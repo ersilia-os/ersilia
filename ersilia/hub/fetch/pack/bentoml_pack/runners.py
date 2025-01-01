@@ -88,7 +88,9 @@ class VenvPack(BasePack):
         venv = self._setup()
         pack_snippet = """
         python {0}
-        """.format(self.cfg.HUB.PACK_SCRIPT)
+        """.format(
+            self.cfg.HUB.PACK_SCRIPT
+        )
         venv.run_commandlines(environment=DEFAULT_VENV, commandlines=pack_snippet)
         self._symlinks()
 
@@ -172,7 +174,9 @@ class CondaPack(BasePack):
         env = self._setup()
         pack_snippet = """
         python {0}
-        """.format(self.cfg.HUB.PACK_SCRIPT)
+        """.format(
+            self.cfg.HUB.PACK_SCRIPT
+        )
         self.logger.debug("Using environment {0}".format(env))
         self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)

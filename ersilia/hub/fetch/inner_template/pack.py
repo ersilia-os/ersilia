@@ -5,6 +5,7 @@ import os
 from src.service import CHECKPOINTS_BASEDIR, FRAMEWORK_BASEDIR, Service, load_model
 
 
+
 def main():
     """
     Main function to load the model, pack it into a service, and save the service.

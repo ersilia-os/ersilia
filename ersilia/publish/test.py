@@ -72,7 +72,7 @@ class TableType(Enum):
 @dataclass
 class TableConfig:
     """
-    Configuration for table construction.
+    Configuration for a table.
     """
 
     title: str

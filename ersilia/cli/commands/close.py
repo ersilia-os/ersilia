@@ -5,6 +5,7 @@ from .. import echo
 from . import ersilia_cli
 
 
+
 def close_cmd():
     """
     Closes the current session of the served model.

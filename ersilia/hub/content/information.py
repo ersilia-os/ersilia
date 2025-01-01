@@ -7,6 +7,7 @@ except:
     emoji = None
 import click
 
+from .columns_information import ColumnsInformation
 from ... import ErsiliaBase
 from ...default import (
     API_SCHEMA_FILE,
