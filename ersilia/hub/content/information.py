@@ -23,7 +23,7 @@ from .columns_information import ColumnsInformation
 
 class Information(ErsiliaBase):
     """
-    Class to handle the information of a model.
+    Class to handle the information of a models.
 
     This class provides methods to get various information about a model,
     such as pack mode, service class, model source, API schema, size, metadata, and card.

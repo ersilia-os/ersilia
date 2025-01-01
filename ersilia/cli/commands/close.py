@@ -7,7 +7,7 @@ from . import ersilia_cli
 
 def close_cmd():
     """
-    Closes the current session.
+    Closes the current session of the served model.
 
     This command allows users to close the current session and clean up any resources.
 
