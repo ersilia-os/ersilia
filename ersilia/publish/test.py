@@ -12,6 +12,7 @@ from enum import Enum
 from typing import List
 
 # ruff: noqa
+MISSING_PACKAGES = False
 try:
     from fuzzywuzzy import fuzz
     from rich.console import Console
