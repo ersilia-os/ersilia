@@ -1,7 +1,7 @@
 from .. import ErsiliaBase
 from ..db.environments.managers import DockerManager
+from ..default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ..utils.terminal import run_command
-from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
 
 
 class DockerHubUploader(ErsiliaBase):
@@ -19,10 +19,16 @@ class DockerHubUploader(ErsiliaBase):
     --------
     .. code-block:: python
 
-        uploader = DockerHubUploader(model_id="model_id", config_json="path/to/config.json")
-        uploader.set_credentials(docker_user="username", docker_pwd="password")
+        uploader = DockerHubUploader(
+            model_id="model_id",
+            config_json="path/to/config.json",
+        )
+        uploader.set_credentials(
+            docker_user="username", docker_pwd="password"
+        )
         uploader.upload()
     """
+
     def __init__(self, model_id: str, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id

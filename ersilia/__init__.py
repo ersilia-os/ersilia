@@ -1,4 +1,5 @@
 # External imports
+# ruff: noqa
 import os
 from ._version import __version__
 import warnings

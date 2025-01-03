@@ -1,16 +1,14 @@
 import os
+
 import yaml
 
-from . import BasePack
-from .....utils.terminal import run_command
+from ..... import EOS, throw_ersilia_exception
 from .....db.environments.localdb import EnvironmentDb
 from .....utils.conda import SimpleConda
 from .....utils.docker import SimpleDockerfileParser
-
-from ..... import throw_ersilia_exception
 from .....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
-
-from ..... import EOS
+from .....utils.terminal import run_command
+from . import BasePack
 
 
 class SystemPack(BasePack):
@@ -28,9 +26,12 @@ class SystemPack(BasePack):
     --------
     .. code-block:: python
 
-        packer = SystemPack(model_id="eosxxxx", config_json=config)
+        packer = SystemPack(
+            model_id="eosxxxx", config_json=config
+        )
         packer.run()
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BasePack.__init__(self, model_id, config_json)
         self.logger.debug("Initializing system packer")
@@ -70,9 +71,12 @@ class CondaPack(BasePack):
     --------
     .. code-block:: python
 
-        packer = CondaPack(model_id="eosxxxx", config_json=config)
+        packer = CondaPack(
+            model_id="eosxxxx", config_json=config
+        )
         packer.run()
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BasePack.__init__(self, model_id, config_json)
         self.conda = SimpleConda()
@@ -171,7 +175,9 @@ def get_runner(pack_mode: str):
     .. code-block:: python
 
         runner_class = get_runner(pack_mode="system")
-        runner = runner_class(model_id="eosxxxx", config_json=config)
+        runner = runner_class(
+            model_id="eosxxxx", config_json=config
+        )
     """
     if pack_mode == "system":
         return SystemPack

@@ -1,4 +1,5 @@
 import json
+
 import numpy as np
 
 try:
@@ -6,9 +7,9 @@ try:
 except:
     Hdf5ApiExplorer = None
 
-from .base import LakeBase
 from ..io.dataframe import Dataframe
 from ..io.output import DictlistDataframeConverter
+from .base import LakeBase
 
 
 class IsauraInterface(LakeBase):
@@ -38,6 +39,7 @@ class IsauraInterface(LakeBase):
     is_available : bool
         True if Hdf5ApiExplorer is available, otherwise False.
     """
+
     def __init__(self, model_id: str, api_name: str, config_json: dict):
         LakeBase.__init__(self, config_json=config_json)
         self.model_id = model_id

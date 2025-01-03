@@ -1,17 +1,13 @@
-import tempfile
 import os
 import shutil
 
-from .. import ErsiliaBase
-
-from .terminal import run_command
+from .. import ErsiliaBase, logger, throw_ersilia_exception
 from ..utils.exceptions_utils.fetch_exceptions import (
-    VirtualEnvironmentSetupError,
     ModelPackageInstallError,
+    VirtualEnvironmentSetupError,
 )
-from .. import throw_ersilia_exception
-from .. import logger
 from ..utils.logging import make_temp_dir
+from .terminal import run_command
 
 
 class SimpleVenv(ErsiliaBase):
@@ -32,6 +28,7 @@ class SimpleVenv(ErsiliaBase):
     run_commandlines(environment, commandlines)
         Run command lines in a virtual environment.
     """
+
     def __init__(self, root):
         ErsiliaBase.__init__(self, config_json=None, credentials_json=None)
         self.root = os.path.abspath(root)

@@ -1,8 +1,7 @@
 import sys
+
 import click
 
-from ...utils.cli_query import query_yes_no
-from ...utils.exceptions_utils.issue_reporting import send_exception_issue
 from ... import EOS
 from ...default import CURRENT_LOGGING_FILE, DEFAULT_ERSILIA_ERROR_EXIT_CODE
 

@@ -1,22 +1,19 @@
-import requests
-import subprocess
-import tempfile
-import json
+import asyncio
 import os
 import re
-import asyncio
-import aiofiles
-from ... import ErsiliaBase
-from ...utils.terminal import yes_no_input, run_command
-from ... import throw_ersilia_exception
-from ...utils.exceptions_utils.pull_exceptions import (
-    DockerImageNotAvailableError,
-    DockerConventionalPullError,
-)
+import subprocess
 
+import requests
+
+from ... import ErsiliaBase, throw_ersilia_exception
+from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...utils.docker import SimpleDocker, model_image_version_reader
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
+from ...utils.exceptions_utils.pull_exceptions import (
+    DockerConventionalPullError,
+    DockerImageNotAvailableError,
+)
 from ...utils.logging import make_temp_dir
+from ...utils.terminal import run_command, yes_no_input
 
 PULL_IMAGE = os.environ.get("PULL_IMAGE", "Y")
 
@@ -38,7 +35,9 @@ class ModelPuller(ErsiliaBase):
     --------
     .. code-block:: python
 
-        puller = ModelPuller(model_id="eosxxxx", config_json=config)
+        puller = ModelPuller(
+            model_id="eosxxxx", config_json=config
+        )
         await puller.async_pull()
     """
     def __init__(self, model_id: str, overwrite: bool = None, config_json: dict = None, docker_tag: str = None):

@@ -1,7 +1,7 @@
-from ....setup.requirements.eospath import EosHomePathRequirement
-from ....setup.requirements.git import GitLfsRequirement, GithubCliRequirement
-from ....setup.requirements.ping import PingRequirement
 from ....setup.requirements.conda import CondaRequirement
+from ....setup.requirements.eospath import EosHomePathRequirement
+from ....setup.requirements.git import GithubCliRequirement, GitLfsRequirement
+from ....setup.requirements.ping import PingRequirement
 from . import BaseAction
 
 

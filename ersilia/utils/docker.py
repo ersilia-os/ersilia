@@ -1,27 +1,27 @@
+import json
 import os
-import docker
 import subprocess
 import threading
 import time
-import json
-from dockerfile_parse import DockerfileParser
 
-from .identifiers.long import LongIdentifier
-from .terminal import run_command, run_command_check_output
+import docker
+from dockerfile_parse import DockerfileParser
 
 from .. import logger
 from ..default import (
     EOS,
     DEFAULT_DOCKER_PLATFORM,
     DEFAULT_UDOCKER_USERNAME,
-    DOCKERHUB_ORG,
     DOCKERHUB_LATEST_TAG,
+    DOCKERHUB_ORG,
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     DOCKER_INFO_FILE
 )
-from ..utils.system import SystemChecker
 from ..utils.logging import make_temp_dir
+from ..utils.system import SystemChecker
+from .identifiers.long import LongIdentifier
+from .terminal import run_command, run_command_check_output
 
 
 def resolve_pack_method_docker(model_id):
@@ -87,6 +87,7 @@ class SimpleDocker(object):
     use_udocker : bool, optional
         Whether to use udocker instead of Docker. Default is None.
     """
+
     def __init__(self, use_udocker=None):
         self.identifier = LongIdentifier()
         self.logger = logger
@@ -188,16 +189,16 @@ class SimpleDocker(object):
         cnt_dict = {}
         with open(tmp_file, "r") as f:
             h = next(f)
-            cnt_idx = h.find("CONTAINER ID")
+            # cnt_idx = h.find("CONTAINER ID")
             img_idx = h.find("IMAGE")
             cmd_idx = h.find("COMMAND")
-            sts_idx = h.find("STATUS")
-            pts_idx = h.find("PORTS")
+            # sts_idx = h.find("STATUS")
+            # pts_idx = h.find("PORTS")
             nam_idx = h.find("NAMES")
             for l in f:
-                cnt = l[cnt_idx:img_idx].strip()
+                # cnt = l[cnt_idx:img_idx].strip()
                 img = l[img_idx:cmd_idx].strip()
-                sts = l[sts_idx:pts_idx].strip()
+                # sts = l[sts_idx:pts_idx].strip()
                 nam = l[nam_idx:].strip()
                 cnt_dict[nam] = img
         return cnt_dict
@@ -328,9 +329,7 @@ class SimpleDocker(object):
             run_command(cmd)
         else:
             # TODO
-            cmd = "sudo -u {0} udocker run {2} bash".format(
-                DEFAULT_UDOCKER_USERNAME, self._image_name(org, img, tag)
-            )
+            cmd = "sudo -u {0} udocker run {2} bash".format(DEFAULT_UDOCKER_USERNAME)  # noqa: F524
             run_command(cmd)
         return name
 
@@ -560,6 +559,7 @@ class SimpleDockerfileParser(DockerfileParser):
     path : str
         The path to the Dockerfile or the directory containing the Dockerfile.
     """
+
     def __init__(self, path):
         if os.path.isdir(path):
             path = os.path.join(path, "Dockerfile")
@@ -606,6 +606,7 @@ class ContainerMetricsSampler:
     sampling_interval : float, optional
         The interval between samples in seconds. Default is 0.01.
     """
+
     def __init__(self, model_id, sampling_interval=0.01):
         self.client = docker.from_env()
         self.logger = logger

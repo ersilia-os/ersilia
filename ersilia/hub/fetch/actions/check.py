@@ -1,5 +1,5 @@
-from . import BaseAction
 from ....serve.autoservice import AutoService
+from . import BaseAction
 
 
 class ModelChecker(BaseAction):
@@ -20,5 +20,8 @@ class ModelChecker(BaseAction):
         )
 
     def check(self):
+        """
+        Check that the autoservice works.
+        """
         self.logger.debug("Checking that autoservice works")
         AutoService(self.model_id)

@@ -1,9 +1,17 @@
+import json
 import os
 import shutil
-import psutil
-import json
 
-from ..default import SESSIONS_DIR, LOGS_DIR, CONTAINER_LOGS_TMP_DIR, SESSION_JSON
+import psutil
+
+from ..default import (
+    CONTAINER_LOGS_TMP_DIR,
+    EOS,
+    LOGS_DIR,
+    MODELS_JSON,
+    SESSION_JSON,
+    SESSIONS_DIR,
+)
 
 
 def get_current_pid():
@@ -93,7 +101,8 @@ def remove_session_dir(session_name):
         The name of the session.
     """
     session_dir = os.path.join(SESSIONS_DIR, session_name)
-    shutil.rmtree(session_dir)
+    if os.path.exists(session_dir):
+        shutil.rmtree(session_dir)
 
 
 def determine_orphaned_session():
@@ -140,3 +149,73 @@ def get_session_id():
         The session ID.
     """
     return f"session_{get_parent_pid()}"
+
+
+def register_model_session(model_id, session_dir):
+    """
+    Register a model with a session.
+
+    Parameters
+    ----------
+    model_id : str
+        The model ID.
+    session_dir : str
+        The session directory.
+    """
+    file_path = os.path.join(EOS, MODELS_JSON)
+
+    if not os.path.exists(file_path):
+        with open(file_path, "w") as f:
+            json.dump({}, f, indent=4)
+
+    with open(file_path, "r") as f:
+        models = json.load(f)
+
+    if (
+        model_id not in models
+    ):  # TODO This would have implications when we try to run the same model across multiple sessions
+        models[model_id] = session_dir
+        with open(file_path, "w") as f:
+            json.dump(models, f, indent=4)
+
+
+def get_model_session(model_id):
+    """
+    Get the model session.
+
+    Parameters
+    ----------
+    model_id : str
+        The model ID.
+
+    Returns
+    -------
+    str
+        The session ID.
+    """
+    file_path = os.path.join(EOS, MODELS_JSON)
+    if not os.path.exists(file_path):
+        return None
+    with open(file_path, "r") as f:
+        models = json.load(f)
+    return models.get(model_id, None)
+
+
+def deregister_model_session(model_id):
+    """
+    Remove a model from a session.
+
+    Parameters
+    ----------
+    model_id : str
+        The model ID.
+    """
+    file_path = os.path.join(EOS, MODELS_JSON)
+    if not os.path.exists(file_path):
+        return
+    with open(file_path, "r") as f:
+        models = json.load(f)
+    if model_id in models:
+        del models[model_id]
+        with open(file_path, "w") as f:
+            json.dump(models, f, indent=4)

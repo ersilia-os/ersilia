@@ -1,6 +1,8 @@
-from .echo import echo
-from ..default import ERSILIA_MODEL_HUB_URL
 import sys
+
+from ..default import ERSILIA_MODEL_HUB_URL
+from .echo import echo
+
 
 class ModelNotFound(object):
     """
@@ -16,6 +18,7 @@ class ModelNotFound(object):
     echo()
         Prints an error message and exits the program.
     """
+
     def __init__(self, model):
         self.model = model
 
@@ -36,6 +39,7 @@ class ModelNotFound(object):
         )
         sys.exit(0)
 
+
 class ModelNotInLocal(object):
     """
     A class to handle the scenario when a model is not found locally.
@@ -50,6 +54,7 @@ class ModelNotInLocal(object):
     echo()
         Prints an error message and exits the program.
     """
+
     def __init__(self, model_id):
         self.model_id = model_id
 

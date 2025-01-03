@@ -5,7 +5,6 @@ on:
     branches: [ master ]
   push:
     branches: [ master ]
-
   workflow_dispatch:
 
 permissions:
@@ -14,22 +13,18 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
-
-      - name: Add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
-
-      - name: Set Python to 3.10.10
-        run:
-         conda install -y python=3.10.10 
-      
-      - name: Source conda
-        run: source $CONDA/etc/profile.d/conda.sh
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
 
       - name: Install dependencies
         run: |
-          source activate
           conda init
           conda install git-lfs -c conda-forge
           git-lfs install
@@ -37,19 +32,20 @@ jobs:
 
       - name: Install Ersilia
         run: |
-          source activate
           python --version
           echo "After conda init"
           conda init
           python -m pip install -e .[test]
 
+      - name: Run Ruff
+        run: ruff check --output-format=github .
+      
       - name: Hub catalog
         run: |
           ersilia catalog --hub
 
       - name: Fetch model from GitHub
         run: |
-          source activate
           ersilia -v fetch molecular-weight --from_github
           echo "Serving molecular-weight model."
           ersilia serve molecular-weight --track
@@ -59,7 +55,6 @@ jobs:
 
       - name: Fetch model from S3
         run: |
-          source activate
           ersilia -v fetch molecular-weight --from_s3
           echo "Serving molecular-weight model."
           ersilia serve molecular-weight --track
@@ -69,7 +64,6 @@ jobs:
 
       - name: Fetch model from DockerHub
         run: |
-          source activate
           ersilia -v fetch molecular-weight --from_dockerhub
           echo "Serving molecular-weight model." --track
           ersilia serve molecular-weight

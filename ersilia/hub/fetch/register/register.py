@@ -1,12 +1,11 @@
+import datetime
+import json
 import os
 import shutil
-import json
-import datetime
+
 import validators
 
-from .... import ErsiliaBase
-from .... import EOS
-from .... import throw_ersilia_exception
+from .... import EOS, ErsiliaBase, throw_ersilia_exception
 from ....default import (
     DOCKER_INFO_FILE,
     IS_FETCHED_FROM_HOSTED_FILE,
@@ -31,9 +30,12 @@ class ModelRegisterer(ErsiliaBase):
     --------
     .. code-block:: python
 
-        registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
+        registerer = ModelRegisterer(
+            model_id="eosxxxx", config_json=config
+        )
         await registerer.register(is_from_dockerhub=True)
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -175,7 +177,9 @@ class ModelRegisterer(ErsiliaBase):
         with open(file_name, "w") as f:
             json.dump(data, f)
 
-    async def register(self, is_from_dockerhub: bool = False, is_from_hosted: bool = False, **kwargs):
+    async def register(
+        self, is_from_dockerhub: bool = False, is_from_hosted: bool = False, **kwargs
+    ):
         """
         Register the model based on its source.
 
@@ -197,7 +201,9 @@ class ModelRegisterer(ErsiliaBase):
         --------
         .. code-block:: python
 
-            registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
+            registerer = ModelRegisterer(
+                model_id="eosxxxx", config_json=config
+            )
             await registerer.register(is_from_dockerhub=True)
         """
         if is_from_dockerhub and is_from_hosted:

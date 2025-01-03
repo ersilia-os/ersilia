@@ -1,33 +1,32 @@
-import os
-import re
-import sys
+import copy
 import csv
 import json
-import copy
-import boto3
-import psutil
-from loguru import logger as logging
-import requests
+import os
+import re
+import resource
+import sys
 import tempfile
 import types
-import resource
-from .session import Session
 from datetime import datetime
-from datetime import timedelta
-from .base import ErsiliaBase
-from ..utils.docker import SimpleDocker
-from ..utils.session import get_session_dir, get_session_uuid
-from ..utils.csvfile import CsvDataLoader
-from ..utils.tracking import (
-    init_tracking_summary,
-    update_tracking_summary,
-    RUN_DATA_STUB,
-)
-from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+
+import boto3
+import psutil
+import requests
+from botocore.exceptions import ClientError, NoCredentialsError
+from loguru import logger as logging
+
 from ..default import SESSION_JSON
 from ..io.output_logger import TabularResultLogger
-from botocore.exceptions import ClientError, NoCredentialsError
-
+from ..utils.csvfile import CsvDataLoader
+from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from ..utils.session import get_session_dir, get_session_uuid
+from ..utils.tracking import (
+    RUN_DATA_STUB,
+    init_tracking_summary,
+    update_tracking_summary,
+)
+from .base import ErsiliaBase
+from .session import Session
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -452,9 +451,10 @@ class RunTracker(ErsiliaBase):
                     dtypes_list[key].add(type(value).__name__)
 
         mismatched_types = 0
-        for column, types in dtypes_list.items():
+        for column, dtype_set in dtypes_list.items():
             if not all(
-                type_dict.get(dtype) == metadata["Output Type"][0] for dtype in types
+                type_dict.get(dtype) == metadata["Output Type"][0]
+                for dtype in dtype_set
             ):
                 mismatched_types += 1
 

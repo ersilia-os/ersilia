@@ -1,6 +1,6 @@
+import os
 import subprocess
 import sys
-import os
 
 from ...default import EOS
 
@@ -18,6 +18,7 @@ class BentoMLRequirement(object):
     install()
         Installs the Ersilia version of BentoML.
     """
+
     def __init__(self):
         pass
 
@@ -31,7 +32,8 @@ class BentoMLRequirement(object):
             True if BentoML is installed, False otherwise.
         """
         try:
-            import bentoml
+            import bentoml  # noqa: F401
+
             return True
         except ImportError:
             return False

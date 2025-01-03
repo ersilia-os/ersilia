@@ -1,4 +1,5 @@
 import importlib
+
 from ...utils.terminal import run_command
 
 
@@ -11,6 +12,7 @@ class RdkitRequirement(object):
     install()
         Installs the RDKit library.
     """
+
     def __init__(self):
         self.name = "rdkit"
         try:
@@ -40,6 +42,7 @@ class ChemblWebResourceClientRequirement(object):
     install()
         Installs the ChEMBL web resource client library.
     """
+
     def __init__(self):
         self.name = "chembl_webresource_client"
         try:

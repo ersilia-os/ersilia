@@ -7,9 +7,22 @@ class ProteinIdentifier(object):
     """
     A class to handle protein identification and sequence retrieval.
     """
+
     def __init__(self):
-        self.seguid = seguid
+        self.seguid = self.generate_seguid()
         self.uniprot = UniProt(verbose=False)
+
+    def generate_seguid(self):
+        """
+        Generate a SEGUID for the protein.
+
+        Returns
+        -------
+        str
+            The generated SEGUID.
+        """
+        # Implementation for generating SEGUID
+        pass
 
     def sequence_from_uniprot(self, uniprot_ac):
         """

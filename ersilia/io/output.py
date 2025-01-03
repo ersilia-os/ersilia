@@ -1,21 +1,21 @@
-
-import csv
-import os
-import json
-import random
-import numpy as np
-import tempfile
 import collections
-from .dataframe import Dataframe
-from .readers.file import FileTyper
-from .pure import PureDataTyper
-from ..serve.schema import ApiSchema
+import csv
+import json
+import os
+import random
+
+import numpy as np
+
 from .. import ErsiliaBase
-from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..db.hubdata.interfaces import JsonModelsInterface
 from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
-from ..utils.paths import resolve_pack_method
+from ..serve.schema import ApiSchema
+from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..utils.logging import make_temp_dir
+from ..utils.paths import resolve_pack_method
+from .dataframe import Dataframe
+from .pure import PureDataTyper
+from .readers.file import FileTyper
 
 
 class DataFrame(object):
@@ -207,8 +207,8 @@ class ResponseRefactor(ErsiliaBase):
         if self._expect_meta is not None:
             return self._expect_meta
         try:
-            r = result["result"]
-            m = result["meta"]
+            r = result["result"]  # noqa: F841
+            m = result["meta"]  # noqa: F841
             self._expect_meta = True
         except:
             self._expect_meta = False
@@ -723,7 +723,9 @@ class GenericOutputAdapter(ResponseRefactor):
                             fo.write(l)
                     use_header = False
 
-    def _adapt_generic(self, result: dict, output: str, model_id: str = None, api_name: str = None) -> dict:
+    def _adapt_generic(
+        self, result: dict, output: str, model_id: str = None, api_name: str = None
+    ) -> dict:
         """
         Adapts the output based on the result and model.
 
@@ -834,7 +836,9 @@ class GenericOutputAdapter(ResponseRefactor):
             pass
         return result
 
-    def adapt(self, result: dict, output: str, model_id: str = None, api_name: str = None) -> dict:
+    def adapt(
+        self, result: dict, output: str, model_id: str = None, api_name: str = None
+    ) -> dict:
         """
         Adapts the output based on the result and model.
 

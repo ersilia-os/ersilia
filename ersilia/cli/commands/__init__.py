@@ -1,15 +1,24 @@
-import click
 import functools
-from ... import __version__
-from ... import logger
+
+import click
+
+from ... import __version__, logger
 from ..echo import Silencer
 
 
 class ErsiliaCommandGroup(click.Group):
+    """
+    Command group for Ersilia CLI commands.
+    """
+
     NUMBER_OF_COMMON_PARAMS = 2
 
     @staticmethod
     def bentoml_common_params(func):
+        """
+        Add common parameters to the command.
+        """
+
         @click.option(
             "-q",
             "--quiet",
@@ -24,6 +33,10 @@ class ErsiliaCommandGroup(click.Group):
         return wrapper
 
     def command(self, *args, **kwargs):
+        """
+        Register a new command with common parameters.
+        """
+
         def wrapper(func):
             func = ErsiliaCommandGroup.bentoml_common_params(func)
             func.__click_params__ = (

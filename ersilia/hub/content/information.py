@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 try:
     import emoji
@@ -9,20 +9,21 @@ import click
 
 from ... import ErsiliaBase
 from ...default import (
-    PACKMODE_FILE,
     API_SCHEMA_FILE,
-    MODEL_SIZE_FILE,
-    CARD_FILE,
-    SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
+    CARD_FILE,
+    MODEL_SIZE_FILE,
     MODEL_SOURCE_FILE,
+    PACKMODE_FILE,
+    SERVICE_CLASS_FILE,
 )
 from ...utils.paths import get_metadata_from_base_dir
+from .columns_information import ColumnsInformation
 
 
 class Information(ErsiliaBase):
     """
-    Class to handle the information of a model.
+    Class to handle the information of a models.
 
     This class provides methods to get various information about a model,
     such as pack mode, service class, model source, API schema, size, metadata, and card.
@@ -34,6 +35,7 @@ class Information(ErsiliaBase):
     config_json : dict, optional
         Configuration settings in JSON format.
     """
+
     def __init__(self, model_id, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -105,6 +107,17 @@ class Information(ErsiliaBase):
         else:
             return None
 
+    def _get_columns(self):
+        columns_data = {}
+        api_names = self._get_apis_list()
+        for api_name in api_names:
+            ci = ColumnsInformation(
+                model_id=self.model_id, api_name=api_name, config_json=self.config_json
+            )
+            data = ci.load()
+            columns_data[api_name] = data
+        return columns_data
+
     def get(self) -> dict:
         """
         Get various information about the model.
@@ -112,7 +125,7 @@ class Information(ErsiliaBase):
         Returns
         -------
         dict
-            A dictionary containing various information about the model.
+            A dictionary containing several information about the model.
         """
         data = {
             "pack_mode": self._get_pack_mode(),
@@ -123,6 +136,7 @@ class Information(ErsiliaBase):
             "size": self._get_size(),
             "metadata": self._get_metadata(),
             "card": self._get_card(),
+            "columns": self._get_columns(),
         }
         return data
 
@@ -141,6 +155,7 @@ class InformationDisplayer(ErsiliaBase):
     config_json : dict, optional
         Configuration settings in JSON format.
     """
+
     def __init__(self, info_data, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.info_data = info_data

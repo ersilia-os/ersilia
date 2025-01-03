@@ -1,50 +1,54 @@
-# TODO adapt to input-type agnostic. For now, it works only with Compound input types.
+import csv
 import json
 import os
-import csv
 import subprocess
+import sys
 import tempfile
 import time
-import click
 import types
-import sys
-from enum import Enum
 from dataclasses import dataclass
-from typing import List
 from datetime import datetime
-from pathlib import Path
-from .inspect import ModelInspector
-from ..utils.conda import SimpleConda
-from .. import ErsiliaBase, throw_ersilia_exception
-from ..io.input import ExampleGenerator
-from ..utils.exceptions_utils import test_exceptions as texc
-from ..utils.terminal import run_command_check_output
-from ..hub.fetch.actions.template_resolver import TemplateResolver
-from ..default import (
-    INFORMATION_FILE, 
-    INSTALL_YAML_FILE, 
-    DOCKERFILE_FILE,
-    PACK_METHOD_FASTAPI,
-    PACK_METHOD_BENTOML,
-    METADATA_JSON_FILE,
-    METADATA_YAML_FILE,
-    RUN_FILE,
-    PREDEFINED_EXAMPLE_FILES
-)
+from enum import Enum
+from typing import List
 
+# ruff: noqa
 MISSING_PACKAGES = False
-
 try:
-    from scipy.stats import spearmanr
     from fuzzywuzzy import fuzz
     from rich.console import Console
     from rich.table import Table
     from rich.text import Text
+    from scipy.stats import spearmanr
 except ImportError:
     MISSING_PACKAGES = True
+# ruff: enable
+import click
+
+from .. import ErsiliaBase, throw_ersilia_exception
+from ..default import (
+    DOCKERFILE_FILE,
+    INFORMATION_FILE,
+    INSTALL_YAML_FILE,
+    METADATA_JSON_FILE,
+    METADATA_YAML_FILE,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+    PREDEFINED_EXAMPLE_FILES,
+    RUN_FILE,
+)
+from ..hub.fetch.actions.template_resolver import TemplateResolver
+from ..io.input import ExampleGenerator
+from ..utils.conda import SimpleConda
+from ..utils.exceptions_utils import test_exceptions as texc
+from ..utils.terminal import run_command_check_output
+from .inspect import ModelInspector
 
 
 class Options(Enum):
+    """
+    Enum for different options.
+    """
+
     NUM_SAMPLES = 5
     BASE = "base"
     OUTPUT_CSV = "result.csv"
@@ -52,7 +56,12 @@ class Options(Enum):
     OUTPUT2_CSV = "output2.csv"
     LEVEL_DEEP = "deep"
 
+
 class TableType(Enum):
+    """
+    Enum for different table types.
+    """
+
     MODEL_INFORMATION_CHECKS = "Model Information Checks"
     MODEL_FILE_CHECKS = "Model File Checks"
     MODEL_DIRECTORY_SIZES = "Model Directory Sizes"
@@ -60,41 +69,47 @@ class TableType(Enum):
     FINAL_RUN_SUMMARY = "Test Run Summary"
     INSPECT_SUMMARY = "Inspect Summary"
 
+
 @dataclass
 class TableConfig:
+    """
+    Configuration for a table.
+    """
+
     title: str
     headers: List[str]
 
+
 TABLE_CONFIGS = {
     TableType.MODEL_INFORMATION_CHECKS: TableConfig(
-        title="Model Information Checks",
-        headers=["Check", "Status"]
+        title="Model Information Checks", headers=["Check", "Status"]
     ),
     TableType.MODEL_FILE_CHECKS: TableConfig(
-        title="Model File Checks",
-        headers=["Check", "Status"]
+        title="Model File Checks", headers=["Check", "Status"]
     ),
     TableType.MODEL_DIRECTORY_SIZES: TableConfig(
-        title="Model Directory Sizes",
-        headers=["Dest dir", "Env Dir"]
+        title="Model Directory Sizes", headers=["Dest dir", "Env Dir"]
     ),
     TableType.RUNNER_CHECKUP_STATUS: TableConfig(
         title="Runner Checkup Status",
         headers=["Runner", "Status"],
     ),
-     TableType.FINAL_RUN_SUMMARY: TableConfig(
-        title="Test Run Summary",
-        headers=["Check", "Status"]
+    TableType.FINAL_RUN_SUMMARY: TableConfig(
+        title="Test Run Summary", headers=["Check", "Status"]
     ),
-     TableType.INSPECT_SUMMARY: TableConfig(
-        title="Inspect Summary",
-        headers=["Check", "Status"]
+    TableType.INSPECT_SUMMARY: TableConfig(
+        title="Inspect Summary", headers=["Check", "Status"]
     ),
 }
 
+
 class STATUS_CONFIGS(Enum):
-    PASSED  = ("PASSED", "green", "✔")
-    FAILED  = ("FAILED", "red", "✘")
+    """
+    Enum for status configurations.
+    """
+
+    PASSED = ("PASSED", "green", "✔")
+    FAILED = ("FAILED", "red", "✘")
     WARNING = ("WARNING", "yellow", "⚠")
     SUCCESS = ("SUCCESS", "green", "★")
     NA = ("N/A", "dim", "~")
@@ -107,30 +122,34 @@ class STATUS_CONFIGS(Enum):
     def __str__(self):
         return f"[{self.color}]{self.icon} {self.label}[/{self.color}]"
 
+
 # fmt: off
 class TestResult(Enum):
+    """
+    Enum for test results.
+    """
     DATE_TIME_RUN = (
-        "Date and Time Run", 
+        "Date and Time Run",
         lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     )
     TIME_ELAPSED = (
-        "Time to Run Tests (seconds)", 
+        "Time to Run Tests (seconds)",
         lambda elapsed: elapsed
     )
     BASIC_CHECKS = (
-        "Basic Checks Passed", 
+        "Basic Checks Passed",
         lambda svc: svc.information_check
     )
     SINGLE_INPUT = (
-        "Single Input Run Without Error", 
+        "Single Input Run Without Error",
         lambda svc: svc.single_input
     )
     EXAMPLE_INPUT = (
-        "Example Input Run Without Error", 
+        "Example Input Run Without Error",
         lambda svc: svc.example_input
     )
     CONSISTENT_OUTPUT = (
-        "Outputs Consistent", 
+        "Outputs Consistent",
         lambda svc: svc.consistent_output
     )
     BASH_RUN = (
@@ -144,6 +163,23 @@ class TestResult(Enum):
 
     @classmethod
     def generate_results(cls, checkup_service, elapsed_time, run_using_bash):
+        """
+        Generate test results.
+
+        Parameters
+        ----------
+        checkup_service : object
+            The checkup service.
+        elapsed_time : float
+            The elapsed time.
+        run_using_bash : bool
+            Whether to run using bash.
+
+        Returns
+        -------
+        dict
+            The generated results.
+        """
         results = {}
         for test in cls:
             func_args = {}
@@ -157,18 +193,38 @@ class TestResult(Enum):
             value = test.value_function(**func_args)
             results[test.key] = value
         return results
-    
+
 class CheckStrategy:
+    """
+    Execuetd a strategy for checking inspect commands.
+
+    Parameters
+    ----------
+    check_function : callable
+        The function to check.
+    success_key : str
+        The key for success.
+    details_key : str
+        The key for details.
+    """
     def __init__(self, check_function, success_key, details_key):
         self.check_function = check_function
         self.success_key = success_key
         self.details_key = details_key
 
     def execute(self):
+        """
+        Execute the check strategy.
+
+        Returns
+        -------
+        dict
+            The results of the check.
+        """
         if self.check_function is None:
             return {}
         result = self.check_function()
-        if result is None:  
+        if result is None:
             return {}
         return {
             self.success_key: result.success,
@@ -222,15 +278,15 @@ class InspectService(ErsiliaBase):
         """
         if not self.model:
             raise ValueError("Model must be specified.")
-        
+
         inspector = ModelInspector(self.model, self.dir)
         checks = self._get_checks(inspector)
-        
+
         output = {}
         for strategy in checks:
             if strategy.check_function:
                 output.update(strategy.execute())
-        
+
         return output
 
     def _get_checks(self, inspector: ModelInspector) -> list:
@@ -338,7 +394,7 @@ class SetupService:
                     text=True,
                     shell=shell
                 )
-                
+
                 stdout_lines, stderr_lines = [], []
 
                 for line in iter(process.stdout.readline, ''):
@@ -401,7 +457,7 @@ class SetupService:
             raise Exception(
                 f"Conda virtual environment not found for {self.model_id}"
             )
-    
+
     @staticmethod
     def get_conda_env_location(model_id: str, logger) -> str:
         """
@@ -432,7 +488,7 @@ class SetupService:
             )
             for line in result.splitlines():
                 if line.startswith("#") or not line.strip():
-                    continue 
+                    continue
                 parts = line.split()
                 if parts[0] == model_id:
                     return parts[-1]
@@ -440,7 +496,7 @@ class SetupService:
             print(f"Error running conda command: {e.stderr}")
         except Exception as e:
             print(f"Unexpected error: {e}")
-        
+
         return None
 
 class IOService:
@@ -468,8 +524,8 @@ class IOService:
     --------
     .. code-block:: python
 
-        ios = IOService(logger=logger, dest_dir="/path/to/dest", model_path="/path/to/model", 
-                        bundle_path="/path/to/bundle", bentoml_path="/path/to/bentoml", 
+        ios = IOService(logger=logger, dest_dir="/path/to/dest", model_path="/path/to/model",
+                        bundle_path="/path/to/bundle", bentoml_path="/path/to/bentoml",
                         model_id="model_id", dir="/path/to/dir")
         ios.read_information()
     """
@@ -515,7 +571,7 @@ class IOService:
             else:
                 check_function(data)
             self.check_results.append((
-                check_name, 
+                check_name,
                 str(STATUS_CONFIGS.PASSED)
             ))
             return True
@@ -524,22 +580,22 @@ class IOService:
                 f"Check '{check_name}' failed: {e}"
             )
             self.check_results.append((
-                check_name, 
+                check_name,
                 str(STATUS_CONFIGS.FAILED)
             ))
             return False
 
     def _generate_table(self, title: str, headers: List[str], rows: List[List[str]], large_table: bool = False, merge: bool = False):
-        f_col_width = 30 if large_table else 30    
-        l_col_width = 50 if large_table else 10     
-        d_col_width = 30 if not large_table else 20 
+        f_col_width = 30 if large_table else 30
+        l_col_width = 50 if large_table else 10
+        d_col_width = 30 if not large_table else 20
 
         table = Table(
             title=Text(
                 title,
-                style="bold light_green" 
+                style="bold light_green"
             ),
-            border_style="light_green",   
+            border_style="light_green",
             show_lines=True,
         )
 
@@ -547,27 +603,27 @@ class IOService:
             headers[0],
             justify="left",
             width=f_col_width,
-            style="bold" 
+            style="bold"
         )
         for header in headers[1:-1]:
             table.add_column(
                 header,
                 justify="center",
                 width=d_col_width,
-                style="bold" 
+                style="bold"
             )
         table.add_column(
             headers[-1],
             justify="right",
             width=l_col_width,
-            style="bold" 
+            style="bold"
         )
 
-        prev_value = None 
+        prev_value = None
         for row in rows:
             first_col = str(row[0])
             if merge and first_col == prev_value:
-                first_col = ""  
+                first_col = ""
             else:
                 prev_value = first_col
 
@@ -598,7 +654,7 @@ class IOService:
             The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).
         """
         resolver = TemplateResolver(
-            model_id=model_id, 
+            model_id=model_id,
             repo_path=repo_path
         )
         if resolver.is_bentoml():
@@ -623,7 +679,7 @@ class IOService:
             If the model type is unsupported.
         """
         type = IOService.get_model_type(
-            model_id=self.model_id, 
+            model_id=self.model_id,
             repo_path=self.dir
         )
         if type == PACK_METHOD_BENTOML:
@@ -650,8 +706,8 @@ class IOService:
             If the information file does not exist.
         """
         file = os.path.join(
-            self._dest_dir, 
-            self.model_id, 
+            self._dest_dir,
+            self.model_id,
             INFORMATION_FILE
         )
         if not os.path.exists(file):
@@ -701,7 +757,7 @@ class IOService:
         """
         try:
             loc = SetupService.get_conda_env_location(
-                self.model_id, 
+                self.model_id,
                 self.logger
             )
             return self.calculate_directory_size(loc)
@@ -712,9 +768,22 @@ class IOService:
             return 0
 
     def calculate_directory_size(self, path: str) -> int:
+        """
+        Calculate the size of a directory.
+
+        Parameters
+        ----------
+        path : str
+            The path to the directory.
+
+        Returns
+        -------
+        int
+            The size of the directory.
+        """
         try:
             size_output = SetupService.run_command(
-                ["du", "-sm", path], 
+                ["du", "-sm", path],
                 logger=self.logger,
                 capture_output=True,
                 shell=False
@@ -726,7 +795,7 @@ class IOService:
                 f"Error calculating directory size for {path}: {e}"
             )
             return 0
-        
+
     @throw_ersilia_exception()
     def get_directories_sizes(self) -> tuple:
         """
@@ -762,7 +831,7 @@ class CheckService:
     --------
     .. code-block:: python
 
-        check_service = CheckService(logger=logger, model_id="model_id", dest_dir="/path/to/dest", 
+        check_service = CheckService(logger=logger, model_id="model_id", dest_dir="/path/to/dest",
                                      dir="/path/to/dir", ios=ios)
         check_service.check_files()
     """
@@ -793,18 +862,18 @@ class CheckService:
     }
 
     INPUT_SHAPE = {
-        "Single", 
-        "Pair", 
-        "List", 
-        "Pair of Lists", 
+        "Single",
+        "Pair",
+        "List",
+        "Pair of Lists",
         "List of Lists"
     }
 
     OUTPUT_SHAPE = {
-        "Single", 
-        "List", 
-        "Flexible List", 
-        "Matrix", 
+        "Single",
+        "List",
+        "Flexible List",
+        "Matrix",
         "Serializable Object"
     }
 
@@ -838,9 +907,9 @@ class CheckService:
         for file in requirements:
             self.logger.debug(f"Checking file: {file}")
             self._run_check(
-                self._check_file_existence, 
+                self._check_file_existence,
                 None,
-                f"File: {file}", 
+                f"File: {file}",
                 file
             )
 
@@ -866,27 +935,27 @@ class CheckService:
         raw_tasks = data.get("card", {}).get("Task", "")
         if isinstance(raw_tasks, str):
             tasks = [
-                task.strip() 
-                for task 
-                in raw_tasks.split(",") 
+                task.strip()
+                for task
+                in raw_tasks.split(",")
                 if task.strip()
             ]
         elif isinstance(raw_tasks, list):
             tasks = [
-                task.strip() 
-                for task 
-                in raw_tasks 
+                task.strip()
+                for task
+                in raw_tasks
                 if isinstance(task, str) and task.strip()
             ]
         else:
             raise texc.InvalidEntry(
-                "Task", 
+                "Task",
                 message="Task field must be a string or list."
             )
 
         if not tasks:
             raise texc.InvalidEntry(
-                "Task", 
+                "Task",
                 message="Task field is missing or empty."
             )
 
@@ -903,39 +972,39 @@ class CheckService:
         raw_outputs = data.get("card", {}).get("Output", "") or data.get("metadata", {}).get("Output", "")
         if isinstance(raw_outputs, str):
             outputs = [
-                output.strip() 
-                for output 
+                output.strip()
+                for output
                 in raw_outputs.split(",")
                 if output.strip()
             ]
         elif isinstance(raw_outputs, list):
             outputs = [
-                output.strip() 
-                for output 
-                in raw_outputs 
+                output.strip()
+                for output
+                in raw_outputs
                 if isinstance(output, str) and output.strip()
             ]
         else:
             raise texc.InvalidEntry(
-                "Output", 
+                "Output",
                 message="Output field must be a string or list."
             )
 
         if not outputs:
             raise texc.InvalidEntry(
-                "Output", 
+                "Output",
                 message="Output field is missing or empty."
             )
 
         invalid_outputs = [
-            output 
-            for output 
-            in outputs 
+            output
+            for output
+            in outputs
             if output not in self.MODEL_OUTPUT
         ]
         if invalid_outputs:
             raise texc.InvalidEntry(
-                "Output", 
+                "Output",
                 message=f"Invalid outputs: {' '.join(invalid_outputs)}"
             )
 
@@ -944,44 +1013,44 @@ class CheckService:
     def _check_model_input(self, data):
         self.logger.debug("Checking model input")
         valid_inputs = [{"Compound"}, {"Protein"}, {"Text"}]
-        
+
         model_input = data.get("card", {}).get("Input") or data.get("metadata", {}).get("Input")
-        
+
         if not model_input or set(model_input) not in valid_inputs:
             raise texc.InvalidEntry("Input")
 
     def _check_model_input_shape(self, data):
         self.logger.debug("Checking model input shape")
         model_input_shape = (
-            data.get("card", {}).get("Input Shape") or 
+            data.get("card", {}).get("Input Shape") or
             data.get("metadata", {}).get("InputShape")
         )
-        
+
         if model_input_shape not in self.INPUT_SHAPE:
             raise texc.InvalidEntry("Input Shape")
 
     def _check_model_output_type(self, data):
         self.logger.debug("Checking model output type...")
         valid_output_types = [{"String"}, {"Float"}, {"Integer"}]
-        
+
         model_output_type = (
-            data.get("card", {}).get("Output Type") or 
+            data.get("card", {}).get("Output Type") or
             data.get("metadata", {}).get("OutputType")
         )
-        
+
         if not model_output_type or set(model_output_type) not in valid_output_types:
             raise texc.InvalidEntry("Output Type")
 
     def _check_model_output_shape(self, data):
         self.logger.debug("Checking model output shape...")
         model_output_shape = (
-            data.get("card", {}).get("Output Shape") or 
+            data.get("card", {}).get("Output Shape") or
             data.get("metadata", {}).get("OutputShape")
         )
-        
+
         if model_output_shape not in self.OUTPUT_SHAPE:
             raise texc.InvalidEntry("Output Shape")
-    
+
     @throw_ersilia_exception()
     def check_information(self, output):
         """
@@ -994,8 +1063,8 @@ class CheckService:
         """
         self.logger.debug(f"Beginning checks for {self.model_id} model information")
         file = os.path.join(
-            self._dest_dir, 
-            self.model_id, 
+            self._dest_dir,
+            self.model_id,
             INFORMATION_FILE
         )
         with open(file, "r") as f:
@@ -1017,7 +1086,7 @@ class CheckService:
     @throw_ersilia_exception()
     def check_single_input(self, output, run_model, run_example):
         """
-        Check if the model can run with a single input to check if it has a value 
+        Check if the model can run with a single input to check if it has a value
         in the produced output csv.
 
         Parameters
@@ -1030,14 +1099,14 @@ class CheckService:
             Function to generate example input.
         """
         input = run_example(
-            n_samples=Options.NUM_SAMPLES.value, 
-            file_name=None, 
-            simple=True, 
+            n_samples=Options.NUM_SAMPLES.value,
+            file_name=None,
+            simple=True,
             try_predefined=False
         )
         result = run_model(
-            input=input, 
-            output=output, 
+            input=input,
+            output=output,
             batch=100
         )
 
@@ -1072,17 +1141,17 @@ class CheckService:
             Function to generate example input.
         """
         input_samples = run_example(
-            n_samples=Options.NUM_SAMPLES.value, 
-            file_name=None, 
-            simple=True, 
+            n_samples=Options.NUM_SAMPLES.value,
+            file_name=None,
+            simple=True,
             try_predefined=False
         )
 
         self.logger.debug("Testing model on input of 5 smiles given by 'example' command")
 
         result = run_model(
-            input=input_samples, 
-            output=output, 
+            input=input_samples,
+            output=output,
             batch=100
         )
 
@@ -1140,7 +1209,7 @@ class CheckService:
             elif isinstance(output1, str):
                 if _compare_output_strings(output1, output2) <= 95:
                     raise texc.InconsistentOutputs(self.model_id)
-                
+
         def read_csv(file_path):
             absolute_path = os.path.abspath(file_path)
             if not os.path.exists(absolute_path):
@@ -1151,23 +1220,23 @@ class CheckService:
 
         output1_path = os.path.abspath(Options.OUTPUT1_CSV.value)
         output2_path = os.path.abspath(Options.OUTPUT2_CSV.value)
-                
+
         self.logger.debug("Confirming model produces consistent output...")
 
         input_samples = run_example(
-            n_samples=Options.NUM_SAMPLES.value, 
-            file_name=None, 
-            simple=True, 
+            n_samples=Options.NUM_SAMPLES.value,
+            file_name=None,
+            simple=True,
             try_predefined=False
         )
         run_model(
-            input=input_samples, 
-            output=output1_path, 
+            input=input_samples,
+            output=output1_path,
             batch=100
         )
         run_model(
-            input=input_samples, 
-            output=output2_path, 
+            input=input_samples,
+            output=output2_path,
             batch=100
         )
 
@@ -1216,13 +1285,13 @@ class RunnerService:
     """
 
     def __init__(
-        self, 
-        model_id: str, 
-        logger, 
-        ios_service: IOService, 
-        checkup_service: CheckService, 
+        self,
+        model_id: str,
+        logger,
+        ios_service: IOService,
+        checkup_service: CheckService,
         setup_service: SetupService,
-        model_path: str, 
+        model_path: str,
         level: str,
         dir: str,
         remote: bool,
@@ -1280,19 +1349,19 @@ class RunnerService:
         Fetch the model repository from the specified directory.
         """
         SetupService.run_command(
-            " ".join(["ersilia", 
-            "-v", 
-            "fetch", self.model_id, 
+            " ".join(["ersilia",
+            "-v",
+            "fetch", self.model_id,
             "--from_dir", self.dir
             ]),
             logger=self.logger,
         )
 
     def run_exampe(
-        self, 
-        n_samples: int, 
-        file_name: str = None, 
-        simple: bool = True, 
+        self,
+        n_samples: int,
+        file_name: str = None,
+        simple: bool = True,
         try_predefined: bool = False
     ):
         """
@@ -1315,9 +1384,9 @@ class RunnerService:
             List of generated input samples.
         """
         return self.example.example(
-            n_samples=n_samples, 
-            file_name=file_name, 
-            simple=simple, 
+            n_samples=n_samples,
+            file_name=file_name,
+            simple=simple,
             try_predefined=try_predefined
         )
     @throw_ersilia_exception()
@@ -1332,7 +1401,7 @@ class RunnerService:
         """
         def compute_rmse(y_true, y_pred):
             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
-        
+
         def compare_outputs(bsh_data, ers_data):
             columns = set(bsh_data[0].keys()) & set(data[0].keys())
             self.logger.debug(f"Common columns: {columns}")
@@ -1349,12 +1418,12 @@ class RunnerService:
                         raise texc.InconsistentOutputs(self.model_id)
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
-                        self._compare_string_similarity(a, b, 95) 
-                        for a, b 
+                        self._compare_string_similarity(a, b, 95)
+                        for a, b
                         in zip(bv, ev)
                     ):
                         raise texc.InconsistentOutputs(self.model_id)
-                    
+
         def read_csv(path, flag=False):
             try:
                 with open(path, "r") as file:
@@ -1382,7 +1451,7 @@ class RunnerService:
                             try:
                                 return float(value)
                             except ValueError:
-                                return value  
+                                return value
 
                     _values = [infer_type(x) for x in values]
 
@@ -1398,10 +1467,10 @@ class RunnerService:
         def run_subprocess(command, env_vars=None):
             try:
                 result = subprocess.run(
-                    command, 
-                    capture_output=True, 
-                    text=True, 
-                    check=True, 
+                    command,
+                    capture_output=True,
+                    text=True,
+                    check=True,
                     env=env_vars,
                 )
                 self.logger.debug(
@@ -1423,9 +1492,9 @@ class RunnerService:
             error_log_path   = os.path.join(temp_dir, "error.txt")
 
             input = self.run_exampe(
-                n_samples=Options.NUM_SAMPLES.value, 
+                n_samples=Options.NUM_SAMPLES.value,
                 file_name=None,
-                simple=True, 
+                simple=True,
                 try_predefined=False
             )
 
@@ -1435,9 +1504,9 @@ class RunnerService:
                 f.write("smiles\n" + "\n".join(map(str, input)))
 
             run_sh_path = os.path.join(
-                model_path, 
-                "model", 
-                "framework", 
+                model_path,
+                "model",
+                "framework",
                 RUN_FILE
             )
             if not os.path.exists(run_sh_path):
@@ -1462,18 +1531,18 @@ class RunnerService:
 
             bsh_data = read_csv(bash_output_path)
             self.logger.info(f"Bash Data:{bsh_data}")
-            self.logger.debug(f"Serving the model after run.sh")
+            self.logger.debug("Serving the model after run.sh")
             run_subprocess(
-                ["ersilia", "-v", 
-                 "serve", self.model_id, 
+                ["ersilia", "-v",
+                 "serve", self.model_id,
                 ]
             )
             self.logger.debug(
-                f"Running model for bash data consistency checking"
+                "Running model for bash data consistency checking"
             )
-            out = run_subprocess(
-                ["ersilia", "-v", 
-                 "run", 
+            run_subprocess(
+                ["ersilia", "-v",
+                 "run",
                  "-i", ex_file,
                  "-o", output_path
                 ]
@@ -1486,13 +1555,33 @@ class RunnerService:
 
     @staticmethod
     def default_env():
+        """
+        Get the default environment.
+
+        Returns
+        -------
+        str
+            The default environment.
+        """
         if "CONDA_DEFAULT_ENV" in os.environ:
             return os.environ["CONDA_DEFAULT_ENV"]
-        else:
-            return Options.BASE.value
+        return None
 
     @staticmethod
     def conda_prefix(is_base):
+        """
+        Get the conda prefix.
+
+        Parameters
+        ----------
+        is_base : bool
+            Whether it is the base environment.
+
+        Returns
+        -------
+        str
+            The conda prefix.
+        """
         o = run_command_check_output("which conda").rstrip()
         if o:
             o = os.path.abspath(os.path.join(o, "..", ".."))
@@ -1505,17 +1594,22 @@ class RunnerService:
             return o
 
     def is_base(self):
+        """
+        Check if the current environment is the base environment.
+
+        Returns
+        -------
+        bool
+            True if it is the base environment, False otherwise.
+        """
         default_env = self.default_env()
         self.logger.debug(f"Default environment: {default_env}")
-        if default_env == "base":
-            return True
-        else:
-            return False
+        return default_env == "base"
 
     def _compare_string_similarity(
-            self, 
+            self,
             str1,
-            str2, 
+            str2,
             threshold
         ):
         similarity = fuzz.ratio(str1, str2)
@@ -1533,7 +1627,7 @@ class RunnerService:
         """
         results = TestResult.generate_results(
             self.checkup_service,
-            elapsed_time, 
+            elapsed_time,
             self.run_using_bash
         )
         data = [(key, str(value)) for key, value in results.items()]
@@ -1558,10 +1652,10 @@ class RunnerService:
         """
         if not output_file:
             output_file = os.path.join(
-                self._model_path(self.model_id), 
+                self._model_path(self.model_id),
                 Options.OUTPUT_CSV.value
             )
-            
+
         start_time = time.time()
 
         try:
@@ -1570,7 +1664,7 @@ class RunnerService:
             self._perform_inspect()
             if self.level == Options.LEVEL_DEEP.value:
                 self._perform_deep_checks(output_file)
-            
+
             elapsed_time = time.time() - start_time
             self.make_output(elapsed_time)
             self._clear_folders()
@@ -1603,12 +1697,12 @@ class RunnerService:
         elif value is False:
             return str(STATUS_CONFIGS.FAILED)
         return value
-    
+
     def _perform_inspect(self):
         if self.inspect:
             out = self.inspecter.run()
             out = {
-                    " ".join(word.capitalize() 
+                    " ".join(word.capitalize()
                     for word in k.split("_")): self.transform_key(v)
                     for k, v in out.items()
             }
@@ -1621,7 +1715,7 @@ class RunnerService:
                 large_table=True,
                 merge=True
             )
-    
+
     def _perform_checks(self, output_file):
         self.checkup_service.check_information(output_file)
         self._generate_table(
@@ -1645,8 +1739,8 @@ class RunnerService:
 
     def _perform_deep_checks(self, output_file):
         self.checkup_service.check_single_input(
-            output_file, 
-            self.run_model, 
+            output_file,
+            self.run_model,
             self.run_exampe
         )
         self._generate_table(
@@ -1658,12 +1752,12 @@ class RunnerService:
          ]
         )
         self.checkup_service.check_example_input(
-            output_file, 
-            self.run_model, 
+            output_file,
+            self.run_model,
             self.run_exampe
         )
         self.checkup_service.check_consistent_output(
-            self.run_exampe, 
+            self.run_exampe,
             self.run_model
         )
         self.run_bash()
@@ -1682,18 +1776,35 @@ class RunnerService:
             )
 
 class ModelTester(ErsiliaBase):
+    """
+    Class to handle model testing. Initializes the model tester services and runs the tests.
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    level : str
+        The level of testing.
+    dir : str
+        The directory for the model.
+    inspect : bool
+        Whether to inspect the model.
+    remote : bool
+        Whether to fetch the model from a remote source.
+    remove : bool
+        Whether to remove the model after testing.
+    """
     def __init__(
-            self, 
-            model_id, 
-            level, 
+            self,
+            model_id,
+            level,
             dir,
             inspect,
             remote,
             remove
         ):
         ErsiliaBase.__init__(
-            self, 
-            config_json=None, 
+            self,
+            config_json=None,
             credentials_json=None
         )
         self.model_id = model_id
@@ -1704,23 +1815,23 @@ class ModelTester(ErsiliaBase):
         self.remove = remove
         self._check_pedendency()
         self.setup_service = SetupService(
-            self.model_id, 
-            self.dir, 
+            self.model_id,
+            self.dir,
             self.logger,
             self.remote
         )
         self.ios = IOService(
-            self.logger, 
+            self.logger,
             self._dest_dir,
-            self._model_path, 
-            self._get_bundle_location, 
-            self._get_bentoml_location, 
+            self._model_path,
+            self._get_bundle_location,
+            self._get_bentoml_location,
             self.model_id,
             self.dir
         )
         self.checks = CheckService(
-            self.logger, 
-            self.model_id, 
+            self.logger,
+            self.model_id,
             self._dest_dir,
             self.dir,
             self.ios,
@@ -1732,9 +1843,9 @@ class ModelTester(ErsiliaBase):
         )
         self.runner = RunnerService(
             self.model_id,
-            self.logger, 
-            self.ios, 
-            self.checks, 
+            self.logger,
+            self.ios,
+            self.checks,
             self.setup_service,
             self._model_path,
             self.level,
@@ -1752,6 +1863,9 @@ class ModelTester(ErsiliaBase):
             )
 
     def setup(self):
+        """
+        Set up the model tester.
+        """
         self.logger.debug(f"Running conda setup for {self.model_id}")
         self.setup_service.fetch_repo() # for remote option
         self.logger.debug(f"Fetching model {self.model_id} from local dir: {self.dir}")
@@ -1759,4 +1873,12 @@ class ModelTester(ErsiliaBase):
         self.setup_service.check_conda_env()
 
     def run(self, output_file=None):
+        """
+        Run the model tester.
+
+        Parameters
+        ----------
+        output_file : str, optional
+            The output file.
+        """
         self.runner.run(output_file)

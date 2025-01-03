@@ -1,10 +1,12 @@
-import click
 import asyncio
+
+import click
 import nest_asyncio
-from . import ersilia_cli
-from .. import echo
-from ...hub.fetch.fetch import ModelFetcher
+
 from ... import ModelBase
+from ...hub.fetch.fetch import ModelFetcher
+from .. import echo
+from . import ersilia_cli
 
 nest_asyncio.apply()
 
@@ -30,6 +32,7 @@ def fetch_cmd():
         Fetch a model from a local directory:
         $ ersilia fetch <model_id> --from_dir <path>
     """
+
     def _fetch(mf, model_id):
         res = asyncio.run(mf.fetch(model_id))
         return res
@@ -84,7 +87,7 @@ def fetch_cmd():
         "--hosted_url",
         default=None,
         type=click.STRING,
-        help="URL of the hosted model service"
+        help="URL of the hosted model service",
     )
     @click.option(
         "--with_bentoml",
@@ -144,6 +147,9 @@ def fetch_cmd():
                 fg="green",
             )
         else:
-            echo(f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}", fg="red")
+            echo(
+                f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
+                fg="red",
+            )
 
     return fetch

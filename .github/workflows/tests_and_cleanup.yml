@@ -129,7 +129,7 @@ jobs:
           - test_auto_fetcher_decider
           - test_conventional_run
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
 
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
@@ -165,7 +165,7 @@ jobs:
     needs: run-pytest
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
 
       - name: Add conda to system path
         run: echo $CONDA/bin >> $GITHUB_PATH
@@ -228,7 +228,7 @@ jobs:
           #jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-python-api.ipynb --output=output-python-api.ipynb --ExecutePreprocessor.timeout=-1
 
       - name: Upload Output of the Google Colab Notebook CLI
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # pin@v4.5.0
         with:
           name: output-cli.ipynb
           path: notebooks/output-cli.ipynb

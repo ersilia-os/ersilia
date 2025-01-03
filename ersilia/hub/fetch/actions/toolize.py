@@ -1,9 +1,10 @@
 import sys
-from . import BaseAction
-from ...bundle.status import ModelStatus
-from ....utils.terminal import run_command
+
 from ....db.environments.localdb import EnvironmentDb
 from ....setup.requirements.docker import DockerRequirement
+from ....utils.terminal import run_command
+from ...bundle.status import ModelStatus
+from . import BaseAction
 
 
 class ModelToolizer(BaseAction):

@@ -1,6 +1,6 @@
+import collections
 import json
 import os
-import collections
 
 OUTPUT = "secrets.json"
 

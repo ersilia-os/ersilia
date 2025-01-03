@@ -1,6 +1,6 @@
+from ... import ErsiliaBase
 from ...db.hubdata.localslugs import SlugDb
 from ...utils.identifiers.model import ModelIdentifier
-from ... import ErsiliaBase
 from .card import ModelCard
 
 
@@ -16,6 +16,7 @@ class Slug(ErsiliaBase):
     config_json : dict, optional
         Configuration settings in JSON format.
     """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.db = SlugDb(config_json=config_json)

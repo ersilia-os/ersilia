@@ -1,6 +1,6 @@
 try:
     import uuid
-except ModuleNotFoundError as err:
+except ModuleNotFoundError:
     uuid = None
 import random
 
@@ -18,6 +18,7 @@ class LongIdentifier(object):
     encode()
         Generate a UUID or a random identifier if UUID is not available.
     """
+
     def __init__(self):
         pass
 
@@ -33,6 +34,7 @@ class LongIdentifier(object):
         """
         if uuid is None:
             alphabet = ALPHABET.lower()
+            s = []
             for n in PATTERN:
                 s += ["".join([random.choice(alphabet) for _ in range(n)])]
             return "-".join(s)

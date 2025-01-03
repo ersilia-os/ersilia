@@ -1,13 +1,12 @@
 import os
 
-import requests
 import pyairtable
+import requests
 import yaml
 
-from ersilia.hub.content.card import BaseInformation
-from ersilia.hub.content.card import RepoMetadataFile
-from ersilia.utils.terminal import run_command
+from ersilia.hub.content.card import BaseInformation, RepoMetadataFile
 from ersilia.utils.logging import make_temp_dir
+from ersilia.utils.terminal import run_command
 
 GITHUB_ORG = "ersilia-os"
 AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
@@ -121,7 +120,7 @@ class ReadmeMetadata:
         self.model_id = model_id
 
     def read_information(self):
-        print ("Cannot read directly from README file. Using AirTable instead")
+        print("Cannot read directly from README file. Using AirTable instead")
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
         print(bi.as_dict())

@@ -1,11 +1,12 @@
-import click
 import json
 
-from . import ersilia_cli
-from .. import echo
-from ...io.input import ExampleGenerator
-from ...core.session import Session
+import click
+
 from ... import ModelBase
+from ...core.session import Session
+from ...io.input import ExampleGenerator
+from .. import echo
+from . import ersilia_cli
 
 
 def example_cmd():
@@ -29,7 +30,8 @@ def example_cmd():
             model_id = session.current_model_id()
         if not model_id:
             echo(
-                "No model found. Please specify a model or serve a model in the current shell.", fg="red"
+                "No model found. Please specify a model or serve a model in the current shell.",
+                fg="red",
             )
             return
         eg = ExampleGenerator(model_id=model_id)

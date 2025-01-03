@@ -1,5 +1,5 @@
 import os
-from ..default import SESSIONS_DIR
+
 from ..utils.session import get_session_dir
 
 

@@ -1,14 +1,13 @@
-import click
 import json
 import types
-import time
 
-from . import ersilia_cli
-from .. import echo
+import click
+
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...core.tracking import RunTracker
 from ...utils.terminal import print_result_table
+from .. import echo
+from . import ersilia_cli
 
 
 def run_cmd():
@@ -32,6 +31,7 @@ def run_cmd():
         Run a model with batch size:
         $ ersilia run -i <input_data> -b 50
     """
+
     # Example usage: ersilia run -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
     @ersilia_cli.command(short_help="Run a served model", help="Run a served model")
     @click.option("-i", "--input", "input", required=True, type=click.STRING)

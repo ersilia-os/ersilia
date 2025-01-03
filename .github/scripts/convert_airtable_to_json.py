@@ -1,9 +1,10 @@
-import os
 import json
 import logging
+import os
+
 import boto3
-from botocore.exceptions import ClientError, NoCredentialsError
 import requests
+from botocore.exceptions import ClientError, NoCredentialsError
 
 AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
 AIRTABLE_TABLE_ID = "tblZGe2a2XeBxrEHP"

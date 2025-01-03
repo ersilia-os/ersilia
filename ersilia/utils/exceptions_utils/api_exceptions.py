@@ -1,3 +1,4 @@
+# ruff: noqa: D101, D102
 from .exceptions import ErsiliaError
 
 

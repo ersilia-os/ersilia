@@ -1,7 +1,9 @@
-from . import terminal
-import h5py
 import os
+
+import h5py
+
 from ..default import H5_DATA_FILE, ISAURA_GDRIVE, ISAURA_TEAM_GDRIVE
+from . import terminal
 
 try:
     from pydrive2.auth import GoogleAuth
@@ -32,6 +34,7 @@ class DVCFetcher(object):
     local_repo_path : str
         The local repository path.
     """
+
     def __init__(self, local_repo_path):
         self.repo_path = local_repo_path
 
@@ -91,6 +94,7 @@ class DVCBrancher(object):
     """
     A class to manage DVC branches.
     """
+
     def __init__(self):
         pass
 
@@ -106,6 +110,7 @@ class DVCSetup(object):
     model_id : str
         The model identifier.
     """
+
     def __init__(self, local_repo_path, model_id):
         self.repo_path = local_repo_path
         self.model_id = model_id

@@ -1,6 +1,6 @@
-from ...utils.terminal import run_command_check_output
 from ...utils.docker import resolve_platform
 from ...utils.system import is_inside_docker
+from ...utils.terminal import run_command_check_output
 
 
 class DockerRequirement(object):
@@ -20,6 +20,7 @@ class DockerRequirement(object):
     is_installed()
         Checks if Docker is installed.
     """
+
     def __init__(self):
         self.name = "docker"
 

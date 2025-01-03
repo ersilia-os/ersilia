@@ -1,13 +1,13 @@
-import os
 import json
+import os
+
 from ..default import (
-    EOS,
-    GITHUB_ORG,
-    GITHUB_ERSILIA_REPO,
     CONFIG_JSON,
     CREDENTIALS_JSON,
+    EOS,
+    GITHUB_ERSILIA_REPO,
+    GITHUB_ORG,
 )
-
 
 SECRETS_JSON = "secrets.json"
 GDRIVE_CLIENT_SECRETS_JSON = "gdrive_client_secrets.json"
@@ -25,6 +25,7 @@ class Checker(object):
     get_development_path()
         Get the development path.
     """
+
     def __init__(self):
         self.development_path = None
         self._config()
@@ -166,6 +167,7 @@ class Config(object):
     json_file : str, optional
         The path to the JSON configuration file. Default is None.
     """
+
     def __init__(self, json_file=None):
         """Initialize a Config instance.
 
@@ -174,7 +176,7 @@ class Config(object):
         if json_file is None:
             try:
                 json_file = os.environ["EOS_CONFIG"]
-            except KeyError as err:
+            except KeyError:
                 json_file = os.path.join(EOS, CONFIG_JSON)
             except Exception as err:
                 raise err
@@ -202,6 +204,7 @@ class Secrets(object):
     overwrite : bool, optional
         Whether to overwrite existing files. Default is True.
     """
+
     def __init__(self, overwrite=True):
         self.overwrite = overwrite
         self.secrets_json = os.path.join(EOS, SECRETS_JSON)
@@ -273,11 +276,12 @@ class Credentials(object):
     json_file : str, optional
         The path to the JSON credentials file. Default is None.
     """
+
     def __init__(self, json_file=None):
         if json_file is None:
             try:
                 json_file = os.environ["EOS_CREDENTIALS"]
-            except KeyError as err:
+            except KeyError:
                 json_file = os.path.join(EOS, CREDENTIALS_JSON)
             except Exception as err:
                 raise err

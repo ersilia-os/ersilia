@@ -12,7 +12,7 @@ def version_writer(func):
         with open(toml_path, "r") as f:
             toml_content = f.read()
         toml_content = re.sub(
-            'version\s=\s"[0-9\.]+"', f'version = "{version}"', toml_content
+            r'version\s=\s"[0-9\.]+"', f'version = "{version}"', toml_content
         )
         with open(toml_path, "w") as f:
             f.write(toml_content)

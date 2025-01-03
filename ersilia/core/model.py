@@ -1,43 +1,50 @@
-import os
+import asyncio
+import collections
 import csv
 import json
+import os
+import sys
 import time
 import types
-import asyncio
-import importlib
-import collections
-import __main__ as main
 
-from click import secho as echo # Style-aware echo
+from click import secho as echo  # Style-aware echo
 
 from .. import logger
-from ..serve.api import Api
-from .session import Session
-from .base import ErsiliaBase
-from ..lake.base import LakeBase
-from ..utils import tmp_pid_file
-from .modelbase import ModelBase
-from ..serve.schema import ApiSchema
-from ..utils.hdf5 import Hdf5DataLoader
-from ..utils.csvfile import CsvDataLoader
-from ..utils.terminal import yes_no_input
-from ..utils.docker import ContainerMetricsSampler
-from ..serve.autoservice import AutoService, PulledDockerImageService
+from ..default import (
+    APIS_LIST_FILE,
+    CARD_FILE,
+    DEFAULT_BATCH_SIZE,
+    EOS,
+    FETCHED_MODELS_FILENAME,
+    INFORMATION_FILE,
+    MODEL_SIZE_FILE,
+)
+from ..hub.fetch.fetch import ModelFetcher
+from ..io.input import BaseIOGetter, ExampleGenerator
 from ..io.output import TabularOutputStacker
-from ..serve.standard_api import StandardCSVRunApi
-from ..io.input import ExampleGenerator, BaseIOGetter
-from .tracking import RunTracker
 from ..io.readers.file import FileTyper, TabularFileReader
-from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
-from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
-from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
-from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
-from ..utils.logging import make_temp_dir
+from ..lake.base import LakeBase
+from ..serve.api import Api
+from ..serve.autoservice import AutoService, PulledDockerImageService
+from ..serve.schema import ApiSchema
+from ..serve.standard_api import StandardCSVRunApi
 from ..setup.requirements.compound import (
     ChemblWebResourceClientRequirement,
     RdkitRequirement,
 )
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
+from ..utils import tmp_pid_file
+from ..utils.csvfile import CsvDataLoader
+from ..utils.docker import ContainerMetricsSampler
+from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
+from ..utils.hdf5 import Hdf5DataLoader
+from ..utils.logging import make_temp_dir
+from ..utils.terminal import yes_no_input
+from .base import ErsiliaBase
+from .modelbase import ModelBase
+from .session import Session
+from .tracking import RunTracker
 
 try:
     import pandas as pd
@@ -77,30 +84,38 @@ class ErsiliaModel(ErsiliaBase):
 
     Examples
     --------
-    Fetching a model:
+    Fetching a model this requires to use asyncio since `fetch` is a coroutine.:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         model.fetch()
 
     Serving a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         model.serve()
 
     Running a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
-        result = model.run(input="input_data.csv", output="output_data.csv")
+        result = model.run(
+            input="input_data.csv",
+            output="output_data.csv",
+        )
 
     Closing a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         model.close()
     """
+
     def __init__(
         self,
         model: str,
@@ -124,7 +139,7 @@ class ErsiliaModel(ErsiliaBase):
             else:
                 self.logger.set_verbosity(0)
         else:
-            if not hasattr(main, "__file__"):
+            if hasattr(sys, "ps1"):
                 self.logger.set_verbosity(0)
         self.save_to_lake = save_to_lake
         if self.save_to_lake:
@@ -148,7 +163,10 @@ class ErsiliaModel(ErsiliaBase):
         self.service_class = service_class
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
-        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+
+        assert (
+            self._is_valid
+        ), "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
             model
         )
         self.config_json = config_json
@@ -170,13 +188,11 @@ class ErsiliaModel(ErsiliaBase):
                 self.logger.debug("Unable to capture user input. Fetching anyway.")
                 do_fetch = True
             if do_fetch:
-                fetch = importlib.import_module("ersilia.hub.fetch.fetch")
-                mf = fetch.ModelFetcher(
+                mf = ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
                 asyncio.run(mf.fetch(self.model_id))
-            else:
-                return
+
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
         )
@@ -209,30 +225,12 @@ class ErsiliaModel(ErsiliaBase):
 
     def fetch(self):
         """
-        Fetch the model if not available locally.
-
-        This method fetches the model from the Ersilia Model Hub if it is not available locally.
+        This method fetches the model from the Ersilia Model Hub.
         """
-        if not self._is_available_locally and self.fetch_if_not_available:
-            self.logger.info("Model is not available locally")
-            try:
-                do_fetch = yes_no_input(
-                    "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
-                        self.model_id
-                    ),
-                    default_answer="Y",
-                )
-            except:
-                self.logger.debug("Unable to capture user input. Fetching anyway.")
-                do_fetch = True
-            if do_fetch:
-                fetch = importlib.import_module("ersilia.hub.fetch.fetch")
-                mf = fetch.ModelFetcher(
-                    config_json=self.config_json, credentials_json=self.credentials_json
-                )
-                asyncio.run(mf.fetch(self.model_id))
-            else:
-                return
+        mf = ModelFetcher(
+            config_json=self.config_json, credentials_json=self.credentials_json
+        )
+        asyncio.run(mf.fetch(self.model_id))
 
     def __enter__(self):
         """
@@ -326,7 +324,7 @@ class ErsiliaModel(ErsiliaBase):
 
     def _get_api_instance(self, api_name):
         url = self._get_url()
-        if (api_name is None):
+        if api_name is None:
             api_names = self.autoservice.get_apis()
             assert (
                 len(api_names) == 1
@@ -796,7 +794,7 @@ class ErsiliaModel(ErsiliaBase):
             result = None
             standard_status_ok = False
             self.logger.debug("We will try conventional run.")
-        
+
         if not standard_status_ok:
             self.logger.debug("Trying conventional run")
             result = self._run(

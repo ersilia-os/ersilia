@@ -1,25 +1,23 @@
 import os
-import tempfile
 
 try:
     import bentoml
 except:
     bentoml = None
 
-from . import BasePack
-from .....utils.terminal import run_command
+from ..... import throw_ersilia_exception
 from .....db.environments.localdb import EnvironmentDb
 from .....db.environments.managers import DockerManager
-from .....utils.venv import SimpleVenv
+from .....default import DEFAULT_VENV
+from .....setup.baseconda import SetupBaseConda
 from .....utils.conda import SimpleConda
 from .....utils.docker import SimpleDocker
-from .....setup.baseconda import SetupBaseConda
-
-from .....default import DEFAULT_VENV
-from ... import MODEL_INSTALL_COMMANDS_FILE
-from ..... import throw_ersilia_exception
 from .....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
 from .....utils.logging import make_temp_dir
+from .....utils.terminal import run_command
+from .....utils.venv import SimpleVenv
+from ... import MODEL_INSTALL_COMMANDS_FILE
+from . import BasePack
 
 USE_CHECKSUM = False
 
@@ -37,7 +35,9 @@ class SystemPack(BasePack):
     --------
     .. code-block:: python
 
-        packer = SystemPack(model_id="eosxxxx", config_json=config)
+        packer = SystemPack(
+            model_id="eosxxxx", config_json=config
+        )
         packer.run()
     """
 
@@ -88,7 +88,9 @@ class VenvPack(BasePack):
         venv = self._setup()
         pack_snippet = """
         python {0}
-        """.format(self.cfg.HUB.PACK_SCRIPT)
+        """.format(
+            self.cfg.HUB.PACK_SCRIPT
+        )
         venv.run_commandlines(environment=DEFAULT_VENV, commandlines=pack_snippet)
         self._symlinks()
 
@@ -172,7 +174,9 @@ class CondaPack(BasePack):
         env = self._setup()
         pack_snippet = """
         python {0}
-        """.format(self.cfg.HUB.PACK_SCRIPT)
+        """.format(
+            self.cfg.HUB.PACK_SCRIPT
+        )
         self.logger.debug("Using environment {0}".format(env))
         self.logger.debug("Running command: {0}".format(pack_snippet.strip()))
         self.conda.run_commandlines(environment=env, commandlines=pack_snippet)

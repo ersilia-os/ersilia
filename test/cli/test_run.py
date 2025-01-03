@@ -1,14 +1,16 @@
-import pytest
 import random
 import time
-from unittest.mock import patch, Mock, AsyncMock, PropertyMock
+from unittest.mock import AsyncMock, patch
+
+import pytest
 from click.testing import CliRunner
+
 from ersilia.cli.commands.run import run_cmd
-from ersilia.serve.standard_api import StandardCSVRunApi
-from ersilia.core.session import Session
 from ersilia.core.model import ErsiliaModel
+from ersilia.core.session import Session
+from ersilia.serve.standard_api import StandardCSVRunApi
 from ersilia.utils.logging import logger
-from ersilia.hub.fetch.fetch import ModelFetcher
+
 from .utils import create_compound_input_csv
 
 URL = "http://localhost"

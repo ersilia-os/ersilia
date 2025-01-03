@@ -1,4 +1,5 @@
 import importlib
+
 from ...utils.terminal import run_command
 
 
@@ -11,6 +12,7 @@ class IsauraRequirement(object):
     install()
         Installs the Isaura library.
     """
+
     def __init__(self):
         self.name = "isaura"
         try:

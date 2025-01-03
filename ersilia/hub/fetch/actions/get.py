@@ -1,25 +1,20 @@
-import json
 import os
 import shutil
-import tempfile
 import zipfile
-import yaml
 
-
-from . import BaseAction
 from .... import ErsiliaBase
+from ....default import PREDEFINED_EXAMPLE_FILES, S3_BUCKET_URL_ZIP
 from ....utils.download import GitHubDownloader, S3Downloader
-from ...bundle.repo import PackFile, DockerfileFile
-from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.exceptions_utils.fetch_exceptions import (
     FolderNotFoundError,
     S3DownloaderError,
 )
-from .template_resolver import TemplateResolver
-
-from ....default import S3_BUCKET_URL_ZIP, PREDEFINED_EXAMPLE_FILES
-from ....utils.paths import get_metadata_from_base_dir
+from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.logging import make_temp_dir
+from ....utils.paths import get_metadata_from_base_dir
+from ...bundle.repo import DockerfileFile, PackFile
+from . import BaseAction
+from .template_resolver import TemplateResolver
 
 MODEL_DIR = "model"
 ROOT = os.path.basename(os.path.abspath(__file__))
@@ -27,8 +22,8 @@ ROOT = os.path.basename(os.path.abspath(__file__))
 
 class PackCreator(ErsiliaBase):
     """
-    Class to create a pack for the model. The pack.py file loads a model, 
-    packs it into a BentoML Service instance, and saves the service for deployment. 
+    Class to create a pack for the model. The pack.py file loads a model,
+    packs it into a BentoML Service instance, and saves the service for deployment.
 
     Parameters
     ----------
@@ -37,6 +32,7 @@ class PackCreator(ErsiliaBase):
     config_json : dict
         Configuration settings for the model.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -55,7 +51,7 @@ class PackCreator(ErsiliaBase):
 
 class ServiceCreator(ErsiliaBase):
     """
-    Class to create a service file for the model. The 'service.py' specifically 
+    Class to create a service file for the model. The 'service.py' specifically
     facilitates the deployment of a custom model as a BENTOML REST API service.
 
     Parameters
@@ -65,6 +61,7 @@ class ServiceCreator(ErsiliaBase):
     config_json : dict
         Configuration settings for the model.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -117,6 +114,7 @@ class DockerfileCreator(ErsiliaBase):
     commands : list
         List of commands to be added to the Dockerfile.
     """
+
     def __init__(self, model_id: str, config_json: dict, commands: list):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -167,9 +165,9 @@ class TemplatePreparer(BaseAction):
     """
     Class to prepare the template for the model.
 
-    In this context, a template refers to a predefined structure or set of files 
-    that are necessary for setting up the model environment. This includes 
-    configuration files, scripts, and other resources required to deploy and 
+    In this context, a template refers to a predefined structure or set of files
+    that are necessary for setting up the model environment. This includes
+    configuration files, scripts, and other resources required to deploy and
     run the model.
 
     Parameters
@@ -179,6 +177,7 @@ class TemplatePreparer(BaseAction):
     config_json : dict
         Configuration settings for the model.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -242,8 +241,14 @@ class ModelRepositoryGetter(BaseAction):
     repo_path : str
         Path to the local repository.
     """
+
     def __init__(
-        self, model_id: str, config_json: dict, force_from_github: bool, force_from_s3: bool, repo_path: str
+        self,
+        model_id: str,
+        config_json: dict,
+        force_from_github: bool,
+        force_from_s3: bool,
+        repo_path: str,
     ):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -373,7 +378,7 @@ class ModelRepositoryGetter(BaseAction):
 
 
 #  TODO: work outside GIT LFS
-class ModelParametersGetter(BaseAction): 
+class ModelParametersGetter(BaseAction):
     """
     Class to get the model parameters. Getting the checkpoints, weights.
 
@@ -384,6 +389,7 @@ class ModelParametersGetter(BaseAction):
     config_json : dict
         Configuration settings for the model.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
@@ -435,8 +441,14 @@ class ModelGetter(BaseAction):
     force_from_s3 : bool
         Force download from S3.
     """
+
     def __init__(
-        self, model_id: str, repo_path: str, config_json: dict, force_from_github: bool, force_from_s3: bool
+        self,
+        model_id: str,
+        repo_path: str,
+        config_json: dict,
+        force_from_github: bool,
+        force_from_s3: bool,
     ):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None

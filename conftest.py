@@ -1,9 +1,10 @@
-from test.playground.shared import results
-from rich.table import Table
-from rich.console import Console
-from rich.text import Text
 from rich import box
+from rich.console import Console
 from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+
+from test.playground.shared import results
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus, config):

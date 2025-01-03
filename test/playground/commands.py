@@ -1,14 +1,14 @@
-import pytest
 import subprocess
 import time
+from pathlib import Path
+
 import psutil
-import re
-import json
+import pytest
 import yaml
 from rich.text import Text
-from pathlib import Path
-from .shared import results
+
 from .rules import get_rule
+from .shared import results
 from .utils import (
     create_compound_input_csv,
     get_command_names,
@@ -56,7 +56,13 @@ def execute_command(command, description="", dest_path=None, repo_path=None):
         success,
         result,
         checkups,
-    ) = time.time(), 0, False, "", []
+    ) = (
+        time.time(),
+        0,
+        False,
+        "",
+        [],
+    )
 
     proc = psutil.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

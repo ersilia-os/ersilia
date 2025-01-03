@@ -1,9 +1,9 @@
-import shutil
 import os
+import shutil
 
 from ... import ErsiliaBase
-from ...utils.download import GitHubDownloader
 from ...utils.config import Checker
+from ...utils.download import GitHubDownloader
 from ...utils.versioning import Versioner
 
 
@@ -16,6 +16,7 @@ class ErsiliaCloner(ErsiliaBase):
     clone(path, version)
         Clones the Ersilia repository to the specified path and version.
     """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         checker = Checker()

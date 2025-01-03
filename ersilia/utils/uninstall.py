@@ -2,9 +2,9 @@ import os
 import shutil
 import subprocess
 
+from ..default import BENTOML_PATH, EOS
 from .conda import SimpleConda
 from .docker import SimpleDocker
-from ..default import EOS, BENTOML_PATH
 from .logging import logger
 
 
@@ -17,6 +17,7 @@ class Uninstaller(object):
     uninstall()
         Main uninstallation method.
     """
+
     def __init__(self):
         self.docker_cleaner = SimpleDocker()
 

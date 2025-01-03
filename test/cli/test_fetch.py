@@ -1,6 +1,8 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
+
 from ersilia.cli.commands.fetch import fetch_cmd
 from ersilia.hub.fetch.fetch import FetchResult
 from ersilia.utils.logging import logger
@@ -14,7 +16,10 @@ def runner():
 
 
 @patch("ersilia.core.modelbase.ModelBase")
-@patch("ersilia.hub.fetch.fetch.ModelFetcher.fetch", return_value=FetchResult(True, "Model fetched successfully."))
+@patch(
+    "ersilia.hub.fetch.fetch.ModelFetcher.fetch",
+    return_value=FetchResult(True, "Model fetched successfully."),
+)
 @pytest.mark.parametrize(
     "slug, model, flags",
     [

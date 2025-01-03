@@ -1,6 +1,7 @@
+import requests
+
 from ... import throw_ersilia_exception
 from ...utils.exceptions_utils.setup_exceptions import PingError
-import requests
 
 
 class PingRequirement(object):
@@ -12,6 +13,7 @@ class PingRequirement(object):
     is_connected()
         Checks if the system is connected to the internet.
     """
+
     def __init__(self):
         pass
 

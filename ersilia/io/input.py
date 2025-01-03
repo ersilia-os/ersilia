@@ -1,22 +1,17 @@
-import os
-import shutil
-import json
 import csv
 import importlib
 import itertools
+import json
+import os
+import shutil
 
-from ..hub.content.card import ModelCard
-from .. import ErsiliaBase
-from .. import throw_ersilia_exception
-
-from ..utils.exceptions_utils.exceptions import NullModelIdentifierError
-
-from .shape import InputShape
-from .shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
-from .readers.pyinput import PyInputReader
-from .readers.file import TabularFileReader, JsonFileReader
-
+from .. import ErsiliaBase, throw_ersilia_exception
 from ..default import PREDEFINED_EXAMPLE_FILES
+from ..hub.content.card import ModelCard
+from ..utils.exceptions_utils.exceptions import NullModelIdentifierError
+from .readers.file import JsonFileReader, TabularFileReader
+from .readers.pyinput import PyInputReader
+from .shape import InputShape, InputShapeList, InputShapePairOfLists, InputShapeSingle
 
 
 class BaseIOGetter(ErsiliaBase):
@@ -28,6 +23,7 @@ class BaseIOGetter(ErsiliaBase):
     config_json : dict, optional
         Configuration JSON.
     """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mc = ModelCard(config_json=config_json)
@@ -128,6 +124,7 @@ class _GenericAdapter(object):
     BaseIO : object
         Base IO handler object.
     """
+
     def __init__(self, BaseIO):
         self.IO = BaseIO
 
@@ -234,6 +231,7 @@ class GenericInputAdapter(object):
     config_json : dict, optional
         Configuration JSON.
     """
+
     def __init__(
         self, model_id=None, input_type=None, input_shape=None, config_json=None
     ):
@@ -281,6 +279,21 @@ class GenericInputAdapter(object):
             yield d
 
     def batch_iter(self, data, batch_size):
+        """
+        Yield batches of data.
+
+        Parameters
+        ----------
+        data : iterable
+            The data to be batched.
+        batch_size : int
+            The size of each batch.
+
+        Yields
+        ------
+        iterable
+            A batch of data.
+        """
         it = iter(data)
         while True:
             chunk = tuple(itertools.islice(it, batch_size))
@@ -300,6 +313,7 @@ class ExampleGenerator(ErsiliaBase):
     config_json : dict, optional
         Configuration JSON.
     """
+
     def __init__(self, model_id, config_json=None):
         self.model_id = model_id
         self.IO = BaseIOGetter(config_json=config_json).get(model_id)
@@ -351,7 +365,7 @@ class ExampleGenerator(ErsiliaBase):
         if file_name is None:
             data = [v for v in self.IO.example(n_samples)]
             if simple:
-                data = [{'input': d["input"]} for d in data]
+                data = [{"input": d["input"]} for d in data]
             return data
         else:
             extension = file_name.split(".")[-1]
@@ -359,7 +373,7 @@ class ExampleGenerator(ErsiliaBase):
                 with open(file_name, "w") as f:
                     data = [v for v in self.IO.example(n_samples)]
                     if simple:
-                        data = [{'input': d["input"]} for d in data]
+                        data = [{"input": d["input"]} for d in data]
                     json.dump(data, f, indent=4)
             else:
                 delimiter = self._get_delimiter(file_name)
@@ -421,7 +435,7 @@ class ExampleGenerator(ErsiliaBase):
         if try_predefined is True and file_name is not None:
             self.logger.debug("Trying with predefined input")
             predefined_available = self.predefined_example(file_name)
-        
+
         if predefined_available:
             with open(file_name, "r") as f:
                 return f.read()

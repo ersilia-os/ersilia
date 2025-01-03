@@ -1,29 +1,29 @@
-import os
-import tempfile
-import shutil
 import json
+import os
+import shutil
+import tempfile
 
+from .. import ErsiliaBase
+from ..db.environments.managers import DockerManager
+from ..default import (
+    APIS_LIST_FILE,
+    DEFAULT_BATCH_SIZE,
+    DOCKER_INFO_FILE,
+    IS_FETCHED_FROM_HOSTED_FILE,
+    SERVICE_CLASS_FILE,
+)
+from ..utils import tmp_pid_file
+from .api import Api
 from .services import (
-    SystemBundleService,
-    VenvEnvironmentService,
     CondaEnvironmentService,
     DockerImageService,
     DummyService,
-    PulledDockerImageService,
     HostedService,
+    PulledDockerImageService,
+    SystemBundleService,
+    VenvEnvironmentService,
 )
-from .api import Api
-from ..db.environments.managers import DockerManager
-from .. import ErsiliaBase
-from ..utils import tmp_pid_file
 
-from ..default import (
-    DEFAULT_BATCH_SIZE,
-    SERVICE_CLASS_FILE,
-    APIS_LIST_FILE,
-    DOCKER_INFO_FILE,
-    IS_FETCHED_FROM_HOSTED_FILE,
-)
 
 DEFAULT_OUTPUT = None
 
@@ -56,7 +56,9 @@ class AutoService(ErsiliaBase):
     --------
     .. code-block:: python
 
-        service = AutoService(model_id='model123', config_json={})
+        service = AutoService(
+            model_id="model123", config_json={}
+        )
         service.serve()
     """
 
@@ -355,6 +357,9 @@ class AutoService(ErsiliaBase):
                 self.logger.info("PID {0} is unassigned".format(pid))
 
     def clean_before_serving(self):
+        """
+        Clean processes before serving.
+        """
         self.logger.debug("Cleaning processes before serving")
         tmp_file = tmp_pid_file(self.model_id)
         dir_name = os.path.dirname(tmp_file)
@@ -370,6 +375,9 @@ class AutoService(ErsiliaBase):
         self._kill_pids(pids)
 
     def clean_temp_dir(self):
+        """
+        Clean the temporary directory.
+        """
         self.logger.debug("Cleaning temp dir")
         tmp_folder = tempfile.gettempdir()
         for d in os.listdir(tmp_folder):
@@ -384,6 +392,9 @@ class AutoService(ErsiliaBase):
                     )
 
     def clean_docker_containers(self):
+        """
+        Clean Docker containers if necessary.
+        """
         self.logger.debug("Silencing docker containers if necessary")
         dm = DockerManager(config_json=self.config_json)
         if dm.is_inside_docker():
@@ -394,6 +405,9 @@ class AutoService(ErsiliaBase):
             dm.stop_containers(self.model_id)
 
     def serve(self):
+        """
+        Serve the application.
+        """
         self.clean_before_serving()
         self.clean_temp_dir()
         self.close()
@@ -403,6 +417,9 @@ class AutoService(ErsiliaBase):
             f.write("{0} {1}{2}".format(self.service.pid, self.service.url, os.linesep))
 
     def close(self):
+        """
+        Close the service.
+        """
         tmp_file = tmp_pid_file(self.model_id)
         if os.path.isfile(tmp_file):
             pids = self._pids_from_file(tmp_file)
