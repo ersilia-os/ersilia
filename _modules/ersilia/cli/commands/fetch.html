@@ -385,6 +385,12 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force fetch from DockerHub&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Version of the model to fetch, when fetching a model from DockerHub&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--from_s3&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force fetch from AWS S3 bucket&quot;</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
@@ -417,6 +423,7 @@
         <span class="n">from_dir</span><span class="p">,</span>
         <span class="n">from_github</span><span class="p">,</span>
         <span class="n">from_dockerhub</span><span class="p">,</span>
+        <span class="n">version</span><span class="p">,</span>
         <span class="n">from_s3</span><span class="p">,</span>
         <span class="n">from_hosted</span><span class="p">,</span>
         <span class="n">hosted_url</span><span class="p">,</span>
@@ -441,6 +448,7 @@
             <span class="n">force_from_github</span><span class="o">=</span><span class="n">from_github</span><span class="p">,</span>
             <span class="n">force_from_s3</span><span class="o">=</span><span class="n">from_s3</span><span class="p">,</span>
             <span class="n">force_from_dockerhub</span><span class="o">=</span><span class="n">from_dockerhub</span><span class="p">,</span>
+            <span class="n">img_version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
             <span class="n">force_from_hosted</span><span class="o">=</span><span class="n">from_hosted</span><span class="p">,</span>
             <span class="n">force_with_bentoml</span><span class="o">=</span><span class="n">with_bentoml</span><span class="p">,</span>
             <span class="n">force_with_fastapi</span><span class="o">=</span><span class="n">with_fastapi</span><span class="p">,</span>

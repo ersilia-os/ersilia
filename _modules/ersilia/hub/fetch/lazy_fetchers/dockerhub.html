@@ -375,10 +375,12 @@
 <span class="sd">        Fetch the model from DockerHub.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">img_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span> <span class="o">=</span> <span class="n">img_tag</span> <span class="ow">or</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_docker_installed">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_installed">[docs]</a>
@@ -425,7 +427,10 @@
 <span class="sd">            True if the model is available, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span>
-            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
+            <span class="n">docker_tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">mp</span><span class="o">.</span><span class="n">is_available_locally</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -472,7 +477,7 @@
                 <span class="n">local_path</span><span class="o">=</span><span class="n">to_file</span><span class="p">,</span>
                 <span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
                 <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception when copying: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -495,7 +500,7 @@
             <span class="n">local_path</span><span class="o">=</span><span class="n">to_file</span><span class="p">,</span>
             <span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
             <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
-            <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_copy_from_image_to_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -509,8 +514,12 @@
 <span class="sd">        file : str</span>
 <span class="sd">            Name of the file to copy.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pack_method</span> <span class="o">=</span> <span class="n">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resolving pack method&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">=</span> <span class="n">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resolved pack method: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_bentoml_image</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_ersiliapack_image</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
@@ -587,7 +596,9 @@
 <span class="sd">            ID of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">information_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">INFORMATION_FILE</span><span class="p">)</span>
-        <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">docker_tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span>
+        <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
@@ -611,13 +622,15 @@
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">docker_tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pulling model image from DockerHub&quot;</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">mp</span><span class="o">.</span><span class="n">async_pull</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModelRegisterer</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Asynchronous and concurrent execution started!&quot;</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
-            <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">img_tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">write_apis</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">copy_information</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">modify_information</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>

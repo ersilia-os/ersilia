@@ -328,7 +328,6 @@
     <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
     <span class="n">CONTAINER_LOGS_TMP_DIR</span><span class="p">,</span>
     <span class="n">DEFAULT_VENV</span><span class="p">,</span>
-    <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
     <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
     <span class="n">INFORMATION_FILE</span><span class="p">,</span>
     <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span><span class="p">,</span>
@@ -339,7 +338,7 @@
 <span class="kn">from</span> <span class="nn">..setup.requirements.conda</span> <span class="kn">import</span> <span class="n">CondaRequirement</span>
 <span class="kn">from</span> <span class="nn">..setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
 <span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span><span class="p">,</span> <span class="n">StandaloneConda</span>
-<span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
+<span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">model_image_version_reader</span>
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils.serve_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BadGatewayError</span><span class="p">,</span>
     <span class="n">DockerNotActiveError</span><span class="p">,</span>
@@ -1532,9 +1531,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">find_free_port</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">preferred_port</span>
+        <span class="n">bundle_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span> <span class="o">=</span> <span class="n">model_image_version_reader</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using port </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">image_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
+            <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting Docker Daemon service&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">container_tmp_logs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -1619,7 +1620,7 @@
 <span class="sd">            True if the service is available, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">is_available</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
-            <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
+            <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">is_available</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Image </span><span class="si">{0}</span><span class="s2"> is available locally&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_name</span><span class="p">))</span>

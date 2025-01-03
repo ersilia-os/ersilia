@@ -312,7 +312,8 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.docker</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -324,8 +325,10 @@
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_DOCKER_PLATFORM</span><span class="p">,</span>
     <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span>
+    <span class="n">DOCKER_INFO_FILE</span><span class="p">,</span>
     <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
     <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
+    <span class="n">EOS</span><span class="p">,</span>
     <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
 <span class="p">)</span>
@@ -339,9 +342,9 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.resolve_pack_method_docker">[docs]</a>
 <span class="k">def</span> <span class="nf">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
-    <span class="n">model_image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
+    <span class="n">bundle_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">EOS</span><span class="si">}</span><span class="s2">/dest/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">docker_tag</span> <span class="o">=</span> <span class="n">model_image_version_reader</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">)</span>
+    <span class="n">model_image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">docker_tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">image_history</span> <span class="o">=</span> <span class="n">model_image</span><span class="o">.</span><span class="n">history</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">hist</span> <span class="ow">in</span> <span class="n">image_history</span><span class="p">:</span>
         <span class="c1"># Very hacky, but works bec we don&#39;t have nginx in ersilia-pack images</span>
@@ -385,6 +388,21 @@
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="model_image_version_reader">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.model_image_version_reader">[docs]</a>
+<span class="k">def</span> <span class="nf">model_image_version_reader</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read the requested model image version from a file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">DOCKER_INFO_FILE</span><span class="p">)):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">DOCKER_INFO_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;tag&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;tag&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">DOCKERHUB_LATEST_TAG</span></div>
 
 
 

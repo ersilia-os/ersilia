@@ -320,7 +320,7 @@
 <span class="kn">from</span> <span class="nn">...core.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span>
 <span class="kn">from</span> <span class="nn">...setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
-<span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">resolve_platform</span>
+<span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">model_image_version_reader</span><span class="p">,</span> <span class="n">resolve_platform</span>
 <span class="kn">from</span> <span class="nn">...utils.identifiers.short</span> <span class="kn">import</span> <span class="n">ShortIdentifier</span>
 <span class="kn">from</span> <span class="nn">...utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">Paths</span>
@@ -583,7 +583,7 @@
 
 <div class="viewcode-block" id="DockerManager.build_with_bentoml">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.build_with_bentoml">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_with_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">build_with_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>  <span class="c1"># Ignore for versioning</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Builds a Docker image for the model using BentoML.</span>
 
@@ -646,7 +646,9 @@
 
 <div class="viewcode-block" id="DockerManager.build_with_ersilia">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.build_with_ersilia">[docs]</a>
-    <span class="k">def</span> <span class="nf">build_with_ersilia</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">docker_user</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">build_with_ersilia</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">docker_user</span><span class="p">,</span> <span class="n">docker_pwd</span>
+    <span class="p">):</span>  <span class="c1"># Ignore for versioning</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Builds a Docker image for the model using Ersilia&#39;s base image.</span>
 
@@ -740,10 +742,12 @@
 <span class="sd">        model_id : str</span>
 <span class="sd">            Identifier of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">)</span>
+        <span class="n">bundle_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">docker_tag</span> <span class="o">=</span> <span class="n">model_image_version_reader</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">docker_tag</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
-            <span class="n">env</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">),</span>
+            <span class="n">env</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">docker_tag</span><span class="p">),</span>
         <span class="p">)</span></div>
 
 

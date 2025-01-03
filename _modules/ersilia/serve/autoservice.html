@@ -322,7 +322,7 @@
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
     <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
-    <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">,</span>
+    <span class="n">DOCKER_INFO_FILE</span><span class="p">,</span>
     <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span><span class="p">,</span>
     <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
 <span class="p">)</span>
@@ -533,7 +533,7 @@
 
     <span class="k">def</span> <span class="nf">_was_fetched_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">from_dockerhub_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKER_INFO_FILE</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">from_dockerhub_file</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
