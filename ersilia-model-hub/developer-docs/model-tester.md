@@ -1,24 +1,79 @@
 # Model Tester
 
-### Overview
+This functionality provides tools and tests for running and validating individual AI/ML models that are under development locally or even deployed remotely. Models in Ersilia are packed with two methods, . The `test` command supports AI/ML models packaged with both `bentoml` or `ersilia-pack` methods (see <mark style="color:red;">this page</mark> for more information).
 
-This functionality provides tools and tests for running and validating model operations that are underdevelopment locally or even deployed models remotely. Models in ersilia are packed with two methods, `bentoml` and `ersilia-pack`. This CLI supports models packed with both types of mehtods. Checks includes:
+## TL:DR
 
-* **High-Level Checks:**
-  * Model Size Calculation: Checks the size of the `venv` of the model and othe size for the directory itself. In the first case it helps to note the package sizes necessary to run the model and the second case weighs the files (this includes model checkpoints) necessary to run the model.
-  * Model Tasks: the model supports a variety of tasks, including classification, regression, generative modeling, representation learning, similarity assessment, clustering, and dimensionality reduction, providing flexibility to address diverse machine learning and data analysis needs.
-  * Input and Output Shapes: for input shape to ensure it matches one of the supported formats: a single entity, a pair of entities, a list of entities, a pair of lists, or a list of lists. These checks are performed at runtime to guarantee compatibility and prevent errors, ensuring smooth and efficient processing of data. On the other hand the model's output will conform to one of the supported shapes: a single entity, a list of entities, a flexible list (with varying sizes), a matrix, or a serializable object. This ensures that the output format aligns with the expected structure for downstream processing and facilitates seamless integration.
-  * Model Outputs Types: The model produces outputs in various formats, including boolean values, compounds, descriptors, distances, experimental values, images, other values, probabilities, proteins, scores, and text, offering versatility to accommodate a wide range of applications.
-  * File Integrity Checks: this checks a models packed with both methods have a files necessary to be there and flags if missed.
-* **Detailed Inspection with `--level/-l deep` Flag:**
-  * A deeper inspection can now be performed to include:
-    * Testing with a single input.
-    * **Model consistency output:** Comparing outputs from running `run.sh` and the Ersilia `run` command. So the run.sh create an isolated vertual environment and generate results from the shell. The other one uses `ersilia` CLI to fetch, serve and run models. The output from both method will be compared using `check_consistent_output` function. Checks the string and numerical output consistency will be calculated. The scores include `rmse`, `spearmanr` (Spearman correlation coefficient with associated p-value) etc...
-    * Computational performance assessment: After serving the models, they get executed for 1, 50, and 100 input and performance using `wall clock` will be recorded and reported.
-    * Complete Metadata: this check ensures the metadata file's completeness by verifying required fields and validating URLs. The required fields are `["Publication", "Source Code", "S3", "DockerHub"]`. The function first constructs the metadata file URL based on the package type (`bentoml` or otherwise) and checks if the file exists. If the file is missing or cannot be fetched/parsed, it returns a failure result. It then identifies missing fields and invalid URLs within the metadata, appending relevant details. Additionally, the function attempts to parse the metadata file using `RepoMetadataFile.read_information`, catching and reporting any exceptions. If all checks pass, it confirms the metadata is complete; otherwise, it consolidates the details of the issues and returns a failure result.
-    * Repository structure validation, detection of extra/unnecessary files, and more.
+The test command is a CLI command on the Ersilia Model Hub that automatically performs several checks on an individual model fetched from source (i.e it automatically fetches the model from GitHub and installs it in its own conda environment).
 
-#### Mechanism
+To run the test command you need to install Ersilia with the extra packages required for testing:
+
+```bash
+conda activate ersilia
+pip install ersilia[test]
+ersilia test model_id -d /path/to/model --remote --inspect --remove -l deep
+```
+
+The output of the test will be shown on the terminal.
+
+| Flags           | Function                                                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| -d              | Path to the local directory where the model is already stored or where you want the model to be stored.                              |
+| -- remote       | If the model is not locally fetched, you need to include this command to include the model to be tested is only available in GitHub. |
+| --inspect       |                                                                                                                                      |
+| --level/-l deep | Performs more detailed testing of the model                                                                                          |
+| --remove        | Removes the fetched model after testing, deleting the virtual environments created and the directory itself.                         |
+
+Hence, a test command could look like:
+
+```
+ersilia test model_id -d /path/to/model --remote --inspect --remove -l deep
+```
+
+## Tests performed
+
+### High-Level checks
+
+#### Model Size
+
+* Environment size: size of the virtual environment required to run the model, noting the size of all the Python packages installed.
+* Files size: size of the directory itself, which includes files like the model checkpoints, for example
+
+#### Metadata
+
+These series of tests ensure that the metadata stored with the model is correct and corresponds to the Ersilia Model Hub approved metadata types. In particular, it inspects the following Metadata fields:
+
+* Model Tasks
+* Input and Output Shapes
+* Model Outputs Types
+
+To learn more about the Metadata files for Ersilia models, please see [this page](../model-contribution/model-template.md#the-metadata.yml-file).
+
+#### File Integrity
+
+This checks a models packed with both methods have a files necessary to be there and flags if any required file is missing
+
+### Detailed inspection
+
+With the `--level/l deep` flag, a more thorough inspection will be performed, including:
+
+#### Model consistency output
+
+Testing with a single input. Comparing outputs from running `run.sh` and the Ersilia `run` command. So the run.sh create an isolated vertual environment and generate results from the shell. The other one uses `ersilia` CLI to fetch, serve and run models. The output from both method will be compared using `check_consistent_output` function. Checks the string and numerical output consistency will be calculated. The scores include `rmse`, `spearmanr` (Spearman correlation coefficient with associated p-value) etc...
+
+#### Computational performance assessment
+
+After serving the models, they get executed for 1, 50, and 100 input and performance using `wall clock` will be recorded and reported.
+
+#### Complete metadata
+
+This check ensures the metadata file's completeness by verifying required fields and validating URLs. The required fields are `["Publication", "Source Code", "S3", "DockerHub"]`. The function first constructs the metadata file URL based on the package type (`bentoml` or otherwise) and checks if the file exists. If the file is missing or cannot be fetched/parsed, it returns a failure result. It then identifies missing fields and invalid URLs within the metadata, appending relevant details. Additionally, the function attempts to parse the metadata file using `RepoMetadataFile.read_information`, catching and reporting any exceptions. If all checks pass, it confirms the metadata is complete; otherwise, it consolidates the details of the issues and returns a failure result.
+
+#### File integrity
+
+Repository structure validation, detection of extra/unnecessary files, and more.
+
+## Mechanism
 
 The mechanism involves several services and classes working together to ensure the model's functionality and reliability. The main components are:
 
@@ -265,10 +320,4 @@ Service for handling input/output operations related to model testing.
 ```python
 ios = IOService(logger=logger, dest_dir="/path/to/dest", model_path="/path/to/model", bundle_path="/path/to/bundle", bentoml_path="/path/to/bentoml", model_id="eosxxxx", dir="/path/to/dir")
 ios.read_information()
-```
-
-Command line example
-
-```bash
-$ ersilia test model_id -d /path/to/model --remote --inspect --remove -l deep
 ```
