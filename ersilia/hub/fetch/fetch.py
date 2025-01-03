@@ -50,6 +50,8 @@ class ModelFetcher(ErsiliaBase):
         Whether to force fetching from S3.
     force_from_dockerhub : bool, optional
         Whether to force fetching from DockerHub.
+    img_version : str, optional
+        Version of the model image.
     force_from_hosted : bool, optional
         Whether to force fetching from hosted services.
     force_with_bentoml : bool, optional
@@ -81,6 +83,7 @@ class ModelFetcher(ErsiliaBase):
         force_from_github: bool = False,
         force_from_s3: bool = False,
         force_from_dockerhub: bool = False,
+        img_version: str = None,
         force_from_hosted: bool = False,
         force_with_bentoml: bool = False,
         force_with_fastapi: bool = False,
@@ -100,7 +103,7 @@ class ModelFetcher(ErsiliaBase):
             dockerize = True
         self.do_docker = dockerize
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
-            overwrite=self.overwrite, config_json=self.config_json
+            overwrite=self.overwrite, config_json=self.config_json, img_tag=img_version
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
         self.is_docker_active = self.model_dockerhub_fetcher.is_docker_active()

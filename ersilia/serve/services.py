@@ -14,7 +14,6 @@ from ..default import (
     APIS_LIST_FILE,
     CONTAINER_LOGS_TMP_DIR,
     DEFAULT_VENV,
-    DOCKERHUB_LATEST_TAG,
     DOCKERHUB_ORG,
     INFORMATION_FILE,
     IS_FETCHED_FROM_HOSTED_FILE,
@@ -25,7 +24,7 @@ from ..default import (
 from ..setup.requirements.conda import CondaRequirement
 from ..setup.requirements.docker import DockerRequirement
 from ..utils.conda import SimpleConda, StandaloneConda
-from ..utils.docker import SimpleDocker
+from ..utils.docker import SimpleDocker, model_image_version_reader
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
@@ -1120,9 +1119,11 @@ class PulledDockerImageService(BaseServing):
             self.port = find_free_port()
         else:
             self.port = preferred_port
+        bundle_path = self._model_path(model_id)
+        self.docker_tag = model_image_version_reader(bundle_path)
         self.logger.debug("Using port {0}".format(self.port))
         self.image_name = "{0}/{1}:{2}".format(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         self.logger.debug("Starting Docker Daemon service")
         self.container_tmp_logs = os.path.join(
@@ -1205,7 +1206,7 @@ class PulledDockerImageService(BaseServing):
             True if the service is available, False otherwise.
         """
         is_available = self.simple_docker.exists(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         if is_available:
             self.logger.debug("Image {0} is available locally".format(self.image_name))

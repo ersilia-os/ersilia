@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import threading
@@ -10,8 +11,10 @@ from .. import logger
 from ..default import (
     DEFAULT_DOCKER_PLATFORM,
     DEFAULT_UDOCKER_USERNAME,
+    DOCKER_INFO_FILE,
     DOCKERHUB_LATEST_TAG,
     DOCKERHUB_ORG,
+    EOS,
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
 )
@@ -23,9 +26,9 @@ from .terminal import run_command, run_command_check_output
 
 def resolve_pack_method_docker(model_id):
     client = docker.from_env()
-    model_image = client.images.get(
-        f"{DOCKERHUB_ORG}/{model_id}:{DOCKERHUB_LATEST_TAG}"
-    )
+    bundle_path = f"{EOS}/dest/{model_id}"
+    docker_tag = model_image_version_reader(bundle_path)
+    model_image = client.images.get(f"{DOCKERHUB_ORG}/{model_id}:{docker_tag}")
     image_history = model_image.history()
     for hist in image_history:
         # Very hacky, but works bec we don't have nginx in ersilia-pack images
@@ -60,6 +63,18 @@ def is_udocker_installed():
         return False
     except:
         return False
+
+
+def model_image_version_reader(dir):
+    """
+    Read the requested model image version from a file.
+    """
+    if os.path.exists(os.path.join(dir, DOCKER_INFO_FILE)):
+        with open(os.path.join(dir, DOCKER_INFO_FILE), "r") as f:
+            data = json.load(f)
+        if "tag" in data:
+            return data["tag"]
+    return DOCKERHUB_LATEST_TAG
 
 
 class SimpleDocker(object):
