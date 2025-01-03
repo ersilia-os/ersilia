@@ -1,13 +1,10 @@
 import click
-import csv
 
-from ...hub.content.catalog import ModelCatalog
-
-
-from . import ersilia_cli
-from .. import echo
-from ...hub.delete.delete import ModelFullDeleter
 from ... import ModelBase
+from ...hub.content.catalog import ModelCatalog
+from ...hub.delete.delete import ModelFullDeleter
+from .. import echo
+from . import ersilia_cli
 
 
 def delete_cmd():

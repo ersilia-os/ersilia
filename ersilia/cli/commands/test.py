@@ -1,7 +1,8 @@
 import click
+
 from ...cli import echo
-from . import ersilia_cli
 from ...publish.test import ModelTester
+from . import ersilia_cli
 
 
 def test_cmd():

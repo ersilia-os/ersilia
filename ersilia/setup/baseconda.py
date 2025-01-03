@@ -1,14 +1,13 @@
-import tempfile
 import os
+
 from packaging import version
 
+from .. import logger
 from ..utils.conda import SimpleConda
+from ..utils.logging import make_temp_dir
 from ..utils.terminal import run_command
 from ..utils.versioning import Versioner
 from .utils.clone import ErsiliaCloner
-from ..utils.logging import make_temp_dir
-
-from .. import logger
 
 
 class SetupBaseConda(object):

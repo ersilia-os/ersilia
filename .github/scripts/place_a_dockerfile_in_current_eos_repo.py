@@ -1,7 +1,8 @@
 import os
-import sys
-import requests
 import shutil
+import sys
+
+import requests
 
 BUILD_VERSIONS = ["ersiliapack", "legacy-bentoml", "multistage-condapack"]
 ENV_TYPES = ["conda", "pip"]

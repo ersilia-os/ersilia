@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 try:
     import emoji
@@ -7,23 +7,23 @@ except:
     emoji = None
 import click
 
-from .columns_information import ColumnsInformation
 from ... import ErsiliaBase
 from ...default import (
-    PACKMODE_FILE,
     API_SCHEMA_FILE,
-    MODEL_SIZE_FILE,
-    CARD_FILE,
-    SERVICE_CLASS_FILE,
     APIS_LIST_FILE,
+    CARD_FILE,
+    MODEL_SIZE_FILE,
     MODEL_SOURCE_FILE,
+    PACKMODE_FILE,
+    SERVICE_CLASS_FILE,
 )
 from ...utils.paths import get_metadata_from_base_dir
+from .columns_information import ColumnsInformation
 
 
 class Information(ErsiliaBase):
     """
-    Class to handle the information of a model.
+    Class to handle the information of a models.
 
     This class provides methods to get various information about a model,
     such as pack mode, service class, model source, API schema, size, metadata, and card.
@@ -125,7 +125,7 @@ class Information(ErsiliaBase):
         Returns
         -------
         dict
-            A dictionary containing various information about the model.
+            A dictionary containing several information about the model.
         """
         data = {
             "pack_mode": self._get_pack_mode(),

@@ -2,11 +2,11 @@ import random
 
 try:
     from hashids import Hashids
-except ModuleNotFoundError as err:
+except ModuleNotFoundError:
     Hashids = None
 try:
     from datetime import datetime
-except ModuleNotFoundError as err:
+except ModuleNotFoundError:
     datetime = None
 
 ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"

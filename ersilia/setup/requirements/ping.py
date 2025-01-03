@@ -1,6 +1,7 @@
+import requests
+
 from ... import throw_ersilia_exception
 from ...utils.exceptions_utils.setup_exceptions import PingError
-import requests
 
 
 class PingRequirement(object):

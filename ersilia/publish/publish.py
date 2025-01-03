@@ -1,13 +1,12 @@
 import os
 import shutil
 
-from .rebase import TemplateRebaser
-from . import EOS_TEMPLATE_REPOSITORY
-
-from ..utils.terminal import run_command
 from .. import ErsiliaBase
-from ..utils.dvc import DVCSetup
 from ..default import GITHUB_ORG
+from ..utils.dvc import DVCSetup
+from ..utils.terminal import run_command
+from . import EOS_TEMPLATE_REPOSITORY
+from .rebase import TemplateRebaser
 
 
 class ModelPublisher(ErsiliaBase):
@@ -117,7 +116,13 @@ class ModelPublisher(ErsiliaBase):
         self.git_push()
 
     def test(self):
+        """
+        Test the publishing process.
+        """
         pass
 
     def docker(self):
+        """
+        Handle Docker-related tasks.
+        """
         pass

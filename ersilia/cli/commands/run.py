@@ -1,14 +1,13 @@
-import click
 import json
 import types
-import time
 
-from . import ersilia_cli
-from .. import echo
+import click
+
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...core.tracking import RunTracker
 from ...utils.terminal import print_result_table
+from .. import echo
+from . import ersilia_cli
 
 
 def run_cmd():

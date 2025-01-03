@@ -1,4 +1,6 @@
-import os, shutil
+import os
+import shutil
+
 from .. import ErsiliaBase
 from ..default import GITHUB_ORG
 from ..utils.terminal import run_command

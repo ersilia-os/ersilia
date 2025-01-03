@@ -1,4 +1,5 @@
 import json
+
 import numpy as np
 
 try:
@@ -6,9 +7,9 @@ try:
 except:
     Hdf5ApiExplorer = None
 
-from .base import LakeBase
 from ..io.dataframe import Dataframe
 from ..io.output import DictlistDataframeConverter
+from .base import LakeBase
 
 
 class IsauraInterface(LakeBase):

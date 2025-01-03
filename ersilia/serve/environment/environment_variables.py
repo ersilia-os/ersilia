@@ -4,9 +4,10 @@ import os
 import shutil
 import subprocess
 
+from ... import ErsiliaBase
+
 # from dotenv import load_dotenv
 from ...default import DOTENV_FILE
-from ... import ErsiliaBase
 
 
 class GetEnvironmentVariable(ErsiliaBase):

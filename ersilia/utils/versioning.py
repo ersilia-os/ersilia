@@ -1,5 +1,5 @@
-import sys
 import os
+import sys
 
 try:
     from bentoml import __version__ as __bentoml_version__

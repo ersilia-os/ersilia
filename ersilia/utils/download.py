@@ -1,20 +1,20 @@
 """Download utilities"""
 
 import os
-import zipfile
-import requests
 import shutil
+import subprocess
+import sys
 import tempfile
 import uuid
-import requests
-import sys
-import subprocess
-from click import echo
-from .terminal import run_command
-from .. import logger
+import zipfile
+from pathlib import Path
 
-from ..default import S3_BUCKET_URL, S3_BUCKET_URL_ZIP
+import requests
+
+from .. import logger
+from ..default import S3_BUCKET_URL
 from ..utils.logging import make_temp_dir
+from .terminal import run_command
 
 
 class PseudoDownloader(object):
@@ -109,6 +109,19 @@ class GoogleDriveDownloader(object):
 
     @staticmethod
     def get_confirm_token(response):
+        """
+        Get the confirmation token from the response.
+
+        Parameters
+        ----------
+        response : object
+            The response object.
+
+        Returns
+        -------
+        str
+            The confirmation token, if available.
+        """
         for key, value in response.cookies.items():
             if key.startswith("download_warning"):
                 return value
@@ -116,6 +129,16 @@ class GoogleDriveDownloader(object):
 
     @staticmethod
     def save_response_content(response, destination):
+        """
+        Save the response content to a file.
+
+        Parameters
+        ----------
+        response : object
+            The response object.
+        destination : str
+            The destination file path.
+        """
         chunk_size = 32768
         with open(destination, "wb") as f:
             for chunk in response.iter_content(chunk_size):
@@ -240,38 +263,50 @@ class GitHubDownloader(object):
         return clean_lfs_files_list
 
     def _download_s3_files(self, filename, repo, destination):
-        # This function takes S3 filename as input and tries to download it
-        # from a location given in S3_BUCKET_URL at default.py
+        file_url = f"{S3_BUCKET_URL}/{repo}/{filename}"
+        local_filename = Path(destination) / filename
 
-        file_url = S3_BUCKET_URL + "/" + repo + "/" + filename
-        local_filename = destination + "/" + filename
         try:
-            with requests.get(file_url, stream=True) as r:
-                r.raise_for_status()
-                dl = 0
-                total_length = int(r.headers.get("content-length"))
-                if total_length is None:  # no content length header
-                    f.write(r.content)
+            response = requests.get(file_url, stream=True)
+            response.raise_for_status()
+
+            total_length = response.headers.get("content-length")
+            total_length = int(total_length) if total_length else None
+
+            local_filename.parent.mkdir(parents=True, exist_ok=True)
+
+            with open(local_filename, "wb") as file:
+                if total_length is None:
+                    # No content-length header, write content directly
+                    file.write(response.content)
                 else:
-                    with open(local_filename, "wb") as f:
-                        echo(
-                            "Downloading large file {} from S3 bucket.".format(filename)
-                        )
-                        for chunk in r.iter_content(chunk_size=8192):
-                            dl += len(chunk)
-                            f.write(chunk)
-                            done = int(50 * dl / total_length)
-                            sys.stdout.write(
-                                "\r[%s%s]" % ("=" * done, " " * (50 - done))
-                            )
-                            sys.stdout.flush()
-                    echo("✅\n")
-        except:
-            self.logger.error(
-                "❗Could not download file {} from S3 bucket.\n We will try Git LFS.".format(
-                    file_url
-                )
+                    self._download_large_file(response, file, total_length, filename)
+
+            self.logger.info(
+                f"✅ Successfully downloaded {filename} to {local_filename}"
             )
+        except requests.RequestException as e:
+            self.logger.error(
+                f"❗ Could not download file {filename} from S3 bucket: {file_url}. "
+                "Falling back to Git LFS if available."
+            )
+            self.logger.debug(f"Error details: {e}")
+        except Exception as e:
+            self.logger.error(f"❗ Unexpected error while downloading {filename}: {e}")
+
+    def _download_large_file(self, response, file, total_length, filename):
+        self.logger.info(f"Downloading large file {filename} from S3 bucket.")
+        downloaded = 0
+
+        for chunk in response.iter_content(chunk_size=8192):
+            file.write(chunk)
+            downloaded += len(chunk)
+
+            done = int(50 * downloaded / total_length)
+            sys.stdout.write(f"\r[{'=' * done}{' ' * (50 - done)}]")
+            sys.stdout.flush()
+
+        sys.stdout.write("\n")
 
     def _check_large_file_checksum(self, filename, destination):
         # This function takes filenames and checksums from lfs ls-files

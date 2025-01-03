@@ -1,9 +1,11 @@
 import asyncio
-import nest_asyncio
-import aiohttp
 import urllib.parse
-import requests
 from functools import lru_cache
+
+import aiohttp
+import nest_asyncio
+import requests
+
 from ..logging import logger
 
 try:
@@ -11,8 +13,7 @@ try:
 except:
     unichem = None
 try:
-    from rdkit import Chem
-    from rdkit import RDLogger
+    from rdkit import Chem, RDLogger
 
     RDLogger.DisableLog("rdApp.*")
 except:
@@ -231,7 +232,7 @@ class CompoundIdentifier(object):
                     return None
                 data = await response.json()
                 return data["PropertyTable"]["Properties"][0]["InChIKey"]
-        except Exception as e:
+        except Exception:
             return None
 
     @staticmethod
@@ -296,6 +297,20 @@ class CompoundIdentifier(object):
             return None
 
     async def process_smiles(self, smiles, semaphore, session, result_list):
+        """
+        Process a SMILES string asynchronously.
+
+        Parameters
+        ----------
+        smiles : str
+            The SMILES string to process.
+        semaphore : asyncio.Semaphore
+            The semaphore to limit concurrency.
+        session : aiohttp.ClientSession
+            The HTTP session for making requests.
+        result_list : list
+            The list to store results.
+        """
         async with semaphore:  # high performance resource manager
             inchikey = self.convert_smiles_to_inchikey_with_rdkit(smiles)
 
@@ -315,6 +330,19 @@ class CompoundIdentifier(object):
                 logger.info(f"No InChIKey found for SMILES {smiles}. Skipping.")
 
     async def encode_batch(self, smiles_list):
+        """
+        Encode a batch of SMILES strings asynchronously.
+
+        Parameters
+        ----------
+        smiles_list : list
+            The list of SMILES strings to encode.
+
+        Returns
+        -------
+        list
+            The list of encoded results.
+        """
         result_list = []
         semaphore = asyncio.Semaphore(self.concurrency_limit)
         async with aiohttp.ClientSession() as session:

@@ -1,18 +1,21 @@
-from dataclasses import dataclass, asdict
-import re
-import os
 import json
-from typing import List, Optional
-import yaml
+import os
+import re
+from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import List, Optional
+
+import yaml
+
 from ersilia import logger
-from .docker import resolve_pack_method_docker
+
 from ..default import (
-    PACK_METHOD_BENTOML,
-    PACK_METHOD_FASTAPI,
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
 )
+from .docker import resolve_pack_method_docker
 
 MODELS_DEVEL_DIRNAME = "models"
 
@@ -215,6 +218,10 @@ class Metadata:
 
 
 class ErsiliaMetadataLoader(yaml.SafeLoader):
+    """
+    Custom YAML loader for Ersilia metadata.
+    """
+
     pass
 
 

@@ -1,4 +1,5 @@
 import sys
+
 from ersilia.publish.s3 import S3BucketRepoUploader
 
 model_id = sys.argv[1]

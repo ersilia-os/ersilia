@@ -1,6 +1,5 @@
-import json
-import os
 import numpy as np
+
 from .. import ErsiliaBase
 from ..utils.paths import get_metadata_from_base_dir
 

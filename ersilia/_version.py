@@ -1,6 +1,6 @@
-from urllib.request import urlopen
 import json
 import os
+from urllib.request import urlopen
 
 STATIC_VERSION_FILE = "_static_version.py"
 PACKAGE_NAME = "ersilia"

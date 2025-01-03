@@ -1,17 +1,15 @@
+import json
+import os
+import pickle
+import shutil
+import subprocess
+import tempfile
 from typing import List
 
 from bentoml import BentoService, api, artifacts
 from bentoml.adapters import JsonInput
-from bentoml.types import JsonSerializable
 from bentoml.service import BentoServiceArtifact
-
-import pickle
-import os
-import shutil
-import tempfile
-import subprocess
-import json
-
+from bentoml.types import JsonSerializable
 
 CHECKPOINTS_BASEDIR = "checkpoints"
 FRAMEWORK_BASEDIR = "framework"

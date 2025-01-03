@@ -1,10 +1,9 @@
 import os
-import sys
 
-from . import BaseAction
-from ..pack.fastapi_pack.mode import PackModeDecision, AVAILABLE_MODES
-from ..pack.fastapi_pack.runners import get_runner
 from ....default import PACKMODE_FILE
+from ..pack.fastapi_pack.mode import AVAILABLE_MODES, PackModeDecision
+from ..pack.fastapi_pack.runners import get_runner
+from . import BaseAction
 
 
 class ModelPacker(BaseAction):

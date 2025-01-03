@@ -1,11 +1,13 @@
-import os
-import yaml
 import collections
+import os
+
+import yaml
+from dockerfile_parse import DockerfileParser
+
 from ...core.base import ErsiliaBase
 from ...default import CONDA_ENV_YML_FILE, DOCKERFILE_FILE
 from ...hub.fetch import MODEL_INSTALL_COMMANDS_FILE, REQUIREMENTS_TXT
 from .repo import DockerfileFile
-from dockerfile_parse import DockerfileParser
 
 
 class BundleEnvironmentFile(ErsiliaBase):

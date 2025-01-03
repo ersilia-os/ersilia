@@ -1,14 +1,13 @@
-import os
-import tempfile
+import collections
 import csv
 import json
-import collections
+import os
+
 import numpy as np
 
-from ..shape import InputShape
-from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
 from ... import logger
 from ...utils.logging import make_temp_dir
+from ..shape import InputShape, InputShapeList, InputShapePairOfLists, InputShapeSingle
 
 MIN_COLUMN_VALIDITY = 0.8
 FLATTENED_EVIDENCE = 0.2
@@ -271,12 +270,12 @@ class BaseTabularFile(object):
 
     def get_delimiter(self):
         """
-        Get the column delimiter of the file.
+        Get the delimiter used in the file.
 
         Returns
         -------
         str
-            The column delimiter.
+            The delimiter used in the file.
         """
         delimiters = collections.defaultdict(int)
         default_extension = self._get_delimiter_by_extension()
@@ -612,7 +611,12 @@ class TabularFileShapeStandardizer(BaseTabularFile):
     --------
     .. code-block:: python
 
-        tfss = TabularFileShapeStandardizer("data.csv", "standard_data.csv", "single", IOHandler())
+        tfss = TabularFileShapeStandardizer(
+            "data.csv",
+            "standard_data.csv",
+            "single",
+            IOHandler(),
+        )
         tfss.standardize()
     """
 
@@ -748,6 +752,14 @@ class StandardTabularFileReader(BatchCacher):
         self._has_header = True
 
     def get_delimiter(self):
+        """
+        Get the delimiter used in the file.
+
+        Returns
+        -------
+        str
+            The delimiter used in the file.
+        """
         if self.path.endswith(".csv"):
             return ","
         if self.path.endswith(".tsv"):

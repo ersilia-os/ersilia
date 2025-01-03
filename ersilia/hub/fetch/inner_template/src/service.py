@@ -1,16 +1,14 @@
-from typing import List, Dict, Any
+import csv
+import os
+import pickle
+import shutil
+import subprocess
+from typing import Any, Dict, List
 
 from bentoml import BentoService, api, artifacts
 from bentoml.adapters import JsonInput
-from bentoml.types import JsonSerializable
 from bentoml.service import BentoServiceArtifact
-
-import pickle
-import os
-import shutil
-import tempfile
-import subprocess
-import csv
+from bentoml.types import JsonSerializable
 
 from .....utils.logging import make_temp_dir
 

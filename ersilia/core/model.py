@@ -1,43 +1,50 @@
-import os
-import csv
-import json
-import time
-import types
 import asyncio
 import collections
+import csv
+import json
+import os
 import sys
+import time
+import types
 
 from click import secho as echo  # Style-aware echo
 
 from .. import logger
-from ..serve.api import Api
-from .session import Session
+from ..default import (
+    APIS_LIST_FILE,
+    CARD_FILE,
+    DEFAULT_BATCH_SIZE,
+    EOS,
+    FETCHED_MODELS_FILENAME,
+    INFORMATION_FILE,
+    MODEL_SIZE_FILE,
+)
 from ..hub.fetch.fetch import ModelFetcher
-from .base import ErsiliaBase
-from ..lake.base import LakeBase
-from ..utils import tmp_pid_file
-from .modelbase import ModelBase
-from ..serve.schema import ApiSchema
-from ..utils.hdf5 import Hdf5DataLoader
-from ..utils.csvfile import CsvDataLoader
-from ..utils.terminal import yes_no_input
-from ..utils.docker import ContainerMetricsSampler
-from ..serve.autoservice import AutoService, PulledDockerImageService
+from ..io.input import BaseIOGetter, ExampleGenerator
 from ..io.output import TabularOutputStacker
-from ..serve.standard_api import StandardCSVRunApi
-from ..io.input import ExampleGenerator, BaseIOGetter
-from .tracking import RunTracker
 from ..io.readers.file import FileTyper, TabularFileReader
-from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
-from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
-from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
-from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
-from ..utils.logging import make_temp_dir
+from ..lake.base import LakeBase
+from ..serve.api import Api
+from ..serve.autoservice import AutoService, PulledDockerImageService
+from ..serve.schema import ApiSchema
+from ..serve.standard_api import StandardCSVRunApi
 from ..setup.requirements.compound import (
     ChemblWebResourceClientRequirement,
     RdkitRequirement,
 )
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
+from ..utils import tmp_pid_file
+from ..utils.csvfile import CsvDataLoader
+from ..utils.docker import ContainerMetricsSampler
+from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
+from ..utils.hdf5 import Hdf5DataLoader
+from ..utils.logging import make_temp_dir
+from ..utils.terminal import yes_no_input
+from .base import ErsiliaBase
+from .modelbase import ModelBase
+from .session import Session
+from .tracking import RunTracker
 
 try:
     import pandas as pd
@@ -96,7 +103,10 @@ class ErsiliaModel(ErsiliaBase):
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
-        result = model.run(input="input_data.csv", output="output_data.csv")
+        result = model.run(
+            input="input_data.csv",
+            output="output_data.csv",
+        )
 
     Closing a model:
 

@@ -1,5 +1,6 @@
-import sqlite3
 import os
+import sqlite3
+
 from ... import ErsiliaBase
 
 ENVIRONMENTDB_FILE = ".environment.db"
@@ -21,8 +22,8 @@ class EnvironmentDb(ErsiliaBase):
     Examples
     --------
     >>> env_db = EnvironmentDb(config_json)
-    >>> env_db.table = 'conda'
-    >>> env_db.insert('model_id', 'venv_name')
+    >>> env_db.table = "conda"
+    >>> env_db.insert("model_id", "venv_name")
     """
 
     def __init__(self, config_json=None):
@@ -66,6 +67,9 @@ class EnvironmentDb(ErsiliaBase):
         return sqlite3.connect(self.file_path)
 
     def create_table(self):
+        """
+        Create table if it does not exist.
+        """
         if self._table is None:
             return
         sql = """

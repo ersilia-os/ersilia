@@ -1,25 +1,20 @@
-import json
 import os
 import shutil
-import tempfile
 import zipfile
-import yaml
 
-
-from . import BaseAction
 from .... import ErsiliaBase
+from ....default import PREDEFINED_EXAMPLE_FILES, S3_BUCKET_URL_ZIP
 from ....utils.download import GitHubDownloader, S3Downloader
-from ...bundle.repo import PackFile, DockerfileFile
-from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.exceptions_utils.fetch_exceptions import (
     FolderNotFoundError,
     S3DownloaderError,
 )
-from .template_resolver import TemplateResolver
-
-from ....default import S3_BUCKET_URL_ZIP, PREDEFINED_EXAMPLE_FILES
-from ....utils.paths import get_metadata_from_base_dir
+from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.logging import make_temp_dir
+from ....utils.paths import get_metadata_from_base_dir
+from ...bundle.repo import DockerfileFile, PackFile
+from . import BaseAction
+from .template_resolver import TemplateResolver
 
 MODEL_DIR = "model"
 ROOT = os.path.basename(os.path.abspath(__file__))

@@ -1,18 +1,17 @@
-import os
 import json
-from re import I
-from ... import ErsiliaBase
-from ... import logger
-from ...utils.paths import Paths
-from ...utils.docker import SimpleDockerfileParser
-from ...utils.conda import SimpleConda
-from ...utils.system import SystemChecker
+import os
+
+from ... import ErsiliaBase, logger
 from ...default import (
     CONDA_ENV_YML_FILE,
-    DOCKER_BENTO_PATH,
     DEFAULT_MODEL_ID,
+    DOCKER_BENTO_PATH,
     DOCKERFILE_FILE,
 )
+from ...utils.conda import SimpleConda
+from ...utils.docker import SimpleDockerfileParser
+from ...utils.paths import Paths
+from ...utils.system import SystemChecker
 
 ROOT_CHECKFILE = "README.md"
 
@@ -321,6 +320,19 @@ class DockerfileFile(object):
         return False
 
     def get_install_commands_from_dockerfile(self, fn):
+        """
+        Get the install commands from the Dockerfile.
+
+        Parameters
+        ----------
+        fn : str
+            The path to the Dockerfile.
+
+        Returns
+        -------
+        list
+            The list of RUN commands from the Dockerfile.
+        """
         dp = SimpleDockerfileParser(fn)
         runs = dp.get_runs()
         return runs

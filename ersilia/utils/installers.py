@@ -1,17 +1,17 @@
-import shutil
 import os
+import shutil
 import sys
-import tempfile
-from .conda import SimpleConda
+
+import click
+
+from .. import ErsiliaBase, check_install_status
+from ..default import CONFIG_JSON, EOS
 from ..setup.baseconda import SetupBaseConda
-from ..default import EOS, CONFIG_JSON
-from .. import ErsiliaBase
-from .. import check_install_status
+from .conda import SimpleConda
 from .config import Checker
+from .logging import make_temp_dir
 from .terminal import run_command
 from .versioning import Versioner
-import click
-from .logging import make_temp_dir
 
 INSTALL_LOG_FILE = ".install.log"
 
@@ -182,9 +182,10 @@ class Installer(BaseInstaller):
         if self._is_done("rdkit"):
             return
         try:
-            import rdkit
+            import importlib.util
 
-            exists = True
+            if importlib.util.find_spec("rdkit") is not None:
+                exists = True
         except ModuleNotFoundError:
             exists = False
         if exists:
@@ -285,7 +286,6 @@ class Installer(BaseInstaller):
         """
         if self._is_done("server_docker"):
             return
-        import tempfile
         from .docker import SimpleDocker
 
         docker = SimpleDocker()

@@ -1,10 +1,8 @@
 import validators
 
-from .interfaces import AirtableInterface
+from ... import ErsiliaBase, throw_ersilia_exception
 from ...utils.exceptions_utils.hubdata_exceptions import InvalidUrlInAirtableError
-
-from ... import ErsiliaBase
-from ... import throw_ersilia_exception
+from .interfaces import AirtableInterface
 
 
 # Potentially related issue: https://github.com/ersilia-os/ersilia/issues/1407

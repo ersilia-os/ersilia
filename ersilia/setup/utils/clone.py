@@ -1,9 +1,9 @@
-import shutil
 import os
+import shutil
 
 from ... import ErsiliaBase
-from ...utils.download import GitHubDownloader
 from ...utils.config import Checker
+from ...utils.download import GitHubDownloader
 from ...utils.versioning import Versioner
 
 

@@ -1,26 +1,25 @@
-import os
-import json
 import importlib
+import json
+import os
 from collections import namedtuple
 
-from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
-from .lazy_fetchers.hosted import ModelHostedFetcher
-from ...db.hubdata.interfaces import JsonModelsInterface
 from ... import ErsiliaBase
-from ...hub.fetch.actions.template_resolver import TemplateResolver
-from ...hub.fetch.actions.setup import SetupChecker
+from ...db.hubdata.interfaces import JsonModelsInterface
+from ...default import MODEL_SOURCE_FILE, PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 from ...hub.delete.delete import ModelFullDeleter
+from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...setup.requirements import check_bentoml
 from ...utils.exceptions_utils.fetch_exceptions import (
-    NotInstallableWithFastAPI,
     NotInstallableWithBentoML,
+    NotInstallableWithFastAPI,
     StandardModelExampleError,
 )
-from .register.standard_example import ModelStandardExample
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...utils.terminal import yes_no_input
-from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, EOS, MODEL_SOURCE_FILE
-from . import STATUS_FILE, DONE_TAG
+from . import STATUS_FILE
+from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
+from .lazy_fetchers.hosted import ModelHostedFetcher
+from .register.standard_example import ModelStandardExample
 
 FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
 
@@ -222,7 +221,6 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Fetching from hosted done")
 
     def _decide_if_use_dockerhub(self, model_id: str) -> bool:
-
         if self.repo_path is not None:
             return False
         if self.force_from_dockerhub:

@@ -5,9 +5,8 @@ try:
 except:
     Hdf5Explorer = None
 
-from ..utils.terminal import run_command
-
 from .. import ErsiliaBase
+from ..utils.terminal import run_command
 
 
 class IsauraManager(ErsiliaBase):

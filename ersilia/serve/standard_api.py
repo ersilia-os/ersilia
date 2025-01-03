@@ -1,23 +1,23 @@
-import os
-import csv
-import json
-import importlib
-import requests
 import asyncio
+import csv
+import importlib
+import json
+import os
+
 import nest_asyncio
-from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
+import requests
+
 from .. import ErsiliaBase
 from ..default import (
-    EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
-    EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
-)
-from ..default import (
-    INFORMATION_FILE,
     API_SCHEMA_FILE,
     DEFAULT_API_NAME,
+    EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
+    EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
+    INFORMATION_FILE,
     PREDEFINED_EXAMPLE_FILES,
 )
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -46,7 +46,6 @@ class StandardCSVRunApi(ErsiliaBase):
         input_data = "path/to/input.csv"
         output_data = "path/to/output.csv"
         result = api.post(input_data, output_data)
-        print(result)
     """
 
     def __init__(self, model_id, url, config_json=None):
@@ -101,7 +100,7 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def _read_field_from_metadata(self, meta, field):
         if not meta:
-            self.logger.error(f"No metadata given")
+            self.logger.error("No metadata given")
             return None
         if "metadata" in meta and field in meta["metadata"]:
             return meta["metadata"][field]
@@ -111,6 +110,14 @@ class StandardCSVRunApi(ErsiliaBase):
             self.logger.error(f"Neither 'metadata' nor 'card' contains '{field}' key.")
 
     def get_identifier_object_by_input_type(self):
+        """
+        Get the identifier object by input type.
+
+        Returns
+        -------
+        object
+            The identifier object.
+        """
         identifier_module_path = "ersilia.utils.identifiers.{0}".format(
             self.input_type[0].lower()
         )
@@ -211,10 +218,13 @@ class StandardCSVRunApi(ErsiliaBase):
             with open(file, "r") as f:
                 reader = csv.reader(f)
                 header = next(reader)
-                if header[0:2] != [
-                    "key",
-                    "input",
-                ]:  # Slicing doesn't raise an error even if the list does not have 2 elements
+                if (
+                    header[0:2]
+                    != [
+                        "key",
+                        "input",
+                    ]
+                ):  # Slicing doesn't raise an error even if the list does not have 2 elements
                     header = ["key", "input"] + header
             return header
         except (FileNotFoundError, StopIteration):
@@ -264,6 +274,19 @@ class StandardCSVRunApi(ErsiliaBase):
         return [{"key": key, "input": input, "text": input}]
 
     def serialize_to_json_three_columns(self, input_data):
+        """
+        Serialize data to JSON with three columns.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The serialized JSON data.
+        """
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
@@ -274,6 +297,19 @@ class StandardCSVRunApi(ErsiliaBase):
         return json_data
 
     def serialize_to_json_two_columns(self, input_data):
+        """
+        Serialize data to JSON with two columns.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The serialized JSON data.
+        """
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
@@ -284,6 +320,19 @@ class StandardCSVRunApi(ErsiliaBase):
         return json_data
 
     def serialize_to_json_one_column(self, input_data):
+        """
+        Serialize data to JSON with one column.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The serialized JSON data.
+        """
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
@@ -295,12 +344,38 @@ class StandardCSVRunApi(ErsiliaBase):
         return json_data
 
     async def async_serialize_to_json_one_column(self, input_data):
+        """
+        Asynchronously serialize data to JSON with one column.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The serialized JSON data.
+        """
         smiles_list = self.get_list_from_csv(input_data)
         smiles_list = [smiles for smiles in smiles_list if self.validate_smiles(smiles)]
         json_data = await self.encoder.encode_batch(smiles_list)
         return json_data
 
     def get_list_from_csv(self, input_data):
+        """
+        Get a list from a CSV file.
+
+        Parameters
+        ----------
+        input_data : str
+            The input data file path.
+
+        Returns
+        -------
+        list
+            The list of data from the CSV file.
+        """
         smiles_list = []
         with open(input_data, mode="r") as file:
             reader = csv.DictReader(file)

@@ -1,14 +1,13 @@
-import os
 import csv
-import random
 import importlib
+import os
+import random
 
-from ...utils.identifiers.arbitrary import ArbitraryIdentifier
 from ... import logger
-from ..shape import InputShapeSingle, InputShapeList, InputShapePairOfLists
-from .examples import text as test_examples
+from ...utils.identifiers.arbitrary import ArbitraryIdentifier
+from ..shape import InputShapeList, InputShapePairOfLists, InputShapeSingle
 from . import EXAMPLES_FOLDER
-
+from .examples import text as test_examples
 
 EXAMPLES = "text.tsv"
 

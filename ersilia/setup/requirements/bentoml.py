@@ -1,6 +1,6 @@
+import os
 import subprocess
 import sys
-import os
 
 from ...default import EOS
 
@@ -32,7 +32,7 @@ class BentoMLRequirement(object):
             True if BentoML is installed, False otherwise.
         """
         try:
-            import bentoml
+            import bentoml  # noqa: F401
 
             return True
         except ImportError:

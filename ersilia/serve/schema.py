@@ -1,9 +1,10 @@
-import os
 import json
+import os
+
 import numpy as np
 
-from ..default import API_SCHEMA_FILE
 from .. import ErsiliaBase
+from ..default import API_SCHEMA_FILE
 
 
 class ApiSchema(ErsiliaBase):

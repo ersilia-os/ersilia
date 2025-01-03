@@ -1,7 +1,9 @@
-import nox
-import yaml
 import shutil
 from pathlib import Path
+
+import nox
+import yaml
+
 from ersilia.utils.logging import logger
 
 ORIGINAL_DIR = Path.cwd()
@@ -97,7 +99,7 @@ def test_fetch_multiple_models(session):
             "fetch_flags": "--from_dockerhub",
         }
     )
-    logger.info(f"Fetching and Serving Multiple Models: Fetching")
+    logger.info("Fetching and Serving Multiple Models: Fetching")
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
@@ -107,7 +109,7 @@ def test_serve_multiple_models(session):
     update_yaml_values(
         {"runner": "multiple", "cli_type": "serve", "delete_model": False}
     )
-    logger.info(f"Fetching and Serving Multiple Models: Serving")
+    logger.info("Fetching and Serving Multiple Models: Serving")
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
@@ -125,5 +127,5 @@ def test_conventional_run(session):
             "delete_model": True,
         }
     )
-    logger.info(f"Standard and Conventional Run: Conventional")
+    logger.info("Standard and Conventional Run: Conventional")
     session.run("pytest", "commands.py", "-v", silent=False)

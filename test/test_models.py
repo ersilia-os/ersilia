@@ -1,10 +1,12 @@
 import asyncio
-import pytest
 import random
-from unittest.mock import patch, AsyncMock
-from ersilia.hub.fetch.fetch import ModelFetcher
+from unittest.mock import AsyncMock, patch
+
+import pytest
+
 from ersilia import ErsiliaModel
 from ersilia.core.session import Session
+from ersilia.hub.fetch.fetch import ModelFetcher
 
 MODELS = ["eos0t01", "eos3b5e", "eos0t03", "eos0t04"]
 RESULTS = [0, 312.89, 0, 0]

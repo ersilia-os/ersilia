@@ -1,8 +1,8 @@
 import click
 
-from . import ersilia_cli
-from ...hub.content.catalog import ModelCatalog
 from ...hub.content.card import ModelCard
+from ...hub.content.catalog import ModelCatalog
+from . import ersilia_cli
 
 
 def catalog_cmd():

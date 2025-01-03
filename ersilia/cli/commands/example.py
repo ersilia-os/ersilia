@@ -1,11 +1,12 @@
-import click
 import json
 
-from . import ersilia_cli
-from .. import echo
-from ...io.input import ExampleGenerator
-from ...core.session import Session
+import click
+
 from ... import ModelBase
+from ...core.session import Session
+from ...io.input import ExampleGenerator
+from .. import echo
+from . import ersilia_cli
 
 
 def example_cmd():

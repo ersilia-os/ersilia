@@ -1,14 +1,16 @@
+import csv
+import uuid
+
+import requests
+
 from ersilia.core.base import ErsiliaBase
+from ersilia.default import INFERENCE_STORE_API_URL
 from ersilia.io.input import GenericInputAdapter
 from ersilia.store.utils import (
-    PrecalculationsNotInStore,
     PrecalculationsInStore,
+    PrecalculationsNotInStore,
     delete_file_upon_upload,
 )
-from ersilia.default import INFERENCE_STORE_API_URL
-import requests
-import uuid
-import csv
 
 
 class InferenceStoreApi(ErsiliaBase):

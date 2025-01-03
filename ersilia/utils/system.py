@@ -1,5 +1,5 @@
-import platform
 import os
+import platform
 
 
 def is_inside_docker():

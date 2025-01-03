@@ -1,5 +1,7 @@
 from .exceptions import ErsiliaError
 
+# ruff: noqa: D101, D102
+
 
 class GitLfsSetupError(ErsiliaError):
     def __init__(

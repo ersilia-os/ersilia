@@ -1,11 +1,11 @@
 import click
 
-from .. import echo
-from . import ersilia_cli
 from ... import ErsiliaModel
-from ..messages import ModelNotFound
-from ...store.utils import OutputSource, ModelNotInStore, store_has_model
+from ...store.utils import ModelNotInStore, OutputSource, store_has_model
 from ...utils.session import register_model_session
+from .. import echo
+from ..messages import ModelNotFound
+from . import ersilia_cli
 
 
 def serve_cmd():

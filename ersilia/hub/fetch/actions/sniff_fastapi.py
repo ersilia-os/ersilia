@@ -1,14 +1,11 @@
-import os
 import csv
 import json
+import os
 from pathlib import Path
 
-from .... import throw_ersilia_exception
-
-from . import BaseAction
-from .... import ErsiliaBase
+from .... import ErsiliaBase, throw_ersilia_exception
 from ....default import MODEL_SIZE_FILE
-
+from . import BaseAction
 
 N = 3
 

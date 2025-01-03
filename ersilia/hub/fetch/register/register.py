@@ -1,12 +1,11 @@
+import datetime
+import json
 import os
 import shutil
-import json
-import datetime
+
 import validators
 
-from .... import ErsiliaBase
-from .... import EOS
-from .... import throw_ersilia_exception
+from .... import EOS, ErsiliaBase, throw_ersilia_exception
 from ....default import (
     IS_FETCHED_FROM_DOCKERHUB_FILE,
     IS_FETCHED_FROM_HOSTED_FILE,
@@ -31,7 +30,9 @@ class ModelRegisterer(ErsiliaBase):
     --------
     .. code-block:: python
 
-        registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
+        registerer = ModelRegisterer(
+            model_id="eosxxxx", config_json=config
+        )
         await registerer.register(is_from_dockerhub=True)
     """
 
@@ -196,7 +197,9 @@ class ModelRegisterer(ErsiliaBase):
         --------
         .. code-block:: python
 
-            registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
+            registerer = ModelRegisterer(
+                model_id="eosxxxx", config_json=config
+            )
             await registerer.register(is_from_dockerhub=True)
         """
         if is_from_dockerhub and is_from_hosted:

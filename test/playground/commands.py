@@ -1,14 +1,14 @@
-import pytest
 import subprocess
 import time
+from pathlib import Path
+
 import psutil
-import re
-import json
+import pytest
 import yaml
 from rich.text import Text
-from pathlib import Path
-from .shared import results
+
 from .rules import get_rule
+from .shared import results
 from .utils import (
     create_compound_input_csv,
     get_command_names,

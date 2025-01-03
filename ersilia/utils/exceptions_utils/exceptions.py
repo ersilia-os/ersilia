@@ -1,8 +1,8 @@
-from ... import ErsiliaBase
 import os
-import tempfile
-from ...utils.terminal import run_command
+
+from ... import ErsiliaBase
 from ...utils.logging import make_temp_dir
+from ...utils.terminal import run_command
 
 
 class ErsiliaError(Exception):
@@ -23,7 +23,10 @@ class ErsiliaError(Exception):
     .. code-block:: python
 
         try:
-            raise ErsiliaError("An error occurred", hints="Check your configuration")
+            raise ErsiliaError(
+                "An error occurred",
+                hints="Check your configuration",
+            )
         except ErsiliaError as e:
             print(e)
 
@@ -47,6 +50,10 @@ class ErsiliaError(Exception):
 
 
 class MissingDependencyError(ErsiliaError):
+    """
+    Exception raised for missing dependency errors.
+    """
+
     def __init__(self, dependency):
         self.dependency = dependency
         self.message = "Missing dependency {0}".format(self.dependency)
@@ -55,6 +62,10 @@ class MissingDependencyError(ErsiliaError):
 
 
 class NullModelIdentifierError(ErsiliaError):
+    """
+    Exception raised for null model identifier errors.
+    """
+
     def __init__(self, model):
         self.model = model
         self.message = "Model identifier {0} is null".format(self.model)
@@ -63,6 +74,10 @@ class NullModelIdentifierError(ErsiliaError):
 
 
 class InvalidModelIdentifierError(ErsiliaError):
+    """
+    Exception raised for invalid model identifier errors.
+    """
+
     def __init__(self, model):
         self.model = model
         self.message = "Could not identify model identifier or slug: {0}:".format(
@@ -75,6 +90,10 @@ class InvalidModelIdentifierError(ErsiliaError):
 
 
 class ModelNotAvailableLocallyError(ErsiliaError):
+    """
+    Exception raised when the model is not available locally.
+    """
+
     def __init__(self, model):
         self.model = model
         self.message = (
@@ -88,6 +107,10 @@ class ModelNotAvailableLocallyError(ErsiliaError):
 
 
 class EmptyOutputError(ErsiliaError):
+    """
+    Exception raised for empty output errors.
+    """
+
     def __init__(self, model_id, api_name):
         self.model_id = model_id
         self.api_name = api_name
@@ -100,6 +123,9 @@ class EmptyOutputError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
     def run_from_terminal(self):
+        """
+        Run the error handling from the terminal.
+        """
         eb = ErsiliaBase()
         bundle_dir = eb._get_bundle_location(model_id=self.model_id)
         framework_dir = os.path.join(
@@ -114,7 +140,9 @@ class EmptyOutputError(ErsiliaError):
         output_file = os.path.join(framework_dir, "example_output.csv")
         tmp_folder = make_temp_dir(prefix="ersilia-")
         log_file = os.path.join(tmp_folder, "terminal.log")
-        run_command("ersilia example {0} -n 3 -f {1}".format(self.model_id, input_file))
+        run_command(
+            "ersilia example inputs {0} -n 3 -f {1}".format(self.model_id, input_file)
+        )
         cmd = "bash {0} {1} {2} {3} 2>&1 | tee -a {4}".format(
             exec_file, framework_dir, input_file, output_file, log_file
         )

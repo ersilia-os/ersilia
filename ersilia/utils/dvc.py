@@ -1,7 +1,9 @@
-from . import terminal
-import h5py
 import os
+
+import h5py
+
 from ..default import H5_DATA_FILE, ISAURA_GDRIVE, ISAURA_TEAM_GDRIVE
+from . import terminal
 
 try:
     from pydrive2.auth import GoogleAuth

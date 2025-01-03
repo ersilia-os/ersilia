@@ -1,10 +1,9 @@
-import os
 import json
+import os
 
+from ..... import ErsiliaBase
 from .....default import MODEL_CONFIG_FILENAME
 from .....utils.system import SystemChecker
-from ..... import ErsiliaBase
-
 
 AVAILABLE_MODES = ["system", "conda"]
 
@@ -24,7 +23,9 @@ class PackModeDecision(ErsiliaBase):
     --------
     .. code-block:: python
 
-        pmd = PackModeDecision(model_id="model123", config_json={})
+        pmd = PackModeDecision(
+            model_id="model123", config_json={}
+        )
         mode = pmd.decide()
     """
 

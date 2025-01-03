@@ -1,13 +1,12 @@
 import os
 
-import requests
 import pyairtable
+import requests
 import yaml
 
-from ersilia.hub.content.card import BaseInformation
-from ersilia.hub.content.card import RepoMetadataFile
-from ersilia.utils.terminal import run_command
+from ersilia.hub.content.card import BaseInformation, RepoMetadataFile
 from ersilia.utils.logging import make_temp_dir
+from ersilia.utils.terminal import run_command
 
 GITHUB_ORG = "ersilia-os"
 AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"

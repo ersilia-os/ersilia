@@ -1,7 +1,7 @@
 import click
 
-from . import ersilia_cli
 from ...utils.installers import base_installer, full_installer
+from . import ersilia_cli
 
 
 def setup_cmd():

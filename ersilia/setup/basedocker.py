@@ -1,10 +1,10 @@
 import os
-import tempfile
-from ..utils.docker import SimpleDocker
-from ..utils.versioning import Versioner
+
 from .. import ErsiliaBase
-from .utils.clone import ErsiliaCloner
+from ..utils.docker import SimpleDocker
 from ..utils.logging import make_temp_dir
+from ..utils.versioning import Versioner
+from .utils.clone import ErsiliaCloner
 
 
 # TODO: Make sure it is used.

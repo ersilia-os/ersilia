@@ -1,9 +1,9 @@
-import os
 import csv
+import os
 import tempfile
 from urllib.request import urlopen
-from ... import ErsiliaBase
 
+from ... import ErsiliaBase
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -13,6 +13,22 @@ MIN_DESCRIPTION_LENGTH = 60
 
 
 class ColumnsInformation(ErsiliaBase):
+    """
+    Class to handle the columns information of a model.
+
+    This class provides methods to get columns information from local files or GitHub,
+    and validate the columns data.
+
+    Parameters
+    ----------
+    model_id : str
+        The model identifier.
+    api_name : str
+        The API name.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    """
+
     def __init__(self, model_id, api_name, config_json=None):
         self.model_id = model_id
         self.api_name = api_name
@@ -50,7 +66,12 @@ class ColumnsInformation(ErsiliaBase):
                     else:
                         directions += [r[2]]
                     descriptions += [r[3]]
-            return {"name": names, "type": types, "direction": directions, "description": descriptions}
+            return {
+                "name": names,
+                "type": types,
+                "direction": directions,
+                "description": descriptions,
+            }
         else:
             self.logger.debug(
                 "Explicit columns data for {0} API does not exist in file {1}".format(
@@ -58,11 +79,11 @@ class ColumnsInformation(ErsiliaBase):
                 )
             )
             return None
-        
+
     def _get_columns_information_from_local(self):
         file_name = os.path.join(self._model_path(self.model_id), self.relative_path)
         return self._get_columns_information_from_file(file_name)
-    
+
     def _get_columns_information_from_github(self):
         org = "ersilia-os"
         branch = "main"
@@ -74,7 +95,7 @@ class ColumnsInformation(ErsiliaBase):
         try:
             with urlopen(url) as response:
                 data = response.read()
-            with open(file_name, 'wb') as f:
+            with open(file_name, "wb") as f:
                 f.write(data)
         except Exception as e:
             self.logger.debug(
@@ -84,7 +105,7 @@ class ColumnsInformation(ErsiliaBase):
             )
             self.logger.warning(f"Warning: {e}")
             return None
-        
+
     def _validate_columns_data(self, data):
         for d in data["name"]:
             if d[0].lower() != d[0]:
@@ -96,9 +117,7 @@ class ColumnsInformation(ErsiliaBase):
         for d in data["type"]:
             if d not in self.DATA_TYPES:
                 raise ValueError(
-                    "Type {0} is not an accepted type: {1}".format(
-                        d, self.DATA_TYPES
-                    )
+                    "Type {0} is not an accepted type: {1}".format(d, self.DATA_TYPES)
                 )
         for d in data["direction"]:
             if d not in self.DESIRED_DIRECTIONS:
@@ -116,6 +135,14 @@ class ColumnsInformation(ErsiliaBase):
                 )
 
     def load(self):
+        """
+        Load the columns information.
+
+        Returns
+        -------
+        dict
+            The columns information.
+        """
         data = self._get_columns_information_from_local()
         if data is None:
             data = self._get_columns_information_from_github()

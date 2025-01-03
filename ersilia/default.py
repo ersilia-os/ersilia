@@ -1,7 +1,9 @@
-from pathlib import Path
-import shutil
 import os
+import shutil
 from enum import Enum
+from pathlib import Path
+
+# ruff: noqa: D101, D102
 
 # EOS environmental variables
 EOS = os.path.join(str(Path.home()), "eos")
@@ -85,7 +87,7 @@ ISAURA_FILE_TAG_LOCAL = "_local"
 ISAURA_GDRIVE = "1LSCMHrCuXUDNH3WRbrLMW2FoiwMCxF2n"
 ISAURA_TEAM_GDRIVE = "0AG4WDDaU_00XUk9PVA"
 ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
-
+REDIS_SERVER = "redis://127.0.0.1:6379"
 # Other
 FEATURE_MERGE_PATTERN = "---"
 
