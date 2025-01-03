@@ -1,7 +1,6 @@
 import json
 import os
 
-
 from .. import ErsiliaBase, throw_ersilia_exception
 from ..default import DOCKER_INFO_FILE
 from ..hub.content.slug import Slug

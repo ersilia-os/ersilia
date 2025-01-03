@@ -9,14 +9,14 @@ from dockerfile_parse import DockerfileParser
 
 from .. import logger
 from ..default import (
-    EOS,
     DEFAULT_DOCKER_PLATFORM,
     DEFAULT_UDOCKER_USERNAME,
+    DOCKER_INFO_FILE,
     DOCKERHUB_LATEST_TAG,
     DOCKERHUB_ORG,
+    EOS,
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
-    DOCKER_INFO_FILE
 )
 from ..utils.logging import make_temp_dir
 from ..utils.system import SystemChecker
@@ -28,9 +28,7 @@ def resolve_pack_method_docker(model_id):
     client = docker.from_env()
     bundle_path = f"{EOS}/dest/{model_id}"
     docker_tag = model_image_version_reader(bundle_path)
-    model_image = client.images.get(
-        f"{DOCKERHUB_ORG}/{model_id}:{docker_tag}"
-    )
+    model_image = client.images.get(f"{DOCKERHUB_ORG}/{model_id}:{docker_tag}")
     image_history = model_image.history()
     for hist in image_history:
         # Very hacky, but works bec we don't have nginx in ersilia-pack images
@@ -77,6 +75,7 @@ def model_image_version_reader(dir):
         if "tag" in data:
             return data["tag"]
     return DOCKERHUB_LATEST_TAG
+
 
 class SimpleDocker(object):
     """

@@ -24,7 +24,6 @@ from .services import (
     VenvEnvironmentService,
 )
 
-
 DEFAULT_OUTPUT = None
 
 

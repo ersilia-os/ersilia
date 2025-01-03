@@ -103,10 +103,10 @@ class ModelDockerHubFetcher(ErsiliaBase):
             True if the model is available, False otherwise.
         """
         mp = ModelPuller(
-            model_id=model_id, 
-            overwrite=self.overwrite, 
+            model_id=model_id,
+            overwrite=self.overwrite,
             config_json=self.config_json,
-            docker_tag=self.img_tag
+            docker_tag=self.img_tag,
         )
         if mp.is_available_locally():
             return True
@@ -255,9 +255,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         """
         information_file = os.path.join(self._model_path(model_id), INFORMATION_FILE)
         mp = ModelPuller(
-            model_id=model_id, 
-            config_json=self.config_json,
-            docker_tag=self.img_tag
+            model_id=model_id, config_json=self.config_json, docker_tag=self.img_tag
         )
         try:
             with open(information_file, "r") as infile:
@@ -282,9 +280,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             ID of the model.
         """
         mp = ModelPuller(
-            model_id=model_id,
-            config_json=self.config_json,
-            docker_tag=self.img_tag
+            model_id=model_id, config_json=self.config_json, docker_tag=self.img_tag
         )
         self.logger.debug("Pulling model image from DockerHub")
         await mp.async_pull()

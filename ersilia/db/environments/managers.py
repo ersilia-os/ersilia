@@ -6,7 +6,7 @@ import sys
 from ...core.base import ErsiliaBase
 from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...setup.requirements.docker import DockerRequirement
-from ...utils.docker import SimpleDocker, resolve_platform
+from ...utils.docker import SimpleDocker, model_image_version_reader, resolve_platform
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.logging import make_temp_dir
 from ...utils.paths import Paths
@@ -235,7 +235,7 @@ class DockerManager(ErsiliaBase):
                 cnt_dict[k] = v
         return cnt_dict
 
-    def build_with_bentoml(self, model_id, use_cache=True): # Ignore for versioning
+    def build_with_bentoml(self, model_id, use_cache=True):  # Ignore for versioning
         """
         Builds a Docker image for the model using BentoML.
 
@@ -295,7 +295,9 @@ class DockerManager(ErsiliaBase):
         )
         run_command(cmd)
 
-    def build_with_ersilia(self, model_id, docker_user, docker_pwd): # Ignore for versioning
+    def build_with_ersilia(
+        self, model_id, docker_user, docker_pwd
+    ):  # Ignore for versioning
         """
         Builds a Docker image for the model using Ersilia's base image.
 

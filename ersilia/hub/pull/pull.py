@@ -7,7 +7,7 @@ import requests
 
 from ... import ErsiliaBase, throw_ersilia_exception
 from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
-from ...utils.docker import SimpleDocker, model_image_version_reader
+from ...utils.docker import SimpleDocker
 from ...utils.exceptions_utils.pull_exceptions import (
     DockerConventionalPullError,
     DockerImageNotAvailableError,
@@ -40,7 +40,14 @@ class ModelPuller(ErsiliaBase):
         )
         await puller.async_pull()
     """
-    def __init__(self, model_id: str, overwrite: bool = None, config_json: dict = None, docker_tag: str = None):
+
+    def __init__(
+        self,
+        model_id: str,
+        overwrite: bool = None,
+        config_json: dict = None,
+        docker_tag: str = None,
+    ):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.model_id = model_id
@@ -152,7 +159,9 @@ class ModelPuller(ErsiliaBase):
                     "Trying to pull image {0}/{1}".format(DOCKERHUB_ORG, self.model_id)
                 )
 
-                pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{self.docker_tag}"
+                pull_command = (
+                    f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{self.docker_tag}"
+                )
 
                 process = await asyncio.create_subprocess_shell(
                     pull_command,

@@ -16,7 +16,6 @@ from ...utils.exceptions_utils.fetch_exceptions import (
 )
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...utils.terminal import yes_no_input
-from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, MODEL_SOURCE_FILE
 from . import STATUS_FILE
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
@@ -104,9 +103,7 @@ class ModelFetcher(ErsiliaBase):
             dockerize = True
         self.do_docker = dockerize
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
-            overwrite=self.overwrite,
-            config_json=self.config_json,
-            img_tag=img_version
+            overwrite=self.overwrite, config_json=self.config_json, img_tag=img_version
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
         self.is_docker_active = self.model_dockerhub_fetcher.is_docker_active()
