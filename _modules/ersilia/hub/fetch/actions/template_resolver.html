@@ -312,13 +312,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch.actions.template_resolver</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">http.client</span>
+<span></span><span class="kn">import</span> <span class="nn">http.client</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">urllib.parse</span>
 
+<span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">ALLOWED_API_NAMES</span><span class="p">,</span> <span class="n">GITHUB_ORG</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
-
-<span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="n">GITHUB_ORG</span><span class="p">,</span> <span class="n">ALLOWED_API_NAMES</span>
 
 
 <div class="viewcode-block" id="TemplateResolver">
@@ -367,7 +366,7 @@
             <span class="n">conn</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;HEAD&quot;</span><span class="p">,</span> <span class="n">parsed_url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>

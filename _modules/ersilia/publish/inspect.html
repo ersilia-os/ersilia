@@ -312,25 +312,27 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.publish.inspect</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
+    <span class="n">INSTALL_YAML_FILE</span><span class="p">,</span>
+    <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
+    <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
+    <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">,</span>
+    <span class="n">RUN_FILE</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..hub.content.card</span> <span class="kn">import</span> <span class="n">RepoMetadataFile</span>
 <span class="kn">from</span> <span class="nn">..hub.fetch.actions.template_resolver</span> <span class="kn">import</span> <span class="n">TemplateResolver</span>
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">INSTALL_YAML_FILE</span><span class="p">,</span>
-    <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
-    <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
-    <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
-    <span class="n">RUN_FILE</span><span class="p">,</span>
-    <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">,</span>
-<span class="p">)</span>
 
 <span class="n">Result</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;Result&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">])</span>
 
@@ -360,7 +362,9 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        inspector = ModelInspector(model=&quot;model_id&quot;, dir=&quot;path/to/repo&quot;)</span>
+<span class="sd">        inspector = ModelInspector(</span>
+<span class="sd">            model=&quot;model_id&quot;, dir=&quot;path/to/repo&quot;</span>
+<span class="sd">        )</span>
 <span class="sd">        result = inspector.check_repo_exists()</span>
 <span class="sd">        result = inspector.check_complete_metadata()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -703,6 +707,13 @@
 <div class="viewcode-block" id="ModelInspector.validate_repo_structure">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.inspect.ModelInspector.validate_repo_structure">[docs]</a>
     <span class="k">def</span> <span class="nf">validate_repo_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the repository structure.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List of missing items.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pack Type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
             <span class="n">required_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">BENTOML_FILES</span>

@@ -312,17 +312,16 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.setup.baseconda</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">from</span> <span class="nn">packaging</span> <span class="kn">import</span> <span class="n">version</span>
 
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
+<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">..utils.versioning</span> <span class="kn">import</span> <span class="n">Versioner</span>
 <span class="kn">from</span> <span class="nn">.utils.clone</span> <span class="kn">import</span> <span class="n">ErsiliaCloner</span>
-<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
-
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
 
 
 <div class="viewcode-block" id="SetupBaseConda">

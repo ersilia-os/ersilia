@@ -312,25 +312,20 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.io.input</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">csv</span>
+<span></span><span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
 
-<span class="kn">from</span> <span class="nn">..hub.content.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
-
-<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.exceptions</span> <span class="kn">import</span> <span class="n">NullModelIdentifierError</span>
-
-<span class="kn">from</span> <span class="nn">.shape</span> <span class="kn">import</span> <span class="n">InputShape</span>
-<span class="kn">from</span> <span class="nn">.shape</span> <span class="kn">import</span> <span class="n">InputShapeSingle</span><span class="p">,</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span>
-<span class="kn">from</span> <span class="nn">.readers.pyinput</span> <span class="kn">import</span> <span class="n">PyInputReader</span>
-<span class="kn">from</span> <span class="nn">.readers.file</span> <span class="kn">import</span> <span class="n">TabularFileReader</span><span class="p">,</span> <span class="n">JsonFileReader</span>
-
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span>
+<span class="kn">from</span> <span class="nn">..hub.content.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
+<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.exceptions</span> <span class="kn">import</span> <span class="n">NullModelIdentifierError</span>
+<span class="kn">from</span> <span class="nn">.readers.file</span> <span class="kn">import</span> <span class="n">JsonFileReader</span><span class="p">,</span> <span class="n">TabularFileReader</span>
+<span class="kn">from</span> <span class="nn">.readers.pyinput</span> <span class="kn">import</span> <span class="n">PyInputReader</span>
+<span class="kn">from</span> <span class="nn">.shape</span> <span class="kn">import</span> <span class="n">InputShape</span><span class="p">,</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
 
 
 <div class="viewcode-block" id="BaseIOGetter">
@@ -617,6 +612,21 @@
 <div class="viewcode-block" id="GenericInputAdapter.batch_iter">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.GenericInputAdapter.batch_iter">[docs]</a>
     <span class="k">def</span> <span class="nf">batch_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Yield batches of data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : iterable</span>
+<span class="sd">            The data to be batched.</span>
+<span class="sd">        batch_size : int</span>
+<span class="sd">            The size of each batch.</span>
+
+<span class="sd">        Yields</span>
+<span class="sd">        ------</span>
+<span class="sd">        iterable</span>
+<span class="sd">            A batch of data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">chunk</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">))</span>

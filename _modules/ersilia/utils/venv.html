@@ -312,20 +312,16 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.venv</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-
-<span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">VirtualEnvironmentSetupError</span><span class="p">,</span>
     <span class="n">ModelPackageInstallError</span><span class="p">,</span>
+    <span class="n">VirtualEnvironmentSetupError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 
 
 <div class="viewcode-block" id="SimpleVenv">

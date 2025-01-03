@@ -312,22 +312,31 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">__version__</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
+<span></span><span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">import</span> <span class="nn">click</span>
+
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">..echo</span> <span class="kn">import</span> <span class="n">Silencer</span>
 
 
 <div class="viewcode-block" id="ErsiliaCommandGroup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup">[docs]</a>
 <span class="k">class</span> <span class="nc">ErsiliaCommandGroup</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Command group for Ersilia CLI commands.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">NUMBER_OF_COMMON_PARAMS</span> <span class="o">=</span> <span class="mi">2</span>
 
 <div class="viewcode-block" id="ErsiliaCommandGroup.bentoml_common_params">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.bentoml_common_params">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">bentoml_common_params</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add common parameters to the command.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
             <span class="s2">&quot;-q&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--quiet&quot;</span><span class="p">,</span>
@@ -345,6 +354,10 @@
 <div class="viewcode-block" id="ErsiliaCommandGroup.command">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.command">[docs]</a>
     <span class="k">def</span> <span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register a new command with common parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">ErsiliaCommandGroup</span><span class="o">.</span><span class="n">bentoml_common_params</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="n">func</span><span class="o">.</span><span class="n">__click_params__</span> <span class="o">=</span> <span class="p">(</span>

@@ -319,6 +319,19 @@
 <div class="viewcode-block" id="LakeStorer">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.lake.LakeStorer">[docs]</a>
 <span class="k">class</span> <span class="nc">LakeStorer</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to handle storing data in the lake.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration in JSON format.</span>
+<span class="sd">    credentials_json : dict</span>
+<span class="sd">        Credentials in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -333,6 +346,9 @@
 <div class="viewcode-block" id="LakeStorer.store">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.lake.LakeStorer.store">[docs]</a>
     <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store data in the lake.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Appeding local to public&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isaura_manager</span><span class="o">.</span><span class="n">append_local_to_public</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pushing&quot;</span><span class="p">)</span>

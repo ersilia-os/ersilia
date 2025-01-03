@@ -312,11 +312,11 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.exceptions_utils.exceptions</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 
 
 <div class="viewcode-block" id="ErsiliaError">
@@ -339,7 +339,10 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        try:</span>
-<span class="sd">            raise ErsiliaError(&quot;An error occurred&quot;, hints=&quot;Check your configuration&quot;)</span>
+<span class="sd">            raise ErsiliaError(</span>
+<span class="sd">                &quot;An error occurred&quot;,</span>
+<span class="sd">                hints=&quot;Check your configuration&quot;,</span>
+<span class="sd">            )</span>
 <span class="sd">        except ErsiliaError as e:</span>
 <span class="sd">            print(e)</span>
 
@@ -366,6 +369,10 @@
 <div class="viewcode-block" id="MissingDependencyError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.MissingDependencyError">[docs]</a>
 <span class="k">class</span> <span class="nc">MissingDependencyError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exception raised for missing dependency errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dependency</span> <span class="o">=</span> <span class="n">dependency</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Missing dependency </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependency</span><span class="p">)</span>
@@ -377,6 +384,10 @@
 <div class="viewcode-block" id="NullModelIdentifierError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.NullModelIdentifierError">[docs]</a>
 <span class="k">class</span> <span class="nc">NullModelIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exception raised for null model identifier errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Model identifier </span><span class="si">{0}</span><span class="s2"> is null&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
@@ -388,6 +399,10 @@
 <div class="viewcode-block" id="InvalidModelIdentifierError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.InvalidModelIdentifierError">[docs]</a>
 <span class="k">class</span> <span class="nc">InvalidModelIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exception raised for invalid model identifier errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Could not identify model identifier or slug: </span><span class="si">{0}</span><span class="s2">:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -403,6 +418,10 @@
 <div class="viewcode-block" id="ModelNotAvailableLocallyError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelNotAvailableLocallyError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exception raised when the model is not available locally.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
@@ -419,6 +438,10 @@
 <div class="viewcode-block" id="EmptyOutputError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.EmptyOutputError">[docs]</a>
 <span class="k">class</span> <span class="nc">EmptyOutputError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exception raised for empty output errors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span> <span class="o">=</span> <span class="n">api_name</span>
@@ -433,6 +456,9 @@
 <div class="viewcode-block" id="EmptyOutputError.run_from_terminal">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.EmptyOutputError.run_from_terminal">[docs]</a>
     <span class="k">def</span> <span class="nf">run_from_terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the error handling from the terminal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">eb</span> <span class="o">=</span> <span class="n">ErsiliaBase</span><span class="p">()</span>
         <span class="n">bundle_dir</span> <span class="o">=</span> <span class="n">eb</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">framework_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -447,7 +473,9 @@
         <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">framework_dir</span><span class="p">,</span> <span class="s2">&quot;example_output.csv&quot;</span><span class="p">)</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">log_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;terminal.log&quot;</span><span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;ersilia example </span><span class="si">{0}</span><span class="s2"> -n 3 -f </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">input_file</span><span class="p">))</span>
+        <span class="n">run_command</span><span class="p">(</span>
+            <span class="s2">&quot;ersilia example inputs </span><span class="si">{0}</span><span class="s2"> -n 3 -f </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">input_file</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2"> </span><span class="si">{1}</span><span class="s2"> </span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span><span class="s2"> 2&gt;&amp;1 | tee -a </span><span class="si">{4}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">exec_file</span><span class="p">,</span> <span class="n">framework_dir</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">log_file</span>
         <span class="p">)</span>

@@ -313,27 +313,26 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.docker</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">docker</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
 
-<span class="kn">from</span> <span class="nn">.identifiers.long</span> <span class="kn">import</span> <span class="n">LongIdentifier</span>
-<span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
+<span class="kn">import</span> <span class="nn">docker</span>
+<span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_DOCKER_PLATFORM</span><span class="p">,</span>
     <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span>
-    <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
     <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+    <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
     <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..utils.system</span> <span class="kn">import</span> <span class="n">SystemChecker</span>
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span> <span class="nn">..utils.system</span> <span class="kn">import</span> <span class="n">SystemChecker</span>
+<span class="kn">from</span> <span class="nn">.identifiers.long</span> <span class="kn">import</span> <span class="n">LongIdentifier</span>
+<span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
 
 
 <div class="viewcode-block" id="resolve_pack_method_docker">
@@ -507,16 +506,16 @@
         <span class="n">cnt_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">cnt_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;CONTAINER ID&quot;</span><span class="p">)</span>
+            <span class="c1"># cnt_idx = h.find(&quot;CONTAINER ID&quot;)</span>
             <span class="n">img_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;IMAGE&quot;</span><span class="p">)</span>
             <span class="n">cmd_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;COMMAND&quot;</span><span class="p">)</span>
-            <span class="n">sts_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;STATUS&quot;</span><span class="p">)</span>
-            <span class="n">pts_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;PORTS&quot;</span><span class="p">)</span>
+            <span class="c1"># sts_idx = h.find(&quot;STATUS&quot;)</span>
+            <span class="c1"># pts_idx = h.find(&quot;PORTS&quot;)</span>
             <span class="n">nam_idx</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;NAMES&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">cnt</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">cnt_idx</span><span class="p">:</span><span class="n">img_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="c1"># cnt = l[cnt_idx:img_idx].strip()</span>
                 <span class="n">img</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">img_idx</span><span class="p">:</span><span class="n">cmd_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="n">sts</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">sts_idx</span><span class="p">:</span><span class="n">pts_idx</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="c1"># sts = l[sts_idx:pts_idx].strip()</span>
                 <span class="n">nam</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">nam_idx</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">cnt_dict</span><span class="p">[</span><span class="n">nam</span><span class="p">]</span> <span class="o">=</span> <span class="n">img</span>
         <span class="k">return</span> <span class="n">cnt_dict</span></div>
@@ -659,9 +658,7 @@
             <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># TODO</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;sudo -u </span><span class="si">{0}</span><span class="s2"> udocker run </span><span class="si">{2}</span><span class="s2"> bash&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;sudo -u </span><span class="si">{0}</span><span class="s2"> udocker run </span><span class="si">{2}</span><span class="s2"> bash&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">)</span>  <span class="c1"># noqa: F524</span>
             <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">name</span></div>
 

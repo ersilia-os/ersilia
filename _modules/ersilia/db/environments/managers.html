@@ -313,24 +313,22 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.db.environments.managers</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">...core.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span>
 <span class="kn">from</span> <span class="nn">...setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
-<span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">Paths</span>
-<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">resolve_platform</span>
-<span class="kn">from</span> <span class="nn">...utils.system</span> <span class="kn">import</span> <span class="n">is_inside_docker</span>
 <span class="kn">from</span> <span class="nn">...utils.identifiers.short</span> <span class="kn">import</span> <span class="n">ShortIdentifier</span>
-<span class="kn">from</span> <span class="nn">...utils.ports</span> <span class="kn">import</span> <span class="n">find_free_port</span>
-<span class="kn">from</span> <span class="nn">.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
-<span class="kn">from</span> <span class="nn">...utils.session</span> <span class="kn">import</span> <span class="n">get_session_dir</span>
 <span class="kn">from</span> <span class="nn">...utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
-
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">Paths</span>
+<span class="kn">from</span> <span class="nn">...utils.ports</span> <span class="kn">import</span> <span class="n">find_free_port</span>
+<span class="kn">from</span> <span class="nn">...utils.session</span> <span class="kn">import</span> <span class="n">get_session_dir</span>
+<span class="kn">from</span> <span class="nn">...utils.system</span> <span class="kn">import</span> <span class="n">is_inside_docker</span>
+<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
 
 <span class="n">BENTOML_DOCKERPORT</span> <span class="o">=</span> <span class="mi">5000</span>
 <span class="n">INTERNAL_DOCKERPORT</span> <span class="o">=</span> <span class="mi">80</span>
@@ -356,9 +354,15 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; docker_manager = DockerManager(config_json=config, preferred_port=8080)</span>
-<span class="sd">    &gt;&gt;&gt; docker_manager.build(model_id=&#39;eosxxxx&#39;, docker_user=&#39;user&#39;, docker_pwd=&#39;pass&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; docker_manager.run(model_id=&#39;eosxxxx&#39;, workers=2)</span>
+<span class="sd">    &gt;&gt;&gt; docker_manager = DockerManager(</span>
+<span class="sd">    ...     config_json=config, preferred_port=8080</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; docker_manager.build(</span>
+<span class="sd">    ...     model_id=&quot;eosxxxx&quot;,</span>
+<span class="sd">    ...     docker_user=&quot;user&quot;,</span>
+<span class="sd">    ...     docker_pwd=&quot;pass&quot;,</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; docker_manager.run(model_id=&quot;eosxxxx&quot;, workers=2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -856,6 +860,9 @@
 
 
     <span class="k">def</span> <span class="nf">delete_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a Docker image associated with a model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DockerManager.remove_stopped_containers">
@@ -971,7 +978,7 @@
 
 <div class="viewcode-block" id="DockerManager.delete_image">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.delete_image">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">delete_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">):</span>  <span class="c1"># noqa: D102, F811</span>
         <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;rm_image_output.txt&quot;</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker image rm </span><span class="si">{0}</span><span class="s2"> --force 2&gt; </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
@@ -1040,14 +1047,13 @@
 
 <div class="viewcode-block" id="CondaManager">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.CondaManager">[docs]</a>
-<span class="k">class</span> <span class="nc">CondaManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-
+<span class="k">class</span> <span class="nc">CondaManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>  <span class="c1"># noqa: D101</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="CondaManager.environments">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.CondaManager.environments">[docs]</a>
-    <span class="k">def</span> <span class="nf">environments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">environments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># noqa: D102</span>
         <span class="k">pass</span></div>
 </div>
 

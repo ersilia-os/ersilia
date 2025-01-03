@@ -313,28 +313,28 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.delete.delete</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">...utils.environment</span> <span class="kn">import</span> <span class="n">Environment</span>
-<span class="kn">from</span> <span class="nn">...utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
-<span class="kn">from</span> <span class="nn">...utils.system</span> <span class="kn">import</span> <span class="n">is_inside_docker</span>
-<span class="kn">from</span> <span class="nn">..content.catalog</span> <span class="kn">import</span> <span class="n">ModelCatalog</span>
-<span class="kn">from</span> <span class="nn">..content.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
-<span class="kn">from</span> <span class="nn">...db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.localslugs</span> <span class="kn">import</span> <span class="n">SlugDb</span>
-<span class="kn">from</span> <span class="nn">...db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
-<span class="kn">from</span> <span class="nn">...db.disk.fetched</span> <span class="kn">import</span> <span class="n">FetchedModelsManager</span>
-<span class="kn">from</span> <span class="nn">..bundle.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
 
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">...db.disk.fetched</span> <span class="kn">import</span> <span class="n">FetchedModelsManager</span>
+<span class="kn">from</span> <span class="nn">...db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
+<span class="kn">from</span> <span class="nn">...db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
+<span class="kn">from</span> <span class="nn">...db.hubdata.localslugs</span> <span class="kn">import</span> <span class="n">SlugDb</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">ISAURA_FILE_TAG</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG_LOCAL</span>
+<span class="kn">from</span> <span class="nn">...utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
+<span class="kn">from</span> <span class="nn">...utils.environment</span> <span class="kn">import</span> <span class="n">Environment</span>
 <span class="kn">from</span> <span class="nn">...utils.session</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">deregister_model_session</span><span class="p">,</span>
     <span class="n">get_model_session</span><span class="p">,</span>
     <span class="n">remove_session_dir</span><span class="p">,</span>
-    <span class="n">deregister_model_session</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">...utils.system</span> <span class="kn">import</span> <span class="n">is_inside_docker</span>
+<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">..bundle.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
+<span class="kn">from</span> <span class="nn">..content.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
+<span class="kn">from</span> <span class="nn">..content.catalog</span> <span class="kn">import</span> <span class="n">ModelCatalog</span>
 
 
 <div class="viewcode-block" id="rmtree">
@@ -431,6 +431,18 @@
 <div class="viewcode-block" id="ModelLakeDeleter.delete_if_exists">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelLakeDeleter.delete_if_exists">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_if_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete the file or symbolic link at the given path if it exists.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            The path to the file or symbolic link to be deleted.</span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This function checks if the given path is a file or a symbolic link.</span>
+<span class="sd">        If it is, the file or symbolic link is removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -780,6 +792,13 @@
 <div class="viewcode-block" id="ModelPipDeleter.pip_uninstall">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelPipDeleter.pip_uninstall">[docs]</a>
     <span class="k">def</span> <span class="nf">pip_uninstall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uninstalls a Python package using pip.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The name of the package to uninstall.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;echo y | pip uninstall </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">model_id</span><span class="p">)</span></div>
 
 

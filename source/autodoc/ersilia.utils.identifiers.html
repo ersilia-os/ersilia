@@ -329,10 +329,23 @@
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.arbitrary.ArbitraryIdentifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.arbitrary.</span></span><span class="sig-name descname"><span class="pre">ArbitraryIdentifier</span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/arbitrary.html#ArbitraryIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.arbitrary.ArbitraryIdentifier" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for handling arbitrary identifiers.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.arbitrary.ArbitraryIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/arbitrary.html#ArbitraryIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.arbitrary.ArbitraryIdentifier.encode" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Encode the given text using MD5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The text to encode.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The encoded text.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -421,7 +434,19 @@ The results are cached to improve performance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.encode_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Encode a batch of SMILES strings asynchronously.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>smiles_list</strong> (<em>list</em>) – The list of SMILES strings to encode.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of encoded results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">
@@ -477,7 +502,18 @@ The results are cached to improve performance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_smiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semaphore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.process_smiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Process a SMILES string asynchronously.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>smiles</strong> (<em>str</em>) – The SMILES string to process.</p></li>
+<li><p><strong>semaphore</strong> (<em>asyncio.Semaphore</em>) – The semaphore to limit concurrency.</p></li>
+<li><p><strong>session</strong> (<em>aiohttp.ClientSession</em>) – The HTTP session for making requests.</p></li>
+<li><p><strong>result_list</strong> (<em>list</em>) – The list to store results.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">
@@ -793,10 +829,20 @@ The checksum is prefixed with “key” to distinguish it from other strings.</p
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.timestamp.TimeStampIdentifier">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.timestamp.</span></span><span class="sig-name descname"><span class="pre">TimeStampIdentifier</span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/timestamp.html#TimeStampIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.timestamp.TimeStampIdentifier" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for handling timestamp identifiers.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.timestamp.TimeStampIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/timestamp.html#TimeStampIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.timestamp.TimeStampIdentifier.encode" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Encode the current timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The encoded timestamp.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

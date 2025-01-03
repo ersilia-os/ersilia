@@ -312,25 +312,22 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.pull.pull</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">aiofiles</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span><span class="p">,</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
-<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.pull_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DockerImageNotAvailableError</span><span class="p">,</span>
-    <span class="n">DockerConventionalPullError</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span>
 <span class="kn">from</span> <span class="nn">...utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span>
+<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.pull_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DockerConventionalPullError</span><span class="p">,</span>
+    <span class="n">DockerImageNotAvailableError</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">...utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">yes_no_input</span>
 
 <span class="n">PULL_IMAGE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PULL_IMAGE&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
 
@@ -354,7 +351,9 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        puller = ModelPuller(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        puller = ModelPuller(</span>
+<span class="sd">            model_id=&quot;eosxxxx&quot;, config_json=config</span>
+<span class="sd">        )</span>
 <span class="sd">        await puller.async_pull()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

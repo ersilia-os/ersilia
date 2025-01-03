@@ -312,8 +312,8 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.content.information</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">emoji</span>
@@ -321,25 +321,25 @@
     <span class="n">emoji</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="kn">import</span> <span class="nn">click</span>
 
-<span class="kn">from</span> <span class="nn">.columns_information</span> <span class="kn">import</span> <span class="n">ColumnsInformation</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">PACKMODE_FILE</span><span class="p">,</span>
     <span class="n">API_SCHEMA_FILE</span><span class="p">,</span>
-    <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span>
-    <span class="n">CARD_FILE</span><span class="p">,</span>
-    <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
     <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
+    <span class="n">CARD_FILE</span><span class="p">,</span>
+    <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span>
     <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span>
+    <span class="n">PACKMODE_FILE</span><span class="p">,</span>
+    <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
+<span class="kn">from</span> <span class="nn">.columns_information</span> <span class="kn">import</span> <span class="n">ColumnsInformation</span>
 
 
 <div class="viewcode-block" id="Information">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.Information">[docs]</a>
 <span class="k">class</span> <span class="nc">Information</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to handle the information of a model.</span>
+<span class="sd">    Class to handle the information of a models.</span>
 
 <span class="sd">    This class provides methods to get various information about a model,</span>
 <span class="sd">    such as pack mode, service class, model source, API schema, size, metadata, and card.</span>
@@ -443,7 +443,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
-<span class="sd">            A dictionary containing various information about the model.</span>
+<span class="sd">            A dictionary containing several information about the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;pack_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pack_mode</span><span class="p">(),</span>

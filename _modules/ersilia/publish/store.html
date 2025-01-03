@@ -320,10 +320,11 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">..utils.zip</span> <span class="kn">import</span> <span class="n">Zipper</span>
-<span class="kn">from</span> <span class="nn">..utils.upload</span> <span class="kn">import</span> <span class="n">OsfUploader</span>
 <span class="kn">from</span> <span class="nn">..utils.remove</span> <span class="kn">import</span> <span class="n">OsfRemover</span>
+<span class="kn">from</span> <span class="nn">..utils.upload</span> <span class="kn">import</span> <span class="n">OsfUploader</span>
+<span class="kn">from</span> <span class="nn">..utils.zip</span> <span class="kn">import</span> <span class="n">Zipper</span>
 
 
 <div class="viewcode-block" id="ModelStorager">
@@ -415,7 +416,10 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        remover = ModelRemover(config_json=&quot;path/to/config.json&quot;, credentials_json=&quot;path/to/credentials.json&quot;)</span>
+<span class="sd">        remover = ModelRemover(</span>
+<span class="sd">            config_json=&quot;path/to/config.json&quot;,</span>
+<span class="sd">            credentials_json=&quot;path/to/credentials.json&quot;,</span>
+<span class="sd">        )</span>
 <span class="sd">        remover.remove(model_id=&quot;model_id&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

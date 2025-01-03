@@ -313,11 +313,13 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.identifiers.compound</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">nest_asyncio</span>
-<span class="kn">import</span> <span class="nn">aiohttp</span>
 <span class="kn">import</span> <span class="nn">urllib.parse</span>
-<span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+
+<span class="kn">import</span> <span class="nn">aiohttp</span>
+<span class="kn">import</span> <span class="nn">nest_asyncio</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
 <span class="kn">from</span> <span class="nn">..logging</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -325,8 +327,7 @@
 <span class="k">except</span><span class="p">:</span>
     <span class="n">unichem</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span>
-    <span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">RDLogger</span>
+    <span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span><span class="p">,</span> <span class="n">RDLogger</span>
 
     <span class="n">RDLogger</span><span class="o">.</span><span class="n">DisableLog</span><span class="p">(</span><span class="s2">&quot;rdApp.*&quot;</span><span class="p">)</span>
 <span class="k">except</span><span class="p">:</span>
@@ -562,7 +563,7 @@
                     <span class="k">return</span> <span class="kc">None</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
                 <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;PropertyTable&quot;</span><span class="p">][</span><span class="s2">&quot;Properties&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;InChIKey&quot;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
@@ -632,6 +633,20 @@
 <div class="viewcode-block" id="CompoundIdentifier.process_smiles">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles">[docs]</a>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">process_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">result_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process a SMILES string asynchronously.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        smiles : str</span>
+<span class="sd">            The SMILES string to process.</span>
+<span class="sd">        semaphore : asyncio.Semaphore</span>
+<span class="sd">            The semaphore to limit concurrency.</span>
+<span class="sd">        session : aiohttp.ClientSession</span>
+<span class="sd">            The HTTP session for making requests.</span>
+<span class="sd">        result_list : list</span>
+<span class="sd">            The list to store results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">semaphore</span><span class="p">:</span>  <span class="c1"># high performance resource manager</span>
             <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_smiles_to_inchikey_with_rdkit</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
 
@@ -654,6 +669,19 @@
 <div class="viewcode-block" id="CompoundIdentifier.encode_batch">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch">[docs]</a>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">encode_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles_list</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Encode a batch of SMILES strings asynchronously.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        smiles_list : list</span>
+<span class="sd">            The list of SMILES strings to encode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The list of encoded results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">semaphore</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">concurrency_limit</span><span class="p">)</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>

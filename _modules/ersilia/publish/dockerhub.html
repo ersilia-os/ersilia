@@ -314,8 +314,8 @@
           <h1>Source code for ersilia.publish.dockerhub</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">..db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span>
 <span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
 
 
 <div class="viewcode-block" id="DockerHubUploader">
@@ -335,8 +335,13 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        uploader = DockerHubUploader(model_id=&quot;model_id&quot;, config_json=&quot;path/to/config.json&quot;)</span>
-<span class="sd">        uploader.set_credentials(docker_user=&quot;username&quot;, docker_pwd=&quot;password&quot;)</span>
+<span class="sd">        uploader = DockerHubUploader(</span>
+<span class="sd">            model_id=&quot;model_id&quot;,</span>
+<span class="sd">            config_json=&quot;path/to/config.json&quot;,</span>
+<span class="sd">        )</span>
+<span class="sd">        uploader.set_credentials(</span>
+<span class="sd">            docker_user=&quot;username&quot;, docker_pwd=&quot;password&quot;</span>
+<span class="sd">        )</span>
 <span class="sd">        uploader.upload()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

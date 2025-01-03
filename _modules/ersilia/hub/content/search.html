@@ -314,9 +314,11 @@
           <h1>Source code for ersilia.hub.content.search</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Search for models&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">.catalog</span> <span class="kn">import</span> <span class="n">CatalogTable</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.catalog</span> <span class="kn">import</span> <span class="n">CatalogTable</span>
 
 
 <div class="viewcode-block" id="ModelSearcher">
@@ -421,7 +423,7 @@
             <span class="n">string_ratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
             <span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">string_ratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;\s&quot;</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s&quot;</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
             <span class="k">for</span> <span class="n">r1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
                 <span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r1</span><span class="p">)</span>
                 <span class="n">string_ratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>

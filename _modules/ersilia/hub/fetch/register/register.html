@@ -312,15 +312,14 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch.register.register</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
 <span class="kn">import</span> <span class="nn">validators</span>
 
-<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">EOS</span>
-<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span> <span class="nn">....</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">....default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">,</span>
     <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span><span class="p">,</span>
@@ -347,7 +346,9 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        registerer = ModelRegisterer(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        registerer = ModelRegisterer(</span>
+<span class="sd">            model_id=&quot;eosxxxx&quot;, config_json=config</span>
+<span class="sd">        )</span>
 <span class="sd">        await registerer.register(is_from_dockerhub=True)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -523,7 +524,9 @@
 <span class="sd">        --------</span>
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            registerer = ModelRegisterer(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">            registerer = ModelRegisterer(</span>
+<span class="sd">                model_id=&quot;eosxxxx&quot;, config_json=config</span>
+<span class="sd">            )</span>
 <span class="sd">            await registerer.register(is_from_dockerhub=True)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">is_from_dockerhub</span> <span class="ow">and</span> <span class="n">is_from_hosted</span><span class="p">:</span>

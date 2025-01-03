@@ -390,10 +390,10 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.io.readers.file.BaseTabularFile.get_delimiter">
 <span class="sig-name descname"><span class="pre">get_delimiter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#BaseTabularFile.get_delimiter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.readers.file.BaseTabularFile.get_delimiter" title="Link to this definition">¶</a></dt>
-<dd><p>Get the column delimiter of the file.</p>
+<dd><p>Get the delimiter used in the file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The column delimiter.</p>
+<dd class="field-odd"><p>The delimiter used in the file.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
@@ -844,7 +844,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.io.readers.file.StandardTabularFileReader.get_delimiter">
 <span class="sig-name descname"><span class="pre">get_delimiter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/readers/file.html#StandardTabularFileReader.get_delimiter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.readers.file.StandardTabularFileReader.get_delimiter" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the delimiter used in the file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The delimiter used in the file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.io.readers.file.StandardTabularFileReader.is_worth_splitting">
@@ -951,7 +960,12 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfss</span> <span class="o">=</span> <span class="n">TabularFileShapeStandardizer</span><span class="p">(</span><span class="s2">&quot;data.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;standard_data.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;single&quot;</span><span class="p">,</span> <span class="n">IOHandler</span><span class="p">())</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfss</span> <span class="o">=</span> <span class="n">TabularFileShapeStandardizer</span><span class="p">(</span>
+    <span class="s2">&quot;data.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;standard_data.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;single&quot;</span><span class="p">,</span>
+    <span class="n">IOHandler</span><span class="p">(),</span>
+<span class="p">)</span>
 <span class="n">tfss</span><span class="o">.</span><span class="n">standardize</span><span class="p">()</span>
 </pre></div>
 </div>

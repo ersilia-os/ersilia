@@ -312,8 +312,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.content.base_information</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">datetime</span>
+<span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">import</span> <span class="nn">validators</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -322,46 +323,55 @@
     <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ValidationFailure</span>
 
 
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...utils.exceptions_utils.base_information_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SlugBaseInformationError</span><span class="p">,</span>
-    <span class="n">IdentifierBaseInformationError</span><span class="p">,</span>
-    <span class="n">StatusBaseInformationError</span><span class="p">,</span>
-    <span class="n">TitleBaseInformationError</span><span class="p">,</span>
+    <span class="n">BiomedicalAreaBaseInformationError</span><span class="p">,</span>
+    <span class="n">BothIdentifiersBaseInformationError</span><span class="p">,</span>
     <span class="n">DescriptionBaseInformationError</span><span class="p">,</span>
-    <span class="n">ModeBaseInformationError</span><span class="p">,</span>
-    <span class="n">SourceBaseInformationError</span><span class="p">,</span>
-    <span class="n">SourceTypeBaseInformationError</span><span class="p">,</span>
+    <span class="n">DockerArchitectureBaseInformationError</span><span class="p">,</span>
+    <span class="n">DockerhubBaseInformationError</span><span class="p">,</span>
+    <span class="n">GithubBaseInformationError</span><span class="p">,</span>
+    <span class="n">IdentifierBaseInformationError</span><span class="p">,</span>
     <span class="n">InputBaseInformationError</span><span class="p">,</span>
     <span class="n">InputShapeBaseInformationError</span><span class="p">,</span>
+    <span class="n">LicenseBaseInformationError</span><span class="p">,</span>
+    <span class="n">MemoryGbBaseInformationError</span><span class="p">,</span>
+    <span class="n">ModeBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputBaseInformationError</span><span class="p">,</span>
-    <span class="n">OutputTypeBaseInformationError</span><span class="p">,</span>
-    <span class="n">OutputShapeBaseInformationError</span><span class="p">,</span>
-    <span class="n">OutputDimensionBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputConsistencyBaseInformationError</span><span class="p">,</span>
-    <span class="n">TaskBaseInformationError</span><span class="p">,</span>
-    <span class="n">SubtaskBaseInformationError</span><span class="p">,</span>
-    <span class="n">BiomedicalAreaBaseInformationError</span><span class="p">,</span>
-    <span class="n">TargetOrganismBaseInformationError</span><span class="p">,</span>
-    <span class="n">TagBaseInformationError</span><span class="p">,</span>
+    <span class="n">OutputDimensionBaseInformationError</span><span class="p">,</span>
+    <span class="n">OutputShapeBaseInformationError</span><span class="p">,</span>
+    <span class="n">OutputTypeBaseInformationError</span><span class="p">,</span>
     <span class="n">PublicationBaseInformationError</span><span class="p">,</span>
     <span class="n">PublicationTypeBaseInformationError</span><span class="p">,</span>
     <span class="n">PublicationYearBaseInformationError</span><span class="p">,</span>
-    <span class="n">SourceCodeBaseInformationError</span><span class="p">,</span>
-    <span class="n">LicenseBaseInformationError</span><span class="p">,</span>
-    <span class="n">GithubBaseInformationError</span><span class="p">,</span>
-    <span class="n">DockerhubBaseInformationError</span><span class="p">,</span>
-    <span class="n">DockerArchitectureBaseInformationError</span><span class="p">,</span>
     <span class="n">S3BaseInformationError</span><span class="p">,</span>
-    <span class="n">BothIdentifiersBaseInformationError</span><span class="p">,</span>
-    <span class="n">MemoryGbBaseInformationError</span><span class="p">,</span>
+    <span class="n">SlugBaseInformationError</span><span class="p">,</span>
+    <span class="n">SourceBaseInformationError</span><span class="p">,</span>
+    <span class="n">SourceCodeBaseInformationError</span><span class="p">,</span>
+    <span class="n">SourceTypeBaseInformationError</span><span class="p">,</span>
+    <span class="n">StatusBaseInformationError</span><span class="p">,</span>
+    <span class="n">SubtaskBaseInformationError</span><span class="p">,</span>
+    <span class="n">TagBaseInformationError</span><span class="p">,</span>
+    <span class="n">TargetOrganismBaseInformationError</span><span class="p">,</span>
+    <span class="n">TaskBaseInformationError</span><span class="p">,</span>
+    <span class="n">TitleBaseInformationError</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">...utils.identifiers.model</span> <span class="kn">import</span> <span class="n">ModelIdentifier</span>
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 
 
 <div class="viewcode-block" id="BaseInformation">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation">[docs]</a>
 <span class="k">class</span> <span class="nc">BaseInformation</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for handling and validating model information.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration data in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="kc">None</span>
@@ -406,10 +416,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model identifier.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span>
 
     <span class="nd">@identifier</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identifier</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model identifier.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_identifier : str</span>
+<span class="sd">            The new model identifier.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IdentifierBaseInformationError</span>
+<span class="sd">            If the identifier is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mi</span> <span class="o">=</span> <span class="n">ModelIdentifier</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mi</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">new_identifier</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">IdentifierBaseInformationError</span>
@@ -417,10 +448,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model slug.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model slug.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slug</span>
 
     <span class="nd">@slug</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_slug</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model slug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_slug : str</span>
+<span class="sd">            The new model slug.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        SlugBaseInformationError</span>
+<span class="sd">            If the slug is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_slug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">new_slug</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SlugBaseInformationError</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_slug</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">60</span><span class="p">:</span>
@@ -431,20 +483,62 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model status.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model status.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span>
 
     <span class="nd">@status</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model status.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_status : str</span>
+<span class="sd">            The new model status.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        StatusBaseInformationError</span>
+<span class="sd">            If the status is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">StatusBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="n">new_status</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model title.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model title.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
 
     <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_title</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model title.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_title : str</span>
+<span class="sd">            The new model title.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TitleBaseInformationError</span>
+<span class="sd">            If the title is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">TitleBaseInformationError</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_title</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
@@ -453,10 +547,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model description.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
 
     <span class="nd">@description</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_description</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model description.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_description : str</span>
+<span class="sd">            The new model description.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        DescriptionBaseInformationError</span>
+<span class="sd">            If the description is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_description</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DescriptionBaseInformationError</span>
         <span class="k">if</span> <span class="n">new_description</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span>
@@ -465,40 +580,124 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model mode.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model mode.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span>
 
     <span class="nd">@mode</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_mode</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model mode.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_mode : str</span>
+<span class="sd">            The new model mode.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ModeBaseInformationError</span>
+<span class="sd">            If the mode is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Mode&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">ModeBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">new_mode</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model source.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model source.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span>
 
     <span class="nd">@source</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model source.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_source : str</span>
+<span class="sd">            The new model source.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        SourceBaseInformationError</span>
+<span class="sd">            If the source is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Source&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SourceBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">new_source</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">source_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model source type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model source type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span>
 
     <span class="nd">@source_type</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">source_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model source type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_source_type : str</span>
+<span class="sd">            The new model source type.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        SourceTypeBaseInformationError</span>
+<span class="sd">            If the source type is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Source Type&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SourceTypeBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">=</span> <span class="n">new_source_type</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model input.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input</span>
 
     <span class="nd">@input</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model input.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_input : list or str</span>
+<span class="sd">            The new model input.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        InputBaseInformationError</span>
+<span class="sd">            If the input is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_input</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_input</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_input</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_input</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
@@ -510,20 +709,62 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model input shape.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model input shape.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span>
 
     <span class="nd">@input_shape</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input_shape</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model input shape.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_input_shape : str</span>
+<span class="sd">            The new model input shape.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        InputShapeBaseInformationError</span>
+<span class="sd">            If the input shape is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_input_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">InputShapeBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="n">new_input_shape</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model task.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model task.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span>
 
     <span class="nd">@task</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model task.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_task : list or str</span>
+<span class="sd">            The new model task.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TaskBaseInformationError</span>
+<span class="sd">            If the task is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_task</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_task</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_task</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_task</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
@@ -535,10 +776,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subtask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model subtask.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model subtask.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subtask</span>
 
     <span class="nd">@subtask</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">subtask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_subtask</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model subtask.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_subtask : list or str</span>
+<span class="sd">            The new model subtask.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        SubtaskBaseInformationError</span>
+<span class="sd">            If the subtask is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_subtask</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_subtask</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_subtask</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_subtask</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
@@ -550,10 +812,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">biomedical_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model biomedical area.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model biomedical area.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_biomedical_area</span>
 
     <span class="nd">@biomedical_area</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">biomedical_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_biomedical_area</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model biomedical area.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_biomedical_area : list or str</span>
+<span class="sd">            The new model biomedical area.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        BiomedicalAreaBaseInformationError</span>
+<span class="sd">            If the biomedical area is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_biomedical_area</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_biomedical_area</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_biomedical_area</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_biomedical_area</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
@@ -565,10 +848,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">target_organism</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model target organism.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model target organism.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_organism</span>
 
     <span class="nd">@target_organism</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">target_organism</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_target_organism</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model target organism.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_target_organism : list or str</span>
+<span class="sd">            The new model target organism.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TargetOrganismBaseInformationError</span>
+<span class="sd">            If the target organism is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_target_organism</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_target_organism</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_target_organism</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_target_organism</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
@@ -580,10 +884,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model output.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span>
 
     <span class="nd">@output</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model output.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_output : list or str</span>
+<span class="sd">            The new model output.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        OutputBaseInformationError</span>
+<span class="sd">            If the output is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_output</span><span class="p">]</span>
         <span class="n">default_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">)</span>
@@ -594,10 +919,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model output type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model output type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span>
 
     <span class="nd">@output_type</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model output type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_output_type : list or str</span>
+<span class="sd">            The new model output type.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        OutputTypeBaseInformationError</span>
+<span class="sd">            If the output type is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_output_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_output_type</span><span class="p">]</span>
         <span class="n">default_output_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">)</span>
@@ -608,10 +954,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model output shape.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model output shape.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span>
 
     <span class="nd">@output_shape</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_shape</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model output shape.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_output_shape : str</span>
+<span class="sd">            The new model output shape.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        OutputShapeBaseInformationError</span>
+<span class="sd">            If the output shape is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">default_output_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">new_output_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_shape</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">OutputShapeBaseInformationError</span>
@@ -619,10 +986,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">output_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model output dimension.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The model output dimension.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dimension</span>
 
     <span class="nd">@output_dimension</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">output_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_dimension</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model output dimension.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_output_dimension : int</span>
+<span class="sd">            The new model output dimension.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        OutputDimensionBaseInformationError</span>
+<span class="sd">            If the output dimension is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output_dimension</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">OutputDimensionBaseInformationError</span>
         <span class="k">if</span> <span class="n">new_output_dimension</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -631,10 +1019,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model output consistency.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model output consistency.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_consistency</span>
 
     <span class="nd">@output_consistency</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_consistency</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model output consistency.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_output_consistency : str</span>
+<span class="sd">            The new model output consistency.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        OutputConsistencyBaseInformationError</span>
+<span class="sd">            If the output consistency is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">default_output_consistency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Consistency&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">new_output_consistency</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_consistency</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">OutputConsistencyBaseInformationError</span>
@@ -642,18 +1051,55 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model interpretation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model interpretation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span>
 
     <span class="nd">@interpretation</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_interpretation</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model interpretation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_interpretation : str</span>
+<span class="sd">            The new model interpretation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span> <span class="o">=</span> <span class="n">new_interpretation</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model tags.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model tags.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
 
     <span class="nd">@tag</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_tag</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model tags.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_tag : list or str</span>
+<span class="sd">            The new model tags.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TagBaseInformationError</span>
+<span class="sd">            If the tags are not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_tag</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_tag</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_tag</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_tag</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
@@ -666,30 +1112,93 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">publication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model publication URL.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model publication URL.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span>
 
     <span class="nd">@publication</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">publication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model publication URL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_publication : str</span>
+<span class="sd">            The new model publication URL.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        PublicationBaseInformationError</span>
+<span class="sd">            If the publication URL is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_url</span><span class="p">(</span><span class="n">new_publication</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">PublicationBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="n">new_publication</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">publication_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model publication type.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model publication type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publication_type</span>
 
     <span class="nd">@publication_type</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">publication_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication_type</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model publication type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_publication_type : str</span>
+<span class="sd">            The new model publication type.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        PublicationTypeBaseInformationError</span>
+<span class="sd">            If the publication type is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_publication_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Publication Type&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">PublicationTypeBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_publication_type</span> <span class="o">=</span> <span class="n">new_publication_type</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">publication_year</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model publication year.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The model publication year.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publication_year</span>
 
     <span class="nd">@publication_year</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">publication_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication_year</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model publication year.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_publication_year : int</span>
+<span class="sd">            The new model publication year.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        PublicationYearBaseInformationError</span>
+<span class="sd">            If the publication year is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_publication_year</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PublicationYearBaseInformationError</span>
         <span class="k">if</span> <span class="n">new_publication_year</span> <span class="o">&lt;</span> <span class="mi">1900</span> <span class="ow">or</span> <span class="n">new_publication_year</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">):</span>
@@ -698,42 +1207,129 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model source code URL.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model source code URL.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span>
 
     <span class="nd">@source_code</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source_code</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model source code URL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_source_code : str</span>
+<span class="sd">            The new model source code URL.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        SourceCodeBaseInformationError</span>
+<span class="sd">            If the source code URL is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_url</span><span class="p">(</span><span class="n">new_source_code</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">SourceCodeBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="n">new_source_code</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model license.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model license.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_license</span>
 
     <span class="nd">@license</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_license</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model license.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_license : str</span>
+<span class="sd">            The new model license.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        LicenseBaseInformationError</span>
+<span class="sd">            If the license is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_license</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;License&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">LicenseBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="n">new_license</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model date.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span>
 
     <span class="nd">@date</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_date</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model date.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_date : str</span>
+<span class="sd">            The new model date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_date</span> <span class="o">=</span> <span class="n">new_date</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model contributor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model contributor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span>
 
     <span class="nd">@contributor</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_contributor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model contributor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_contributor : str</span>
+<span class="sd">            The new model contributor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="n">new_contributor</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model GitHub URL.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model GitHub URL.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        GithubBaseInformationError</span>
+<span class="sd">            If the identifier is not set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">GithubBaseInformationError</span>
@@ -742,20 +1338,62 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model DockerHub URL.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model DockerHub URL.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span>
 
     <span class="nd">@dockerhub</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dockerhub_url</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model DockerHub URL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_dockerhub_url : str</span>
+<span class="sd">            The new model DockerHub URL.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        DockerhubBaseInformationError</span>
+<span class="sd">            If the DockerHub URL is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">new_dockerhub_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://hub.docker.com/r/ersiliaos/&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DockerhubBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="n">new_dockerhub_url</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model Docker architecture.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The model Docker architecture.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span>
 
     <span class="nd">@docker_architecture</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_docker_architecture</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model Docker architecture.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_docker_architecture : list or str</span>
+<span class="sd">            The new model Docker architecture.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        DockerArchitectureBaseInformationError</span>
+<span class="sd">            If the Docker architecture is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_docker_architecture</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_docker_architecture</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_docker_architecture</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">new_docker_architecture</span><span class="p">:</span>
@@ -765,10 +1403,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model S3 URL.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model S3 URL.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span>
 
     <span class="nd">@s3</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_s3_url</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model S3 URL.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_s3_url : str</span>
+<span class="sd">            The new model S3 URL.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        S3BaseInformationError</span>
+<span class="sd">            If the S3 URL is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">new_s3_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
             <span class="s2">&quot;https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/&quot;</span>
         <span class="p">):</span>
@@ -777,6 +1436,19 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">both_identifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get both the model identifier and slug.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            The model identifier and slug.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        BothIdentifiersBaseInformationError</span>
+<span class="sd">            If either the identifier or slug is not set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span>
         <span class="n">slug</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">slug</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -786,10 +1458,31 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model memory in GB.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The model memory in GB.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span>
 
     <span class="nd">@memory_gb</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_memory_gb</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model memory in GB.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_memory_gb : int</span>
+<span class="sd">            The new model memory in GB.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        MemoryGbBaseInformationError</span>
+<span class="sd">            If the memory value is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_memory_gb</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">MemoryGbBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span> <span class="o">=</span> <span class="n">new_memory_gb</span>
@@ -797,6 +1490,14 @@
 <div class="viewcode-block" id="BaseInformation.as_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation.as_dict">[docs]</a>
     <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the model information to a dictionary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The model information as a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;Identifier&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
             <span class="s2">&quot;Slug&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span>
@@ -834,46 +1535,51 @@
         <span class="k">return</span> <span class="n">data</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">var</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">var</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">def</span> <span class="nf">_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseInformation.from_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation.from_dict">[docs]</a>
     <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;Mode&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s2">&quot;Source&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;Source Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="s2">&quot;Input&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span> <span class="s2">&quot;Input Shape&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subtask</span><span class="p">,</span> <span class="s2">&quot;Subtask&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">biomedical_area</span><span class="p">,</span> <span class="s2">&quot;Biomedical Area&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_organism</span><span class="p">,</span> <span class="s2">&quot;Target Organism&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;Output&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_type</span><span class="p">,</span> <span class="s2">&quot;Output Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_shape</span><span class="p">,</span> <span class="s2">&quot;Output Shape&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">,</span> <span class="s2">&quot;Output Dimension&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_consistency</span><span class="p">,</span> <span class="s2">&quot;Output Consistency&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interpretation</span><span class="p">,</span> <span class="s2">&quot;Interpretation&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="s2">&quot;Tag&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">publication</span><span class="p">,</span> <span class="s2">&quot;Publication&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">publication_type</span><span class="p">,</span> <span class="s2">&quot;Publication Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">publication_year</span><span class="p">,</span> <span class="s2">&quot;Publication Year&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_code</span><span class="p">,</span> <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">,</span> <span class="s2">&quot;License&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contributor</span><span class="p">,</span> <span class="s2">&quot;Contributor&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span><span class="p">,</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span><span class="p">,</span> <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory_gb</span><span class="p">,</span> <span class="s2">&quot;Memory Gb&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the model information from a dictionary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : dict</span>
+<span class="sd">            The model information as a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;slug&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;Mode&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;Source&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;Input&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;input_shape&quot;</span><span class="p">,</span> <span class="s2">&quot;Input Shape&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;subtask&quot;</span><span class="p">,</span> <span class="s2">&quot;Subtask&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;biomedical_area&quot;</span><span class="p">,</span> <span class="s2">&quot;Biomedical Area&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;target_organism&quot;</span><span class="p">,</span> <span class="s2">&quot;Target Organism&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="s2">&quot;Output&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output_type&quot;</span><span class="p">,</span> <span class="s2">&quot;Output Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output_shape&quot;</span><span class="p">,</span> <span class="s2">&quot;Output Shape&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output_dimension&quot;</span><span class="p">,</span> <span class="s2">&quot;Output Dimension&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output_consistency&quot;</span><span class="p">,</span> <span class="s2">&quot;Output Consistency&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;interpretation&quot;</span><span class="p">,</span> <span class="s2">&quot;Interpretation&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Tag&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;publication&quot;</span><span class="p">,</span> <span class="s2">&quot;Publication&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;publication_type&quot;</span><span class="p">,</span> <span class="s2">&quot;Publication Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;publication_year&quot;</span><span class="p">,</span> <span class="s2">&quot;Publication Year&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source_code&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span> <span class="s2">&quot;License&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;contributor&quot;</span><span class="p">,</span> <span class="s2">&quot;Contributor&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;dockerhub&quot;</span><span class="p">,</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;docker_architecture&quot;</span><span class="p">,</span> <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;memory_gb&quot;</span><span class="p">,</span> <span class="s2">&quot;Memory Gb&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

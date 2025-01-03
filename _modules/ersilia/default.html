@@ -312,10 +312,12 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.default</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># ruff: noqa: D101, D102</span>
 
 <span class="c1"># EOS environmental variables</span>
 <span class="n">EOS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span> <span class="s2">&quot;eos&quot;</span><span class="p">)</span>
@@ -399,7 +401,7 @@
 <span class="n">ISAURA_GDRIVE</span> <span class="o">=</span> <span class="s2">&quot;1LSCMHrCuXUDNH3WRbrLMW2FoiwMCxF2n&quot;</span>
 <span class="n">ISAURA_TEAM_GDRIVE</span> <span class="o">=</span> <span class="s2">&quot;0AG4WDDaU_00XUk9PVA&quot;</span>
 <span class="n">ISAURA_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;isaura&quot;</span><span class="p">,</span> <span class="s2">&quot;lake&quot;</span><span class="p">)</span>
-
+<span class="n">REDIS_SERVER</span> <span class="o">=</span> <span class="s2">&quot;redis://127.0.0.1:6379&quot;</span>
 <span class="c1"># Other</span>
 <span class="n">FEATURE_MERGE_PATTERN</span> <span class="o">=</span> <span class="s2">&quot;---&quot;</span>
 

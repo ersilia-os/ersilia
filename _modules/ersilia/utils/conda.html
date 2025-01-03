@@ -313,20 +313,20 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.conda</h1><div class="highlight"><pre>
 <span></span><span class="c1"># TODO Implement conda python telemetry for resources during model execution</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
-<span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">SimpleDockerfileParser</span>
-<span class="kn">from</span> <span class="nn">.versioning</span> <span class="kn">import</span> <span class="n">Versioner</span>
-<span class="kn">from</span> <span class="nn">.supp.conda_env_resolve</span> <span class="kn">import</span> <span class="n">CHECKSUM_NCHAR</span><span class="p">,</span> <span class="n">CHECKSUM_FILE</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="n">ModelPackageInstallError</span>
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">SimpleDockerfileParser</span>
+<span class="kn">from</span> <span class="nn">.supp.conda_env_resolve</span> <span class="kn">import</span> <span class="n">CHECKSUM_FILE</span><span class="p">,</span> <span class="n">CHECKSUM_NCHAR</span>
+<span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
+<span class="kn">from</span> <span class="nn">.versioning</span> <span class="kn">import</span> <span class="n">Versioner</span>
 
 <span class="n">BASE</span> <span class="o">=</span> <span class="s2">&quot;base&quot;</span>
 <span class="n">SPECS_JSON</span> <span class="o">=</span> <span class="s2">&quot;.specs.json&quot;</span>
@@ -714,11 +714,11 @@
 <span class="sd">            The name or checksum of the specs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">use_checksum</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">checksum_from_dockerfile</span><span class="p">(</span><span class="n">dockerfile</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>  <span class="c1"># TODO debug</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">checksum_from_dockerfile</span><span class="p">(</span><span class="n">dockerfile_dir</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>  <span class="c1"># TODO debug</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dest</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">dest</span> <span class="o">=</span> <span class="n">dockerfile_dir</span>
-            <span class="n">json_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">specs_from_dockerfile_as_json</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">specs_from_dockerfile_as_json</span><span class="p">(</span>
                 <span class="n">dockerfile_dir</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="n">dest</span>
             <span class="p">)</span>  <span class="c1"># TODO remove?</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHECKSUM_FILE</span><span class="p">)</span>

@@ -312,46 +312,53 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.core.model</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">click</span> <span class="kn">import</span> <span class="n">secho</span> <span class="k">as</span> <span class="n">echo</span>  <span class="c1"># Style-aware echo</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">..serve.api</span> <span class="kn">import</span> <span class="n">Api</span>
-<span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
+    <span class="n">CARD_FILE</span><span class="p">,</span>
+    <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">EOS</span><span class="p">,</span>
+    <span class="n">FETCHED_MODELS_FILENAME</span><span class="p">,</span>
+    <span class="n">INFORMATION_FILE</span><span class="p">,</span>
+    <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..hub.fetch.fetch</span> <span class="kn">import</span> <span class="n">ModelFetcher</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">..lake.base</span> <span class="kn">import</span> <span class="n">LakeBase</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
-<span class="kn">from</span> <span class="nn">.modelbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
-<span class="kn">from</span> <span class="nn">..serve.schema</span> <span class="kn">import</span> <span class="n">ApiSchema</span>
-<span class="kn">from</span> <span class="nn">..utils.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
-<span class="kn">from</span> <span class="nn">..utils.csvfile</span> <span class="kn">import</span> <span class="n">CsvDataLoader</span>
-<span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
-<span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">ContainerMetricsSampler</span>
-<span class="kn">from</span> <span class="nn">..serve.autoservice</span> <span class="kn">import</span> <span class="n">AutoService</span><span class="p">,</span> <span class="n">PulledDockerImageService</span>
+<span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">BaseIOGetter</span><span class="p">,</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span> <span class="nn">..io.output</span> <span class="kn">import</span> <span class="n">TabularOutputStacker</span>
-<span class="kn">from</span> <span class="nn">..serve.standard_api</span> <span class="kn">import</span> <span class="n">StandardCSVRunApi</span>
-<span class="kn">from</span> <span class="nn">..io.input</span> <span class="kn">import</span> <span class="n">ExampleGenerator</span><span class="p">,</span> <span class="n">BaseIOGetter</span>
-<span class="kn">from</span> <span class="nn">.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span>
 <span class="kn">from</span> <span class="nn">..io.readers.file</span> <span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
-<span class="kn">from</span> <span class="nn">..store.api</span> <span class="kn">import</span> <span class="n">InferenceStoreApi</span>
-<span class="kn">from</span> <span class="nn">..store.utils</span> <span class="kn">import</span> <span class="n">OutputSource</span>
-<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.api_exceptions</span> <span class="kn">import</span> <span class="n">ApiSpecifiedOutputError</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">FETCHED_MODELS_FILENAME</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span> <span class="n">CARD_FILE</span><span class="p">,</span> <span class="n">EOS</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">APIS_LIST_FILE</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span>
-<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span> <span class="nn">..lake.base</span> <span class="kn">import</span> <span class="n">LakeBase</span>
+<span class="kn">from</span> <span class="nn">..serve.api</span> <span class="kn">import</span> <span class="n">Api</span>
+<span class="kn">from</span> <span class="nn">..serve.autoservice</span> <span class="kn">import</span> <span class="n">AutoService</span><span class="p">,</span> <span class="n">PulledDockerImageService</span>
+<span class="kn">from</span> <span class="nn">..serve.schema</span> <span class="kn">import</span> <span class="n">ApiSchema</span>
+<span class="kn">from</span> <span class="nn">..serve.standard_api</span> <span class="kn">import</span> <span class="n">StandardCSVRunApi</span>
 <span class="kn">from</span> <span class="nn">..setup.requirements.compound</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ChemblWebResourceClientRequirement</span><span class="p">,</span>
     <span class="n">RdkitRequirement</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..store.api</span> <span class="kn">import</span> <span class="n">InferenceStoreApi</span>
+<span class="kn">from</span> <span class="nn">..store.utils</span> <span class="kn">import</span> <span class="n">OutputSource</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
+<span class="kn">from</span> <span class="nn">..utils.csvfile</span> <span class="kn">import</span> <span class="n">CsvDataLoader</span>
+<span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">ContainerMetricsSampler</span>
+<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.api_exceptions</span> <span class="kn">import</span> <span class="n">ApiSpecifiedOutputError</span>
+<span class="kn">from</span> <span class="nn">..utils.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
+<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">.modelbase</span> <span class="kn">import</span> <span class="n">ModelBase</span>
+<span class="kn">from</span> <span class="nn">.session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">.tracking</span> <span class="kn">import</span> <span class="n">RunTracker</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -412,7 +419,10 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
-<span class="sd">        result = model.run(input=&quot;input_data.csv&quot;, output=&quot;output_data.csv&quot;)</span>
+<span class="sd">        result = model.run(</span>
+<span class="sd">            input=&quot;input_data.csv&quot;,</span>
+<span class="sd">            output=&quot;output_data.csv&quot;,</span>
+<span class="sd">        )</span>
 
 <span class="sd">    Closing a model:</span>
 

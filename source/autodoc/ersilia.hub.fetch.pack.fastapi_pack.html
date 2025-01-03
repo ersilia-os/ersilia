@@ -339,7 +339,9 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pmd</span> <span class="o">=</span> <span class="n">PackModeDecision</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model123&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="p">{})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pmd</span> <span class="o">=</span> <span class="n">PackModeDecision</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model123&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="p">{}</span>
+<span class="p">)</span>
 <span class="n">mode</span> <span class="o">=</span> <span class="n">pmd</span><span class="o">.</span><span class="n">decide</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -393,7 +395,9 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">packer</span> <span class="o">=</span> <span class="n">CondaPack</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">packer</span> <span class="o">=</span> <span class="n">CondaPack</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span>
+<span class="p">)</span>
 <span class="n">packer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -418,7 +422,9 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">packer</span> <span class="o">=</span> <span class="n">SystemPack</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">packer</span> <span class="o">=</span> <span class="n">SystemPack</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span>
+<span class="p">)</span>
 <span class="n">packer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -448,7 +454,9 @@
 </dl>
 <p class="rubric">Examples</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">runner_class</span> <span class="o">=</span> <span class="n">get_runner</span><span class="p">(</span><span class="n">pack_mode</span><span class="o">=</span><span class="s2">&quot;system&quot;</span><span class="p">)</span>
-<span class="n">runner</span> <span class="o">=</span> <span class="n">runner_class</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">runner_class</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -460,6 +468,15 @@
 <dt class="sig sig-object py" id="ersilia.hub.fetch.pack.fastapi_pack.BasePack">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.fetch.pack.fastapi_pack.</span></span><span class="sig-name descname"><span class="pre">BasePack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/fetch/pack/fastapi_pack.html#BasePack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.fetch.pack.fastapi_pack.BasePack" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Symlinker</span></code></p>
+<p>Base class for handling FastAPI model packs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings for the pack.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

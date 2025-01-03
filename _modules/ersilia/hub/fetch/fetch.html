@@ -312,29 +312,28 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch.fetch</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 
-<span class="kn">from</span> <span class="nn">.lazy_fetchers.dockerhub</span> <span class="kn">import</span> <span class="n">ModelDockerHubFetcher</span>
-<span class="kn">from</span> <span class="nn">.lazy_fetchers.hosted</span> <span class="kn">import</span> <span class="n">ModelHostedFetcher</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...hub.fetch.actions.template_resolver</span> <span class="kn">import</span> <span class="n">TemplateResolver</span>
-<span class="kn">from</span> <span class="nn">...hub.fetch.actions.setup</span> <span class="kn">import</span> <span class="n">SetupChecker</span>
+<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span>
 <span class="kn">from</span> <span class="nn">...hub.delete.delete</span> <span class="kn">import</span> <span class="n">ModelFullDeleter</span>
+<span class="kn">from</span> <span class="nn">...hub.fetch.actions.template_resolver</span> <span class="kn">import</span> <span class="n">TemplateResolver</span>
 <span class="kn">from</span> <span class="nn">...setup.requirements</span> <span class="kn">import</span> <span class="n">check_bentoml</span>
 <span class="kn">from</span> <span class="nn">...utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">NotInstallableWithFastAPI</span><span class="p">,</span>
     <span class="n">NotInstallableWithBentoML</span><span class="p">,</span>
+    <span class="n">NotInstallableWithFastAPI</span><span class="p">,</span>
     <span class="n">StandardModelExampleError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.register.standard_example</span> <span class="kn">import</span> <span class="n">ModelStandardExample</span>
 <span class="kn">from</span> <span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span><span class="p">,</span> <span class="n">DONE_TAG</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span>
+<span class="kn">from</span> <span class="nn">.lazy_fetchers.dockerhub</span> <span class="kn">import</span> <span class="n">ModelDockerHubFetcher</span>
+<span class="kn">from</span> <span class="nn">.lazy_fetchers.hosted</span> <span class="kn">import</span> <span class="n">ModelHostedFetcher</span>
+<span class="kn">from</span> <span class="nn">.register.standard_example</span> <span class="kn">import</span> <span class="n">ModelStandardExample</span>
 
 <span class="n">FetchResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;FetchResult&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fetch_success&quot;</span><span class="p">,</span> <span class="s2">&quot;reason&quot;</span><span class="p">])</span>
 
@@ -538,7 +537,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching from hosted done&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_decide_if_use_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span><span class="p">:</span>

@@ -312,17 +312,18 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.content.card</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="kn">from</span> <span class="nn">.base_information</span> <span class="kn">import</span> <span class="n">BaseInformation</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span> <span class="nn">...auth.auth</span> <span class="kn">import</span> <span class="n">Auth</span>
 <span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
 <span class="kn">from</span> <span class="nn">...utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">.base_information</span> <span class="kn">import</span> <span class="n">BaseInformation</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">isaura.core.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5Explorer</span>
@@ -331,8 +332,8 @@
 
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CARD_FILE</span><span class="p">,</span>
-    <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
     <span class="n">INFORMATION_FILE</span><span class="p">,</span>
+    <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
     <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">...utils.paths</span> <span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
@@ -593,6 +594,14 @@
 <div class="viewcode-block" id="ReadmeCard.parse">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.ReadmeCard.parse">[docs]</a>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the model information from the README file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The model identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">readme</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot;README.md&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">readme</span><span class="p">):</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">readme</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -785,6 +794,19 @@
 <div class="viewcode-block" id="S3JsonCard.get_card_by_model_id">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.S3JsonCard.get_card_by_model_id">[docs]</a>
     <span class="k">def</span> <span class="nf">get_card_by_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the card information by model identifier.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            The model identifier.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The card information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">all_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">all_models</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">model</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">model_id</span><span class="p">:</span>
@@ -794,6 +816,19 @@
 <div class="viewcode-block" id="S3JsonCard.get_card_by_slug">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.card.S3JsonCard.get_card_by_slug">[docs]</a>
     <span class="k">def</span> <span class="nf">get_card_by_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the card information by model slug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        slug : str</span>
+<span class="sd">            The model slug.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The card information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">all_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">all_models</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">model</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">slug</span><span class="p">:</span>

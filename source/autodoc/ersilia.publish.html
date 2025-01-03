@@ -342,8 +342,13 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uploader</span> <span class="o">=</span> <span class="n">DockerHubUploader</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="s2">&quot;path/to/config.json&quot;</span><span class="p">)</span>
-<span class="n">uploader</span><span class="o">.</span><span class="n">set_credentials</span><span class="p">(</span><span class="n">docker_user</span><span class="o">=</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="o">=</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uploader</span> <span class="o">=</span> <span class="n">DockerHubUploader</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span>
+    <span class="n">config_json</span><span class="o">=</span><span class="s2">&quot;path/to/config.json&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">uploader</span><span class="o">.</span><span class="n">set_credentials</span><span class="p">(</span>
+    <span class="n">docker_user</span><span class="o">=</span><span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="o">=</span><span class="s2">&quot;password&quot;</span>
+<span class="p">)</span>
 <span class="n">uploader</span><span class="o">.</span><span class="n">upload</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -393,7 +398,9 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inspector</span> <span class="o">=</span> <span class="n">ModelInspector</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="s2">&quot;path/to/repo&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inspector</span> <span class="o">=</span> <span class="n">ModelInspector</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="s2">&quot;path/to/repo&quot;</span>
+<span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">inspector</span><span class="o">.</span><span class="n">check_repo_exists</span><span class="p">()</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">inspector</span><span class="o">.</span><span class="n">check_complete_metadata</span><span class="p">()</span>
 </pre></div>
@@ -534,7 +541,13 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector.validate_repo_structure">
 <span class="sig-name descname"><span class="pre">validate_repo_structure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/inspect.html#ModelInspector.validate_repo_structure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.validate_repo_structure" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Validate the repository structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of missing items.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -563,10 +576,21 @@
 <dt class="sig sig-object py" id="ersilia.publish.lake.LakeStorer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.lake.</span></span><span class="sig-name descname"><span class="pre">LakeStorer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/lake.html#LakeStorer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.lake.LakeStorer" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle storing data in the lake.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – The ID of the model.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em>) – Configuration in JSON format.</p></li>
+<li><p><strong>credentials_json</strong> (<em>dict</em>) – Credentials in JSON format.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.lake.LakeStorer.store">
 <span class="sig-name descname"><span class="pre">store</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/lake.html#LakeStorer.store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.lake.LakeStorer.store" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Store data in the lake.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -601,7 +625,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.publish.ModelPublisher.docker">
 <span class="sig-name descname"><span class="pre">docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/publish.html#ModelPublisher.docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.publish.ModelPublisher.docker" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Handle Docker-related tasks.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.publish.ModelPublisher.dvc">
@@ -635,7 +660,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.publish.ModelPublisher.test">
 <span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/publish.html#ModelPublisher.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.publish.ModelPublisher.test" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Test the publishing process.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -706,8 +732,14 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uploader</span> <span class="o">=</span> <span class="n">S3BucketRepoUploader</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="s2">&quot;path/to/config.json&quot;</span><span class="p">)</span>
-<span class="n">uploader</span><span class="o">.</span><span class="n">set_credentials</span><span class="p">(</span><span class="n">aws_access_key_id</span><span class="o">=</span><span class="s2">&quot;access_key&quot;</span><span class="p">,</span> <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="s2">&quot;secret_key&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uploader</span> <span class="o">=</span> <span class="n">S3BucketRepoUploader</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span>
+    <span class="n">config_json</span><span class="o">=</span><span class="s2">&quot;path/to/config.json&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">uploader</span><span class="o">.</span><span class="n">set_credentials</span><span class="p">(</span>
+    <span class="n">aws_access_key_id</span><span class="o">=</span><span class="s2">&quot;access_key&quot;</span><span class="p">,</span>
+    <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="s2">&quot;secret_key&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="n">uploader</span><span class="o">.</span><span class="n">upload</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -768,7 +800,10 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">remover</span> <span class="o">=</span> <span class="n">ModelRemover</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="s2">&quot;path/to/config.json&quot;</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="s2">&quot;path/to/credentials.json&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">remover</span> <span class="o">=</span> <span class="n">ModelRemover</span><span class="p">(</span>
+    <span class="n">config_json</span><span class="o">=</span><span class="s2">&quot;path/to/config.json&quot;</span><span class="p">,</span>
+    <span class="n">credentials_json</span><span class="o">=</span><span class="s2">&quot;path/to/credentials.json&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="n">remover</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model_id&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -892,10 +927,29 @@
 <dt class="sig sig-object py" id="ersilia.publish.test.CheckStrategy">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.</span></span><span class="sig-name descname"><span class="pre">CheckStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">details_key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#CheckStrategy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.CheckStrategy" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Execuetd a strategy for checking inspect commands.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>check_function</strong> (<em>callable</em>) – The function to check.</p></li>
+<li><p><strong>success_key</strong> (<em>str</em>) – The key for success.</p></li>
+<li><p><strong>details_key</strong> (<em>str</em>) – The key for details.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.CheckStrategy.execute">
 <span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#CheckStrategy.execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.CheckStrategy.execute" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Execute the check strategy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The results of the check.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -942,7 +996,19 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.IOService.calculate_directory_size">
 <span class="sig-name descname"><span class="pre">calculate_directory_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#IOService.calculate_directory_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.IOService.calculate_directory_size" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the size of a directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – The path to the directory.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The size of the directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.IOService.get_conda_env_size">
@@ -1079,15 +1145,35 @@
 <dt class="sig sig-object py" id="ersilia.publish.test.ModelTester">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.</span></span><span class="sig-name descname"><span class="pre">ModelTester</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#ModelTester"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.ModelTester" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Class to handle model testing. Initializes the model tester services and runs the tests.
+:param model_id: The ID of the model.
+:type model_id: str
+:param level: The level of testing.
+:type level: str
+:param dir: The directory for the model.
+:type dir: str
+:param inspect: Whether to inspect the model.
+:type inspect: bool
+:param remote: Whether to fetch the model from a remote source.
+:type remote: bool
+:param remove: Whether to remove the model after testing.
+:type remove: bool</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.ModelTester.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#ModelTester.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.ModelTester.run" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Run the model tester.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output_file</strong> (<em>str</em><em>, </em><em>optional</em>) – The output file.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.ModelTester.setup">
 <span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#ModelTester.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.ModelTester.setup" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Set up the model tester.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -1095,7 +1181,7 @@
 <dt class="sig sig-object py" id="ersilia.publish.test.Options">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.</span></span><span class="sig-name descname"><span class="pre">Options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#Options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.Options" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration.</p>
+<p>Enum for different options.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.Options.BASE">
 <span class="sig-name descname"><span class="pre">BASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'base'</span></em><a class="headerlink" href="#ersilia.publish.test.Options.BASE" title="Link to this definition">¶</a></dt>
@@ -1154,12 +1240,33 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.RunnerService.conda_prefix">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">conda_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#RunnerService.conda_prefix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.RunnerService.conda_prefix" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the conda prefix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>is_base</strong> (<em>bool</em>) – Whether it is the base environment.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The conda prefix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.RunnerService.default_env">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_env</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#RunnerService.default_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.RunnerService.default_env" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the default environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The default environment.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.RunnerService.fetch">
@@ -1170,7 +1277,16 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.RunnerService.is_base">
 <span class="sig-name descname"><span class="pre">is_base</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#RunnerService.is_base"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.RunnerService.is_base" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check if the current environment is the base environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if it is the base environment, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.RunnerService.make_output">
@@ -1268,7 +1384,7 @@
 <dt class="sig sig-object py" id="ersilia.publish.test.STATUS_CONFIGS">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.</span></span><span class="sig-name descname"><span class="pre">STATUS_CONFIGS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#STATUS_CONFIGS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.STATUS_CONFIGS" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration.</p>
+<p>Enum for status configurations.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.STATUS_CONFIGS.FAILED">
 <span class="sig-name descname"><span class="pre">FAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('FAILED',</span> <span class="pre">'red',</span> <span class="pre">'✘')</span></em><a class="headerlink" href="#ersilia.publish.test.STATUS_CONFIGS.FAILED" title="Link to this definition">¶</a></dt>
@@ -1387,6 +1503,7 @@
 <dt class="sig sig-object py" id="ersilia.publish.test.TableConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.</span></span><span class="sig-name descname"><span class="pre">TableConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#TableConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.TableConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Configuration for a table.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.TableConfig.headers">
 <span class="sig-name descname"><span class="pre">headers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ersilia.publish.test.TableConfig.headers" title="Link to this definition">¶</a></dt>
@@ -1403,7 +1520,7 @@
 <dt class="sig sig-object py" id="ersilia.publish.test.TableType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.</span></span><span class="sig-name descname"><span class="pre">TableType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#TableType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.TableType" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration.</p>
+<p>Enum for different table types.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.TableType.FINAL_RUN_SUMMARY">
 <span class="sig-name descname"><span class="pre">FINAL_RUN_SUMMARY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Test</span> <span class="pre">Run</span> <span class="pre">Summary'</span></em><a class="headerlink" href="#ersilia.publish.test.TableType.FINAL_RUN_SUMMARY" title="Link to this definition">¶</a></dt>
@@ -1440,7 +1557,7 @@
 <dt class="sig sig-object py" id="ersilia.publish.test.TestResult">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.</span></span><span class="sig-name descname"><span class="pre">TestResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#TestResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.TestResult" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
-<p>An enumeration.</p>
+<p>Enum for test results.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.TestResult.BASH_RUN">
 <span class="sig-name descname"><span class="pre">BASH_RUN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('Bash</span> <span class="pre">Run</span> <span class="pre">Without</span> <span class="pre">Error',</span> <span class="pre">&lt;function</span> <span class="pre">TestResult.&lt;lambda&gt;&gt;)</span></em><a class="headerlink" href="#ersilia.publish.test.TestResult.BASH_RUN" title="Link to this definition">¶</a></dt>
@@ -1479,7 +1596,23 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.TestResult.generate_results">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkup_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elapsed_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_using_bash</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#TestResult.generate_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.TestResult.generate_results" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Generate test results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>checkup_service</strong> (<em>object</em>) – The checkup service.</p></li>
+<li><p><strong>elapsed_time</strong> (<em>float</em>) – The elapsed time.</p></li>
+<li><p><strong>run_using_bash</strong> (<em>bool</em>) – Whether to run using bash.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

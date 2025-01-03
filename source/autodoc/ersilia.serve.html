@@ -365,8 +365,18 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s1">&#39;eosxxxx&#39;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="s1">&#39;http://0.0.0.0:25512/&#39;</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="s1">&#39;run&#39;</span><span class="p">,</span> <span class="n">save_to_lake</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="p">{})</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="s1">&#39;input.json&#39;</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="s1">&#39;output.csv&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span>
+    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://0.0.0.0:25512/&quot;</span><span class="p">,</span>
+    <span class="n">api_name</span><span class="o">=</span><span class="s2">&quot;run&quot;</span><span class="p">,</span>
+    <span class="n">save_to_lake</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">config_json</span><span class="o">=</span><span class="p">{},</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+    <span class="nb">input</span><span class="o">=</span><span class="s2">&quot;input.json&quot;</span><span class="p">,</span>
+    <span class="n">output</span><span class="o">=</span><span class="s2">&quot;output.csv&quot;</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -404,22 +414,74 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.api.Api.post_amenable_to_h5">
 <span class="sig-name descname"><span class="pre">post_amenable_to_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.post_amenable_to_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.post_amenable_to_h5" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Post input data to the API and get the result, handling HDF5 serialization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.api.Api.post_only_calculations">
 <span class="sig-name descname"><span class="pre">post_only_calculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.post_only_calculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.post_only_calculations" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Post input data to the API and get the result, performing only calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.api.Api.post_only_reads">
 <span class="sig-name descname"><span class="pre">post_only_reads</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.post_only_reads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.post_only_reads" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Post input data to the API and get the result, performing only reads.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.api.Api.post_unique_input">
 <span class="sig-name descname"><span class="pre">post_unique_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/api.html#Api.post_unique_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.api.Api.post_unique_input" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Post unique input data to the API and get the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>str</em>) – The input data file or data.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output data file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – The batch size for processing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>dict</em> – The result of the API call.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -448,7 +510,9 @@ It also provides methods to start, stop, and manage the service, as well as to i
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">AutoService</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s1">&#39;model123&#39;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="p">{})</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">service</span> <span class="o">=</span> <span class="n">AutoService</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model123&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="p">{}</span>
+<span class="p">)</span>
 <span class="n">service</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -474,22 +538,26 @@ It also provides methods to start, stop, and manage the service, as well as to i
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.clean_before_serving">
 <span class="sig-name descname"><span class="pre">clean_before_serving</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.clean_before_serving"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.clean_before_serving" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Clean processes before serving.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.clean_docker_containers">
 <span class="sig-name descname"><span class="pre">clean_docker_containers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.clean_docker_containers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.clean_docker_containers" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Clean Docker containers if necessary.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.clean_temp_dir">
 <span class="sig-name descname"><span class="pre">clean_temp_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.clean_temp_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.clean_temp_dir" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Clean the temporary directory.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.close" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Close the service.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.get_apis">
@@ -536,7 +604,8 @@ It also provides methods to start, stop, and manage the service, as well as to i
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.serve">
 <span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.serve" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Serve the application.</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -860,7 +929,16 @@ for HDF5 serializability, and generate empty representations of the input and ou
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.services.CondaEnvironmentService.is_single_model_without_conda">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_single_model_without_conda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/services.html#CondaEnvironmentService.is_single_model_without_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.services.CondaEnvironmentService.is_single_model_without_conda" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Check if there is a single model without conda.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if conda is not installed, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.services.CondaEnvironmentService.serve">
@@ -1366,7 +1444,19 @@ for HDF5 serializability, and generate empty representations of the input and ou
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.async_serialize_to_json_one_column">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">async_serialize_to_json_one_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.async_serialize_to_json_one_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.async_serialize_to_json_one_column" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Asynchronously serialize data to JSON with one column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>str</em>) – The input data file path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The serialized JSON data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.get_expected_output_header">
@@ -1385,12 +1475,33 @@ for HDF5 serializability, and generate empty representations of the input and ou
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.get_identifier_object_by_input_type">
 <span class="sig-name descname"><span class="pre">get_identifier_object_by_input_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.get_identifier_object_by_input_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.get_identifier_object_by_input_type" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the identifier object by input type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The identifier object.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.get_list_from_csv">
 <span class="sig-name descname"><span class="pre">get_list_from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.get_list_from_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.get_list_from_csv" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a list from a CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>str</em>) – The input data file path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The list of data from the CSV file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.is_amenable">
@@ -1550,17 +1661,53 @@ for HDF5 serializability, and generate empty representations of the input and ou
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_one_column">
 <span class="sig-name descname"><span class="pre">serialize_to_json_one_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.serialize_to_json_one_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_one_column" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Serialize data to JSON with one column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>str</em>) – The input data file path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The serialized JSON data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_three_columns">
 <span class="sig-name descname"><span class="pre">serialize_to_json_three_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.serialize_to_json_three_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_three_columns" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Serialize data to JSON with three columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>str</em>) – The input data file path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The serialized JSON data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_two_columns">
 <span class="sig-name descname"><span class="pre">serialize_to_json_two_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.serialize_to_json_two_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_two_columns" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Serialize data to JSON with two columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>str</em>) – The input data file path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The serialized JSON data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

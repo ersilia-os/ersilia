@@ -312,14 +312,16 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.bundle.bundle</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
+
 <span class="kn">from</span> <span class="nn">...core.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span>
 <span class="kn">from</span> <span class="nn">...hub.fetch</span> <span class="kn">import</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span><span class="p">,</span> <span class="n">REQUIREMENTS_TXT</span>
 <span class="kn">from</span> <span class="nn">.repo</span> <span class="kn">import</span> <span class="n">DockerfileFile</span>
-<span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
 
 
 <div class="viewcode-block" id="BundleEnvironmentFile">

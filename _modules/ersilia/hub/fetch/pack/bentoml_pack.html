@@ -316,11 +316,10 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 
 <span class="kn">from</span> <span class="nn">.....</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">.....default</span> <span class="kn">import</span> <span class="n">BENTOML_PATH</span><span class="p">,</span> <span class="n">H5_DATA_FILE</span><span class="p">,</span> <span class="n">H5_EXTENSION</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG</span>
 <span class="kn">from</span> <span class="nn">....bundle.repo</span> <span class="kn">import</span> <span class="n">DockerfileFile</span>
 <span class="kn">from</span> <span class="nn">....delete.delete</span> <span class="kn">import</span> <span class="n">ModelBentoDeleter</span>
-
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span>
-<span class="kn">from</span> <span class="nn">.....default</span> <span class="kn">import</span> <span class="n">BENTOML_PATH</span><span class="p">,</span> <span class="n">H5_DATA_FILE</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG</span><span class="p">,</span> <span class="n">H5_EXTENSION</span>
 
 
 <span class="k">class</span> <span class="nc">_Deleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -374,7 +373,7 @@
         <span class="c1"># model_install_commands</span>
         <span class="n">model_install_commands_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_install_commands_path</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_install_commands_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">model_install_commands_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">):</span>
                 <span class="k">pass</span>
         <span class="n">trg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bundle_dir</span><span class="p">,</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating model_install_commands.sh symlink dest &lt;&gt; bundle&quot;</span><span class="p">)</span>
@@ -459,6 +458,17 @@
 <div class="viewcode-block" id="BasePack">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.BasePack">[docs]</a>
 <span class="k">class</span> <span class="nc">BasePack</span><span class="p">(</span><span class="n">_Deleter</span><span class="p">,</span> <span class="n">_Symlinker</span><span class="p">,</span> <span class="n">_Writer</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for handling BentoML model packs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    config_json : dict</span>
+<span class="sd">        Configuration settings for the pack.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">_Deleter</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>
         <span class="n">_Symlinker</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span>

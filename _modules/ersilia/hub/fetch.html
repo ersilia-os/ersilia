@@ -313,8 +313,9 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">validators</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
 
 <span class="n">MODEL_INSTALL_COMMANDS_FILE</span> <span class="o">=</span> <span class="s2">&quot;model_install_commands.sh&quot;</span>
 <span class="n">DOCKERFILE</span> <span class="o">=</span> <span class="s2">&quot;Dockerfile&quot;</span>
@@ -330,6 +331,21 @@
 <div class="viewcode-block" id="ModelURLResolver">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.ModelURLResolver">[docs]</a>
 <span class="k">class</span> <span class="nc">ModelURLResolver</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to resolve the URL of a model.</span>
+
+<span class="sd">    This class provides methods to resolve the URL of a model based on its ID.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        The ID of the model.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings in JSON format.</span>
+<span class="sd">    credentials_json : dict, optional</span>
+<span class="sd">        Credentials settings in JSON format.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>

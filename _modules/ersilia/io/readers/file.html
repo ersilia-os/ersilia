@@ -312,17 +312,16 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.io.readers.file</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">..shape</span> <span class="kn">import</span> <span class="n">InputShape</span>
-<span class="kn">from</span> <span class="nn">..shape</span> <span class="kn">import</span> <span class="n">InputShapeSingle</span><span class="p">,</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span>
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">...utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span> <span class="nn">..shape</span> <span class="kn">import</span> <span class="n">InputShape</span><span class="p">,</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
 
 <span class="n">MIN_COLUMN_VALIDITY</span> <span class="o">=</span> <span class="mf">0.8</span>
 <span class="n">FLATTENED_EVIDENCE</span> <span class="o">=</span> <span class="mf">0.2</span>
@@ -631,12 +630,12 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.BaseTabularFile.get_delimiter">[docs]</a>
     <span class="k">def</span> <span class="nf">get_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the column delimiter of the file.</span>
+<span class="sd">        Get the delimiter used in the file.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            The column delimiter.</span>
+<span class="sd">            The delimiter used in the file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">delimiters</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">default_extension</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_delimiter_by_extension</span><span class="p">()</span>
@@ -1000,7 +999,12 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        tfss = TabularFileShapeStandardizer(&quot;data.csv&quot;, &quot;standard_data.csv&quot;, &quot;single&quot;, IOHandler())</span>
+<span class="sd">        tfss = TabularFileShapeStandardizer(</span>
+<span class="sd">            &quot;data.csv&quot;,</span>
+<span class="sd">            &quot;standard_data.csv&quot;,</span>
+<span class="sd">            &quot;single&quot;,</span>
+<span class="sd">            IOHandler(),</span>
+<span class="sd">        )</span>
 <span class="sd">        tfss.standardize()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1144,6 +1148,14 @@
 <div class="viewcode-block" id="StandardTabularFileReader.get_delimiter">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.StandardTabularFileReader.get_delimiter">[docs]</a>
     <span class="k">def</span> <span class="nf">get_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the delimiter used in the file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The delimiter used in the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="s2">&quot;,&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">):</span>

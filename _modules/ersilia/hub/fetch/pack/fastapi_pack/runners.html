@@ -313,18 +313,16 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch.pack.fastapi_pack.runners</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BasePack</span>
-<span class="kn">from</span> <span class="nn">.....utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">.....</span> <span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">.....db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
 <span class="kn">from</span> <span class="nn">.....utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span> <span class="nn">.....utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDockerfileParser</span>
-
-<span class="kn">from</span> <span class="nn">.....</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span> <span class="nn">.....utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="n">CondaEnvironmentExistsError</span>
-
-<span class="kn">from</span> <span class="nn">.....</span> <span class="kn">import</span> <span class="n">EOS</span>
+<span class="kn">from</span> <span class="nn">.....utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BasePack</span>
 
 
 <div class="viewcode-block" id="SystemPack">
@@ -344,7 +342,9 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        packer = SystemPack(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        packer = SystemPack(</span>
+<span class="sd">            model_id=&quot;eosxxxx&quot;, config_json=config</span>
+<span class="sd">        )</span>
 <span class="sd">        packer.run()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -393,7 +393,9 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        packer = CondaPack(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        packer = CondaPack(</span>
+<span class="sd">            model_id=&quot;eosxxxx&quot;, config_json=config</span>
+<span class="sd">        )</span>
 <span class="sd">        packer.run()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -498,7 +500,9 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        runner_class = get_runner(pack_mode=&quot;system&quot;)</span>
-<span class="sd">        runner = runner_class(model_id=&quot;eosxxxx&quot;, config_json=config)</span>
+<span class="sd">        runner = runner_class(</span>
+<span class="sd">            model_id=&quot;eosxxxx&quot;, config_json=config</span>
+<span class="sd">        )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">pack_mode</span> <span class="o">==</span> <span class="s2">&quot;system&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">SystemPack</span>

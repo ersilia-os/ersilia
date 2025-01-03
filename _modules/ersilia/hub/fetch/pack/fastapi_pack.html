@@ -315,8 +315,8 @@
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 
-<span class="kn">from</span> <span class="nn">.....default</span> <span class="kn">import</span> <span class="n">H5_DATA_FILE</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG</span><span class="p">,</span> <span class="n">H5_EXTENSION</span>
 <span class="kn">from</span> <span class="nn">.....</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">.....default</span> <span class="kn">import</span> <span class="n">H5_DATA_FILE</span><span class="p">,</span> <span class="n">H5_EXTENSION</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG</span>
 
 
 <span class="k">class</span> <span class="nc">_Symlinker</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
@@ -360,6 +360,17 @@
 <div class="viewcode-block" id="BasePack">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.pack.fastapi_pack.html#ersilia.hub.fetch.pack.fastapi_pack.BasePack">[docs]</a>
 <span class="k">class</span> <span class="nc">BasePack</span><span class="p">(</span><span class="n">_Symlinker</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for handling FastAPI model packs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_id : str</span>
+<span class="sd">        Identifier of the model.</span>
+<span class="sd">    config_json : dict, optional</span>
+<span class="sd">        Configuration settings for the pack.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">_Symlinker</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">)</span></div>
 

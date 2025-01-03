@@ -312,31 +312,30 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.serve.autoservice</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span> <span class="nn">..db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
+    <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">,</span>
+    <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span><span class="p">,</span>
+    <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
+<span class="kn">from</span> <span class="nn">.api</span> <span class="kn">import</span> <span class="n">Api</span>
 <span class="kn">from</span> <span class="nn">.services</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SystemBundleService</span><span class="p">,</span>
-    <span class="n">VenvEnvironmentService</span><span class="p">,</span>
     <span class="n">CondaEnvironmentService</span><span class="p">,</span>
     <span class="n">DockerImageService</span><span class="p">,</span>
     <span class="n">DummyService</span><span class="p">,</span>
-    <span class="n">PulledDockerImageService</span><span class="p">,</span>
     <span class="n">HostedService</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.api</span> <span class="kn">import</span> <span class="n">Api</span>
-<span class="kn">from</span> <span class="nn">..db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">tmp_pid_file</span>
-
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
-    <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
-    <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
-    <span class="n">IS_FETCHED_FROM_DOCKERHUB_FILE</span><span class="p">,</span>
-    <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span><span class="p">,</span>
+    <span class="n">PulledDockerImageService</span><span class="p">,</span>
+    <span class="n">SystemBundleService</span><span class="p">,</span>
+    <span class="n">VenvEnvironmentService</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">DEFAULT_OUTPUT</span> <span class="o">=</span> <span class="kc">None</span>
@@ -372,7 +371,9 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        service = AutoService(model_id=&#39;model123&#39;, config_json={})</span>
+<span class="sd">        service = AutoService(</span>
+<span class="sd">            model_id=&quot;model123&quot;, config_json={}</span>
+<span class="sd">        )</span>
 <span class="sd">        service.serve()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -682,6 +683,9 @@
 <div class="viewcode-block" id="AutoService.clean_before_serving">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_before_serving">[docs]</a>
     <span class="k">def</span> <span class="nf">clean_before_serving</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean processes before serving.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cleaning processes before serving&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">dir_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span>
@@ -700,6 +704,9 @@
 <div class="viewcode-block" id="AutoService.clean_temp_dir">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_temp_dir">[docs]</a>
     <span class="k">def</span> <span class="nf">clean_temp_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean the temporary directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Cleaning temp dir&quot;</span><span class="p">)</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">):</span>
@@ -717,6 +724,9 @@
 <div class="viewcode-block" id="AutoService.clean_docker_containers">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_docker_containers">[docs]</a>
     <span class="k">def</span> <span class="nf">clean_docker_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean Docker containers if necessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Silencing docker containers if necessary&quot;</span><span class="p">)</span>
         <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dm</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
@@ -730,6 +740,9 @@
 <div class="viewcode-block" id="AutoService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.serve">[docs]</a>
     <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serve the application.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clean_before_serving</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clean_temp_dir</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -742,6 +755,9 @@
 <div class="viewcode-block" id="AutoService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.close">[docs]</a>
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the service.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">):</span>
             <span class="n">pids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pids_from_file</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span>

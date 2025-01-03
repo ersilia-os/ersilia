@@ -312,37 +312,44 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.serve.services</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
+
 <span class="kn">import</span> <span class="nn">docker</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
-<span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">..utils.ports</span> <span class="kn">import</span> <span class="n">find_free_port</span>
-<span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">resolve_pack_method</span>
 <span class="kn">from</span> <span class="nn">..db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
 <span class="kn">from</span> <span class="nn">..db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
+<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
+    <span class="n">CONTAINER_LOGS_TMP_DIR</span><span class="p">,</span>
+    <span class="n">DEFAULT_VENV</span><span class="p">,</span>
+    <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+    <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
+    <span class="n">INFORMATION_FILE</span><span class="p">,</span>
+    <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
+    <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
+    <span class="n">PACKMODE_FILE</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..setup.requirements.conda</span> <span class="kn">import</span> <span class="n">CondaRequirement</span>
 <span class="kn">from</span> <span class="nn">..setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
 <span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span><span class="p">,</span> <span class="n">StandaloneConda</span>
 <span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span>
-<span class="kn">from</span> <span class="nn">..utils.venv</span> <span class="kn">import</span> <span class="n">SimpleVenv</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DEFAULT_VENV</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">PACKMODE_FILE</span><span class="p">,</span> <span class="n">APIS_LIST_FILE</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">CONTAINER_LOGS_TMP_DIR</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">INFORMATION_FILE</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span>
-<span class="kn">from</span> <span class="nn">..utils.session</span> <span class="kn">import</span> <span class="n">get_session_dir</span>
 <span class="kn">from</span> <span class="nn">..utils.exceptions_utils.serve_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">BadGatewayError</span><span class="p">,</span>
     <span class="n">DockerNotActiveError</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span> <span class="nn">..setup.requirements.conda</span> <span class="kn">import</span> <span class="n">CondaRequirement</span>
+<span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">resolve_pack_method</span>
+<span class="kn">from</span> <span class="nn">..utils.ports</span> <span class="kn">import</span> <span class="n">find_free_port</span>
+<span class="kn">from</span> <span class="nn">..utils.session</span> <span class="kn">import</span> <span class="n">get_session_dir</span>
+<span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">..utils.venv</span> <span class="kn">import</span> <span class="n">SimpleVenv</span>
 
 <span class="n">SLEEP_SECONDS</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">TIMEOUT_SECONDS</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -1014,6 +1021,14 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.is_single_model_without_conda">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">is_single_model_without_conda</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if there is a single model without conda.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if conda is not installed, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">conda_checker</span> <span class="o">=</span> <span class="n">CondaRequirement</span><span class="p">()</span>
         <span class="c1"># Returns True if conda is not installed and False otherwise</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="n">conda_checker</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
@@ -1682,9 +1697,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
             <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">http_err</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span></div>
@@ -1913,9 +1928,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
             <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">http_err</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span></div>

@@ -339,8 +339,8 @@ It provides a database where models and their corresponding environments (such a
 </dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env_db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env_db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s1">&#39;conda&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env_db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s1">&#39;model_id&#39;</span><span class="p">,</span> <span class="s1">&#39;venv_name&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env_db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env_db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span> <span class="s2">&quot;venv_name&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -352,7 +352,8 @@ It provides a database where models and their corresponding environments (such a
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.create_table">
 <span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/localdb.html#EnvironmentDb.create_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.localdb.EnvironmentDb.create_table" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create table if it does not exist.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.db.environments.localdb.EnvironmentDb.delete">
@@ -511,9 +512,15 @@ associated with Ersilia models.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="mi">8080</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s1">&#39;eosxxxx&#39;</span><span class="p">,</span> <span class="n">docker_user</span><span class="o">=</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s1">&#39;eosxxxx&#39;</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">config_json</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="mi">8080</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span><span class="o">.</span><span class="n">build</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">docker_user</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">docker_pwd</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">docker_manager</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">,</span> <span class="n">workers</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">

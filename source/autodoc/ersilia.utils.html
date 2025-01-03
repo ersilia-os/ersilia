@@ -1588,12 +1588,33 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.download.GoogleDriveDownloader.get_confirm_token">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_confirm_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/download.html#GoogleDriveDownloader.get_confirm_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.download.GoogleDriveDownloader.get_confirm_token" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the confirmation token from the response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>response</strong> (<em>object</em>) – The response object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The confirmation token, if available.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.download.GoogleDriveDownloader.save_response_content">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_response_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/download.html#GoogleDriveDownloader.save_response_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.download.GoogleDriveDownloader.save_response_content" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Save the response content to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>response</strong> (<em>object</em>) – The response object.</p></li>
+<li><p><strong>destination</strong> (<em>str</em>) – The destination file path.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -1808,6 +1829,7 @@
 <dt class="sig sig-object py" id="ersilia.utils.environment.Environment">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.environment.</span></span><span class="sig-name descname"><span class="pre">Environment</span></span><a class="reference internal" href="../../_modules/ersilia/utils/environment.html#Environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.environment.Environment" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to handle environment settings.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.environment.Environment.has_module">
 <span class="sig-name descname"><span class="pre">has_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/environment.html#Environment.has_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.environment.Environment.has_module" title="Link to this definition">¶</a></dt>
@@ -2245,6 +2267,7 @@
 <dt class="sig sig-object py" id="ersilia.utils.paths.ErsiliaMetadataLoader">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.paths.</span></span><span class="sig-name descname"><span class="pre">ErsiliaMetadataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/paths.html#ErsiliaMetadataLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.paths.ErsiliaMetadataLoader" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SafeLoader</span></code></p>
+<p>Custom YAML loader for Ersilia metadata.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.utils.paths.ErsiliaMetadataLoader.yaml_constructors">
 <span class="sig-name descname"><span class="pre">yaml_constructors</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'tag:yaml.org,2002:binary':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_binary&gt;,</span> <span class="pre">'tag:yaml.org,2002:bool':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_bool&gt;,</span> <span class="pre">'tag:yaml.org,2002:float':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_float&gt;,</span> <span class="pre">'tag:yaml.org,2002:int':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_int&gt;,</span> <span class="pre">'tag:yaml.org,2002:map':</span> <span class="pre">&lt;function</span> <span class="pre">metadata_constructor&gt;,</span> <span class="pre">'tag:yaml.org,2002:null':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_null&gt;,</span> <span class="pre">'tag:yaml.org,2002:omap':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_omap&gt;,</span> <span class="pre">'tag:yaml.org,2002:pairs':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_pairs&gt;,</span> <span class="pre">'tag:yaml.org,2002:seq':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_seq&gt;,</span> <span class="pre">'tag:yaml.org,2002:set':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_set&gt;,</span> <span class="pre">'tag:yaml.org,2002:str':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_str&gt;,</span> <span class="pre">'tag:yaml.org,2002:timestamp':</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_yaml_timestamp&gt;,</span> <span class="pre">None:</span> <span class="pre">&lt;function</span> <span class="pre">SafeConstructor.construct_undefined&gt;}</span></em><a class="headerlink" href="#ersilia.utils.paths.ErsiliaMetadataLoader.yaml_constructors" title="Link to this definition">¶</a></dt>
