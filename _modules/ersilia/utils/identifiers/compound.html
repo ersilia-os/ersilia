@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.utils.identifiers.compound - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,35 +312,35 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.identifiers.compound</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
-<span class="kn">import</span> <span class="nn">urllib.parse</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.parse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
 
-<span class="kn">import</span> <span class="nn">aiohttp</span>
-<span class="kn">import</span> <span class="nn">nest_asyncio</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aiohttp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nest_asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
-<span class="kn">from</span> <span class="nn">..logging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">chembl_webresource_client.unichem</span> <span class="kn">import</span> <span class="n">unichem_client</span> <span class="k">as</span> <span class="n">unichem</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">chembl_webresource_client.unichem</span><span class="w"> </span><span class="kn">import</span> <span class="n">unichem_client</span> <span class="k">as</span> <span class="n">unichem</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">unichem</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">rdkit</span> <span class="kn">import</span> <span class="n">Chem</span><span class="p">,</span> <span class="n">RDLogger</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span><span class="p">,</span> <span class="n">RDLogger</span>
 
     <span class="n">RDLogger</span><span class="o">.</span><span class="n">DisableLog</span><span class="p">(</span><span class="s2">&quot;rdApp.*&quot;</span><span class="p">)</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">Chem</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">UNPROCESSABLE_INPUT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNPROCESSABLE_INPUT</span>
 
 <span class="n">nest_asyncio</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="CompoundIdentifier">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier">[docs]</a>
-<span class="k">class</span> <span class="nc">CompoundIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CompoundIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to handle compound identification and conversion between different chemical identifiers.</span>
 
@@ -364,7 +364,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">concurrency_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">cache_maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">concurrency_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">cache_maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="o">=</span> <span class="n">Chem</span>
         <span class="k">else</span><span class="p">:</span>
@@ -392,7 +392,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.is_input_header">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_input_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_input_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the given header is an input header.</span>
 
@@ -411,7 +411,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.is_key_header">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_key_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_key_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the given header is a key header.</span>
 
@@ -428,7 +428,7 @@
         <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_is_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -437,12 +437,12 @@
             <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">mol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_process_pubchem_inchikey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_process_pubchem_inchikey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
             <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_is_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">27</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">comp</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
@@ -458,7 +458,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.guess_type">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">[docs]</a>
-    <span class="k">def</span> <span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Guess the type of the given text (either &#39;smiles&#39; or &#39;inchikey&#39;).</span>
 
@@ -483,7 +483,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.unichem_resolver">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">[docs]</a>
-    <span class="k">def</span> <span class="nf">unichem_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inchikey</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unichem_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inchikey</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resolve an InChIKey to a SMILES string using UniChem.</span>
 
@@ -511,7 +511,7 @@
 <div class="viewcode-block" id="CompoundIdentifier.chemical_identifier_resolver">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">chemical_identifier_resolver</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chemical_identifier_resolver</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resolve a chemical identifier to a SMILES string using the NCI tool.</span>
 
@@ -538,7 +538,7 @@
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetch InChIKey for a single SMILES using PubChem API asynchronously.</span>
 <span class="sd">        The cache is used to store the results of the requests for unique SMILES.</span>
@@ -567,7 +567,7 @@
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetch InChIKey for a single SMILES using NCI asynchronously.</span>
 <span class="sd">        The cache is used to store the results of the requests for unique SMILES.</span>
@@ -600,7 +600,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit">[docs]</a>
-    <span class="k">def</span> <span class="nf">convert_smiles_to_inchikey_with_rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_smiles_to_inchikey_with_rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts a SMILES string to an InChIKey using RDKit.</span>
 <span class="sd">        The results are cached to improve performance.</span>
@@ -632,7 +632,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.process_smiles">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">process_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">result_list</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">result_list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process a SMILES string asynchronously.</span>
 
@@ -668,7 +668,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.encode_batch">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">encode_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles_list</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">encode_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles_list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Encode a batch of SMILES strings asynchronously.</span>
 
@@ -698,7 +698,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.encode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode">[docs]</a>
-    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the InChIKey of a compound based on its SMILES string.</span>
 
@@ -721,7 +721,7 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
-            <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_inchikeys</span><span class="p">():</span>
+            <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_inchikeys</span><span class="p">():</span>
                 <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
                     <span class="n">inchikey</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">inchikey</span><span class="p">:</span>
@@ -746,7 +746,7 @@
 
 <div class="viewcode-block" id="CompoundIdentifier.validate_smiles">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles">[docs]</a>
-    <span class="k">def</span> <span class="nf">validate_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate a SMILES string.</span>
 

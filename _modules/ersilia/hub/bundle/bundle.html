@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.hub.bundle.bundle - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,21 +312,21 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.bundle.bundle</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">collections</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dockerfile_parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileParser</span>
 
-<span class="kn">from</span> <span class="nn">...core.base</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span>
-<span class="kn">from</span> <span class="nn">...hub.fetch</span> <span class="kn">import</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span><span class="p">,</span> <span class="n">REQUIREMENTS_TXT</span>
-<span class="kn">from</span> <span class="nn">.repo</span> <span class="kn">import</span> <span class="n">DockerfileFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...hub.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span><span class="p">,</span> <span class="n">REQUIREMENTS_TXT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.repo</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileFile</span>
 
 
 <div class="viewcode-block" id="BundleEnvironmentFile">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile">[docs]</a>
-<span class="k">class</span> <span class="nc">BundleEnvironmentFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BundleEnvironmentFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle the environment file for a model bundle.</span>
 
@@ -341,7 +341,7 @@
 <span class="sd">        Configuration settings in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
@@ -350,7 +350,7 @@
 
 <div class="viewcode-block" id="BundleEnvironmentFile.get_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.get_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the path to the environment file.</span>
 
@@ -362,7 +362,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_is_not_pip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_not_pip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dep</span> <span class="o">!=</span> <span class="s2">&quot;pip&quot;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
@@ -370,7 +370,7 @@
 
 <div class="viewcode-block" id="BundleEnvironmentFile.needs_conda">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.needs_conda">[docs]</a>
-    <span class="k">def</span> <span class="nf">needs_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">needs_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the environment file requires Conda.</span>
 
@@ -394,7 +394,7 @@
 
 <div class="viewcode-block" id="BundleEnvironmentFile.add_model_install_commands">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.add_model_install_commands">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_model_install_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_model_install_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add model installation commands to the environment file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -434,7 +434,7 @@
 
 <div class="viewcode-block" id="BundleEnvironmentFile.check">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleEnvironmentFile.check">[docs]</a>
-    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># TODO: Removing this fucntion</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># TODO: Removing this fucntion</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the environment file exists.</span>
 
@@ -449,7 +449,7 @@
 
 <div class="viewcode-block" id="BundleRequirementsFile">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleRequirementsFile">[docs]</a>
-<span class="k">class</span> <span class="nc">BundleRequirementsFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BundleRequirementsFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle the requirements file for a model bundle.</span>
 
@@ -463,7 +463,7 @@
 <span class="sd">        Configuration settings in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
@@ -472,7 +472,7 @@
 
 <div class="viewcode-block" id="BundleRequirementsFile.add_model_install_commands">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleRequirementsFile.add_model_install_commands">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_model_install_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_model_install_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add model installation commands to the requirements file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -497,7 +497,7 @@
 
 <div class="viewcode-block" id="BundleRequirementsFile.check">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleRequirementsFile.check">[docs]</a>
-    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># TODO: Removing this fucntion</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># TODO: Removing this fucntion</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the requirements file exists.</span>
 
@@ -512,7 +512,7 @@
 
 <div class="viewcode-block" id="BundleDockerfileFile">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile">[docs]</a>
-<span class="k">class</span> <span class="nc">BundleDockerfileFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BundleDockerfileFile</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle the Dockerfile for a model bundle.</span>
 
@@ -526,7 +526,7 @@
 <span class="sd">        Configuration settings in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
@@ -536,7 +536,7 @@
 
 <div class="viewcode-block" id="BundleDockerfileFile.get_file">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the path to the Dockerfile.</span>
 
@@ -550,7 +550,7 @@
 
 <div class="viewcode-block" id="BundleDockerfileFile.get_bentoml_version">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_bentoml_version">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the BentoML version required for the model.</span>
 
@@ -564,7 +564,7 @@
 
 <div class="viewcode-block" id="BundleDockerfileFile.set_to_slim">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_slim">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_to_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_to_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the Dockerfile to use the slim version of the BentoML image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -582,7 +582,7 @@
 
 <div class="viewcode-block" id="BundleDockerfileFile.set_to_full">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_full">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_to_full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_to_full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the Dockerfile to use the full version of the BentoML image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -599,7 +599,7 @@
 
 <div class="viewcode-block" id="BundleDockerfileFile.check">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.check">[docs]</a>
-    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># TODO: Removing this fucntion</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># TODO: Removing this fucntion</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the Dockerfile exists.</span>
 

@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.hub.content.catalog - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -314,32 +314,32 @@
           <h1>Source code for ersilia.hub.content.catalog</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;See available models in the Ersilia Model Hub&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">BENTOML_PATH</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span> <span class="n">TableConstants</span>
-<span class="kn">from</span> <span class="nn">...utils.identifiers.model</span> <span class="kn">import</span> <span class="n">ModelIdentifier</span>
-<span class="kn">from</span> <span class="nn">.card</span> <span class="kn">import</span> <span class="n">ModelCard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...db.hubdata.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">BENTOML_PATH</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span> <span class="n">TableConstants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelIdentifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.card</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCard</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">webbrowser</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">webbrowser</span>
 <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
     <span class="n">webbrowser</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">github</span><span class="w"> </span><span class="kn">import</span> <span class="n">Github</span>
 <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
     <span class="n">Github</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="CatalogTable">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable">[docs]</a>
-<span class="k">class</span> <span class="nc">CatalogTable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CatalogTable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle the catalog table of models.</span>
 
@@ -355,13 +355,13 @@
 <span class="sd">        The columns of the catalog table.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span>
 
 <div class="viewcode-block" id="CatalogTable.as_list_of_dicts">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_list_of_dicts">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_list_of_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_list_of_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the catalog table to a list of dictionaries.</span>
 
@@ -381,7 +381,7 @@
 
 <div class="viewcode-block" id="CatalogTable.as_json">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_json">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the catalog table to JSON format.</span>
 
@@ -396,7 +396,7 @@
 
 <div class="viewcode-block" id="CatalogTable.generate_separator_line">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.generate_separator_line">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_separator_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">middle</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">,</span> <span class="n">widths</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_separator_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">middle</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">,</span> <span class="n">widths</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates a separator line for the table based on the given borders and column widths.</span>
 
@@ -423,7 +423,7 @@
 
 <div class="viewcode-block" id="CatalogTable.as_table">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.as_table">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the catalog table to table format.</span>
 
@@ -511,7 +511,7 @@
 
 <div class="viewcode-block" id="CatalogTable.write">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.write">[docs]</a>
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write the catalog table to a file.</span>
 
@@ -533,17 +533,17 @@
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_json</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
 
 
 
 <div class="viewcode-block" id="ModelCatalog">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelCatalog</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelCatalog</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle the model catalog.</span>
 
@@ -567,18 +567,18 @@
         <span class="s2">&quot;Output Shape&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">less</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">less</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mi</span> <span class="o">=</span> <span class="n">ModelIdentifier</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="o">=</span> <span class="n">less</span>
 
-    <span class="k">def</span> <span class="nf">_is_eos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_eos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">is_test</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
             <span class="n">card</span> <span class="o">=</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
@@ -590,22 +590,22 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;slug&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_get_model_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_model_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;identifier&quot;</span><span class="p">)</span>
         <span class="n">model_source_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_source_file</span><span class="p">):</span>
@@ -614,7 +614,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_get_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">card</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;service_class&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;service_class&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="s2">&quot;Service_class&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
@@ -623,7 +623,7 @@
 
 <div class="viewcode-block" id="ModelCatalog.airtable">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.airtable">[docs]</a>
-    <span class="k">def</span> <span class="nf">airtable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">airtable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        List models available in AirTable Ersilia Model Hub base.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -631,7 +631,7 @@
             <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://airtable.com/shrUcrUnd7jB9ChZV&quot;</span><span class="p">)</span>  <span class="c1"># TODO Hardcoded</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">model_cards</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">model_cards</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Index&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">columns</span>
 
@@ -655,7 +655,7 @@
 
 <div class="viewcode-block" id="ModelCatalog.hub">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.hub">[docs]</a>
-    <span class="k">def</span> <span class="nf">hub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available in Ersilia model hub from the S3 JSON&quot;&quot;&quot;</span>
         <span class="n">ji</span> <span class="o">=</span> <span class="n">JsonModelsInterface</span><span class="p">()</span>
         <span class="n">models</span> <span class="o">=</span> <span class="n">ji</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span>
@@ -666,7 +666,7 @@
 
 <div class="viewcode-block" id="ModelCatalog.local">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.local">[docs]</a>
-    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        List models metadata from the local repository.</span>
 
@@ -691,7 +691,7 @@
 
 <div class="viewcode-block" id="ModelCatalog.bentoml">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.bentoml">[docs]</a>
-    <span class="k">def</span> <span class="nf">bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        List models available as BentoServices.</span>
 

@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.cli.echo - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -313,21 +313,21 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.echo</h1><div class="highlight"><pre>
 <span></span><span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">emoji</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">emoji</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">emoji</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
 
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">SILENCE_FILE</span>
-<span class="kn">from</span> <span class="nn">..utils.session</span> <span class="kn">import</span> <span class="n">get_session_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">SILENCE_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span>
 
 
 <div class="viewcode-block" id="Silencer">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer">[docs]</a>
-<span class="k">class</span> <span class="nc">Silencer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Silencer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to manage the silencing of CLI output.</span>
 
@@ -346,14 +346,14 @@
 <span class="sd">        Disables CLI output.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SILENCE_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">speak</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Silencer.is_silence">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.is_silence">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks if the CLI output is silenced.</span>
 
@@ -369,7 +369,7 @@
 
 <div class="viewcode-block" id="Silencer.speak">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.speak">[docs]</a>
-    <span class="k">def</span> <span class="nf">speak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">speak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enables CLI output.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -379,7 +379,7 @@
 
 <div class="viewcode-block" id="Silencer.silence">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.silence">[docs]</a>
-    <span class="k">def</span> <span class="nf">silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Disables CLI output.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -391,7 +391,7 @@
 
 <div class="viewcode-block" id="echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.echo">[docs]</a>
-<span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Prints styled text to the CLI, optionally with emojis, unless silenced.</span>
 

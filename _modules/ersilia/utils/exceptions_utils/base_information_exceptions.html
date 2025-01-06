@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.utils.exceptions_utils.base_information_exceptions - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,15 +312,15 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.exceptions_utils.base_information_exceptions</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span>
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ErsiliaError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaError</span>
 
 <span class="c1"># ruff: noqa: D101, D102</span>
 
 
-<span class="k">def</span> <span class="nf">_read_default_fields</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_default_fields</span><span class="p">(</span><span class="n">field</span><span class="p">):</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -333,8 +333,8 @@
 
 <div class="viewcode-block" id="BaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.BaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia model information</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Please check Ersilia AirTable to make sure you are providing the right information. This is the AirTable link: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span>
@@ -345,8 +345,8 @@
 
 <div class="viewcode-block" id="IdentifierBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.IdentifierBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">IdentifierBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IdentifierBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia model identifier&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Ersilia model identifiers are 7 alphanumeric characters. They always start with eos, followed by a digit. The eos identifier coincides with the name of the repository. Check our current AirTable to see correct identifiers: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span>
@@ -357,8 +357,8 @@
 
 <div class="viewcode-block" id="SlugBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.SlugBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">SlugBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SlugBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia slug&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Slug must be a 5-60 chars lowercase single-word unique identifier. Use &#39;-&#39; for linking words if necessary&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -367,8 +367,8 @@
 
 <div class="viewcode-block" id="StatusBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.StatusBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">StatusBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StatusBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia status&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following status is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">))</span>
@@ -379,8 +379,8 @@
 
 <div class="viewcode-block" id="TitleBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.TitleBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">TitleBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TitleBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia title&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Title must be a 1 sentence (10 to 300 chars)&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -389,8 +389,8 @@
 
 <div class="viewcode-block" id="DescriptionBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.DescriptionBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">DescriptionBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DescriptionBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia description&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Description must be longer than 200 characters and different from the title&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -399,8 +399,8 @@
 
 <div class="viewcode-block" id="ModeBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.ModeBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">ModeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia mode&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following modes is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Mode&quot;</span><span class="p">))</span>
@@ -411,8 +411,8 @@
 
 <div class="viewcode-block" id="SourceBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.SourceBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">SourceBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SourceBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong source information&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following sources is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Source&quot;</span><span class="p">))</span>
@@ -423,8 +423,8 @@
 
 <div class="viewcode-block" id="SourceTypeBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.SourceTypeBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">SourceTypeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SourceTypeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong source type information&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following source types is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Source Types&quot;</span><span class="p">))</span>
@@ -435,8 +435,8 @@
 
 <div class="viewcode-block" id="TaskBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.TaskBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">TaskBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TaskBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia model task&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;Only these tasks are allowed: </span><span class="si">{}</span><span class="s2">. Tasks must be in list format&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -449,8 +449,8 @@
 
 <div class="viewcode-block" id="SubtaskBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.SubtaskBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">SubtaskBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SubtaskBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia model subtask&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only these subtasks are allowed: </span><span class="si">{}</span><span class="s2">. Subtasks must be in list format&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Subtask&quot;</span><span class="p">))</span>
@@ -461,8 +461,8 @@
 
 <div class="viewcode-block" id="BiomedicalAreaBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.BiomedicalAreaBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">BiomedicalAreaBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BiomedicalAreaBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong biomedical area&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only these biomedical areas are allowed: </span><span class="si">{}</span><span class="s2">. Biomedical areas must be in list format&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Biomedical Area&quot;</span><span class="p">))</span>
@@ -473,8 +473,8 @@
 
 <div class="viewcode-block" id="TargetOrganismBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.TargetOrganismBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">TargetOrganismBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TargetOrganismBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong target organism&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only these target organisms are allowed: </span><span class="si">{}</span><span class="s2">. Target organisms must be in list format&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Target Organism&quot;</span><span class="p">))</span>
@@ -485,8 +485,8 @@
 
 <div class="viewcode-block" id="InputBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.InputBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">InputBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InputBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia input&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only inputs allowed: </span><span class="si">{}</span><span class="s2">. Input must be in list format&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Input&quot;</span><span class="p">))</span>
@@ -497,8 +497,8 @@
 
 <div class="viewcode-block" id="InputShapeBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.InputShapeBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">InputShapeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InputShapeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia input shape&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following shapes is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">))</span>
@@ -509,8 +509,8 @@
 
 <div class="viewcode-block" id="OutputBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.OutputBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">OutputBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutputBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia output&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following outputs is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">))</span>
@@ -521,8 +521,8 @@
 
 <div class="viewcode-block" id="OutputTypeBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.OutputTypeBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">OutputTypeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutputTypeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia output type&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only output types allowed: </span><span class="si">{}</span><span class="s2">. More than one output type can be added in list format&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">))</span>
@@ -533,8 +533,8 @@
 
 <div class="viewcode-block" id="OutputShapeBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.OutputShapeBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">OutputShapeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutputShapeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia output shape&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following output shapes is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">))</span>
@@ -545,8 +545,8 @@
 
 <div class="viewcode-block" id="OutputDimensionBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.OutputDimensionBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">OutputDimensionBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutputDimensionBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong dimension&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Dimension should be at least 1&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -555,8 +555,8 @@
 
 <div class="viewcode-block" id="OutputConsistencyBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.OutputConsistencyBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">OutputConsistencyBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutputConsistencyBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong consistency&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;Only one of the following output consistency is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -569,8 +569,8 @@
 
 <div class="viewcode-block" id="TagBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.TagBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">TagBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TagBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia model tag&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Tags must be in list format and they must be accepted our team. This means that only tags that are already available in Ersilia are allowed. If you want to include a new tag, please open a pull request (PR) on the &#39;tag.txt&#39; file from the Ersilia repository.&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -579,8 +579,8 @@
 
 <div class="viewcode-block" id="LicenseBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.LicenseBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">LicenseBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LicenseBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong license&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Listed licenses are: </span><span class="si">{}</span><span class="s2">. If the model has a license not in this list, please open a PR on the &#39;license.txt&#39; file in the Ersilia repository&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;License&quot;</span><span class="p">))</span>
@@ -591,8 +591,8 @@
 
 <div class="viewcode-block" id="GithubBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.GithubBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">GithubBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GithubBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia GitHub URL&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;The model does not seem to be publicly available in Ersilia&#39;s GitHub organization profile (ersilia-os). Make sure that a model identifier has been set.&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -601,8 +601,8 @@
 
 <div class="viewcode-block" id="DockerhubBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.DockerhubBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">DockerhubBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DockerhubBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia DockerHub URL&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;The model does not seem to be publicly available in Ersilia&#39;s DockerHub organization profile (ersiliaos). Make sure that a model identifier has been set.&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -611,8 +611,8 @@
 
 <div class="viewcode-block" id="DockerArchitectureBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.DockerArchitectureBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">DockerArchitectureBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DockerArchitectureBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Docker architecture&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Listed Docker architectures are: </span><span class="si">{}</span><span class="s2">. If you are considering a Docker architecture that is not in this list, please open a PR on the &#39;docker_architecture.txt&#39; file in the Ersilia repository&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">))</span>
@@ -623,8 +623,8 @@
 
 <div class="viewcode-block" id="S3BaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.S3BaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">S3BaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">S3BaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia AWS S3 URL&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;The model does not seem to be publicly available in Ersilia&#39;s AWS S3 bucket for zipped models. Make sure that a model identifier has been set.&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -633,8 +633,8 @@
 
 <div class="viewcode-block" id="BothIdentifiersBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.BothIdentifiersBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">BothIdentifiersBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BothIdentifiersBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Both identifiers field error&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Ersilia model identifier and/or slug have not been set yet&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -643,8 +643,8 @@
 
 <div class="viewcode-block" id="PublicationBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.PublicationBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">PublicationBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PublicationBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Publication field error&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Publication must be a valid URL&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -653,8 +653,8 @@
 
 <div class="viewcode-block" id="PublicationTypeBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.PublicationTypeBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">PublicationTypeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PublicationTypeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong publication type&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following status is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">))</span>
@@ -665,8 +665,8 @@
 
 <div class="viewcode-block" id="PublicationYearBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.PublicationYearBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">PublicationYearBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PublicationYearBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong publication year&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Publication year must be valid&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -675,8 +675,8 @@
 
 <div class="viewcode-block" id="SourceCodeBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.SourceCodeBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">SourceCodeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SourceCodeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Source Code field error&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Source Code must be a valid URL&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
@@ -685,8 +685,8 @@
 
 <div class="viewcode-block" id="MemoryGbBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.MemoryGbBaseInformationError">[docs]</a>
-<span class="k">class</span> <span class="nc">MemoryGbBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MemoryGbBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Memory Gb field error&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Memory Gb field must be specified as an integer indicating GB of memory limit&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>

@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.store.utils - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,18 +312,18 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.store.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">import</span> <span class="nn">click</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
-<span class="kn">from</span> <span class="nn">ersilia.default</span> <span class="kn">import</span> <span class="n">INFERENCE_STORE_API_URL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ersilia.default</span><span class="w"> </span><span class="kn">import</span> <span class="n">INFERENCE_STORE_API_URL</span>
 
 
 <div class="viewcode-block" id="InferenceStoreMessage">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.InferenceStoreMessage">[docs]</a>
-<span class="k">class</span> <span class="nc">InferenceStoreMessage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InferenceStoreMessage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for inference store messages.</span>
 
@@ -333,17 +333,17 @@
 <span class="sd">        The ID of the model for which the message is being generated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
-    <span class="k">def</span> <span class="nf">_echo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_echo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="OutputSource">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource">[docs]</a>
-<span class="k">class</span> <span class="nc">OutputSource</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutputSource</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to define output source options.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -358,7 +358,7 @@
 <div class="viewcode-block" id="OutputSource.is_local">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_local">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">is_local</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_local</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the option is local.</span>
 
@@ -378,7 +378,7 @@
 <div class="viewcode-block" id="OutputSource.is_cloud">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_cloud">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">is_cloud</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_cloud</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the option is cloud.</span>
 
@@ -399,7 +399,7 @@
 
 <div class="viewcode-block" id="ModelNotInStore">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ModelNotInStore">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Message class for models not found in the inference store.</span>
 
@@ -409,13 +409,13 @@
 <span class="sd">        The ID of the model that is not found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
 <div class="viewcode-block" id="ModelNotInStore.echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ModelNotInStore.echo">[docs]</a>
-    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Echo the message for model not found in inference store.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -435,7 +435,7 @@
 
 <div class="viewcode-block" id="PrecalculationsNotInStore">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore">[docs]</a>
-<span class="k">class</span> <span class="nc">PrecalculationsNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PrecalculationsNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Message class for precalculations not found in the inference store.</span>
 
@@ -445,13 +445,13 @@
 <span class="sd">        The ID of the model for which precalculations are not found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
 <div class="viewcode-block" id="PrecalculationsNotInStore.echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore.echo">[docs]</a>
-    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Echo the message for precalculations not found in inference store.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -473,7 +473,7 @@
 
 <div class="viewcode-block" id="PrecalculationsInStore">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsInStore">[docs]</a>
-<span class="k">class</span> <span class="nc">PrecalculationsInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PrecalculationsInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Message class for precalculations found in the inference store.</span>
 
@@ -485,13 +485,13 @@
 <span class="sd">        The URL where the precalculations can be downloaded.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">output_url</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">output_url</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_url</span> <span class="o">=</span> <span class="n">output_url</span>
 
 <div class="viewcode-block" id="PrecalculationsInStore.echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsInStore.echo">[docs]</a>
-    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Echo the message for precalculations available for download.</span>
 
@@ -513,7 +513,7 @@
 
 <div class="viewcode-block" id="store_has_model">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.store_has_model">[docs]</a>
-<span class="k">def</span> <span class="nf">store_has_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">store_has_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if the model exists in the inference store.</span>
 
@@ -540,7 +540,7 @@
 
 <div class="viewcode-block" id="delete_file_upon_upload">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.delete_file_upon_upload">[docs]</a>
-<span class="k">def</span> <span class="nf">delete_file_upon_upload</span><span class="p">(</span><span class="n">response_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_file_upon_upload</span><span class="p">(</span><span class="n">response_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Delete the file upon successful upload.</span>
 

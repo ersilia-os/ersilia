@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.serve.services - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,19 +312,19 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.serve.services</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 
-<span class="kn">import</span> <span class="nn">docker</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">docker</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
-<span class="kn">from</span> <span class="nn">..db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
-<span class="kn">from</span> <span class="nn">..db.environments.managers</span> <span class="kn">import</span> <span class="n">DockerManager</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..db.environments.localdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvironmentDb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..db.environments.managers</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
     <span class="n">CONTAINER_LOGS_TMP_DIR</span><span class="p">,</span>
     <span class="n">DEFAULT_VENV</span><span class="p">,</span>
@@ -335,20 +335,20 @@
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
     <span class="n">PACKMODE_FILE</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..setup.requirements.conda</span> <span class="kn">import</span> <span class="n">CondaRequirement</span>
-<span class="kn">from</span> <span class="nn">..setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
-<span class="kn">from</span> <span class="nn">..utils.conda</span> <span class="kn">import</span> <span class="n">SimpleConda</span><span class="p">,</span> <span class="n">StandaloneConda</span>
-<span class="kn">from</span> <span class="nn">..utils.docker</span> <span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">model_image_version_reader</span>
-<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.serve_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..setup.requirements.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">CondaRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..setup.requirements.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleConda</span><span class="p">,</span> <span class="n">StandaloneConda</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">model_image_version_reader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.serve_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BadGatewayError</span><span class="p">,</span>
     <span class="n">DockerNotActiveError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">resolve_pack_method</span>
-<span class="kn">from</span> <span class="nn">..utils.ports</span> <span class="kn">import</span> <span class="n">find_free_port</span>
-<span class="kn">from</span> <span class="nn">..utils.session</span> <span class="kn">import</span> <span class="n">get_session_dir</span>
-<span class="kn">from</span> <span class="nn">..utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">..utils.venv</span> <span class="kn">import</span> <span class="n">SimpleVenv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_pack_method</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_free_port</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.venv</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleVenv</span>
 
 <span class="n">SLEEP_SECONDS</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">TIMEOUT_SECONDS</span> <span class="o">=</span> <span class="mi">1000</span>
@@ -356,7 +356,7 @@
 
 <div class="viewcode-block" id="BaseServing">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.BaseServing">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseServing</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseServing</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for serving models.</span>
 
@@ -372,13 +372,13 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bundle_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bundle_tag</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">preferred_port</span>
 
-    <span class="k">def</span> <span class="nf">_get_apis_from_apis_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis_from_apis_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting APIs from list file&quot;</span><span class="p">)</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">APIS_LIST_FILE</span>
@@ -394,7 +394,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_get_info_from_bento</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_info_from_bento</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;information.json&quot;</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;bentoml info --quiet </span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -409,7 +409,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Info </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">info</span>
 
-    <span class="k">def</span> <span class="nf">_get_apis_from_bento</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis_from_bento</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting APIs from Bento&quot;</span><span class="p">)</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info_from_bento</span><span class="p">()</span>
         <span class="n">apis_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -417,7 +417,7 @@
             <span class="n">apis_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">apis_list</span>
 
-    <span class="k">def</span> <span class="nf">_get_apis_from_fastapi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis_from_fastapi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">bundle_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">apis_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">)):</span>
@@ -426,7 +426,7 @@
                 <span class="n">apis_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">api_name</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">apis_list</span>
 
-    <span class="k">def</span> <span class="nf">_get_apis_from_where_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis_from_where_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">apis_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_apis_from_apis_list</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">apis_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">pack_method</span> <span class="o">=</span> <span class="n">resolve_pack_method</span><span class="p">(</span>
@@ -445,7 +445,7 @@
         <span class="k">for</span> <span class="n">api</span> <span class="ow">in</span> <span class="n">apis_list</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">api</span>
 
-    <span class="k">def</span> <span class="nf">_api_with_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_api_with_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given URL and input.</span>
 
@@ -469,8 +469,8 @@
 
 
 
-<span class="k">class</span> <span class="nc">_BentoMLService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_BentoMLService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -481,7 +481,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">SEARCH_SUF_STRING</span> <span class="o">=</span> <span class="s2">&quot;Press CTRL+C to quit&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ERROR_STRING</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
 
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runcommand_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runcommand_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using BentoML.</span>
 
@@ -575,7 +575,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No URL found&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the BentoML service by killing the process.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -585,8 +585,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PID </span><span class="si">{0}</span><span class="s2"> is unassigned&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
 
 
-<span class="k">class</span> <span class="nc">_FastApiService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_FastApiService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -598,7 +598,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ERROR_STRING</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runcommand_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runcommand_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using FastAPI.</span>
 
@@ -691,7 +691,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No URL found&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the FastAPI service by killing the process.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -701,8 +701,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;PID </span><span class="si">{0}</span><span class="s2"> is unassigned&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
 
 
-<span class="k">class</span> <span class="nc">_LocalService</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_LocalService</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">pack_method</span> <span class="o">=</span> <span class="n">resolve_pack_method</span><span class="p">(</span>
@@ -724,10 +724,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Model is not a valid BentoML or FastAPI model&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_apis_from_where_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis_from_where_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">_get_apis_from_where_available</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">local_serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runcommand_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">local_serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runcommand_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model locally.</span>
 
@@ -741,7 +741,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">pid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">port</span>
 
-    <span class="k">def</span> <span class="nf">local_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">local_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the local service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -750,7 +750,7 @@
 
 <div class="viewcode-block" id="SystemBundleService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.SystemBundleService">[docs]</a>
-<span class="k">class</span> <span class="nc">SystemBundleService</span><span class="p">(</span><span class="n">_LocalService</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SystemBundleService</span><span class="p">(</span><span class="n">_LocalService</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Service class for managing system bundle models.</span>
 
@@ -766,7 +766,7 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">_LocalService</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -774,7 +774,7 @@
             <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
@@ -786,7 +786,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
@@ -800,12 +800,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SystemBundleService.is_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.SystemBundleService.is_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the system bundle service is available.</span>
 
@@ -827,7 +827,7 @@
 
 <div class="viewcode-block" id="SystemBundleService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.SystemBundleService.serve">[docs]</a>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using the system bundle service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -836,7 +836,7 @@
 
 <div class="viewcode-block" id="SystemBundleService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.SystemBundleService.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the system bundle service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -845,7 +845,7 @@
 
 <div class="viewcode-block" id="SystemBundleService.api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.SystemBundleService.api">[docs]</a>
-    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given name and input.</span>
 
@@ -868,7 +868,7 @@
 
 <div class="viewcode-block" id="VenvEnvironmentService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService">[docs]</a>
-<span class="k">class</span> <span class="nc">VenvEnvironmentService</span><span class="p">(</span><span class="n">_LocalService</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VenvEnvironmentService</span><span class="p">(</span><span class="n">_LocalService</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Service class for managing virtual environment models.</span>
 
@@ -884,7 +884,7 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">_LocalService</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -893,7 +893,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">venv</span> <span class="o">=</span> <span class="n">SimpleVenv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
@@ -905,7 +905,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
@@ -920,15 +920,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">venv</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">DEFAULT_VENV</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VenvEnvironmentService.is_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.is_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the virtual environment service is available.</span>
 
@@ -943,7 +943,7 @@
 
 <div class="viewcode-block" id="VenvEnvironmentService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.serve">[docs]</a>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using the virtual environment service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -952,7 +952,7 @@
 
 <div class="viewcode-block" id="VenvEnvironmentService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the virtual environment service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -961,7 +961,7 @@
 
 <div class="viewcode-block" id="VenvEnvironmentService.api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.VenvEnvironmentService.api">[docs]</a>
-    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given name and input.</span>
 
@@ -984,7 +984,7 @@
 
 <div class="viewcode-block" id="CondaEnvironmentService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService">[docs]</a>
-<span class="k">class</span> <span class="nc">CondaEnvironmentService</span><span class="p">(</span><span class="n">_LocalService</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CondaEnvironmentService</span><span class="p">(</span><span class="n">_LocalService</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Service class for managing Conda environment models.</span>
 
@@ -1000,7 +1000,7 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">_LocalService</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -1019,7 +1019,7 @@
 <div class="viewcode-block" id="CondaEnvironmentService.is_single_model_without_conda">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.is_single_model_without_conda">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">is_single_model_without_conda</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_single_model_without_conda</span><span class="p">():</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if there is a single model without conda.</span>
 
@@ -1033,7 +1033,7 @@
         <span class="k">return</span> <span class="ow">not</span> <span class="n">conda_checker</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
@@ -1045,7 +1045,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
@@ -1059,7 +1059,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_get_env_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_env_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_singe</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1069,14 +1069,14 @@
                     <span class="k">return</span> <span class="n">env</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
         <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_env_name</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running on conda environment </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CondaEnvironmentService.is_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.is_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the Conda environment service is available.</span>
 
@@ -1094,7 +1094,7 @@
 
 <div class="viewcode-block" id="CondaEnvironmentService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.serve">[docs]</a>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using the Conda environment service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1103,7 +1103,7 @@
 
 <div class="viewcode-block" id="CondaEnvironmentService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the Conda environment service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1112,7 +1112,7 @@
 
 <div class="viewcode-block" id="CondaEnvironmentService.api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.CondaEnvironmentService.api">[docs]</a>
-    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given name and input.</span>
 
@@ -1135,7 +1135,7 @@
 
 <div class="viewcode-block" id="DockerImageService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DockerImageService">[docs]</a>
-<span class="k">class</span> <span class="nc">DockerImageService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DockerImageService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Service class for managing Docker image models.</span>
 
@@ -1151,7 +1151,7 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_docker_active</span><span class="p">()</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -1165,7 +1165,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
@@ -1177,7 +1177,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
@@ -1191,7 +1191,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_get_env_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_env_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">envs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">envs_of_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
             <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">_splitter</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -1201,7 +1201,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dr</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dr</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">DockerNotActiveError</span><span class="p">()</span>
@@ -1209,7 +1209,7 @@
 
 <div class="viewcode-block" id="DockerImageService.is_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DockerImageService.is_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the Docker image service is available.</span>
 
@@ -1229,7 +1229,7 @@
 
 <div class="viewcode-block" id="DockerImageService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DockerImageService.serve">[docs]</a>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using the Docker image service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1242,7 +1242,7 @@
 
 <div class="viewcode-block" id="DockerImageService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DockerImageService.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the Docker image service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1251,7 +1251,7 @@
 
 <div class="viewcode-block" id="DockerImageService.api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DockerImageService.api">[docs]</a>
-    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given name and input.</span>
 
@@ -1275,7 +1275,7 @@
 <span class="c1"># TODO: Include &#39;pip&#39; within available service_class</span>
 <div class="viewcode-block" id="PipInstalledService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService">[docs]</a>
-<span class="k">class</span> <span class="nc">PipInstalledService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PipInstalledService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Service class for managing pip-installed models.</span>
 
@@ -1291,7 +1291,7 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -1300,7 +1300,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
@@ -1312,7 +1312,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
@@ -1326,7 +1326,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_import</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_import</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">model</span>
@@ -1335,7 +1335,7 @@
 
 <div class="viewcode-block" id="PipInstalledService.is_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService.is_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the pip-installed service is available.</span>
 
@@ -1353,7 +1353,7 @@
 
 <div class="viewcode-block" id="PipInstalledService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService.serve">[docs]</a>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using the pip-installed service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1363,7 +1363,7 @@
 
 <div class="viewcode-block" id="PipInstalledService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the pip-installed service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1372,7 +1372,7 @@
 
 <div class="viewcode-block" id="PipInstalledService.api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PipInstalledService.api">[docs]</a>
-    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given name and input.</span>
 
@@ -1396,7 +1396,7 @@
 
 <div class="viewcode-block" id="DummyService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService">[docs]</a>
-<span class="k">class</span> <span class="nc">DummyService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DummyService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dummy service class for testing purposes.</span>
 
@@ -1412,7 +1412,7 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -1420,7 +1420,7 @@
             <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
@@ -1431,7 +1431,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
@@ -1447,7 +1447,7 @@
 
 <div class="viewcode-block" id="DummyService.is_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService.is_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the dummy service is available.</span>
 
@@ -1461,7 +1461,7 @@
 
 <div class="viewcode-block" id="DummyService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService.serve">[docs]</a>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using the dummy service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1470,7 +1470,7 @@
 
 <div class="viewcode-block" id="DummyService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the dummy service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1479,7 +1479,7 @@
 
 <div class="viewcode-block" id="DummyService.api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.DummyService.api">[docs]</a>
-    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given name and input.</span>
 
@@ -1502,7 +1502,7 @@
 
 <div class="viewcode-block" id="PulledDockerImageService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PulledDockerImageService">[docs]</a>
-<span class="k">class</span> <span class="nc">PulledDockerImageService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PulledDockerImageService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Service class for managing Docker image models pulled from a registry.</span>
 
@@ -1518,7 +1518,7 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_docker_active</span><span class="p">()</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -1552,7 +1552,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mem_gb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_memory</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
@@ -1563,7 +1563,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
@@ -1578,20 +1578,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dr</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dr</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">DockerNotActiveError</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_api_with_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_api_with_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using URL: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">))</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">api_name</span><span class="p">),</span> <span class="n">json</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_get_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">info_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">INFORMATION_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">info_file</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -1610,7 +1610,7 @@
 
 <div class="viewcode-block" id="PulledDockerImageService.is_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PulledDockerImageService.is_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the Docker image service is available.</span>
 
@@ -1632,7 +1632,7 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_stop_all_containers_of_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stop_all_containers_of_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Stopping all containers related to model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="p">)</span>
@@ -1648,7 +1648,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Container removed&quot;</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">APIS_LIST_FILE</span>
         <span class="p">)</span>
@@ -1681,7 +1681,7 @@
 
 <div class="viewcode-block" id="PulledDockerImageService.is_url_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PulledDockerImageService.is_url_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_url_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_url_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the given URL is available.</span>
 
@@ -1706,7 +1706,7 @@
             <span class="k">return</span> <span class="kc">True</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_wait_until_container_is_running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wait_until_container_is_running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_url_available</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">):</span>
                 <span class="k">break</span>
@@ -1716,7 +1716,7 @@
 
 <div class="viewcode-block" id="PulledDockerImageService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PulledDockerImageService.serve">[docs]</a>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using the Docker image service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1752,7 +1752,7 @@
 
 <div class="viewcode-block" id="PulledDockerImageService.api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PulledDockerImageService.api">[docs]</a>
-    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given name and input.</span>
 
@@ -1773,7 +1773,7 @@
 
 <div class="viewcode-block" id="PulledDockerImageService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PulledDockerImageService.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the Docker image service by stopping and removing the container.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1785,7 +1785,7 @@
 
 <div class="viewcode-block" id="HostedService">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.HostedService">[docs]</a>
-<span class="k">class</span> <span class="nc">HostedService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HostedService</span><span class="p">(</span><span class="n">BaseServing</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Service class for managing hosted models.</span>
 
@@ -1801,7 +1801,7 @@
 <span class="sd">        URL for the served model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">BaseServing</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
@@ -1814,7 +1814,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
@@ -1825,7 +1825,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception_type</span><span class="p">,</span> <span class="n">exception_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
@@ -1839,14 +1839,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_api_with_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_api_with_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Using URL: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">))</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">api_name</span><span class="p">),</span> <span class="n">json</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_resolve_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">from_hosted_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">IS_FETCHED_FROM_HOSTED_FILE</span>
         <span class="p">)</span>
@@ -1862,7 +1862,7 @@
 
 <div class="viewcode-block" id="HostedService.is_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.HostedService.is_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the hosted service is available.</span>
 
@@ -1879,7 +1879,7 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the list of APIs available for the model.</span>
 
@@ -1912,7 +1912,7 @@
 
 <div class="viewcode-block" id="HostedService.is_url_available">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.HostedService.is_url_available">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_url_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_url_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the given URL is available.</span>
 
@@ -1939,7 +1939,7 @@
 
 <div class="viewcode-block" id="HostedService.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.HostedService.serve">[docs]</a>
-    <span class="k">def</span> <span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model using the hosted service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1949,7 +1949,7 @@
 
 <div class="viewcode-block" id="HostedService.api">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.HostedService.api">[docs]</a>
-    <span class="k">def</span> <span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Call an API with the given name and input.</span>
 
@@ -1970,7 +1970,7 @@
 
 <div class="viewcode-block" id="HostedService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.HostedService.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the hosted service.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

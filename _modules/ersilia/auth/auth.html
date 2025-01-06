@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.auth.auth - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,14 +312,14 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.auth.auth</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">github</span> <span class="kn">import</span> <span class="n">Github</span>
-    <span class="kn">from</span> <span class="nn">github.GithubException</span> <span class="kn">import</span> <span class="n">UnknownObjectException</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">github</span><span class="w"> </span><span class="kn">import</span> <span class="n">Github</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">github.GithubException</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnknownObjectException</span>
 <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
     <span class="n">Github</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">UnknownObjectException</span> <span class="o">=</span> <span class="kc">None</span>
@@ -331,12 +331,12 @@
 
 <div class="viewcode-block" id="Auth">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth">[docs]</a>
-<span class="k">class</span> <span class="nc">Auth</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Auth</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class handles authentication.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hosts_yml</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span> <span class="s2">&quot;.config&quot;</span><span class="p">,</span> <span class="s2">&quot;gh&quot;</span><span class="p">,</span> <span class="s2">&quot;hosts.yml&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hosts_yml</span><span class="p">):</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hosts_yml</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -348,7 +348,7 @@
 
 <div class="viewcode-block" id="Auth.login">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth.login">[docs]</a>
-    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Login using GitHub&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -356,7 +356,7 @@
 
 <div class="viewcode-block" id="Auth.logout">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth.logout">[docs]</a>
-    <span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Logout from GitHub&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -364,7 +364,7 @@
 
 <div class="viewcode-block" id="Auth.status">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth.status">[docs]</a>
-    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;See login status&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hosts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -374,7 +374,7 @@
 
 <div class="viewcode-block" id="Auth.user">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth.user">[docs]</a>
-    <span class="k">def</span> <span class="nf">user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get user&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hosts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -384,7 +384,7 @@
 
 <div class="viewcode-block" id="Auth.oauth_token">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth.oauth_token">[docs]</a>
-    <span class="k">def</span> <span class="nf">oauth_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">oauth_token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get OAuth Token&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hosts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -394,7 +394,7 @@
 
 <div class="viewcode-block" id="Auth.is_contributor">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.auth.html#ersilia.auth.auth.Auth.is_contributor">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the GitHub user is a contributor of ersilia-os&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">Github</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>

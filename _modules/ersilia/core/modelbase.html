@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.core.modelbase - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,20 +312,20 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.core.modelbase</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">DOCKER_INFO_FILE</span>
-<span class="kn">from</span> <span class="nn">..hub.content.slug</span> <span class="kn">import</span> <span class="n">Slug</span>
-<span class="kn">from</span> <span class="nn">..hub.fetch</span> <span class="kn">import</span> <span class="n">DONE_TAG</span><span class="p">,</span> <span class="n">STATUS_FILE</span>
-<span class="kn">from</span> <span class="nn">..utils.exceptions_utils.exceptions</span> <span class="kn">import</span> <span class="n">InvalidModelIdentifierError</span>
-<span class="kn">from</span> <span class="nn">..utils.paths</span> <span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DOCKER_INFO_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..hub.content.slug</span><span class="w"> </span><span class="kn">import</span> <span class="n">Slug</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..hub.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">DONE_TAG</span><span class="p">,</span> <span class="n">STATUS_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidModelIdentifierError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
 
 
 <div class="viewcode-block" id="ModelBase">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelBase</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelBase</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for managing models.</span>
 
@@ -343,7 +343,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id_or_slug</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id_or_slug</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">model_id_or_slug</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">repo_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span>
@@ -378,10 +378,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span>
 
-    <span class="k">def</span> <span class="nf">_get_model_id_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_model_id_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">repo_path</span><span class="p">))</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_slug_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_slug_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">repo_path</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
@@ -394,7 +394,7 @@
 
 <div class="viewcode-block" id="ModelBase.is_valid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_valid">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the model identifier and slug are valid.</span>
 
@@ -409,7 +409,7 @@
             <span class="k">return</span> <span class="kc">True</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_is_available_locally_from_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_available_locally_from_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">fetch_status_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fetch_status_file</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No status file exists&quot;</span><span class="p">)</span>
@@ -421,7 +421,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Is fetched: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">is_fetched</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">is_fetched</span>
 
-    <span class="k">def</span> <span class="nf">_is_available_locally_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_available_locally_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">from_dockerhub_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKER_INFO_FILE</span>
         <span class="p">)</span>
@@ -432,7 +432,7 @@
 
 <div class="viewcode-block" id="ModelBase.is_available_locally">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.is_available_locally">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_available_locally</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the model is available locally either from the status file</span>
 <span class="sd">        or from DockerHub.</span>
@@ -452,7 +452,7 @@
 
 <div class="viewcode-block" id="ModelBase.was_fetched_from_dockerhub">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.modelbase.ModelBase.was_fetched_from_dockerhub">[docs]</a>
-    <span class="k">def</span> <span class="nf">was_fetched_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">was_fetched_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the model was fetched from DockerHub by reading the DockerHub file.</span>
 

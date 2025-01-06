@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.io.types.compound - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,27 +312,27 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.io.types.compound</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">random</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">...setup.requirements.compound</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements.compound</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">ChemblWebResourceClientRequirement</span><span class="p">,</span>
     <span class="n">RdkitRequirement</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">...utils.identifiers.arbitrary</span> <span class="kn">import</span> <span class="n">ArbitraryIdentifier</span>
-<span class="kn">from</span> <span class="nn">...utils.identifiers.compound</span> <span class="kn">import</span> <span class="n">CompoundIdentifier</span>
-<span class="kn">from</span> <span class="nn">..shape</span> <span class="kn">import</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">EXAMPLES_FOLDER</span>
-<span class="kn">from</span> <span class="nn">.examples</span> <span class="kn">import</span> <span class="n">compound</span> <span class="k">as</span> <span class="n">test_examples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.arbitrary</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArbitraryIdentifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.compound</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompoundIdentifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">EXAMPLES_FOLDER</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">compound</span> <span class="k">as</span> <span class="n">test_examples</span>
 
 <span class="n">EXAMPLES</span> <span class="o">=</span> <span class="s2">&quot;compound.tsv&quot;</span>
 
 
 <div class="viewcode-block" id="IO">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO">[docs]</a>
-<span class="k">class</span> <span class="nc">IO</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IO</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle input/output operations for compound data.</span>
 
@@ -355,7 +355,7 @@
 <span class="sd">        [{&#39;key&#39;: &#39;...&#39;, &#39;input&#39;: &#39;...&#39;, &#39;text&#39;: &#39;...&#39;}]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="n">input_shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">example_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EXAMPLES_FOLDER</span><span class="p">,</span> <span class="n">EXAMPLES</span><span class="p">)</span>
@@ -384,7 +384,7 @@
 
 <div class="viewcode-block" id="IO.setup">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.setup">[docs]</a>
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Setup necessary requirements for compound inputs.</span>
 
@@ -401,7 +401,7 @@
 
 <div class="viewcode-block" id="IO.example">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.example">[docs]</a>
-    <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate example data.</span>
 
@@ -420,7 +420,7 @@
 
 <div class="viewcode-block" id="IO.test">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.test">[docs]</a>
-    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get test examples.</span>
 
@@ -434,7 +434,7 @@
 
 <div class="viewcode-block" id="IO.parse">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.parse">[docs]</a>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse a datum.</span>
 
@@ -456,7 +456,7 @@
 
 <div class="viewcode-block" id="IO.is_input">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.is_input">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if a text is a valid input.</span>
 
@@ -475,7 +475,7 @@
 
 <div class="viewcode-block" id="IO.is_key">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.is_key">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if a text is a valid key.</span>
 
@@ -494,7 +494,7 @@
 
 <div class="viewcode-block" id="IO.string_delimiter">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.string_delimiter">[docs]</a>
-    <span class="k">def</span> <span class="nf">string_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">string_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the string delimiter.</span>
 
@@ -508,7 +508,7 @@
 
 <div class="viewcode-block" id="IO.column_delimiter">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.compound.IO.column_delimiter">[docs]</a>
-    <span class="k">def</span> <span class="nf">column_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">column_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the column delimiter.</span>
 
@@ -520,7 +520,7 @@
         <span class="k">return</span> <span class="s2">&quot;,&quot;</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_sample_example_singlets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sample_example_singlets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
         <span class="n">delimiter</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">example_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">):</span>
             <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
@@ -539,12 +539,12 @@
             <span class="n">D</span> <span class="o">+=</span> <span class="p">[{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]}]</span>
         <span class="k">return</span> <span class="n">D</span>
 
-    <span class="k">def</span> <span class="nf">_example_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_example_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
         <span class="n">D</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_example_singlets</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">D</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">d</span>
 
-    <span class="k">def</span> <span class="nf">_example_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_example_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
         <span class="n">D</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
             <span class="n">D_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_example_singlets</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
@@ -555,7 +555,7 @@
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">D</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">d</span>
 
-    <span class="k">def</span> <span class="nf">_example_pair_of_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_example_pair_of_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
         <span class="n">D</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">):</span>
             <span class="n">D_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample_example_singlets</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
@@ -574,7 +574,7 @@
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">D</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">d</span>
 
-    <span class="k">def</span> <span class="nf">_parse_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;key&quot;</span> <span class="ow">in</span> <span class="n">datum</span><span class="p">:</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">datum</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -592,7 +592,7 @@
         <span class="c1"># TODO</span>
         <span class="k">return</span> <span class="n">datum</span>
 
-    <span class="k">def</span> <span class="nf">_parse_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">datum</span>
         <span class="n">text_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">guess_type</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
@@ -608,17 +608,17 @@
         <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">inp</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_parse_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_text</span><span class="p">(</span><span class="n">datum</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_parse_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
         <span class="n">inp</span> <span class="o">=</span> <span class="n">datum</span>
         <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">string_delimiter</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
         <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arbitrary_identifier</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">inp</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_parse_pair_of_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_pair_of_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
         <span class="n">inp</span> <span class="o">=</span> <span class="n">datum</span>
         <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_delimiter</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">string_delimiter</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">string_delimiter</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>

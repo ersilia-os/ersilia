@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.utils.session - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,13 +312,13 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.session</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
-<span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
 
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CONTAINER_LOGS_TMP_DIR</span><span class="p">,</span>
     <span class="n">EOS</span><span class="p">,</span>
     <span class="n">LOGS_DIR</span><span class="p">,</span>
@@ -330,7 +330,7 @@
 
 <div class="viewcode-block" id="get_current_pid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_current_pid">[docs]</a>
-<span class="k">def</span> <span class="nf">get_current_pid</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_current_pid</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the current process ID.</span>
 
@@ -345,7 +345,7 @@
 
 <div class="viewcode-block" id="get_parent_pid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_parent_pid">[docs]</a>
-<span class="k">def</span> <span class="nf">get_parent_pid</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_parent_pid</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the parent process ID.</span>
 
@@ -361,7 +361,7 @@
 
 <div class="viewcode-block" id="get_session_uuid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_session_uuid">[docs]</a>
-<span class="k">def</span> <span class="nf">get_session_uuid</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_session_uuid</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the session UUID.</span>
 
@@ -379,7 +379,7 @@
 
 <div class="viewcode-block" id="create_session_files">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.create_session_files">[docs]</a>
-<span class="k">def</span> <span class="nf">create_session_files</span><span class="p">(</span><span class="n">session_name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_session_files</span><span class="p">(</span><span class="n">session_name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create session directory and necessary files.</span>
 
@@ -396,7 +396,7 @@
 
 <div class="viewcode-block" id="create_session_dir">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.create_session_dir">[docs]</a>
-<span class="k">def</span> <span class="nf">create_session_dir</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_session_dir</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a session directory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -410,7 +410,7 @@
 
 <div class="viewcode-block" id="get_session_dir">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_session_dir">[docs]</a>
-<span class="k">def</span> <span class="nf">get_session_dir</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_session_dir</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the session directory.</span>
 
@@ -425,7 +425,7 @@
 
 <div class="viewcode-block" id="remove_session_dir">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.remove_session_dir">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_session_dir</span><span class="p">(</span><span class="n">session_name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_session_dir</span><span class="p">(</span><span class="n">session_name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove a session directory.</span>
 
@@ -442,7 +442,7 @@
 
 <div class="viewcode-block" id="determine_orphaned_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.determine_orphaned_session">[docs]</a>
-<span class="k">def</span> <span class="nf">determine_orphaned_session</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">determine_orphaned_session</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Determine orphaned sessions.</span>
 
@@ -467,7 +467,7 @@
 
 <div class="viewcode-block" id="remove_orphaned_sessions">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.remove_orphaned_sessions">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_orphaned_sessions</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_orphaned_sessions</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove orphaned sessions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -482,7 +482,7 @@
 
 <div class="viewcode-block" id="get_session_id">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_session_id">[docs]</a>
-<span class="k">def</span> <span class="nf">get_session_id</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_session_id</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the session ID.</span>
 
@@ -497,7 +497,7 @@
 
 <div class="viewcode-block" id="register_model_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.register_model_session">[docs]</a>
-<span class="k">def</span> <span class="nf">register_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">session_dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">session_dir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Register a model with a session.</span>
 
@@ -528,7 +528,7 @@
 
 <div class="viewcode-block" id="get_model_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_model_session">[docs]</a>
-<span class="k">def</span> <span class="nf">get_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the model session.</span>
 
@@ -553,7 +553,7 @@
 
 <div class="viewcode-block" id="deregister_model_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.deregister_model_session">[docs]</a>
-<span class="k">def</span> <span class="nf">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove a model from a session.</span>
 

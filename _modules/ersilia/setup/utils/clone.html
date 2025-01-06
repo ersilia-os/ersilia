@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.setup.utils.clone - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,18 +312,18 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.setup.utils.clone</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...utils.config</span> <span class="kn">import</span> <span class="n">Checker</span>
-<span class="kn">from</span> <span class="nn">...utils.download</span> <span class="kn">import</span> <span class="n">GitHubDownloader</span>
-<span class="kn">from</span> <span class="nn">...utils.versioning</span> <span class="kn">import</span> <span class="n">Versioner</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Checker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.download</span><span class="w"> </span><span class="kn">import</span> <span class="n">GitHubDownloader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.versioning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Versioner</span>
 
 
 <div class="viewcode-block" id="ErsiliaCloner">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.utils.html#ersilia.setup.utils.clone.ErsiliaCloner">[docs]</a>
-<span class="k">class</span> <span class="nc">ErsiliaCloner</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaCloner</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to handle cloning of the Ersilia repository.</span>
 
@@ -333,7 +333,7 @@
 <span class="sd">        Clones the Ersilia repository to the specified path and version.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">checker</span> <span class="o">=</span> <span class="n">Checker</span><span class="p">()</span>
         <span class="n">checker</span><span class="o">.</span><span class="n">_package_path</span><span class="p">()</span>
@@ -341,7 +341,7 @@
 
 <div class="viewcode-block" id="ErsiliaCloner.clone">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.utils.html#ersilia.setup.utils.clone.ErsiliaCloner.clone">[docs]</a>
-    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clones the Ersilia repository to the specified path and version.</span>
 

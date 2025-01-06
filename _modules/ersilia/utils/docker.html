@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.utils.docker - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,17 +312,17 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.docker</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">threading</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
-<span class="kn">import</span> <span class="nn">docker</span>
-<span class="kn">from</span> <span class="nn">dockerfile_parse</span> <span class="kn">import</span> <span class="n">DockerfileParser</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">docker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dockerfile_parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileParser</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_DOCKER_PLATFORM</span><span class="p">,</span>
     <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span>
     <span class="n">DOCKER_INFO_FILE</span><span class="p">,</span>
@@ -332,15 +332,15 @@
     <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span> <span class="nn">..utils.system</span> <span class="kn">import</span> <span class="n">SystemChecker</span>
-<span class="kn">from</span> <span class="nn">.identifiers.long</span> <span class="kn">import</span> <span class="n">LongIdentifier</span>
-<span class="kn">from</span> <span class="nn">.terminal</span> <span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.system</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemChecker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.identifiers.long</span><span class="w"> </span><span class="kn">import</span> <span class="n">LongIdentifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
 
 
 <div class="viewcode-block" id="resolve_pack_method_docker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.resolve_pack_method_docker">[docs]</a>
-<span class="k">def</span> <span class="nf">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
     <span class="n">bundle_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">EOS</span><span class="si">}</span><span class="s2">/dest/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">docker_tag</span> <span class="o">=</span> <span class="n">model_image_version_reader</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">)</span>
@@ -356,7 +356,7 @@
 
 <div class="viewcode-block" id="resolve_platform">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.resolve_platform">[docs]</a>
-<span class="k">def</span> <span class="nf">resolve_platform</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_platform</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">SystemChecker</span><span class="p">()</span><span class="o">.</span><span class="n">is_arm64</span><span class="p">():</span>
         <span class="k">return</span> <span class="s2">&quot;linux/arm64&quot;</span>
     <span class="k">else</span><span class="p">:</span>
@@ -366,7 +366,7 @@
 
 <div class="viewcode-block" id="is_docker_installed">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.is_docker_installed">[docs]</a>
-<span class="k">def</span> <span class="nf">is_docker_installed</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_docker_installed</span><span class="p">():</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -379,7 +379,7 @@
 
 <div class="viewcode-block" id="is_udocker_installed">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.is_udocker_installed">[docs]</a>
-<span class="k">def</span> <span class="nf">is_udocker_installed</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_udocker_installed</span><span class="p">():</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sudo&quot;</span><span class="p">,</span> <span class="s2">&quot;-u&quot;</span><span class="p">,</span> <span class="n">DEFAULT_UDOCKER_USERNAME</span><span class="p">,</span> <span class="s2">&quot;udocker&quot;</span><span class="p">,</span> <span class="s2">&quot;--help&quot;</span><span class="p">]</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
@@ -393,7 +393,7 @@
 
 <div class="viewcode-block" id="model_image_version_reader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.model_image_version_reader">[docs]</a>
-<span class="k">def</span> <span class="nf">model_image_version_reader</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">model_image_version_reader</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read the requested model image version from a file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -408,7 +408,7 @@
 
 <div class="viewcode-block" id="SimpleDocker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker">[docs]</a>
-<span class="k">class</span> <span class="nc">SimpleDocker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleDocker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to manage Docker containers and images.</span>
 
@@ -418,7 +418,7 @@
 <span class="sd">        Whether to use udocker instead of Docker. Default is None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_udocker</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_udocker</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">LongIdentifier</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="k">if</span> <span class="n">use_udocker</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -426,7 +426,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_with_udocker</span> <span class="o">=</span> <span class="n">use_udocker</span>
 
-    <span class="k">def</span> <span class="nf">_use_udocker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_use_udocker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">is_docker_installed</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_udocker_installed</span><span class="p">():</span>
@@ -434,7 +434,7 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_splitter</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_splitter</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">org</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -451,12 +451,12 @@
         <span class="k">return</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_image_name</span><span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SimpleDocker.images">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.images">[docs]</a>
-    <span class="k">def</span> <span class="nf">images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a dictionary of Docker images.</span>
 
@@ -499,7 +499,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.containers">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.containers">[docs]</a>
-    <span class="k">def</span> <span class="nf">containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_run</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">only_run</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a dictionary of Docker containers.</span>
 
@@ -541,7 +541,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.exists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.exists">[docs]</a>
-    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if a Docker image exists.</span>
 
@@ -585,7 +585,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.build">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.build">[docs]</a>
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build a Docker image.</span>
 
@@ -613,7 +613,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.delete">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.delete">[docs]</a>
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Delete a Docker image.</span>
 
@@ -637,7 +637,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.run">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run a Docker container.</span>
 
@@ -684,7 +684,7 @@
 <div class="viewcode-block" id="SimpleDocker.kill">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.kill">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">kill</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kill</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Kill a Docker container.</span>
 
@@ -700,7 +700,7 @@
 <div class="viewcode-block" id="SimpleDocker.remove">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.remove">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove a Docker container.</span>
 
@@ -716,7 +716,7 @@
 <div class="viewcode-block" id="SimpleDocker.cp_from_container">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cp_from_container">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">cp_from_container</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cp_from_container</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">org</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copy files from a Docker container to the local filesystem.</span>
 
@@ -754,7 +754,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.cp_from_image">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cp_from_image">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">cp_from_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cp_from_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copy files from a Docker image to the local filesystem.</span>
 
@@ -779,7 +779,7 @@
 <div class="viewcode-block" id="SimpleDocker.exec_container">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.exec_container">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">exec_container</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exec_container</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute a command in a Docker container.</span>
 
@@ -796,7 +796,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.exec">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.exec">[docs]</a>
-    <span class="k">def</span> <span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">org</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Execute a command in a Docker container and then kill the container.</span>
 
@@ -820,7 +820,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.container_peak">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.container_peak">[docs]</a>
-    <span class="k">def</span> <span class="nf">container_peak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">container_peak</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the peak memory usage of a Docker container running an Ersilia model.</span>
 
@@ -894,7 +894,7 @@
 
 <div class="viewcode-block" id="SimpleDocker.cleanup_ersilia_images">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDocker.cleanup_ersilia_images">[docs]</a>
-    <span class="k">def</span> <span class="nf">cleanup_ersilia_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cleanup_ersilia_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove all Ersilia-related Docker images.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -925,7 +925,7 @@
 
 <div class="viewcode-block" id="SimpleDockerfileParser">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDockerfileParser">[docs]</a>
-<span class="k">class</span> <span class="nc">SimpleDockerfileParser</span><span class="p">(</span><span class="n">DockerfileParser</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleDockerfileParser</span><span class="p">(</span><span class="n">DockerfileParser</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to parse Dockerfiles.</span>
 
@@ -935,14 +935,14 @@
 <span class="sd">        The path to the Dockerfile or the directory containing the Dockerfile.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;Dockerfile&quot;</span><span class="p">)</span>
         <span class="n">DockerfileParser</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SimpleDockerfileParser.get_baseimage">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDockerfileParser.get_baseimage">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_baseimage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_baseimage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the base image from the Dockerfile.</span>
 
@@ -956,7 +956,7 @@
 
 <div class="viewcode-block" id="SimpleDockerfileParser.get_runs">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.SimpleDockerfileParser.get_runs">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_runs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the RUN commands from the Dockerfile.</span>
 
@@ -979,7 +979,7 @@
 
 <div class="viewcode-block" id="ContainerMetricsSampler">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler">[docs]</a>
-<span class="k">class</span> <span class="nc">ContainerMetricsSampler</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ContainerMetricsSampler</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to sample metrics from Docker containers.</span>
 
@@ -991,7 +991,7 @@
 <span class="sd">        The interval between samples in seconds. Default is 0.01.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">sampling_interval</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">sampling_interval</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">container</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_container_for_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -1001,7 +1001,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_interval</span> <span class="o">=</span> <span class="n">sampling_interval</span>  <span class="c1"># Sample every 10ms</span>
 
-    <span class="k">def</span> <span class="nf">_get_container_for_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_container_for_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function will get the Docker container running an ersilia model</span>
 
@@ -1034,7 +1034,7 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An unexpected error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_container_cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_container_cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function will get the CPU percentage utilisation of the Docker container running Ersilia Models.</span>
 
@@ -1067,7 +1067,7 @@
             <span class="p">)</span>
             <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">_container_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_container_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function will get the total memory usage of the Docker container running an ersilia model.</span>
 
@@ -1092,7 +1092,7 @@
             <span class="p">)</span>
             <span class="k">return</span>
 
-    <span class="k">def</span> <span class="nf">_collect_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_collect_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="p">:</span>
             <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracking</span><span class="p">:</span>
                 <span class="n">stat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">container</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1106,7 +1106,7 @@
 
 <div class="viewcode-block" id="ContainerMetricsSampler.start_tracking">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler.start_tracking">[docs]</a>
-    <span class="k">def</span> <span class="nf">start_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Start tracking metrics from the Docker container.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1120,7 +1120,7 @@
 
 <div class="viewcode-block" id="ContainerMetricsSampler.stop_tracking">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler.stop_tracking">[docs]</a>
-    <span class="k">def</span> <span class="nf">stop_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Stop tracking metrics from the Docker container.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1133,7 +1133,7 @@
 
 <div class="viewcode-block" id="ContainerMetricsSampler.get_average_metrics">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.ContainerMetricsSampler.get_average_metrics">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_average_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_average_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the average metrics from the tracked samples.</span>
 

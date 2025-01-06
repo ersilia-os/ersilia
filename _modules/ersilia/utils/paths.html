@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.utils.paths - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,31 +312,31 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.paths</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
-<span class="kn">from</span> <span class="nn">ersilia</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ersilia</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
     <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
     <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.docker</span> <span class="kn">import</span> <span class="n">resolve_pack_method_docker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_pack_method_docker</span>
 
 <span class="n">MODELS_DEVEL_DIRNAME</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>
 
 
 <div class="viewcode-block" id="Paths">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths">[docs]</a>
-<span class="k">class</span> <span class="nc">Paths</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Paths</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to handle various path-related operations in Ersilia.</span>
 
@@ -352,17 +352,17 @@
 <span class="sd">        Check if a path exists.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">essentials</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;setup.py&quot;</span><span class="p">,</span> <span class="s2">&quot;README.md&quot;</span><span class="p">,</span> <span class="s2">&quot;CODE_OF_CONDUCT.md&quot;</span><span class="p">]</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_eos_regex</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_eos_regex</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;eos[0-9][a-z0-9]</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Paths.home">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.home">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">home</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">():</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get home directory.</span>
 
@@ -376,7 +376,7 @@
 
 <div class="viewcode-block" id="Paths.model_id_from_path">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.model_id_from_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">model_id_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_id_from_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Guess model identifier based on the path.</span>
 
@@ -401,7 +401,7 @@
 
 <div class="viewcode-block" id="Paths.org_development_path">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.org_development_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">org_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">org_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Guess generic development path.</span>
 
@@ -419,7 +419,7 @@
 
 <div class="viewcode-block" id="Paths.ersilia_development_path">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.ersilia_development_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">ersilia_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ersilia_development_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Try to guess the package development path in the local computer.</span>
 
@@ -440,7 +440,7 @@
 <div class="viewcode-block" id="Paths.exists">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Paths.exists">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if a path exists.</span>
 
@@ -467,7 +467,7 @@
 <div class="viewcode-block" id="Metadata">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.Metadata">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Metadata</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Metadata</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A dataclass to represent metadata for Ersilia models.</span>
 
@@ -539,7 +539,7 @@
     <span class="n">Status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">Contributor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Dataclasses do not implicitly perform type checks</span>
         <span class="c1"># This is a workaround to ensure that the fields are of the correct type</span>
         <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_def</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataclass_fields__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -554,7 +554,7 @@
 
 <div class="viewcode-block" id="ErsiliaMetadataLoader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.ErsiliaMetadataLoader">[docs]</a>
-<span class="k">class</span> <span class="nc">ErsiliaMetadataLoader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaMetadataLoader</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Custom YAML loader for Ersilia metadata.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -565,7 +565,7 @@
 
 <div class="viewcode-block" id="metadata_constructor">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.metadata_constructor">[docs]</a>
-<span class="k">def</span> <span class="nf">metadata_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">metadata_constructor</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
     <span class="n">_fields</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">construct_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
     <span class="n">fields</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">_fields</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -585,7 +585,7 @@
 
 <div class="viewcode-block" id="resolve_pack_method_source">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.resolve_pack_method_source">[docs]</a>
-<span class="k">def</span> <span class="nf">resolve_pack_method_source</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_source</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Resolve the packaging method for a model based on its source files.</span>
 
@@ -610,7 +610,7 @@
 
 <div class="viewcode-block" id="resolve_pack_method">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.resolve_pack_method">[docs]</a>
-<span class="k">def</span> <span class="nf">resolve_pack_method</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Resolve the packaging method for a model.</span>
 
@@ -636,7 +636,7 @@
 
 <div class="viewcode-block" id="get_metadata_from_base_dir">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.get_metadata_from_base_dir">[docs]</a>
-<span class="k">def</span> <span class="nf">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get metadata from the base directory of a model.</span>
 

@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.hub.fetch.actions.setup - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,16 +312,16 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch.actions.setup</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">....setup.requirements.conda</span> <span class="kn">import</span> <span class="n">CondaRequirement</span>
-<span class="kn">from</span> <span class="nn">....setup.requirements.eospath</span> <span class="kn">import</span> <span class="n">EosHomePathRequirement</span>
-<span class="kn">from</span> <span class="nn">....setup.requirements.git</span> <span class="kn">import</span> <span class="n">GithubCliRequirement</span><span class="p">,</span> <span class="n">GitLfsRequirement</span>
-<span class="kn">from</span> <span class="nn">....setup.requirements.ping</span> <span class="kn">import</span> <span class="n">PingRequirement</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">....setup.requirements.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">CondaRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....setup.requirements.eospath</span><span class="w"> </span><span class="kn">import</span> <span class="n">EosHomePathRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....setup.requirements.git</span><span class="w"> </span><span class="kn">import</span> <span class="n">GithubCliRequirement</span><span class="p">,</span> <span class="n">GitLfsRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....setup.requirements.ping</span><span class="w"> </span><span class="kn">import</span> <span class="n">PingRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAction</span>
 
 
 <div class="viewcode-block" id="SetupChecker">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker">[docs]</a>
-<span class="k">class</span> <span class="nc">SetupChecker</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SetupChecker</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks the setup requirements for the model to be installed and run.</span>
 
@@ -338,12 +338,12 @@
 <span class="sd">        Checks all setup requirements.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_gh_cli</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_gh_cli</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">GithubCliRequirement</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;GitHub CLI is installed&quot;</span><span class="p">)</span>
@@ -352,31 +352,31 @@
                 <span class="s2">&quot;GitHub CLI is not installed. Ersilia can work without it, but we highly recommend that you install this tool.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_git_lfs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_git_lfs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">GitLfsRequirement</span><span class="p">()</span>
         <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Git LFS is installed&quot;</span><span class="p">)</span>
         <span class="n">req</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Git LFS has been activated&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">PingRequirement</span><span class="p">()</span>
         <span class="n">req</span><span class="o">.</span><span class="n">is_connected</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connected to the internet&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">CondaRequirement</span><span class="p">()</span>
         <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Conda is installed&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_eos_home_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_eos_home_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">EosHomePathRequirement</span><span class="p">()</span>
         <span class="n">req</span><span class="o">.</span><span class="n">eos_home_path_exists</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;EOS Home path exists&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SetupChecker.check">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker.check">[docs]</a>
-    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks all setup requirements.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

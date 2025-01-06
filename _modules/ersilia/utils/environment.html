@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.utils.environment - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -316,22 +316,22 @@
 <span class="sd">Utility functions to get information about the working environment.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">importlib.metadata</span> <span class="kn">import</span> <span class="n">distributions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">distributions</span>
 
 
 <div class="viewcode-block" id="Environment">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.environment.Environment">[docs]</a>
-<span class="k">class</span> <span class="nc">Environment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Environment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle environment settings.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">python_packages</span> <span class="o">=</span> <span class="p">{</span><span class="n">dist</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">dist</span> <span class="ow">in</span> <span class="n">distributions</span><span class="p">()}</span>
 
 <div class="viewcode-block" id="Environment.has_module">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.environment.Environment.has_module">[docs]</a>
-    <span class="k">def</span> <span class="nf">has_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">has_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if Python module is installed.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_packages</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>

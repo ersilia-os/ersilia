@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.hub.content.base_information - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,19 +312,19 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.content.base_information</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">validators</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">validators</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationFailure</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationFailure</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">validators</span> <span class="kn">import</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ValidationFailure</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ValidationFailure</span>
 
 
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.base_information_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.base_information_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BiomedicalAreaBaseInformationError</span><span class="p">,</span>
     <span class="n">BothIdentifiersBaseInformationError</span><span class="p">,</span>
     <span class="n">DescriptionBaseInformationError</span><span class="p">,</span>
@@ -357,12 +357,12 @@
     <span class="n">TaskBaseInformationError</span><span class="p">,</span>
     <span class="n">TitleBaseInformationError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">...utils.identifiers.model</span> <span class="kn">import</span> <span class="n">ModelIdentifier</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelIdentifier</span>
 
 
 <div class="viewcode-block" id="BaseInformation">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation">[docs]</a>
-<span class="k">class</span> <span class="nc">BaseInformation</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseInformation</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for handling and validating model information.</span>
 
@@ -372,7 +372,7 @@
 <span class="sd">        Configuration data in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="kc">None</span>
@@ -400,13 +400,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_is_valid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url_string</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ValidationFailure</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_read_default_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_default_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">):</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;metadata&quot;</span><span class="p">,</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
@@ -415,7 +415,7 @@
         <span class="k">return</span> <span class="n">valid_field</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model identifier.</span>
 
@@ -427,7 +427,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span>
 
     <span class="nd">@identifier</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identifier</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_identifier</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model identifier.</span>
 
@@ -447,7 +447,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="n">new_identifier</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model slug.</span>
 
@@ -459,7 +459,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slug</span>
 
     <span class="nd">@slug</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_slug</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_slug</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model slug.</span>
 
@@ -482,7 +482,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_slug</span> <span class="o">=</span> <span class="n">new_slug</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model status.</span>
 
@@ -494,7 +494,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span>
 
     <span class="nd">@status</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_status</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model status.</span>
 
@@ -513,7 +513,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="n">new_status</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model title.</span>
 
@@ -525,7 +525,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span>
 
     <span class="nd">@title</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_title</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_title</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model title.</span>
 
@@ -546,7 +546,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">new_title</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model description.</span>
 
@@ -558,7 +558,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_description</span>
 
     <span class="nd">@description</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_description</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_description</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model description.</span>
 
@@ -579,7 +579,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="n">new_description</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model mode.</span>
 
@@ -591,7 +591,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span>
 
     <span class="nd">@mode</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_mode</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_mode</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model mode.</span>
 
@@ -610,7 +610,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">new_mode</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model source.</span>
 
@@ -622,7 +622,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span>
 
     <span class="nd">@source</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model source.</span>
 
@@ -641,7 +641,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">new_source</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">source_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model source type.</span>
 
@@ -653,7 +653,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span>
 
     <span class="nd">@source_type</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">source_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source_type</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source_type</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model source type.</span>
 
@@ -672,7 +672,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">=</span> <span class="n">new_source_type</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model input.</span>
 
@@ -684,7 +684,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input</span>
 
     <span class="nd">@input</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model input.</span>
 
@@ -708,7 +708,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="n">new_input</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model input shape.</span>
 
@@ -720,7 +720,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span>
 
     <span class="nd">@input_shape</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input_shape</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model input shape.</span>
 
@@ -739,7 +739,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="n">new_input_shape</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model task.</span>
 
@@ -751,7 +751,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span>
 
     <span class="nd">@task</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_task</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_task</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model task.</span>
 
@@ -775,7 +775,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="n">new_task</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">subtask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subtask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model subtask.</span>
 
@@ -787,7 +787,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subtask</span>
 
     <span class="nd">@subtask</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">subtask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_subtask</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subtask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_subtask</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model subtask.</span>
 
@@ -811,7 +811,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subtask</span> <span class="o">=</span> <span class="n">new_subtask</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">biomedical_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">biomedical_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model biomedical area.</span>
 
@@ -823,7 +823,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_biomedical_area</span>
 
     <span class="nd">@biomedical_area</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">biomedical_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_biomedical_area</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">biomedical_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_biomedical_area</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model biomedical area.</span>
 
@@ -847,7 +847,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_biomedical_area</span> <span class="o">=</span> <span class="n">new_biomedical_area</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">target_organism</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_organism</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model target organism.</span>
 
@@ -859,7 +859,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_organism</span>
 
     <span class="nd">@target_organism</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">target_organism</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_target_organism</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">target_organism</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_target_organism</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model target organism.</span>
 
@@ -883,7 +883,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_target_organism</span> <span class="o">=</span> <span class="n">new_target_organism</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model output.</span>
 
@@ -895,7 +895,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span>
 
     <span class="nd">@output</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model output.</span>
 
@@ -918,7 +918,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">new_output</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model output type.</span>
 
@@ -930,7 +930,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span>
 
     <span class="nd">@output_type</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_type</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_type</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model output type.</span>
 
@@ -953,7 +953,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="n">new_output_type</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model output shape.</span>
 
@@ -965,7 +965,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span>
 
     <span class="nd">@output_shape</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_shape</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_shape</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model output shape.</span>
 
@@ -985,7 +985,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="n">new_output_shape</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model output dimension.</span>
 
@@ -997,7 +997,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dimension</span>
 
     <span class="nd">@output_dimension</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">output_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_dimension</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_dimension</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model output dimension.</span>
 
@@ -1018,7 +1018,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_dimension</span> <span class="o">=</span> <span class="n">new_output_dimension</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model output consistency.</span>
 
@@ -1030,7 +1030,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_consistency</span>
 
     <span class="nd">@output_consistency</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_consistency</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_output_consistency</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model output consistency.</span>
 
@@ -1050,7 +1050,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_consistency</span> <span class="o">=</span> <span class="n">new_output_consistency</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model interpretation.</span>
 
@@ -1062,7 +1062,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span>
 
     <span class="nd">@interpretation</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_interpretation</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interpretation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_interpretation</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model interpretation.</span>
 
@@ -1074,7 +1074,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span> <span class="o">=</span> <span class="n">new_interpretation</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model tags.</span>
 
@@ -1086,7 +1086,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span>
 
     <span class="nd">@tag</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_tag</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_tag</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model tags.</span>
 
@@ -1111,7 +1111,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="n">new_tag</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">publication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publication</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model publication URL.</span>
 
@@ -1123,7 +1123,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span>
 
     <span class="nd">@publication</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">publication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model publication URL.</span>
 
@@ -1142,7 +1142,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="n">new_publication</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">publication_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publication_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model publication type.</span>
 
@@ -1154,7 +1154,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publication_type</span>
 
     <span class="nd">@publication_type</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">publication_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication_type</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publication_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication_type</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model publication type.</span>
 
@@ -1173,7 +1173,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_publication_type</span> <span class="o">=</span> <span class="n">new_publication_type</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">publication_year</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publication_year</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model publication year.</span>
 
@@ -1185,7 +1185,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_publication_year</span>
 
     <span class="nd">@publication_year</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">publication_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication_year</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">publication_year</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_publication_year</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model publication year.</span>
 
@@ -1206,7 +1206,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_publication_year</span> <span class="o">=</span> <span class="n">new_publication_year</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model source code URL.</span>
 
@@ -1218,7 +1218,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span>
 
     <span class="nd">@source_code</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source_code</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_source_code</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model source code URL.</span>
 
@@ -1237,7 +1237,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="n">new_source_code</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model license.</span>
 
@@ -1249,7 +1249,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_license</span>
 
     <span class="nd">@license</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_license</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_license</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model license.</span>
 
@@ -1268,7 +1268,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="n">new_license</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model date.</span>
 
@@ -1280,7 +1280,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span>
 
     <span class="nd">@date</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_date</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_date</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model date.</span>
 
@@ -1292,7 +1292,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_date</span> <span class="o">=</span> <span class="n">new_date</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model contributor.</span>
 
@@ -1304,7 +1304,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span>
 
     <span class="nd">@contributor</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_contributor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_contributor</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model contributor.</span>
 
@@ -1316,7 +1316,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="n">new_contributor</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">github</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model GitHub URL.</span>
 
@@ -1337,7 +1337,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_github</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model DockerHub URL.</span>
 
@@ -1349,7 +1349,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span>
 
     <span class="nd">@dockerhub</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dockerhub_url</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_dockerhub_url</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model DockerHub URL.</span>
 
@@ -1368,7 +1368,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="n">new_dockerhub_url</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model Docker architecture.</span>
 
@@ -1380,7 +1380,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span>
 
     <span class="nd">@docker_architecture</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_docker_architecture</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_docker_architecture</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model Docker architecture.</span>
 
@@ -1402,7 +1402,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="n">new_docker_architecture</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model S3 URL.</span>
 
@@ -1414,7 +1414,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span>
 
     <span class="nd">@s3</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_s3_url</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_s3_url</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model S3 URL.</span>
 
@@ -1435,7 +1435,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="n">new_s3_url</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">both_identifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">both_identifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get both the model identifier and slug.</span>
 
@@ -1457,7 +1457,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_both_identifiers</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model memory in GB.</span>
 
@@ -1469,7 +1469,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span>
 
     <span class="nd">@memory_gb</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_memory_gb</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_memory_gb</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model memory in GB.</span>
 
@@ -1489,7 +1489,7 @@
 
 <div class="viewcode-block" id="BaseInformation.as_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation.as_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the model information to a dictionary.</span>
 
@@ -1535,12 +1535,12 @@
         <span class="k">return</span> <span class="n">data</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_assign</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseInformation.from_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation.from_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the model information from a dictionary.</span>
 

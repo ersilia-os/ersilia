@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.hub.fetch.actions.toolize - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,18 +312,18 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch.actions.toolize</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">....db.environments.localdb</span> <span class="kn">import</span> <span class="n">EnvironmentDb</span>
-<span class="kn">from</span> <span class="nn">....setup.requirements.docker</span> <span class="kn">import</span> <span class="n">DockerRequirement</span>
-<span class="kn">from</span> <span class="nn">....utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
-<span class="kn">from</span> <span class="nn">...bundle.status</span> <span class="kn">import</span> <span class="n">ModelStatus</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">BaseAction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....db.environments.localdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvironmentDb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....setup.requirements.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...bundle.status</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAction</span>
 
 
 <div class="viewcode-block" id="ModelToolizer">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelToolizer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelToolizer</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Toolizes a model by distributing it as a Python package or containerizing it using Docker.</span>
 
@@ -340,7 +340,7 @@
 <span class="sd">        Toolizes the model by distributing it as a Python package or containerizing it using Docker.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">BaseAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
@@ -349,7 +349,7 @@
 
 <div class="viewcode-block" id="ModelToolizer.pip_install">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.pip_install">[docs]</a>
-    <span class="k">def</span> <span class="nf">pip_install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pip_install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Installs the model and distributes it as a Python package.</span>
 
@@ -365,7 +365,7 @@
 
 <div class="viewcode-block" id="ModelToolizer.dockerize">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.dockerize">[docs]</a>
-    <span class="k">def</span> <span class="nf">dockerize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dockerize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Containerizes the model using BentoML with Docker.</span>
 
@@ -394,7 +394,7 @@
 
 <div class="viewcode-block" id="ModelToolizer.toolize">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.toolize.ModelToolizer.toolize">[docs]</a>
-    <span class="k">def</span> <span class="nf">toolize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">do_pip</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">do_docker</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">toolize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">do_pip</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">do_docker</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Toolizes the model by distributing it as a Python package or containerizing it using Docker.</span>
 

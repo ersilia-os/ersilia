@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.hub.fetch.fetch - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,35 +312,35 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.fetch.fetch</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
 
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...db.hubdata.interfaces</span> <span class="kn">import</span> <span class="n">JsonModelsInterface</span>
-<span class="kn">from</span> <span class="nn">...default</span> <span class="kn">import</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span>
-<span class="kn">from</span> <span class="nn">...hub.delete.delete</span> <span class="kn">import</span> <span class="n">ModelFullDeleter</span>
-<span class="kn">from</span> <span class="nn">...hub.fetch.actions.template_resolver</span> <span class="kn">import</span> <span class="n">TemplateResolver</span>
-<span class="kn">from</span> <span class="nn">...setup.requirements</span> <span class="kn">import</span> <span class="n">check_bentoml</span>
-<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.fetch_exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...db.hubdata.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonModelsInterface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...hub.delete.delete</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFullDeleter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...hub.fetch.actions.template_resolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateResolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_bentoml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.fetch_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">NotInstallableWithBentoML</span><span class="p">,</span>
     <span class="n">NotInstallableWithFastAPI</span><span class="p">,</span>
     <span class="n">StandardModelExampleError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span> <span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
-<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">yes_no_input</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">STATUS_FILE</span>
-<span class="kn">from</span> <span class="nn">.lazy_fetchers.dockerhub</span> <span class="kn">import</span> <span class="n">ModelDockerHubFetcher</span>
-<span class="kn">from</span> <span class="nn">.lazy_fetchers.hosted</span> <span class="kn">import</span> <span class="n">ModelHostedFetcher</span>
-<span class="kn">from</span> <span class="nn">.register.standard_example</span> <span class="kn">import</span> <span class="n">ModelStandardExample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_input</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">STATUS_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lazy_fetchers.dockerhub</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelDockerHubFetcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.lazy_fetchers.hosted</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelHostedFetcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.register.standard_example</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelStandardExample</span>
 
 <span class="n">FetchResult</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;FetchResult&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;fetch_success&quot;</span><span class="p">,</span> <span class="s2">&quot;reason&quot;</span><span class="p">])</span>
 
 
 <div class="viewcode-block" id="ModelFetcher">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ModelFetcher is responsible for fetching models from various sources.</span>
 
@@ -387,7 +387,7 @@
 <span class="sd">        await fetcher.fetch(model_id=&quot;eosxxxx&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -452,7 +452,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model getting fetched from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_source</span><span class="p">))</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_decide_fetcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decide_fetcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">tr</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
@@ -462,7 +462,7 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No fetcher available&quot;</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_fetch_from_fastapi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_fastapi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching using Ersilia Pack (FastAPI)&quot;</span><span class="p">)</span>
         <span class="n">fetch</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.hub.fetch.fetch_fastapi&quot;</span><span class="p">)</span>
         <span class="n">mf</span> <span class="o">=</span> <span class="n">fetch</span><span class="o">.</span><span class="n">ModelFetcherFromFastAPI</span><span class="p">(</span>
@@ -481,7 +481,7 @@
             <span class="k">raise</span> <span class="n">NotInstallableWithFastAPI</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_fetch_from_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching using BentoML&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_bentoml</span><span class="p">()</span>
         <span class="n">fetch</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.hub.fetch.fetch_bentoml&quot;</span><span class="p">)</span>
@@ -503,7 +503,7 @@
             <span class="k">raise</span> <span class="n">NotInstallableWithBentoML</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -526,20 +526,20 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model already exists in your local, skipping fetching&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_standard_csv_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_standard_csv_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStandardExample</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">ms</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching from DockerHub&quot;</span><span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_fetch_from_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching from hosted&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_hosted_fetcher</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching from hosted done&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_decide_if_use_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decide_if_use_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span><span class="p">:</span>
@@ -561,7 +561,7 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_decide_if_use_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_decide_if_use_hosted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span><span class="p">:</span>
@@ -579,7 +579,7 @@
 
 <div class="viewcode-block" id="ModelFetcher.exists">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher.exists">[docs]</a>
-    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the model exists locally.</span>
 
@@ -604,7 +604,7 @@
             <span class="k">return</span> <span class="kc">False</span></div>
 
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchResult</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FetchResult</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Model doesn&#39;t exist on your system, fetching it now.&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting fetching procedure&quot;</span><span class="p">)</span>
@@ -644,7 +644,7 @@
 
 <div class="viewcode-block" id="ModelFetcher.fetch">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.fetch.html#ersilia.hub.fetch.fetch.ModelFetcher.fetch">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetch a model with the given eos identifier.</span>
 

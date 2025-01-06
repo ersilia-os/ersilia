@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.lake.interface - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,23 +312,23 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.lake.interface</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">isaura.core.hdf5</span> <span class="kn">import</span> <span class="n">Hdf5ApiExplorer</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">isaura.core.hdf5</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5ApiExplorer</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">Hdf5ApiExplorer</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">..io.dataframe</span> <span class="kn">import</span> <span class="n">Dataframe</span>
-<span class="kn">from</span> <span class="nn">..io.output</span> <span class="kn">import</span> <span class="n">DictlistDataframeConverter</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">LakeBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..io.dataframe</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataframe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..io.output</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictlistDataframeConverter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeBase</span>
 
 
 <div class="viewcode-block" id="IsauraInterface">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.interface.IsauraInterface">[docs]</a>
-<span class="k">class</span> <span class="nc">IsauraInterface</span><span class="p">(</span><span class="n">LakeBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IsauraInterface</span><span class="p">(</span><span class="n">LakeBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interface class for interacting with the Isaura HDF5 API, s caching framework</span>
 <span class="sd">    to store repeated calculation from inference.</span>
@@ -356,7 +356,7 @@
 <span class="sd">        True if Hdf5ApiExplorer is available, otherwise False.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">LakeBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span> <span class="o">=</span> <span class="n">api_name</span>
@@ -367,7 +367,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">is_available</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_dict_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dict_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">res</span> <span class="o">=</span> <span class="nb">input</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -377,7 +377,7 @@
 
 <div class="viewcode-block" id="IsauraInterface.done_todo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.interface.IsauraInterface.done_todo">[docs]</a>
-    <span class="k">def</span> <span class="nf">done_todo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">done_todo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Determine which keys are done and which are to be processed.</span>
 
@@ -402,7 +402,7 @@
 
 <div class="viewcode-block" id="IsauraInterface.read">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.interface.IsauraInterface.read">[docs]</a>
-    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read data from the HDF5 file based on input keys.</span>
 
@@ -431,7 +431,7 @@
 
 <div class="viewcode-block" id="IsauraInterface.write">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.lake.html#ersilia.lake.interface.IsauraInterface.write">[docs]</a>
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write results to the HDF5 file.</span>
 

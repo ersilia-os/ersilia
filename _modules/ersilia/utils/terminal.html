@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.utils.terminal - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,29 +312,29 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.terminal</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 
-<span class="kn">from</span> <span class="nn">.logging</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">inputimeout</span> <span class="kn">import</span> <span class="n">TimeoutOccurred</span><span class="p">,</span> <span class="n">inputimeout</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">inputimeout</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutOccurred</span><span class="p">,</span> <span class="n">inputimeout</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">inputimeout</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">TimeoutOccurred</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="kn">from</span> <span class="nn">..default</span> <span class="kn">import</span> <span class="n">VERBOSE_FILE</span>
-<span class="kn">from</span> <span class="nn">..utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span> <span class="nn">..utils.session</span> <span class="kn">import</span> <span class="n">get_session_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">VERBOSE_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span>
 
 
 <div class="viewcode-block" id="is_quiet">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.is_quiet">[docs]</a>
-<span class="k">def</span> <span class="nf">is_quiet</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_quiet</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if the current session is in quiet mode.</span>
 
@@ -357,7 +357,7 @@
 
 <div class="viewcode-block" id="run_command">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.run_command">[docs]</a>
-<span class="k">def</span> <span class="nf">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run a shell command.</span>
 
@@ -393,7 +393,7 @@
 
 <div class="viewcode-block" id="run_command_check_output">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.run_command_check_output">[docs]</a>
-<span class="k">def</span> <span class="nf">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_command_check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run a shell command and capture its output.</span>
 
@@ -427,7 +427,7 @@
 
 <div class="viewcode-block" id="raw_input_with_timeout">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.raw_input_with_timeout">[docs]</a>
-<span class="k">def</span> <span class="nf">raw_input_with_timeout</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">raw_input_with_timeout</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Prompt the user for input with a timeout.</span>
 
@@ -457,7 +457,7 @@
 
 <div class="viewcode-block" id="yes_no_input">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.yes_no_input">[docs]</a>
-<span class="k">def</span> <span class="nf">yes_no_input</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">yes_no_input</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">default_answer</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Prompt the user for a yes/no input with a timeout.</span>
 
@@ -490,7 +490,7 @@
 
 <div class="viewcode-block" id="print_result_table">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.print_result_table">[docs]</a>
-<span class="k">def</span> <span class="nf">print_result_table</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_result_table</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print a result table from CSV or JSON-like data.</span>
 
@@ -513,7 +513,7 @@
             <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">headers</span>
         <span class="p">}</span>
 
-        <span class="k">def</span> <span class="nf">format_row</span><span class="p">(</span><span class="n">row_data</span><span class="p">,</span> <span class="n">is_header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">format_row</span><span class="p">(</span><span class="n">row_data</span><span class="p">,</span> <span class="n">is_header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">is_header</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">(</span>
                     <span class="n">HEADER_COLOR</span>
@@ -548,7 +548,7 @@
 
 <div class="viewcode-block" id="read_csv_from_string">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.read_csv_from_string">[docs]</a>
-<span class="k">def</span> <span class="nf">read_csv_from_string</span><span class="p">(</span><span class="n">csv_string</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_csv_from_string</span><span class="p">(</span><span class="n">csv_string</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read CSV data from a string.</span>
 

@@ -6,7 +6,7 @@
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
         <title>ersilia.utils.exceptions_utils.exceptions - Ersilia documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -312,16 +312,16 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.exceptions_utils.exceptions</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span> <span class="nn">...utils.logging</span> <span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span> <span class="nn">...utils.terminal</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
 
 
 <div class="viewcode-block" id="ErsiliaError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ErsiliaError">[docs]</a>
-<span class="k">class</span> <span class="nc">ErsiliaError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for managing errors in Ersilia.</span>
 
@@ -348,7 +348,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Ersilia has experienced an error&quot;</span><span class="p">,</span> <span class="n">hints</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Ersilia exception class:</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -368,12 +368,12 @@
 
 <div class="viewcode-block" id="MissingDependencyError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.MissingDependencyError">[docs]</a>
-<span class="k">class</span> <span class="nc">MissingDependencyError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingDependencyError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for missing dependency errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependency</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dependency</span> <span class="o">=</span> <span class="n">dependency</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Missing dependency </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dependency</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -383,12 +383,12 @@
 
 <div class="viewcode-block" id="NullModelIdentifierError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.NullModelIdentifierError">[docs]</a>
-<span class="k">class</span> <span class="nc">NullModelIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NullModelIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for null model identifier errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Model identifier </span><span class="si">{0}</span><span class="s2"> is null&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;This type of error typically occurs when a model has not been served. Please run &#39;ersilia serve MODEL_ID&#39; if you have a model identifier in mind&quot;</span>
@@ -398,12 +398,12 @@
 
 <div class="viewcode-block" id="InvalidModelIdentifierError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.InvalidModelIdentifierError">[docs]</a>
-<span class="k">class</span> <span class="nc">InvalidModelIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidModelIdentifierError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for invalid model identifier errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Could not identify model identifier or slug: </span><span class="si">{0}</span><span class="s2">:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
@@ -417,12 +417,12 @@
 
 <div class="viewcode-block" id="ModelNotAvailableLocallyError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelNotAvailableLocallyError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelNotAvailableLocallyError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised when the model is not available locally.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> is not available locally, so it cannot be served&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -437,12 +437,12 @@
 
 <div class="viewcode-block" id="EmptyOutputError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.EmptyOutputError">[docs]</a>
-<span class="k">class</span> <span class="nc">EmptyOutputError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmptyOutputError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Exception raised for empty output errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span> <span class="o">=</span> <span class="n">api_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Model API </span><span class="si">{0}</span><span class="s2">:</span><span class="si">{1}</span><span class="s2"> did not produce an output&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -455,7 +455,7 @@
 
 <div class="viewcode-block" id="EmptyOutputError.run_from_terminal">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.EmptyOutputError.run_from_terminal">[docs]</a>
-    <span class="k">def</span> <span class="nf">run_from_terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_from_terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the error handling from the terminal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
