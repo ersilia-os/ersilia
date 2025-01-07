@@ -1,79 +1,23 @@
 import csv
 import json
-import re
+import os
+import yaml
 from datetime import datetime
+from ersilia.io.input import ExampleGenerator
+from pathlib import Path
 
-
-def create_compound_input_csv(csv_path):
-    input_data = [
-        "COc1ccc2c(NC(=O)Nc3cccc(C(F)(F)F)n3)ccnc2c1",
-        "O=C(O)c1ccccc1NC(=O)N1CCC(c2ccccc2C(F)(F)F)CC1",
-        "O=C(O)c1cc(C(=O)O)c(C(=O)N(Cc2cccc(Oc3ccccc3)c2)[C@H]2CCCc3ccccc32)cc1C(=O)O",
-        "Cc1ccc(N2CCN(Cc3nc4ccccc4[nH]3)CC2)cc1C",
-        "Cc1cccc(NC(=O)CN2CCC(c3ccccn3)CC2)c1",
-        "Clc1cccc(-c2nnnn2Cc2cccnc2)c1Cl",
-        "CNC(=O)Nc1ccc2c(c1)CC[C@@]21OC(=O)N(CC(=O)N(Cc2ccc(F)cc2)[C@@H](C)C(F)(F)F)C1=O",
-        "Cc1[nH]nc2ccc(-c3cncc(OC[C@@H](N)Cc4ccccc4)c3)cc12",
-        "NCCCCCCCCCCNS(=O)(=O)c1cccc2c(Cl)cccc12",
-    ]
-
-    with open(csv_path, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(["Input"])
-        for line in input_data:
-            writer.writerow([line])
-
-
-def save_as_json(result, output_file, remove_list=None):
-    try:
-        if remove_list:
-            for item in remove_list:
-                result = result.replace(item, "")
-
-        stripped, formatted = re.split(r"\}\s*\{", result.strip()), []
-
-        for i, line in enumerate(stripped):
-            if i == 0:
-                line = line + "}"
-            elif i == len(stripped) - 1:
-                line = "{" + line
-            else:
-                line = "{" + line + "}"
-            formatted.append(line)
-
-        _data = []
-        for obj in formatted:
-            try:
-                _data.append(json.loads(obj))
-            except json.JSONDecodeError as e:
-                print(f"Skipping invalid JSON object: {obj}. Error: {e}")
-                continue
-
-        with open(output_file, "w") as f:
-            json.dump(_data, f, indent=4)
-
-    except Exception as e:
-        raise ValueError(f"Error processing result: {e}")
+config_path = Path("config.yml")
+config = yaml.safe_load(config_path.read_text())
 
 
 def get_commands(model_id, config):
+    run = construct_run_cmd(config)
     return {
         "fetch": ["ersilia", "-v", "fetch", model_id]
         + (config.get("fetch_flags", "").split() if config.get("fetch_flags") else []),
         "serve": ["ersilia", "-v", "serve", model_id]
         + (config.get("serve_flags", "").split() if config.get("serve_flags") else []),
-        "run": [
-            "ersilia",
-            "run",
-            "-i",
-            config["input_file"],
-        ]
-        + (
-            ["-o", config["output_file"]]
-            if config.get("output_file") and not config.get("output_redirection")
-            else []
-        )
-        + (config.get("run_flags", "").split() if config.get("run_flags") else []),
+        **run,
         "close": ["ersilia", "close"],
     }
 
@@ -96,3 +40,74 @@ def handle_error_logging(command, description, result, config, checkups=None):
             if checkups:
                 for check in checkups:
                     file.write(f"Check '{check['name']}': {check['status']}\n")
+
+
+def get_inputs(config, types):
+    example = ExampleGenerator(model_id=config["model_id"])
+    samples = example.example(
+        n_samples=config["number_of_input_samples"],
+        file_name=None,
+        simple=True,
+        try_predefined=True,
+    )
+
+    samples = [sample["input"] for sample in samples]
+    if types == "str":
+        return samples[0]
+    if types == "list":
+        return json.dumps(samples)
+    if types == "csv":
+        example.example(
+            n_samples=config["number_of_input_samples"],
+            file_name=config["input_file"],
+            simple=True,
+            try_predefined=True,
+        )
+        return config["input_file"]
+
+
+def construct_run_cmd(config):
+    run = {}
+    for inp_type in config["input_types"]:
+        for i, output_file in enumerate(config["output_files"]):
+            out_type = os.path.splitext(output_file)[1].replace(".", "")
+            inp_data = get_inputs(config, inp_type)
+            key = f"run-{inp_type}-{out_type}"
+            val = ["ersilia", "-v", "run", "-i", inp_data, "-o", output_file]
+            run[key] = val
+    return run
+
+
+if __name__ == "__main__":
+    import subprocess
+    import sys
+
+    docker_activated = False
+
+    if config and config.get("activate_docker"):
+        if sys.platform == "linux":  # macOS
+            try:
+                docker_status = subprocess.run(
+                    ["docker", "info"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    check=True,
+                )
+                docker_activated = True
+                print("Docker is running.")
+            except subprocess.CalledProcessError:
+                raise RuntimeError(
+                    "Docker is not running. Please start Docker manually on macOS."
+                )
+        else:  # Assume Linux
+            docker_status = subprocess.run(
+                ["systemctl", "is-active", "--quiet", "docker"]
+            )
+            if docker_status.returncode != 0:
+                subprocess.run(["systemctl", "start", "docker"], check=True)
+            docker_activated = True
+    # else:
+    #     if sys.platform != "darwin":  # Only stop Docker on Linux
+    #         subprocess.run(["systemctl", "stop", "docker"], check=True)
+
+    print(docker_activated)

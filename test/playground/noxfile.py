@@ -54,7 +54,29 @@ def setup_ersilia(session):
     session.chdir(ORIGINAL_DIR)
 
 
-@nox.session(venv_backend="conda", python=get_python_version())
+def parse_and_update_config(session):
+    passed_args = {
+        arg.split("=")[0]: arg.split("=")[1] for arg in session.posargs if "=" in arg
+    }
+
+    for key, value in passed_args.items():
+        if value.lower() in ("true", "false"):
+            passed_args[key] = value.lower() == "true"
+        elif "," in value:
+            passed_args[key] = value.split(",")
+
+    new_config = {key: passed_args.get(key, config.get(key)) for key in config.keys()}
+
+    logger.info("Parsed arguments and updated configuration:")
+    for key in passed_args.keys():
+        logger.info(f"  {key}: {passed_args[key]}")
+
+    update_yaml_values(new_config)
+
+    return new_config
+
+
+@nox.session(venv_backend="conda", python=get_python_version(), reuse_venv=True)
 def setup(session):
     install_dependencies(session)
     setup_ersilia(session)
@@ -63,35 +85,41 @@ def setup(session):
 @nox.session(venv_backend="conda", python=get_python_version())
 def test_from_github(session):
     install_dependencies(session)
+    setup_ersilia(session)
+    update_yaml_values({"fetch_flags": "--from_github"})
     logger.info(
         f'CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}'
     )
+    parse_and_update_config(session)
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
-@nox.session(venv_backend="conda", python=get_python_version())
+@nox.session(venv_backend="conda", python=get_python_version(), reuse_venv=True)
 def test_from_dockerhub(session):
     install_dependencies(session)
+    setup_ersilia(session)
     update_yaml_values({"fetch_flags": "--from_dockerhub"})
     logger.info(
         f'CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}'
     )
+    parse_and_update_config(session)
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
 @nox.session(venv_backend="conda", python=get_python_version())
 def test_auto_fetcher_decider(session):
     install_dependencies(session)
+    setup_ersilia(session)
     update_yaml_values({"fetch_flags": ""})
     logger.info(
         f'CLI test for model: {config.get("model_id")} and auto fetcher decider'
     )
+    parse_and_update_config(session)
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
 @nox.session(venv_backend="conda", python=get_python_version())
 def test_fetch_multiple_models(session):
-    install_dependencies(session)
     update_yaml_values(
         {
             "runner": "multiple",
@@ -100,32 +128,34 @@ def test_fetch_multiple_models(session):
         }
     )
     logger.info("Fetching and Serving Multiple Models: Fetching")
+    parse_and_update_config(session)
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
 @nox.session(venv_backend="conda", python=get_python_version())
 def test_serve_multiple_models(session):
-    install_dependencies(session)
     update_yaml_values(
         {"runner": "multiple", "cli_type": "serve", "delete_model": False}
     )
     logger.info("Fetching and Serving Multiple Models: Serving")
+    parse_and_update_config(session)
     session.run("pytest", "commands.py", "-v", silent=False)
 
 
 @nox.session(venv_backend="conda", python=get_python_version())
 def test_conventional_run(session):
-    """Run pytest for standard and conventional run."""
-    install_dependencies(session)
     update_yaml_values(
         {
             "runner": "single",
             "cli_type": "all",
             "fetch_flags": "--from_dockerhub",
-            "output_file": "files/output_eos9gg2_0.json",
-            "output_redirection": "true",
+            "output_files": [
+                "files/output_eos9gg2_0.json",
+                "files/output_eos9gg2_1.h5",
+            ],
             "delete_model": True,
         }
     )
     logger.info("Standard and Conventional Run: Conventional")
+    parse_and_update_config(session)
     session.run("pytest", "commands.py", "-v", silent=False)

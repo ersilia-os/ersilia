@@ -1,20 +1,18 @@
+import psutil
+import platform
+import pytest
 import subprocess
 import time
-from pathlib import Path
-
-import psutil
-import pytest
 import yaml
+from pathlib import Path
 from rich.text import Text
 
 from .rules import get_rule
 from .shared import results
 from .utils import (
-    create_compound_input_csv,
     get_command_names,
     get_commands,
     handle_error_logging,
-    save_as_json,
 )
 
 config = yaml.safe_load(Path("config.yml").read_text())
@@ -22,7 +20,7 @@ delete_model = config.get("delete_model", False)
 activate_docker = config.get("activate_docker", False)
 runner = config.get("runner", "single")
 cli_type = config.get("cli_type", "all")
-output_file = config.get("output_file")
+output_file = config.get("output_files")
 input_file = config.get("input_file")
 redirect = config.get("output_redirection", False)
 
@@ -37,19 +35,45 @@ from_github = "--from_github" in config.get("fetch_flags", "")
 from_dockerhub = "--from_dockerhub" in config.get("fetch_flags", "")
 
 
-def execute_command(command, description="", dest_path=None, repo_path=None):
-    # generating input eg.
-    create_compound_input_csv(config.get("input_file"))
-    # docker sys control
+def manage_docker(config):
     docker_activated = False
+
     if config and config.get("activate_docker"):
-        docker_status = subprocess.run(["systemctl", "is-active", "--quiet", "docker"])
-        if docker_status.returncode != 0:
-            subprocess.run(["systemctl", "start", "docker"], check=True)
+        system_platform = platform.system()
+
+        if system_platform == "Linux":
+            docker_status = subprocess.run(
+                ["systemctl", "is-active", "--quiet", "docker"]
+            )
+            if docker_status.returncode != 0:
+                subprocess.run(["systemctl", "start", "docker"], check=True)
+        elif system_platform == "Darwin":  # macOS
+            docker_status = subprocess.run(
+                ["docker", "info"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+            if docker_status.returncode != 0:
+                print(
+                    "Docker is not running. Please start the Docker Desktop application."
+                )
+                raise RuntimeError(
+                    "Docker is not running on macOS. Start Docker Desktop."
+                )
+        else:
+            raise OSError(f"Unsupported platform: {system_platform}")
+
         docker_activated = True
     else:
-        subprocess.run(["systemctl", "stop", "docker"], check=True)
+        if platform.system() == "Linux":
+            subprocess.run(["systemctl", "stop", "docker"], check=True)
+        elif platform.system() == "Darwin":
+            print("Stopping Docker programmatically is not supported on macOS.")
+            raise RuntimeError("Cannot stop Docker programmatically on macOS.")
 
+    return docker_activated
+
+
+def execute_command(command, description="", dest_path=None, repo_path=None):
+    docker_activated = manage_docker(config)
     (
         start_time,
         max_memory,
@@ -87,9 +111,6 @@ def execute_command(command, description="", dest_path=None, repo_path=None):
             handle_error_logging(command, description, result, config)
 
         pytest.fail(f"{description} '{' '.join(command)}' failed with error: {result}")
-
-    if description == "run" and success and config.get("output_redirection"):
-        save_as_json(result, output_file, remove_list=[input_file])
 
     checkups = apply_rules(command, description, dest_path, repo_path, config)
 
@@ -149,19 +170,32 @@ def apply_rules(command, description, dest_path, repo_path, config):
                         expected_status=True,
                     )
                 )
-        elif description == "run":
-            checkups.append(
-                get_rule(
-                    "file_exists",
-                    file_path=output_file,
-                    expected_status=True,
-                )
+        elif "run" in description:
+            file = next(
+                (
+                    t
+                    for t in config["output_files"]
+                    if Path(t).suffix.replace(".", "") in description
+                ),
+                None,
             )
             checkups.append(
                 get_rule(
+                    "file_exists",
+                    file_path=file,
+                    expected_status=True,
+                )
+            )
+
+            inp_type = next(
+                (t for t in config["input_types"] if t in description), None
+            )
+
+            checkups.append(
+                get_rule(
                     "file_content_check",
-                    file_path=output_file,
-                    expected_status="not null",
+                    file_path=file,
+                    expected_input=inp_type,
                 )
             )
         elif description == "serve":
@@ -182,7 +216,6 @@ def apply_rules(command, description, dest_path, repo_path, config):
 
 @pytest.fixture(scope="module", autouse=True)
 def delete_model_command():
-    """Deletes models if delete_model is True."""
     if delete_model:
         for model_id in model_ids:
             dest_path = base_path / "dest" / model_id
@@ -221,7 +254,7 @@ def test_command(model_id, command_name):
 
     assert success, f"Command '{command_name}' failed for model ID {model_id}"
 
-    if command_name == "run" and max_runtime_minutes is not None:
+    if "run" in command_name and max_runtime_minutes is not None:
         assert (
             time_taken <= max_runtime_minutes
         ), f"Command '{command_name}' for model ID {model_id} exceeded max runtime of {max_runtime_minutes} minutes"
