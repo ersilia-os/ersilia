@@ -76,38 +76,3 @@ def construct_run_cmd(config):
             val = ["ersilia", "-v", "run", "-i", inp_data, "-o", output_file]
             run[key] = val
     return run
-
-
-if __name__ == "__main__":
-    import subprocess
-    import sys
-
-    docker_activated = False
-
-    if config and config.get("activate_docker"):
-        if sys.platform == "linux":  # macOS
-            try:
-                docker_status = subprocess.run(
-                    ["docker", "info"],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
-                    check=True,
-                )
-                docker_activated = True
-                print("Docker is running.")
-            except subprocess.CalledProcessError:
-                raise RuntimeError(
-                    "Docker is not running. Please start Docker manually on macOS."
-                )
-        else:  # Assume Linux
-            docker_status = subprocess.run(
-                ["systemctl", "is-active", "--quiet", "docker"]
-            )
-            if docker_status.returncode != 0:
-                subprocess.run(["systemctl", "start", "docker"], check=True)
-            docker_activated = True
-    # else:
-    #     if sys.platform != "darwin":  # Only stop Docker on Linux
-    #         subprocess.run(["systemctl", "stop", "docker"], check=True)
-
-    print(docker_activated)
