@@ -659,7 +659,7 @@ class GenericOutputAdapter(ResponseRefactor):
                     self.dtypes = [self.__pure_dtype(k) for k in output_keys]
                 are_dtypes_informative = False
                 for dtype in self.dtypes:
-                    if dtype is not None:
+                    if dtype:
                         are_dtypes_informative = True
                 if output_keys_expanded is None:
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
@@ -770,15 +770,15 @@ class GenericOutputAdapter(ResponseRefactor):
         return result
 
     def _adapt_when_fastapi_was_used(
-        self, result: dict, output: str, model_id: str = None, api_name: str = None
+        self, result: str, output: str, model_id: str = None, api_name: str = None
     ) -> dict:
         """
         Adapts the output when FastAPI was used.
 
         Parameters
         ----------
-        result : dict
-            The result to adapt.
+        result : str
+            The result to adapt, stringyfied JSON.
         output : str
             The output file name.
         model_id : str, optional
@@ -809,43 +809,37 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = "json"
         else:
             extension = None
-        delimiters = {"csv": ",", "tsv": "\t"}
-        if extension in ["csv", "tsv"]:
+        delimiters = {"csv": ",", "tsv": "\t", "h5": None}
+        if extension in ["csv", "tsv", "h5"]:
             R = []
+
+            # Flatten the JSON object
             for r in json.loads(result):
                 inp = r["input"]
                 out = r["output"]
                 vals = [out[k] for k in out.keys()]
                 R += [[inp["key"], inp["input"]] + vals]
-            header = ["key", "input"] + [k for k in out.keys()]
-            with open(output, "w") as f:
-                writer = csv.writer(f, delimiter=delimiters[extension])
-                writer.writerow(header)
-                for r in R:
-                    writer.writerow(r)
+
+            df = DataFrame(data=R, columns=["key", "input"] + [k for k in out.keys()])
+            df.write(output, delimiter=delimiters[extension])
         elif extension == "json":
             data = json.loads(result)
             with open(output, "w") as f:
                 json.dump(data, f, indent=4)
-        elif extension == "h5":
-            df = self._to_dataframe(
-                result, model_id
-            )  # TODO: we can potentially simplify this and get rid of the to_dataframe method for conversion to HDF5.
-            df.write(output)
         else:
             pass
         return result
 
     def adapt(
-        self, result: dict, output: str, model_id: str = None, api_name: str = None
+        self, result: str, output: str, model_id: str = None, api_name: str = None
     ) -> dict:
         """
         Adapts the output based on the result and model.
 
         Parameters
         ----------
-        result : dict
-            The result to adapt.
+        result : str
+            The result to adapt, stringyfied JSON.
         output : str
             The output file name.
         model_id : str, optional
