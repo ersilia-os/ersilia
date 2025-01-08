@@ -48,6 +48,8 @@ PREDEFINED_EXAMPLE_FILES = [
     "model/framework/input.csv",
     "model/framework/example.csv",
     "example.csv",
+    "model/framework/examples/run_input.csv",  
+    "model/framework/examples/run_output.csv",
 ]
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
