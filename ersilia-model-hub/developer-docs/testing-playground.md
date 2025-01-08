@@ -18,13 +18,32 @@ layout:
 
 # Testing Playground
 
-### **Overview of the playground**
+The **Testing Playground** provides a flexible and robust framework for validating and profiling CLI commands that are being used for managing Ersilia models from various sources, such as GitHub, DockerHub, and local directories.
 
-The **Testing Playground** is a new testing system added to the Ersilia testing pipeline. It aims to advance the testing pipeline using the ersilia CLI commands. It provides a flexible and robust framework for validating and profiling CLI commands that are being used for managing Ersilia models from various sources, such as GitHub, DockerHub, and local directories.
+{% hint style="warning" %}
+The Testing Playground only works with Linux systems.
+{% endhint %}
 
-### Why its needed?
+## Usage
 
-Recently we have faced a few issues with the model hub as well the model themselves. It was difficult to trace back the error at deeper level when several failures happened. So playground CLI testing intended to check ersilia system using a CLI with user based rules and expected behavior such as what do we expect after we perform some CLI commands. This make sure that everything is running or executed as we expected it to be.
+To use the Test Playground, you need to have Ersilia installed in test mode and the Ersilia repository cloned into your local, as the files will be saved in the Ersilia directory
+
+```bash
+conda create -n ersilia python=3.11
+conda activate ersilia
+pip install ersilia[test]
+cd ersilia
+nox -f test/playground/noxfile.py -s setup
+```
+
+### **Tests available**
+
+1. From GitHub: the model is fetched from its source directory and installed in an independent conda environment --> `nox -f test/playground/noxfile.py -s test_from_github`
+2. From DockerHub: the model is fetched via its Docker Image and run inside a container -->
+3. AutoFetcher: the test will automatically decide which fetching system to use
+4. Fetch multiple models:
+5. Serve multiple models:
+6. Conventional run
 
 ### **Playground Key Features**
 
