@@ -191,12 +191,10 @@ class CatalogTable(object):
             The name of the file to write the catalog table to.
         """
         with open(file_name, "w") as f:
-            if file_name.endswith(".csv"):
-                delimiter = ","
-            elif file_name.endswith(".tsv"):
+            if file_name.endswith(".tsv"):
                 delimiter = "\t"
             else:
-                return None
+                delimiter = ","  # Default to CSV always
             writer = csv.writer(f, delimiter=delimiter)
             writer.writerow(self.columns)
             for r in self.data:
