@@ -299,7 +299,10 @@ class ModelCatalog(ErsiliaBase):
         idx = 0
         for card in model_cards:
             status = self._get_status(card)
+            slug = self._get_slug(card)
             if status == "In Progress":
+                continue
+            if "test" in slug:
                 continue
             idx += 1
             r = [idx]
