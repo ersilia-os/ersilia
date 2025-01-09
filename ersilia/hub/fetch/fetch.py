@@ -1,6 +1,8 @@
 import importlib
 import json
 import os
+import sys
+from ...utils.terminal import run_command
 from collections import namedtuple
 
 from ... import ErsiliaBase
@@ -22,6 +24,8 @@ from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
 
 FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
+
+
 
 
 class ModelFetcher(ErsiliaBase):
@@ -93,6 +97,26 @@ class ModelFetcher(ErsiliaBase):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
         )
+
+        # Python 3.12 Compatibility Check and Setuptools Handling
+        if sys.version_info >= (3, 12):
+            self.logger.info("Detected Python 3.12. Verifying setuptools...")
+            try:
+                importlib.import_module("setuptools")
+                self.logger.info("Setuptools is already installed.")
+            except ImportError:
+                self.logger.warning("Setuptools is not installed. Installing now...")
+                try:
+                    run_command("python -m pip install setuptools")
+                    self.logger.info("Setuptools installed successfully.")
+                except Exception as e:
+                    self.logger.error(
+                        f"Failed to install setuptools: {str(e)}"
+                    )
+                    raise RuntimeError(
+                        "Setuptools is required but could not be installed. Please resolve this manually."
+                    )
+
         self.ji = JsonModelsInterface(config_json=self.config_json)
         self.overwrite = overwrite
         self.mode = mode
