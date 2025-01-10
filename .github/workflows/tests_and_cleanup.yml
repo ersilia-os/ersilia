@@ -164,8 +164,8 @@ jobs:
       - name: Install dependencies
         run: |
           conda install google-colab -c conda-forge
-          jupyter --version
           pip install --upgrade nbconvert nbformat jsonschema pandas jupyter
+          jupyter --version
 
       - name: Test Google Colab Notebook with CLI shell commands
         run: |
