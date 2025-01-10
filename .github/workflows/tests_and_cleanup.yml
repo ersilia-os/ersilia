@@ -128,8 +128,7 @@ jobs:
           python -m pip install -e .[test]
 
       - name: Run CLI Test Default
-        run: |
-          source activate            
+        run: |     
           nox -f test/playground/noxfile.py -s ${{ matrix.session }}
 
   run-cli-test-multiple:
@@ -150,8 +149,7 @@ jobs:
           python -m pip install -e .[test]
 
       - name: Run CLI Test Multiple
-        run: |
-          source activate            
+        run: |          
           nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
 
   test-colab-notebook:
