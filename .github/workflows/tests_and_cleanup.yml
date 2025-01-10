@@ -92,23 +92,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
-
-      - name: Install ersilia
-        run: |
-          source activate
-          python --version
-          echo "After conda init"
-          conda init
           python -m pip install -e .[test]
 
       - name: Run pytest
-        run: |
-          source activate          
+        run: |     
           pip install pytest pytest-benchmark pytest-asyncio rdkit-pypi nox rich fuzzywuzzy scipy
           pytest
 
@@ -132,18 +122,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
-
-      - name: Install ersilia
-        run: |
-          source activate
-          python --version
-          echo "After conda init"
-          conda init
           python -m pip install -e .[test]
 
       - name: Run CLI Test Default
@@ -163,18 +144,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
-
-      - name: Install ersilia
-        run: |
-          source activate
-          python --version
-          echo "After conda init"
-          conda init
           python -m pip install -e .[test]
 
       - name: Run CLI Test Multiple
@@ -193,8 +165,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
           conda install google-colab -c conda-forge
           jupyter --version
           pip install --upgrade nbconvert nbformat jsonschema pandas
