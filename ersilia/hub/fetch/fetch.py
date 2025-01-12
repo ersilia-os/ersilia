@@ -2,7 +2,6 @@ import importlib
 import json
 import os
 import sys
-from ...utils.terminal import run_command
 from collections import namedtuple
 
 from ... import ErsiliaBase
@@ -17,15 +16,13 @@ from ...utils.exceptions_utils.fetch_exceptions import (
     StandardModelExampleError,
 )
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
-from ...utils.terminal import yes_no_input
+from ...utils.terminal import run_command, yes_no_input
 from . import STATUS_FILE
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
 
 FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
-
-
 
 
 class ModelFetcher(ErsiliaBase):
@@ -110,9 +107,7 @@ class ModelFetcher(ErsiliaBase):
                     run_command("python -m pip install setuptools")
                     self.logger.info("Setuptools installed successfully.")
                 except Exception as e:
-                    self.logger.error(
-                        f"Failed to install setuptools: {str(e)}"
-                    )
+                    self.logger.error(f"Failed to install setuptools: {str(e)}")
                     raise RuntimeError(
                         "Setuptools is required but could not be installed. Please resolve this manually."
                     )
