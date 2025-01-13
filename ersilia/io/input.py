@@ -5,6 +5,8 @@ import json
 import os
 import shutil
 
+from click import secho
+
 from .. import ErsiliaBase, throw_ersilia_exception
 from ..default import PREDEFINED_EXAMPLE_FILES
 from ..hub.content.card import ModelCard
@@ -440,6 +442,11 @@ class ExampleGenerator(ErsiliaBase):
             with open(file_name, "r") as f:
                 return f.read()
         else:
+            if try_predefined and not predefined_available:
+                secho(
+                    "No predefined examples found for the model. Generating random examples.",
+                    fg="yellow",
+                )
             self.logger.debug("Randomly sampling input")
             return self.random_example(
                 n_samples=n_samples, file_name=file_name, simple=simple

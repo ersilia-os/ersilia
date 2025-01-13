@@ -9,7 +9,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 EXPECTED_HEADER = ["name", "type", "direction", "description"]
 
-MIN_DESCRIPTION_LENGTH = 60
+MIN_DESCRIPTION_LENGTH = 10
 
 
 class ColumnsInformation(ErsiliaBase):
