@@ -41,7 +41,7 @@ def run_cmd():
     @click.option(
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
-    @click.option("--as-table", is_flag=True, default=False)
+    @click.option("--as-table/-t", is_flag=True, default=False)
     def run(input, output, batch_size, as_table):
         session = Session(config_json=None)
         model_id = session.current_model_id()
