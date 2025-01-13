@@ -175,7 +175,7 @@ def print_result_table(data):
         with open(data, mode="r") as file:
             reader = csv.DictReader(file)
             data = [dict(row) for row in reader]
-    if isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
+    elif isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
         headers = list(data[0].keys())
         column_widths = {
             header: max(len(header), max(len(str(row[header])) for row in data)) + 5
