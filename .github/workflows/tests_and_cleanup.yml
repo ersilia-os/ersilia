@@ -83,6 +83,9 @@ jobs:
 
   run-pytest:
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
       - uses: conda-incubator/setup-miniconda@v3
@@ -105,6 +108,9 @@ jobs:
   run-cli-test-single:
     needs: run-pytest
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash -el {0}
     strategy:
       matrix:
         session:
@@ -133,6 +139,9 @@ jobs:
 
   run-cli-test-multiple:
     needs: run-pytest
+    defaults:
+      run:
+        shell: bash -el {0}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
@@ -153,6 +162,9 @@ jobs:
           nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
 
   test-colab-notebook:
+    defaults:
+      run:
+        shell: bash -el {0}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
