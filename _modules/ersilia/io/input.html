@@ -319,6 +319,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">click</span><span class="w"> </span><span class="kn">import</span> <span class="n">secho</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..hub.content.card</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCard</span>
@@ -788,6 +790,11 @@
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">try_predefined</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">predefined_available</span><span class="p">:</span>
+                <span class="n">secho</span><span class="p">(</span>
+                    <span class="s2">&quot;No predefined examples found for the model. Generating random examples.&quot;</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Randomly sampling input&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_example</span><span class="p">(</span>
                 <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="n">simple</span>
