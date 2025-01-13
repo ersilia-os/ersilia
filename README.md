@@ -97,6 +97,13 @@ ersilia delete eos4e40
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
 
+## Troubleshooting
+Python 3.12 Compatibility
+For systems running Python 3.12 , the setuptools library is required for fetching models. The ModelFetcher class automatically verifies the presence of setuptools and installs it if necessary. If the installation fails, ensure pip is properly configured or install setuptools manually:
+python -m pip install setuptools
+
+python3.12 -m venv ersiliatest_env
+
 ## Contribute
 
 The Ersilia Model Hub is a Free, Open Source Software and we highly value new contributors. There are several ways in which you can contribute to the project:
