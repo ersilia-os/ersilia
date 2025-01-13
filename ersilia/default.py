@@ -43,11 +43,6 @@ MODEL_CONFIG_FILENAME = "config.json"
 EXAMPLE_STANDARD_INPUT_CSV_FILENAME = "example_standard_input.csv"
 EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 PREDEFINED_EXAMPLE_FILES = [
-    "model/framework/examples/input.csv",
-    "model/framework/examples/output.csv",
-    "model/framework/input.csv",
-    "model/framework/example.csv",
-    "example.csv",
     "model/framework/examples/run_input.csv",
     "model/framework/examples/run_output.csv",
 ]

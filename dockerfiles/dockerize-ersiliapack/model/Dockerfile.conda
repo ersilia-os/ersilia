@@ -36,10 +36,8 @@ RUN cp /root/bundles/$MODEL/*/information.json /root/information.json && \
     cp /root/bundles/$MODEL/*/api_schema.json /root/api_schema.json && \
     cp /root/bundles/$MODEL/*/status.json /root/status.json && \
     mkdir -p /root/model/framework/examples && \    
-    (cp /root/bundles/$MODEL/*/model/framework/examples/run_output.csv /root/model/framework/examples/output.csv || \
-     cp /root/bundles/$MODEL/*/model/framework/examples/output.csv /root/model/framework/examples/output.csv) && \
-    (cp /root/bundles/$MODEL/*/model/framework/examples/run_input.csv /root/model/framework/examples/input.csv || \
-     cp /root/bundles/$MODEL/*/model/framework/examples/input.csv /root/model/framework/examples/input.csv) && \
+    cp /root/bundles/$MODEL/*/model/framework/examples/run_output.csv /root/model/framework/examples/run_output.csv && \
+    cp /root/bundles/$MODEL/*/model/framework/examples/run_input.csv /root/model/framework/examples/run_input.csv && \
     chmod + docker-entrypoint.sh
 EXPOSE 80
 ENTRYPOINT [ "sh", "docker-entrypoint.sh"]
