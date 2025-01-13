@@ -102,7 +102,9 @@ Python 3.12 Compatibility
 For systems running Python 3.12 , the setuptools library is required for fetching models. The ModelFetcher class automatically verifies the presence of setuptools and installs it if necessary. If the installation fails, ensure pip is properly configured or install setuptools manually:
 python -m pip install setuptools
 
+```bash
 python3.12 -m venv ersiliatest_env
+```
 
 ## Contribute
 
