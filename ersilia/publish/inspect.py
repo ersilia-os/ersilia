@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import time
 from collections import namedtuple
@@ -387,23 +388,28 @@ class ModelInspector:
 
     def _validate_dockerfile(self, dockerfile_content):
         lines, errors = dockerfile_content.splitlines(), []
-        for line in lines:
-            if line.startswith("RUN pip install"):
-                cmd = line.split("RUN ")[-1]
-                result = subprocess.run(
-                    cmd,
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-                if result.returncode != 0:
-                    errors.append(f"Failed to run {cmd}: {result.stderr.strip()}")
 
         if "WORKDIR /repo" not in dockerfile_content:
             errors.append("Missing 'WORKDIR /repo'.")
         if "COPY . /repo" not in dockerfile_content:
             errors.append("Missing 'COPY . /repo'.")
+
+        pip_install_pattern = re.compile(r"pip install (.+)")
+        version_pin_pattern = re.compile(r"^[a-zA-Z0-9_\-\.]+==[a-zA-Z0-9_\-\.]+$")
+
+        for line in lines:
+            line = line.strip()
+            match = pip_install_pattern.search(line)
+            if match:
+                packages = match.group(1).split()
+                for package in packages:
+                    if package.startswith("-"):
+                        continue
+                    if not version_pin_pattern.match(package):
+                        errors.append(
+                            f"Package '{package}' in line '{line}' is not version-pinned (e.g., 'package==1.0.0')."
+                        )
+
         return errors
 
     def _validate_yml(self, yml_content):
@@ -419,16 +425,20 @@ class ModelInspector:
 
         commands = yml_data.get("commands", [])
         for command in commands:
-            if not isinstance(command, list) or command[0] != "pip":
+            if not isinstance(command, list) or len(command) < 2:
                 errors.append(f"Invalid command format: {command}")
                 continue
-            # package: name & version
-            name = command[1] if len(command) > 1 else None
+
+            tool = command[0]
+            package = command[1]
             version = command[2] if len(command) > 2 else None
-            if not name:
-                errors.append(f"Missing package name in command: {command}")
-            if name and version:
-                pass
+
+            if tool in ("pip", "conda"):
+                if not version or not version.replace(".", "").isdigit():
+                    errors.append(
+                        f"Package in command does not have a valid pinned version: {package} (should be in the format ['pip', 'package_name', 'x.y.z'])"
+                    )
+
         return errors
 
     def _run_performance_check(self, n):
