@@ -69,14 +69,22 @@ def run_cmd():
             batch_size=batch_size,
             track_run=track_runs,
         )
+
+        # Process and display the results
+        def display_result(res):
+            if isinstance(res, list) and len(res) > 10:
+                # Truncate long lists for clarity
+                echo(json.dumps(res[:10], indent=4) + "\n... (truncated)", fg="yellow")
+            else:
+                echo(json.dumps(res, indent=4))
+
         if isinstance(result, types.GeneratorType):
-            for result in mdl.run(input=input, output=output, batch_size=batch_size):
-                if result is not None:
-                    formatted = json.dumps(result, indent=4)
+            for res in result:
+                if res is not None:
                     if as_table:
-                        print_result_table(formatted)
+                        print_result_table(res)
                     else:
-                        echo(formatted)
+                        display_result(res)
                 else:
                     echo("Something went wrong", fg="red")
         else:
@@ -84,8 +92,8 @@ def run_cmd():
                 print_result_table(result)
             else:
                 try:
-                    echo(result)
-                except:
-                    print_result_table(result)
+                    display_result(result)
+                except Exception as e:
+                    echo(f"An error occurred while displaying the result: {str(e)}", fg="red")
 
     return run
