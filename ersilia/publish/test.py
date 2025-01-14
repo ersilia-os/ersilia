@@ -1,15 +1,21 @@
 import csv
+import docker
 import json
 import os
 import subprocess
+import zipfile
 import sys
 import tempfile
-import time
+import math
+from pathlib import Path
+import yaml
+import sys
 import types
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from typing import List
+from typing import Callable
+from typing import List, Any
 
 # ruff: noqa
 MISSING_PACKAGES = False
@@ -22,12 +28,10 @@ try:
 except ImportError:
     MISSING_PACKAGES = True
 # ruff: enable
-import click
 
 from .. import ErsiliaBase, throw_ersilia_exception
 from ..default import (
     DOCKERFILE_FILE,
-    INFORMATION_FILE,
     INSTALL_YAML_FILE,
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
@@ -35,13 +39,24 @@ from ..default import (
     PACK_METHOD_FASTAPI,
     PREDEFINED_EXAMPLE_FILES,
     RUN_FILE,
+    EOS_TMP,
+    GITHUB_ORG,
+    S3_BUCKET_URL_ZIP,
+    DOCKERHUB_ORG,
 )
 from ..hub.fetch.actions.template_resolver import TemplateResolver
 from ..io.input import ExampleGenerator
+from ..hub.content.card import ModelCard
+from ..utils.download import GitHubDownloader, S3Downloader
 from ..utils.conda import SimpleConda
 from ..utils.exceptions_utils import test_exceptions as texc
-from ..utils.terminal import run_command_check_output
+from ..utils.docker import SimpleDocker
+from ..utils.logging import make_temp_dir
+from ..utils.spinner import show_loader
+from ..utils.hdf5 import Hdf5DataLoader
+from ..utils.terminal import run_command_check_output, yes_no_input
 from .inspect import ModelInspector
+from ..cli import echo
 
 
 class Options(Enum):
@@ -49,12 +64,18 @@ class Options(Enum):
     Enum for different options.
     """
 
-    NUM_SAMPLES = 5
+    NUM_SAMPLES = 2
     BASE = "base"
     OUTPUT_CSV = "result.csv"
+    INPUT_CSV = "input.csv"
     OUTPUT1_CSV = "output1.csv"
     OUTPUT2_CSV = "output2.csv"
-    LEVEL_DEEP = "deep"
+    OUTPUT_FILES = [
+        "file.csv",
+        "file.json",
+        "file.h5",
+    ]  # ["file.csv", "file.json", "file.h5"]
+    INPUT_TYPES = ["str", "list", "csv"]
 
 
 class TableType(Enum):
@@ -62,11 +83,17 @@ class TableType(Enum):
     Enum for different table types.
     """
 
-    MODEL_INFORMATION_CHECKS = "Model Information Checks"
+    MODEL_INFORMATION_CHECKS = "Model Metadata Checks"
     MODEL_FILE_CHECKS = "Model File Checks"
     MODEL_DIRECTORY_SIZES = "Model Directory Sizes"
+    MODEL_ENV_SIZES = "Model Environment Sizes"
     RUNNER_CHECKUP_STATUS = "Runner Checkup Status"
     FINAL_RUN_SUMMARY = "Test Run Summary"
+    DEPENDECY_CHECK = "Dependency Check"
+    COMPUTATIONAL_PERFORMANCE = "Computational Performance Summary"
+    SHALLOW_CHECK_SUMMARY = "Validation and Size Check Summary"
+    CONSISTENCY_BASH = "Consistency Summary Between Ersilia and Bash Execution Outputs"
+    MODEL_OUTPUT = "Model Output Content Validation Summary"
     INSPECT_SUMMARY = "Inspect Summary"
 
 
@@ -88,7 +115,7 @@ TABLE_CONFIGS = {
         title="Model File Checks", headers=["Check", "Status"]
     ),
     TableType.MODEL_DIRECTORY_SIZES: TableConfig(
-        title="Model Directory Sizes", headers=["Dest dir", "Env Dir"]
+        title="Model Directory Sizes", headers=["Check", "Size"]
     ),
     TableType.RUNNER_CHECKUP_STATUS: TableConfig(
         title="Runner Checkup Status",
@@ -96,6 +123,23 @@ TABLE_CONFIGS = {
     ),
     TableType.FINAL_RUN_SUMMARY: TableConfig(
         title="Test Run Summary", headers=["Check", "Status"]
+    ),
+    TableType.DEPENDECY_CHECK: TableConfig(
+        title="Dependency Check", headers=["Check", "Status"]
+    ),
+    TableType.COMPUTATIONAL_PERFORMANCE: TableConfig(
+        title="Computational Performance Summary", headers=["Check", "Status"]
+    ),
+    TableType.SHALLOW_CHECK_SUMMARY: TableConfig(
+        title="Validation and Size Check Results", headers=["Check", "Status"]
+    ),
+    TableType.MODEL_OUTPUT: TableConfig(
+        title="Model Output Content Validation Summary",
+        headers=["Check", "Detail", "Status"],
+    ),
+    TableType.CONSISTENCY_BASH: TableConfig(
+        title="Consistency Summary Between Ersilia and Bash Execution Outputs",
+        headers=["Check", "Result", "Status"],
     ),
     TableType.INSPECT_SUMMARY: TableConfig(
         title="Inspect Summary", headers=["Check", "Status"]
@@ -261,10 +305,19 @@ class InspectService(ErsiliaBase):
 
         self.model = model
         self.remote = remote
+        self.resolver = TemplateResolver(
+            model_id=model,
+            repo_path=self.dir
+        )
 
-    def run(self) -> dict:
+    def run(self, check_keys: list = None) -> dict:
         """
         Run the inspection checks on the specified model.
+
+        Parameters
+        ----------
+        check_keys : list, optional
+            A list of check keys to execute. If None, all checks will be executed.
 
         Returns
         -------
@@ -275,53 +328,97 @@ class InspectService(ErsiliaBase):
         ------
         ValueError
             If the model is not specified.
+        KeyError
+            If any of the specified keys do not exist.
         """
-        if not self.model:
-            raise ValueError("Model must be specified.")
+        def _transform_key(value):
+            if value is True:
+                return str(STATUS_CONFIGS.PASSED)
+            elif value is False:
+                return str(STATUS_CONFIGS.FAILED)
+            return value
 
         inspector = ModelInspector(self.model, self.dir)
         checks = self._get_checks(inspector)
 
         output = {}
-        for strategy in checks:
-            if strategy.check_function:
-                output.update(strategy.execute())
 
+        if check_keys:
+            for key in check_keys:
+                try:
+                    strategy = checks.get(key)
+                    if strategy.check_function:
+                        output.update(strategy.execute())
+                except KeyError:
+                    raise KeyError(f"Check '{key}' does not exist.")
+        else:
+            for key, strategy in checks.all():
+                if strategy.check_function:
+                    output.update(strategy.execute())
+        output = {
+            " ".join(word.capitalize()
+            for word in k.split("_")): _transform_key(v)
+            for k, v in output.items()
+            }
+
+        output = [(key, value) for key, value in output.items()]
         return output
 
-    def _get_checks(self, inspector: ModelInspector) -> list:
-        return [
-            CheckStrategy(
+    def _get_checks(self, inspector: ModelInspector) -> dict:
+        def create_check(check_fn, key, details):
+            return lambda: CheckStrategy(check_fn, key, details)
+        dependency_check = "Dockerfile" if self.resolver.is_bentoml() else "Install_YAML"
+        checks = {
+            "is_github_url_available": create_check(
                 inspector.check_repo_exists if self.remote else lambda: None,
                 "is_github_url_available",
                 "is_github_url_available_details",
             ),
-            CheckStrategy(
+            "complete_metadata": create_check(
                 inspector.check_complete_metadata if self.remote else lambda: None,
                 "complete_metadata",
                 "complete_metadata_details",
             ),
-            CheckStrategy(
+            "complete_folder_structure": create_check(
                 inspector.check_complete_folder_structure,
                 "complete_folder_structure",
                 "complete_folder_structure_details",
             ),
-            CheckStrategy(
+            "docker_check": create_check(
                 inspector.check_dependencies_are_valid,
-                "docker_check",
-                "docker_check_details",
+                f"{dependency_check}_check",
+                "check_details",
             ),
-            CheckStrategy(
+            "computational_performance_tracking": create_check(
                 inspector.check_computational_performance,
                 "computational_performance_tracking",
                 "computational_performance_tracking_details",
             ),
-            CheckStrategy(
+            "extra_files_check": create_check(
                 inspector.check_no_extra_files if self.remote else lambda: None,
                 "extra_files_check",
                 "extra_files_check_details",
             ),
-        ]
+        }
+
+        class LazyChecks:
+            def __init__(self, checks):
+                self._checks = checks
+                self._loaded = {}
+
+            def get(self, key):
+                if key not in self._loaded:
+                    if key not in self._checks:
+                        raise KeyError(f"Check '{key}' does not exist.")
+                    self._loaded[key] = self._checks[key]()
+                return self._loaded[key]
+
+            def all(self):
+                for key in self._checks.keys():
+                    yield key, self.get(key)
+
+        return LazyChecks(checks)
+
 
 class SetupService:
     """
@@ -335,20 +432,87 @@ class SetupService:
         Directory where the model repository will be cloned.
     logger : logging.Logger
         Logger for logging messages.
-    remote : bool
-        Flag indicating whether to fetch the repository from a remote source.
+    from_github : bool
+        Flag indicating whether to fetch the repository from GitHub.
+    from_s3 : bool
+        Flag indicating whether to fetch the repository from S3.
     """
 
     BASE_URL = "https://github.com/ersilia-os/"
 
-    def __init__(self, model_id: str, dir: str, logger, remote: bool):
+    def __init__(
+        self,
+        model_id: str,
+        dir: str,
+        from_github: bool,
+        from_s3: bool,
+        logger: Any,
+    ):
         self.model_id = model_id
         self.dir = dir
         self.logger = logger
-        self.remote = remote
+        self.from_github = from_github
+        self.from_s3 = from_s3
+
+        self.mc = ModelCard()
+        self.metadata = self.mc.get(model_id)
+        self.s3 = (
+            self.metadata.get("card", {}).get("S3") or
+            self.metadata.get("metadata", {}).get("S3")
+        )
         self.repo_url = f"{self.BASE_URL}{self.model_id}"
+        self.overwrite = self._handle_overwrite()
+        self.github_down = GitHubDownloader(overwrite=self.overwrite)
+        self.s3_down = S3Downloader()
         self.conda = SimpleConda()
 
+    def _handle_overwrite(self) -> bool:
+        if os.path.exists(self.dir):
+            self.logger.info(f"Directory {self.dir} already exists.")
+            return yes_no_input(
+                f"Directory {self.dir} already exists. Do you want to overwrite it? [Y/n]",
+                default_answer="n",
+            )
+        return False
+
+    def _download_s3(self):
+        if not self.overwrite:
+            self.logger.info("Skipping S3 download as user chose not to overwrite.")
+            return
+
+        tmp_file = os.path.join(make_temp_dir("ersilia-"), f"{self.model_id}.zip")
+
+        self.logger.info(f"Downloading model from S3 to temporary file: {tmp_file}")
+        self.s3_down.download_from_s3(
+            bucket_url=S3_BUCKET_URL_ZIP,
+            file_name=f"{self.model_id}.zip",
+            destination=tmp_file,
+        )
+
+        self.logger.info(f"Extracting model to: {self.dir}")
+        with zipfile.ZipFile(tmp_file, "r") as zip_ref:
+            zip_ref.extractall(self.dir)
+
+    def _download_github(self):
+        if not self._handle_overwrite():
+            self.logger.info("Skipping GitHub download as user chose not to overwrite.")
+            return
+
+        destination = os.path.join(self.dir, self.model_id)
+        self.logger.info(f"Cloning repository from GitHub to: {destination}")
+        self.github_down.clone(
+            org=GITHUB_ORG,
+            repo=self.model_id,
+            destination=destination,
+        )
+
+    def get_model(self):
+        if self.from_s3:
+            self._download_s3()
+
+        if self.from_github:
+            self._download_github()
+                
     @staticmethod
     def run_command(command: str, logger, capture_output: bool = False, shell: bool = True) -> str:
         """
@@ -405,7 +569,7 @@ class SetupService:
                 for line in iter(process.stderr.readline, ''):
                     if line.strip():
                         stderr_lines.append(line.strip())
-                        logger.error(line.strip())
+                        logger.info(line.strip())
 
                 process.wait()
                 if process.returncode != 0:
@@ -428,17 +592,6 @@ class SetupService:
         except Exception as e:
             logger.debug(f"Unexpected error: {e}")
             sys.exit(1)
-
-    def fetch_repo(self):
-        """
-        Fetch the model repository from the remote source if the remote flag is set.
-        """
-        if self.remote and not os.path.exists(self.dir):
-            out = SetupService.run_command(
-                f"git clone {self.repo_url}",
-                self.logger,
-            )
-            self.logger.info(out)
 
     def check_conda_env(self):
         """
@@ -552,17 +705,14 @@ class IOService:
         "LICENSE",
     ]
 
-    def __init__(self, logger, dest_dir: str, model_path: str, bundle_path: str, bentoml_path: str, model_id: str, dir: str):
+    def __init__(self, logger,  model_id: str, dir: str):
         self.logger = logger
         self.model_id = model_id
         self.dir = dir
         self.model_size = 0
         self.console = Console()
         self.check_results = []
-        self._model_path = model_path
-        self._bundle_path = bundle_path
-        self._bentoml_path = bentoml_path
-        self._dest_dir = dest_dir
+        self.simple_docker = SimpleDocker()
 
     def _run_check(self, check_function, data, check_name: str, additional_info=None) -> bool:
         try:
@@ -706,9 +856,9 @@ class IOService:
             If the information file does not exist.
         """
         file = os.path.join(
-            self._dest_dir,
+            EOS_TMP,
             self.model_id,
-            INFORMATION_FILE
+            METADATA_JSON_FILE
         )
         if not os.path.exists(file):
             raise FileNotFoundError(
@@ -795,20 +945,58 @@ class IOService:
                 f"Error calculating directory size for {path}: {e}"
             )
             return 0
+        
+    def calculate_image_size(self):
+        """
+        Calculates the size of a Docker image.
+
+        Args:
+            image_name (str): The name (and optionally tag) of the Docker image, e.g., "ubuntu:latest".
+
+        Returns:
+            str: The size of the image in a human-readable format, or an error message if the image is not found.
+        """
+        image_name = f"{DOCKERHUB_ORG}/{self.model_id}"
+        client = docker.from_env()  # Initialize Docker client
+        try:
+            image = client.images.get(image_name)
+            size_bytes = image.attrs['Size']  # Get the size in bytes
+            size_mb = size_bytes / (1024 ** 2)  # Convert bytes to MB
+            return f"{size_mb:.2f} MB"
+        except docker.errors.ImageNotFound:
+            return f"Image '{image_name}' not found."
+        except Exception as e:
+            return f"An error occurred: {e}"
+
+
 
     @throw_ersilia_exception()
-    def get_directories_sizes(self) -> tuple:
+    def get_directories_sizes(self) -> str:
         """
-        Get the sizes of the model directory and the Conda environment directory.
+        Get the sizes of the model directory.
 
         Returns
         -------
-        tuple
-            A tuple containing the sizes of the model directory and the Conda environment directory in megabytes.
+        str
+          A string of containing size of the model directory
         """
         dir_size = self.calculate_directory_size(self.dir)
+        dir_size = f"{dir_size}MB"
+        return dir_size
+
+    @throw_ersilia_exception()
+    def get_env_sizes(self) -> str:
+        """
+        Get the sizes of the Conda environment directory.
+
+        Returns
+        -------
+        str
+          A string of containing size of the model environment
+        """
         env_size = self.get_conda_env_size()
-        return dir_size, env_size
+        env_size = f"{env_size}MB"
+        return env_size
 
 class CheckService:
     """
@@ -877,10 +1065,9 @@ class CheckService:
         "Serializable Object"
     }
 
-    def __init__(self, logger, model_id: str, dest_dir: str, dir: str, ios: IOService):
+    def __init__(self, logger, model_id: str, dir: str, ios: IOService):
         self.logger = logger
         self.model_id = model_id
-        self._dest_dir = dest_dir
         self.dir = dir
         self._run_check = ios._run_check
         self._generate_table = ios._generate_table
@@ -888,10 +1075,23 @@ class CheckService:
         self.get_file_requirements = ios.get_file_requirements
         self.console = ios.console
         self.check_results = ios.check_results
-        self.information_check = False
-        self.single_input = False
-        self.example_input = False
-        self.consistent_output = False
+        self.resolver = TemplateResolver(
+            model_id=model_id,
+            repo_path=self.dir
+        )
+    
+    def _get_metadata(self):
+        path = METADATA_JSON_FILE if self.resolver.is_bentoml() else METADATA_YAML_FILE
+        path = os.path.join(self.dir, path)
+
+        with open(path, 'r') as file:
+            if path.endswith('.json'):
+                data = json.load(file)
+            elif path.endswith(('.yml', '.yaml')):
+                data = yaml.safe_load(file)
+            else:
+                raise ValueError(f"Unsupported file format: {path}")
+        return data
 
     def _check_file_existence(self, path):
         if not os.path.exists(os.path.join(self.dir, path)):
@@ -915,24 +1115,94 @@ class CheckService:
 
     def _check_model_id(self, data):
         self.logger.debug("Checking model ID...")
-        if data["card"]["Identifier"] != self.model_id:
+        if data["Identifier"] != self.model_id:
             raise texc.WrongCardIdentifierError(self.model_id)
 
 
     def _check_model_slug(self, data):
         self.logger.debug("Checking model slug...")
-        if not data["card"]["Slug"]:
+        if not data["Slug"]:
             raise texc.EmptyField("slug")
 
 
     def _check_model_description(self, data):
         self.logger.debug("Checking model description...")
-        if not data["card"]["Description"]:
+        if not data["Description"]:
             raise texc.EmptyField("Description")
-
+    
+    def _check_model_tag(self, data):
+        self.logger.debug("Checking model tag...")
+        if not data["Tag"]:
+            raise texc.EmptyField("Tag")
+        
+    def _check_model_source_code(self, data):
+        self.logger.debug("Checking model source code...")
+        if not data["Source Code"]:
+            raise texc.EmptyField("Source Code")
+        
+    def _check_model_source_title(self, data):
+        self.logger.debug("Checking model title...")
+        if not data["Title"]:
+            raise texc.EmptyField("Title")
+        
+    def _check_model_status(self, data):
+        self.logger.debug("Checking model status...")
+        if not data["Status"]:
+            raise texc.EmptyField("Status")
+        
+    def _check_model_contributor(self, data):
+        self.logger.debug("Checking model contributor...")
+        if not data["Contributor"]:
+            raise texc.EmptyField("Contributor") 
+        
+    def _check_model_interpret(self, data):
+        self.logger.debug("Checking model interpretation...")
+        if not data["Interpretation"]:
+            raise texc.EmptyField("Interpretation")
+        
+    def _check_model_dockerhub_url(self, data):
+        key = "DockerHub"
+        self.logger.info(f"Data: {data}")   
+        self.logger.debug(f"Checking {key} URL field..")
+        if key in data:
+            self.logger.debug(f"Checking {key} URL field..")
+            if not data[key]:
+                self.logger.debug(f"Checking {key} URL field..")
+                raise texc.EmptyField(key)
+        else:
+            self.logger.debug(f"Checking {key} URL field..")
+            raise texc.EmptyKey(key)
+        
+    def _check_model_s3_url(self, data):
+        key = "S3"
+        self.logger.debug(f"Checking {key} URL field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
+        
+    def _check_model_arch(self, data):
+        key = "Docker Architecture"
+        self.logger.debug(f"Checking {key} field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
+        
+    def _check_model_publication(self, data):
+        key = "Publication"
+        self.logger.debug(f"Checking {key} field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
+        
     def _check_model_task(self, data):
         self.logger.debug("Checking model task...")
-        raw_tasks = data.get("card", {}).get("Task", "")
+        raw_tasks = data.get("Task", "")
         if isinstance(raw_tasks, str):
             tasks = [
                 task.strip()
@@ -969,7 +1239,7 @@ class CheckService:
 
     def _check_model_output(self, data):
         self.logger.debug("Checking model output...")
-        raw_outputs = data.get("card", {}).get("Output", "") or data.get("metadata", {}).get("Output", "")
+        raw_outputs = data.get("Output", "")
         if isinstance(raw_outputs, str):
             outputs = [
                 output.strip()
@@ -1014,17 +1284,14 @@ class CheckService:
         self.logger.debug("Checking model input")
         valid_inputs = [{"Compound"}, {"Protein"}, {"Text"}]
 
-        model_input = data.get("card", {}).get("Input") or data.get("metadata", {}).get("Input")
+        model_input = data.get("Input")
 
         if not model_input or set(model_input) not in valid_inputs:
             raise texc.InvalidEntry("Input")
 
     def _check_model_input_shape(self, data):
         self.logger.debug("Checking model input shape")
-        model_input_shape = (
-            data.get("card", {}).get("Input Shape") or
-            data.get("metadata", {}).get("InputShape")
-        )
+        model_input_shape = data.get("Input Shape")
 
         if model_input_shape not in self.INPUT_SHAPE:
             raise texc.InvalidEntry("Input Shape")
@@ -1034,8 +1301,7 @@ class CheckService:
         valid_output_types = [{"String"}, {"Float"}, {"Integer"}]
 
         model_output_type = (
-            data.get("card", {}).get("Output Type") or
-            data.get("metadata", {}).get("OutputType")
+            data.get("Output Type")
         )
 
         if not model_output_type or set(model_output_type) not in valid_output_types:
@@ -1044,15 +1310,14 @@ class CheckService:
     def _check_model_output_shape(self, data):
         self.logger.debug("Checking model output shape...")
         model_output_shape = (
-            data.get("card", {}).get("Output Shape") or
-            data.get("metadata", {}).get("OutputShape")
+            data.get("Output Shape")
         )
 
         if model_output_shape not in self.OUTPUT_SHAPE:
             raise texc.InvalidEntry("Output Shape")
 
     @throw_ersilia_exception()
-    def check_information(self, output):
+    def check_information(self):
         """
         Perform various checks on the model information.
 
@@ -1062,16 +1327,12 @@ class CheckService:
             The output file to write to.
         """
         self.logger.debug(f"Beginning checks for {self.model_id} model information")
-        file = os.path.join(
-            self._dest_dir,
-            self.model_id,
-            INFORMATION_FILE
-        )
-        with open(file, "r") as f:
-            data = json.load(f)
+        data = self._get_metadata()
 
         self._run_check(self._check_model_id, data, "Model ID")
         self._run_check(self._check_model_slug, data, "Model Slug")
+        self._run_check(self._check_model_status, data, "Model Status")
+        self._run_check(self._check_model_source_title, data, "Model Title")
         self._run_check(self._check_model_description, data, "Model Description")
         self._run_check(self._check_model_task, data, "Model Task")
         self._run_check(self._check_model_input, data, "Model Input")
@@ -1079,12 +1340,152 @@ class CheckService:
         self._run_check(self._check_model_output, data, "Model Output")
         self._run_check(self._check_model_output_type, data, "Model Output Type")
         self._run_check(self._check_model_output_shape, data, "Model Output Shape")
+        self._run_check(self._check_model_interpret, data, "Model Interpretation")
+        self._run_check(self._check_model_tag, data, "Model Tag")
+        self._run_check(self._check_model_publication, data, "Model Publication")
+        self._run_check(self._check_model_source_code, data, "Model Source Code")
+        self._run_check(self._check_model_contributor, data, "Model Contributor")
+        self._run_check(self._check_model_dockerhub_url, data, "Model Dockerhub URL")
+        self._run_check(self._check_model_s3_url, data, "Model S3 URL")
+        self._run_check(self._check_model_arch, data, "Model Docker Architecture")
+    
+    def get_inputs(self, run_example, types):
+        samples = run_example(
+            n_samples=Options.NUM_SAMPLES.value,
+            file_name=None,
+            simple=True,
+            try_predefined=False
+        )
+        samples = [sample["input"] for sample in samples]
+        if types == "str":
+            return samples[0]
+        if types == "list":
+            return json.dumps(samples)
+        if types == "csv":
+            run_example(
+            n_samples=Options.NUM_SAMPLES.value,
+            file_name=Options.INPUT_CSV.value,
+            simple=True,
+            try_predefined=False
+            )
+            return Options.INPUT_CSV.value
 
-        if output is not None:
-            self.information_check = True
+    def check_model_output_content(self, run_example, run_model):
+        status = []
+        self.logger.debug("Checking model output...")
+        for inp_type in Options.INPUT_TYPES.value:
+            for i, output_file in enumerate(Options.OUTPUT_FILES.value):
+                self.logger.debug(f"Checking model output for input type: {inp_type} and output file: {output_file}")
+                inp_data = self.get_inputs(run_example, inp_type)
+                self.logger.debug(f"Input data: {inp_data}")
+                run_model(inputs=inp_data, output=output_file, batch=100)
+                _status = self.validate_file_content(output_file, inp_type)
+                status.append(_status)
+                self.logger.debug(f"Output file {output_file} is {_status}")
+        return status
+    
+    def validate_file_content(self, file_path, input_type):
+        def is_invalid_value(item):
+            return item in [None, "", "null"] or (isinstance(item, float) and math.isnan(item))
+        
+        def validate_json(content):
+            data_structures = {
+                "Single": lambda x: isinstance(x, list) and len(x) == 1 or isinstance(x, (int, float, str)),
+                "List": lambda x: isinstance(x, list) and len(x) > 1 and all(isinstance(item, (int, float, str)) for item in x),
+                "Flexible List": lambda x: isinstance(x, list) and all(isinstance(item, (str, int, float)) for item in x),
+                "Matrix": lambda x: isinstance(x, list) and all(
+                    isinstance(row, list) and all(isinstance(item, (int, float)) for item in row) for row in x
+                ),
+                "Serializable Object": lambda x: isinstance(x, dict),
+            }
+            
+            for check_type, validator in data_structures.items():
+                types = validator(content)
+                self.logger.debug(f"Checking outcome of type '{types}'...")
+                if validator(content):
+                    content = content[0] if isinstance(content, list) and len(content) == 1 else content
+                    if check_type == "Single" and is_invalid_value(content):
+                        self.logger.debug(f"Invalid value '{content}' in outcome of type 'Single'.")
+                        raise ValueError(f"Invalid value '{content}' in outcome of type 'Single'.")
+                    elif check_type in ["List", "Flexible List"]:
+                        self.logger.debug(f"Checking outcome of type '{check_type}'...")
+                        for item in content:
+                            if is_invalid_value(item):
+                                raise ValueError(f"Invalid value '{item}' in outcome of type '{check_type}'.")
+                    elif check_type == "Matrix":
+                        self.logger.debug(f"Checking outcome of type 'Matrix'...")
+                        for row in content:
+                            for item in row:
+                                if is_invalid_value(item):
+                                    raise ValueError(f"Invalid value '{item}' in outcome of type 'Matrix'.")
+                    elif check_type == "Serializable Object":
+                        self.logger.debug(f"Checking outcome of type 'Serializable Object'...")
+                        for key, value in content.items():
+                            if is_invalid_value(value):
+                                raise ValueError(f"Invalid value '{value}' for key '{key}' in outcome of type 'Serializable Object'.")
+                    return f"{input_type} : JSON", "Valid Content", str(STATUS_CONFIGS.PASSED)
+        
+            raise TypeError("Unknown content structure.")
+        
+        def check_json(file_path):
+            with open(file_path, "r") as f:
+                try:
+                    content = json.load(f)
+                    self.logger.debug(f"Checking JSON file: {file_path}")
+                    self.logger.debug(f"Content: {content}")
+                    for item in content:
+                        # outcome = item.get("output", {}).get("value", None)
+                        outcome = next(iter(item.values()), None)
+                        self.logger.debug(f"Checking outcome: {outcome}")
+                        if outcome:
+                            return validate_json(outcome)
+                    return f"{input_type} : Unknown", "No valid JSON outcome found", str(STATUS_CONFIGS.FAILED)
+                except json.JSONDecodeError as e:
+                    return f"{input_type} : JSON", f"Invalid JSON content: {e}", str(STATUS_CONFIGS.FAILED)
+        
+        def check_csv(file_path):
+            self.logger.debug(f"Checking CSV file: {file_path}")
+            with open(file_path, "r") as f:
+                reader = csv.reader(f)
+                rows = list(reader)[1:] 
+                if any(any(is_invalid_value(cell) for cell in row) for row in rows):
+                    return f"{input_type} : CSV", "Invalid values found in CSV content", str(STATUS_CONFIGS.FAILED)
+                return f"{input_type} : CSV", "Valid Content", str(STATUS_CONFIGS.PASSED)
+            
+        def check_h5(file_path):
+            self.logger.debug(f"Checking HDF5 file: {file_path}")
+            try:
+                loader = Hdf5DataLoader()
+                loader.load(file_path)
+                content = next((x for x in [loader.values, loader.keys, loader.inputs, loader.features] if x is not None), None)
+                
+                self.logger.debug(f"Content: {content}")    
+                if content is None or (hasattr(content, 'size') and content.size == 0):
+                    return f"{input_type} : HDF5", "Empty content", str(STATUS_CONFIGS.FAILED)
+                
+                if any(any(is_invalid_value(cell) for cell in row) for row in content):
+                    return f"{input_type} : HDF5", "Invalid values found in HDF5 content"
+                
+                return f"{input_type} : HDF5", "Valid Content", str(STATUS_CONFIGS.PASSED)
+            except Exception as e:
+                return f"{input_type} : HDF5", f"Invalid HDF5 content: {e}", str(STATUS_CONFIGS.FAILED)
 
+        
+        if not Path(file_path).exists():
+            raise FileNotFoundError(f"File {file_path} does not exist.")
+        
+        file_extension = Path(file_path).suffix.lower()
+        if file_extension == ".json":
+            return check_json(file_path)
+        elif file_extension == ".csv":
+            return check_csv(file_path)
+        elif file_extension == ".h5":
+            return check_h5(file_path)
+        else:
+            raise ValueError(f"Unsupported file type: {file_extension}. Supported types are JSON, CSV, and HDF5.")
+        
     @throw_ersilia_exception()
-    def check_single_input(self, output, run_model, run_example):
+    def check_single_input(self, run_model, run_example):
         """
         Check if the model can run with a single input to check if it has a value
         in the produced output csv.
@@ -1098,14 +1499,17 @@ class CheckService:
         run_example : callable
             Function to generate example input.
         """
+        self.logger.debug("Checking model with single input...")
+        output = Options.OUTPUT_CSV.value
         input = run_example(
             n_samples=Options.NUM_SAMPLES.value,
             file_name=None,
             simple=True,
             try_predefined=False
         )
-        result = run_model(
-            input=input,
+        input = json.dumps([input['input'] for input in input])
+        run_model(
+            inputs=input,
             output=output,
             batch=100
         )
@@ -1118,16 +1522,15 @@ class CheckService:
                 reader = csv.DictReader(csv_file)
                 return [row for row in reader]
 
-        try:
-            csv_content = read_csv(output)
-            if csv_content:
-                self.single_input = True
-        except Exception as e:
-            self.logger.error(f"Error reading CSV content: {e}")
-            self._print_output(result, output)
-
+        csv_content, _completed_status = read_csv(output), []
+        if csv_content:
+            _completed_status.append(("Check Single Input", str(STATUS_CONFIGS.PASSED)))
+        else:
+            _completed_status.append(("Check Single Input", str(STATUS_CONFIGS.FAILED)))
+        return _completed_status
+        
     @throw_ersilia_exception()
-    def check_example_input(self, output, run_model, run_example):
+    def check_example_input(self, run_model, run_example):
         """
         Check if the model can run with example input without error.
 
@@ -1140,25 +1543,30 @@ class CheckService:
         run_example : callable
             Function to generate example input.
         """
-        input_samples = run_example(
+        self.logger.debug("Checking model with example input...")
+        output = Options.OUTPUT_CSV.value
+        input = run_example(
             n_samples=Options.NUM_SAMPLES.value,
             file_name=None,
             simple=True,
-            try_predefined=False
+            try_predefined=True
         )
+        input = json.dumps([input['input'] for input in input])
 
         self.logger.debug("Testing model on input of 5 smiles given by 'example' command")
 
-        result = run_model(
-            input=input_samples,
+        run_model(
+            inputs=input,
             output=output,
             batch=100
         )
 
-        if input_samples:
-            self.example_input = True
+        csv_content, _completed_status = input, []
+        if csv_content:
+            _completed_status.append(("Check Predefined Example Input", str(STATUS_CONFIGS.PASSED)))
         else:
-            self._print_output(result, output)
+            _completed_status.append(("Check Predefined Example Input", str(STATUS_CONFIGS.FAILED)))
+        return _completed_status
 
     @throw_ersilia_exception()
     def check_consistent_output(self, run_example, run_model):
@@ -1172,6 +1580,7 @@ class CheckService:
         run_model : callable
             Function to run the model.
         """
+        self.logger.debug("Confirming model produces consistent output...")
         def compute_rmse(y_true, y_pred):
             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
 
@@ -1223,34 +1632,40 @@ class CheckService:
 
         self.logger.debug("Confirming model produces consistent output...")
 
-        input_samples = run_example(
+        input = run_example(
             n_samples=Options.NUM_SAMPLES.value,
             file_name=None,
             simple=True,
             try_predefined=False
         )
+        input = json.dumps([input['input'] for input in input])
+
         run_model(
-            input=input_samples,
+            inputs=input,
             output=output1_path,
             batch=100
         )
         run_model(
-            input=input_samples,
+            inputs=input,
             output=output2_path,
             batch=100
         )
 
         data1 = read_csv(output1_path)
         data2 = read_csv(output1_path)
-
-        for res1, res2 in zip(data1, data2):
-            for key in res1:
-                if key in res2:
-                    validate_output(res1[key], res2[key])
-                else:
-                    raise KeyError(f"Key '{key}' not found in second result.")
-
-        self.consistent_output = True
+        _completed_status = []
+        try:
+            for res1, res2 in zip(data1, data2):
+                for key in res1:
+                    if key in res2:
+                        validate_output(res1[key], res2[key])
+                    else:
+                        raise KeyError(f"Key '{key}' not found in second result.")
+            _completed_status.append(("Check Consistency of Model Output", str(STATUS_CONFIGS.PASSED)))
+        except:
+            _completed_status.append(("Check Consistency of Model Output", f"{str(STATUS_CONFIGS.FAILED)}: Inconsistent Output Detected!"))
+            raise texc.InconsistentOutputs("Inconsistent Output Detected!")
+        return _completed_status
 
 class RunnerService:
     """
@@ -1291,12 +1706,15 @@ class RunnerService:
         ios_service: IOService,
         checkup_service: CheckService,
         setup_service: SetupService,
-        model_path: str,
         level: str,
         dir: str,
-        remote: bool,
-        inspect: bool,
-        remove: bool,
+        model_path: Callable,
+        from_github: bool,
+        from_s3: bool,
+        from_dockerhub: bool,
+        version: str,
+        shallow: bool,
+        deep: bool,
         inspecter: InspectService
     ):
         self.model_id = model_id
@@ -1305,19 +1723,22 @@ class RunnerService:
         self.ios_service = ios_service
         self.console = ios_service.console
         self.checkup_service = checkup_service
-        self._model_path = model_path
+        self.model_path = model_path(self.model_id)
         self.level = level
         self.dir = dir
-        self.remote = remote
-        self.inspect = inspect
-        self.remove = remove
+        self.from_github = from_github
+        self.from_s3 = from_s3
+        self.from_dockerhub = from_dockerhub
+        self.version = version
+        self.shallow = shallow
+        self.deep = deep
         self.inspecter = inspecter
         self.example = ExampleGenerator(
             model_id=self.model_id
         )
         self.run_using_bash = False
 
-    def run_model(self, input, output: str, batch: int):
+    def run_model(self, inputs: list, output: str, batch: int):
         """
         Run the model with the given input and output parameters.
 
@@ -1335,28 +1756,46 @@ class RunnerService:
         str
             The output of the command.
         """
-        if isinstance(input, list):
-            input = input[0]
-        self.logger.info("Running model")
+        self.logger.info(f"Input after escape: {inputs}")
         out = SetupService.run_command(
-            f"ersilia -v serve {self.model_id} && ersilia  -v run -i {input[0]} -o {output} -b {str(batch)}",
+            f"ersilia -v serve {self.model_id} && ersilia  -v run -i '{inputs}' -o {output} -b {str(batch)}",
             logger=self.logger,
         )
+        self.logger.info(out)
         return out
-
+    
     def fetch(self):
         """
         Fetch the model repository from the specified directory.
         """
-        SetupService.run_command(
-            " ".join(["ersilia",
-            "-v",
-            "fetch", self.model_id,
-            "--from_dir", self.dir
-            ]),
-            logger=self.logger,
-        )
+        def _fetch(dir, model_id, logger):
+            loc = (
+                ["--from_dir", self.dir]
+                if self.from_github or self.from_s3
+                else ["--from_dockerhub"] + (["--version", self.version] if self.version else [])
+            )
+            self.logger.info(f"Fetching model from: {loc}")
+            out =SetupService.run_command(
+                " ".join(["ersilia",
+                "-v",
+                "fetch", model_id,
+                *loc
+                ]),
+                logger=logger,
+            )
+            logger.info(f"Fetch out: {out}")
 
+        if os.path.exists(self.model_path):
+            SetupService.run_command(
+                " ".join(["ersilia",
+                "-v",
+                "delete", self.model_id,
+                ]),
+                logger=self.logger,
+
+            )
+        _fetch(self.dir, self.model_id, self.logger)
+        
     def run_exampe(
         self,
         n_samples: int,
@@ -1389,6 +1828,7 @@ class RunnerService:
             simple=simple,
             try_predefined=try_predefined
         )
+    
     @throw_ersilia_exception()
     def run_bash(self):
         """
@@ -1401,8 +1841,11 @@ class RunnerService:
         """
         def compute_rmse(y_true, y_pred):
             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
-
+        
         def compare_outputs(bsh_data, ers_data):
+            _completed_status = []
+            self.logger.debug(f"Bash Data: {bsh_data}")
+            self.logger.debug(f"Ers Data: {ers_data}")
             columns = set(bsh_data[0].keys()) & set(data[0].keys())
             self.logger.debug(f"Common columns: {columns}")
 
@@ -1415,14 +1858,22 @@ class RunnerService:
                     self.logger.debug(f"RMSE for {column}: {rmse}")
 
                     if rmse > 0.1:
+                        _completed_status.append(("RMSE", f"RMSE > 10% | {rmse * 100}%", str(STATUS_CONFIGS.FAILED)))
                         raise texc.InconsistentOutputs(self.model_id)
+                    _completed_status.append(("RMSE", f"{rmse * 100}%", str(STATUS_CONFIGS.PASSED)))
+                    
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
                         self._compare_string_similarity(a, b, 95)
                         for a, b
                         in zip(bv, ev)
                     ):
+                        _completed_status.append(("String Similarity", "< 95%", str(STATUS_CONFIGS.FAILED)))
                         raise texc.InconsistentOutputs(self.model_id)
+                    _completed_status.append(("String Similarity", "> 95%", str(STATUS_CONFIGS.PASSED)))
+
+            return _completed_status
+                    
 
         def read_csv(path, flag=False):
             try:
@@ -1444,7 +1895,7 @@ class RunnerService:
                     values = line.strip().split(",")
                     values = values[2:] if flag else values
 
-                    def infer_type(value):
+                    def infer_type(value): # TODO: Datastructure support
                         try:
                             return int(value)
                         except ValueError:
@@ -1490,18 +1941,14 @@ class RunnerService:
             output_path      = os.path.join(temp_dir, "ersilia_output.csv")
             output_log_path  = os.path.join(temp_dir, "output.txt")
             error_log_path   = os.path.join(temp_dir, "error.txt")
+            ex_file = os.path.join(temp_dir, "example_file.csv")
 
-            input = self.run_exampe(
+            self.run_exampe(
                 n_samples=Options.NUM_SAMPLES.value,
-                file_name=None,
+                file_name=ex_file,
                 simple=True,
                 try_predefined=False
             )
-
-            ex_file = os.path.join(temp_dir, "example_file.csv")
-
-            with open(ex_file, "w") as f:
-                f.write("smiles\n" + "\n".join(map(str, input)))
 
             run_sh_path = os.path.join(
                 model_path,
@@ -1516,7 +1963,7 @@ class RunnerService:
                 return
 
             bash_script = f"""
-                source {self.conda_prefix(self.is_base())}/etc/profile.d/conda.sh
+                source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
                 conda activate {self.model_id}
                 cd {os.path.dirname(run_sh_path)}
                 bash run.sh . {ex_file} {bash_output_path} > {output_log_path} 2> {error_log_path}
@@ -1527,8 +1974,8 @@ class RunnerService:
                 script_file.write(bash_script)
 
             self.logger.debug(f"Running bash script: {temp_script_path}")
-            run_subprocess(["bash", temp_script_path])
-
+            out = run_subprocess(["bash", temp_script_path])
+            self.logger.info(out)
             bsh_data = read_csv(bash_output_path)
             self.logger.info(f"Bash Data:{bsh_data}")
             self.logger.debug("Serving the model after run.sh")
@@ -1549,39 +1996,18 @@ class RunnerService:
             )
             data = read_csv(output_path, flag=True)
 
-            compare_outputs(bsh_data, data)
+            status = compare_outputs(bsh_data, data)
+            return status
 
-        self.run_using_bash = True
 
     @staticmethod
-    def default_env():
-        """
-        Get the default environment.
-
-        Returns
-        -------
-        str
-            The default environment.
-        """
+    def _default_env():
         if "CONDA_DEFAULT_ENV" in os.environ:
             return os.environ["CONDA_DEFAULT_ENV"]
         return None
 
     @staticmethod
-    def conda_prefix(is_base):
-        """
-        Get the conda prefix.
-
-        Parameters
-        ----------
-        is_base : bool
-            Whether it is the base environment.
-
-        Returns
-        -------
-        str
-            The conda prefix.
-        """
+    def _conda_prefix(is_base):
         o = run_command_check_output("which conda").rstrip()
         if o:
             o = os.path.abspath(os.path.join(o, "..", ".."))
@@ -1593,16 +2019,8 @@ class RunnerService:
             o = run_command_check_output("echo $CONDA_PREFIX_1").rstrip()
             return o
 
-    def is_base(self):
-        """
-        Check if the current environment is the base environment.
-
-        Returns
-        -------
-        bool
-            True if it is the base environment, False otherwise.
-        """
-        default_env = self.default_env()
+    def _is_base(self):
+        default_env = self._default_env()
         self.logger.debug(f"Default environment: {default_env}")
         return default_env == "base"
 
@@ -1615,112 +2033,44 @@ class RunnerService:
         similarity = fuzz.ratio(str1, str2)
         return similarity >= threshold
 
-
-    def make_output(self, elapsed_time: float):
-        """
-        Generate the final output table with the test results.
-
-        Parameters
-        ----------
-        elapsed_time : float
-            Time elapsed during the test run.
-        """
-        results = TestResult.generate_results(
-            self.checkup_service,
-            elapsed_time,
-            self.run_using_bash
-        )
-        data = [(key, str(value)) for key, value in results.items()]
-        self.ios_service._generate_table(
-            **TABLE_CONFIGS[TableType.FINAL_RUN_SUMMARY].__dict__,
-            rows=data
-        )
-
-    def run(self, output_file: str = Options.OUTPUT_CSV.value):
+    def run(self):
         """
         Run the model tests and checks.
-
-        Parameters
-        ----------
-        output_file : str, optional
-            Path to the output file for storing the test results.
 
         Raises
         ------
         ImportError
             If required packages are missing.
         """
-        if not output_file:
-            output_file = os.path.join(
-                self._model_path(self.model_id),
-                Options.OUTPUT_CSV.value
-            )
-
-        start_time = time.time()
-
         try:
-            self._perform_checks(output_file)
-            self._log_directory_sizes()
-            self._perform_inspect()
-            if self.level == Options.LEVEL_DEEP.value:
-                self._perform_deep_checks(output_file)
-
-            elapsed_time = time.time() - start_time
-            self.make_output(elapsed_time)
-            self._clear_folders()
+            echo("* Basic test started: downloading the model")
+            if self.from_dockerhub:
+                self.setup_service.from_github = True
+            self.setup_service.get_model()
+            self._perform_basic_checks()
+            echo("* Basic checks done!")
+            if self.shallow:
+                echo("Performing shallow checks")
+                self._perform_shallow_checks()
+                echo("Shallow checks done")
+            if self.deep:
+                self._perform_shallow_checks()
+                self._perform_deep_checks()
 
         except Exception as e:
-            click.echo(
+            echo(
                 f"An error occurred: {e}"
             )
         finally:
-            click.echo(
+            echo(
                 "Run process finished successfully."
             )
 
-    def transform_key(self, value):
-        """
-        Transform the test result key to a string representation.
-
-        Parameters
-        ----------
-        value : any
-            The test result value.
-
-        Returns
-        -------
-        str
-            The string representation of the test result.
-        """
-        if value is True:
-            return str(STATUS_CONFIGS.PASSED)
-        elif value is False:
-            return str(STATUS_CONFIGS.FAILED)
-        return value
-
-    def _perform_inspect(self):
-        if self.inspect:
-            out = self.inspecter.run()
-            out = {
-                    " ".join(word.capitalize()
-                    for word in k.split("_")): self.transform_key(v)
-                    for k, v in out.items()
-            }
-
-            data = [(key, value) for key, value in out.items()]
-
-            self.ios_service._generate_table(
-             **TABLE_CONFIGS[TableType.INSPECT_SUMMARY].__dict__,
-                rows=data,
-                large_table=True,
-                merge=True
-            )
-
-    def _perform_checks(self, output_file):
-        self.checkup_service.check_information(output_file)
+    def _perform_basic_checks(self):
+        self.checkup_service.check_information()
         self._generate_table(
             **TABLE_CONFIGS[TableType.MODEL_INFORMATION_CHECKS].__dict__,
-            rows=self.ios_service.check_results
+            rows=self.ios_service.check_results,
         )
         self.ios_service.check_results.clear()
 
@@ -1729,51 +2079,88 @@ class RunnerService:
             **TABLE_CONFIGS[TableType.MODEL_FILE_CHECKS].__dict__,
             rows=self.ios_service.check_results
         )
+        self._log_directory_sizes()
+        self._docker_yml_check()
+    
+    @show_loader(text="Performing shallow checks", color="cyan")
+    def _perform_shallow_checks(self):
+        self.fetch()
+        out = self.checkup_service.check_model_output_content(self.run_exampe, self.run_model)
+        res = []
+        if self.from_github or self.from_s3:
+            out1 = self._log_env_sizes()
+            res.append(*out1)
+        if self.from_dockerhub:
+            size = self.ios_service.calculate_image_size()
+            res.append(("Docker Image Size", size))
 
-    def _log_directory_sizes(self):
-        dir_size, env_size = self.ios_service.get_directories_sizes()
-        self._generate_table(
-            **TABLE_CONFIGS[TableType.MODEL_DIRECTORY_SIZES].__dict__,
-            rows=[(f"{dir_size:.2f}MB", f"{env_size:.2f}MB")]
-        )
-
-    def _perform_deep_checks(self, output_file):
-        self.checkup_service.check_single_input(
-            output_file,
+        self.logger.debug("Running model with single input...")
+        out2 = self.checkup_service.check_single_input(
             self.run_model,
             self.run_exampe
         )
-        self._generate_table(
-            **TABLE_CONFIGS[TableType.RUNNER_CHECKUP_STATUS].__dict__,
-            rows = [
-            ["Fetch", str(STATUS_CONFIGS.PASSED)],
-            ["Serve", str(STATUS_CONFIGS.PASSED)],
-            ["Run",   str(STATUS_CONFIGS.PASSED)]
-         ]
-        )
-        self.checkup_service.check_example_input(
-            output_file,
+        out3 = self.checkup_service.check_example_input(
             self.run_model,
             self.run_exampe
         )
-        self.checkup_service.check_consistent_output(
+        out4 = self.checkup_service.check_consistent_output(
             self.run_exampe,
             self.run_model
         )
-        self.run_bash()
+        res.append(*out2)
+        res.append(*out3)
+        res.append(*out4)
+        self.ios_service._generate_table(
+            **TABLE_CONFIGS[TableType.SHALLOW_CHECK_SUMMARY].__dict__,
+            rows=res,
+            large_table=True,
+        )
+        out5 = self.run_bash()
+        self.ios_service._generate_table(
+            **TABLE_CONFIGS[TableType.CONSISTENCY_BASH].__dict__,
+            rows=[*out5],
+        )
+        self.ios_service._generate_table(
+            **TABLE_CONFIGS[TableType.MODEL_OUTPUT].__dict__,
+            rows=out,
+        )
 
-    def _generate_table(self, title, headers, rows):
+    @show_loader(text="Performing deep checks", color="cyan")
+    def _perform_deep_checks(self):
+        data = self.inspecter.run(["computational_performance_tracking"])
+        self.logger.info(f"Data: {data}")
+        self.ios_service._generate_table(
+            **TABLE_CONFIGS[TableType.COMPUTATIONAL_PERFORMANCE].__dict__,
+            rows=data,
+            large_table=True,
+        )
+    
+    def _docker_yml_check(self):
+        data = self.inspecter.run(["docker_check"])
+        self.ios_service._generate_table(
+            **TABLE_CONFIGS[TableType.DEPENDECY_CHECK].__dict__,
+            rows=data,
+            large_table=True,
+        )
+
+    def _log_env_sizes(self):
+        env_size = self.ios_service.get_env_sizes()
+        return [("Env Size", env_size)]
+
+    def _log_directory_sizes(self):
+        dir_size = self.ios_service.get_directories_sizes()
+        self._generate_table(
+            **TABLE_CONFIGS[TableType.MODEL_DIRECTORY_SIZES].__dict__,
+            rows=[("Directory", dir_size)]
+        )
+
+    def _generate_table(self, title, headers, rows, large=False):
         self.ios_service._generate_table(
             title=title,
             headers=headers,
-            rows=rows
+            rows=rows,
+            large_table=large
         )
-    def _clear_folders(self):
-        if self.remove:
-            SetupService.run_command(
-                f"rm -rf {self.dir}",
-                logger=self.logger,
-            )
 
 class ModelTester(ErsiliaBase):
     """
@@ -1795,51 +2182,55 @@ class ModelTester(ErsiliaBase):
     """
     def __init__(
             self,
-            model_id,
-            level,
-            dir,
-            inspect,
-            remote,
-            remove
+            model, 
+            level, 
+            from_dir, 
+            from_github, 
+            from_dockerhub, 
+            from_s3, 
+            version, 
+            shallow,
+            deep,
         ):
         ErsiliaBase.__init__(
             self,
             config_json=None,
             credentials_json=None
         )
-        self.model_id = model_id
+        self.model_id = model
         self.level = level
-        self.dir = dir or self.model_id
-        self.inspect = inspect
-        self.remote = remote
-        self.remove = remove
+        self.from_dir = from_dir
+        self.model_dir = os.path.join(EOS_TMP, self.model_id)
+        self.dir = from_dir or self.model_dir
+        self.from_github = from_github
+        self.from_dockerhub = from_dockerhub
+        self.from_s3 = from_s3
+        self.version = version
+        self.shallow = shallow
+        self.deep = deep
         self._check_pedendency()
         self.setup_service = SetupService(
             self.model_id,
             self.dir,
+            self.from_github,
+            self.from_s3,
             self.logger,
-            self.remote
         )
         self.ios = IOService(
             self.logger,
-            self._dest_dir,
-            self._model_path,
-            self._get_bundle_location,
-            self._get_bentoml_location,
             self.model_id,
             self.dir
         )
         self.checks = CheckService(
             self.logger,
             self.model_id,
-            self._dest_dir,
             self.dir,
             self.ios,
         )
         self.inspecter = InspectService(
-            dir=self.dir if not self.remote else None,
+            dir=self.dir,
             model=self.model_id,
-            remote=self.remote
+            remote=True
         )
         self.runner = RunnerService(
             self.model_id,
@@ -1847,12 +2238,15 @@ class ModelTester(ErsiliaBase):
             self.ios,
             self.checks,
             self.setup_service,
-            self._model_path,
             self.level,
             self.dir,
-            self.remote,
-            self.inspect,
-            self.remove,
+            self._model_path,
+            self.from_github,
+            self.from_s3,
+            self.from_dockerhub,
+            self.version,
+            self.shallow,
+            self.deep,
             self.inspecter
         )
     def _check_pedendency(self):
@@ -1862,23 +2256,8 @@ class ModelTester(ErsiliaBase):
                 "Please install test extras with 'pip install ersilia[test]'."
             )
 
-    def setup(self):
-        """
-        Set up the model tester.
-        """
-        self.logger.debug(f"Running conda setup for {self.model_id}")
-        self.setup_service.fetch_repo() # for remote option
-        self.logger.debug(f"Fetching model {self.model_id} from local dir: {self.dir}")
-        self.runner.fetch()
-        self.setup_service.check_conda_env()
-
-    def run(self, output_file=None):
+    def run(self):
         """
         Run the model tester.
-
-        Parameters
-        ----------
-        output_file : str, optional
-            The output file.
         """
-        self.runner.run(output_file)
+        self.runner.run()
