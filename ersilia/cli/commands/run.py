@@ -10,6 +10,32 @@ from .. import echo
 from . import ersilia_cli
 
 
+def truncate_output(output, max_length=10):
+    """
+    Truncates long outputs (like arrays or lists) for better readability.
+    
+    Parameters
+    ----------
+    output : Any
+        The result to be truncated if it is a list or array-like object.
+    max_length : int, optional
+        The maximum number of elements to display, by default 10.
+    
+    Returns
+    -------
+    str
+        The truncated output as a formatted string.
+    """
+    if isinstance(output, (list, tuple)) and len(output) > max_length:
+        truncated = output[:max_length]
+        return json.dumps(truncated, indent=4) + f"\n... (and {len(output) - max_length} more elements)"
+    elif isinstance(output, dict):
+        truncated_dict = {k: truncate_output(v, max_length) for k, v in output.items()}
+        return json.dumps(truncated_dict, indent=4)
+    else:
+        return json.dumps(output, indent=4)
+
+
 def run_cmd():
     """
     Runs a specified model.
@@ -69,22 +95,14 @@ def run_cmd():
             batch_size=batch_size,
             track_run=track_runs,
         )
-
-        # Process and display the results
-        def display_result(res):
-            if isinstance(res, list) and len(res) > 10:
-                # Truncate long lists for clarity
-                echo(json.dumps(res[:10], indent=4) + "\n... (truncated)", fg="yellow")
-            else:
-                echo(json.dumps(res, indent=4))
-
         if isinstance(result, types.GeneratorType):
-            for res in result:
-                if res is not None:
+            for result in mdl.run(input=input, output=output, batch_size=batch_size):
+                if result is not None:
                     if as_table:
-                        print_result_table(res)
+                        print_result_table(result)
                     else:
-                        display_result(res)
+                        formatted = truncate_output(result)
+                        echo(formatted)
                 else:
                     echo("Something went wrong", fg="red")
         else:
@@ -92,8 +110,9 @@ def run_cmd():
                 print_result_table(result)
             else:
                 try:
-                    display_result(result)
+                    truncated = truncate_output(result)
+                    echo(truncated)
                 except Exception as e:
-                    echo(f"An error occurred while displaying the result: {str(e)}", fg="red")
+                    echo(f"Error formatting result: {e}", fg="red")
 
     return run
