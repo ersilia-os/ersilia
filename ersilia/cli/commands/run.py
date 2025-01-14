@@ -10,55 +10,39 @@ from .. import echo
 from . import ersilia_cli
 
 
-def truncate_output(output, max_length=10):
+def summarize_output(output, max_items=20):
     """
-    Truncates long outputs (like arrays or lists) for better readability.
-    
+    Summarize the output to display only the first few elements.
+    If the output is a list or dictionary, truncate it for better readability.
+
     Parameters
     ----------
-    output : Any
-        The result to be truncated if it is a list or array-like object.
-    max_length : int, optional
-        The maximum number of elements to display, by default 10.
-    
+    output : dict, list, or any object
+        The output to summarize.
+    max_items : int, optional
+        The maximum number of items to display, by default 10.
+
     Returns
     -------
     str
-        The truncated output as a formatted string.
+        The summarized output as a string.
     """
-    if isinstance(output, (list, tuple)) and len(output) > max_length:
-        truncated = output[:max_length]
-        return json.dumps(truncated, indent=4) + f"\n... (and {len(output) - max_length} more elements)"
+    if isinstance(output, list):
+        if len(output) > max_items:
+            return json.dumps(output[:max_items] + ["..."], indent=4)
     elif isinstance(output, dict):
-        truncated_dict = {k: truncate_output(v, max_length) for k, v in output.items()}
-        return json.dumps(truncated_dict, indent=4)
-    else:
-        return json.dumps(output, indent=4)
+        if len(output) > max_items:
+            truncated = dict(list(output.items())[:max_items])
+            truncated["..."] = f"+{len(output) - max_items} more items"
+            return json.dumps(truncated, indent=4)
+    return json.dumps(output, indent=4)
 
 
 def run_cmd():
     """
     Runs a specified model.
-
-    This command allows users to run a specified model with given inputs.
-
-    Returns
-    -------
-    function
-        The run command function to be used by the CLI and for testing in the pytest.
-
-    Examples
-    --------
-    .. code-block:: console
-
-        Run a model by its ID with input data:
-        $ ersilia run -i <input_data> --as-table
-
-        Run a model with batch size:
-        $ ersilia run -i <input_data> -b 50
     """
 
-    # Example usage: ersilia run -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
     @ersilia_cli.command(short_help="Run a served model", help="Run a served model")
     @click.option("-i", "--input", "input", required=True, type=click.STRING)
     @click.option(
@@ -68,7 +52,8 @@ def run_cmd():
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
     @click.option("--as-table/-t", is_flag=True, default=False)
-    def run(input, output, batch_size, as_table):
+    @click.option("--verbose", is_flag=True, help="Show the full output.")
+    def run(input, output, batch_size, as_table, verbose):
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
@@ -95,24 +80,31 @@ def run_cmd():
             batch_size=batch_size,
             track_run=track_runs,
         )
+
+        def process_result(result):
+            if verbose:
+                return json.dumps(result, indent=4)
+            else:
+                return summarize_output(result)
+
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:
+                    formatted = process_result(result)
                     if as_table:
-                        print_result_table(result)
+                        print_result_table(formatted)
                     else:
-                        formatted = truncate_output(result)
                         echo(formatted)
                 else:
                     echo("Something went wrong", fg="red")
         else:
+            formatted = process_result(result)
             if as_table:
-                print_result_table(result)
+                print_result_table(formatted)
             else:
                 try:
-                    truncated = truncate_output(result)
-                    echo(truncated)
-                except Exception as e:
-                    echo(f"Error formatting result: {e}", fg="red")
+                    echo(formatted)
+                except Exception:
+                    print_result_table(result)
 
     return run
