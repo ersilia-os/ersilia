@@ -2,6 +2,7 @@ import csv
 import docker
 import json
 import os
+import re
 import subprocess
 import zipfile
 import sys
@@ -74,8 +75,9 @@ class Options(Enum):
         "file.csv",
         "file.json",
         "file.h5",
-    ]  # ["file.csv", "file.json", "file.h5"]
+    ]
     INPUT_TYPES = ["str", "list", "csv"]
+    # REPORT_PATH = PWD/model_
 
 
 class TableType(Enum):
@@ -737,8 +739,47 @@ class IOService:
                 str(STATUS_CONFIGS.FAILED)
             ))
             return False
+        
+    def collect_and_save_json(self, results, output_file):
+        """
+        Helper function to collect JSON results and save them to a file.
+        """
+        aggregated_json = {}
+        for result in results:
+            aggregated_json.update(result)  
 
-    def _generate_table(self, title: str, headers: List[str], rows: List[List[str]], large_table: bool = False, merge: bool = False):
+        with open(output_file, "w") as f:
+            json.dump(aggregated_json, f, indent=4)
+
+    def _create_json_data(self, headers, rows, merge):
+        json_rows = []
+        prev_value = None
+
+        for row in rows:
+            first_col = str(row[0])
+            if merge and first_col == prev_value:
+                first_col = ""
+            else:
+                prev_value = first_col
+
+            processed_row = []
+            for i, cell in enumerate(row):
+                if i == len(row) - 1: 
+                    if "[green]✔" in cell:
+                        cell = "PASSED"
+                    elif "[red]✘" in cell:
+                        cell = "FAILED"
+                    else:
+                        cell = re.sub(r"\[.*?\]", "", cell) 
+                processed_row.append(cell)
+
+            json_row = dict(zip(headers, processed_row))
+            json_rows.append(json_row)
+
+        return json_rows
+
+
+    def _generate_table(self, title, headers, rows, large_table = False, merge = False):
         f_col_width = 30 if large_table else 30
         l_col_width = 50 if large_table else 10
         d_col_width = 30 if not large_table else 20
@@ -787,7 +828,13 @@ class IOService:
             ]
             table.add_row(*styled_row)
 
+        json_rows = self._create_json_data(headers, rows, merge)
+
         self.console.print(table)
+
+        json_key = title.replace(" ", "")
+        table_json = {json_key: json_rows}
+        return table_json
 
     @staticmethod
     def get_model_type(model_id: str, repo_path: str) -> str:
@@ -960,11 +1007,11 @@ class IOService:
             str: The size of the image in a human-readable format, or an error message if the image is not found.
         """
         image_name = f"{DOCKERHUB_ORG}/{self.model_id}"
-        client = docker.from_env()  # Initialize Docker client
+        client = docker.from_env()  
         try:
             image = client.images.get(image_name)
-            size_bytes = image.attrs['Size']  # Get the size in bytes
-            size_mb = size_bytes / (1024 ** 2)  # Convert bytes to MB
+            size_bytes = image.attrs['Size']  
+            size_mb = size_bytes / (1024 ** 2)  
             return f"{size_mb:.2f} MB"
         except docker.errors.ImageNotFound:
             return f"Image '{image_name}' not found."
@@ -1205,7 +1252,7 @@ class CheckService:
         
     def _check_model_task(self, data):
         self.logger.debug("Checking model task...")
-        raw_tasks = data.get("Task", "")
+        raw_tasks = data.get("Task")
         if isinstance(raw_tasks, str):
             tasks = [
                 task.strip()
@@ -1222,27 +1269,25 @@ class CheckService:
             ]
         else:
             raise texc.InvalidEntry(
-                "Task",
-                message="Task field must be a string or list."
+                "Task"
             )
 
         if not tasks:
             raise texc.InvalidEntry(
-                "Task",
-                message="Task field is missing or empty."
+                "Task"
             )
 
         invalid_tasks = [task for task in tasks if task not in self.MODEL_TASKS]
         if invalid_tasks:
             raise texc.InvalidEntry(
-                "Task", message=f"Invalid tasks: {', '.join(invalid_tasks)}"
+                "Task"
             )
 
         self.logger.debug("All tasks are valid.")
 
     def _check_model_output(self, data):
         self.logger.debug("Checking model output...")
-        raw_outputs = data.get("Output", "")
+        raw_outputs = data.get("Output")
         if isinstance(raw_outputs, str):
             outputs = [
                 output.strip()
@@ -1259,14 +1304,12 @@ class CheckService:
             ]
         else:
             raise texc.InvalidEntry(
-                "Output",
-                message="Output field must be a string or list."
+                "Output"
             )
 
         if not outputs:
             raise texc.InvalidEntry(
-                "Output",
-                message="Output field is missing or empty."
+                "Output"
             )
 
         invalid_outputs = [
@@ -1277,20 +1320,52 @@ class CheckService:
         ]
         if invalid_outputs:
             raise texc.InvalidEntry(
-                "Output",
-                message=f"Invalid outputs: {' '.join(invalid_outputs)}"
+                "Output"
             )
 
         self.logger.debug("All outputs are valid.")
 
     def _check_model_input(self, data):
         self.logger.debug("Checking model input")
-        valid_inputs = [{"Compound"}, {"Protein"}, {"Text"}]
+        valid_inputs = ["Compound", "Protein", "Text"]
 
         model_input = data.get("Input")
+        if isinstance(model_input, str):
+            model_input = [
+                input.strip()
+                for input
+                in model_input.split(",")
+                if input.strip()
+            ]
+        elif isinstance(model_input, list):
+            model_input = [
+                input.strip()
+                for input
+                in model_input
+                if isinstance(input, str) and input.strip()
+            ]
+        else:
+            raise texc.InvalidEntry(
+                "Input"
+            )
 
-        if not model_input or set(model_input) not in valid_inputs:
-            raise texc.InvalidEntry("Input")
+        if not model_input:
+            raise texc.InvalidEntry(
+                "Output"
+            )
+
+        invalid_inputs = [
+            input
+            for input
+            in model_input
+            if input not in valid_inputs
+        ]
+        if invalid_inputs:
+            raise texc.InvalidEntry(
+                "Input"
+            )
+
+        self.logger.debug("All Inputs are valid.")
 
     def _check_model_input_shape(self, data):
         self.logger.debug("Checking model input shape")
@@ -1301,13 +1376,13 @@ class CheckService:
 
     def _check_model_output_type(self, data):
         self.logger.debug("Checking model output type...")
-        valid_output_types = [{"String"}, {"Float"}, {"Integer"}]
+        valid_output_types = ["String", "Float", "Integer"]
 
         model_output_type = (
             data.get("Output Type")
         )
-
-        if not model_output_type or set(model_output_type) not in valid_output_types:
+        model_output_type = model_output_type[0] if isinstance(model_output_type, list) else model_output_type
+        if not model_output_type or model_output_type not in valid_output_types:
             raise texc.InvalidEntry("Output Type")
 
     def _check_model_output_shape(self, data):
@@ -1437,9 +1512,7 @@ class CheckService:
                     self.logger.debug(f"Checking JSON file: {file_path}")
                     self.logger.debug(f"Content: {content}")
                     for item in content:
-                        # outcome = item.get("output", {}).get("value", None)
                         outcome = next(iter(item.values()), None)
-                        self.logger.debug(f"Checking outcome: {outcome}")
                         if outcome:
                             return validate_json(outcome)
                     return f"{input_type} : Unknown", "No valid JSON outcome found", str(STATUS_CONFIGS.FAILED)
@@ -1718,7 +1791,8 @@ class RunnerService:
         version: str,
         shallow: bool,
         deep: bool,
-        inspecter: InspectService
+        as_json: bool,
+        inspector: InspectService
     ):
         self.model_id = model_id
         self.logger = logger
@@ -1735,7 +1809,9 @@ class RunnerService:
         self.version = version
         self.shallow = shallow
         self.deep = deep
-        self.inspecter = inspecter
+        self.as_json = as_json 
+        self.report_file = Path.cwd().parent / f"{self.model_id}-test.json"
+        self.inspector = inspector
         self.example = ExampleGenerator(
             model_id=self.model_id
         )
@@ -1799,7 +1875,7 @@ class RunnerService:
             )
         _fetch(self.dir, self.model_id, self.logger)
         
-    def run_exampe(
+    def run_example(
         self,
         n_samples: int,
         file_name: str = None,
@@ -1946,7 +2022,7 @@ class RunnerService:
             error_log_path   = os.path.join(temp_dir, "error.txt")
             ex_file = os.path.join(temp_dir, "example_file.csv")
 
-            self.run_exampe(
+            self.run_example(
                 n_samples=Options.NUM_SAMPLES.value,
                 file_name=ex_file,
                 simple=True,
@@ -2046,121 +2122,133 @@ class RunnerService:
             If required packages are missing.
         """
         try:
-            echo("* Basic test started: downloading the model")
+            echo("* Starting basic model tests")
             if self.from_dockerhub:
                 self.setup_service.from_github = True
+            
             self.setup_service.get_model()
-            self._perform_basic_checks()
-            echo("* Basic checks done!")
-            if self.shallow:
-                echo("Performing shallow checks")
-                self._perform_shallow_checks()
-                echo("Shallow checks done")
-            if self.deep:
-                self._perform_shallow_checks()
-                self._perform_deep_checks()
+            results = self._perform_basic_checks()
+            echo("* Basic checks completed!")
 
-        except Exception as e:
-            echo(
-                f"An error occurred: {e}"
-            )
+            if self.shallow:
+                echo("Performing shallow checks...")
+                shallow_results = self._perform_shallow_checks()
+                results.extend(shallow_results)
+                echo("Shallow checks completed!")
+            
+            if self.deep:
+                echo("Performing deep checks...")
+                shallow_results = self._perform_shallow_checks()
+                deep_results = self._perform_deep_checks()
+                results.extend(shallow_results)
+                results.append(deep_results)
+                echo("Deep checks completed!")
+
+            if self.as_json:
+                self.ios_service.collect_and_save_json(results, self.report_file)
+
+        except Exception as error:
+            echo(f"An error occurred: {error}")
         finally:
-            echo(
-                "Run process finished successfully."
-            )
+            echo("Run process completed.")
 
     def _perform_basic_checks(self):
+        results = []
+
         self.checkup_service.check_information()
-        self._generate_table(
-            **TABLE_CONFIGS[TableType.MODEL_INFORMATION_CHECKS].__dict__,
-            rows=self.ios_service.check_results,
-        )
+        results.append(self._generate_table_from_check(
+            TableType.MODEL_INFORMATION_CHECKS, 
+            self.ios_service.check_results
+        ))
+
         self.ios_service.check_results.clear()
 
         self.checkup_service.check_files()
-        self._generate_table(
-            **TABLE_CONFIGS[TableType.MODEL_FILE_CHECKS].__dict__,
-            rows=self.ios_service.check_results
-        )
-        self._log_directory_sizes()
-        self._docker_yml_check()
-    
+        results.append(self._generate_table_from_check(
+            TableType.MODEL_FILE_CHECKS, 
+            self.ios_service.check_results
+        ))
+
+        results.append(self._log_directory_sizes())
+        results.append(self._docker_yml_check())
+
+        return results
+
     @show_loader(text="Performing shallow checks", color="cyan")
     def _perform_shallow_checks(self):
         self.fetch()
-        out = self.checkup_service.check_model_output_content(self.run_exampe, self.run_model)
-        res = []
-        if self.from_github or self.from_s3:
-            out1 = self._log_env_sizes()
-            res.append(*out1)
-        if self.from_dockerhub:
-            size = self.ios_service.calculate_image_size()
-            res.append(("Docker Image Size", size))
+        model_output = self.checkup_service.check_model_output_content(self.run_example, self.run_model)
+        results = []
 
-        self.logger.debug("Running model with single input...")
-        out2 = self.checkup_service.check_single_input(
-            self.run_model,
-            self.run_exampe
-        )
-        out3 = self.checkup_service.check_example_input(
-            self.run_model,
-            self.run_exampe
-        )
-        out4 = self.checkup_service.check_consistent_output(
-            self.run_exampe,
-            self.run_model
-        )
-        res.append(*out2)
-        res.append(*out3)
-        res.append(*out4)
-        self.ios_service._generate_table(
-            **TABLE_CONFIGS[TableType.SHALLOW_CHECK_SUMMARY].__dict__,
-            rows=res,
-            large_table=True,
-        )
-        out5 = self.run_bash()
-        self.ios_service._generate_table(
-            **TABLE_CONFIGS[TableType.CONSISTENCY_BASH].__dict__,
-            rows=[*out5],
-        )
-        self.ios_service._generate_table(
-            **TABLE_CONFIGS[TableType.MODEL_OUTPUT].__dict__,
-            rows=out,
-        )
+        if self.from_github or self.from_s3:
+            results.extend(self._log_env_sizes())
+
+        if self.from_dockerhub:
+            docker_size = self.ios_service.calculate_image_size()
+            results.append(("Docker Image Size", docker_size))
+
+        results.extend(self._run_single_and_example_input_checks())
+
+        results.append(self._generate_table_from_check(
+            TableType.SHALLOW_CHECK_SUMMARY, 
+            results, 
+            large=True
+        ))
+        
+        bash_results = self.run_bash()
+        results.append(self._generate_table_from_check(
+            TableType.CONSISTENCY_BASH, 
+            bash_results
+        ))
+
+        results.append(self._generate_table_from_check(
+            TableType.MODEL_OUTPUT, 
+            model_output
+        ))
+
+        return results
 
     @show_loader(text="Performing deep checks", color="cyan")
     def _perform_deep_checks(self):
-        data = self.inspecter.run(["computational_performance_tracking"])
-        self.logger.info(f"Data: {data}")
-        self.ios_service._generate_table(
-            **TABLE_CONFIGS[TableType.COMPUTATIONAL_PERFORMANCE].__dict__,
-            rows=data,
-            large_table=True,
+        performance_data = self.inspector.run(["computational_performance_tracking"])
+        self.logger.info(f"Performance data: {performance_data}")
+        return self._generate_table_from_check(
+            TableType.COMPUTATIONAL_PERFORMANCE, 
+            performance_data, 
+            large=True
         )
-    
+
     def _docker_yml_check(self):
-        data = self.inspecter.run(["docker_check"])
-        self.ios_service._generate_table(
-            **TABLE_CONFIGS[TableType.DEPENDECY_CHECK].__dict__,
-            rows=data,
-            large_table=True,
+        docker_check_data = self.inspector.run(["docker_check"])
+        return self._generate_table_from_check(
+            TableType.DEPENDECY_CHECK, 
+            docker_check_data, 
+            large=True
         )
 
     def _log_env_sizes(self):
         env_size = self.ios_service.get_env_sizes()
-        return [("Env Size", env_size)]
+        return [("Environment Size", env_size)]
 
     def _log_directory_sizes(self):
-        dir_size = self.ios_service.get_directories_sizes()
-        self._generate_table(
-            **TABLE_CONFIGS[TableType.MODEL_DIRECTORY_SIZES].__dict__,
-            rows=[("Directory", dir_size)]
+        directory_size = self.ios_service.get_directories_sizes()
+        return self._generate_table_from_check(
+            TableType.MODEL_DIRECTORY_SIZES, 
+            [("Directory", directory_size)]
         )
 
-    def _generate_table(self, title, headers, rows, large=False):
-        self.ios_service._generate_table(
-            title=title,
-            headers=headers,
+    def _run_single_and_example_input_checks(self):
+        results = []
+        results.extend(self.checkup_service.check_single_input(self.run_model, self.run_example))
+        results.extend(self.checkup_service.check_example_input(self.run_model, self.run_example))
+        results.extend(self.checkup_service.check_consistent_output(self.run_example, self.run_model))
+        return results
+
+    def _generate_table_from_check(self, table_type, rows, large=False):
+        config = TABLE_CONFIGS[table_type].__dict__
+        return self.ios_service._generate_table(
+            title=config["title"],
+            headers=config["headers"],
             rows=rows,
             large_table=large
         )
@@ -2194,6 +2282,7 @@ class ModelTester(ErsiliaBase):
             version, 
             shallow,
             deep,
+            as_json
         ):
         ErsiliaBase.__init__(
             self,
@@ -2211,6 +2300,7 @@ class ModelTester(ErsiliaBase):
         self.version = version
         self.shallow = shallow
         self.deep = deep
+        self.as_json = as_json
         self._check_pedendency()
         self.setup_service = SetupService(
             self.model_id,
@@ -2230,7 +2320,7 @@ class ModelTester(ErsiliaBase):
             self.dir,
             self.ios,
         )
-        self.inspecter = InspectService(
+        self.inspector = InspectService(
             dir=self.dir,
             model=self.model_id,
             remote=True
@@ -2250,7 +2340,8 @@ class ModelTester(ErsiliaBase):
             self.version,
             self.shallow,
             self.deep,
-            self.inspecter
+            self.as_json,
+            self.inspector
         )
     def _check_pedendency(self):
         if MISSING_PACKAGES:

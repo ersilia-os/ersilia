@@ -82,6 +82,12 @@ def test_cmd():
         default=False,
         help="This flag is used to check deep checks (such as computational performance checks)",
     )
+    @click.option(
+        "--as_json",
+        is_flag=True,
+        default=False,
+        help="This flag is used to save the report as json file)",
+    )
     def test(
         model,
         level,
@@ -92,6 +98,7 @@ def test_cmd():
         version,
         shallow,
         deep,
+        as_json,
     ):
         mt = ModelTester(
             model,
@@ -103,6 +110,7 @@ def test_cmd():
             version,
             shallow,
             deep,
+            as_json,
         )
         echo(f"Model testing started for: {model}")
         mt.run()
