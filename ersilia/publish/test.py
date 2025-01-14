@@ -462,6 +462,7 @@ class SetupService:
         )
         self.repo_url = f"{self.BASE_URL}{self.model_id}"
         self.overwrite = self._handle_overwrite()
+        self.logger.info(f"Overwrite:{self.overwrite}")
         self.github_down = GitHubDownloader(overwrite=self.overwrite)
         self.s3_down = S3Downloader()
         self.conda = SimpleConda()
@@ -476,7 +477,7 @@ class SetupService:
         return False
 
     def _download_s3(self):
-        if not self.overwrite:
+        if not self.overwrite and os.path.exists(self.dir):
             self.logger.info("Skipping S3 download as user chose not to overwrite.")
             return
 
@@ -491,19 +492,21 @@ class SetupService:
 
         self.logger.info(f"Extracting model to: {self.dir}")
         with zipfile.ZipFile(tmp_file, "r") as zip_ref:
-            zip_ref.extractall(self.dir)
+            zip_ref.extractall(EOS_TMP)
 
     def _download_github(self):
-        if not self._handle_overwrite():
-            self.logger.info("Skipping GitHub download as user chose not to overwrite.")
-            return
+        try:
+            if not os.path.exists(EOS_TMP):
+                self.logger.info(f"Path does not exist. Creating: {self.dir}")
+                os.makedirs(EOS_TMP, exist_ok=True)
+        except OSError as e:
+            self.logger.error(f"Failed to create directory {self.dir}: {e}")
 
-        destination = os.path.join(self.dir, self.model_id)
-        self.logger.info(f"Cloning repository from GitHub to: {destination}")
+        self.logger.info(f"Cloning repository from GitHub to: {self.dir}")
         self.github_down.clone(
             org=GITHUB_ORG,
             repo=self.model_id,
-            destination=destination,
+            destination=self.dir,
         )
 
     def get_model(self):
