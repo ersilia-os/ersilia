@@ -497,12 +497,12 @@ class SetupService:
     def _download_github(self):
         try:
             if not os.path.exists(EOS_TMP):
-                self.logger.info(f"Path does not exist. Creating: {self.dir}")
+                self.logger.info(f"Path does not exist. Creating: {EOS_TMP}")
                 os.makedirs(EOS_TMP, exist_ok=True)
         except OSError as e:
-            self.logger.error(f"Failed to create directory {self.dir}: {e}")
+            self.logger.error(f"Failed to create directory {EOS_TMP}: {e}")
 
-        self.logger.info(f"Cloning repository from GitHub to: {self.dir}")
+        self.logger.info(f"Cloning repository from GitHub to: {EOS_TMP}")
         self.github_down.clone(
             org=GITHUB_ORG,
             repo=self.model_id,
