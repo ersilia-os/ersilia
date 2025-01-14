@@ -20,11 +20,14 @@ def test_cmd():
     --------
     .. code-block:: console
 
-        With default settings:/
+        With basic testing:/
         $ ersilia test eosxxxx --from_dir /path/to/model
 
-        With deep testing level:
-        $ ersilia test eosxxxx --from_github --level shallow
+        With different sources to fetch the model:
+        $ ersilia test eosxxxx --from_github/--from_dockerhub/--from_s3
+
+        With different levels of testing:
+        $ ersilia test eosxxxx --shallow --from_github/--from_dockerhub/--from_s3
     """
 
     @ersilia_cli.command(

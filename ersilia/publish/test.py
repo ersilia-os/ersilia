@@ -288,6 +288,8 @@ class InspectService(ErsiliaBase):
         Directory where the model is located.
     model : str, optional
         Model identifier.
+    remote : bool, optional
+        Flag indicating whether the model is remote.
     config_json : str, optional
         Path to the configuration JSON file.
     credentials_json : str, optional
@@ -432,12 +434,12 @@ class SetupService:
         Identifier of the model.
     dir : str
         Directory where the model repository will be cloned.
-    logger : logging.Logger
-        Logger for logging messages.
     from_github : bool
         Flag indicating whether to fetch the repository from GitHub.
     from_s3 : bool
         Flag indicating whether to fetch the repository from S3.
+    logger : Any
+        Logger for logging messages.
     """
 
     BASE_URL = "https://github.com/ersilia-os/"
@@ -665,14 +667,6 @@ class IOService:
     ----------
     logger : logging.Logger
         Logger for logging messages.
-    dest_dir : str
-        Destination directory for storing model-related files.
-    model_path : str
-        Path to the model.
-    bundle_path : str
-        Path to the model bundle.
-    bentoml_path : str
-        Path to the BentoML files.
     model_id : str
         Identifier of the model.
     dir : str
@@ -682,9 +676,7 @@ class IOService:
     --------
     .. code-block:: python
 
-        ios = IOService(logger=logger, dest_dir="/path/to/dest", model_path="/path/to/model",
-                        bundle_path="/path/to/bundle", bentoml_path="/path/to/bentoml",
-                        model_id="model_id", dir="/path/to/dir")
+        ios = IOService(logger=logger, model_id="model_id", dir="/path/to/dir")
         ios.read_information()
     """
 
@@ -718,6 +710,10 @@ class IOService:
         self.console = Console()
         self.check_results = []
         self.simple_docker = SimpleDocker()
+        self.resolver = TemplateResolver(
+            model_id=model_id,
+            repo_path=self.dir
+        )
 
     def _run_check(self, check_function, data, check_name: str, additional_info=None) -> bool:
         try:
@@ -739,6 +735,19 @@ class IOService:
                 str(STATUS_CONFIGS.FAILED)
             ))
             return False
+        
+    def _get_metadata(self):
+        path = METADATA_JSON_FILE if self.resolver.is_bentoml() else METADATA_YAML_FILE
+        path = os.path.join(self.dir, path)
+
+        with open(path, 'r') as file:
+            if path.endswith('.json'):
+                data = json.load(file)
+            elif path.endswith(('.yml', '.yaml')):
+                data = yaml.safe_load(file)
+            else:
+                raise ValueError(f"Unsupported file format: {path}")
+        return data
         
     def collect_and_save_json(self, results, output_file):
         """
@@ -1047,6 +1056,95 @@ class IOService:
         env_size = self.get_conda_env_size()
         env_size = f"{env_size}MB"
         return env_size
+    
+    def _extract_size(self, data, key="ValidationandSizeCheckResults"):
+        self.logger.info("Size Extraction is started")
+        _field_names = ["Environment Size", "Image Size"]
+        sizes = {}
+
+        validation_results = next((item.get(key) for item in data if key in item), None)
+
+        if validation_results:
+            for check in validation_results:
+                check_name = check.get("Check")
+                status = check.get("Status")
+
+                if check_name in _field_names:
+                    size_match = re.search(r"(\d+(\.\d+)?)\s*(MB|GB|KB|B)", status, re.IGNORECASE)
+                    if size_match:
+                        size = float(size_match.group(1)) 
+                        unit = size_match.group(3).upper()  
+
+                        if unit == "GB":
+                            sizes[check_name] = float(f"{size * 1024:.2f}")
+                        elif unit == "MB":
+                            sizes[check_name] = float(f"{size:.2f}")
+                        elif unit == "KB":
+                            sizes[check_name] = float(f"{size / 1024:.2f}")
+                        elif unit == "B":
+                            sizes[check_name] = float(f"{size / (1024 * 1024)::.2f}")
+        return sizes
+
+    def _extract_execution_times(self, data, key="ComputationalPerformanceSummary"):
+        self.logger.info("Performance Extraction is started")
+        performance = {
+            "Computational Performance 1": None,
+            "CP 10": None,
+            "CP 100": None
+        }
+        self.logger.info(f"Data: {data}")
+
+        summary = next((item.get(key) for item in data if key in item), None)
+
+        if summary:
+            for check in summary:
+                status = check.get("Status")
+
+                if "executed in" in status:
+                    matches = re.findall(r"(\d+\.\d+)", status)
+
+                    if len(matches) >= 3:
+                        performance["Computational Performance 1"] = float(matches[0])
+                        performance["CP 10"] = float(matches[1])
+                        performance["CP 100"] = float(matches[2])
+
+        return performance
+
+    def update_metadata(self, json_data):
+        """
+        Processes JSON/YAML metadata to extract size and performance info and update them.
+
+        Args:
+            json_data (dict): Report data from the commdand output
+            is_yaml (bool): Whether the input data is in YAML format. If False, it's treated as JSON.
+
+        Returns:
+            dict: Updated data with computed performance and size info
+        """
+        sizes = self._extract_size(json_data)
+        exec_times = self._extract_execution_times(json_data)
+        metadata = self._get_metadata()
+        metadata.update(sizes)
+        metadata.update(exec_times)
+        
+        self._save_file(metadata,)
+
+    def _save_file(self, metadata):
+        path = os.path.join(
+            self.dir, 
+            METADATA_YAML_FILE if self.resolver.is_fastapi() else METADATA_JSON_FILE
+        )
+        with open(path, 'w') as file:
+            if self.resolver.is_fastapi():
+                yaml.dump(
+                    metadata, 
+                    file, 
+                    default_flow_style=False, 
+                    sort_keys=False,  
+                    allow_unicode=True
+                )
+            else:
+                json.dump(metadata, file, indent=4, ensure_ascii=False)
 
 class CheckService:
     """
@@ -1058,10 +1156,12 @@ class CheckService:
         Logger for logging messages.
     model_id : str
         Identifier of the model.
-    dest_dir : str
-        Destination directory for storing model-related files.
     dir : str
         Directory where the model repository is located.
+    from_github : bool
+        Flag indicating whether to fetch the repository from GitHub.
+    from_dockerhub : bool
+        Flag indicating whether to fetch the repository from DockerHub.
     ios : IOService
         Instance of IOService for handling input/output operations.
 
@@ -1069,8 +1169,7 @@ class CheckService:
     --------
     .. code-block:: python
 
-        check_service = CheckService(logger=logger, model_id="model_id", dest_dir="/path/to/dest",
-                                     dir="/path/to/dir", ios=ios)
+        check_service = CheckService(logger=logger, model_id="model_id", dir="/path/to/dir", from_github=True, from_dockerhub=False, ios=ios)
         check_service.check_files()
     """
 
@@ -1115,10 +1214,12 @@ class CheckService:
         "Serializable Object"
     }
 
-    def __init__(self, logger, model_id: str, dir: str, ios: IOService):
+    def __init__(self, logger, model_id: str, dir: str, from_github: bool, from_dockerhub: bool, ios: IOService):
         self.logger = logger
         self.model_id = model_id
         self.dir = dir
+        self.from_github = from_github
+        self.from_dockerhub = from_dockerhub
         self._run_check = ios._run_check
         self._generate_table = ios._generate_table
         self._print_output = ios.print_output
@@ -1425,7 +1526,8 @@ class CheckService:
         self._run_check(self._check_model_contributor, data, "Model Contributor")
         self._run_check(self._check_model_dockerhub_url, data, "Model Dockerhub URL")
         self._run_check(self._check_model_s3_url, data, "Model S3 URL")
-        self._run_check(self._check_model_arch, data, "Model Docker Architecture")
+        if self.from_github or self.from_dockerhub:
+            self._run_check(self._check_model_arch, data, "Model Docker Architecture")
     
     def get_inputs(self, run_example, types):
         samples = run_example(
@@ -1675,19 +1777,23 @@ class CheckService:
 
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
+                print(f"rmse for float and int: {rmse}")
                 if rmse > 0.1:
                     raise texc.InconsistentOutputs(self.model_id)
 
                 rho, _ = spearmanr([output1], [output2])
+                self.logger.debug(f"rho for float and int: {rho}")
                 if rho < 0.5:
                     raise texc.InconsistentOutputs(self.model_id)
 
             elif isinstance(output1, list):
                 rmse = compute_rmse(output1, output2)
+                self.logger.debug(f"rmse for list: {rmse}")
                 if rmse > 0.1:
                     raise texc.InconsistentOutputs(self.model_id)
-
+                
                 rho, _ = spearmanr(output1, output2)
+                
                 if rho < 0.5:
                     raise texc.InconsistentOutputs(self.model_id)
 
@@ -1759,19 +1865,27 @@ class RunnerService:
         Instance of CheckService for performing various checks on the model.
     setup_service : SetupService
         Instance of SetupService for setting up the environment and fetching the model repository.
-    model_path : str
-        Path to the model.
     level : str
         Level of checks to perform.
     dir : str
         Directory where the model repository is located.
-    remote : bool
-        Flag indicating whether to fetch the repository from a remote source.
-    inspect : bool
-        Flag indicating whether to perform inspection checks.
-    remove : bool
-        Flag indicating whether to remove the model directory after tests.
-    inspecter : InspectService
+    model_path : Callable
+        Callable to get the model path.
+    from_github : bool
+        Flag indicating whether to fetch the repository from GitHub.
+    from_s3 : bool
+        Flag indicating whether to fetch the repository from S3.
+    from_dockerhub : bool
+        Flag indicating whether to fetch the repository from DockerHub.
+    version : str
+        Version of the model.
+    shallow : bool
+        Flag indicating whether to perform shallow checks.
+    deep : bool
+        Flag indicating whether to perform deep checks.
+    as_json : bool
+        Flag indicating whether to output results as JSON.
+    inspector : InspectService
         Instance of InspectService for inspecting models and their configurations.
     """
 
@@ -1934,12 +2048,13 @@ class RunnerService:
 
                 if all(isinstance(val, (int, float)) for val in bv + ev):
                     rmse = compute_rmse(bv, ev)
+                    rmse_perc = round(rmse, 2 - int(f"{rmse:.0e}".split('e')[-1]))
                     self.logger.debug(f"RMSE for {column}: {rmse}")
 
                     if rmse > 0.1:
-                        _completed_status.append(("RMSE", f"RMSE > 10% | {rmse * 100}%", str(STATUS_CONFIGS.FAILED)))
+                        _completed_status.append((f"RMSE:{column}", f"RMSE > 10% | {rmse_perc * 100:.2f}%", str(STATUS_CONFIGS.FAILED)))
                         raise texc.InconsistentOutputs(self.model_id)
-                    _completed_status.append(("RMSE", f"{rmse * 100}%", str(STATUS_CONFIGS.PASSED)))
+                    _completed_status.append((f"RMSE:{column}", f"{rmse_perc * 100:.2f}%", str(STATUS_CONFIGS.PASSED)))
                     
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
@@ -2143,8 +2258,9 @@ class RunnerService:
                 results.extend(shallow_results)
                 results.append(deep_results)
                 echo("Deep checks completed!")
-
+            self.ios_service.update_metadata(results)
             if self.as_json:
+                self.logger.info(f"Results: {results}")
                 self.ios_service.collect_and_save_json(results, self.report_file)
 
         except Exception as error:
@@ -2178,20 +2294,20 @@ class RunnerService:
     def _perform_shallow_checks(self):
         self.fetch()
         model_output = self.checkup_service.check_model_output_content(self.run_example, self.run_model)
-        results = []
+        results, _sizes = [], []
 
         if self.from_github or self.from_s3:
-            results.extend(self._log_env_sizes())
+            _sizes.extend(self._log_env_sizes())
 
         if self.from_dockerhub:
             docker_size = self.ios_service.calculate_image_size()
-            results.append(("Docker Image Size", docker_size))
+            _sizes.append(("Image Size", docker_size))
 
-        results.extend(self._run_single_and_example_input_checks())
+        _sizes.extend(self._run_single_and_example_input_checks())
 
         results.append(self._generate_table_from_check(
             TableType.SHALLOW_CHECK_SUMMARY, 
-            results, 
+            _sizes, 
             large=True
         ))
         
@@ -2256,20 +2372,29 @@ class RunnerService:
 class ModelTester(ErsiliaBase):
     """
     Class to handle model testing. Initializes the model tester services and runs the tests.
+
     Parameters
     ----------
-    model_id : str
+    model : str
         The ID of the model.
     level : str
         The level of testing.
-    dir : str
+    from_dir : str
         The directory for the model.
-    inspect : bool
-        Whether to inspect the model.
-    remote : bool
-        Whether to fetch the model from a remote source.
-    remove : bool
-        Whether to remove the model after testing.
+    from_github : bool
+        Flag indicating whether to fetch the repository from GitHub.
+    from_dockerhub : bool
+        Flag indicating whether to fetch the repository from DockerHub.
+    from_s3 : bool
+        Flag indicating whether to fetch the repository from S3.
+    version : str
+        Version of the model.
+    shallow : bool
+        Flag indicating whether to perform shallow checks.
+    deep : bool
+        Flag indicating whether to perform deep checks.
+    as_json : bool
+        Flag indicating whether to output results as JSON.
     """
     def __init__(
             self,
@@ -2318,6 +2443,8 @@ class ModelTester(ErsiliaBase):
             self.logger,
             self.model_id,
             self.dir,
+            self.from_github,
+            self.from_s3,
             self.ios,
         )
         self.inspector = InspectService(
