@@ -455,5 +455,5 @@ class ModelInspector:
             return Result(False, f"Error serving model: {process.stderr.strip()}")
         execution_time = time.time() - start_time
         return Result(
-            True, f"{n} predictions executed in {execution_time:.2f} seconds."
+            True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
         )

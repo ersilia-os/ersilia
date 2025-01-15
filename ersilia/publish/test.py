@@ -6,6 +6,7 @@ import re
 import subprocess
 import zipfile
 import sys
+import warnings
 import tempfile
 import math
 from pathlib import Path
@@ -58,6 +59,8 @@ from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.terminal import run_command_check_output, yes_no_input
 from .inspect import ModelInspector
 from ..cli import echo
+
+warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
 
 
 class Options(Enum):
@@ -594,7 +597,7 @@ class SetupService:
             if e.output:
                 logger.debug(f"Output: {e.output.strip()}")
             if e.stderr:
-                logger.debug(f"Error: {e.stderr.strip()}")
+                logger.error(f"Error: {e.stderr.strip()}")
             sys.exit(1)
         except Exception as e:
             logger.debug(f"Unexpected error: {e}")
@@ -760,35 +763,42 @@ class IOService:
         with open(output_file, "w") as f:
             json.dump(aggregated_json, f, indent=4)
 
-    def _create_json_data(self, headers, rows, merge):
-        json_rows = []
-        prev_value = None
+    def _create_json_data(self, rows, key):
+        def sanitize_name(name):
+            return re.sub(r"[ \-./]", "_", str(name).lower())
+
+        def parse_status(status):
+            if isinstance(status, str):
+                status = re.sub(r"[-+]?\d*\.\d+|\d+", lambda m: str(float(m.group())), status)
+                if "[green]✔" in status:
+                    return True
+                elif "[red]✘" in status:
+                    return False
+                else:
+                    return re.sub(r"\[.*?\]", "", status).strip()
+            return status
+
+        def parse_performance(status):
+            return {
+                f"pred_{match[0]}": float(match[1])
+                for match in re.findall(r"(\d+) predictions executed in (\d+\.\d{2}) seconds. \n", status)
+            }
+
+        key = re.sub(r" ", "_", key.lower())
+        json_data = {}
 
         for row in rows:
-            first_col = str(row[0])
-            if merge and first_col == prev_value:
-                first_col = ""
+            check_name = sanitize_name(row[0])
+            check_status = row[-1]
+
+            if check_name == "computational_performance_tracking_details":
+                json_data[check_name] = parse_performance(check_status)
             else:
-                prev_value = first_col
+                json_data[check_name] = parse_status(check_status)
 
-            processed_row = []
-            for i, cell in enumerate(row):
-                if i == len(row) - 1: 
-                    if "[green]✔" in cell:
-                        cell = "PASSED"
-                    elif "[red]✘" in cell:
-                        cell = "FAILED"
-                    else:
-                        cell = re.sub(r"\[.*?\]", "", cell) 
-                processed_row.append(cell)
+        return {key: json_data}
 
-            json_row = dict(zip(headers, processed_row))
-            json_rows.append(json_row)
-
-        return json_rows
-
-
-    def _generate_table(self, title, headers, rows, large_table = False, merge = False):
+    def _generate_table(self, title, headers, rows, large_table=False, merge=False):
         f_col_width = 30 if large_table else 30
         l_col_width = 50 if large_table else 10
         d_col_width = 30 if not large_table else 20
@@ -837,13 +847,11 @@ class IOService:
             ]
             table.add_row(*styled_row)
 
-        json_rows = self._create_json_data(headers, rows, merge)
+        json_data = self._create_json_data(rows, title)
 
         self.console.print(table)
 
-        json_key = title.replace(" ", "")
-        table_json = {json_key: json_rows}
-        return table_json
+        return json_data
 
     @staticmethod
     def get_model_type(model_id: str, repo_path: str) -> str:
@@ -1021,7 +1029,7 @@ class IOService:
             image = client.images.get(image_name)
             size_bytes = image.attrs['Size']  
             size_mb = size_bytes / (1024 ** 2)  
-            return f"{size_mb:.2f} MB"
+            return f"{size_mb:.2f}"
         except docker.errors.ImageNotFound:
             return f"Image '{image_name}' not found."
         except Exception as e:
@@ -1040,7 +1048,7 @@ class IOService:
           A string of containing size of the model directory
         """
         dir_size = self.calculate_directory_size(self.dir)
-        dir_size = f"{dir_size}MB"
+        dir_size = f"{dir_size:.2f}"
         return dir_size
 
     @throw_ersilia_exception()
@@ -1054,59 +1062,37 @@ class IOService:
           A string of containing size of the model environment
         """
         env_size = self.get_conda_env_size()
-        env_size = f"{env_size}MB"
+        env_size = f"{env_size:.2f}"
         return env_size
     
-    def _extract_size(self, data, key="ValidationandSizeCheckResults"):
-        self.logger.info("Size Extraction is started")
-        _field_names = ["Environment Size", "Image Size"]
+    def _extract_size(self, data, key="validation_and_size_check_results"):
         sizes = {}
-
         validation_results = next((item.get(key) for item in data if key in item), None)
-
+        self.logger.info(f"Validation res: {validation_results}")
         if validation_results:
-            for check in validation_results:
-                check_name = check.get("Check")
-                status = check.get("Status")
-
-                if check_name in _field_names:
-                    size_match = re.search(r"(\d+(\.\d+)?)\s*(MB|GB|KB|B)", status, re.IGNORECASE)
-                    if size_match:
-                        size = float(size_match.group(1)) 
-                        unit = size_match.group(3).upper()  
-
-                        if unit == "GB":
-                            sizes[check_name] = float(f"{size * 1024:.2f}")
-                        elif unit == "MB":
-                            sizes[check_name] = float(f"{size:.2f}")
-                        elif unit == "KB":
-                            sizes[check_name] = float(f"{size / 1024:.2f}")
-                        elif unit == "B":
-                            sizes[check_name] = float(f"{size / (1024 * 1024)::.2f}")
+            if "environment_size_mb" in validation_results:
+                env_size = validation_results["environment_size_mb"]
+                sizes["Environment Size"] = float(env_size)
+            if "image_size_mb" in validation_results:
+                img_size = validation_results["image_size_mb"]
+                sizes["Image Size"] = float(img_size)
         return sizes
 
-    def _extract_execution_times(self, data, key="ComputationalPerformanceSummary"):
+    def _extract_execution_times(self, data, key="computational_performance_summary"):
         self.logger.info("Performance Extraction is started")
         performance = {
             "Computational Performance 1": None,
-            "CP 10": None,
-            "CP 100": None
+            "Computational Performance 10": None,
+            "Computational Performance 100": None
         }
-        self.logger.info(f"Data: {data}")
 
         summary = next((item.get(key) for item in data if key in item), None)
-
+        self.logger.info(f"Summary: {summary}")
         if summary:
-            for check in summary:
-                status = check.get("Status")
-
-                if "executed in" in status:
-                    matches = re.findall(r"(\d+\.\d+)", status)
-
-                    if len(matches) >= 3:
-                        performance["Computational Performance 1"] = float(matches[0])
-                        performance["CP 10"] = float(matches[1])
-                        performance["CP 100"] = float(matches[2])
+            preds = summary.get("computational_performance_tracking_details")
+            performance["Computational Performance 1"]   = float(preds.get("pred_1"))
+            performance["Computational Performance 10"]  = float(preds.get("pred_10"))
+            performance["Computational Performance 100"] = float(preds.get("pred_100"))
 
         return performance
 
@@ -1214,7 +1200,14 @@ class CheckService:
         "Serializable Object"
     }
 
-    def __init__(self, logger, model_id: str, dir: str, from_github: bool, from_dockerhub: bool, ios: IOService):
+    def __init__(
+        self, logger, 
+        model_id: str, 
+        dir: str, 
+        from_github: bool, 
+        from_dockerhub: bool, 
+        ios: IOService
+    ):
         self.logger = logger
         self.model_id = model_id
         self.dir = dir
@@ -1260,7 +1253,7 @@ class CheckService:
             self._run_check(
                 self._check_file_existence,
                 None,
-                f"File: {file}",
+                f"{file}",
                 file
             )
 
@@ -1526,8 +1519,7 @@ class CheckService:
         self._run_check(self._check_model_contributor, data, "Model Contributor")
         self._run_check(self._check_model_dockerhub_url, data, "Model Dockerhub URL")
         self._run_check(self._check_model_s3_url, data, "Model S3 URL")
-        if self.from_github or self.from_dockerhub:
-            self._run_check(self._check_model_arch, data, "Model Docker Architecture")
+        self._run_check(self._check_model_arch, data, "Model Docker Architecture")
     
     def get_inputs(self, run_example, types):
         samples = run_example(
@@ -1603,7 +1595,7 @@ class CheckService:
                         for key, value in content.items():
                             if is_invalid_value(value):
                                 raise ValueError(f"Invalid value '{value}' for key '{key}' in outcome of type 'Serializable Object'.")
-                    return f"{input_type} : JSON", "Valid Content", str(STATUS_CONFIGS.PASSED)
+                    return f"{input_type.upper()}-JSON", "Valid Content", str(STATUS_CONFIGS.PASSED)
         
             raise TypeError("Unknown content structure.")
         
@@ -1617,9 +1609,9 @@ class CheckService:
                         outcome = next(iter(item.values()), None)
                         if outcome:
                             return validate_json(outcome)
-                    return f"{input_type} : Unknown", "No valid JSON outcome found", str(STATUS_CONFIGS.FAILED)
+                    return f"{input_type.upper()}-Unknown", "No valid JSON outcome found", str(STATUS_CONFIGS.FAILED)
                 except json.JSONDecodeError as e:
-                    return f"{input_type} : JSON", f"Invalid JSON content: {e}", str(STATUS_CONFIGS.FAILED)
+                    return f"{input_type.upper()}-JSON", f"Invalid JSON content: {e}", str(STATUS_CONFIGS.FAILED)
         
         def check_csv(file_path):
             self.logger.debug(f"Checking CSV file: {file_path}")
@@ -1627,8 +1619,8 @@ class CheckService:
                 reader = csv.reader(f)
                 rows = list(reader)[1:] 
                 if any(any(is_invalid_value(cell) for cell in row) for row in rows):
-                    return f"{input_type} : CSV", "Invalid values found in CSV content", str(STATUS_CONFIGS.FAILED)
-                return f"{input_type} : CSV", "Valid Content", str(STATUS_CONFIGS.PASSED)
+                    return f"{input_type.upper()}-CSV", "Invalid values found in CSV content", str(STATUS_CONFIGS.FAILED)
+                return f"{input_type.upper()}-CSV", "Valid Content", str(STATUS_CONFIGS.PASSED)
             
         def check_h5(file_path):
             self.logger.debug(f"Checking HDF5 file: {file_path}")
@@ -1639,14 +1631,14 @@ class CheckService:
                 
                 self.logger.debug(f"Content: {content}")    
                 if content is None or (hasattr(content, 'size') and content.size == 0):
-                    return f"{input_type} : HDF5", "Empty content", str(STATUS_CONFIGS.FAILED)
+                    return f"{input_type.upper()}-HDF5", "Empty content", str(STATUS_CONFIGS.FAILED)
                 
                 if any(any(is_invalid_value(cell) for cell in row) for row in content):
-                    return f"{input_type} : HDF5", "Invalid values found in HDF5 content"
+                    return f"{input_type.upper()}-HDF5", "Invalid values found in HDF5 content"
                 
-                return f"{input_type} : HDF5", "Valid Content", str(STATUS_CONFIGS.PASSED)
+                return f"{input_type.upper()}-HDF5", "Valid Content", str(STATUS_CONFIGS.PASSED)
             except Exception as e:
-                return f"{input_type} : HDF5", f"Invalid HDF5 content: {e}", str(STATUS_CONFIGS.FAILED)
+                return f"{input_type.upper()}-HDF5", f"Invalid HDF5 content: {e}", str(STATUS_CONFIGS.FAILED)
 
         
         if not Path(file_path).exists():
@@ -1777,7 +1769,6 @@ class CheckService:
 
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
-                print(f"rmse for float and int: {rmse}")
                 if rmse > 0.1:
                     raise texc.InconsistentOutputs(self.model_id)
 
@@ -1788,7 +1779,6 @@ class CheckService:
 
             elif isinstance(output1, list):
                 rmse = compute_rmse(output1, output2)
-                self.logger.debug(f"rmse for list: {rmse}")
                 if rmse > 0.1:
                     raise texc.InconsistentOutputs(self.model_id)
                 
@@ -1924,7 +1914,7 @@ class RunnerService:
         self.shallow = shallow
         self.deep = deep
         self.as_json = as_json 
-        self.report_file = Path.cwd().parent / f"{self.model_id}-test.json"
+        self.report_file = Path.cwd() / f"{self.model_id}-test.json"
         self.inspector = inspector
         self.example = ExampleGenerator(
             model_id=self.model_id
@@ -2036,25 +2026,24 @@ class RunnerService:
             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
         
         def compare_outputs(bsh_data, ers_data):
-            _completed_status = []
-            self.logger.debug(f"Bash Data: {bsh_data}")
-            self.logger.debug(f"Ers Data: {ers_data}")
+            _completed_status, _rmse = [], []
             columns = set(bsh_data[0].keys()) & set(data[0].keys())
-            self.logger.debug(f"Common columns: {columns}")
-
             for column in columns:
                 bv = [row[column] for row in bsh_data]
                 ev = [row[column] for row in ers_data]
 
                 if all(isinstance(val, (int, float)) for val in bv + ev):
                     rmse = compute_rmse(bv, ev)
-                    rmse_perc = round(rmse, 2 - int(f"{rmse:.0e}".split('e')[-1]))
-                    self.logger.debug(f"RMSE for {column}: {rmse}")
+                    _rmse.append(rmse)
 
                     if rmse > 0.1:
-                        _completed_status.append((f"RMSE:{column}", f"RMSE > 10% | {rmse_perc * 100:.2f}%", str(STATUS_CONFIGS.FAILED)))
+                        rmse_perc = round(rmse * 100, 2)
                         raise texc.InconsistentOutputs(self.model_id)
-                    _completed_status.append((f"RMSE:{column}", f"{rmse_perc * 100:.2f}%", str(STATUS_CONFIGS.PASSED)))
+                    _completed_status.append(
+                        (f"RMSE-{column}", 
+                         f"{rmse_perc}%", 
+                         str(STATUS_CONFIGS.PASSED))
+                    )
                     
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
@@ -2062,9 +2051,25 @@ class RunnerService:
                         for a, b
                         in zip(bv, ev)
                     ):
-                        _completed_status.append(("String Similarity", "< 95%", str(STATUS_CONFIGS.FAILED)))
+                        _completed_status.append(
+                            ("String Similarity", 
+                             "< 95%", 
+                             str(STATUS_CONFIGS.FAILED))
+                        )
                         raise texc.InconsistentOutputs(self.model_id)
-                    _completed_status.append(("String Similarity", "> 95%", str(STATUS_CONFIGS.PASSED)))
+                    _completed_status.append(
+                        ("String Similarity", 
+                         "> 95%", 
+                         str(STATUS_CONFIGS.PASSED))
+                    )
+
+            rmse = sum(_rmse) / len(_rmse) if _rmse else 0
+            rmse_perc = round(rmse * 100, 2)
+            _completed_status.append((
+                "RMSE-MEAN",
+                f"RMSE < 10% | {rmse_perc}%",
+                str(STATUS_CONFIGS.PASSED)
+            ))
 
             return _completed_status
                     
@@ -2171,7 +2176,6 @@ class RunnerService:
             out = run_subprocess(["bash", temp_script_path])
             self.logger.info(out)
             bsh_data = read_csv(bash_output_path)
-            self.logger.info(f"Bash Data:{bsh_data}")
             self.logger.debug("Serving the model after run.sh")
             run_subprocess(
                 ["ersilia", "-v",
@@ -2237,30 +2241,23 @@ class RunnerService:
             If required packages are missing.
         """
         try:
-            echo("* Starting basic model tests")
             if self.from_dockerhub:
                 self.setup_service.from_github = True
             
             self.setup_service.get_model()
             results = self._perform_basic_checks()
-            echo("* Basic checks completed!")
 
             if self.shallow:
-                echo("Performing shallow checks...")
                 shallow_results = self._perform_shallow_checks()
                 results.extend(shallow_results)
-                echo("Shallow checks completed!")
             
             if self.deep:
-                echo("Performing deep checks...")
                 shallow_results = self._perform_shallow_checks()
                 deep_results = self._perform_deep_checks()
                 results.extend(shallow_results)
                 results.append(deep_results)
-                echo("Deep checks completed!")
             self.ios_service.update_metadata(results)
             if self.as_json:
-                self.logger.info(f"Results: {results}")
                 self.ios_service.collect_and_save_json(results, self.report_file)
 
         except Exception as error:
@@ -2293,7 +2290,10 @@ class RunnerService:
     @show_loader(text="Performing shallow checks", color="cyan")
     def _perform_shallow_checks(self):
         self.fetch()
-        model_output = self.checkup_service.check_model_output_content(self.run_example, self.run_model)
+        # model_output = self.checkup_service.check_model_output_content(
+        #     self.run_example, 
+        #     self.run_model
+        # )
         results, _sizes = [], []
 
         if self.from_github or self.from_s3:
@@ -2301,7 +2301,7 @@ class RunnerService:
 
         if self.from_dockerhub:
             docker_size = self.ios_service.calculate_image_size()
-            _sizes.append(("Image Size", docker_size))
+            _sizes.append(("Image Size Mb", docker_size))
 
         _sizes.extend(self._run_single_and_example_input_checks())
 
@@ -2317,10 +2317,10 @@ class RunnerService:
             bash_results
         ))
 
-        results.append(self._generate_table_from_check(
-            TableType.MODEL_OUTPUT, 
-            model_output
-        ))
+        # results.append(self._generate_table_from_check(
+        #     TableType.MODEL_OUTPUT, 
+        #     model_output
+        # ))
 
         return results
 
@@ -2344,13 +2344,13 @@ class RunnerService:
 
     def _log_env_sizes(self):
         env_size = self.ios_service.get_env_sizes()
-        return [("Environment Size", env_size)]
+        return [("Environment Size Mb", env_size)]
 
     def _log_directory_sizes(self):
         directory_size = self.ios_service.get_directories_sizes()
         return self._generate_table_from_check(
             TableType.MODEL_DIRECTORY_SIZES, 
-            [("Directory", directory_size)]
+            [("Directory Size Mb", directory_size)]
         )
 
     def _run_single_and_example_input_checks(self):
