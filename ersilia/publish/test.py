@@ -2038,12 +2038,11 @@ class RunnerService:
 
                     if rmse > 0.1:
                         rmse_perc = round(rmse * 100, 2)
-                        raise texc.InconsistentOutputs(self.model_id)
-                    _completed_status.append(
-                        (f"RMSE-{column}", 
-                         f"{rmse_perc}%", 
-                         str(STATUS_CONFIGS.PASSED))
+                        _completed_status.append((f"RMSE-{column}", 
+                         f"RMSE > 10%{rmse_perc}%", 
+                         str(STATUS_CONFIGS.FAILED))
                     )
+                        raise texc.InconsistentOutputs(self.model_id)
                     
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
@@ -2065,8 +2064,7 @@ class RunnerService:
 
             rmse = sum(_rmse) / len(_rmse) if _rmse else 0
             rmse_perc = round(rmse * 100, 2)
-            _completed_status.append((
-                "RMSE-MEAN",
+            _completed_status.append(("RMSE-MEAN",
                 f"RMSE < 10% | {rmse_perc}%",
                 str(STATUS_CONFIGS.PASSED)
             ))
