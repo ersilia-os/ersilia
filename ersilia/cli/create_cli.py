@@ -29,7 +29,7 @@ def create_ersilia_cli():
     """
     # Check Python version
     if sys.version_info.major < 3 or sys.version_info.minor < 8:
-        VersionNotSupported(sys.version.major, sys.version.minor)
+        VersionNotSupported(sys.version.major, sys.version.minor).echo()
 
     is_contributor = Auth().is_contributor()
 
