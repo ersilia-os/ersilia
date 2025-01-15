@@ -1642,6 +1642,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="s2">&quot;Stopping and removing container </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                 <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_delete_temp_files</span><span class="p">(</span><span class="n">container</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
                 <span class="n">container</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Container stopped&quot;</span><span class="p">)</span>
                 <span class="n">container</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
@@ -1771,6 +1772,48 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_with_url</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span></div>
 
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_delete_temp_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes a file inside a running Docker container.</span>
+
+<span class="sd">        :param container_id: str - The ID or name of the container.</span>
+<span class="sd">        :param file_path: str - The absolute path of the file to delete inside the container.</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create a Docker client from environment variables</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+        <span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">container_id</span><span class="p">)</span>
+
+        <span class="c1"># Create the command to remove the file.</span>
+        <span class="c1"># Using &#39;rm -rf&#39; avoids errors if the file doesn&#39;t exist.</span>
+        <span class="n">ls_cmd</span> <span class="o">=</span> <span class="s2">&quot;ls /tmp&quot;</span>
+        <span class="n">rem_cmd</span> <span class="o">=</span> <span class="s2">&quot;rm -rf /tmp/</span><span class="si">{0}</span><span class="s2">&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Execute the command inside the container</span>
+            <span class="n">exec_result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">exec_run</span><span class="p">(</span><span class="n">ls_cmd</span><span class="p">)</span>
+            <span class="c1"># Check if the command executed successfully</span>
+            <span class="k">if</span> <span class="n">exec_result</span><span class="o">.</span><span class="n">exit_code</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">list_dirs</span> <span class="o">=</span> <span class="n">exec_result</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">list_dirs</span><span class="p">:</span>
+                    <span class="n">container</span><span class="o">.</span><span class="n">exec_run</span><span class="p">(</span><span class="n">rem_cmd</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Deleted temp file </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s2"> from container </span><span class="si">{</span><span class="n">container_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">output</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">exec_result</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">exec_result</span><span class="o">.</span><span class="n">output</span>
+                    <span class="k">else</span> <span class="s2">&quot;No output&quot;</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Error deleting file. Exit code: </span><span class="si">{</span><span class="n">exec_result</span><span class="o">.</span><span class="n">exit_code</span><span class="si">}</span><span class="s2">. Output: </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;An error occurred during execution inside the container: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
 <div class="viewcode-block" id="PulledDockerImageService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.services.PulledDockerImageService.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1778,6 +1821,7 @@
 <span class="sd">        Close the Docker image service by stopping and removing the container.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping and removing container&quot;</span><span class="p">)</span>
+        <span class="c1"># Here we remove temp files so that they are not left behind</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop_all_containers_of_image</span><span class="p">()</span></div>
 </div>
 
