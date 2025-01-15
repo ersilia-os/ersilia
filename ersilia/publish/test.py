@@ -68,7 +68,7 @@ class Options(Enum):
     Enum for different options.
     """
 
-    NUM_SAMPLES = 2
+    NUM_SAMPLES = 5
     BASE = "base"
     OUTPUT_CSV = "result.csv"
     INPUT_CSV = "input.csv"
@@ -80,7 +80,6 @@ class Options(Enum):
         "file.h5",
     ]
     INPUT_TYPES = ["str", "list", "csv"]
-    # REPORT_PATH = PWD/model_
 
 
 class TableType(Enum):
@@ -172,77 +171,6 @@ class STATUS_CONFIGS(Enum):
         return f"[{self.color}]{self.icon} {self.label}[/{self.color}]"
 
 
-# fmt: off
-class TestResult(Enum):
-    """
-    Enum for test results.
-    """
-    DATE_TIME_RUN = (
-        "Date and Time Run",
-        lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    )
-    TIME_ELAPSED = (
-        "Time to Run Tests (seconds)",
-        lambda elapsed: elapsed
-    )
-    BASIC_CHECKS = (
-        "Basic Checks Passed",
-        lambda svc: svc.information_check
-    )
-    SINGLE_INPUT = (
-        "Single Input Run Without Error",
-        lambda svc: svc.single_input
-    )
-    EXAMPLE_INPUT = (
-        "Example Input Run Without Error",
-        lambda svc: svc.example_input
-    )
-    CONSISTENT_OUTPUT = (
-        "Outputs Consistent",
-        lambda svc: svc.consistent_output
-    )
-    BASH_RUN = (
-        "Bash Run Without Error",
-        lambda run_bash: run_bash,
-    )
-# fmt: on
-    def __init__(self, key, value_function):
-        self.key = key
-        self.value_function = value_function
-
-    @classmethod
-    def generate_results(cls, checkup_service, elapsed_time, run_using_bash):
-        """
-        Generate test results.
-
-        Parameters
-        ----------
-        checkup_service : object
-            The checkup service.
-        elapsed_time : float
-            The elapsed time.
-        run_using_bash : bool
-            Whether to run using bash.
-
-        Returns
-        -------
-        dict
-            The generated results.
-        """
-        results = {}
-        for test in cls:
-            func_args = {}
-            if "svc" in test.value_function.__code__.co_varnames:
-                func_args["svc"] = checkup_service
-            if "elapsed" in test.value_function.__code__.co_varnames:
-                func_args["elapsed"] = elapsed_time
-            if "run_bash" in test.value_function.__code__.co_varnames:
-                func_args["run_bash"] = run_using_bash
-
-            value = test.value_function(**func_args)
-            results[test.key] = value
-        return results
-
 class CheckStrategy:
     """
     Execuetd a strategy for checking inspect commands.
@@ -256,6 +184,7 @@ class CheckStrategy:
     details_key : str
         The key for details.
     """
+
     def __init__(self, check_function, success_key, details_key):
         self.check_function = check_function
         self.success_key = success_key
@@ -302,20 +231,26 @@ class InspectService(ErsiliaBase):
     --------
     .. code-block:: python
 
-        inspector = InspectService(dir="/path/to/model", model="model_id")
+        inspector = InspectService(
+            dir="/path/to/model", model="model_id"
+        )
         results = inspector.run()
     """
 
-    def __init__(self, dir: str = None, model: str = None, remote: bool = False, config_json: str = None, credentials_json: str = None):
+    def __init__(
+        self,
+        dir: str,
+        model: str,
+        remote: bool = False,
+        config_json: str = None,
+        credentials_json: str = None,
+    ):
         super().__init__(config_json, credentials_json)
         self.dir = dir
 
         self.model = model
         self.remote = remote
-        self.resolver = TemplateResolver(
-            model_id=model,
-            repo_path=self.dir
-        )
+        self.resolver = TemplateResolver(model_id=model, repo_path=self.dir)
 
     def run(self, check_keys: list = None) -> dict:
         """
@@ -338,6 +273,7 @@ class InspectService(ErsiliaBase):
         KeyError
             If any of the specified keys do not exist.
         """
+
         def _transform_key(value):
             if value is True:
                 return str(STATUS_CONFIGS.PASSED)
@@ -363,10 +299,9 @@ class InspectService(ErsiliaBase):
                 if strategy.check_function:
                     output.update(strategy.execute())
         output = {
-            " ".join(word.capitalize()
-            for word in k.split("_")): _transform_key(v)
+            " ".join(word.capitalize() for word in k.split("_")): _transform_key(v)
             for k, v in output.items()
-            }
+        }
 
         output = [(key, value) for key, value in output.items()]
         return output
@@ -374,7 +309,10 @@ class InspectService(ErsiliaBase):
     def _get_checks(self, inspector: ModelInspector) -> dict:
         def create_check(check_fn, key, details):
             return lambda: CheckStrategy(check_fn, key, details)
-        dependency_check = "Dockerfile" if self.resolver.is_bentoml() else "Install_YAML"
+
+        dependency_check = (
+            "Dockerfile" if self.resolver.is_bentoml() else "Install_YAML"
+        )
         checks = {
             "is_github_url_available": create_check(
                 inspector.check_repo_exists if self.remote else lambda: None,
@@ -463,10 +401,9 @@ class SetupService:
 
         self.mc = ModelCard()
         self.metadata = self.mc.get(model_id)
-        self.s3 = (
-            self.metadata.get("card", {}).get("S3") or
-            self.metadata.get("metadata", {}).get("S3")
-        )
+        self.s3 = self.metadata.get("card", {}).get("S3") or self.metadata.get(
+            "metadata", {}
+        ).get("S3")
         self.repo_url = f"{self.BASE_URL}{self.model_id}"
         self.overwrite = self._handle_overwrite()
         self.logger.info(f"Overwrite:{self.overwrite}")
@@ -522,9 +459,11 @@ class SetupService:
 
         if self.from_github:
             self._download_github()
-                
+
     @staticmethod
-    def run_command(command: str, logger, capture_output: bool = False, shell: bool = True) -> str:
+    def run_command(
+        command: str, logger, capture_output: bool = False, shell: bool = True
+    ) -> str:
         """
         Run a shell command.
 
@@ -557,7 +496,7 @@ class SetupService:
                     stderr=subprocess.PIPE,
                     text=True,
                     check=True,
-                    shell=shell
+                    shell=shell,
                 )
                 return result.stdout
             else:
@@ -566,17 +505,17 @@ class SetupService:
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
-                    shell=shell
+                    shell=shell,
                 )
 
                 stdout_lines, stderr_lines = [], []
 
-                for line in iter(process.stdout.readline, ''):
+                for line in iter(process.stdout.readline, ""):
                     if line.strip():
                         stdout_lines.append(line.strip())
                         logger.info(line.strip())
 
-                for line in iter(process.stderr.readline, ''):
+                for line in iter(process.stderr.readline, ""):
                     if line.strip():
                         stderr_lines.append(line.strip())
                         logger.info(line.strip())
@@ -603,24 +542,6 @@ class SetupService:
             logger.debug(f"Unexpected error: {e}")
             sys.exit(1)
 
-    def check_conda_env(self):
-        """
-        Check if the Conda environment for the model exists.
-
-        Raises
-        ------
-        Exception
-            If the Conda environment does not exist.
-        """
-        if self.conda.exists(self.model_id):
-            self.logger.debug(
-                f"Conda environment '{self.model_id}' already exists."
-            )
-        else:
-            raise Exception(
-                f"Conda virtual environment not found for {self.model_id}"
-            )
-
     @staticmethod
     def get_conda_env_location(model_id: str, logger) -> str:
         """
@@ -645,9 +566,7 @@ class SetupService:
         """
         try:
             result = SetupService.run_command(
-                "conda env list",
-                logger=logger,
-                capture_output=True
+                "conda env list", logger=logger, capture_output=True
             )
             for line in result.splitlines():
                 if line.startswith("#") or not line.strip():
@@ -661,6 +580,7 @@ class SetupService:
             print(f"Unexpected error: {e}")
 
         return None
+
 
 class IOService:
     """
@@ -679,7 +599,11 @@ class IOService:
     --------
     .. code-block:: python
 
-        ios = IOService(logger=logger, model_id="model_id", dir="/path/to/dir")
+        ios = IOService(
+            logger=logger,
+            model_id="model_id",
+            dir="/path/to/dir",
+        )
         ios.read_information()
     """
 
@@ -692,7 +616,7 @@ class IOService:
         "src/service.py",
         "pack.py",
         "README.md",
-        "LICENSE"
+        "LICENSE",
     ]
 
     ERSILIAPACK_FILES = [
@@ -705,7 +629,7 @@ class IOService:
         "LICENSE",
     ]
 
-    def __init__(self, logger,  model_id: str, dir: str):
+    def __init__(self, logger, model_id: str, dir: str):
         self.logger = logger
         self.model_id = model_id
         self.dir = dir
@@ -713,52 +637,43 @@ class IOService:
         self.console = Console()
         self.check_results = []
         self.simple_docker = SimpleDocker()
-        self.resolver = TemplateResolver(
-            model_id=model_id,
-            repo_path=self.dir
-        )
+        self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
 
-    def _run_check(self, check_function, data, check_name: str, additional_info=None) -> bool:
+    def _run_check(
+        self, check_function, data, check_name: str, additional_info=None
+    ) -> bool:
         try:
             if additional_info is not None:
                 check_function(additional_info)
             else:
                 check_function(data)
-            self.check_results.append((
-                check_name,
-                str(STATUS_CONFIGS.PASSED)
-            ))
+            self.check_results.append((check_name, str(STATUS_CONFIGS.PASSED)))
             return True
         except Exception as e:
-            self.logger.error(
-                f"Check '{check_name}' failed: {e}"
-            )
-            self.check_results.append((
-                check_name,
-                str(STATUS_CONFIGS.FAILED)
-            ))
+            self.logger.error(f"Check '{check_name}' failed: {e}")
+            self.check_results.append((check_name, str(STATUS_CONFIGS.FAILED)))
             return False
-        
+
     def _get_metadata(self):
         path = METADATA_JSON_FILE if self.resolver.is_bentoml() else METADATA_YAML_FILE
         path = os.path.join(self.dir, path)
 
-        with open(path, 'r') as file:
-            if path.endswith('.json'):
+        with open(path, "r") as file:
+            if path.endswith(".json"):
                 data = json.load(file)
-            elif path.endswith(('.yml', '.yaml')):
+            elif path.endswith((".yml", ".yaml")):
                 data = yaml.safe_load(file)
             else:
                 raise ValueError(f"Unsupported file format: {path}")
         return data
-        
+
     def collect_and_save_json(self, results, output_file):
         """
         Helper function to collect JSON results and save them to a file.
         """
         aggregated_json = {}
         for result in results:
-            aggregated_json.update(result)  
+            aggregated_json.update(result)
 
         with open(output_file, "w") as f:
             json.dump(aggregated_json, f, indent=4)
@@ -769,7 +684,9 @@ class IOService:
 
         def parse_status(status):
             if isinstance(status, str):
-                status = re.sub(r"[-+]?\d*\.\d+|\d+", lambda m: str(float(m.group())), status)
+                status = re.sub(
+                    r"[-+]?\d*\.\d+|\d+", lambda m: str(float(m.group())), status
+                )
                 if "[green]✔" in status:
                     return True
                 elif "[red]✘" in status:
@@ -781,7 +698,9 @@ class IOService:
         def parse_performance(status):
             return {
                 f"pred_{match[0]}": float(match[1])
-                for match in re.findall(r"(\d+) predictions executed in (\d+\.\d{2}) seconds. \n", status)
+                for match in re.findall(
+                    r"(\d+) predictions executed in (\d+\.\d{2}) seconds. \n", status
+                )
             }
 
         key = re.sub(r" ", "_", key.lower())
@@ -804,33 +723,15 @@ class IOService:
         d_col_width = 30 if not large_table else 20
 
         table = Table(
-            title=Text(
-                title,
-                style="bold light_green"
-            ),
+            title=Text(title, style="bold light_green"),
             border_style="light_green",
             show_lines=True,
         )
 
-        table.add_column(
-            headers[0],
-            justify="left",
-            width=f_col_width,
-            style="bold"
-        )
+        table.add_column(headers[0], justify="left", width=f_col_width, style="bold")
         for header in headers[1:-1]:
-            table.add_column(
-                header,
-                justify="center",
-                width=d_col_width,
-                style="bold"
-            )
-        table.add_column(
-            headers[-1],
-            justify="right",
-            width=l_col_width,
-            style="bold"
-        )
+            table.add_column(header, justify="center", width=d_col_width, style="bold")
+        table.add_column(headers[-1], justify="right", width=l_col_width, style="bold")
 
         prev_value = None
         for row in rows:
@@ -843,7 +744,7 @@ class IOService:
             styled_row = [
                 Text(first_col, style="bold"),
                 *[str(cell) for cell in row[1:-1]],
-                row[-1]
+                row[-1],
             ]
             table.add_row(*styled_row)
 
@@ -870,10 +771,7 @@ class IOService:
         str
             The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).
         """
-        resolver = TemplateResolver(
-            model_id=model_id,
-            repo_path=repo_path
-        )
+        resolver = TemplateResolver(model_id=model_id, repo_path=repo_path)
         if resolver.is_bentoml():
             return PACK_METHOD_BENTOML
         elif resolver.is_fastapi():
@@ -895,18 +793,13 @@ class IOService:
         ValueError
             If the model type is unsupported.
         """
-        type = IOService.get_model_type(
-            model_id=self.model_id,
-            repo_path=self.dir
-        )
+        type = IOService.get_model_type(model_id=self.model_id, repo_path=self.dir)
         if type == PACK_METHOD_BENTOML:
             return self.BENTOML_FILES
         elif type == PACK_METHOD_FASTAPI:
             return self.ERSILIAPACK_FILES
         else:
-            raise ValueError(
-                f"Unsupported model type: {type}"
-            )
+            raise ValueError(f"Unsupported model type: {type}")
 
     def read_information(self) -> dict:
         """
@@ -922,15 +815,11 @@ class IOService:
         FileNotFoundError
             If the information file does not exist.
         """
-        file = os.path.join(
-            EOS_TMP,
-            self.model_id,
-            METADATA_JSON_FILE
-        )
+        file = os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE)
         if not os.path.exists(file):
             raise FileNotFoundError(
                 f"Information file does not exist for model {self.model_id}"
-        )
+            )
         with open(file, "r") as f:
             return json.load(f)
 
@@ -945,6 +834,7 @@ class IOService:
         output : file-like object
             The output file to write to.
         """
+
         def write_output(data):
             if output is not None:
                 with open(output.name, "w") as file:
@@ -973,10 +863,7 @@ class IOService:
             If there is an error calculating the size.
         """
         try:
-            loc = SetupService.get_conda_env_location(
-                self.model_id,
-                self.logger
-            )
+            loc = SetupService.get_conda_env_location(self.model_id, self.logger)
             return self.calculate_directory_size(loc)
         except Exception as e:
             self.logger.error(
@@ -1003,16 +890,14 @@ class IOService:
                 ["du", "-sm", path],
                 logger=self.logger,
                 capture_output=True,
-                shell=False
+                shell=False,
             )
             size = int(size_output.split()[0])
             return size
         except Exception as e:
-            self.logger.error(
-                f"Error calculating directory size for {path}: {e}"
-            )
+            self.logger.error(f"Error calculating directory size for {path}: {e}")
             return 0
-        
+
     def calculate_image_size(self):
         """
         Calculates the size of a Docker image.
@@ -1024,18 +909,16 @@ class IOService:
             str: The size of the image in a human-readable format, or an error message if the image is not found.
         """
         image_name = f"{DOCKERHUB_ORG}/{self.model_id}"
-        client = docker.from_env()  
+        client = docker.from_env()
         try:
             image = client.images.get(image_name)
-            size_bytes = image.attrs['Size']  
-            size_mb = size_bytes / (1024 ** 2)  
+            size_bytes = image.attrs["Size"]
+            size_mb = size_bytes / (1024**2)
             return f"{size_mb:.2f}"
         except docker.errors.ImageNotFound:
             return f"Image '{image_name}' not found."
         except Exception as e:
             return f"An error occurred: {e}"
-
-
 
     @throw_ersilia_exception()
     def get_directories_sizes(self) -> str:
@@ -1064,16 +947,18 @@ class IOService:
         env_size = self.get_conda_env_size()
         env_size = f"{env_size:.2f}"
         return env_size
-    
+
     def _extract_size(self, data, key="validation_and_size_check_results"):
-        sizes = {}
+        sizes, keys = {}, ("environment_size_mb", "image_size_mb")
         validation_results = next((item.get(key) for item in data if key in item), None)
         if validation_results:
-            if "environment_size_mb" in validation_results:
-                env_size = validation_results["environment_size_mb"]
+            if keys[0] in validation_results:
+                env_size = validation_results[keys[0]]
+                self.logger.info(f"Environment Size: {env_size}")
                 sizes["Environment Size"] = float(env_size)
-            if "image_size_mb" in validation_results:
-                img_size = validation_results["image_size_mb"]
+            if keys[1] in validation_results:
+                img_size = validation_results[keys[1]]
+                self.logger.info(f"Image Size: {img_size}")
                 sizes["Image Size"] = float(img_size)
         return sizes
 
@@ -1082,53 +967,59 @@ class IOService:
         performance = {
             "Computational Performance 1": None,
             "Computational Performance 10": None,
-            "Computational Performance 100": None
+            "Computational Performance 100": None,
         }
 
         summary = next((item.get(key) for item in data if key in item), None)
         if summary:
             preds = summary.get("computational_performance_tracking_details")
-            performance["Computational Performance 1"]   = float(preds.get("pred_1"))
-            performance["Computational Performance 10"]  = float(preds.get("pred_10"))
+            performance["Computational Performance 1"] = float(preds.get("pred_1"))
+            performance["Computational Performance 10"] = float(preds.get("pred_10"))
             performance["Computational Performance 100"] = float(preds.get("pred_100"))
 
         return performance
 
     def update_metadata(self, json_data):
         """
-        Processes JSON/YAML metadata to extract size and performance info and update them.
+        Processes JSON/YAML metadata to extract size and performance info and then updates them.
 
-        Args:
-            json_data (dict): Report data from the commdand output
-            is_yaml (bool): Whether the input data is in YAML format. If False, it's treated as JSON.
+        Parameters
+        ----------
+        json_data : dict
+            Report data from the command output.
 
-        Returns:
-            dict: Updated data with computed performance and size info
+        Returns
+        -------
+        dict
+            Updated metadata containing computed performance and size information.
         """
         sizes = self._extract_size(json_data)
         exec_times = self._extract_execution_times(json_data)
         metadata = self._get_metadata()
         metadata.update(sizes)
         metadata.update(exec_times)
-        
-        self._save_file(metadata,)
+
+        self._save_file(
+            metadata,
+        )
 
     def _save_file(self, metadata):
-        path = os.path.join(
-            self.dir, 
-            METADATA_YAML_FILE if self.resolver.is_fastapi() else METADATA_JSON_FILE
-        )
-        with open(path, 'w') as file:
-            if self.resolver.is_fastapi():
+        path = METADATA_JSON_FILE if self.resolver.is_bentoml() else METADATA_YAML_FILE
+        path = os.path.join(self.dir, path)
+        with open(path, "w") as file:
+            if path.endswith(".json"):
+                json.dump(metadata, file, indent=4, ensure_ascii=False)
+            elif path.endswith((".yml", ".yaml")):
                 yaml.dump(
-                    metadata, 
-                    file, 
-                    default_flow_style=False, 
-                    sort_keys=False,  
-                    allow_unicode=True
+                    metadata,
+                    file,
+                    default_flow_style=False,
+                    sort_keys=False,
+                    allow_unicode=True,
                 )
             else:
-                json.dump(metadata, file, indent=4, ensure_ascii=False)
+                raise ValueError(f"Unsupported file format: {path}")
+
 
 class CheckService:
     """
@@ -1153,7 +1044,14 @@ class CheckService:
     --------
     .. code-block:: python
 
-        check_service = CheckService(logger=logger, model_id="model_id", dir="/path/to/dir", from_github=True, from_dockerhub=False, ios=ios)
+        check_service = CheckService(
+            logger=logger,
+            model_id="model_id",
+            dir="/path/to/dir",
+            from_github=True,
+            from_dockerhub=False,
+            ios=ios,
+        )
         check_service.check_files()
     """
 
@@ -1182,29 +1080,18 @@ class CheckService:
         "Text",
     }
 
-    INPUT_SHAPE = {
-        "Single",
-        "Pair",
-        "List",
-        "Pair of Lists",
-        "List of Lists"
-    }
+    INPUT_SHAPE = {"Single", "Pair", "List", "Pair of Lists", "List of Lists"}
 
-    OUTPUT_SHAPE = {
-        "Single",
-        "List",
-        "Flexible List",
-        "Matrix",
-        "Serializable Object"
-    }
+    OUTPUT_SHAPE = {"Single", "List", "Flexible List", "Matrix", "Serializable Object"}
 
     def __init__(
-        self, logger, 
-        model_id: str, 
-        dir: str, 
-        from_github: bool, 
-        from_dockerhub: bool, 
-        ios: IOService
+        self,
+        logger,
+        model_id: str,
+        dir: str,
+        from_github: bool,
+        from_dockerhub: bool,
+        ios: IOService,
     ):
         self.logger = logger
         self.model_id = model_id
@@ -1217,19 +1104,16 @@ class CheckService:
         self.get_file_requirements = ios.get_file_requirements
         self.console = ios.console
         self.check_results = ios.check_results
-        self.resolver = TemplateResolver(
-            model_id=model_id,
-            repo_path=self.dir
-        )
-    
+        self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
+
     def _get_metadata(self):
         path = METADATA_JSON_FILE if self.resolver.is_bentoml() else METADATA_YAML_FILE
         path = os.path.join(self.dir, path)
 
-        with open(path, 'r') as file:
-            if path.endswith('.json'):
+        with open(path, "r") as file:
+            if path.endswith(".json"):
                 data = json.load(file)
-            elif path.endswith(('.yml', '.yaml')):
+            elif path.endswith((".yml", ".yaml")):
                 data = yaml.safe_load(file)
             else:
                 raise ValueError(f"Unsupported file format: {path}")
@@ -1237,9 +1121,7 @@ class CheckService:
 
     def _check_file_existence(self, path):
         if not os.path.exists(os.path.join(self.dir, path)):
-            raise FileNotFoundError(
-                f"File '{path}' does not exist."
-        )
+            raise FileNotFoundError(f"File '{path}' does not exist.")
 
     def check_files(self):
         """
@@ -1248,63 +1130,56 @@ class CheckService:
         requirements = self.get_file_requirements()
         for file in requirements:
             self.logger.debug(f"Checking file: {file}")
-            self._run_check(
-                self._check_file_existence,
-                None,
-                f"{file}",
-                file
-            )
+            self._run_check(self._check_file_existence, None, f"{file}", file)
 
     def _check_model_id(self, data):
         self.logger.debug("Checking model ID...")
         if data["Identifier"] != self.model_id:
             raise texc.WrongCardIdentifierError(self.model_id)
 
-
     def _check_model_slug(self, data):
         self.logger.debug("Checking model slug...")
         if not data["Slug"]:
             raise texc.EmptyField("slug")
 
-
     def _check_model_description(self, data):
         self.logger.debug("Checking model description...")
         if not data["Description"]:
             raise texc.EmptyField("Description")
-    
+
     def _check_model_tag(self, data):
         self.logger.debug("Checking model tag...")
         if not data["Tag"]:
             raise texc.EmptyField("Tag")
-        
+
     def _check_model_source_code(self, data):
         self.logger.debug("Checking model source code...")
         if not data["Source Code"]:
             raise texc.EmptyField("Source Code")
-        
+
     def _check_model_source_title(self, data):
         self.logger.debug("Checking model title...")
         if not data["Title"]:
             raise texc.EmptyField("Title")
-        
+
     def _check_model_status(self, data):
         self.logger.debug("Checking model status...")
         if not data["Status"]:
             raise texc.EmptyField("Status")
-        
+
     def _check_model_contributor(self, data):
         self.logger.debug("Checking model contributor...")
         if not data["Contributor"]:
-            raise texc.EmptyField("Contributor") 
-        
+            raise texc.EmptyField("Contributor")
+
     def _check_model_interpret(self, data):
         self.logger.debug("Checking model interpretation...")
         if not data["Interpretation"]:
             raise texc.EmptyField("Interpretation")
-        
+
     def _check_model_dockerhub_url(self, data):
         key = "DockerHub"
-        self.logger.info(f"Data: {data}")   
+        self.logger.info(f"Data: {data}")
         self.logger.debug(f"Checking {key} URL field..")
         if key in data:
             self.logger.debug(f"Checking {key} URL field..")
@@ -1314,7 +1189,7 @@ class CheckService:
         else:
             self.logger.debug(f"Checking {key} URL field..")
             raise texc.EmptyKey(key)
-        
+
     def _check_model_s3_url(self, data):
         key = "S3"
         self.logger.debug(f"Checking {key} URL field..")
@@ -1323,7 +1198,7 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
     def _check_model_arch(self, data):
         key = "Docker Architecture"
         self.logger.debug(f"Checking {key} field..")
@@ -1332,7 +1207,7 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
     def _check_model_publication(self, data):
         key = "Publication"
         self.logger.debug(f"Checking {key} field..")
@@ -1341,39 +1216,27 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
     def _check_model_task(self, data):
         self.logger.debug("Checking model task...")
         raw_tasks = data.get("Task")
         if isinstance(raw_tasks, str):
-            tasks = [
-                task.strip()
-                for task
-                in raw_tasks.split(",")
-                if task.strip()
-            ]
+            tasks = [task.strip() for task in raw_tasks.split(",") if task.strip()]
         elif isinstance(raw_tasks, list):
             tasks = [
                 task.strip()
-                for task
-                in raw_tasks
+                for task in raw_tasks
                 if isinstance(task, str) and task.strip()
             ]
         else:
-            raise texc.InvalidEntry(
-                "Task"
-            )
+            raise texc.InvalidEntry("Task")
 
         if not tasks:
-            raise texc.InvalidEntry(
-                "Task"
-            )
+            raise texc.InvalidEntry("Task")
 
         invalid_tasks = [task for task in tasks if task not in self.MODEL_TASKS]
         if invalid_tasks:
-            raise texc.InvalidEntry(
-                "Task"
-            )
+            raise texc.InvalidEntry("Task")
 
         self.logger.debug("All tasks are valid.")
 
@@ -1382,38 +1245,25 @@ class CheckService:
         raw_outputs = data.get("Output")
         if isinstance(raw_outputs, str):
             outputs = [
-                output.strip()
-                for output
-                in raw_outputs.split(",")
-                if output.strip()
+                output.strip() for output in raw_outputs.split(",") if output.strip()
             ]
         elif isinstance(raw_outputs, list):
             outputs = [
                 output.strip()
-                for output
-                in raw_outputs
+                for output in raw_outputs
                 if isinstance(output, str) and output.strip()
             ]
         else:
-            raise texc.InvalidEntry(
-                "Output"
-            )
+            raise texc.InvalidEntry("Output")
 
         if not outputs:
-            raise texc.InvalidEntry(
-                "Output"
-            )
+            raise texc.InvalidEntry("Output")
 
         invalid_outputs = [
-            output
-            for output
-            in outputs
-            if output not in self.MODEL_OUTPUT
+            output for output in outputs if output not in self.MODEL_OUTPUT
         ]
         if invalid_outputs:
-            raise texc.InvalidEntry(
-                "Output"
-            )
+            raise texc.InvalidEntry("Output")
 
         self.logger.debug("All outputs are valid.")
 
@@ -1424,38 +1274,23 @@ class CheckService:
         model_input = data.get("Input")
         if isinstance(model_input, str):
             model_input = [
-                input.strip()
-                for input
-                in model_input.split(",")
-                if input.strip()
+                input.strip() for input in model_input.split(",") if input.strip()
             ]
         elif isinstance(model_input, list):
             model_input = [
                 input.strip()
-                for input
-                in model_input
+                for input in model_input
                 if isinstance(input, str) and input.strip()
             ]
         else:
-            raise texc.InvalidEntry(
-                "Input"
-            )
+            raise texc.InvalidEntry("Input")
 
         if not model_input:
-            raise texc.InvalidEntry(
-                "Output"
-            )
+            raise texc.InvalidEntry("Output")
 
-        invalid_inputs = [
-            input
-            for input
-            in model_input
-            if input not in valid_inputs
-        ]
+        invalid_inputs = [input for input in model_input if input not in valid_inputs]
         if invalid_inputs:
-            raise texc.InvalidEntry(
-                "Input"
-            )
+            raise texc.InvalidEntry("Input")
 
         self.logger.debug("All Inputs are valid.")
 
@@ -1470,18 +1305,18 @@ class CheckService:
         self.logger.debug("Checking model output type...")
         valid_output_types = ["String", "Float", "Integer"]
 
+        model_output_type = data.get("Output Type")
         model_output_type = (
-            data.get("Output Type")
+            model_output_type[0]
+            if isinstance(model_output_type, list)
+            else model_output_type
         )
-        model_output_type = model_output_type[0] if isinstance(model_output_type, list) else model_output_type
         if not model_output_type or model_output_type not in valid_output_types:
             raise texc.InvalidEntry("Output Type")
 
     def _check_model_output_shape(self, data):
         self.logger.debug("Checking model output shape...")
-        model_output_shape = (
-            data.get("Output Shape")
-        )
+        model_output_shape = data.get("Output Shape")
 
         if model_output_shape not in self.OUTPUT_SHAPE:
             raise texc.InvalidEntry("Output Shape")
@@ -1518,13 +1353,13 @@ class CheckService:
         self._run_check(self._check_model_dockerhub_url, data, "Model Dockerhub URL")
         self._run_check(self._check_model_s3_url, data, "Model S3 URL")
         self._run_check(self._check_model_arch, data, "Model Docker Architecture")
-    
+
     def get_inputs(self, run_example, types):
         samples = run_example(
             n_samples=Options.NUM_SAMPLES.value,
             file_name=None,
             simple=True,
-            try_predefined=False
+            try_predefined=False,
         )
         samples = [sample["input"] for sample in samples]
         if types == "str":
@@ -1533,10 +1368,10 @@ class CheckService:
             return json.dumps(samples)
         if types == "csv":
             run_example(
-            n_samples=Options.NUM_SAMPLES.value,
-            file_name=Options.INPUT_CSV.value,
-            simple=True,
-            try_predefined=False
+                n_samples=Options.NUM_SAMPLES.value,
+                file_name=Options.INPUT_CSV.value,
+                simple=True,
+                try_predefined=False,
             )
             return Options.INPUT_CSV.value
 
@@ -1551,48 +1386,72 @@ class CheckService:
                 _status = self.validate_file_content(output_file, inp_type)
                 status.append(_status)
         return status
-    
+
     def validate_file_content(self, file_path, input_type):
         def is_invalid_value(item):
-            return item in [None, "", "null"] or (isinstance(item, float) and math.isnan(item))
-        
+            return item in [None, "", "null"] or (
+                isinstance(item, float) and math.isnan(item)
+            )
+
         def validate_json(content):
             data_structures = {
-                "Single": lambda x: isinstance(x, list) and len(x) == 1 or isinstance(x, (int, float, str)),
-                "List": lambda x: isinstance(x, list) and len(x) > 1 and all(isinstance(item, (int, float, str)) for item in x),
-                "Flexible List": lambda x: isinstance(x, list) and all(isinstance(item, (str, int, float)) for item in x),
-                "Matrix": lambda x: isinstance(x, list) and all(
-                    isinstance(row, list) and all(isinstance(item, (int, float)) for item in row) for row in x
+                "Single": lambda x: isinstance(x, list)
+                and len(x) == 1
+                or isinstance(x, (int, float, str)),
+                "List": lambda x: isinstance(x, list)
+                and len(x) > 1
+                and all(isinstance(item, (int, float, str)) for item in x),
+                "Flexible List": lambda x: isinstance(x, list)
+                and all(isinstance(item, (str, int, float)) for item in x),
+                "Matrix": lambda x: isinstance(x, list)
+                and all(
+                    isinstance(row, list)
+                    and all(isinstance(item, (int, float)) for item in row)
+                    for row in x
                 ),
                 "Serializable Object": lambda x: isinstance(x, dict),
             }
-            
+
             for check_type, validator in data_structures.items():
                 types = validator(content)
                 self.logger.debug(f"Checking outcome of type '{types}'...")
                 if validator(content):
-                    content = content[0] if isinstance(content, list) and len(content) == 1 else content
+                    content = (
+                        content[0]
+                        if isinstance(content, list) and len(content) == 1
+                        else content
+                    )
                     if check_type == "Single" and is_invalid_value(content):
-                        raise ValueError(f"Invalid value '{content}' in outcome of type 'Single'.")
+                        raise ValueError(
+                            f"Invalid value '{content}' in outcome of type 'Single'."
+                        )
                     elif check_type in ["List", "Flexible List"]:
                         for item in content:
                             if is_invalid_value(item):
-                                raise ValueError(f"Invalid value '{item}' in outcome of type '{check_type}'.")
+                                raise ValueError(
+                                    f"Invalid value '{item}' in outcome of type '{check_type}'."
+                                )
                     elif check_type == "Matrix":
                         for row in content:
                             for item in row:
                                 if is_invalid_value(item):
-                                    raise ValueError(f"Invalid value '{item}' in outcome of type 'Matrix'.")
+                                    raise ValueError(
+                                        f"Invalid value '{item}' in outcome of type 'Matrix'."
+                                    )
                     elif check_type == "Serializable Object":
                         for key, value in content.items():
                             if is_invalid_value(value):
                                 raise ValueError(
                                     f"Invalid value '{value}' for key '{key}' in outcome of type 'Serializable Object'."
                                 )
-                    return f"{input_type.upper()}-JSON", "Valid Content", str(STATUS_CONFIGS.PASSED)
-        
+                    return (
+                        f"{input_type.upper()}-JSON",
+                        "Valid Content",
+                        str(STATUS_CONFIGS.PASSED),
+                    )
+
             raise TypeError("Unknown content structure.")
-        
+
         def check_json(file_path):
             with open(file_path, "r") as f:
                 try:
@@ -1603,41 +1462,83 @@ class CheckService:
                         outcome = next(iter(item.values()), None)
                         if outcome:
                             return validate_json(outcome)
-                    return f"{input_type.upper()}-Unknown", "No valid JSON outcome found", str(STATUS_CONFIGS.FAILED)
+                    return (
+                        f"{input_type.upper()}-Unknown",
+                        "No valid JSON outcome found",
+                        str(STATUS_CONFIGS.FAILED),
+                    )
                 except json.JSONDecodeError as e:
-                    return f"{input_type.upper()}-JSON", f"Invalid JSON content: {e}", str(STATUS_CONFIGS.FAILED)
-        
+                    return (
+                        f"{input_type.upper()}-JSON",
+                        f"Invalid JSON content: {e}",
+                        str(STATUS_CONFIGS.FAILED),
+                    )
+
         def check_csv(file_path):
             self.logger.debug(f"Checking CSV file: {file_path}")
             with open(file_path, "r") as f:
                 reader = csv.reader(f)
-                rows = list(reader)[1:] 
+                rows = list(reader)[1:]
                 if any(any(is_invalid_value(cell) for cell in row) for row in rows):
-                    return f"{input_type.upper()}-CSV", "Invalid values found in CSV content", str(STATUS_CONFIGS.FAILED)
-                return f"{input_type.upper()}-CSV", "Valid Content", str(STATUS_CONFIGS.PASSED)
-            
+                    return (
+                        f"{input_type.upper()}-CSV",
+                        "Invalid values found in CSV content",
+                        str(STATUS_CONFIGS.FAILED),
+                    )
+                return (
+                    f"{input_type.upper()}-CSV",
+                    "Valid Content",
+                    str(STATUS_CONFIGS.PASSED),
+                )
+
         def check_h5(file_path):
             self.logger.debug(f"Checking HDF5 file: {file_path}")
             try:
                 loader = Hdf5DataLoader()
                 loader.load(file_path)
-                content = next((x for x in [loader.values, loader.keys, loader.inputs, loader.features] if x is not None), None)
-                
-                self.logger.debug(f"Content: {content}")    
-                if content is None or (hasattr(content, 'size') and content.size == 0):
-                    return f"{input_type.upper()}-HDF5", "Empty content", str(STATUS_CONFIGS.FAILED)
-                
-                if any(any(is_invalid_value(cell) for cell in row) for row in content):
-                    return f"{input_type.upper()}-HDF5", "Invalid values found in HDF5 content"
-                
-                return f"{input_type.upper()}-HDF5", "Valid Content", str(STATUS_CONFIGS.PASSED)
-            except Exception as e:
-                return f"{input_type.upper()}-HDF5", f"Invalid HDF5 content: {e}", str(STATUS_CONFIGS.FAILED)
+                content = next(
+                    (
+                        x
+                        for x in [
+                            loader.values,
+                            loader.keys,
+                            loader.inputs,
+                            loader.features,
+                        ]
+                        if x is not None
+                    ),
+                    None,
+                )
 
-        
+                self.logger.debug(f"Content: {content}")
+                if content is None or (hasattr(content, "size") and content.size == 0):
+                    return (
+                        f"{input_type.upper()}-HDF5",
+                        "Empty content",
+                        str(STATUS_CONFIGS.FAILED),
+                    )
+
+                if any(any(is_invalid_value(cell) for cell in row) for row in content):
+                    return (
+                        f"{input_type.upper()}-HDF5",
+                        "Invalid values found in HDF5 content",
+                    )
+
+                return (
+                    f"{input_type.upper()}-HDF5",
+                    "Valid Content",
+                    str(STATUS_CONFIGS.PASSED),
+                )
+            except Exception as e:
+                return (
+                    f"{input_type.upper()}-HDF5",
+                    f"Invalid HDF5 content: {e}",
+                    str(STATUS_CONFIGS.FAILED),
+                )
+
         if not Path(file_path).exists():
             raise FileNotFoundError(f"File {file_path} does not exist.")
-        
+
         file_extension = Path(file_path).suffix.lower()
         if file_extension == ".json":
             return check_json(file_path)
@@ -1646,8 +1547,10 @@ class CheckService:
         elif file_extension == ".h5":
             return check_h5(file_path)
         else:
-            raise ValueError(f"Unsupported file type: {file_extension}. Supported types are JSON, CSV, and HDF5.")
-        
+            raise ValueError(
+                f"Unsupported file type: {file_extension}. Supported types are JSON, CSV, and HDF5."
+            )
+
     @throw_ersilia_exception()
     def check_single_input(self, run_model, run_example):
         """
@@ -1669,20 +1572,16 @@ class CheckService:
             n_samples=Options.NUM_SAMPLES.value,
             file_name=None,
             simple=True,
-            try_predefined=False
+            try_predefined=False,
         )
-        input = json.dumps([input['input'] for input in input])
-        run_model(
-            inputs=input,
-            output=output,
-            batch=100
-        )
+        input = json.dumps([input["input"] for input in input])
+        run_model(inputs=input, output=output, batch=100)
 
         def read_csv(file_path):
             absolute_path = os.path.abspath(file_path)
             if not os.path.exists(absolute_path):
                 raise FileNotFoundError(f"File not found: {absolute_path}")
-            with open(absolute_path, mode='r') as csv_file:
+            with open(absolute_path, mode="r") as csv_file:
                 reader = csv.DictReader(csv_file)
                 return [row for row in reader]
 
@@ -1692,7 +1591,7 @@ class CheckService:
         else:
             _completed_status.append(("Check Single Input", str(STATUS_CONFIGS.FAILED)))
         return _completed_status
-        
+
     @throw_ersilia_exception()
     def check_example_input(self, run_model, run_example):
         """
@@ -1713,23 +1612,25 @@ class CheckService:
             n_samples=Options.NUM_SAMPLES.value,
             file_name=None,
             simple=True,
-            try_predefined=True
+            try_predefined=True,
         )
-        input = json.dumps([input['input'] for input in input])
+        input = json.dumps([input["input"] for input in input])
 
-        self.logger.debug("Testing model on input of 5 smiles given by 'example' command")
-
-        run_model(
-            inputs=input,
-            output=output,
-            batch=100
+        self.logger.debug(
+            "Testing model on input of 5 smiles given by 'example' command"
         )
+
+        run_model(inputs=input, output=output, batch=100)
 
         csv_content, _completed_status = input, []
         if csv_content:
-            _completed_status.append(("Check Predefined Example Input", str(STATUS_CONFIGS.PASSED)))
+            _completed_status.append(
+                ("Check Predefined Example Input", str(STATUS_CONFIGS.PASSED))
+            )
         else:
-            _completed_status.append(("Check Predefined Example Input", str(STATUS_CONFIGS.FAILED)))
+            _completed_status.append(
+                ("Check Predefined Example Input", str(STATUS_CONFIGS.FAILED))
+            )
         return _completed_status
 
     @throw_ersilia_exception()
@@ -1745,8 +1646,11 @@ class CheckService:
             Function to run the model.
         """
         self.logger.debug("Confirming model produces consistent output...")
+
         def compute_rmse(y_true, y_pred):
-            return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
+            return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(
+                y_true
+            )
 
         def _compare_output_strings(output1, output2):
             if output1 is None and output2 is None:
@@ -1775,9 +1679,9 @@ class CheckService:
                 rmse = compute_rmse(output1, output2)
                 if rmse > 0.1:
                     raise texc.InconsistentOutputs(self.model_id)
-                
+
                 rho, _ = spearmanr(output1, output2)
-                
+
                 if rho < 0.5:
                     raise texc.InconsistentOutputs(self.model_id)
 
@@ -1789,7 +1693,7 @@ class CheckService:
             absolute_path = os.path.abspath(file_path)
             if not os.path.exists(absolute_path):
                 raise FileNotFoundError(f"File not found: {absolute_path}")
-            with open(absolute_path, mode='r') as csv_file:
+            with open(absolute_path, mode="r") as csv_file:
                 reader = csv.DictReader(csv_file)
                 return [row for row in reader]
 
@@ -1802,20 +1706,12 @@ class CheckService:
             n_samples=Options.NUM_SAMPLES.value,
             file_name=None,
             simple=True,
-            try_predefined=False
+            try_predefined=False,
         )
-        input = json.dumps([input['input'] for input in input])
+        input = json.dumps([input["input"] for input in input])
 
-        run_model(
-            inputs=input,
-            output=output1_path,
-            batch=100
-        )
-        run_model(
-            inputs=input,
-            output=output2_path,
-            batch=100
-        )
+        run_model(inputs=input, output=output1_path, batch=100)
+        run_model(inputs=input, output=output2_path, batch=100)
 
         data1 = read_csv(output1_path)
         data2 = read_csv(output1_path)
@@ -1827,11 +1723,19 @@ class CheckService:
                         validate_output(res1[key], res2[key])
                     else:
                         raise KeyError(f"Key '{key}' not found in second result.")
-            _completed_status.append(("Check Consistency of Model Output", str(STATUS_CONFIGS.PASSED)))
+            _completed_status.append(
+                ("Check Consistency of Model Output", str(STATUS_CONFIGS.PASSED))
+            )
         except:
-            _completed_status.append(("Check Consistency of Model Output", f"{str(STATUS_CONFIGS.FAILED)}: Inconsistent Output Detected!"))
+            _completed_status.append(
+                (
+                    "Check Consistency of Model Output",
+                    f"{str(STATUS_CONFIGS.FAILED)}: Inconsistent Output Detected!",
+                )
+            )
             raise texc.InconsistentOutputs("Inconsistent Output Detected!")
         return _completed_status
+
 
 class RunnerService:
     """
@@ -1890,7 +1794,7 @@ class RunnerService:
         shallow: bool,
         deep: bool,
         as_json: bool,
-        inspector: InspectService
+        inspector: InspectService,
     ):
         self.model_id = model_id
         self.logger = logger
@@ -1907,12 +1811,10 @@ class RunnerService:
         self.version = version
         self.shallow = shallow
         self.deep = deep
-        self.as_json = as_json 
+        self.as_json = as_json
         self.report_file = Path.cwd() / f"{self.model_id}-test.json"
         self.inspector = inspector
-        self.example = ExampleGenerator(
-            model_id=self.model_id
-        )
+        self.example = ExampleGenerator(model_id=self.model_id)
         self.run_using_bash = False
 
     def run_model(self, inputs: list, output: str, batch: int):
@@ -1933,52 +1835,52 @@ class RunnerService:
         str
             The output of the command.
         """
-        self.logger.info(f"Input after escape: {inputs}")
         out = SetupService.run_command(
             f"ersilia -v serve {self.model_id} && ersilia  -v run -i '{inputs}' -o {output} -b {str(batch)}",
             logger=self.logger,
         )
         self.logger.info(out)
         return out
-    
+
     def fetch(self):
         """
         Fetch the model repository from the specified directory.
         """
+
         def _fetch(dir, model_id, logger):
             loc = (
                 ["--from_dir", self.dir]
                 if self.from_github or self.from_s3
-                else ["--from_dockerhub"] + (["--version", self.version] if self.version else [])
+                else ["--from_dockerhub"]
+                + (["--version", self.version] if self.version else [])
             )
             self.logger.info(f"Fetching model from: {loc}")
-            out =SetupService.run_command(
-                " ".join(["ersilia",
-                "-v",
-                "fetch", model_id,
-                *loc
-                ]),
+            out = SetupService.run_command(
+                " ".join(["ersilia", "-v", "fetch", model_id, *loc]),
                 logger=logger,
             )
             logger.info(f"Fetch out: {out}")
 
         if os.path.exists(self.model_path):
             SetupService.run_command(
-                " ".join(["ersilia",
-                "-v",
-                "delete", self.model_id,
-                ]),
+                " ".join(
+                    [
+                        "ersilia",
+                        "-v",
+                        "delete",
+                        self.model_id,
+                    ]
+                ),
                 logger=self.logger,
-
             )
         _fetch(self.dir, self.model_id, self.logger)
-        
+
     def run_example(
         self,
         n_samples: int,
         file_name: str = None,
         simple: bool = True,
-        try_predefined: bool = False
+        try_predefined: bool = False,
     ):
         """
         Generate example input samples for the model.
@@ -2003,9 +1905,9 @@ class RunnerService:
             n_samples=n_samples,
             file_name=file_name,
             simple=simple,
-            try_predefined=try_predefined
+            try_predefined=try_predefined,
         )
-    
+
     @throw_ersilia_exception()
     def run_bash(self):
         """
@@ -2016,9 +1918,12 @@ class RunnerService:
         RuntimeError
             If there is an error during the subprocess execution or output comparison.
         """
+
         def compute_rmse(y_true, y_pred):
-            return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(y_true)
-        
+            return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(
+                y_true
+            )
+
         def compare_outputs(bsh_data, ers_data):
             _completed_status, _rmse = [], []
             columns = set(bsh_data[0].keys()) & set(data[0].keys())
@@ -2032,39 +1937,35 @@ class RunnerService:
 
                     if rmse > 0.1:
                         rmse_perc = round(rmse * 100, 2)
-                        _completed_status.append((f"RMSE-{column}", 
-                         f"RMSE > 10%{rmse_perc}%", 
-                         str(STATUS_CONFIGS.FAILED))
-                    )
+                        _completed_status.append(
+                            (
+                                f"RMSE-{column}",
+                                f"RMSE > 10%{rmse_perc}%",
+                                str(STATUS_CONFIGS.FAILED),
+                            )
+                        )
                         raise texc.InconsistentOutputs(self.model_id)
-                    
+
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
                         self._compare_string_similarity(a, b, 95)
-                        for a, b
-                        in zip(bv, ev)
+                        for a, b in zip(bv, ev)
                     ):
                         _completed_status.append(
-                            ("String Similarity", 
-                             "< 95%", 
-                             str(STATUS_CONFIGS.FAILED))
+                            ("String Similarity", "< 95%", str(STATUS_CONFIGS.FAILED))
                         )
                         raise texc.InconsistentOutputs(self.model_id)
                     _completed_status.append(
-                        ("String Similarity", 
-                         "> 95%", 
-                         str(STATUS_CONFIGS.PASSED))
+                        ("String Similarity", "> 95%", str(STATUS_CONFIGS.PASSED))
                     )
 
             rmse = sum(_rmse) / len(_rmse) if _rmse else 0
             rmse_perc = round(rmse * 100, 2)
-            _completed_status.append(("RMSE-MEAN",
-                f"RMSE < 10% | {rmse_perc}%",
-                str(STATUS_CONFIGS.PASSED)
-            ))
+            _completed_status.append(
+                ("RMSE-MEAN", f"RMSE < 10% | {rmse_perc}%", str(STATUS_CONFIGS.PASSED))
+            )
 
             return _completed_status
-                    
 
         def read_csv(path, flag=False):
             try:
@@ -2086,14 +1987,19 @@ class RunnerService:
                     values = line.strip().split(",")
                     values = values[2:] if flag else values
 
-                    def infer_type(value): # TODO: Datastructure support
+                    def infer_type(value):
                         try:
                             return int(value)
                         except ValueError:
                             try:
                                 return float(value)
                             except ValueError:
-                                return value
+                                if isinstance(value, str):
+                                    return value
+                                else:
+                                    raise ValueError(
+                                        "Unsupported type: must be int, float, or str."
+                                    )
 
                     _values = [infer_type(x) for x in values]
 
@@ -2101,10 +2007,7 @@ class RunnerService:
 
                 return data
             except Exception as e:
-                raise RuntimeError(
-                    f"Failed to read CSV from {path}."
-                ) from e
-
+                raise RuntimeError(f"Failed to read CSV from {path}.") from e
 
         def run_subprocess(command, env_vars=None):
             try:
@@ -2115,38 +2018,28 @@ class RunnerService:
                     check=True,
                     env=env_vars,
                 )
-                self.logger.debug(
-                    f"Subprocess output: {result.stdout}"
-                )
+                self.logger.debug(f"Subprocess output: {result.stdout}")
                 return result.stdout
             except subprocess.CalledProcessError as e:
-                raise RuntimeError(
-                    "Subprocess execution failed."
-                ) from e
+                raise RuntimeError("Subprocess execution failed.") from e
 
         with tempfile.TemporaryDirectory() as temp_dir:
-
-            model_path       = os.path.join(self.dir)
+            model_path = os.path.join(self.dir)
             temp_script_path = os.path.join(temp_dir, "script.sh")
             bash_output_path = os.path.join(temp_dir, "bash_output.csv")
-            output_path      = os.path.join(temp_dir, "ersilia_output.csv")
-            output_log_path  = os.path.join(temp_dir, "output.txt")
-            error_log_path   = os.path.join(temp_dir, "error.txt")
+            output_path = os.path.join(temp_dir, "ersilia_output.csv")
+            output_log_path = os.path.join(temp_dir, "output.txt")
+            error_log_path = os.path.join(temp_dir, "error.txt")
             ex_file = os.path.join(temp_dir, "example_file.csv")
 
             self.run_example(
                 n_samples=Options.NUM_SAMPLES.value,
                 file_name=ex_file,
                 simple=True,
-                try_predefined=False
+                try_predefined=False,
             )
 
-            run_sh_path = os.path.join(
-                model_path,
-                "model",
-                "framework",
-                RUN_FILE
-            )
+            run_sh_path = os.path.join(model_path, "model", "framework", RUN_FILE)
             if not os.path.exists(run_sh_path):
                 self.logger.warning(
                     f"{RUN_FILE} not found at {run_sh_path}. Skipping bash run."
@@ -2170,25 +2063,19 @@ class RunnerService:
             bsh_data = read_csv(bash_output_path)
             self.logger.debug("Serving the model after run.sh")
             run_subprocess(
-                ["ersilia", "-v",
-                 "serve", self.model_id,
+                [
+                    "ersilia",
+                    "-v",
+                    "serve",
+                    self.model_id,
                 ]
             )
-            self.logger.debug(
-                "Running model for bash data consistency checking"
-            )
-            run_subprocess(
-                ["ersilia", "-v",
-                 "run",
-                 "-i", ex_file,
-                 "-o", output_path
-                ]
-            )
+            self.logger.debug("Running model for bash data consistency checking")
+            run_subprocess(["ersilia", "-v", "run", "-i", ex_file, "-o", output_path])
             data = read_csv(output_path, flag=True)
 
             status = compare_outputs(bsh_data, data)
             return status
-
 
     @staticmethod
     def _default_env():
@@ -2214,12 +2101,7 @@ class RunnerService:
         self.logger.debug(f"Default environment: {default_env}")
         return default_env == "base"
 
-    def _compare_string_similarity(
-            self,
-            str1,
-            str2,
-            threshold
-        ):
+    def _compare_string_similarity(self, str1, str2, threshold):
         similarity = fuzz.ratio(str1, str2)
         return similarity >= threshold
 
@@ -2235,14 +2117,14 @@ class RunnerService:
         try:
             if self.from_dockerhub:
                 self.setup_service.from_github = True
-            
+
             self.setup_service.get_model()
             results = self._perform_basic_checks()
 
             if self.shallow:
                 shallow_results = self._perform_shallow_checks()
                 results.extend(shallow_results)
-            
+
             if self.deep:
                 shallow_results = self._perform_shallow_checks()
                 deep_results = self._perform_deep_checks()
@@ -2261,18 +2143,20 @@ class RunnerService:
         results = []
 
         self.checkup_service.check_information()
-        results.append(self._generate_table_from_check(
-            TableType.MODEL_INFORMATION_CHECKS, 
-            self.ios_service.check_results
-        ))
+        results.append(
+            self._generate_table_from_check(
+                TableType.MODEL_INFORMATION_CHECKS, self.ios_service.check_results
+            )
+        )
 
         self.ios_service.check_results.clear()
 
         self.checkup_service.check_files()
-        results.append(self._generate_table_from_check(
-            TableType.MODEL_FILE_CHECKS, 
-            self.ios_service.check_results
-        ))
+        results.append(
+            self._generate_table_from_check(
+                TableType.MODEL_FILE_CHECKS, self.ios_service.check_results
+            )
+        )
 
         results.append(self._log_directory_sizes())
         results.append(self._docker_yml_check())
@@ -2283,8 +2167,7 @@ class RunnerService:
     def _perform_shallow_checks(self):
         self.fetch()
         model_output = self.checkup_service.check_model_output_content(
-            self.run_example, 
-            self.run_model
+            self.run_example, self.run_model
         )
         results, _sizes = [], []
 
@@ -2297,22 +2180,20 @@ class RunnerService:
 
         _sizes.extend(self._run_single_and_example_input_checks())
 
-        results.append(self._generate_table_from_check(
-            TableType.SHALLOW_CHECK_SUMMARY, 
-            _sizes, 
-            large=True
-        ))
-        
-        bash_results = self.run_bash()
-        results.append(self._generate_table_from_check(
-            TableType.CONSISTENCY_BASH, 
-            bash_results
-        ))
+        results.append(
+            self._generate_table_from_check(
+                TableType.SHALLOW_CHECK_SUMMARY, _sizes, large=True
+            )
+        )
 
-        results.append(self._generate_table_from_check(
-            TableType.MODEL_OUTPUT, 
-            model_output
-        ))
+        bash_results = self.run_bash()
+        results.append(
+            self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
+        )
+
+        results.append(
+            self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)
+        )
 
         return results
 
@@ -2321,17 +2202,13 @@ class RunnerService:
         performance_data = self.inspector.run(["computational_performance_tracking"])
         self.logger.info(f"Performance data: {performance_data}")
         return self._generate_table_from_check(
-            TableType.COMPUTATIONAL_PERFORMANCE, 
-            performance_data, 
-            large=True
+            TableType.COMPUTATIONAL_PERFORMANCE, performance_data, large=True
         )
 
     def _docker_yml_check(self):
         docker_check_data = self.inspector.run(["docker_check"])
         return self._generate_table_from_check(
-            TableType.DEPENDECY_CHECK, 
-            docker_check_data, 
-            large=True
+            TableType.DEPENDECY_CHECK, docker_check_data, large=True
         )
 
     def _log_env_sizes(self):
@@ -2341,15 +2218,22 @@ class RunnerService:
     def _log_directory_sizes(self):
         directory_size = self.ios_service.get_directories_sizes()
         return self._generate_table_from_check(
-            TableType.MODEL_DIRECTORY_SIZES, 
-            [("Directory Size Mb", directory_size)]
+            TableType.MODEL_DIRECTORY_SIZES, [("Directory Size Mb", directory_size)]
         )
 
     def _run_single_and_example_input_checks(self):
         results = []
-        results.extend(self.checkup_service.check_single_input(self.run_model, self.run_example))
-        results.extend(self.checkup_service.check_example_input(self.run_model, self.run_example))
-        results.extend(self.checkup_service.check_consistent_output(self.run_example, self.run_model))
+        results.extend(
+            self.checkup_service.check_single_input(self.run_model, self.run_example)
+        )
+        results.extend(
+            self.checkup_service.check_example_input(self.run_model, self.run_example)
+        )
+        results.extend(
+            self.checkup_service.check_consistent_output(
+                self.run_example, self.run_model
+            )
+        )
         return results
 
     def _generate_table_from_check(self, table_type, rows, large=False):
@@ -2358,8 +2242,9 @@ class RunnerService:
             title=config["title"],
             headers=config["headers"],
             rows=rows,
-            large_table=large
+            large_table=large,
         )
+
 
 class ModelTester(ErsiliaBase):
     """
@@ -2388,24 +2273,21 @@ class ModelTester(ErsiliaBase):
     as_json : bool
         Flag indicating whether to output results as JSON.
     """
+
     def __init__(
-            self,
-            model, 
-            level, 
-            from_dir, 
-            from_github, 
-            from_dockerhub, 
-            from_s3, 
-            version, 
-            shallow,
-            deep,
-            as_json
-        ):
-        ErsiliaBase.__init__(
-            self,
-            config_json=None,
-            credentials_json=None
-        )
+        self,
+        model,
+        level,
+        from_dir,
+        from_github,
+        from_dockerhub,
+        from_s3,
+        version,
+        shallow,
+        deep,
+        as_json,
+    ):
+        ErsiliaBase.__init__(self, config_json=None, credentials_json=None)
         self.model_id = model
         self.level = level
         self.from_dir = from_dir
@@ -2426,11 +2308,7 @@ class ModelTester(ErsiliaBase):
             self.from_s3,
             self.logger,
         )
-        self.ios = IOService(
-            self.logger,
-            self.model_id,
-            self.dir
-        )
+        self.ios = IOService(self.logger, self.model_id, self.dir)
         self.checks = CheckService(
             self.logger,
             self.model_id,
@@ -2439,11 +2317,7 @@ class ModelTester(ErsiliaBase):
             self.from_s3,
             self.ios,
         )
-        self.inspector = InspectService(
-            dir=self.dir,
-            model=self.model_id,
-            remote=True
-        )
+        self.inspector = InspectService(dir=self.dir, model=self.model_id, remote=True)
         self.runner = RunnerService(
             self.model_id,
             self.logger,
@@ -2460,8 +2334,9 @@ class ModelTester(ErsiliaBase):
             self.shallow,
             self.deep,
             self.as_json,
-            self.inspector
+            self.inspector,
         )
+
     def _check_pedendency(self):
         if MISSING_PACKAGES:
             raise ImportError(
