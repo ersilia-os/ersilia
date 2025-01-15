@@ -1068,7 +1068,6 @@ class IOService:
     def _extract_size(self, data, key="validation_and_size_check_results"):
         sizes = {}
         validation_results = next((item.get(key) for item in data if key in item), None)
-        self.logger.info(f"Validation res: {validation_results}")
         if validation_results:
             if "environment_size_mb" in validation_results:
                 env_size = validation_results["environment_size_mb"]
@@ -1087,7 +1086,6 @@ class IOService:
         }
 
         summary = next((item.get(key) for item in data if key in item), None)
-        self.logger.info(f"Summary: {summary}")
         if summary:
             preds = summary.get("computational_performance_tracking_details")
             performance["Computational Performance 1"]   = float(preds.get("pred_1"))
@@ -1547,13 +1545,11 @@ class CheckService:
         self.logger.debug("Checking model output...")
         for inp_type in Options.INPUT_TYPES.value:
             for i, output_file in enumerate(Options.OUTPUT_FILES.value):
-                self.logger.debug(f"Checking model output for input type: {inp_type} and output file: {output_file}")
                 inp_data = self.get_inputs(run_example, inp_type)
                 self.logger.debug(f"Input data: {inp_data}")
                 run_model(inputs=inp_data, output=output_file, batch=100)
                 _status = self.validate_file_content(output_file, inp_type)
                 status.append(_status)
-                self.logger.debug(f"Output file {output_file} is {_status}")
         return status
     
     def validate_file_content(self, file_path, input_type):
@@ -1577,24 +1573,22 @@ class CheckService:
                 if validator(content):
                     content = content[0] if isinstance(content, list) and len(content) == 1 else content
                     if check_type == "Single" and is_invalid_value(content):
-                        self.logger.debug(f"Invalid value '{content}' in outcome of type 'Single'.")
                         raise ValueError(f"Invalid value '{content}' in outcome of type 'Single'.")
                     elif check_type in ["List", "Flexible List"]:
-                        self.logger.debug(f"Checking outcome of type '{check_type}'...")
                         for item in content:
                             if is_invalid_value(item):
                                 raise ValueError(f"Invalid value '{item}' in outcome of type '{check_type}'.")
                     elif check_type == "Matrix":
-                        self.logger.debug(f"Checking outcome of type 'Matrix'...")
                         for row in content:
                             for item in row:
                                 if is_invalid_value(item):
                                     raise ValueError(f"Invalid value '{item}' in outcome of type 'Matrix'.")
                     elif check_type == "Serializable Object":
-                        self.logger.debug(f"Checking outcome of type 'Serializable Object'...")
                         for key, value in content.items():
                             if is_invalid_value(value):
-                                raise ValueError(f"Invalid value '{value}' for key '{key}' in outcome of type 'Serializable Object'.")
+                                raise ValueError(
+                                    f"Invalid value '{value}' for key '{key}' in outcome of type 'Serializable Object'."
+                                )
                     return f"{input_type.upper()}-JSON", "Valid Content", str(STATUS_CONFIGS.PASSED)
         
             raise TypeError("Unknown content structure.")
@@ -2288,10 +2282,10 @@ class RunnerService:
     @show_loader(text="Performing shallow checks", color="cyan")
     def _perform_shallow_checks(self):
         self.fetch()
-        # model_output = self.checkup_service.check_model_output_content(
-        #     self.run_example, 
-        #     self.run_model
-        # )
+        model_output = self.checkup_service.check_model_output_content(
+            self.run_example, 
+            self.run_model
+        )
         results, _sizes = [], []
 
         if self.from_github or self.from_s3:
@@ -2315,10 +2309,10 @@ class RunnerService:
             bash_results
         ))
 
-        # results.append(self._generate_table_from_check(
-        #     TableType.MODEL_OUTPUT, 
-        #     model_output
-        # ))
+        results.append(self._generate_table_from_check(
+            TableType.MODEL_OUTPUT, 
+            model_output
+        ))
 
         return results
 
