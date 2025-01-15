@@ -9,7 +9,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 EXPECTED_HEADER = ["name", "type", "direction", "description"]
 
-MIN_DESCRIPTION_LENGTH = 60
+MIN_DESCRIPTION_LENGTH = 10
 
 
 class ColumnsInformation(ErsiliaBase):
@@ -120,6 +120,8 @@ class ColumnsInformation(ErsiliaBase):
                     "Type {0} is not an accepted type: {1}".format(d, self.DATA_TYPES)
                 )
         for d in data["direction"]:
+            if d is None:
+                continue
             if d not in self.DESIRED_DIRECTIONS:
                 raise ValueError(
                     "Direction {0} is not an accepted direction: {1}".format(
