@@ -76,14 +76,14 @@ def run_cmd():
             if as_table:
                 print_result_table(iter_values)
             else:
-                echo(iter_values)
+                echo("\n".join(map(str, iter_values)))
         else:
             if as_table:
                 print_result_table(result)
             else:
                 try:
-                    echo(result)
-                except:
+                    echo(str(result))
+                except Exception:
                     print_result_table(result)
 
     return run
