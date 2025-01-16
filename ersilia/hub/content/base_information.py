@@ -13,11 +13,16 @@ from ... import ErsiliaBase
 from ...utils.exceptions_utils.base_information_exceptions import (
     BiomedicalAreaBaseInformationError,
     BothIdentifiersBaseInformationError,
+    ComputationalPerformanceHundredBaseInformationError,
+    ComputationalPerformanceOneBaseInformationError,
+    ComputationalPerformanceTenBaseInformationError,
     DescriptionBaseInformationError,
     DockerArchitectureBaseInformationError,
     DockerhubBaseInformationError,
+    EnvironmentSizeMbBaseInformationError,
     GithubBaseInformationError,
     IdentifierBaseInformationError,
+    ImageSizeMbBaseInformationError,
     InputBaseInformationError,
     InputShapeBaseInformationError,
     LicenseBaseInformationError,
@@ -56,7 +61,78 @@ class BaseInformation(ErsiliaBase):
         Configuration data in JSON format.
     """
 
-    def __init__(self, config_json):
+    def __init__(self, config_json=None):
+        """
+        Initialize the base information object with a provided configuration.
+
+        Parameters
+        ----------
+        config_json : dict
+            A JSON-compatible dictionary containing configuration data.
+
+        Attributes
+        ----------
+        _github : None
+            Placeholder for GitHub-related data.
+        _identifier : None
+            Placeholder for a unique identifier string.
+        _slug : None
+            Placeholder for a descriptive slug string.
+        _status : None
+            Placeholder for the current status of the object.
+        _title : None
+            Placeholder for the object’s title.
+        _description : None
+            Placeholder for a description of the object.
+        _mode : None
+            Placeholder for the runtime mode.
+        _task : None
+            Placeholder for the primary task associated with this object.
+        _input : None
+            Placeholder for input data specifications.
+        _input_shape : None
+            Placeholder for the shape of the input data.
+        _output : None
+            Placeholder for output data specifications.
+        _output_type : None
+            Placeholder for the type of output data.
+        _output_shape : None
+            Placeholder for the shape of the output data.
+        _output_dimension : None
+            Placeholder for dimensional notes about the output.
+        _output_consistency : None
+            Placeholder for output consistency metrics.
+        _interpretation : None
+            Placeholder for interpretation details.
+        _tag : None
+            Placeholder for tag information.
+        _publication : None
+            Placeholder for publication references.
+        _source_code : None
+            Placeholder for source code metadata.
+        _license : None
+            Placeholder for license information.
+        _contributor : None
+            Placeholder for contributor information.
+        _dockerhub : None
+            Placeholder for Docker Hub repository details.
+        _docker_architecture : None
+            Placeholder for Docker image architecture details.
+        _s3 : None
+            Placeholder for related AWS S3 information.
+        _memory_gb : None
+            Placeholder for memory requirement in gigabytes.
+        _environment_size_mb : None
+            Placeholder for environment size in megabytes.
+        _image_size_mb : None
+            Placeholder for Docker image size in megabytes.
+        _computational_performance_one : None
+            Placeholder for single-run computational performance.
+        _computational_performance_ten : None
+            Placeholder for ten-run computational performance.
+        _computational_performance_hund : None
+            Placeholder for hundred-run computational performance.
+        """
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self._github = None
         self._identifier = None
@@ -66,6 +142,11 @@ class BaseInformation(ErsiliaBase):
         self._description = None
         self._mode = None
         self._task = None
+        self._subtask = None
+        self._biomedical_area = None
+        self._target_organism = None
+        self._publication_type = None
+        self._publication_year = None
         self._input = None
         self._input_shape = None
         self._output = None
@@ -83,6 +164,13 @@ class BaseInformation(ErsiliaBase):
         self._docker_architecture = None
         self._s3 = None
         self._memory_gb = None
+        self._source = None
+        self._source_type = None
+        self._environment_size_mb = None
+        self._image_size_mb = None
+        self._computational_performance_one = None
+        self._computational_performance_ten = None
+        self._computational_performance_hund = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -1171,6 +1259,153 @@ class BaseInformation(ErsiliaBase):
             raise MemoryGbBaseInformationError
         self._memory_gb = new_memory_gb
 
+    @property
+    def environment_size(self):
+        """
+        Get the model evironment Size in Mb.
+
+        Returns
+        -------
+        int
+            The model evironment Size in Mb.
+        """
+        return self._environment_size_mb
+
+    @environment_size.setter
+    def environment_size(self, new_environment_size):
+        """
+        Set the environment size in MB.
+
+        Parameters
+        ----------
+        new_environment_size : int
+            The new environment size in MB.
+
+        Raises
+        ------
+        EnvironmentSizeMbBaseInformationError
+            If the environment size value is not valid.
+        """
+        if not isinstance(new_environment_size, (int, float)):
+            raise EnvironmentSizeMbBaseInformationError
+        self._environment_size_mb = new_environment_size
+
+    @property
+    def image_size_mb(self):
+        """Get the image size in megabytes.
+
+        Returns
+        -------
+        int
+            The size of the image in MB.
+        """
+        return self._image_size_mb
+
+    @image_size_mb.setter
+    def image_size_mb(self, new_image_size_mb):
+        """Set the image size in megabytes.
+
+        Parameters
+        ----------
+        new_image_size_mb : int
+            The new image size in MB.
+
+        Raises
+        ------
+        ImageSizeMbBaseInformationError
+            If `new_image_size_mb` is not an integer.
+        """
+        if not isinstance(new_image_size_mb, (int, float)):
+            raise ImageSizeMbBaseInformationError
+        self._image_size_mb = new_image_size_mb
+
+    @property
+    def computational_performance_one(self):
+        """Get the computational performance at level one.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric at level one.
+        """
+        return self._computational_performance_one
+
+    @computational_performance_one.setter
+    def computational_performance_one(self, new_value):
+        """Set the computational performance at level one.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceOneBaseInformationError
+            If `new_value` is not an int or float.
+        """
+        if not isinstance(new_value, (int, float)):
+            raise ComputationalPerformanceOneBaseInformationError
+        self._computational_performance_one = new_value
+
+    @property
+    def computational_performance_ten(self):
+        """Get the computational performance at level ten.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric at level ten.
+        """
+        return self._computational_performance_ten
+
+    @computational_performance_ten.setter
+    def computational_performance_ten(self, new_value):
+        """Set the computational performance at level ten.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceTenBaseInformationError
+            If `new_value` is not an int or float.
+        """
+        if not isinstance(new_value, (int, float)):
+            raise ComputationalPerformanceTenBaseInformationError
+        self._computational_performance_ten = new_value
+
+    @property
+    def computational_performance_hund(self):
+        """Get the computational performance at level hundred.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric at level hundred.
+        """
+        return self._computational_performance_hund
+
+    @computational_performance_hund.setter
+    def computational_performance_hund(self, new_value):
+        """Set the computational performance at level hundred.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceHundredBaseInformationError
+            If `new_value` is not an int or float.
+        """
+        if not isinstance(new_value, (int, float)):
+            raise ComputationalPerformanceHundredBaseInformationError
+        self._computational_performance_hund = new_value
+
     def as_dict(self):
         """
         Convert the model information to a dictionary.
@@ -1212,6 +1447,11 @@ class BaseInformation(ErsiliaBase):
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
             "Memory Gb": self.memory_gb,
+            "Environment Size": self.environment_size,
+            "Image Size": self.image_size_mb,
+            "Computational Performance 1": self.computational_performance_one,
+            "Computational Performance 10": self.computational_performance_ten,
+            "Computational Performance 100": self.computational_performance_hund,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1258,4 +1498,14 @@ class BaseInformation(ErsiliaBase):
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
-        self._assign("memory_gb", "Memory Gb", data)
+        self._assign("environment_size", "Environment Size", data)
+        self._assign("image_size_mb", "Image Size", data)
+        self._assign(
+            "computational_performance_one", "Computational Performance 1", data
+        )
+        self._assign(
+            "computational_performance_ten", "Computational Performance 10", data
+        )
+        self._assign(
+            "computational_performance_hund", "Computational Performance 100", data
+        )
