@@ -1,3 +1,4 @@
+import json
 import types
 
 import click
@@ -76,14 +77,17 @@ def run_cmd():
             if as_table:
                 print_result_table(iter_values)
             else:
-                echo("\n".join(map(str, iter_values)))
+                formatted_values = [json.dumps(item) for item in iter_values]
+                echo("\n".join(formatted_values))
         else:
             if as_table:
                 print_result_table(result)
             else:
                 try:
-                    echo(str(result))
+                    echo(result)
                 except Exception:
-                    print_result_table(result)
+                    echo(
+                        f"Error: Could not print the result for output given path: {result}."
+                    )
 
     return run
