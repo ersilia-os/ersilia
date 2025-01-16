@@ -97,6 +97,10 @@ ersilia delete eos4e40
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
 
+For Python versions 3.12, Ersilia explicitly installs the setuptools library during installation. This is due to a compatibility issue in Python 3.12, which is described in python/cpython#95299.
+
+Note: If you are using Python 3.12, you don’t need to take any manual action. The Ersilia CLI automatically handles this by installing setuptools as part of the setup process.
+
 ## Contribute
 
 The Ersilia Model Hub is a Free, Open Source Software and we highly value new contributors. There are several ways in which you can contribute to the project:
