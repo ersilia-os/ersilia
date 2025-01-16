@@ -3,18 +3,17 @@ import docker
 import json
 import os
 import re
+import numpy as np
 import subprocess
 import zipfile
 import sys
 import warnings
 import tempfile
-import math
+import traceback
 from pathlib import Path
 import yaml
 import sys
-import types
 from dataclasses import dataclass
-from datetime import datetime
 from enum import Enum
 from typing import Callable
 from typing import List, Any
@@ -76,10 +75,27 @@ class Options(Enum):
     OUTPUT2_CSV = "output2.csv"
     OUTPUT_FILES = [
         "file.csv",
-        "file.json",
         "file.h5",
+        "file.json",
     ]
     INPUT_TYPES = ["str", "list", "csv"]
+
+
+class Checks(Enum):
+    """
+    Enum for different check types.
+    """
+
+    MODEL_CONSISTENCY = "Check Consistency of Model Output"
+    IMAGE_SIZE = "Image Size Mb"
+    PREDEFINED_EXAMPLE = "Check Predefined Example Input"
+    ENV_SIZE = "Environment Size Mb"
+    DIR_SIZE = "Directory Size Mb"
+    # messages
+    SIZE_CACL_SUCCESS = "Size Successfully Calculated"
+    INCONSISTENCY = "Inconsistent Output Detected"
+    CONSISTENCY = "Model Output Was Consistent"
+    RUN_BASH = "RMSE-MEAN"
 
 
 class TableType(Enum):
@@ -135,7 +151,8 @@ TABLE_CONFIGS = {
         title="Computational Performance Summary", headers=["Check", "Status"]
     ),
     TableType.SHALLOW_CHECK_SUMMARY: TableConfig(
-        title="Validation and Size Check Results", headers=["Check", "Status"]
+        title="Validation and Size Check Results",
+        headers=["Check", "Details", "Status"],
     ),
     TableType.MODEL_OUTPUT: TableConfig(
         title="Model Output Content Validation Summary",
@@ -406,7 +423,6 @@ class SetupService:
         ).get("S3")
         self.repo_url = f"{self.BASE_URL}{self.model_id}"
         self.overwrite = self._handle_overwrite()
-        self.logger.info(f"Overwrite:{self.overwrite}")
         self.github_down = GitHubDownloader(overwrite=self.overwrite)
         self.s3_down = S3Downloader()
         self.conda = SimpleConda()
@@ -607,7 +623,6 @@ class IOService:
         ios.read_information()
     """
 
-    # Required files
     RUN_FILE = f"model/framework/{RUN_FILE}"
     BENTOML_FILES = [
         DOCKERFILE_FILE,
@@ -823,32 +838,7 @@ class IOService:
         with open(file, "r") as f:
             return json.load(f)
 
-    def print_output(self, result, output):
-        """
-        Print the output of a result.
-
-        Parameters
-        ----------
-        result : any
-            The result to print.
-        output : file-like object
-            The output file to write to.
-        """
-
-        def write_output(data):
-            if output is not None:
-                with open(output.name, "w") as file:
-                    json.dump(data, file)
-            else:
-                self.logger.debug(json.dumps(data, indent=4))
-
-        if isinstance(result, types.GeneratorType):
-            for r in result:
-                write_output(r if r is not None else "Something went wrong")
-        else:
-            self.logger.debug(result)
-
-    def get_conda_env_size(self) -> int:
+    def get_conda_env_size(self):
         """
         Get the size of the Conda environment for the model.
 
@@ -892,7 +882,7 @@ class IOService:
                 capture_output=True,
                 shell=False,
             )
-            size = int(size_output.split()[0])
+            size = float(size_output.split()[0])
             return size
         except Exception as e:
             self.logger.error(f"Error calculating directory size for {path}: {e}")
@@ -900,13 +890,17 @@ class IOService:
 
     def calculate_image_size(self):
         """
-        Calculates the size of a Docker image.
+        Calculate the size of a Docker image.
 
-        Args:
-            image_name (str): The name (and optionally tag) of the Docker image, e.g., "ubuntu:latest".
+        Parameters
+        ----------
+        image_name : str
+            The name (and optionally tag) of the Docker image.
 
-        Returns:
-            str: The size of the image in a human-readable format, or an error message if the image is not found.
+        Returns
+        -------
+        str
+            The size of the Docker image.
         """
         image_name = f"{DOCKERHUB_ORG}/{self.model_id}"
         client = docker.from_env()
@@ -1086,7 +1080,7 @@ class CheckService:
 
     def __init__(
         self,
-        logger,
+        logger: Any,
         model_id: str,
         dir: str,
         from_github: bool,
@@ -1100,7 +1094,6 @@ class CheckService:
         self.from_dockerhub = from_dockerhub
         self._run_check = ios._run_check
         self._generate_table = ios._generate_table
-        self._print_output = ios.print_output
         self.get_file_requirements = ios.get_file_requirements
         self.console = ios.console
         self.check_results = ios.check_results
@@ -1387,112 +1380,118 @@ class CheckService:
                 status.append(_status)
         return status
 
-    def validate_file_content(self, file_path, input_type):
-        def is_invalid_value(item):
-            return item in [None, "", "null"] or (
-                isinstance(item, float) and math.isnan(item)
+    def _is_invalid_value(self, value):
+        try:
+            if value is None:
+                return True
+            if isinstance(value, str):
+                if value.strip().lower() in {"", "nan", "null", "none"}:
+                    return True
+            if isinstance(value, float) and (np.isnan(value) or np.isinf(value)):
+                return True
+
+            if isinstance(value, (list, tuple)):
+                return any(self._is_invalid_value(item) for item in value)
+            if isinstance(value, dict):
+                return any(self._is_invalid_value(item) for item in value.values())
+            if isinstance(value, (np.ndarray)):
+                return np.any(np.isnan(value)) or np.any(np.isinf(value))
+        except Exception:
+            return True
+        return False
+
+    def _check_csv(self, file_path, input_type="list"):
+        self.logger.debug(f"Checking CSV file: {file_path}")
+        error_details = []
+
+        with open(file_path, "r") as f:
+            reader = csv.reader(f)
+            rows = list(reader)[1:]
+
+            for row_index, row in enumerate(rows, start=2):
+                for col_index, cell in enumerate(row, start=1):
+                    self.logger.info(f"CSV content check for input type {input_type}")
+                    try:
+                        parsed_cell = (
+                            eval(cell)
+                            if isinstance(cell, str) and cell.startswith(("[", "{"))
+                            else cell
+                        )
+                    except Exception as e:
+                        parsed_cell = cell
+
+                    if self._is_invalid_value(parsed_cell):
+                        self.logger.error(f"Invalid cell found: {cell}")
+                        error_details.append(
+                            f"Row {row_index}, Column {col_index}: {repr(cell)}"
+                        )
+
+        if error_details:
+            return (
+                f"{input_type.upper()}-CSV",
+                f"Invalid values found in CSV content: {error_details} issues detected.",
+                str(STATUS_CONFIGS.FAILED),
             )
 
-        def validate_json(content):
-            data_structures = {
-                "Single": lambda x: isinstance(x, list)
-                and len(x) == 1
-                or isinstance(x, (int, float, str)),
-                "List": lambda x: isinstance(x, list)
-                and len(x) > 1
-                and all(isinstance(item, (int, float, str)) for item in x),
-                "Flexible List": lambda x: isinstance(x, list)
-                and all(isinstance(item, (str, int, float)) for item in x),
-                "Matrix": lambda x: isinstance(x, list)
-                and all(
-                    isinstance(row, list)
-                    and all(isinstance(item, (int, float)) for item in row)
-                    for row in x
-                ),
-                "Serializable Object": lambda x: isinstance(x, dict),
-            }
+        return (
+            f"{input_type.upper()}-CSV",
+            "Valid Content",
+            str(STATUS_CONFIGS.PASSED),
+        )
 
-            for check_type, validator in data_structures.items():
-                types = validator(content)
-                self.logger.debug(f"Checking outcome of type '{types}'...")
-                if validator(content):
-                    content = (
-                        content[0]
-                        if isinstance(content, list) and len(content) == 1
-                        else content
-                    )
-                    if check_type == "Single" and is_invalid_value(content):
-                        raise ValueError(
-                            f"Invalid value '{content}' in outcome of type 'Single'."
-                        )
-                    elif check_type in ["List", "Flexible List"]:
-                        for item in content:
-                            if is_invalid_value(item):
-                                raise ValueError(
-                                    f"Invalid value '{item}' in outcome of type '{check_type}'."
-                                )
-                    elif check_type == "Matrix":
-                        for row in content:
-                            for item in row:
-                                if is_invalid_value(item):
-                                    raise ValueError(
-                                        f"Invalid value '{item}' in outcome of type 'Matrix'."
-                                    )
-                    elif check_type == "Serializable Object":
-                        for key, value in content.items():
-                            if is_invalid_value(value):
-                                raise ValueError(
-                                    f"Invalid value '{value}' for key '{key}' in outcome of type 'Serializable Object'."
-                                )
-                    return (
-                        f"{input_type.upper()}-JSON",
-                        "Valid Content",
-                        str(STATUS_CONFIGS.PASSED),
-                    )
-
-            raise TypeError("Unknown content structure.")
-
+    def validate_file_content(self, file_path, input_type):
         def check_json(file_path):
-            with open(file_path, "r") as f:
-                try:
+            self.logger.debug(f"Checking JSON file: {file_path}")
+            error_details = []
+
+            try:
+                with open(file_path, "r") as f:
                     content = json.load(f)
-                    self.logger.debug(f"Checking JSON file: {file_path}")
-                    self.logger.debug(f"Content: {content}")
-                    for item in content:
-                        outcome = next(iter(item.values()), None)
-                        if outcome:
-                            return validate_json(outcome)
-                    return (
-                        f"{input_type.upper()}-Unknown",
-                        "No valid JSON outcome found",
-                        str(STATUS_CONFIGS.FAILED),
-                    )
-                except json.JSONDecodeError as e:
+
+                self.logger.debug(f"Content: {content}")
+
+                def _validate_item(item, path="result"):
+                    if self._is_invalid_value(item):
+                        self.logger.error(f"Json content invalud value: {item}")
+                        error_details.append(f"{repr(item)}")
+                    elif isinstance(item, dict):
+                        for key, value in item.items():
+                            _validate_item(value, f"{path} -> {key}")
+                    elif isinstance(item, list):
+                        for index, value in enumerate(item):
+                            _validate_item(value, f"{path}[{index}]")
+
+                _validate_item(content)
+
+                if error_details:
                     return (
                         f"{input_type.upper()}-JSON",
-                        f"Invalid JSON content: {e}",
+                        f"Invalid values found in JSON content: {error_details}.",
                         str(STATUS_CONFIGS.FAILED),
                     )
 
-        def check_csv(file_path):
-            self.logger.debug(f"Checking CSV file: {file_path}")
-            with open(file_path, "r") as f:
-                reader = csv.reader(f)
-                rows = list(reader)[1:]
-                if any(any(is_invalid_value(cell) for cell in row) for row in rows):
-                    return (
-                        f"{input_type.upper()}-CSV",
-                        "Invalid values found in CSV content",
-                        str(STATUS_CONFIGS.FAILED),
-                    )
                 return (
-                    f"{input_type.upper()}-CSV",
+                    f"{input_type.upper()}-JSON",
                     "Valid Content",
                     str(STATUS_CONFIGS.PASSED),
+                )
+            except json.JSONDecodeError as e:
+                return (
+                    f"{input_type.upper()}-JSON",
+                    f"Invalid JSON content: {e}",
+                    str(STATUS_CONFIGS.FAILED),
+                )
+            except Exception as e:
+                return (
+                    f"{input_type.upper()}-JSON",
+                    f"Unexpected error during JSON check: {e}",
+                    str(STATUS_CONFIGS.FAILED),
                 )
 
         def check_h5(file_path):
             self.logger.debug(f"Checking HDF5 file: {file_path}")
+            error_details = []
+
             try:
                 loader = Hdf5DataLoader()
                 loader.load(file_path)
@@ -1518,10 +1517,18 @@ class CheckService:
                         str(STATUS_CONFIGS.FAILED),
                     )
 
-                if any(any(is_invalid_value(cell) for cell in row) for row in content):
+                content_array = np.array(content)
+                if np.isnan(content_array).any():
+                    nan_indices = np.argwhere(np.isnan(content_array))
+                    for index in nan_indices:
+                        self.logger.error(f"H5 content invalud value at index: {index}")
+                        error_details.append(f"NaN detected at index: {tuple(index)}")
+
+                if error_details:
                     return (
                         f"{input_type.upper()}-HDF5",
-                        "Invalid values found in HDF5 content",
+                        f"Invalid values found in HDF5 content: {error_details}",
+                        str(STATUS_CONFIGS.FAILED),
                     )
 
                 return (
@@ -1543,54 +1550,13 @@ class CheckService:
         if file_extension == ".json":
             return check_json(file_path)
         elif file_extension == ".csv":
-            return check_csv(file_path)
+            return self._check_csv(file_path, input_type=input_type)
         elif file_extension == ".h5":
             return check_h5(file_path)
         else:
             raise ValueError(
                 f"Unsupported file type: {file_extension}. Supported types are JSON, CSV, and HDF5."
             )
-
-    @throw_ersilia_exception()
-    def check_single_input(self, run_model, run_example):
-        """
-        Check if the model can run with a single input to check if it has a value
-        in the produced output csv.
-
-        Parameters
-        ----------
-        output : file-like object
-            The output file to write to.
-        run_model : callable
-            Function to run the model.
-        run_example : callable
-            Function to generate example input.
-        """
-        self.logger.debug("Checking model with single input...")
-        output = Options.OUTPUT_CSV.value
-        input = run_example(
-            n_samples=Options.NUM_SAMPLES.value,
-            file_name=None,
-            simple=True,
-            try_predefined=False,
-        )
-        input = json.dumps([input["input"] for input in input])
-        run_model(inputs=input, output=output, batch=100)
-
-        def read_csv(file_path):
-            absolute_path = os.path.abspath(file_path)
-            if not os.path.exists(absolute_path):
-                raise FileNotFoundError(f"File not found: {absolute_path}")
-            with open(absolute_path, mode="r") as csv_file:
-                reader = csv.DictReader(csv_file)
-                return [row for row in reader]
-
-        csv_content, _completed_status = read_csv(output), []
-        if csv_content:
-            _completed_status.append(("Check Single Input", str(STATUS_CONFIGS.PASSED)))
-        else:
-            _completed_status.append(("Check Single Input", str(STATUS_CONFIGS.FAILED)))
-        return _completed_status
 
     @throw_ersilia_exception()
     def check_example_input(self, run_model, run_example):
@@ -1625,11 +1591,11 @@ class CheckService:
         csv_content, _completed_status = input, []
         if csv_content:
             _completed_status.append(
-                ("Check Predefined Example Input", str(STATUS_CONFIGS.PASSED))
+                (Checks.PREDEFINED_EXAMPLE.value, str(STATUS_CONFIGS.PASSED))
             )
         else:
             _completed_status.append(
-                ("Check Predefined Example Input", str(STATUS_CONFIGS.FAILED))
+                (Checks.PREDEFINED_EXAMPLE.value, str(STATUS_CONFIGS.FAILED))
             )
         return _completed_status
 
@@ -1653,17 +1619,14 @@ class CheckService:
             )
 
         def _compare_output_strings(output1, output2):
-            if output1 is None and output2 is None:
-                return 100
-            else:
-                return fuzz.ratio(output1, output2)
+            return fuzz.ratio(output1, output2)
 
         def validate_output(output1, output2):
+            if self._is_invalid_value(output1) or self._is_invalid_value(output2):
+                raise texc.InconsistentOutputs(self.model_id)
+
             if not isinstance(output1, type(output2)):
                 raise texc.InconsistentOutputTypes(self.model_id)
-
-            if output1 is None:
-                return
 
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
@@ -1671,7 +1634,6 @@ class CheckService:
                     raise texc.InconsistentOutputs(self.model_id)
 
                 rho, _ = spearmanr([output1], [output2])
-                self.logger.debug(f"rho for float and int: {rho}")
                 if rho < 0.5:
                     raise texc.InconsistentOutputs(self.model_id)
 
@@ -1689,13 +1651,11 @@ class CheckService:
                 if _compare_output_strings(output1, output2) <= 95:
                     raise texc.InconsistentOutputs(self.model_id)
 
-        def read_csv(file_path):
-            absolute_path = os.path.abspath(file_path)
-            if not os.path.exists(absolute_path):
-                raise FileNotFoundError(f"File not found: {absolute_path}")
-            with open(absolute_path, mode="r") as csv_file:
-                reader = csv.DictReader(csv_file)
-                return [row for row in reader]
+        def read_csv(path):
+            with open(path, "r") as f:
+                reader = csv.reader(f)
+                rows = list(reader)[1:]
+                return rows
 
         output1_path = os.path.abspath(Options.OUTPUT1_CSV.value)
         output2_path = os.path.abspath(Options.OUTPUT2_CSV.value)
@@ -1713,27 +1673,41 @@ class CheckService:
         run_model(inputs=input, output=output1_path, batch=100)
         run_model(inputs=input, output=output2_path, batch=100)
 
-        data1 = read_csv(output1_path)
-        data2 = read_csv(output1_path)
+        check_status_one = self._check_csv(output1_path)
+        check_status_two = self._check_csv(output2_path)
         _completed_status = []
-        try:
-            for res1, res2 in zip(data1, data2):
-                for key in res1:
-                    if key in res2:
-                        validate_output(res1[key], res2[key])
-                    else:
-                        raise KeyError(f"Key '{key}' not found in second result.")
-            _completed_status.append(
-                ("Check Consistency of Model Output", str(STATUS_CONFIGS.PASSED))
-            )
-        except:
+        if check_status_one[-1] == str(STATUS_CONFIGS.FAILED) or check_status_two[
+            -1
+        ] == str(STATUS_CONFIGS.FAILED):
             _completed_status.append(
                 (
-                    "Check Consistency of Model Output",
-                    f"{str(STATUS_CONFIGS.FAILED)}: Inconsistent Output Detected!",
+                    Checks.MODEL_CONSISTENCY.value,
+                    check_status_one[1],
+                    str(STATUS_CONFIGS.FAILED),
                 )
             )
-            raise texc.InconsistentOutputs("Inconsistent Output Detected!")
+            return _completed_status
+        else:
+            data1 = read_csv(output1_path)
+            data2 = read_csv(output2_path)
+            try:
+                for res1, res2 in zip(data1, data2):
+                    validate_output(res1, res2)
+                _completed_status.append(
+                    (
+                        Checks.MODEL_CONSISTENCY.value,
+                        Checks.CONSISTENCY.value,
+                        str(STATUS_CONFIGS.PASSED),
+                    )
+                )
+            except:
+                return _completed_status.append(
+                    (
+                        Checks.MODEL_CONSISTENCY.value,
+                        Checks.INCONSISTENCY.value,
+                        str(STATUS_CONFIGS.FAILED),
+                    )
+                )
         return _completed_status
 
 
@@ -1926,7 +1900,7 @@ class RunnerService:
 
         def compare_outputs(bsh_data, ers_data):
             _completed_status, _rmse = [], []
-            columns = set(bsh_data[0].keys()) & set(data[0].keys())
+            columns = set(bsh_data[0].keys()) & set(ers_data[0].keys())
             for column in columns:
                 bv = [row[column] for row in bsh_data]
                 ev = [row[column] for row in ers_data]
@@ -1974,7 +1948,7 @@ class RunnerService:
 
                 if not lines:
                     self.logger.error(f"File at {path} is empty.")
-                    return []
+                    return [], "File is empty"
 
                 headers = lines[0].strip().split(",")
                 if flag:
@@ -1987,25 +1961,35 @@ class RunnerService:
                     values = line.strip().split(",")
                     values = values[2:] if flag else values
 
-                    def infer_type(value):
+                    def is_invalid_value(value):
                         try:
-                            return int(value)
+                            int(value)
+                            return False
                         except ValueError:
-                            try:
-                                return float(value)
-                            except ValueError:
-                                if isinstance(value, str):
-                                    return value
-                                else:
-                                    raise ValueError(
-                                        "Unsupported type: must be int, float, or str."
-                                    )
+                            pass
 
-                    _values = [infer_type(x) for x in values]
+                        try:
+                            float(value)
+                            return False
+                        except ValueError:
+                            pass
+
+                        if isinstance(value, str):
+                            return False
+
+                        return True
+
+                    try:
+                        _values = [
+                            x if not is_invalid_value(x) else None for x in values
+                        ]
+                    except ValueError as e:
+                        return [], f"Invalid value detected in CSV file: {e}"
 
                     data.append(dict(zip(headers, _values)))
 
-                return data
+                return data, None
+
             except Exception as e:
                 raise RuntimeError(f"Failed to read CSV from {path}.") from e
 
@@ -2025,16 +2009,16 @@ class RunnerService:
 
         with tempfile.TemporaryDirectory() as temp_dir:
             model_path = os.path.join(self.dir)
-            temp_script_path = os.path.join(temp_dir, "script.sh")
-            bash_output_path = os.path.join(temp_dir, "bash_output.csv")
             output_path = os.path.join(temp_dir, "ersilia_output.csv")
             output_log_path = os.path.join(temp_dir, "output.txt")
             error_log_path = os.path.join(temp_dir, "error.txt")
-            ex_file = os.path.join(temp_dir, "example_file.csv")
+            input_file_path = os.path.join(temp_dir, "example_file.csv")
+            temp_script_path = os.path.join(temp_dir, "script.sh")
+            bash_output_path = os.path.join(temp_dir, "bash_output.csv")
 
             self.run_example(
                 n_samples=Options.NUM_SAMPLES.value,
-                file_name=ex_file,
+                file_name=input_file_path,
                 simple=True,
                 try_predefined=False,
             )
@@ -2050,7 +2034,7 @@ class RunnerService:
                 source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
                 conda activate {self.model_id}
                 cd {os.path.dirname(run_sh_path)}
-                bash run.sh . {ex_file} {bash_output_path} > {output_log_path} 2> {error_log_path}
+                bash run.sh . {input_file_path} {bash_output_path} > {output_log_path} 2> {error_log_path}
                 conda deactivate
                 """
 
@@ -2059,8 +2043,8 @@ class RunnerService:
 
             self.logger.debug(f"Running bash script: {temp_script_path}")
             out = run_subprocess(["bash", temp_script_path])
-            self.logger.info(out)
-            bsh_data = read_csv(bash_output_path)
+            self.logger.info(f"Bash script subprocess output: {out}")
+            bsh_data, _ = read_csv(bash_output_path)
             self.logger.debug("Serving the model after run.sh")
             run_subprocess(
                 [
@@ -2071,10 +2055,24 @@ class RunnerService:
                 ]
             )
             self.logger.debug("Running model for bash data consistency checking")
-            run_subprocess(["ersilia", "-v", "run", "-i", ex_file, "-o", output_path])
-            data = read_csv(output_path, flag=True)
-
-            status = compare_outputs(bsh_data, data)
+            run_subprocess(
+                ["ersilia", "-v", "run", "-i", input_file_path, "-o", output_path]
+            )
+            ers_data, _ = read_csv(output_path, flag=True)
+            check_status = self.checkup_service._check_csv(
+                output_path, input_type="csv"
+            )
+            if check_status[-1] == str(STATUS_CONFIGS.FAILED):
+                return [
+                    (
+                        (
+                            Checks.RUN_BASH.value,
+                            check_status[1],
+                            str(STATUS_CONFIGS.FAILED),
+                        )
+                    )
+                ]
+            status = compare_outputs(bsh_data, ers_data)
             return status
 
     @staticmethod
@@ -2114,13 +2112,14 @@ class RunnerService:
         ImportError
             If required packages are missing.
         """
+        results = []
         try:
             if self.from_dockerhub:
                 self.setup_service.from_github = True
 
             self.setup_service.get_model()
-            results = self._perform_basic_checks()
-
+            basic_results = self._perform_basic_checks()
+            results.extend(basic_results)
             if self.shallow:
                 shallow_results = self._perform_shallow_checks()
                 results.extend(shallow_results)
@@ -2130,13 +2129,20 @@ class RunnerService:
                 deep_results = self._perform_deep_checks()
                 results.extend(shallow_results)
                 results.append(deep_results)
+
+        except Exception as error:
+            tb = traceback.format_exc()
+            exp = {
+                "exception": str(error),
+                "traceback": tb,
+            }
+            results.append(exp)
+            echo(f"An error occurred: {error}\nTraceback:\n{tb}")
+
+        finally:
             self.ios_service.update_metadata(results)
             if self.as_json:
                 self.ios_service.collect_and_save_json(results, self.report_file)
-
-        except Exception as error:
-            echo(f"An error occurred: {error}")
-        finally:
             echo("Run process completed.")
 
     def _perform_basic_checks(self):
@@ -2169,20 +2175,22 @@ class RunnerService:
         model_output = self.checkup_service.check_model_output_content(
             self.run_example, self.run_model
         )
-        results, _sizes = [], []
+        results, _validations = [], []
 
         if self.from_github or self.from_s3:
-            _sizes.extend(self._log_env_sizes())
+            _validations.extend(self._log_env_sizes())
 
         if self.from_dockerhub:
             docker_size = self.ios_service.calculate_image_size()
-            _sizes.append(("Image Size Mb", docker_size))
+            _validations.append(
+                (Checks.IMAGE_SIZE.value, Checks.SIZE_CACL_SUCCESS.value, docker_size)
+            )
 
-        _sizes.extend(self._run_single_and_example_input_checks())
+        _validations.extend(self._run_single_and_example_input_checks())
 
         results.append(
             self._generate_table_from_check(
-                TableType.SHALLOW_CHECK_SUMMARY, _sizes, large=True
+                TableType.SHALLOW_CHECK_SUMMARY, _validations, large=True
             )
         )
 
@@ -2213,19 +2221,16 @@ class RunnerService:
 
     def _log_env_sizes(self):
         env_size = self.ios_service.get_env_sizes()
-        return [("Environment Size Mb", env_size)]
+        return [(Checks.ENV_SIZE.value, Checks.SIZE_CACL_SUCCESS.value, env_size)]
 
     def _log_directory_sizes(self):
         directory_size = self.ios_service.get_directories_sizes()
         return self._generate_table_from_check(
-            TableType.MODEL_DIRECTORY_SIZES, [("Directory Size Mb", directory_size)]
+            TableType.MODEL_DIRECTORY_SIZES, [(Checks.DIR_SIZE.value, directory_size)]
         )
 
     def _run_single_and_example_input_checks(self):
         results = []
-        results.extend(
-            self.checkup_service.check_single_input(self.run_model, self.run_example)
-        )
         results.extend(
             self.checkup_service.check_example_input(self.run_model, self.run_example)
         )
