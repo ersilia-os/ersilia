@@ -30,13 +30,18 @@ def truncate_output(output, max_items=10, max_chars=500):
     """
     if isinstance(output, list):
         if len(output) > max_items:
-            return f"{output[:max_items]} ... (and {len(output) - max_items} more items)"
+            return (
+                f"{output[:max_items]} ... (and {len(output) - max_items} more items)"
+            )
         return str(output)
     elif isinstance(output, dict):
         formatted = json.dumps(output, indent=4)
         lines = formatted.splitlines()
         if len(lines) > max_items:
-            return "\n".join(lines[:max_items]) + f"\n... (and {len(lines) - max_items} more lines)"
+            return (
+                "\n".join(lines[:max_items])
+                + f"\n... (and {len(lines) - max_items} more lines)"
+            )
         return formatted
     elif isinstance(output, str):
         if len(output) > max_chars:
@@ -109,28 +114,25 @@ def run_cmd():
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:
-                    truncated = truncate_output(result)  # Truncate the output
+                    truncated = truncate_output(result)
                     if as_table:
-                        print_result_table(truncated)  # Print truncated result as table
+                        print_result_table(truncated)
                     else:
-                        echo(truncated)  # Print truncated raw output
+                        echo(truncated)
                 else:
-                    echo("Something went wrong", fg="red")  # Print error if result is None
+                    echo("Something went wrong", fg="red")
         else:
-            # Allow user to print full result as a table
             if as_table:
                 if isinstance(result, dict):
-                    # Print full result as table if available
-                    print_result_table(result)  
+                    print_result_table(result)
                 else:
                     echo("Result cannot be displayed as a table", fg="red")
             else:
                 try:
-                    truncated = truncate_output(result)  # Truncate only for terminal output
-                    echo(truncated)  # Print truncated result
+                    truncated = truncate_output(result)
+                    echo(truncated)
                 except Exception as e:
-                    echo(f"Error: {e}", fg="red")  # Print error if echo fails
-                    print_result_table(result)  # Fallback: Print full result as a table
-
+                    echo(f"Error: {e}", fg="red")
+                    print_result_table(result)
 
     return run
