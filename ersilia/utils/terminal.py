@@ -159,6 +159,51 @@ def yes_no_input(prompt, default_answer, timeout=5):
         return True
 
 
+def truncate_output(output, max_items=10, max_chars=500):
+    """
+    Truncates long outputs for better readability.
+
+    Parameters
+    ----------
+    output : Any
+        The output to process and truncate.
+    max_items : int, optional
+        Maximum number of items to display for arrays/lists or dictionary keys.
+    max_chars : int, optional
+        Maximum number of characters to display for strings.
+
+    Returns
+    -------
+    str
+        The truncated output as a formatted string.
+    """
+    if isinstance(output, list):
+        if len(output) > max_items:
+            return (
+                f"{output[:max_items]} ... (and {len(output) - max_items} more items)"
+            )
+        return str(output)
+    if isinstance(output, dict):
+        if len(output) > max_items:
+            keys = list(output.keys())[:max_items]
+            truncated = {key: output[key] for key in keys}
+            remaining_lines = len(output) - max_items
+            return f"{json.dumps(truncated, indent=4)}\n... (and {remaining_lines} more lines)"
+        return output
+
+    elif isinstance(output, str):
+        if len(output) > max_chars:
+            suffix = " ... (truncated)"
+            truncated = output[
+                : max_chars - len(suffix) - 1
+            ].rstrip()  # Adjust for space
+            return f"{truncated} {suffix}"
+        return output
+
+    else:
+        return str(output)
+
+
 def print_result_table(data):
     """
     Print a result table from CSV or JSON-like data.

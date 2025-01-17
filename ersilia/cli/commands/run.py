@@ -1,54 +1,12 @@
-import json
 import types
 
 import click
 
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...utils.terminal import print_result_table
+from ...utils.terminal import print_result_table, truncate_output
 from .. import echo
 from . import ersilia_cli
-
-
-def truncate_output(output, max_items=10, max_chars=500):
-    """
-    Truncates long outputs for better readability.
-
-    Parameters
-    ----------
-    output : Any
-        The output to process and truncate.
-    max_items : int, optional
-        Maximum number of items to display for arrays/lists or dictionary keys.
-    max_chars : int, optional
-        Maximum number of characters to display for strings.
-
-    Returns
-    -------
-    str
-        The truncated output as a formatted string.
-    """
-    if isinstance(output, list):
-        if len(output) > max_items:
-            return (
-                f"{output[:max_items]} ... (and {len(output) - max_items} more items)"
-            )
-        return str(output)
-    elif isinstance(output, dict):
-        formatted = json.dumps(output, indent=4)
-        lines = formatted.splitlines()
-        if len(lines) > max_items:
-            return (
-                "\n".join(lines[:max_items])
-                + f"\n... (and {len(lines) - max_items} more lines)"
-            )
-        return formatted
-    elif isinstance(output, str):
-        if len(output) > max_chars:
-            return f"{output[:max_chars]}... (truncated)"
-        return output
-    else:
-        return str(output)
 
 
 def run_cmd():
