@@ -1651,11 +1651,13 @@ class CheckService:
                 if _compare_output_strings(output1, output2) <= 95:
                     raise texc.InconsistentOutputs(self.model_id)
 
-        def read_csv(path):
-            with open(path, "r") as f:
-                reader = csv.reader(f)
-                rows = list(reader)[1:]
-                return rows
+        def read_csv(file_path):
+            absolute_path = os.path.abspath(file_path)
+            if not os.path.exists(absolute_path):
+                raise FileNotFoundError(f"File not found: {absolute_path}")
+            with open(absolute_path, mode="r") as csv_file:
+                reader = csv.DictReader(csv_file)
+                return [row for row in reader]
 
         output1_path = os.path.abspath(Options.OUTPUT1_CSV.value)
         output2_path = os.path.abspath(Options.OUTPUT2_CSV.value)
@@ -1679,6 +1681,7 @@ class CheckService:
         if check_status_one[-1] == str(STATUS_CONFIGS.FAILED) or check_status_two[
             -1
         ] == str(STATUS_CONFIGS.FAILED):
+            self.logger.error("Model output has content problem")
             _completed_status.append(
                 (
                     Checks.MODEL_CONSISTENCY.value,
@@ -1689,10 +1692,15 @@ class CheckService:
             return _completed_status
         else:
             data1 = read_csv(output1_path)
-            data2 = read_csv(output2_path)
+            data2 = read_csv(output1_path)
             try:
                 for res1, res2 in zip(data1, data2):
-                    validate_output(res1, res2)
+                    for key in res1:
+                        if key in res2:
+                            validate_output(res1[key], res2[key])
+                        else:
+                            raise KeyError(f"Key '{key}' not found in second result.")
+                self.logger.info("Model output is consistent")
                 _completed_status.append(
                     (
                         Checks.MODEL_CONSISTENCY.value,
@@ -1701,6 +1709,7 @@ class CheckService:
                     )
                 )
             except:
+                self.logger.info("incons")
                 return _completed_status.append(
                     (
                         Checks.MODEL_CONSISTENCY.value,
@@ -1708,6 +1717,7 @@ class CheckService:
                         str(STATUS_CONFIGS.FAILED),
                     )
                 )
+        self.logger.error(f"Completed status: {_completed_status}")
         return _completed_status
 
 
