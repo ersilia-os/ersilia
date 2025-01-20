@@ -67,12 +67,9 @@ def get_commands(model_id, config):
             "run",
             "-i",
             config["input_file"],
+            "-o", 
+            config["output_file"]
         ]
-        + (
-            ["-o", config["output_file"]]
-            if config.get("output_file") and not config.get("output_redirection")
-            else []
-        )
         + (config.get("run_flags", "").split() if config.get("run_flags") else []),
         "close": ["ersilia", "close"],
     }
