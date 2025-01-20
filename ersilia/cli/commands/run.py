@@ -77,8 +77,8 @@ def run_cmd():
             if as_table:
                 print_result_table(iter_values)
             else:
-                formatted_values = [json.dumps(item) for item in iter_values]
-                echo("\n".join(formatted_values))
+                # formatted_values = [json.dumps(item) for item in iter_values]
+                echo(json.dumps(iter_values, indent=4))
         else:
             if as_table:
                 print_result_table(result)
