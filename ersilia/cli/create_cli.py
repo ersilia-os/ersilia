@@ -2,7 +2,7 @@ from ..auth.auth import Auth
 from .cmd import Command
 from .commands import ersilia_cli
 import sys
-
+from cli import echo
 
 def create_ersilia_cli():
     """
@@ -18,9 +18,9 @@ def create_ersilia_cli():
     """
         # Check Python version compatibility
     if sys.version_info < (3, 8):
-        print("\033[91mErsilia is not compatible with the version of Python you are using. "
-              "Please consider upgrading to Python 3.8 or higher.\033[0m")
-        sys.exit(1)
+        print(echo("⚠️ Ersilia is not compatible with the version of Python you are using. "
+              "Please consider upgrading to Python 3.8 or higher. ⚠️", fg ="red"))
+
     is_contributor = Auth().is_contributor()
 
     cmd = Command()
