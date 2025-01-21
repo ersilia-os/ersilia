@@ -327,15 +327,19 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.base_information_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BiomedicalAreaBaseInformationError</span><span class="p">,</span>
     <span class="n">BothIdentifiersBaseInformationError</span><span class="p">,</span>
+    <span class="n">ComputationalPerformanceHundredBaseInformationError</span><span class="p">,</span>
+    <span class="n">ComputationalPerformanceOneBaseInformationError</span><span class="p">,</span>
+    <span class="n">ComputationalPerformanceTenBaseInformationError</span><span class="p">,</span>
     <span class="n">DescriptionBaseInformationError</span><span class="p">,</span>
     <span class="n">DockerArchitectureBaseInformationError</span><span class="p">,</span>
     <span class="n">DockerhubBaseInformationError</span><span class="p">,</span>
+    <span class="n">EnvironmentSizeMbBaseInformationError</span><span class="p">,</span>
     <span class="n">GithubBaseInformationError</span><span class="p">,</span>
     <span class="n">IdentifierBaseInformationError</span><span class="p">,</span>
+    <span class="n">ImageSizeMbBaseInformationError</span><span class="p">,</span>
     <span class="n">InputBaseInformationError</span><span class="p">,</span>
     <span class="n">InputShapeBaseInformationError</span><span class="p">,</span>
     <span class="n">LicenseBaseInformationError</span><span class="p">,</span>
-    <span class="n">MemoryGbBaseInformationError</span><span class="p">,</span>
     <span class="n">ModeBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputConsistencyBaseInformationError</span><span class="p">,</span>
@@ -372,7 +376,90 @@
 <span class="sd">        Configuration data in JSON format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the base information object with a provided configuration.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_json : dict</span>
+<span class="sd">            A JSON-compatible dictionary containing configuration data.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        _github : None</span>
+<span class="sd">            Placeholder for GitHub URL of the model.</span>
+<span class="sd">        _identifier : None</span>
+<span class="sd">            Placeholder for a unique identifier string.</span>
+<span class="sd">        _slug : None</span>
+<span class="sd">            Placeholder for a descriptive slug string.</span>
+<span class="sd">        _status : None</span>
+<span class="sd">            Placeholder for the current status of the object.</span>
+<span class="sd">        _title : None</span>
+<span class="sd">            Placeholder for the model’s title.</span>
+<span class="sd">        _description : None</span>
+<span class="sd">            Placeholder for a description of the model.</span>
+<span class="sd">        _mode : None</span>
+<span class="sd">            Placeholder for the training mode, one of &#39;retrained&#39;, &#39;pretrained&#39;, &#39;in-house&#39;, or &#39;online&#39;.</span>
+<span class="sd">        _task : None</span>
+<span class="sd">            Placeholder for the primary task associated with the model, such as &#39;classification&#39;, or &#39;regression&#39;.</span>
+<span class="sd">        _subtask : None</span>
+<span class="sd">            Placeholder for the subtask associated with the model, such as &#39;activity prediction&#39;, or &#39;featurization&#39;.</span>
+<span class="sd">        _input : None</span>
+<span class="sd">            Placeholder for input data specifications, such as &#39;Compound&#39;.</span>
+<span class="sd">        _input_shape : None</span>
+<span class="sd">            Placeholder for the shape of the input data.</span>
+<span class="sd">        _output : None</span>
+<span class="sd">            Placeholder for output data specifications, such as &#39;Probability&#39;, or &#39;Compound&#39;.</span>
+<span class="sd">        _output_type : None</span>
+<span class="sd">            Placeholder for the type of output data.</span>
+<span class="sd">        _output_shape : None</span>
+<span class="sd">            Placeholder for the shape of the output data.</span>
+<span class="sd">        _output_dimension : None</span>
+<span class="sd">            Placeholder for dimensional notes about the output.</span>
+<span class="sd">        _output_consistency : None</span>
+<span class="sd">            Placeholder for output consistency metrics, one of &#39;fixed&#39;, or &#39;variable&#39;.</span>
+<span class="sd">        _interpretation : None</span>
+<span class="sd">            Placeholder for interpretation details of the model&#39;s output.</span>
+<span class="sd">        _tag : None</span>
+<span class="sd">            Placeholder for tags associated with the model.</span>
+<span class="sd">        _biomedical_area : None</span>
+<span class="sd">            Placeholder for the biomedical area associated with the model, such as &#39;ADMET&#39;.</span>
+<span class="sd">        _target_organism : None</span>
+<span class="sd">            Placeholder for the target organism associated with the model.</span>
+<span class="sd">        _publication_type : None</span>
+<span class="sd">            Placeholder for the type of publication associated with the model, one of Preprint or Peer reviewed.</span>
+<span class="sd">        _publication_year : None</span>
+<span class="sd">            Placeholder for the year of publication.</span>
+<span class="sd">        _publication : None</span>
+<span class="sd">            Placeholder for publication references.</span>
+<span class="sd">        _source_code : None</span>
+<span class="sd">            Placeholder for source code metadata.</span>
+<span class="sd">        _license : None</span>
+<span class="sd">            Placeholder for license information.</span>
+<span class="sd">        _contributor : None</span>
+<span class="sd">            Placeholder for contributor information.</span>
+<span class="sd">        _dockerhub : None</span>
+<span class="sd">            Placeholder for Docker Hub repository details.</span>
+<span class="sd">        _docker_architecture : None</span>
+<span class="sd">            Placeholder for Docker image architecture details.</span>
+<span class="sd">        _s3 : None</span>
+<span class="sd">            Placeholder for related AWS S3 information.</span>
+<span class="sd">        _source : None</span>
+<span class="sd">            Placeholder for the source of the model, one of &#39;Local&#39;, or &#39;Online&#39;</span>
+<span class="sd">        _source_type: None</span>
+<span class="sd">            Placeholder for the type of source of the model, one of &#39;Internal&#39;, &#39;External&#39;, or &#39;Replicated&#39;.</span>
+<span class="sd">        _environment_size_mb : None</span>
+<span class="sd">            Placeholder for environment size in megabytes.</span>
+<span class="sd">        _image_size_mb : None</span>
+<span class="sd">            Placeholder for Docker image size in megabytes.</span>
+<span class="sd">        _computational_performance_one : None</span>
+<span class="sd">            Placeholder for single-run computational performance.</span>
+<span class="sd">        _computational_performance_ten : None</span>
+<span class="sd">            Placeholder for ten-run computational performance.</span>
+<span class="sd">        _computational_performance_hund : None</span>
+<span class="sd">            Placeholder for hundred-run computational performance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="kc">None</span>
@@ -382,6 +469,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subtask</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="kc">None</span>
@@ -391,6 +479,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_consistency</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_biomedical_area</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_organism</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_publication_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_publication_year</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="kc">None</span>
@@ -398,7 +490,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size_mb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_size_mb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url_string</span><span class="p">)</span>
@@ -1457,35 +1555,151 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_both_identifiers</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">environment_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the model memory in GB.</span>
+<span class="sd">        Get the model evironment Size in Mb.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
-<span class="sd">            The model memory in GB.</span>
+<span class="sd">            The model evironment Size in Mb.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size_mb</span>
 
-    <span class="nd">@memory_gb</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">memory_gb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_memory_gb</span><span class="p">):</span>
+    <span class="nd">@environment_size</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">environment_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_environment_size</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the model memory in GB.</span>
+<span class="sd">        Set the environment size in MB.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        new_memory_gb : int</span>
-<span class="sd">            The new model memory in GB.</span>
+<span class="sd">        new_environment_size : int</span>
+<span class="sd">            The new environment size in MB.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
-<span class="sd">        MemoryGbBaseInformationError</span>
-<span class="sd">            If the memory value is not valid.</span>
+<span class="sd">        EnvironmentSizeMbBaseInformationError</span>
+<span class="sd">            If the environment size value is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_memory_gb</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">MemoryGbBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_memory_gb</span> <span class="o">=</span> <span class="n">new_memory_gb</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_environment_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">EnvironmentSizeMbBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size_mb</span> <span class="o">=</span> <span class="n">new_environment_size</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_size_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the image size in megabytes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The size of the image in MB.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_size_mb</span>
+
+    <span class="nd">@image_size_mb</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_size_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_image_size_mb</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the image size in megabytes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_image_size_mb : int</span>
+<span class="sd">            The new image size in MB.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ImageSizeMbBaseInformationError</span>
+<span class="sd">            If `new_image_size_mb` is not an integer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_image_size_mb</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">ImageSizeMbBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_size_mb</span> <span class="o">=</span> <span class="n">new_image_size_mb</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the computational performance at level one.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int or float</span>
+<span class="sd">            The computational performance metric at level one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span>
+
+    <span class="nd">@computational_performance_one</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the computational performance at level one.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_value : int or float</span>
+<span class="sd">            The new computational performance value.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ComputationalPerformanceOneBaseInformationError</span>
+<span class="sd">            If `new_value` is not an int or float.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">ComputationalPerformanceOneBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="n">new_value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_ten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the computational performance at level ten.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int or float</span>
+<span class="sd">            The computational performance metric at level ten.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span>
+
+    <span class="nd">@computational_performance_ten</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_ten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the computational performance at level ten.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_value : int or float</span>
+<span class="sd">            The new computational performance value.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ComputationalPerformanceTenBaseInformationError</span>
+<span class="sd">            If `new_value` is not an int or float.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">ComputationalPerformanceTenBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="n">new_value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_hund</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the computational performance at level hundred.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int or float</span>
+<span class="sd">            The computational performance metric at level hundred.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span>
+
+    <span class="nd">@computational_performance_hund</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_hund</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the computational performance at level hundred.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_value : int or float</span>
+<span class="sd">            The new computational performance value.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ComputationalPerformanceHundredBaseInformationError</span>
+<span class="sd">            If `new_value` is not an int or float.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">ComputationalPerformanceHundredBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="n">new_value</span>
 
 <div class="viewcode-block" id="BaseInformation.as_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation.as_dict">[docs]</a>
@@ -1529,7 +1743,11 @@
             <span class="s2">&quot;DockerHub&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span><span class="p">,</span>
             <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span><span class="p">,</span>
             <span class="s2">&quot;S3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="p">,</span>
-            <span class="s2">&quot;Memory Gb&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_gb</span><span class="p">,</span>
+            <span class="s2">&quot;Environment Size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment_size</span><span class="p">,</span>
+            <span class="s2">&quot;Image Size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size_mb</span><span class="p">,</span>
+            <span class="s2">&quot;Computational Performance 1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_one</span><span class="p">,</span>
+            <span class="s2">&quot;Computational Performance 10&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_ten</span><span class="p">,</span>
+            <span class="s2">&quot;Computational Performance 100&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_hund</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
@@ -1579,7 +1797,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;dockerhub&quot;</span><span class="p">,</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;docker_architecture&quot;</span><span class="p">,</span> <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;memory_gb&quot;</span><span class="p">,</span> <span class="s2">&quot;Memory Gb&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;environment_size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;image_size_mb&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
+            <span class="s2">&quot;computational_performance_one&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 1&quot;</span><span class="p">,</span> <span class="n">data</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
+            <span class="s2">&quot;computational_performance_ten&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 10&quot;</span><span class="p">,</span> <span class="n">data</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
+            <span class="s2">&quot;computational_performance_hund&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 100&quot;</span><span class="p">,</span> <span class="n">data</span>
+        <span class="p">)</span></div>
 </div>
 
 </pre></div>
