@@ -93,6 +93,7 @@ class Checks(Enum):
     DIR_SIZE = "Directory Size Mb"
     # messages
     SIZE_CACL_SUCCESS = "Size Successfully Calculated"
+    SIZE_CACL_FAILED = "Size Calculation Failed"
     INCONSISTENCY = "Inconsistent Output Detected"
     CONSISTENCY = "Model Output Was Consistent"
     RUN_BASH = "RMSE-MEAN"
@@ -908,11 +909,11 @@ class IOService:
             image = client.images.get(image_name)
             size_bytes = image.attrs["Size"]
             size_mb = size_bytes / (1024**2)
-            return f"{size_mb:.2f} MB"
+            return f"{size_mb:.2f} MB", Checks.SIZE_CACL_SUCCESS.value
         except docker.errors.ImageNotFound:
-            return f"Image '{image_name}' not found."
+            return f"Image '{image_name}' not found.", Checks.SIZE_CACL_FAILED.value
         except Exception as e:
-            return f"An error occurred: {e}"
+            return f"An error occurred: {e}", Checks.SIZE_CACL_FAILED.value
 
     @throw_ersilia_exception()
     def get_directories_sizes(self) -> str:
@@ -2191,12 +2192,10 @@ class RunnerService:
             _validations.extend(self._log_env_sizes())
 
         if self.from_dockerhub:
-            docker_size = self.ios_service.calculate_image_size(
+            message, docker_size = self.ios_service.calculate_image_size(
                 tag=self.version if self.version else "latest"
             )
-            _validations.append(
-                (Checks.IMAGE_SIZE.value, Checks.SIZE_CACL_SUCCESS.value, docker_size)
-            )
+            _validations.append((Checks.IMAGE_SIZE.value, message, docker_size))
 
         _validations.extend(self._run_single_and_example_input_checks())
 

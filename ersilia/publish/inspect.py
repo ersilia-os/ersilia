@@ -399,17 +399,29 @@ class ModelInspector:
 
         for line in lines:
             line = line.strip()
+
             match = pip_install_pattern.search(line)
             if match:
-                packages = match.group(1).split()
-                for package in packages:
-                    if package.startswith("-"):
+                packages_and_options = match.group(1).split()
+                skip_next = False
+
+                for item in packages_and_options:
+                    if skip_next:
+                        skip_next = False
                         continue
-                    if package.startswith("git+"):
+
+                    if item.startswith("--index-url") or item.startswith(
+                        "--extra-index-url"
+                    ):
+                        skip_next = True
                         continue
-                    if not version_pin_pattern.match(package):
+
+                    if item.startswith("git+"):
+                        continue
+
+                    if not version_pin_pattern.match(item):
                         errors.append(
-                            f"Package '{package}' in line '{line}' is not version-pinned (e.g., 'package==1.0.0')."
+                            f"Package '{item}' in line '{line}' is not version-pinned (e.g., 'package==1.0.0')."
                         )
 
         return errors
@@ -425,6 +437,8 @@ class ModelInspector:
         if not python_version:
             errors.append("Missing Python version in install.yml.")
 
+        version_pin_pattern = re.compile(r"^[a-zA-Z0-9_\-\.]+==[a-zA-Z0-9_\-\.]+$")
+
         commands = yml_data.get("commands", [])
         for command in commands:
             if not isinstance(command, list) or len(command) < 2:
@@ -432,13 +446,37 @@ class ModelInspector:
                 continue
 
             tool = command[0]
-            package = command[1]
+            _ = command[1]
             version = command[2] if len(command) > 2 else None
 
             if tool in ("pip", "conda"):
-                if not version or not version.replace(".", "").isdigit():
+                if tool == "pip":
+                    pip_args = command[1:]
+                    skip_next = False
+
+                    for item in pip_args:
+                        if skip_next:
+                            skip_next = False
+                            continue
+
+                        if item.startswith("--index-url") or item.startswith(
+                            "--extra-index-url"
+                        ):
+                            skip_next = True
+                            continue
+
+                        if item.startswith("git+"):
+                            continue
+
+                        if not version_pin_pattern.match(item):
+                            errors.append(
+                                f"Package '{item}' in command '{command}' is not version-pinned (e.g., 'package==1.0.0')."
+                            )
+
+                elif tool == "conda" and not version:
                     errors.append(
-                        f"Package in command does not have a valid pinned version: {package} (should be in the format ['pip', 'package_name', 'x.y.z'])"
+                        f"Package in command '{command}' does not have a valid pinned version "
+                        f"(should be in the format ['conda', 'package_name', 'x.y.z'])."
                     )
 
         return errors
