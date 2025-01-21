@@ -405,6 +405,8 @@ class ModelInspector:
                 for package in packages:
                     if package.startswith("-"):
                         continue
+                    if package.startswith("git+"):
+                        continue
                     if not version_pin_pattern.match(package):
                         errors.append(
                             f"Package '{package}' in line '{line}' is not version-pinned (e.g., 'package==1.0.0')."

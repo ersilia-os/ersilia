@@ -888,27 +888,27 @@ class IOService:
             self.logger.error(f"Error calculating directory size for {path}: {e}")
             return 0
 
-    def calculate_image_size(self):
+    def calculate_image_size(self, tag="latest"):
         """
         Calculate the size of a Docker image.
 
         Parameters
         ----------
-        image_name : str
-            The name (and optionally tag) of the Docker image.
+        tag : str, optional
+            The tag of the Docker image (default is 'latest').
 
         Returns
         -------
         str
             The size of the Docker image.
         """
-        image_name = f"{DOCKERHUB_ORG}/{self.model_id}"
+        image_name = f"{DOCKERHUB_ORG}/{self.model_id}:{tag}"
         client = docker.from_env()
         try:
             image = client.images.get(image_name)
             size_bytes = image.attrs["Size"]
             size_mb = size_bytes / (1024**2)
-            return f"{size_mb:.2f}"
+            return f"{size_mb:.2f} MB"
         except docker.errors.ImageNotFound:
             return f"Image '{image_name}' not found."
         except Exception as e:
@@ -2191,7 +2191,9 @@ class RunnerService:
             _validations.extend(self._log_env_sizes())
 
         if self.from_dockerhub:
-            docker_size = self.ios_service.calculate_image_size()
+            docker_size = self.ios_service.calculate_image_size(
+                tag=self.version if self.version else "latest"
+            )
             _validations.append(
                 (Checks.IMAGE_SIZE.value, Checks.SIZE_CACL_SUCCESS.value, docker_size)
             )
