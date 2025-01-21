@@ -1227,6 +1227,7 @@ class PulledDockerImageService(BaseServing):
                 self.logger.debug(
                     "Stopping and removing container {0}".format(container.name)
                 )
+                self._delete_temp_files(container.name)
                 container.stop()
                 self.logger.debug("Container stopped")
                 container.remove()
@@ -1347,11 +1348,54 @@ class PulledDockerImageService(BaseServing):
         """
         return self._api_with_url(api_name=api_name, input=input)
 
+    def _delete_temp_files(self, container_id):
+        """
+        Deletes a file inside a running Docker container.
+
+        :param container_id: str - The ID or name of the container.
+        :param file_path: str - The absolute path of the file to delete inside the container.
+        :return: None
+        """
+        # Create a Docker client from environment variables
+        client = docker.from_env()
+        container = client.containers.get(container_id)
+
+        # Create the command to remove the file.
+        # Using 'rm -rf' avoids errors if the file doesn't exist.
+        ls_cmd = "ls /tmp"
+        rem_cmd = "rm -rf /tmp/{0}"
+
+        try:
+            # Execute the command inside the container
+            exec_result = container.exec_run(ls_cmd)
+            # Check if the command executed successfully
+            if exec_result.exit_code == 0:
+                list_dirs = exec_result.output.decode("utf-8").split("\n")
+                for f in list_dirs:
+                    container.exec_run(rem_cmd.format(f))
+                    self.logger.debug(
+                        f"Deleted temp file {f} from container {container_id}"
+                    )
+            else:
+                output = (
+                    exec_result.output.decode("utf-8")
+                    if exec_result.output
+                    else "No output"
+                )
+                self.logger.debug(
+                    f"Error deleting file. Exit code: {exec_result.exit_code}. Output: {output}"
+                )
+        except Exception as e:
+            self.logger.debug(
+                f"An error occurred during execution inside the container: {e}"
+            )
+
     def close(self):
         """
         Close the Docker image service by stopping and removing the container.
         """
         self.logger.debug("Stopping and removing container")
+        # Here we remove temp files so that they are not left behind
         self._stop_all_containers_of_image()
 
 
