@@ -123,7 +123,6 @@ def test_conventional_run(session):
             "cli_type": "all",
             "fetch_flags": "--from_dockerhub",
             "output_file": "files/output_eos9gg2_0.json",
-            "output_redirection": "true",
             "delete_model": True,
         }
     )
