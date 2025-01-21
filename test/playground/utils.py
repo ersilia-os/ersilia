@@ -23,39 +23,6 @@ def create_compound_input_csv(csv_path):
         for line in input_data:
             writer.writerow([line])
 
-
-def save_as_json(result, output_file, remove_list=None):
-    try:
-        if remove_list:
-            for item in remove_list:
-                result = result.replace(item, "")
-
-        stripped, formatted = re.split(r"\}\s*\{", result.strip()), []
-
-        for i, line in enumerate(stripped):
-            if i == 0:
-                line = line + "}"
-            elif i == len(stripped) - 1:
-                line = "{" + line
-            else:
-                line = "{" + line + "}"
-            formatted.append(line)
-
-        _data = []
-        for obj in formatted:
-            try:
-                _data.append(json.loads(obj))
-            except json.JSONDecodeError as e:
-                print(f"Skipping invalid JSON object: {obj}. Error: {e}")
-                continue
-
-        with open(output_file, "w") as f:
-            json.dump(_data, f, indent=4)
-
-    except Exception as e:
-        raise ValueError(f"Error processing result: {e}")
-
-
 def get_commands(model_id, config):
     return {
         "fetch": ["ersilia", "-v", "fetch", model_id]
