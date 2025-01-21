@@ -26,7 +26,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     InputBaseInformationError,
     InputShapeBaseInformationError,
     LicenseBaseInformationError,
-    MemoryGbBaseInformationError,
     ModeBaseInformationError,
     OutputBaseInformationError,
     OutputConsistencyBaseInformationError,
@@ -1240,37 +1239,6 @@ class BaseInformation(ErsiliaBase):
         return self._both_identifiers
 
     @property
-    def memory_gb(self):
-        """
-        Get the model memory in GB.
-
-        Returns
-        -------
-        int
-            The model memory in GB.
-        """
-        return self._memory_gb
-
-    @memory_gb.setter
-    def memory_gb(self, new_memory_gb):
-        """
-        Set the model memory in GB.
-
-        Parameters
-        ----------
-        new_memory_gb : int
-            The new model memory in GB.
-
-        Raises
-        ------
-        MemoryGbBaseInformationError
-            If the memory value is not valid.
-        """
-        if type(new_memory_gb) != int:
-            raise MemoryGbBaseInformationError
-        self._memory_gb = new_memory_gb
-
-    @property
     def environment_size(self):
         """
         Get the model evironment Size in Mb.
@@ -1457,7 +1425,6 @@ class BaseInformation(ErsiliaBase):
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
-            "Memory Gb": self.memory_gb,
             "Environment Size": self.environment_size,
             "Image Size": self.image_size_mb,
             "Computational Performance 1": self.computational_performance_one,
