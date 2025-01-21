@@ -1,3 +1,4 @@
+import json
 import types
 
 import click
@@ -70,27 +71,24 @@ def run_cmd():
         )
 
         if isinstance(result, types.GeneratorType):
-            for result in mdl.run(input=input, output=output, batch_size=batch_size):
-                if result is not None:
-                    truncated = truncate_output(result)
+            for result_item in result:
+                if result_item is not None:
+                    truncated_result = truncate_output(result_item, max_length=10)
+                    formatted = json.dumps(truncated_result, indent=4)
                     if as_table:
-                        print_result_table(truncated)
+                        print_result_table(formatted)
                     else:
-                        echo(truncated)
+                        echo(formatted)
                 else:
                     echo("Something went wrong", fg="red")
         else:
+            truncated_result = truncate_output(result, max_length=10)
             if as_table:
-                if isinstance(result, dict):
-                    print_result_table(result)
-                else:
-                    echo("Result cannot be displayed as a table", fg="red")
+                print_result_table(truncated_result)
             else:
                 try:
-                    truncated = truncate_output(result)
-                    echo(truncated)
-                except Exception as e:
-                    echo(f"Error: {e}", fg="red")
-                    print_result_table(result)
+                    echo(json.dumps(truncated_result, indent=4))
+                except:
+                    print_result_table(truncated_result)
 
     return run

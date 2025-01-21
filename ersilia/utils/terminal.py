@@ -159,47 +159,63 @@ def yes_no_input(prompt, default_answer, timeout=5):
         return True
 
 
-def truncate_output(output, max_items=10, max_chars=500):
+def truncate_output(output, max_length=10):
     """
-    Truncates long outputs for better readability.
+    Truncate the given output for better readability in the terminal.
+
+    Handles strings, lists, dictionaries, integers, floats, CSV, HDF5 files, and matrices.
 
     Parameters
     ----------
-    output : Any
-        The output to process and truncate.
-    max_items : int, optional
-        Maximum number of items to display for arrays/lists or dictionary keys.
-    max_chars : int, optional
-        Maximum number of characters to display for strings.
+    output : str, list, dict, int, float, or file object
+        The output to truncate.
+    max_length : int, optional
+        The maximum number of characters or items to display. Default is 10.
 
     Returns
     -------
     str
-        The truncated output as a formatted string.
+        The truncated output as a string.
     """
-    if isinstance(output, list):
-        if len(output) > max_items:
-            return (
-                f"{output[:max_items]} ... (and {len(output) - max_items} more items)"
+    if isinstance(output, str):
+        return (
+            output if len(output) <= 100 else output[:100] + "..."
+        )  # Strings: 100 chars
+    elif isinstance(output, (int, float)):
+        return str(output)  # Numbers: Show as-is
+    elif isinstance(output, list):
+        if all(isinstance(row, list) for row in output):  # Matrix
+            truncated_rows = [
+                row[:max_length] for row in output[:max_length]
+            ]  # Truncate rows/columns
+            return json.dumps(truncated_rows, indent=2) + (
+                "\n..." if len(output) > max_length else ""
             )
-        return str(output)
-    if isinstance(output, dict):
-        if len(output) > max_items:
-            keys = list(output.keys())[:max_items]
-            truncated = {key: output[key] for key in keys}
-            remaining_lines = len(output) - max_items
-            return f"{json.dumps(truncated, indent=4)}\n... (and {remaining_lines} more lines)"
-        return output
+        else:  # Regular list
+            return json.dumps(output[:max_length], indent=2) + (
+                "..." if len(output) > max_length else ""
+            )
+    elif isinstance(output, dict):  # Serializable Object
+        truncated = list(output.items())[:max_length]
+        return json.dumps(truncated, indent=2) + (
+            "..." if len(output) > max_length else ""
+        )
+    elif hasattr(output, "read"):  # Handle file-like objects
+        if output.name.endswith(".csv"):
+            output.seek(0)
+            reader = csv.reader(output)
+            rows = [row for _, row in zip(range(max_length), reader)]
+            return "\n".join([",".join(row) for row in rows]) + (
+                "\n..." if len(list(reader)) > max_length else ""
+            )
+        elif output.name.endswith((".h5", ".hdf5")):
+            import h5py
 
-    elif isinstance(output, str):
-        if len(output) > max_chars:
-            suffix = " ... (truncated)"
-            truncated = output[
-                : max_chars - len(suffix) - 1
-            ].rstrip()  # Adjust for space
-            return f"{truncated} {suffix}"
-        return output
-
+            with h5py.File(output.name, "r") as f:
+                keys = list(f.keys())[:max_length]
+                return f"HDF5 file: {output.name}\nDatasets: {keys}" + (
+                    "\n..." if len(keys) > max_length else ""
+                )
     else:
         return str(output)
 
