@@ -73,7 +73,7 @@ class BaseInformation(ErsiliaBase):
         Attributes
         ----------
         _github : None
-            Placeholder for GitHub-related data.
+            Placeholder for GitHub URL of the model.
         _identifier : None
             Placeholder for a unique identifier string.
         _slug : None
@@ -81,19 +81,21 @@ class BaseInformation(ErsiliaBase):
         _status : None
             Placeholder for the current status of the object.
         _title : None
-            Placeholder for the object’s title.
+            Placeholder for the model’s title.
         _description : None
-            Placeholder for a description of the object.
+            Placeholder for a description of the model.
         _mode : None
-            Placeholder for the runtime mode.
+            Placeholder for the training mode, one of 'retrained', 'pretrained', 'in-house', or 'online'.
         _task : None
-            Placeholder for the primary task associated with this object.
+            Placeholder for the primary task associated with the model, such as 'classification', or 'regression'.
+        _subtask : None
+            Placeholder for the subtask associated with the model, such as 'activity prediction', or 'featurization'.
         _input : None
-            Placeholder for input data specifications.
+            Placeholder for input data specifications, such as 'Compound'.
         _input_shape : None
             Placeholder for the shape of the input data.
         _output : None
-            Placeholder for output data specifications.
+            Placeholder for output data specifications, such as 'Probability', or 'Compound'.
         _output_type : None
             Placeholder for the type of output data.
         _output_shape : None
@@ -101,11 +103,19 @@ class BaseInformation(ErsiliaBase):
         _output_dimension : None
             Placeholder for dimensional notes about the output.
         _output_consistency : None
-            Placeholder for output consistency metrics.
+            Placeholder for output consistency metrics, one of 'fixed', or 'variable'.
         _interpretation : None
-            Placeholder for interpretation details.
+            Placeholder for interpretation details of the model's output.
         _tag : None
-            Placeholder for tag information.
+            Placeholder for tags associated with the model.
+        _biomedical_area : None
+            Placeholder for the biomedical area associated with the model, such as 'ADMET'.
+        _target_organism : None
+            Placeholder for the target organism associated with the model.
+        _publication_type : None
+            Placeholder for the type of publication associated with the model, one of Preprint or Peer reviewed.
+        _publication_year : None
+            Placeholder for the year of publication.
         _publication : None
             Placeholder for publication references.
         _source_code : None
@@ -120,8 +130,10 @@ class BaseInformation(ErsiliaBase):
             Placeholder for Docker image architecture details.
         _s3 : None
             Placeholder for related AWS S3 information.
-        _memory_gb : None
-            Placeholder for memory requirement in gigabytes.
+        _source : None
+            Placeholder for the source of the model, one of 'Local', or 'Online'
+        _source_type: None
+            Placeholder for the type of source of the model, one of 'Internal', 'External', or 'Replicated'.
         _environment_size_mb : None
             Placeholder for environment size in megabytes.
         _image_size_mb : None
@@ -143,10 +155,6 @@ class BaseInformation(ErsiliaBase):
         self._mode = None
         self._task = None
         self._subtask = None
-        self._biomedical_area = None
-        self._target_organism = None
-        self._publication_type = None
-        self._publication_year = None
         self._input = None
         self._input_shape = None
         self._output = None
@@ -156,6 +164,10 @@ class BaseInformation(ErsiliaBase):
         self._output_consistency = None
         self._interpretation = None
         self._tag = None
+        self._biomedical_area = None
+        self._target_organism = None
+        self._publication_type = None
+        self._publication_year = None
         self._publication = None
         self._source_code = None
         self._license = None
@@ -163,7 +175,6 @@ class BaseInformation(ErsiliaBase):
         self._dockerhub = None
         self._docker_architecture = None
         self._s3 = None
-        self._memory_gb = None
         self._source = None
         self._source_type = None
         self._environment_size_mb = None
