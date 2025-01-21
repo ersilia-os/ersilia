@@ -141,6 +141,10 @@ class ReadmeMetadata:
         text += "* Output Type: `{0}`\n".format(", ".join(d["Output Type"]))
         text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
         text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
+        text += "## Baseline Performance\n\n"
+        text += "* Computational Performance For One Input: `{0}`\n".format(d["Computational Performance 1"])
+        text += "* Computational Performance For Ten Input: `{0}`\n".format(d["Computational Performance 10"])
+        text += "* Computational Performance For Hundred Input: `{0}`\n".format(d["Computational Performance 100"])
         text += "## References\n\n"
         text += "* [Publication]({0})\n".format(d["Publication"])
         text += "* [Source Code]({0})\n".format(d["Source Code"])
@@ -259,7 +263,6 @@ def insert_metadata_to_airtable(model, contributor, api_key):
     if data["Source Code"] != "":
         airtable_data["Source Code"] = data["Source Code"]
     ai.table.create(airtable_data)
-
 
 def update_metadata_to_airtable(user, repo, branch, api_key):
     # Works with airtable-update option
