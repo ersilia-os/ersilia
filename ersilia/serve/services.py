@@ -1,34 +1,40 @@
-import tempfile
-import os
-import json
-import time
 import importlib
-import requests
+import json
+import os
+import time
 import uuid
+
 import docker
+import requests
+
 from .. import ErsiliaBase, throw_ersilia_exception
-from ..utils.terminal import run_command
-from ..utils.ports import find_free_port
-from ..utils.paths import resolve_pack_method
 from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
+from ..default import (
+    APIS_LIST_FILE,
+    CONTAINER_LOGS_TMP_DIR,
+    DEFAULT_VENV,
+    DOCKERHUB_ORG,
+    INFORMATION_FILE,
+    IS_FETCHED_FROM_HOSTED_FILE,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+    PACKMODE_FILE,
+)
+from ..setup.requirements.conda import CondaRequirement
 from ..setup.requirements.docker import DockerRequirement
 from ..utils.conda import SimpleConda, StandaloneConda
-from ..utils.docker import SimpleDocker
-from ..utils.venv import SimpleVenv
-from ..default import DEFAULT_VENV
-from ..default import PACKMODE_FILE, APIS_LIST_FILE
-from ..default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, CONTAINER_LOGS_TMP_DIR
-from ..default import IS_FETCHED_FROM_HOSTED_FILE
-from ..default import INFORMATION_FILE
-from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
-from ..utils.session import get_session_dir
+from ..utils.docker import SimpleDocker, model_image_version_reader
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
 )
 from ..utils.logging import make_temp_dir
-from ..setup.requirements.conda import CondaRequirement
+from ..utils.paths import resolve_pack_method
+from ..utils.ports import find_free_port
+from ..utils.session import get_session_dir
+from ..utils.terminal import run_command
+from ..utils.venv import SimpleVenv
 
 SLEEP_SECONDS = 1
 TIMEOUT_SECONDS = 1000
@@ -106,19 +112,19 @@ class BaseServing(ErsiliaBase):
 
     def _get_apis_from_where_available(self):
         apis_list = self._get_apis_from_apis_list()
-        if (apis_list is None):
+        if apis_list is None:
             pack_method = resolve_pack_method(
                 model_path=self._get_bundle_location(self.model_id)
             )
-            if (pack_method == PACK_METHOD_FASTAPI):
+            if pack_method == PACK_METHOD_FASTAPI:
                 self.logger.debug("Getting APIs from FastAPI")
                 apis_list = self._get_apis_from_fastapi()
-            elif (pack_method == PACK_METHOD_BENTOML):
+            elif pack_method == PACK_METHOD_BENTOML:
                 self.logger.debug("Getting APIs from BentoML")
                 apis_list = self._get_apis_from_bento()
             else:
                 raise
-        if (apis_list is None):
+        if apis_list is None:
             apis_list = []
         for api in apis_list:
             yield api
@@ -663,6 +669,14 @@ class CondaEnvironmentService(_LocalService):
 
     @staticmethod
     def is_single_model_without_conda():
+        """
+        Check if there is a single model without conda.
+
+        Returns
+        -------
+        bool
+            True if conda is not installed, False otherwise.
+        """
         conda_checker = CondaRequirement()
         # Returns True if conda is not installed and False otherwise
         return not conda_checker.is_installed()
@@ -1105,9 +1119,11 @@ class PulledDockerImageService(BaseServing):
             self.port = find_free_port()
         else:
             self.port = preferred_port
+        bundle_path = self._model_path(model_id)
+        self.docker_tag = model_image_version_reader(bundle_path)
         self.logger.debug("Using port {0}".format(self.port))
         self.image_name = "{0}/{1}:{2}".format(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         self.logger.debug("Starting Docker Daemon service")
         self.container_tmp_logs = os.path.join(
@@ -1190,7 +1206,7 @@ class PulledDockerImageService(BaseServing):
             True if the service is available, False otherwise.
         """
         is_available = self.simple_docker.exists(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         if is_available:
             self.logger.debug("Image {0} is available locally".format(self.image_name))
@@ -1211,6 +1227,7 @@ class PulledDockerImageService(BaseServing):
                 self.logger.debug(
                     "Stopping and removing container {0}".format(container.name)
                 )
+                self._delete_temp_files(container.name)
                 container.stop()
                 self.logger.debug("Container stopped")
                 container.remove()
@@ -1237,7 +1254,7 @@ class PulledDockerImageService(BaseServing):
         self.logger.debug("Status code: {0}".format(response.status_code))
         if response.status_code == 502:
             raise BadGatewayError(url)
-        elif response.status_code == 405: # We try the GET endpoint here
+        elif response.status_code == 405:  # We try the GET endpoint here
             response = requests.get(url)
         else:
             response.raise_for_status()
@@ -1265,9 +1282,9 @@ class PulledDockerImageService(BaseServing):
         try:
             response = requests.get(url, timeout=5)
             response.raise_for_status()
-        except requests.HTTPError as http_err:
+        except requests.HTTPError:
             return False
-        except Exception as err:
+        except Exception:
             return False
         else:
             return True
@@ -1331,11 +1348,54 @@ class PulledDockerImageService(BaseServing):
         """
         return self._api_with_url(api_name=api_name, input=input)
 
+    def _delete_temp_files(self, container_id):
+        """
+        Deletes a file inside a running Docker container.
+
+        :param container_id: str - The ID or name of the container.
+        :param file_path: str - The absolute path of the file to delete inside the container.
+        :return: None
+        """
+        # Create a Docker client from environment variables
+        client = docker.from_env()
+        container = client.containers.get(container_id)
+
+        # Create the command to remove the file.
+        # Using 'rm -rf' avoids errors if the file doesn't exist.
+        ls_cmd = "ls /tmp"
+        rem_cmd = "rm -rf /tmp/{0}"
+
+        try:
+            # Execute the command inside the container
+            exec_result = container.exec_run(ls_cmd)
+            # Check if the command executed successfully
+            if exec_result.exit_code == 0:
+                list_dirs = exec_result.output.decode("utf-8").split("\n")
+                for f in list_dirs:
+                    container.exec_run(rem_cmd.format(f))
+                    self.logger.debug(
+                        f"Deleted temp file {f} from container {container_id}"
+                    )
+            else:
+                output = (
+                    exec_result.output.decode("utf-8")
+                    if exec_result.output
+                    else "No output"
+                )
+                self.logger.debug(
+                    f"Error deleting file. Exit code: {exec_result.exit_code}. Output: {output}"
+                )
+        except Exception as e:
+            self.logger.debug(
+                f"An error occurred during execution inside the container: {e}"
+            )
+
     def close(self):
         """
         Close the Docker image service by stopping and removing the container.
         """
         self.logger.debug("Stopping and removing container")
+        # Here we remove temp files so that they are not left behind
         self._stop_all_containers_of_image()
 
 
@@ -1478,9 +1538,9 @@ class HostedService(BaseServing):
         try:
             response = requests.get(url, timeout=5)
             response.raise_for_status()
-        except requests.HTTPError as http_err:
+        except requests.HTTPError:
             return False
-        except Exception as err:
+        except Exception:
             return False
         else:
             return True

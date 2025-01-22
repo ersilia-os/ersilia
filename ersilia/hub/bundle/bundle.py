@@ -1,11 +1,13 @@
-import os
-import yaml
 import collections
+import os
+
+import yaml
+from dockerfile_parse import DockerfileParser
+
 from ...core.base import ErsiliaBase
 from ...default import CONDA_ENV_YML_FILE, DOCKERFILE_FILE
 from ...hub.fetch import MODEL_INSTALL_COMMANDS_FILE, REQUIREMENTS_TXT
 from .repo import DockerfileFile
-from dockerfile_parse import DockerfileParser
 
 
 class BundleEnvironmentFile(ErsiliaBase):
@@ -105,7 +107,7 @@ class BundleEnvironmentFile(ErsiliaBase):
         with open(f0, "w") as f:
             yaml.safe_dump(data, f, sort_keys=False)
 
-    def check(self): # TODO: Removing this fucntion
+    def check(self):  # TODO: Removing this fucntion
         """
         Check if the environment file exists.
 
@@ -159,7 +161,7 @@ class BundleRequirementsFile(ErsiliaBase):
             for l in reqs:
                 f.write(l + os.linesep)
 
-    def check(self): # TODO: Removing this fucntion
+    def check(self):  # TODO: Removing this fucntion
         """
         Check if the requirements file exists.
 
@@ -243,7 +245,7 @@ class BundleDockerfileFile(ErsiliaBase):
         with open(self.path, "w") as f:
             f.write(content)
 
-    def check(self): # TODO: Removing this fucntion
+    def check(self):  # TODO: Removing this fucntion
         """
         Check if the Dockerfile exists.
 

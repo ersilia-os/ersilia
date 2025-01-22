@@ -1,8 +1,8 @@
+import json
+import os
 import random
 import string
-import json
 import subprocess
-import os
 
 
 def run_command_check_output(cmd):

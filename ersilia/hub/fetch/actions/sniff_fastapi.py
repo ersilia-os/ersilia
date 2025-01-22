@@ -1,14 +1,11 @@
-import os
 import csv
 import json
+import os
 from pathlib import Path
 
-from .... import throw_ersilia_exception
-
-from . import BaseAction
-from .... import ErsiliaBase
+from .... import ErsiliaBase, throw_ersilia_exception
 from ....default import MODEL_SIZE_FILE
-
+from . import BaseAction
 
 N = 3
 
@@ -35,6 +32,7 @@ class BuiltinExampleReader(ErsiliaBase):
     output_example() -> list
         Returns a list of output examples.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -102,6 +100,7 @@ class ModelSniffer(BaseAction):
     sniff()
         Infers the structure of the model.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None

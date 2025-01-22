@@ -1,5 +1,5 @@
-import platform
 import os
+import platform
 
 
 def is_inside_docker():
@@ -30,6 +30,7 @@ class SystemChecker(object):
     is_inside_docker()
         Check if the code is running inside a Docker container.
     """
+
     def __init__(self):
         self.uname = platform.uname()
 

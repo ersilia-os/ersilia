@@ -2,6 +2,7 @@ from ..auth.auth import Auth
 from .cmd import Command
 from .commands import ersilia_cli
 
+
 def create_ersilia_cli():
     """
     Creates and configures the Ersilia CLI.

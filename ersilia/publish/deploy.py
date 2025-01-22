@@ -1,9 +1,11 @@
-from ..core.base import ErsiliaBase
-from ..app.app import AppBase, StreamlitApp
-import subprocess
 import os
 import shutil
+import subprocess
+
 import streamlit
+
+from ..app.app import AppBase, StreamlitApp
+from ..core.base import ErsiliaBase
 
 
 class DeployBase(ErsiliaBase):
@@ -17,6 +19,7 @@ class DeployBase(ErsiliaBase):
     credentials_json : str, optional
         Path to the credentials JSON file.
     """
+
     def __init__(self, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -143,6 +146,7 @@ class Local(DeployBase):
     credentials_json : str, optional
         Path to the credentials JSON file.
     """
+
     def __init__(self, config_json=None, credentials_json=None):
         DeployBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -169,7 +173,7 @@ class Local(DeployBase):
 
 class Heroku(DeployBase):
     """
-    Class for Heroku deployment, in a cloud platform that allows developers to build, run, and operate applications entirely in the cloud. 
+    Class for Heroku deployment, in a cloud platform that allows developers to build, run, and operate applications entirely in the cloud.
 
     Parameters
     ----------
@@ -182,9 +186,13 @@ class Heroku(DeployBase):
     --------
     .. code-block:: python
 
-        deployer = Heroku(config_json="path/to/config.json", credentials_json="path/to/credentials.json")
+        deployer = Heroku(
+            config_json="path/to/config.json",
+            credentials_json="path/to/credentials.json",
+        )
         deployer.deploy("model_id")
     """
+
     def __init__(self, config_json=None, credentials_json=None):
         DeployBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -220,7 +228,7 @@ class Heroku(DeployBase):
         """
         Deploy the model to Heroku.
 
-        This method handles the entire deployment process to Heroku, including setting up temporary directories, 
+        This method handles the entire deployment process to Heroku, including setting up temporary directories,
         creating the Heroku app, pushing the Docker container, and releasing the app.
 
         Parameters
@@ -263,6 +271,7 @@ class Aws(DeployBase):
     credentials_json : str, optional
         Path to the credentials JSON file.
     """
+
     def __init__(self, config_json=None, credentials_json=None):
         DeployBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -295,6 +304,7 @@ class GoogleCloud(DeployBase):
     credentials_json : str, optional
         Path to the credentials JSON file.
     """
+
     def __init__(self, config_json=None, credentials_json=None):
         DeployBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -327,6 +337,7 @@ class Azure(ErsiliaBase):
     credentials_json : str, optional
         Path to the credentials JSON file.
     """
+
     def __init__(self, config_json=None, credentials_json=None):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -365,9 +376,14 @@ class Deployer(object):
     --------
     .. code-block:: python
 
-        deployer = Deployer(cloud="heroku", config_json="path/to/config.json", credentials_json="path/to/credentials.json")
+        deployer = Deployer(
+            cloud="heroku",
+            config_json="path/to/config.json",
+            credentials_json="path/to/credentials.json",
+        )
         deployer.deploy("model_id")
     """
+
     def __init__(self, cloud="heroku", config_json=None, credentials_json=None):
         """Initialize a cloud deployer. For now, only 'heroku' is available."""
         self.cloud = cloud

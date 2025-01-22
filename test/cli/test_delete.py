@@ -1,41 +1,79 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from click.testing import CliRunner
+
 from ersilia.cli.commands.delete import delete_cmd
-from ersilia.utils.logging import logger
+from ersilia.hub.delete.delete import ModelFullDeleter
+
+MODEL = "eos3b5e"
+DUMMY_MODEL = ["eosxxxx"]
 
 
 @pytest.fixture
-def runner():
-    return CliRunner()
+def can_be_deleted():
+    with patch.object(
+        ModelFullDeleter, "can_be_deleted", return_value=(True, "")
+    ) as can_be_deleted:
+        yield can_be_deleted
 
 
-MODEL_ID = "eos3b5e"
+@patch("ersilia.ModelBase")
+@patch("ersilia.hub.delete.delete.ModelFullDeleter")
+@patch("ersilia.cli.echo")
+def test_delete_specific_model(mock_echo, mock_deleter, mock_modelbase, can_be_deleted):
+    mock_modelbase_instance = MagicMock()
+    mock_modelbase_instance.model_id = MODEL  #
+    mock_modelbase.return_value = mock_modelbase_instance
 
+    mock_deleter_instance = MagicMock()
+    mock_deleter_instance.can_be_deleted.return_value = (False, "")
+    mock_deleter_instance.delete.return_value = None
+    mock_deleter.return_value = mock_deleter_instance
 
-@patch("ersilia.core.modelbase.ModelBase")
-@pytest.mark.parametrize("model", [(MODEL_ID)])
-def test_delete_model(
-    mock_model_base,
-    runner,
-    model,
-):
-    mock_model_instance = MagicMock()
-    mock_model_instance.model_id = model
-    mock_model_base.return_value = mock_model_instance
-    mock_model_instance.invoke.return_value.exit_code = 0
-    mock_model_instance.invoke.return_value.output = f"Deleting model {model}: \n👍 Model {model}\
-          deleting cmd successfully executed!\n"
+    mock_echo.return_value = None
 
-    result = runner.invoke(delete_cmd(), [model])
-
-    logger.info(result.output)
+    runner = CliRunner()
+    result = runner.invoke(delete_cmd(), [MODEL])
 
     assert (
         result.exit_code == 0
     ), f"Unexpected exit code: {result.exit_code}. Output: {result.output}"
 
 
-if __name__ == "__main__":
+@patch("ersilia.hub.content.catalog.ModelCatalog")
+@patch("ersilia.hub.delete.delete.ModelFullDeleter")
+@patch("ersilia.cli.echo")
+def test_delete_all_models(mock_echo, mock_deleter, mock_catalog):
     runner = CliRunner()
-    test_delete_model(None, None, runner, MODEL_ID)
+
+    mock_catalog_instance = MagicMock()
+    mock_catalog_instance.local.return_value.data = [[MODEL], [DUMMY_MODEL]]
+    mock_catalog_instance.local.return_value.columns = ["Identifier"]
+    mock_catalog.return_value = mock_catalog_instance
+
+    mock_deleter_instance = MagicMock()
+    mock_deleter_instance.can_be_deleted.return_value = (True, "")
+    mock_deleter.return_value = mock_deleter_instance
+
+    result = runner.invoke(delete_cmd(), ["delete", "--all"])
+
+    assert (
+        result.exit_code == 0
+    ), f"Unexpected exit code: {result.exit_code}. Output: {result.output}"
+
+
+@patch("ersilia.hub.content.catalog.ModelCatalog")
+@patch("ersilia.cli.echo")
+def test_no_models_available(mock_echo, mock_catalog):
+    runner = CliRunner()
+
+    mock_catalog_instance = MagicMock()
+    mock_catalog_instance.local.return_value = None
+    mock_catalog.return_value = mock_catalog_instance
+
+    result = runner.invoke(delete_cmd(), ["delete", "--all"])
+
+    assert (
+        result.exit_code == 0
+    ), f"Unexpected exit code: {result.exit_code}. Output: {result.output}"

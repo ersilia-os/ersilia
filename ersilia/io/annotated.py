@@ -14,6 +14,7 @@ class AnnotatedDataTyper(object):
     annotated_shape : str
         The shape of the annotated data (e.g., "Single", "List", "Flexible List").
     """
+
     def __init__(self, data, annotated_type, annotated_shape):
         self.data = data
         self.annotated_type = annotated_type

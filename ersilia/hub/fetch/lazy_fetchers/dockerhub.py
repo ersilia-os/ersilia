@@ -1,27 +1,25 @@
-import os
-import json
 import asyncio
-from ..register.register import ModelRegisterer
+import json
+import os
 
-from .... import ErsiliaBase, throw_ersilia_exception
-from .... import EOS
+from .... import EOS, ErsiliaBase, throw_ersilia_exception
 from ....default import (
-    DOCKERHUB_ORG,
-    DOCKERHUB_LATEST_TAG,
-    PREDEFINED_EXAMPLE_FILES,
-    INFORMATION_FILE,
     API_SCHEMA_FILE,
+    DOCKERHUB_LATEST_TAG,
+    DOCKERHUB_ORG,
+    INFORMATION_FILE,
+    PREDEFINED_EXAMPLE_FILES,
 )
-
-from ...pull.pull import ModelPuller
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
 from ....utils.docker import (
+    PACK_METHOD_BENTOML,
     SimpleDocker,
     resolve_pack_method_docker,
-    PACK_METHOD_BENTOML,
 )
+from ...pull.pull import ModelPuller
 from .. import STATUS_FILE
+from ..register.register import ModelRegisterer
 
 
 class ModelDockerHubFetcher(ErsiliaBase):
@@ -61,10 +59,12 @@ class ModelDockerHubFetcher(ErsiliaBase):
         Fetch the model from DockerHub.
     """
 
-    def __init__(self, overwrite=None, config_json=None):
+    def __init__(self, overwrite=None, config_json=None, img_tag=None):
         super().__init__(config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.overwrite = overwrite
+        self.img_tag = img_tag or DOCKERHUB_LATEST_TAG
+        self.pack_method = None
 
     def is_docker_installed(self) -> bool:
         """
@@ -103,7 +103,10 @@ class ModelDockerHubFetcher(ErsiliaBase):
             True if the model is available, False otherwise.
         """
         mp = ModelPuller(
-            model_id=model_id, overwrite=self.overwrite, config_json=self.config_json
+            model_id=model_id,
+            overwrite=self.overwrite,
+            config_json=self.config_json,
+            docker_tag=self.img_tag,
         )
         if mp.is_available_locally():
             return True
@@ -146,7 +149,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
                 local_path=to_file,
                 org=DOCKERHUB_ORG,
                 img=model_id,
-                tag=DOCKERHUB_LATEST_TAG,
+                tag=self.img_tag,
             )
         except Exception as e:
             self.logger.error(f"Exception when copying: {e}")
@@ -169,7 +172,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             local_path=to_file,
             org=DOCKERHUB_ORG,
             img=model_id,
-            tag=DOCKERHUB_LATEST_TAG,
+            tag=self.img_tag,
         )
 
     async def _copy_from_image_to_local(self, model_id: str, file: str):
@@ -183,8 +186,12 @@ class ModelDockerHubFetcher(ErsiliaBase):
         file : str
             Name of the file to copy.
         """
-        pack_method = resolve_pack_method_docker(model_id)
-        if pack_method == PACK_METHOD_BENTOML:
+        if not self.pack_method:
+            self.logger.debug("Resolving pack method")
+            self.pack_method = resolve_pack_method_docker(model_id)
+            self.logger.debug(f"Resolved pack method: {self.pack_method}")
+
+        if self.pack_method == PACK_METHOD_BENTOML:
             await self._copy_from_bentoml_image(model_id, file)
         else:
             await self._copy_from_ersiliapack_image(model_id, file)
@@ -247,7 +254,9 @@ class ModelDockerHubFetcher(ErsiliaBase):
             ID of the model.
         """
         information_file = os.path.join(self._model_path(model_id), INFORMATION_FILE)
-        mp = ModelPuller(model_id=model_id, config_json=self.config_json)
+        mp = ModelPuller(
+            model_id=model_id, config_json=self.config_json, docker_tag=self.img_tag
+        )
         try:
             with open(information_file, "r") as infile:
                 data = json.load(infile)
@@ -256,9 +265,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             return None
 
         data["service_class"] = "pulled_docker"
-        data["size"] = (
-            mp._get_size_of_local_docker_image_in_mb()
-        )
+        data["size"] = mp._get_size_of_local_docker_image_in_mb()
         with open(information_file, "w") as outfile:
             json.dump(data, outfile, indent=4)
 
@@ -272,13 +279,15 @@ class ModelDockerHubFetcher(ErsiliaBase):
         model_id : str
             ID of the model.
         """
-        mp = ModelPuller(model_id=model_id, config_json=self.config_json)
+        mp = ModelPuller(
+            model_id=model_id, config_json=self.config_json, docker_tag=self.img_tag
+        )
         self.logger.debug("Pulling model image from DockerHub")
         await mp.async_pull()
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
         self.logger.debug("Asynchronous and concurrent execution started!")
         await asyncio.gather(
-            mr.register(is_from_dockerhub=True),
+            mr.register(is_from_dockerhub=True, img_tag=self.img_tag),
             self.write_apis(model_id),
             self.copy_information(model_id),
             self.modify_information(model_id),

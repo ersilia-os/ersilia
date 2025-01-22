@@ -1,6 +1,6 @@
-import os
 import csv
 import json
+import os
 
 
 class CsvDataLoader(object):
@@ -14,6 +14,7 @@ class CsvDataLoader(object):
     read(file_path)
         Read data from a CSV, TSV, or JSON file.
     """
+
     def __init__(self):
         self.values = None
         self.keys = None

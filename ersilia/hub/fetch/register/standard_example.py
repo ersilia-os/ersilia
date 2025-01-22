@@ -1,16 +1,13 @@
 import os
 
-from ....utils.terminal import run_command_check_output, run_command
-from ....utils.conda import SimpleConda
-from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
-
+from .... import ErsiliaBase, throw_ersilia_exception
 from ....default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
 )
-
-from .... import ErsiliaBase
-from .... import throw_ersilia_exception
+from ....utils.conda import SimpleConda
+from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
+from ....utils.terminal import run_command, run_command_check_output
 
 
 class ModelStandardExample(ErsiliaBase):
@@ -28,9 +25,12 @@ class ModelStandardExample(ErsiliaBase):
     --------
     .. code-block:: python
 
-        example_runner = ModelStandardExample(model_id="model123", config_json=config)
+        example_runner = ModelStandardExample(
+            model_id="model123", config_json=config
+        )
         example_runner.run()
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
@@ -75,6 +75,8 @@ class ModelStandardExample(ErsiliaBase):
             env_name = os.environ.get("CONDA_DEFAULT_ENV")
             self.logger.debug("The environment name is {0}".format(env_name))
             SimpleConda().run_commandlines(env_name, commands)
+
+        self.logger.info(f"Run log: {open(run_log).read()}")
         self._check_file_exists(output_csv=output_csv)
         self.logger.debug("Removing log file: {0}".format(run_log))
         os.remove(run_log)

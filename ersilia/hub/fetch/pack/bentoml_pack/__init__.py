@@ -2,11 +2,10 @@ import os
 import shutil
 
 from ..... import ErsiliaBase
+from .....default import BENTOML_PATH, H5_DATA_FILE, H5_EXTENSION, ISAURA_FILE_TAG
 from ....bundle.repo import DockerfileFile
 from ....delete.delete import ModelBentoDeleter
-
 from ... import MODEL_INSTALL_COMMANDS_FILE
-from .....default import BENTOML_PATH, H5_DATA_FILE, ISAURA_FILE_TAG, H5_EXTENSION
 
 
 class _Deleter(ErsiliaBase):
@@ -60,7 +59,7 @@ class _Symlinker(ErsiliaBase):
         # model_install_commands
         model_install_commands_path = os.path.join(path, MODEL_INSTALL_COMMANDS_FILE)
         if not os.path.exists(model_install_commands_path):
-            with open(model_install_commands_path, "w") as f:
+            with open(model_install_commands_path, "w"):
                 pass
         trg = os.path.join(bundle_dir, MODEL_INSTALL_COMMANDS_FILE)
         self.logger.debug("Creating model_install_commands.sh symlink dest <> bundle")
@@ -143,6 +142,17 @@ class _Writer(ErsiliaBase):
 
 
 class BasePack(_Deleter, _Symlinker, _Writer):
+    """
+    Base class for handling BentoML model packs.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model.
+    config_json : dict
+        Configuration settings for the pack.
+    """
+
     def __init__(self, model_id, config_json):
         _Deleter.__init__(self, model_id, config_json)
         _Symlinker.__init__(self, model_id, config_json)

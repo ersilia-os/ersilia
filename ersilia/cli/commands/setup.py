@@ -1,7 +1,7 @@
 import click
 
-from . import ersilia_cli
 from ...utils.installers import base_installer, full_installer
+from . import ersilia_cli
 
 
 def setup_cmd():
@@ -25,6 +25,7 @@ def setup_cmd():
         Set up the environment with base installation:
         $ ersilia setup --base
     """
+
     # Example usage: ersilia setup
     @ersilia_cli.command(
         short_help="Setup ersilia",

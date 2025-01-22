@@ -1,14 +1,14 @@
-import os
-import requests
 import json
+import os
 
-from ..register.register import ModelRegisterer
-from ....serve.services import HostedService
-from .... import ErsiliaBase
-from .... import EOS
+import requests
+
+from .... import EOS, ErsiliaBase
 from ....default import API_SCHEMA_FILE, INFORMATION_FILE, IS_FETCHED_FROM_HOSTED_FILE
-from .. import STATUS_FILE
+from ....serve.services import HostedService
 from ...fetch import ModelURLResolver
+from .. import STATUS_FILE
+from ..register.register import ModelRegisterer
 
 
 class ModelHostedFetcher(ErsiliaBase):

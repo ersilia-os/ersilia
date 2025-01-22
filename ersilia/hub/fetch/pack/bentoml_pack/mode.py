@@ -1,13 +1,13 @@
-import os
 import json
+import os
 
 from ..... import ErsiliaBase
-from ....bundle.repo import DockerfileFile
-from .....utils.versioning import Versioner
-from .....utils.system import SystemChecker
+from .....default import MODEL_CONFIG_FILENAME
 from .....setup.requirements.conda import CondaRequirement
 from .....setup.requirements.docker import DockerRequirement
-from .....default import MODEL_CONFIG_FILENAME
+from .....utils.system import SystemChecker
+from .....utils.versioning import Versioner
+from ....bundle.repo import DockerfileFile
 
 AVAILABLE_MODES = ["system", "venv", "conda", "docker"]
 
@@ -38,7 +38,12 @@ class PackModeDecision(ErsiliaBase):
         self.model_id = model_id
         self.versioner = Versioner(config_json=config_json)
 
-    def _correct_protobuf(self, version: dict, dockerfile: DockerfileFile, protobuf_version: str = "3.19.5") -> DockerfileFile:
+    def _correct_protobuf(
+        self,
+        version: dict,
+        dockerfile: DockerfileFile,
+        protobuf_version: str = "3.19.5",
+    ) -> DockerfileFile:
         if version["version"] == "0.11.0":
             self.logger.debug(
                 "Custom Ersilia BentoML is used, no need for modifying protobuf version"

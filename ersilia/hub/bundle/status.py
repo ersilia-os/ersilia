@@ -1,12 +1,12 @@
-import os
 import importlib
 import json
+import os
 
-from ...utils.docker import SimpleDocker
-from ...utils.conda import SimpleConda
-from ...db.environments.localdb import EnvironmentDb
 from ... import ErsiliaBase
-from ...default import IS_FETCHED_FROM_DOCKERHUB_FILE
+from ...db.environments.localdb import EnvironmentDb
+from ...default import DOCKER_INFO_FILE
+from ...utils.conda import SimpleConda
+from ...utils.docker import SimpleDocker
 
 
 class ModelStatus(ErsiliaBase):
@@ -89,7 +89,7 @@ class ModelStatus(ErsiliaBase):
             True if the Docker image has been pulled, False otherwise.
         """
         model_dir = os.path.join(self._model_path(model_id=model_id))
-        json_file = os.path.join(model_dir, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        json_file = os.path.join(model_dir, DOCKER_INFO_FILE)
         if not os.path.exists(json_file):
             return False
         with open(json_file, "r") as f:

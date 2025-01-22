@@ -1,13 +1,10 @@
 import click
-import csv
 
-from ...hub.content.catalog import ModelCatalog
-
-
-from . import ersilia_cli
-from .. import echo
-from ...hub.delete.delete import ModelFullDeleter
 from ... import ModelBase
+from ...hub.content.catalog import ModelCatalog
+from ...hub.delete.delete import ModelFullDeleter
+from .. import echo
+from . import ersilia_cli
 
 
 def delete_cmd():
@@ -31,6 +28,7 @@ def delete_cmd():
         Delete all models:
         $ ersilia delete --all
     """
+
     def _delete(md, model_id):
         md.delete(model_id)
 
@@ -46,9 +44,7 @@ def delete_cmd():
             )
         else:
             echo(
-                f":person_tipping_hand: {reason}".format(
-                    model_id
-                ),
+                f":person_tipping_hand: {reason}".format(model_id),
                 fg="yellow",
             )
 
@@ -57,6 +53,7 @@ def delete_cmd():
         model_catalog = ModelCatalog()
         catalog_table = model_catalog.local()
         local_models = catalog_table.data if catalog_table else None
+        idx = catalog_table.columns.index("Identifier")
         if not local_models:
             echo(
                 ":person_tipping_hand: No models are available locally for deletion.",
@@ -65,11 +62,17 @@ def delete_cmd():
             return
         deleted_count = 0
         for model_row in local_models:
-            model_id = model_row[0]
-            if _delete_model_by_id(model_id):
+            model_id = model_row[idx]
+            try:
+                _delete_model_by_id(model_id)
                 deleted_count += 1
+            except Exception as e:
+                echo(
+                    f":warning: Error deleting model {model_id}: {e}",
+                    fg="red",
+                )
         echo(
-            ":thumbs_up: Completed the deletion of all locally available models!",
+            f":thumbs_up: Completed the deletion of {deleted_count} locally available models!",
             fg="green",
         )
 

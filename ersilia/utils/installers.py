@@ -1,17 +1,17 @@
-import shutil
 import os
+import shutil
 import sys
-import tempfile
-from .conda import SimpleConda
+
+import click
+
+from .. import ErsiliaBase, check_install_status
+from ..default import CONFIG_JSON, EOS
 from ..setup.baseconda import SetupBaseConda
-from ..default import EOS, CONFIG_JSON
-from .. import ErsiliaBase
-from .. import check_install_status
+from .conda import SimpleConda
 from .config import Checker
+from .logging import make_temp_dir
 from .terminal import run_command
 from .versioning import Versioner
-import click
-from .logging import make_temp_dir
 
 INSTALL_LOG_FILE = ".install.log"
 
@@ -29,6 +29,7 @@ class BaseInstaller(ErsiliaBase):
     credentials_json : dict, optional
         Credentials settings in JSON format. Default is None.
     """
+
     def __init__(self, check_install_log, config_json, credentials_json):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -132,6 +133,7 @@ class Installer(BaseInstaller):
     credentials_json : dict, optional
         Credentials settings in JSON format. Default is None.
     """
+
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
         BaseInstaller.__init__(
             self,
@@ -180,9 +182,10 @@ class Installer(BaseInstaller):
         if self._is_done("rdkit"):
             return
         try:
-            import rdkit
+            import importlib.util
 
-            exists = True
+            if importlib.util.find_spec("rdkit") is not None:
+                exists = True
         except ModuleNotFoundError:
             exists = False
         if exists:
@@ -233,12 +236,16 @@ class Installer(BaseInstaller):
             bash_script = """
             source {0}/etc/profile.d/conda.sh
             conda deactivate
-            """.format(sc.conda_prefix(False))
+            """.format(
+                sc.conda_prefix(False)
+            )
         else:
             bash_script = ""
         bash_script += """
         source {0}/etc/profile.d/conda.sh
-        """.format(sc.conda_prefix(True))
+        """.format(
+            sc.conda_prefix(True)
+        )
         bc = SetupBaseConda()
         python_version = self.versions.python_version()
         python_version = bc.find_closest_python_version(python_version)
@@ -249,7 +256,9 @@ class Installer(BaseInstaller):
         pip install -e .
         python {3}
         conda deactivate
-        """.format(tmp_repo, eos_base_env, python_version, tmp_python_script)
+        """.format(
+            tmp_repo, eos_base_env, python_version, tmp_python_script
+        )
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         python_script = """
@@ -277,7 +286,6 @@ class Installer(BaseInstaller):
         """
         if self._is_done("server_docker"):
             return
-        import tempfile
         from .docker import SimpleDocker
 
         docker = SimpleDocker()
@@ -343,6 +351,7 @@ class Uninstaller(BaseInstaller):
     credentials_json : dict, optional
         Credentials settings in JSON format. Default is None.
     """
+
     def __init__(self, check_install_log=True, config_json=None, credentials_json=None):
         BaseInstaller.__init__(
             self,

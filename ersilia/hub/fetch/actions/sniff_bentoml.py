@@ -1,27 +1,24 @@
-import os
+import collections
 import csv
 import json
-import collections
+import os
 from pathlib import Path
 
-from .... import throw_ersilia_exception
-
-from . import BaseAction
-from .... import ErsiliaBase
-from .... import ErsiliaModel
-from ....io.input import ExampleGenerator
-from ....io.pure import PureDataTyper
-from ....io.annotated import AnnotatedDataTyper
+from .... import ErsiliaBase, ErsiliaModel, throw_ersilia_exception
 from ....default import (
     API_SCHEMA_FILE,
     MODEL_SIZE_FILE,
     PREDEFINED_EXAMPLE_FILES,
 )
+from ....io.annotated import AnnotatedDataTyper
+from ....io.input import ExampleGenerator
+from ....io.pure import PureDataTyper
 from ....utils.exceptions_utils.exceptions import EmptyOutputError
 from ....utils.exceptions_utils.fetch_exceptions import (
     OutputDataTypesNotConsistentError,
 )
 from ....utils.paths import get_metadata_from_base_dir
+from . import BaseAction
 
 
 class BuiltinExampleReader(ErsiliaBase):
@@ -113,7 +110,9 @@ class ModelSniffer(BaseAction):
     """
 
     def __init__(self, model_id: str, config_json: dict):
-        super().__init__(model_id=model_id, config_json=config_json, credentials_json=None)
+        super().__init__(
+            model_id=model_id, config_json=config_json, credentials_json=None
+        )
         self.logger.debug("Initializing model for inferring its structure")
         self.model = ErsiliaModel(
             model_id, config_json=config_json, fetch_if_not_available=False

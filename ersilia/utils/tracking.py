@@ -1,8 +1,8 @@
 import json
 import os
-from .session import get_session_dir, get_session_uuid
-from .exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 
+from .exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from .session import get_session_dir, get_session_uuid
 
 TRACKING_STUB = {
     "model_id": "",  # ID of the model

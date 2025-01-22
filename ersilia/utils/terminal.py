@@ -1,21 +1,21 @@
-import os
-import subprocess
-import json
-import tempfile
-import shutil
 import csv
-from .logging import logger
 import io
+import json
+import os
+import shutil
+import subprocess
+
+from .logging import logger
 
 try:
-    from inputimeout import inputimeout, TimeoutOccurred
+    from inputimeout import TimeoutOccurred, inputimeout
 except:
     inputimeout = None
     TimeoutOccurred = None
 
 from ..default import VERBOSE_FILE
-from ..utils.session import get_session_dir
 from ..utils.logging import make_temp_dir
+from ..utils.session import get_session_dir
 
 
 def is_quiet():
@@ -175,7 +175,7 @@ def print_result_table(data):
         with open(data, mode="r") as file:
             reader = csv.DictReader(file)
             data = [dict(row) for row in reader]
-    if isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
+    elif isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
         headers = list(data[0].keys())
         column_widths = {
             header: max(len(header), max(len(str(row[header])) for row in data)) + 5

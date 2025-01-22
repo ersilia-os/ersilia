@@ -1,22 +1,19 @@
-import requests
-import subprocess
-import tempfile
-import json
+import asyncio
 import os
 import re
-import asyncio
-import aiofiles
-from ... import ErsiliaBase
-from ...utils.terminal import yes_no_input, run_command
-from ... import throw_ersilia_exception
-from ...utils.exceptions_utils.pull_exceptions import (
-    DockerImageNotAvailableError,
-    DockerConventionalPullError,
-)
+import subprocess
 
+import requests
+
+from ... import ErsiliaBase, throw_ersilia_exception
+from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...utils.docker import SimpleDocker
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG, EOS, MODEL_SIZE_FILE
+from ...utils.exceptions_utils.pull_exceptions import (
+    DockerConventionalPullError,
+    DockerImageNotAvailableError,
+)
 from ...utils.logging import make_temp_dir
+from ...utils.terminal import run_command, yes_no_input
 
 PULL_IMAGE = os.environ.get("PULL_IMAGE", "Y")
 
@@ -38,15 +35,25 @@ class ModelPuller(ErsiliaBase):
     --------
     .. code-block:: python
 
-        puller = ModelPuller(model_id="eosxxxx", config_json=config)
+        puller = ModelPuller(
+            model_id="eosxxxx", config_json=config
+        )
         await puller.async_pull()
     """
-    def __init__(self, model_id: str, overwrite: bool = None, config_json: dict = None):
+
+    def __init__(
+        self,
+        model_id: str,
+        overwrite: bool = None,
+        config_json: dict = None,
+        docker_tag: str = None,
+    ):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.model_id = model_id
+        self.docker_tag = docker_tag or DOCKERHUB_LATEST_TAG
         self.image_name = "{0}/{1}:{2}".format(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         self.overwrite = overwrite
 
@@ -60,7 +67,7 @@ class ModelPuller(ErsiliaBase):
             True if the image is available locally, False otherwise.
         """
         is_available = self.simple_docker.exists(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         if is_available:
             self.logger.debug("Image {0} is available locally".format(self.image_name))
@@ -81,7 +88,7 @@ class ModelPuller(ErsiliaBase):
             True if the image is available in DockerHub, False otherwise.
         """
         url = "https://hub.docker.com/v2/repositories/{0}/{1}/tags/{2}".format(
-            DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+            DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         response = requests.get(url)
         if response.status_code == 200:
@@ -102,13 +109,13 @@ class ModelPuller(ErsiliaBase):
             "Deleting locally available image {0}".format(self.image_name)
         )
         self.simple_docker.delete(
-            org=DOCKERHUB_ORG, img=self.model_id, tag=DOCKERHUB_LATEST_TAG
+            org=DOCKERHUB_ORG, img=self.model_id, tag=self.docker_tag
         )
 
     def _get_size_of_local_docker_image_in_mb(self) -> float:
         try:
             image_name = "{0}/{1}:{2}".format(
-                DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+                DOCKERHUB_ORG, self.model_id, self.docker_tag
             )
             result = subprocess.check_output(
                 ["docker", "image", "inspect", image_name, "--format", "{{.Size}}"]
@@ -152,7 +159,9 @@ class ModelPuller(ErsiliaBase):
                     "Trying to pull image {0}/{1}".format(DOCKERHUB_ORG, self.model_id)
                 )
 
-                pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{DOCKERHUB_LATEST_TAG}"
+                pull_command = (
+                    f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{self.docker_tag}"
+                )
 
                 process = await asyncio.create_subprocess_shell(
                     pull_command,
@@ -185,7 +194,7 @@ class ModelPuller(ErsiliaBase):
                 self.logger.warning(
                     "Conventional pull did not work, Ersilia is now forcing linux/amd64 architecture"
                 )
-                force_pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{DOCKERHUB_LATEST_TAG} --platform linux/amd64"
+                force_pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{self.docker_tag} --platform linux/amd64"
 
                 process = await asyncio.create_subprocess_shell(
                     force_pull_command,
@@ -257,7 +266,7 @@ class ModelPuller(ErsiliaBase):
                 self.logger.debug("Keeping logs of pull in {0}".format(tmp_file))
                 run_command(
                     "docker pull {0}/{1}:{2} > {3} 2>&1".format(
-                        DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG, tmp_file
+                        DOCKERHUB_ORG, self.model_id, self.docker_tag, tmp_file
                     )
                 )
                 with open(tmp_file, "r") as f:
@@ -275,7 +284,7 @@ class ModelPuller(ErsiliaBase):
                 )
                 run_command(
                     "docker pull {0}/{1}:{2} --platform linux/amd64".format(
-                        DOCKERHUB_ORG, self.model_id, DOCKERHUB_LATEST_TAG
+                        DOCKERHUB_ORG, self.model_id, self.docker_tag
                     )
                 )
             size = self._get_size_of_local_docker_image_in_mb()

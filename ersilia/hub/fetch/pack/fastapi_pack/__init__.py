@@ -1,8 +1,8 @@
 import os
 import shutil
 
-from .....default import H5_DATA_FILE, ISAURA_FILE_TAG, H5_EXTENSION
 from ..... import ErsiliaBase
+from .....default import H5_DATA_FILE, H5_EXTENSION, ISAURA_FILE_TAG
 
 
 class _Symlinker(ErsiliaBase):
@@ -44,5 +44,16 @@ class _Symlinker(ErsiliaBase):
 
 
 class BasePack(_Symlinker):
+    """
+    Base class for handling FastAPI model packs.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model.
+    config_json : dict, optional
+        Configuration settings for the pack.
+    """
+
     def __init__(self, model_id, config_json=None):
         _Symlinker.__init__(self, model_id, config_json)

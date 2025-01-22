@@ -1,11 +1,12 @@
-import click
 import json
 
-from . import ersilia_cli
-from .. import echo
-from ...io.input import ExampleGenerator
-from ...core.session import Session
+import click
+
 from ... import ModelBase
+from ...core.session import Session
+from ...io.input import ExampleGenerator
+from .. import echo
+from . import ersilia_cli
 
 
 def example_cmd():
@@ -20,8 +21,8 @@ def example_cmd():
     @click.option("--n_samples", "-n", default=5, type=click.INT)
     @click.option("--file_name", "-f", default=None, type=click.STRING)
     @click.option("--simple/--complete", "-s/-c", default=True)
-    @click.option("--predefined/--random", "-p/-r", default=True)
-    def example(model, n_samples, file_name, simple, predefined):
+    @click.option("--random/--predefined", "-r/-p", default=True)
+    def example(model, n_samples, file_name, simple, random):
         if model is not None:
             model_id = ModelBase(model).model_id
         else:
@@ -29,16 +30,17 @@ def example_cmd():
             model_id = session.current_model_id()
         if not model_id:
             echo(
-                "No model found. Please specify a model or serve a model in the current shell.", fg="red"
+                "No model found. Please specify a model or serve a model in the current shell.",
+                fg="red",
             )
             return
         eg = ExampleGenerator(model_id=model_id)
         if file_name is None:
             echo(
                 json.dumps(
-                    eg.example(n_samples, file_name, simple, try_predefined=predefined),
+                    eg.example(n_samples, file_name, simple, try_predefined=not random),
                     indent=4,
                 )
             )
         else:
-            eg.example(n_samples, file_name, simple, try_predefined=predefined)
+            eg.example(n_samples, file_name, simple, try_predefined=not random)

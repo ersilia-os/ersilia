@@ -1,7 +1,7 @@
 # imports
-import os
 import csv
 import json
+import os
 import sys
 
 # parse arguments

@@ -1,22 +1,20 @@
 import os
-import tempfile
 import re
 import shutil
+import sys
 
 from ...core.base import ErsiliaBase
+from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...setup.requirements.docker import DockerRequirement
-from ...utils.paths import Paths
-from ...utils.terminal import run_command
-from ...utils.docker import SimpleDocker, resolve_platform
-from ...utils.system import is_inside_docker
+from ...utils.docker import SimpleDocker, model_image_version_reader, resolve_platform
 from ...utils.identifiers.short import ShortIdentifier
-from ...utils.ports import find_free_port
-from .localdb import EnvironmentDb
-from ...default import DOCKERHUB_ORG, DOCKERHUB_LATEST_TAG
-from ...utils.session import get_session_dir
 from ...utils.logging import make_temp_dir
-
-import sys
+from ...utils.paths import Paths
+from ...utils.ports import find_free_port
+from ...utils.session import get_session_dir
+from ...utils.system import is_inside_docker
+from ...utils.terminal import run_command
+from .localdb import EnvironmentDb
 
 BENTOML_DOCKERPORT = 5000
 INTERNAL_DOCKERPORT = 80
@@ -27,7 +25,7 @@ class DockerManager(ErsiliaBase):
     Manages Docker operations for Ersilia models.
 
     It provides methods to build, run, and manage Docker images and containers
-    associated with Ersilia models. 
+    associated with Ersilia models.
 
     Parameters
     ----------
@@ -40,9 +38,15 @@ class DockerManager(ErsiliaBase):
 
     Examples
     --------
-    >>> docker_manager = DockerManager(config_json=config, preferred_port=8080)
-    >>> docker_manager.build(model_id='eosxxxx', docker_user='user', docker_pwd='pass')
-    >>> docker_manager.run(model_id='eosxxxx', workers=2)
+    >>> docker_manager = DockerManager(
+    ...     config_json=config, preferred_port=8080
+    ... )
+    >>> docker_manager.build(
+    ...     model_id="eosxxxx",
+    ...     docker_user="user",
+    ...     docker_pwd="pass",
+    ... )
+    >>> docker_manager.run(model_id="eosxxxx", workers=2)
     """
 
     def __init__(self, config_json=None, preferred_port=None, with_bentoml=False):
@@ -231,7 +235,7 @@ class DockerManager(ErsiliaBase):
                 cnt_dict[k] = v
         return cnt_dict
 
-    def build_with_bentoml(self, model_id, use_cache=True):
+    def build_with_bentoml(self, model_id, use_cache=True):  # Ignore for versioning
         """
         Builds a Docker image for the model using BentoML.
 
@@ -291,7 +295,9 @@ class DockerManager(ErsiliaBase):
         )
         run_command(cmd)
 
-    def build_with_ersilia(self, model_id, docker_user, docker_pwd):
+    def build_with_ersilia(
+        self, model_id, docker_user, docker_pwd
+    ):  # Ignore for versioning
         """
         Builds a Docker image for the model using Ersilia's base image.
 
@@ -379,10 +385,12 @@ class DockerManager(ErsiliaBase):
         model_id : str
             Identifier of the model.
         """
-        self.docker.delete(org=DOCKERHUB_ORG, img=model_id, tag=DOCKERHUB_LATEST_TAG)
+        bundle_path = self._get_bundle_location(model_id)
+        docker_tag = model_image_version_reader(bundle_path)
+        self.docker.delete(org=DOCKERHUB_ORG, img=model_id, tag=docker_tag)
         self.db.delete(
             model_id=model_id,
-            env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG),
+            env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, docker_tag),
         )
 
     def run(self, model_id, workers=1, enable_microbatch=True, memory=None):
@@ -486,6 +494,9 @@ class DockerManager(ErsiliaBase):
             self._delete_container(k)
 
     def delete_image(self, model_id):
+        """
+        Deletes a Docker image associated with a model.
+        """
         self.remove(model_id)
 
     def remove_stopped_containers(self):
@@ -590,7 +601,7 @@ class DockerManager(ErsiliaBase):
         cmd = "docker system prune -f"
         run_command(cmd)
 
-    def delete_image(self, img):
+    def delete_image(self, img):  # noqa: D102, F811
         fn = os.path.join(get_session_dir(), "rm_image_output.txt")
         cmd = "docker image rm {0} --force 2> {1}".format(img, fn)
         run_command(cmd)
@@ -652,10 +663,9 @@ class DockerManager(ErsiliaBase):
             self.delete_image(img)
 
 
-class CondaManager(object):
-
+class CondaManager(object):  # noqa: D101
     def __init__(self):
         pass
 
-    def environments(self):
+    def environments(self):  # noqa: D102
         pass

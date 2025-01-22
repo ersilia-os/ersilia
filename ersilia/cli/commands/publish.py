@@ -1,10 +1,10 @@
 import click
 
-from . import ersilia_cli
-from .. import echo
-from ...publish.publish import ModelPublisher
-from ...publish.lake import LakeStorer
 from ... import ModelBase
+from ...publish.lake import LakeStorer
+from ...publish.publish import ModelPublisher
+from .. import echo
+from . import ersilia_cli
 
 
 def publish_cmd():
@@ -28,6 +28,7 @@ def publish_cmd():
         Rebase a model:
         $ ersilia publish rebase <model_id>
     """
+
     def _publish(mf, model_id):
         mf.publish(model_id)
 

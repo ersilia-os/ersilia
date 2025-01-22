@@ -1,13 +1,13 @@
-import boto3
 import os
 import shutil
-import tempfile
 import zipfile
 
-from ..utils.terminal import run_command
-from ..utils.logging import make_temp_dir
+import boto3
+
 from .. import ErsiliaBase
 from ..default import ERSILIA_MODELS_S3_BUCKET, ERSILIA_MODELS_ZIP_S3_BUCKET
+from ..utils.logging import make_temp_dir
+from ..utils.terminal import run_command
 
 AWS_ACCOUNT_REGION = "eu-central-1"
 
@@ -27,10 +27,17 @@ class S3BucketRepoUploader(ErsiliaBase):
     --------
     .. code-block:: python
 
-        uploader = S3BucketRepoUploader(model_id="model_id", config_json="path/to/config.json")
-        uploader.set_credentials(aws_access_key_id="access_key", aws_secret_access_key="secret_key")
+        uploader = S3BucketRepoUploader(
+            model_id="model_id",
+            config_json="path/to/config.json",
+        )
+        uploader.set_credentials(
+            aws_access_key_id="access_key",
+            aws_secret_access_key="secret_key",
+        )
         uploader.upload()
     """
+
     def __init__(self, model_id: str, config_json=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
@@ -40,7 +47,7 @@ class S3BucketRepoUploader(ErsiliaBase):
         self.aws_access_key_id = None
         self.aws_secret_access_key = None
         self.ignore = ["upload_model_to_s3.py"]
-    
+
     def _clone(self):
         self.logger.debug("Cloning model {0} from ersilia-os".format(self.model_id))
         run_command(
@@ -105,7 +112,7 @@ class S3BucketRepoUploader(ErsiliaBase):
                         os.path.join(root, file), os.path.join(repo_path, "..")
                     ),
                 )
-                
+
     def _zip_model(self, repo_path):
         repo_path = os.path.abspath(repo_path)
         self.zip_model_file = os.path.join(self.tmp_zip_folder, self.model_id + ".zip")

@@ -1,27 +1,25 @@
 """See available models in the Ersilia Model Hub"""
 
-import subprocess
-import requests
-import shutil
-import os
-import json
 import csv
-from .card import ModelCard
+import json
+import os
+import shutil
+import subprocess
+
 from ... import ErsiliaBase
-from ...utils.identifiers.model import ModelIdentifier
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...default import BENTOML_PATH, MODEL_SOURCE_FILE
-from ...default import TableConstants
-from ... import logger
+from ...default import BENTOML_PATH, MODEL_SOURCE_FILE, TableConstants
+from ...utils.identifiers.model import ModelIdentifier
+from .card import ModelCard
 
 try:
     import webbrowser
-except ModuleNotFoundError as err:
+except ModuleNotFoundError:
     webbrowser = None
 
 try:
     from github import Github
-except ModuleNotFoundError as err:
+except ModuleNotFoundError:
     Github = None
 
 
@@ -40,6 +38,7 @@ class CatalogTable(object):
     columns : list
         The columns of the catalog table.
     """
+
     def __init__(self, data, columns):
         self.data = data
         self.columns = columns
@@ -192,12 +191,10 @@ class CatalogTable(object):
             The name of the file to write the catalog table to.
         """
         with open(file_name, "w") as f:
-            if file_name.endswith(".csv"):
-                delimiter = ","
-            elif file_name.endswith(".tsv"):
+            if file_name.endswith(".tsv"):
                 delimiter = "\t"
             else:
-                return None
+                delimiter = ","  # Default to CSV always
             writer = csv.writer(f, delimiter=delimiter)
             writer.writerow(self.columns)
             for r in self.data:
@@ -211,6 +208,20 @@ class CatalogTable(object):
 
 
 class ModelCatalog(ErsiliaBase):
+    """
+    Class to handle the model catalog.
+
+    This class provides methods to manage the model catalog, including adding, updating,
+    and retrieving models.
+
+    Attributes
+    ----------
+    LESS_FIELDS : list
+        List of fields with less information.
+    MORE_FIELDS : list
+        List of fields with more information.
+    """
+
     LESS_FIELDS = ["Identifier", "Slug"]
     MORE_FIELDS = LESS_FIELDS + [
         "Title",
@@ -282,14 +293,16 @@ class ModelCatalog(ErsiliaBase):
             webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")  # TODO Hardcoded
 
     def _get_catalog(self, columns: list, model_cards: list):
-        """Get the catalog of models"""
         R = []
         columns = ["Index"] + columns
 
         idx = 0
         for card in model_cards:
             status = self._get_status(card)
+            slug = self._get_slug(card)
             if status == "In Progress":
+                continue
+            if "test" in slug:
                 continue
             idx += 1
             r = [idx]
@@ -303,7 +316,7 @@ class ModelCatalog(ErsiliaBase):
             R += [r]
         R = sorted(R, key=lambda x: x[0])
         return CatalogTable(data=R, columns=columns)
-        
+
     def hub(self):
         """List models available in Ersilia model hub from the S3 JSON"""
         ji = JsonModelsInterface()
@@ -322,7 +335,7 @@ class ModelCatalog(ErsiliaBase):
             The catalog table containing the models available locally.
         """
         mc = ModelCard()
-        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS+["Model Source"]
+        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS + ["Model Source"]
         cards = []
         for model_id in os.listdir(self._bundles_dir):
             if not self._is_eos(model_id):
@@ -333,7 +346,6 @@ class ModelCatalog(ErsiliaBase):
             cards += [card]
         table = self._get_catalog(columns, cards)
         return table
-
 
     def bentoml(self) -> CatalogTable:
         """
@@ -348,7 +360,7 @@ class ModelCatalog(ErsiliaBase):
             result = subprocess.run(
                 ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ, timeout=10
             )
-        except Exception as e:
+        except Exception:
             shutil.rmtree(BENTOML_PATH)
             return None
         result = [r for r in result.stdout.decode("utf-8").split("\n") if r]

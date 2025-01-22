@@ -1,42 +1,50 @@
-import os
+import asyncio
+import collections
 import csv
 import json
+import os
+import sys
 import time
 import types
-import asyncio
-import importlib
-import collections
-import __main__ as main
+
+from click import secho as echo  # Style-aware echo
 
 from .. import logger
-from ..serve.api import Api
-from .session import Session
-from .base import ErsiliaBase
-from ..lake.base import LakeBase
-from ..utils import tmp_pid_file
-from .modelbase import ModelBase
-from ..serve.schema import ApiSchema
-from ..utils.hdf5 import Hdf5DataLoader
-from ..utils.csvfile import CsvDataLoader
-from ..utils.terminal import yes_no_input
-from ..utils.docker import ContainerMetricsSampler
-from ..serve.autoservice import AutoService
+from ..default import (
+    APIS_LIST_FILE,
+    CARD_FILE,
+    DEFAULT_BATCH_SIZE,
+    EOS,
+    FETCHED_MODELS_FILENAME,
+    INFORMATION_FILE,
+    MODEL_SIZE_FILE,
+)
+from ..hub.fetch.fetch import ModelFetcher
+from ..io.input import BaseIOGetter, ExampleGenerator
 from ..io.output import TabularOutputStacker
-from ..serve.standard_api import StandardCSVRunApi
-from ..io.input import ExampleGenerator, BaseIOGetter
-from .tracking import RunTracker
 from ..io.readers.file import FileTyper, TabularFileReader
-from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
-
-from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
-from ..default import FETCHED_MODELS_FILENAME, MODEL_SIZE_FILE, CARD_FILE, EOS
-from ..default import DEFAULT_BATCH_SIZE, APIS_LIST_FILE, INFORMATION_FILE
-from ..utils.logging import make_temp_dir
+from ..lake.base import LakeBase
+from ..serve.api import Api
+from ..serve.autoservice import AutoService, PulledDockerImageService
+from ..serve.schema import ApiSchema
+from ..serve.standard_api import StandardCSVRunApi
 from ..setup.requirements.compound import (
     ChemblWebResourceClientRequirement,
     RdkitRequirement,
 )
+from ..store.api import InferenceStoreApi
+from ..store.utils import OutputSource
+from ..utils import tmp_pid_file
+from ..utils.csvfile import CsvDataLoader
+from ..utils.docker import ContainerMetricsSampler
+from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
+from ..utils.hdf5 import Hdf5DataLoader
+from ..utils.logging import make_temp_dir
+from ..utils.terminal import yes_no_input
+from .base import ErsiliaBase
+from .modelbase import ModelBase
+from .session import Session
+from .tracking import RunTracker
 
 try:
     import pandas as pd
@@ -76,30 +84,38 @@ class ErsiliaModel(ErsiliaBase):
 
     Examples
     --------
-    Fetching a model:
+    Fetching a model this requires to use asyncio since `fetch` is a coroutine.:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         model.fetch()
 
     Serving a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         model.serve()
 
     Running a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
-        result = model.run(input="input_data.csv", output="output_data.csv")
+        result = model.run(
+            input="input_data.csv",
+            output="output_data.csv",
+        )
 
     Closing a model:
+
     .. code-block:: python
 
         model = ErsiliaModel(model="model_id")
         model.close()
     """
+
     def __init__(
         self,
         model: str,
@@ -123,7 +139,7 @@ class ErsiliaModel(ErsiliaBase):
             else:
                 self.logger.set_verbosity(0)
         else:
-            if not hasattr(main, "__file__"):
+            if hasattr(sys, "ps1"):
                 self.logger.set_verbosity(0)
         self.save_to_lake = save_to_lake
         if self.save_to_lake:
@@ -145,10 +161,12 @@ class ErsiliaModel(ErsiliaBase):
         self.url = None
         self.pid = None
         self.service_class = service_class
-        self.track_runs = track_runs
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
-        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+
+        assert (
+            self._is_valid
+        ), "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
             model
         )
         self.config_json = config_json
@@ -170,13 +188,11 @@ class ErsiliaModel(ErsiliaBase):
                 self.logger.debug("Unable to capture user input. Fetching anyway.")
                 do_fetch = True
             if do_fetch:
-                fetch = importlib.import_module("ersilia.hub.fetch.fetch")
-                mf = fetch.ModelFetcher(
+                mf = ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
                 asyncio.run(mf.fetch(self.model_id))
-            else:
-                return
+
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
         )
@@ -189,44 +205,32 @@ class ErsiliaModel(ErsiliaBase):
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
-
+        self._run_tracker = None
+        self.ct_tracker = None
+        self.track = False
         if track_runs:
-            self._run_tracker = RunTracker(
-                model_id=self.model_id, config_json=self.config_json
-            )
-            self.ct_tracker = ContainerMetricsSampler(model_id=self.model_id)
-        else:
-            self._run_tracker = None
-            self.ct_tracker = None
+            if not isinstance(self.autoservice.service, PulledDockerImageService):
+                echo(
+                    "Tracking runs is currently only supported for Dockerized models.\n",
+                    fg="yellow",
+                )
+            else:
+                self.track = True
+                self._run_tracker = RunTracker(
+                    model_id=self.model_id, config_json=self.config_json
+                )
+                self.ct_tracker = ContainerMetricsSampler(model_id=self.model_id)
 
         self.logger.info("Done with initialization!")
 
     def fetch(self):
         """
-        Fetch the model if not available locally.
-
-        This method fetches the model from the Ersilia Model Hub if it is not available locally.
+        This method fetches the model from the Ersilia Model Hub.
         """
-        if not self._is_available_locally and self.fetch_if_not_available:
-            self.logger.info("Model is not available locally")
-            try:
-                do_fetch = yes_no_input(
-                    "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
-                        self.model_id
-                    ),
-                    default_answer="Y",
-                )
-            except:
-                self.logger.debug("Unable to capture user input. Fetching anyway.")
-                do_fetch = True
-            if do_fetch:
-                fetch = importlib.import_module("ersilia.hub.fetch.fetch")
-                mf = fetch.ModelFetcher(
-                    config_json=self.config_json, credentials_json=self.credentials_json
-                )
-                asyncio.run(mf.fetch(self.model_id))
-            else:
-                return
+        mf = ModelFetcher(
+            config_json=self.config_json, credentials_json=self.credentials_json
+        )
+        asyncio.run(mf.fetch(self.model_id))
 
     def __enter__(self):
         """
@@ -320,7 +324,7 @@ class ErsiliaModel(ErsiliaBase):
 
     def _get_api_instance(self, api_name):
         url = self._get_url()
-        if (api_name is None):
+        if api_name is None:
             api_names = self.autoservice.get_apis()
             assert (
                 len(api_names) == 1
@@ -677,7 +681,7 @@ class ErsiliaModel(ErsiliaBase):
         self.logger.debug("Checking rdkit and other requirements")
         self.setup()
         self.close()
-        self.session.open(model_id=self.model_id, track_runs=self.track_runs)
+        self.session.open(model_id=self.model_id, track_runs=self.track)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
@@ -772,9 +776,6 @@ class ErsiliaModel(ErsiliaBase):
         Any
             The result of the model run(such as output csv file name, json).
         """
-        # TODO this should be smart enough to init the container sampler
-        # or a python process sampler based on how the model was fetched
-        # Presently we only deal with containers
 
         # Init the container metrics sampler
         if self.ct_tracker and track_run:
@@ -793,17 +794,14 @@ class ErsiliaModel(ErsiliaBase):
             result = None
             standard_status_ok = False
             self.logger.debug("We will try conventional run.")
-        if standard_status_ok:  # TODO This should be an else block
-            return result
-        else:
+
+        if not standard_status_ok:
             self.logger.debug("Trying conventional run")
-            self.logger.debug("Input: {0}".format(input))
-            self.logger.debug("Output: {0}".format(output))
-            self.logger.debug("Batch size: {0}".format(batch_size))
             result = self._run(
                 input=input, output=output, batch_size=batch_size, track_run=track_run
             )
-        # Start tracking model run if track flag is used in serve
+
+        # Collect metrics sampled during run if tracking is enabled
         if self._run_tracker and track_run:
             self.ct_tracker.stop_tracking()
             container_metrics = self.ct_tracker.get_average_metrics()

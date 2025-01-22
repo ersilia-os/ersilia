@@ -1,11 +1,10 @@
 import random
-
 from typing import List
 
 from bentoml import BentoService, api, artifacts
-from bentoml.types import JsonSerializable
 from bentoml.adapters import JsonInput
 from bentoml.service.artifacts.common import JSONArtifact
+from bentoml.types import JsonSerializable
 
 
 @artifacts([JSONArtifact("model")])

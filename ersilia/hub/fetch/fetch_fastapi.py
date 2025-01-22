@@ -1,25 +1,22 @@
 """Fetch model from the Ersilia Model Hub using FastAPI."""
 
-import os
 import json
-
-from timeit import default_timer as timer
+import os
 from datetime import timedelta
-
-from .actions.template_resolver import TemplateResolver
-from .actions.setup import SetupChecker
-from .actions.prepare import ModelPreparer
-from .actions.get import ModelGetter
-from .actions.pack_fastapi import ModelPacker
-from .actions.content import CardGetter
-from .actions.check import ModelChecker
-from .actions.sniff_fastapi import ModelSniffer
-from .actions.inform import ModelInformer
-from .register.register import ModelRegisterer
+from timeit import default_timer as timer
 
 from ... import ErsiliaBase
-
-from . import STATUS_FILE, DONE_TAG
+from . import DONE_TAG, STATUS_FILE
+from .actions.check import ModelChecker
+from .actions.content import CardGetter
+from .actions.get import ModelGetter
+from .actions.inform import ModelInformer
+from .actions.pack_fastapi import ModelPacker
+from .actions.prepare import ModelPreparer
+from .actions.setup import SetupChecker
+from .actions.sniff_fastapi import ModelSniffer
+from .actions.template_resolver import TemplateResolver
+from .register.register import ModelRegisterer
 
 
 class ModelFetcherFromFastAPI(ErsiliaBase):
@@ -47,9 +44,12 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
     --------
     .. code-block:: python
 
-        fetcher = ModelFetcherFromFastAPI(config_json=config)
+        fetcher = ModelFetcherFromFastAPI(
+            config_json=config
+        )
         fetcher.fetch(model_id="eosxxxx")
     """
+
     def __init__(
         self,
         config_json: dict = None,
@@ -176,7 +176,9 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         --------
         .. code-block:: python
 
-            fetcher = ModelFetcherFromFastAPI(config_json=config)
+            fetcher = ModelFetcherFromFastAPI(
+                config_json=config
+            )
             fetcher.fetch(model_id="eosxxxx")
         """
         self.logger.debug("Fetching from FastAPI...")

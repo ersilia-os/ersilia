@@ -1,32 +1,34 @@
+import json
 import os
-import docker
 import subprocess
 import threading
 import time
-import json
-from dockerfile_parse import DockerfileParser
 
-from .identifiers.long import LongIdentifier
-from .terminal import run_command, run_command_check_output
+import docker
+from dockerfile_parse import DockerfileParser
 
 from .. import logger
 from ..default import (
     DEFAULT_DOCKER_PLATFORM,
     DEFAULT_UDOCKER_USERNAME,
-    DOCKERHUB_ORG,
+    DOCKER_INFO_FILE,
     DOCKERHUB_LATEST_TAG,
+    DOCKERHUB_ORG,
+    EOS,
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
 )
-from ..utils.system import SystemChecker
 from ..utils.logging import make_temp_dir
+from ..utils.system import SystemChecker
+from .identifiers.long import LongIdentifier
+from .terminal import run_command, run_command_check_output
 
 
 def resolve_pack_method_docker(model_id):
     client = docker.from_env()
-    model_image = client.images.get(
-        f"{DOCKERHUB_ORG}/{model_id}:{DOCKERHUB_LATEST_TAG}"
-    )
+    bundle_path = f"{EOS}/dest/{model_id}"
+    docker_tag = model_image_version_reader(bundle_path)
+    model_image = client.images.get(f"{DOCKERHUB_ORG}/{model_id}:{docker_tag}")
     image_history = model_image.history()
     for hist in image_history:
         # Very hacky, but works bec we don't have nginx in ersilia-pack images
@@ -63,6 +65,18 @@ def is_udocker_installed():
         return False
 
 
+def model_image_version_reader(dir):
+    """
+    Read the requested model image version from a file.
+    """
+    if os.path.exists(os.path.join(dir, DOCKER_INFO_FILE)):
+        with open(os.path.join(dir, DOCKER_INFO_FILE), "r") as f:
+            data = json.load(f)
+        if "tag" in data:
+            return data["tag"]
+    return DOCKERHUB_LATEST_TAG
+
+
 class SimpleDocker(object):
     """
     A class to manage Docker containers and images.
@@ -72,6 +86,7 @@ class SimpleDocker(object):
     use_udocker : bool, optional
         Whether to use udocker instead of Docker. Default is None.
     """
+
     def __init__(self, use_udocker=None):
         self.identifier = LongIdentifier()
         self.logger = logger
@@ -173,16 +188,16 @@ class SimpleDocker(object):
         cnt_dict = {}
         with open(tmp_file, "r") as f:
             h = next(f)
-            cnt_idx = h.find("CONTAINER ID")
+            # cnt_idx = h.find("CONTAINER ID")
             img_idx = h.find("IMAGE")
             cmd_idx = h.find("COMMAND")
-            sts_idx = h.find("STATUS")
-            pts_idx = h.find("PORTS")
+            # sts_idx = h.find("STATUS")
+            # pts_idx = h.find("PORTS")
             nam_idx = h.find("NAMES")
             for l in f:
-                cnt = l[cnt_idx:img_idx].strip()
+                # cnt = l[cnt_idx:img_idx].strip()
                 img = l[img_idx:cmd_idx].strip()
-                sts = l[sts_idx:pts_idx].strip()
+                # sts = l[sts_idx:pts_idx].strip()
                 nam = l[nam_idx:].strip()
                 cnt_dict[nam] = img
         return cnt_dict
@@ -313,9 +328,7 @@ class SimpleDocker(object):
             run_command(cmd)
         else:
             # TODO
-            cmd = "sudo -u {0} udocker run {2} bash".format(
-                DEFAULT_UDOCKER_USERNAME, self._image_name(org, img, tag)
-            )
+            cmd = "sudo -u {0} udocker run {2} bash".format(DEFAULT_UDOCKER_USERNAME)  # noqa: F524
             run_command(cmd)
         return name
 
@@ -545,6 +558,7 @@ class SimpleDockerfileParser(DockerfileParser):
     path : str
         The path to the Dockerfile or the directory containing the Dockerfile.
     """
+
     def __init__(self, path):
         if os.path.isdir(path):
             path = os.path.join(path, "Dockerfile")
@@ -591,6 +605,7 @@ class ContainerMetricsSampler:
     sampling_interval : float, optional
         The interval between samples in seconds. Default is 0.01.
     """
+
     def __init__(self, model_id, sampling_interval=0.01):
         self.client = docker.from_env()
         self.logger = logger

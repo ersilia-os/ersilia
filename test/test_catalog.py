@@ -1,6 +1,8 @@
 import json
 import os
+
 import pytest
+
 from ersilia.hub.content.catalog import CatalogTable
 
 

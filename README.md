@@ -20,87 +20,137 @@
 
 ## Project Description
 
-The [Ersilia Model Hub](https://ersilia.io) is a unified platform of pre-trained AI/ML models dedicated to 🦠 infectious and neglected disease research. Our mission is to offer an open-source, 🛠 low-code solution that provides seamless access to AI/ML models for 💊 drug discovery. Models housed in our hub come from two sources:
+The [Ersilia Model Hub](https://ersilia.io) is a unified platform of pre-trained AI/ML models for 🦠 infectious and neglected disease research. Our mission is to offer an open-source, 🛠 low-code solution that provides seamless access to AI/ML models for 💊 drug discovery. Models housed in our hub come from two sources:
 
-1. 📚 Published models from literature (with due third-party acknowledgement)
-2. 🛠 Custom models developed by the **Ersilia team** or our valued contributors.
+- Published models from literature (with due third-party acknowledgement)
+- Custom models developed by the Ersilia team or our valued contributors
 
-* Read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
-* Browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/)
+You can read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) and browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/).
 
 ## Quick Start Guide
 
-Please check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). The next steps are a quickstart guide to installing Ersilia.
+Please check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). The following steps are a quick start guide to using Ersilia.
 
-1. Create a conda environment and activate it
+First, create a conda environment and activate it:
 
-    ```bash
-    conda create -n ersilia python=3.10
-    conda activate ersilia
-    ```
+```bash
+conda create -n ersilia python=3.10
+conda activate ersilia
+```
 
-1. Clone this repository and install with pip
+Then, clone this repository and install with `pip`:
 
-    ```bash
-    git clone https://github.com/ersilia-os/ersilia.git
-    cd ersilia
-    pip install -e .
-    ```
+```bash
+git clone https://github.com/ersilia-os/ersilia.git
+cd ersilia
+pip install -e .
+```
 
-1. Once the Ersilia Model Hub is installed, you can use the CLI to run predictions. First, select a model from the [Ersilia Model Hub](https://ersilia.io/model-hub/) and **fetch** it:
+Alternatively, you can directly install from PyPi:
+```bash
+pip install ersilia
+```
 
-    ```bash
-    ersilia fetch retrosynthetic-accessibility
-    ```
+Once the Ersilia package is installed, you can use the CLI to run predictions. First, select a model from the [Ersilia Model Hub](https://ersilia.io/model-hub/) and fetch it:
 
-1. Generate a few (5) example molecules, to be used as input. The **example** command will generate the adequate input for the model in use
+```bash
+ersilia fetch eos4e40
+```
 
-    ```bash
-    ersilia example retrosynthetic-accessibility -n 5 -f my_molecules.csv
-    ```
+Note that you can use the model identifier (eos4e40) or its human-readable slug (antibiotic-activity).
 
-1. Then, **serve** your model:
+Now you can serve the model:
 
-    ```bash
-    ersilia serve retrosynthetic-accessibility
-    ```
+```bash
+ersilia serve eos4e40
+```
 
-1. And **run** the model:
+To view some information of the model, type the following:
 
-    ```bash
-    ersilia run -i my_molecules.csv -o my_predictions.csv
-    ```
+```bash
+ersilia info
+```
 
-1. Finally, **close** the service when you are done.
+The simplest way to run a model is by passing a CSV file as input. If you don't have one, you can generate it easily. In this case, we take 5 molecules as an example:
 
-    ```bash
-    ersilia close
-    ```
+```bash
+ersilia example -n 5 -f my_input.csv
+```
 
-1. If you no longer want to use the model, you can **delete** it.
+Now you can run the model:
 
-    ```bash
-    ersilia delete retrosynthetic-accessibility
-    ```
+```bash
+ersilia run -i my_input.csv -o my_output.csv
+```
+
+To stop the service, you can simply close the model:
+
+```bash
+ersilia close
+```
+
+Finally, if you don't want to use the model anymore, delete it as follows:
+
+```bash
+ersilia delete eos4e40
+```
 
 Please see the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) for more examples and detailed explanations.
+
+For Python versions 3.12, Ersilia explicitly installs the setuptools library during installation. This is due to a compatibility issue in Python 3.12, which is described in python/cpython#95299.
+
+Note: If you are using Python 3.12, you don’t need to take any manual action. The Ersilia CLI automatically handles this by installing setuptools as part of the setup process.
 
 ## Contribute
 
 The Ersilia Model Hub is a Free, Open Source Software and we highly value new contributors. There are several ways in which you can contribute to the project:
 
-* A good place to start is checking open [issues](https://github.com/ersilia-os/ersilia/issues).
-* If you have identified a bug in the code, please open a new issue using the bug template.
+* A good place to start is checking open [issues](https://github.com/ersilia-os/ersilia/issues)
+* If you have identified a bug in the code, please open a new issue using the bug template
 * Share any feedback with the community using [GitHub Discussions](https://github.com/ersilia-os/ersilia/discussions) for the project
 * Check our [Contributing Guide](https://github.com/ersilia-os/ersilia/blob/master/CONTRIBUTING.md) for more details
 
 The Ersilia Open Source Initiative adheres to the [Contributor Covenant](https://ersilia.gitbook.io/ersilia-wiki/code-of-conduct) code of conduct.
 
+### Development Guidelines
+
+To maintain consistency and code quality, we follow certain coding and linting standards. Please adhere to these guidelines when contributing:
+
+#### Pre-commit Hooks
+
+We use `pre-commit` and `ruff` to automate code quality checks. Ensure you install and set up `pre-commit` and `ruff` before committing any changes:
+
+1. Install pre-commit: `pip install pre-commit`
+2. Set up pre-commit hooks in your local repository by running:
+   ```bash
+   pre-commit install
+   ```
+3. When you commit it automatically fix the issues but will fail for critical error such as missing docstring on a public class and public methods.
+
+#### Manual with Ruff
+
+1. Run `ruff` to check for linting errors:
+   ```bash
+   ruff check .
+   ```
+2. Automatically fix linting issues (where possible):
+   ```bash
+   ruff check . --fix
+   ```
+
+#### Docstring Style
+
+We adhere to the [NumPy-style docstring format](https://numpydoc.readthedocs.io/en/latest/format.html). Please document all public methods and functions using this style.
+
+Consistent documentation ensures the code is easy to understand and maintain.
+
+Thank you for your contributions and for helping make the Ersilia Model Hub a better project!
+
 ### Submit a New Model
 
 If you want to incorporate a new model in the platform, open a new issue using the [model request template](https://github.com/ersilia-os/ersilia/issues/new?assignees=&labels=new-model&template=model_request.yml&title=%F0%9F%A6%A0+Model+Request%3A+%3Cname%3E) or contact us using the following [form](https://www.ersilia.io/request-model).
 
-After submitting your model request via an issue (suggested), a maintainer will review your request. If they `/approve` your request, a new model respository will be created for you to fork and use! There is a [demo repository](https://github.com/ersilia-os/eos-demo) explaining the steps one-by-one.
+After submitting your model request via an issue (suggested), an Ersilia maintainer will review your request. If they approve your request, a new model respository will be created for you to fork and use! There is a [demo repository](https://github.com/ersilia-os/eos-demo) explaining the steps one-by-one.
 
 ## License and Citation
 
@@ -113,6 +163,7 @@ Please note that Ersilia distinguises between software contributors and software
 - Carolina Caballero
 
 ### Cited by
+
 The Ersilia Model Hub is used in a number of scientific projects. Read more about how we are implementing it in:
 - [Turon, Hlozek et al, Nat Commun, 2023](https://www.nature.com/articles/s41467-023-41512-2)
 - [Van Heerden et al, ACS Omega, 2023](https://pubs.acs.org/doi/10.1021/acsomega.3c05664)
@@ -125,4 +176,5 @@ The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organiz
 [Help us](https://www.ersilia.io/donate) achieve our mission!
 
 ### Funding
-The Ersilia Model Hub is the flagship product of Ersilia. It has been funded thanks to a combination of funding sources. Full disclosure can be found in our [website](https://ersilia.io/supporters). Highlighted supporters include Splunk Pledge, the Mozilla Builders Accelerator and the AI2050 Program by Schmidt Futures. 
+
+The Ersilia Model Hub is the flagship product of Ersilia. It has been funded thanks to a combination of funding sources. Full disclosure can be found in our [website](https://ersilia.io/supporters). Highlighted supporters include the Mozilla Builders Accelerator, Fast Forward, Splunk Pledge and the AI2050 Program by Schmidt Sciences. 

@@ -1,9 +1,9 @@
 import json
-import yaml
 import logging
 import os
 import time
 
+import yaml
 from github import Github, GithubException
 
 
@@ -43,7 +43,7 @@ class UpdateMetadata:
         This is the JSON data parsed from the new model submission request (GitHub issue)
         :return: dict
         """
-        self.log.info(f"loading JSON input from env vars")
+        self.log.info("loading JSON input from env vars")
 
         # Load the JSON input from the env vars and convert it to a dict
         return json.loads(os.environ.get("JSON"))

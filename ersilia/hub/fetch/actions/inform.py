@@ -1,12 +1,11 @@
-import os
 import json
-
-from ...content.information import Information
-from ...bundle.repo import ServiceFile
-from . import BaseAction
+import os
 
 from ....default import INFORMATION_FILE
 from ....utils.paths import resolve_pack_method
+from ...bundle.repo import ServiceFile
+from ...content.information import Information
+from . import BaseAction
 
 
 class ModelInformer(BaseAction):
@@ -21,6 +20,7 @@ class ModelInformer(BaseAction):
     config_json : dict
         Configuration settings for the model.
     """
+
     def __init__(self, model_id, config_json):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None

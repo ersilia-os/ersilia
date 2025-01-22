@@ -1,7 +1,7 @@
-import sys
 import os
 import shutil
 import subprocess
+import sys
 
 model_repo = sys.argv[1]
 

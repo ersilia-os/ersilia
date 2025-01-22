@@ -1,19 +1,19 @@
 import os
-import tempfile
+
 import yaml
 
 from ersilia.default import PACKMODE_FILE
-from . import BaseAction
-from .. import ENVIRONMENT_YML, DOCKERFILE
+
 from ....utils.conda import SimpleConda
+from ....utils.logging import make_temp_dir
 from ....utils.terminal import run_command
 from ...bundle.bundle import (
-    BundleEnvironmentFile,
     BundleDockerfileFile,
+    BundleEnvironmentFile,
     BundleRequirementsFile,
 )
-from ...bundle.repo import DockerfileFile
-from ....utils.logging import make_temp_dir
+from .. import DOCKERFILE, ENVIRONMENT_YML
+from . import BaseAction
 
 
 class ModelModifier(BaseAction):

@@ -1,14 +1,20 @@
-import pytest
 import random
 import time
-from unittest.mock import patch, Mock, AsyncMock, PropertyMock
+from unittest.mock import AsyncMock, patch
+
+import pytest
 from click.testing import CliRunner
+
 from ersilia.cli.commands.run import run_cmd
-from ersilia.serve.standard_api import StandardCSVRunApi
-from ersilia.core.session import Session
 from ersilia.core.model import ErsiliaModel
+from ersilia.core.session import Session
+from ersilia.serve.standard_api import StandardCSVRunApi
+from ersilia.setup.requirements.compound import (
+    ChemblWebResourceClientRequirement,
+    RdkitRequirement,
+)
 from ersilia.utils.logging import logger
-from ersilia.hub.fetch.fetch import ModelFetcher
+
 from .utils import create_compound_input_csv
 
 URL = "http://localhost"
@@ -22,6 +28,10 @@ MIN_WEIGHT = 40.0
 MAX_WEIGHT = 60.0
 HEADER = ["key", "input", "value"]
 
+@pytest.fixture
+def setup():
+    RdkitRequirement()
+    ChemblWebResourceClientRequirement()
 
 @pytest.fixture
 def mock_fetcher():
@@ -117,7 +127,7 @@ def mock_std_api_post():
 
 
 @pytest.fixture
-def mock_session(compound_csv):
+def mock_session(setup, compound_csv):
     with (
         patch.object(Session, "current_model_id", return_value=MODEL_ID),
         patch.object(Session, "current_service_class", return_value="pulled_docker"),

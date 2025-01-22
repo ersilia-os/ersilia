@@ -2,9 +2,11 @@ try:
     import emoji
 except:
     emoji = None
-import click
-import os
 import json
+import os
+
+import click
+
 from ..default import SILENCE_FILE
 from ..utils.session import get_session_dir
 
@@ -27,6 +29,7 @@ class Silencer(object):
     silence()
         Disables CLI output.
     """
+
     def __init__(self):
         self.silence_file = os.path.join(get_session_dir(), SILENCE_FILE)
         if not os.path.exists(self.silence_file):

@@ -1,10 +1,10 @@
 import os
-import tempfile
-from ..utils.docker import SimpleDocker
-from ..utils.versioning import Versioner
+
 from .. import ErsiliaBase
-from .utils.clone import ErsiliaCloner
+from ..utils.docker import SimpleDocker
 from ..utils.logging import make_temp_dir
+from ..utils.versioning import Versioner
+from .utils.clone import ErsiliaCloner
 
 
 # TODO: Make sure it is used.
@@ -17,6 +17,7 @@ class SetupBaseDocker(ErsiliaBase):
     config_json : dict, optional
         Configuration settings in JSON format.
     """
+
     def __init__(self, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.docker = SimpleDocker()
@@ -77,7 +78,9 @@ class SetupBaseDocker(ErsiliaBase):
         COPY . .
 
         RUN pip install .
-        """.format(tag, self.cfg.ENV.DOCKER.IMAGE_WORKDIR)
+        """.format(
+            tag, self.cfg.ENV.DOCKER.IMAGE_WORKDIR
+        )
         path = os.path.join(tmp_repo, "Dockerfile")
         with open(path, "w") as f:
             lines = dockerfile.split("\n")

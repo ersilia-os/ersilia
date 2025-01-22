@@ -1,6 +1,7 @@
 from ....utils.dvc import DVCFetcher
 from . import BaseAction
 
+
 class LakeGetter(BaseAction):
     """
     Class to fetch data from precalculated data from the DVC repository.
@@ -12,6 +13,7 @@ class LakeGetter(BaseAction):
     config_json : dict
         Configuration settings for the model.
     """
+
     def __init__(self, model_id: str, config_json: dict):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None

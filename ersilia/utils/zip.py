@@ -1,6 +1,6 @@
-import zipfile
 import os
 import shutil
+import zipfile
 
 
 class Zipper(object):
@@ -19,6 +19,7 @@ class Zipper(object):
     zip(dir_name, file)
         Zip a directory into a file.
     """
+
     def __init__(self, remove):
         self.remove = remove
 

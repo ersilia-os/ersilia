@@ -1,14 +1,13 @@
+import datetime
+import json
 import os
 import shutil
-import json
-import datetime
+
 import validators
 
-from .... import ErsiliaBase
-from .... import EOS
-from .... import throw_ersilia_exception
+from .... import EOS, ErsiliaBase, throw_ersilia_exception
 from ....default import (
-    IS_FETCHED_FROM_DOCKERHUB_FILE,
+    DOCKER_INFO_FILE,
     IS_FETCHED_FROM_HOSTED_FILE,
     SERVICE_CLASS_FILE,
 )
@@ -31,20 +30,27 @@ class ModelRegisterer(ErsiliaBase):
     --------
     .. code-block:: python
 
-        registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
+        registerer = ModelRegisterer(
+            model_id="eosxxxx", config_json=config
+        )
         await registerer.register(is_from_dockerhub=True)
     """
+
     def __init__(self, model_id: str, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
 
-    def register_from_dockerhub(self):
+    def register_from_dockerhub(self, **kwargs):
         """
         Register the model from DockerHub.
 
         This method registers the model in the file system indicating it was fetched from DockerHub.
         """
-        data = {"docker_hub": True}
+        if 'img_tag' in kwargs:
+            img_tag = kwargs['img_tag']
+            data = {"docker_hub": True, "tag": img_tag}
+        else:
+            data = {"docker_hub": True}
         self.logger.debug(
             "Registering model {0} in the file system".format(self.model_id)
         )
@@ -53,7 +59,7 @@ class ModelRegisterer(ErsiliaBase):
         if os.path.exists(path):
             shutil.rmtree(path)
         os.mkdir(path)
-        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        file_name = os.path.join(path, DOCKER_INFO_FILE)
         self.logger.debug(file_name)
         with open(file_name, "w") as f:
             json.dump(data, f)
@@ -64,7 +70,7 @@ class ModelRegisterer(ErsiliaBase):
             shutil.rmtree(path)
         path = os.path.join(path, folder_name)
         os.makedirs(path)
-        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        file_name = os.path.join(path, DOCKER_INFO_FILE)
         with open(file_name, "w") as f:
             json.dump(data, f)
         file_name = os.path.join(path, SERVICE_CLASS_FILE)
@@ -80,11 +86,11 @@ class ModelRegisterer(ErsiliaBase):
         """
         data = {"docker_hub": False}
         path = self._model_path(self.model_id)
-        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        file_name = os.path.join(path, DOCKER_INFO_FILE)
         with open(file_name, "w") as f:
             json.dump(data, f)
         path = self._get_bundle_location(model_id=self.model_id)
-        file_name = os.path.join(path, IS_FETCHED_FROM_DOCKERHUB_FILE)
+        file_name = os.path.join(path, DOCKER_INFO_FILE)
         with open(file_name, "w") as f:
             json.dump(data, f)
 
@@ -171,7 +177,9 @@ class ModelRegisterer(ErsiliaBase):
         with open(file_name, "w") as f:
             json.dump(data, f)
 
-    async def register(self, is_from_dockerhub: bool = False, is_from_hosted: bool = False):
+    async def register(
+        self, is_from_dockerhub: bool = False, is_from_hosted: bool = False, **kwargs
+    ):
         """
         Register the model based on its source.
 
@@ -193,13 +201,15 @@ class ModelRegisterer(ErsiliaBase):
         --------
         .. code-block:: python
 
-            registerer = ModelRegisterer(model_id="eosxxxx", config_json=config)
+            registerer = ModelRegisterer(
+                model_id="eosxxxx", config_json=config
+            )
             await registerer.register(is_from_dockerhub=True)
         """
         if is_from_dockerhub and is_from_hosted:
             raise ValueError("Model cannot be from both DockerHub and hosted")
         elif is_from_dockerhub and not is_from_hosted:
-            self.register_from_dockerhub()
+            self.register_from_dockerhub(**kwargs)
             self.register_not_from_hosted()
         elif not is_from_dockerhub and is_from_hosted:
             self.register_from_hosted()

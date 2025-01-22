@@ -1,3 +1,4 @@
+import importlib
 import os
 
 try:
@@ -22,6 +23,7 @@ class LakeBase(ErsiliaBase):
     lake_dir : str or None
         Absolute path to the lake directory if ISAURA_REPOSITORY_PATH is set, otherwise None.
     """
+
     def __init__(self, config_json: dict):
         ErsiliaBase.__init__(self, config_json=config_json)
         if ISAURA_REPOSITORY_PATH is not None:
@@ -44,7 +46,7 @@ class LakeBase(ErsiliaBase):
             If 'isaura' is not installed, a warning is logged.
         """
         try:
-            import isaura
+            importlib.util.find_spec("isaura")
 
             return True
         except ModuleNotFoundError:

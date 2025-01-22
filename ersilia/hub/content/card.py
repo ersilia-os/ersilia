@@ -1,44 +1,15 @@
-import os
 import json
+import os
+
 import requests
 import yaml
+
 from ... import ErsiliaBase
-from ...utils.terminal import run_command
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import JsonModelsInterface
-import validators
-
-try:
-    from validators import ValidationFailure
-except ImportError:
-    from validators import ValidationError as ValidationFailure
-
-from ...utils.exceptions_utils.card_exceptions import (
-    SlugBaseInformationError,
-    IdentifierBaseInformationError,
-    StatusBaseInformationError,
-    TitleBaseInformationError,
-    DescriptionBaseInformationError,
-    ModeBaseInformationError,
-    InputBaseInformationError,
-    InputShapeBaseInformationError,
-    OutputBaseInformationError,
-    OutputTypeBaseInformationError,
-    OutputShapeBaseInformationError,
-    TaskBaseInformationError,
-    TagBaseInformationError,
-    PublicationBaseInformationError,
-    SourceCodeBaseInformationError,
-    LicenseBaseInformationError,
-    GithubBaseInformationError,
-    DockerhubBaseInformationError,
-    DockerArchitectureInformationError,
-    S3BaseInformationError,
-    BothIdentifiersBaseInformationError,
-    MemoryGbBaseInformationError,
-)
-from ...utils.identifiers.model import ModelIdentifier
 from ...utils.logging import make_temp_dir
+from ...utils.terminal import run_command
+from .base_information import BaseInformation
 
 try:
     from isaura.core.hdf5 import Hdf5Explorer
@@ -47,429 +18,11 @@ except:
 
 from ...default import (
     CARD_FILE,
-    METADATA_JSON_FILE,
     INFORMATION_FILE,
+    METADATA_JSON_FILE,
     METADATA_YAML_FILE,
 )
 from ...utils.paths import get_metadata_from_base_dir
-
-
-class BaseInformation(ErsiliaBase):
-    """
-    Class to handle the base information of a model card.
-
-    A model card contains metadata about a model, such as its identifier, slug, status,
-    title, description, mode, input, output, and other relevant information. And This class provides
-    methods to validate and set various fields of a model card.
-
-    Parameters
-    ----------
-    config_json : dict
-        Configuration settings in JSON format.
-    """
-
-    def __init__(self, config_json=None):
-        ErsiliaBase.__init__(
-            self, config_json=config_json, credentials_json=None
-        )
-        self._github = None
-        self._identifier = None
-        self._slug = None
-        self._status = None
-        self._title = None
-        self._description = None
-        self._mode = None
-        self._task = None
-        self._input = None
-        self._input_shape = None
-        self._output = None
-        self._output_type = None
-        self._output_shape = None
-        self._interpretation = None
-        self._tag = None
-        self._publication = None
-        self._source_code = None
-        self._license = None
-        self._contributor = None
-        self._dockerhub = None
-        self._docker_architecture = None
-        self._s3 = None
-        self._memory_gb = None
-
-    def _is_valid_url(self, url_string: str) -> bool:
-        result = validators.url(url_string)
-        if isinstance(result, ValidationFailure):
-            return False
-        return result
-
-    def _read_default_fields(self, field):
-        root = os.path.dirname(os.path.abspath(__file__))
-        filename = field.lower().replace(" ", "_")
-        file_path = os.path.join(root, "metadata", filename + ".txt")
-        with open(file_path, "r") as f:
-            valid_field = f.read().split("\n")
-        return valid_field
-
-    @property
-    def identifier(self):
-        return self._identifier
-
-    @identifier.setter
-    def identifier(self, new_identifier):
-        mi = ModelIdentifier()
-        if not mi.is_valid(new_identifier):
-            raise IdentifierBaseInformationError
-        self._identifier = new_identifier
-
-    @property
-    def slug(self):
-        return self._slug
-
-    @slug.setter
-    def slug(self, new_slug):
-        if new_slug.lower() != new_slug:
-            raise SlugBaseInformationError
-        if len(new_slug) > 60:
-            raise SlugBaseInformationError
-        if len(new_slug) < 5:
-            raise SlugBaseInformationError
-        self._slug = new_slug
-
-    @property
-    def status(self):
-        return self._status
-
-    @status.setter
-    def status(self, new_status):
-        if new_status not in self._read_default_fields("Status"):
-            raise StatusBaseInformationError
-        self._status = new_status
-
-    @property
-    def title(self):
-        return self._title
-
-    @title.setter
-    def title(self, new_title):
-        if len(new_title) > 300:
-            raise TitleBaseInformationError
-        if len(new_title) < 10:
-            raise TitleBaseInformationError
-        self._title = new_title
-
-    @property
-    def description(self):
-        return self._description
-
-    @description.setter
-    def description(self, new_description):
-        if len(new_description) < 200:
-            raise DescriptionBaseInformationError
-        if new_description == self._title:
-            raise DescriptionBaseInformationError
-        self._description = new_description
-
-    @property
-    def mode(self):
-        return self._mode
-
-    @mode.setter
-    def mode(self, new_mode):
-        if new_mode not in self._read_default_fields("Mode"):
-            raise ModeBaseInformationError
-        self._mode = new_mode
-
-    @property
-    def input(self):
-        return self._input
-
-    @input.setter
-    def input(self, new_input):
-        if type(new_input) is str:
-            new_input = [new_input]
-        if type(new_input) is not list:
-            raise InputBaseInformationError
-        for inp in new_input:
-            if inp not in self._read_default_fields("Input"):
-                raise InputBaseInformationError
-        self._input = new_input
-
-    @property
-    def input_shape(self):
-        return self._input_shape
-
-    @input_shape.setter
-    def input_shape(self, new_input_shape):
-        if new_input_shape not in self._read_default_fields(
-            "Input Shape"
-        ):
-            raise InputShapeBaseInformationError
-        self._input_shape = new_input_shape
-
-    @property
-    def task(self):
-        return self._task
-
-    @task.setter
-    def task(self, new_task):
-        if type(new_task) is str:
-            new_task = [new_task]
-        if type(new_task) is not list:
-            raise TaskBaseInformationError
-        for nt in new_task:
-            if nt not in self._read_default_fields("Task"):
-                raise TaskBaseInformationError
-        self._task = new_task
-
-    @property
-    def output(self):
-        return self._output
-
-    @output.setter
-    def output(self, new_output):
-        if type(new_output) is str:
-            new_output = [new_output]
-        default_output = self._read_default_fields("Output")
-        for no in new_output:
-            if no not in default_output:
-                raise OutputBaseInformationError
-        self._output = new_output
-
-    @property
-    def output_type(self):
-        return self._output_type
-
-    @output_type.setter
-    def output_type(self, new_output_type):
-        if type(new_output_type) is str:
-            new_output_type = [new_output_type]
-        default_output_type = self._read_default_fields("Output Type")
-        for no in new_output_type:
-            if no not in default_output_type:
-                raise OutputTypeBaseInformationError
-        self._output_type = new_output_type
-
-    @property
-    def output_shape(self):
-        return self._output_shape
-
-    @output_shape.setter
-    def output_shape(self, new_output_shape):
-        default_output_shape = self._read_default_fields("Output Shape")
-        if new_output_shape not in default_output_shape:
-            raise OutputShapeBaseInformationError
-        self._output_shape = new_output_shape
-
-    @property
-    def interpretation(self):
-        return self._interpretation
-
-    @interpretation.setter
-    def interpretation(self, new_interpretation):
-        self._interpretation = new_interpretation
-
-    @property
-    def tag(self):
-        return self._tag
-
-    @tag.setter
-    def tag(self, new_tag):
-        if type(new_tag) is str:
-            new_tag = [new_tag]
-        if type(new_tag) is not list:
-            raise TagBaseInformationError
-        default_tags = self._read_default_fields("Tag")
-        for nt in new_tag:
-            if nt not in default_tags:
-                raise TagBaseInformationError
-        self._tag = new_tag
-
-    @property
-    def publication(self):
-        return self._publication
-
-    @publication.setter
-    def publication(self, new_publication):
-        if not self._is_valid_url(new_publication):
-            raise PublicationBaseInformationError
-        self._publication = new_publication
-
-    @property
-    def source_code(self):
-        return self._source_code
-
-    @source_code.setter
-    def source_code(self, new_source_code):
-        if not self._is_valid_url(new_source_code):
-            raise SourceCodeBaseInformationError
-        self._source_code = new_source_code
-
-    @property
-    def license(self):
-        return self._license
-
-    @license.setter
-    def license(self, new_license):
-        if new_license not in self._read_default_fields("License"):
-            raise LicenseBaseInformationError
-        self._license = new_license
-
-    @property
-    def date(self):
-        return self._date
-
-    @date.setter
-    def date(self, new_date):
-        self._date = new_date
-
-    @property
-    def contributor(self):
-        return self._contributor
-
-    @contributor.setter
-    def contributor(self, new_contributor):
-        self._contributor = new_contributor
-
-    @property
-    def github(self):
-        model_id = self.identifier
-        if model_id is None:
-            raise GithubBaseInformationError
-        self._github = "https://github.com/ersilia-os/{0}".format(
-            model_id
-        )
-        return self._github
-
-    @property
-    def dockerhub(self):
-        return self._dockerhub
-
-    @dockerhub.setter
-    def dockerhub(self, new_dockerhub_url):
-        if not new_dockerhub_url.startswith(
-            "https://hub.docker.com/r/ersiliaos/"
-        ):
-            raise DockerhubBaseInformationError
-        self._dockerhub = new_dockerhub_url
-
-    @property
-    def docker_architecture(self):
-        return self._docker_architecture
-
-    @docker_architecture.setter
-    def docker_architecture(self, new_docker_architecture):
-        if type(new_docker_architecture) is str:
-            new_docker_architecture = [new_docker_architecture]
-        for d in new_docker_architecture:
-            if d not in self._read_default_fields(
-                "Docker Architecture"
-            ):
-                raise DockerArchitectureInformationError
-        self._docker_architecture = new_docker_architecture
-
-    @property
-    def s3(self):
-        return self._s3
-
-    @s3.setter
-    def s3(self, new_s3_url):
-        if not new_s3_url.startswith(
-            "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/"
-        ):
-            raise S3BaseInformationError
-        self._s3 = new_s3_url
-
-    @property
-    def both_identifiers(self):
-        model_id = self.identifier
-        slug = self.slug
-        if model_id is None or slug is None:
-            raise BothIdentifiersBaseInformationError
-        self._both_identifiers = (model_id, slug)
-        return self._both_identifiers
-
-    @property
-    def memory_gb(self):
-        return self._memory_gb
-
-    @memory_gb.setter
-    def memory_gb(self, new_memory_gb):
-        if type(new_memory_gb) != int:
-            raise MemoryGbBaseInformationError
-        self._memory_gb = new_memory_gb
-
-    def as_dict(self) -> dict:
-        """
-        Convert the base information to a dictionary.
-
-        Returns
-        -------
-        dict
-            The base information as a dictionary.
-        """
-        data = {
-            "Identifier": self.identifier,
-            "Slug": self.slug,
-            "Status": self.status,
-            "Title": self.title,
-            "Description": self.description,
-            "Mode": self.mode,
-            "Input": self.input,
-            "Input Shape": self.input_shape,
-            "Task": self.task,
-            "Output": self.output,
-            "Output Type": self.output_type,
-            "Output Shape": self.output_shape,
-            "Interpretation": self.interpretation,
-            "Tag": self.tag,
-            "Publication": self.publication,
-            "Source Code": self.source_code,
-            "License": self.license,
-            "Contributor": self.contributor,
-            "DockerHub": self.dockerhub,
-            "Docker Architecture": self.docker_architecture,
-            "S3": self.s3,
-            "Memory Gb": self.memory_gb,
-        }
-        data = dict((k, v) for k, v in data.items() if v is not None)
-        return data
-
-    def from_dict(self, data: dict):
-        """
-        Set the base information from a dictionary.
-
-        Parameters
-        ----------
-        data : dict
-            The dictionary containing the base information.
-        """
-        self.identifier = data["Identifier"]
-        self.slug = data["Slug"]
-        self.status = data["Status"]
-        self.title = data["Title"]
-        self.description = data["Description"]
-        self.mode = data["Mode"]
-        self.input = data["Input"]
-        self.input_shape = data["Input Shape"]
-        self.task = data["Task"]
-        self.output = data["Output"]
-        self.output_type = data["Output Type"]
-        self.output_shape = data["Output Shape"]
-        self.interpretation = data["Interpretation"]
-        self.tag = data["Tag"]
-        self.publication = data["Publication"]
-        self.source_code = data["Source Code"]
-        self.license = data["License"]
-        if "Contributor" in data:
-            self.contributor = data["Contributor"]
-        if "DockerHub" in data:
-            self.dockerhub = data["DockerHub"]
-        if "Docker Architecture" in data:
-            self.docker_architecture = data["Docker Architecture"]
-        if "S3" in data:
-            self.s3 = data["S3"]
-        if "Memory Gb" in data:
-            self.memory_gb = data["Memory Gb"]
 
 
 class RepoMetadataFile(ErsiliaBase):
@@ -489,19 +42,15 @@ class RepoMetadataFile(ErsiliaBase):
 
     def __init__(self, model_id=None, config_json=None):
         self.model_id = model_id
-        ErsiliaBase.__init__(
-            self, config_json=config_json, credentials_json=None
-        )
+        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
 
     def _github_json_url(self, org=None, branch=None):
         if org is None:
             org = "ersilia-os"
         if branch is None:
             branch = "main"
-        return (
-            "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
-                org, self.model_id, branch, METADATA_JSON_FILE
-            )
+        return "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
+            org, self.model_id, branch, METADATA_JSON_FILE
         )
 
     def _github_yaml_url(self, org=None, branch=None):
@@ -509,10 +58,8 @@ class RepoMetadataFile(ErsiliaBase):
             org = "ersilia-os"
         if branch is None:
             branch = "main"
-        return (
-            "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
-                org, self.model_id, branch, METADATA_YAML_FILE
-            )
+        return "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
+            org, self.model_id, branch, METADATA_YAML_FILE
         )
 
     def _get_file_content_from_github(self, org, branch):
@@ -528,9 +75,7 @@ class RepoMetadataFile(ErsiliaBase):
         else:
             return json.loads(r.content)
 
-    def get_json_or_yaml_file(
-        self, org: str = None, branch: str = None
-    ) -> dict:
+    def get_json_or_yaml_file(self, org: str = None, branch: str = None) -> dict:
         """
         Get the metadata file from GitHub in JSON or YAML format. JSON format typically used for bentoml
         packed models and YAML format typically used for ersilia pack models.
@@ -651,9 +196,7 @@ class MetadataCard(ErsiliaBase):
         """
         if model_id is not None:
             dest_dir = self._model_path(model_id=model_id)
-            self.logger.debug(
-                "Trying to get metadata from: {0}".format(dest_dir)
-            )
+            self.logger.debug("Trying to get metadata from: {0}".format(dest_dir))
             try:
                 data = get_metadata_from_base_dir(dest_dir)
             except FileNotFoundError:
@@ -679,17 +222,17 @@ class ReadmeCard(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
 
     def _raw_readme_url(self, model_id):
-        url = "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
-            model_id
+        url = (
+            "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
+                model_id
+            )
         )
         return url
 
     def _gh_view(self, model_id):
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "view.md")
-        cmd = "gh repo view {0}/{1} > {2}".format(
-            "ersilia-os", model_id, tmp_file
-        )
+        cmd = "gh repo view {0}/{1} > {2}".format("ersilia-os", model_id, tmp_file)
         run_command(cmd)
         with open(tmp_file, "r") as f:
             text = f.read()
@@ -715,6 +258,14 @@ class ReadmeCard(ErsiliaBase):
         return "https://github.com/ersilia-os/{0}".format(model_id)
 
     def parse(self, model_id):
+        """
+        Parse the model information from the README file.
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+        """
         readme = os.path.join(self._dest_dir, model_id, "README.md")
         if os.path.exists(readme):
             with open(readme, "r") as f:
@@ -821,8 +372,8 @@ class LakeCard(ErsiliaBase):
     """
     Class to handle the lake card of a model.
 
-    The lake in ersilia refers to a result storage platform powered by isaura package to 
-    store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to 
+    The lake in ersilia refers to a result storage platform powered by isaura package to
+    store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to
     explore and retrieve information from HDF5 files.
 
     Parameters
@@ -886,12 +437,38 @@ class S3JsonCard(JsonModelsInterface):
         JsonModelsInterface.__init__(self, config_json=config_json)
 
     def get_card_by_model_id(self, model_id):
+        """
+        Get the card information by model identifier.
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+
+        Returns
+        -------
+        dict
+            The card information.
+        """
         all_models = self.items_all()
         for model in all_models:
             if model["Identifier"] == model_id:
                 return model
 
     def get_card_by_slug(self, slug):
+        """
+        Get the card information by model slug.
+
+        Parameters
+        ----------
+        slug : str
+            The model slug.
+
+        Returns
+        -------
+        dict
+            The card information.
+        """
         all_models = self.items_all()
         for model in all_models:
             if model["Slug"] == slug:

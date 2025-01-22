@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import logging
+import os
 from collections import OrderedDict
 from configparser import ConfigParser
 
@@ -42,7 +42,9 @@ class BentoMLConfigParser(ConfigParser):
     def _env_var_name(section, key):
         return "BENTOML__{}__{}".format(section.upper(), key.upper())
 
-    def get(self, section: str, key: str = None, **kwargs) -> str:  # pylint:disable=arguments-differ
+    def get(
+        self, section: str, key: str = None, **kwargs
+    ) -> str:  # pylint:disable=arguments-differ
         """
         A simple hierarchical config access, priority order:
         1. environment var

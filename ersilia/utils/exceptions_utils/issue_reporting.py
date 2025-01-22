@@ -1,7 +1,8 @@
-import requests
 import json
 import subprocess
 from datetime import datetime
+
+import requests
 
 # REPO_OWNER = 'ersilia-os'
 # REPO_NAME = 'ersilia'

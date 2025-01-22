@@ -1,14 +1,11 @@
-import random
-import json
-import collections
-from rdkit import Chem
-from rdkit.Chem import Descriptors
 from typing import List
 
 from bentoml import BentoService, api, artifacts
 from bentoml.adapters import JsonInput
 from bentoml.service.artifacts.common import JSONArtifact
 from bentoml.types import JsonSerializable
+from rdkit import Chem
+from rdkit.Chem import Descriptors
 
 
 @artifacts([JSONArtifact("model")])

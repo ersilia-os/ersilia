@@ -1,26 +1,26 @@
-import os
-import json
 import importlib
+import json
+import os
+import sys
 from collections import namedtuple
 
-from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
-from .lazy_fetchers.hosted import ModelHostedFetcher
-from ...db.hubdata.interfaces import JsonModelsInterface
 from ... import ErsiliaBase
-from ...hub.fetch.actions.template_resolver import TemplateResolver
-from ...hub.fetch.actions.setup import SetupChecker
+from ...db.hubdata.interfaces import JsonModelsInterface
+from ...default import MODEL_SOURCE_FILE, PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 from ...hub.delete.delete import ModelFullDeleter
+from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...setup.requirements import check_bentoml
 from ...utils.exceptions_utils.fetch_exceptions import (
-    NotInstallableWithFastAPI,
     NotInstallableWithBentoML,
+    NotInstallableWithFastAPI,
     StandardModelExampleError,
 )
-from .register.standard_example import ModelStandardExample
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
-from ...utils.terminal import yes_no_input
-from ...default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, EOS, MODEL_SOURCE_FILE
-from . import STATUS_FILE, DONE_TAG
+from ...utils.terminal import run_command, yes_no_input
+from . import STATUS_FILE
+from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
+from .lazy_fetchers.hosted import ModelHostedFetcher
+from .register.standard_example import ModelStandardExample
 
 FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
 
@@ -51,6 +51,8 @@ class ModelFetcher(ErsiliaBase):
         Whether to force fetching from S3.
     force_from_dockerhub : bool, optional
         Whether to force fetching from DockerHub.
+    img_version : str, optional
+        Version of the model image.
     force_from_hosted : bool, optional
         Whether to force fetching from hosted services.
     force_with_bentoml : bool, optional
@@ -69,6 +71,7 @@ class ModelFetcher(ErsiliaBase):
         fetcher = ModelFetcher(config_json=config)
         await fetcher.fetch(model_id="eosxxxx")
     """
+
     def __init__(
         self,
         config_json: dict = None,
@@ -81,6 +84,7 @@ class ModelFetcher(ErsiliaBase):
         force_from_github: bool = False,
         force_from_s3: bool = False,
         force_from_dockerhub: bool = False,
+        img_version: str = None,
         force_from_hosted: bool = False,
         force_with_bentoml: bool = False,
         force_with_fastapi: bool = False,
@@ -90,6 +94,24 @@ class ModelFetcher(ErsiliaBase):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
         )
+
+        # Python 3.12 Compatibility Check and Setuptools Handling
+        if sys.version_info >= (3, 12):
+            self.logger.info("Detected Python 3.12. Verifying setuptools...")
+            try:
+                importlib.import_module("setuptools")
+                self.logger.info("Setuptools is already installed.")
+            except ImportError:
+                self.logger.warning("Setuptools is not installed. Installing now...")
+                try:
+                    run_command("python -m pip install setuptools")
+                    self.logger.info("Setuptools installed successfully.")
+                except Exception as e:
+                    self.logger.error(f"Failed to install setuptools: {str(e)}")
+                    raise RuntimeError(
+                        "Setuptools is required but could not be installed. Please resolve this manually."
+                    )
+
         self.ji = JsonModelsInterface(config_json=self.config_json)
         self.overwrite = overwrite
         self.mode = mode
@@ -100,7 +122,7 @@ class ModelFetcher(ErsiliaBase):
             dockerize = True
         self.do_docker = dockerize
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
-            overwrite=self.overwrite, config_json=self.config_json
+            overwrite=self.overwrite, config_json=self.config_json, img_tag=img_version
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
         self.is_docker_active = self.model_dockerhub_fetcher.is_docker_active()
@@ -221,7 +243,6 @@ class ModelFetcher(ErsiliaBase):
         self.logger.debug("Fetching from hosted done")
 
     def _decide_if_use_dockerhub(self, model_id: str) -> bool:
-
         if self.repo_path is not None:
             return False
         if self.force_from_dockerhub:
@@ -291,14 +312,21 @@ class ModelFetcher(ErsiliaBase):
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
                 if not self.can_use_docker:
-                    return FetchResult(fetch_success=False, reason="Docker is not installed or active on your system.")
+                    return FetchResult(
+                        fetch_success=False,
+                        reason="Docker is not installed or active on your system.",
+                    )
                 await self._fetch_from_dockerhub(model_id=model_id)
-                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+                return FetchResult(
+                    fetch_success=True, reason="Model fetched successfully"
+                )
             do_hosted = self._decide_if_use_hosted(model_id=model_id)
             if do_hosted:
                 self.logger.debug("Fetching from hosted")
                 self._fetch_from_hosted(model_id=model_id)
-                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+                return FetchResult(
+                    fetch_success=True, reason="Model fetched successfully"
+                )
             if self.overwrite is None:
                 self.logger.debug("Overwriting")
                 self.overwrite = True
@@ -306,8 +334,13 @@ class ModelFetcher(ErsiliaBase):
             self._fetch_not_from_dockerhub(model_id=model_id)
             return FetchResult(fetch_success=True, reason="Model fetched successfully")
         else:
-            self.logger.info("Model already exists on your system. If you want to fetch it again, please delete it first.")
-            return FetchResult(fetch_success=False, reason="Model already exists on your system. If you want to fetch it again, please delete the existing model first.")
+            self.logger.info(
+                "Model already exists on your system. If you want to fetch it again, please delete it first."
+            )
+            return FetchResult(
+                fetch_success=False,
+                reason="Model already exists on your system. If you want to fetch it again, please delete the existing model first.",
+            )
 
     async def fetch(self, model_id: str) -> bool:
         """
@@ -337,12 +370,16 @@ class ModelFetcher(ErsiliaBase):
             except StandardModelExampleError:
                 self.logger.debug("Standard model example failed, deleting artifacts")
                 do_delete = yes_no_input(
-                    "Do you want to delete the model artifacts? [Y/n]", 
-                    default_answer="Y")
+                    "Do you want to delete the model artifacts? [Y/n]",
+                    default_answer="Y",
+                )
                 if do_delete:
                     md = ModelFullDeleter(overwrite=False)
                     md.delete(model_id)
-                return FetchResult(fetch_success=False, reason="Could not successfully run a standard example from the model.")
+                return FetchResult(
+                    fetch_success=False,
+                    reason="Could not successfully run a standard example from the model.",
+                )
             else:
                 self.logger.debug("Writing model source to file")
                 model_source_file = os.path.join(
@@ -354,6 +391,8 @@ class ModelFetcher(ErsiliaBase):
                     self.logger.error(f"Error during folder creation: {error}")
                 with open(model_source_file, "w") as f:
                     f.write(self.model_source)
-                return FetchResult(fetch_success=True, reason="Model fetched successfully")
+                return FetchResult(
+                    fetch_success=True, reason="Model fetched successfully"
+                )
         else:
             return fr

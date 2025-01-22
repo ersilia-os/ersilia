@@ -83,43 +83,34 @@ jobs:
 
   run-pytest:
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash -el {0}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
-
-      - name: Add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
-
-      - name: Source conda
-        run: source $CONDA/etc/profile.d/conda.sh
-
-      - name: Set Python to 3.10.10
-        run: conda install -y python=3.10.10
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
-
-      - name: Install ersilia
-        run: |
-          source activate
-          python --version
-          echo "After conda init"
-          conda init
           python -m pip install -e .[test]
 
       - name: Run pytest
-        run: |
-          source activate          
+        run: |     
           pip install pytest pytest-benchmark pytest-asyncio rdkit-pypi nox rich fuzzywuzzy scipy
           pytest
 
   run-cli-test-single:
     needs: run-pytest
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash -el {0}
     strategy:
       matrix:
         session:
@@ -129,94 +120,64 @@ jobs:
           - test_auto_fetcher_decider
           - test_conventional_run
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
-
-      - name: Add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
-
-      - name: Source conda
-        run: source $CONDA/etc/profile.d/conda.sh
-
-      - name: Set Python to 3.10.10
-        run: conda install -y python=3.10.10
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
           conda install git-lfs -c conda-forge
           git-lfs install
           conda install gh -c conda-forge
-
-      - name: Install ersilia
-        run: |
-          source activate
-          python --version
-          echo "After conda init"
-          conda init
           python -m pip install -e .[test]
 
       - name: Run CLI Test Default
-        run: |
-          source activate            
+        run: |     
           nox -f test/playground/noxfile.py -s ${{ matrix.session }}
 
   run-cli-test-multiple:
     needs: run-pytest
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v3.5.3
-
-      - name: Add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
-
-      - name: Source conda
-        run: source $CONDA/etc/profile.d/conda.sh
-
-      - name: Set Python to 3.10.10
-        run: conda install -y python=3.10.10
-
-      - name: Install dependencies
-        run: |
-          source activate
-          conda init
-          conda install git-lfs -c conda-forge
-          git-lfs install
-          conda install gh -c conda-forge
-
-      - name: Install ersilia
-        run: |
-          source activate
-          python --version
-          echo "After conda init"
-          conda init
-          python -m pip install -e .[test]
-
-      - name: Run CLI Test Multiple
-        run: |
-          source activate            
-          nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
-
-  test-colab-notebook:
+    defaults:
+      run:
+        shell: bash -el {0}
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
-      - name: Add conda to system path
-        run: echo $CONDA/bin >> $GITHUB_PATH
-
-      - name: Source conda
-        run: source $CONDA/etc/profile.d/conda.sh
-
-      - name: Set Python to 3.10.10
-        run: conda install -y python=3.10.10
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
 
       - name: Install dependencies
         run: |
-          source activate
-          conda init
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+          python -m pip install -e .[test]
+
+      - name: Run CLI Test Multiple
+        run: |          
+          nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
+
+  test-colab-notebook:
+    defaults:
+      run:
+        shell: bash -el {0}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
+
+      - name: Install dependencies
+        run: |
           conda install google-colab -c conda-forge
+          pip install --upgrade nbconvert nbformat jsonschema pandas jupyter
           jupyter --version
-          pip install --upgrade nbconvert nbformat jsonschema pandas
 
       - name: Test Google Colab Notebook with CLI shell commands
         run: |
@@ -228,7 +189,7 @@ jobs:
           #jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-python-api.ipynb --output=output-python-api.ipynb --ExecutePreprocessor.timeout=-1
 
       - name: Upload Output of the Google Colab Notebook CLI
-        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # pin@v4.4.3
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # pin@v4.5.0
         with:
           name: output-cli.ipynb
           path: notebooks/output-cli.ipynb

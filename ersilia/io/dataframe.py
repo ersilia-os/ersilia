@@ -1,5 +1,6 @@
-import numpy as np
 import csv
+
+import numpy as np
 
 
 class Dataframe(object):
@@ -19,6 +20,7 @@ class Dataframe(object):
     features : list, optional
         List of features.
     """
+
     def __init__(self, keys=None, inputs=None, texts=None, values=None, features=None):
         self.keys = keys
         self.inputs = inputs

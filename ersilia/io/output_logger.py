@@ -1,5 +1,5 @@
-import os
 import csv
+import os
 
 # TODO: For now, only explicitly tabular results are returned. We could, in principle, output any other result
 
@@ -16,6 +16,7 @@ class TabularResultLogger(object):
     ----------
     None
     """
+
     def __init__(self):
         pass
 

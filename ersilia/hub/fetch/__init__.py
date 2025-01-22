@@ -1,6 +1,7 @@
 import validators
-from ...db.hubdata.interfaces import JsonModelsInterface
+
 from ... import ErsiliaBase
+from ...db.hubdata.interfaces import JsonModelsInterface
 
 MODEL_INSTALL_COMMANDS_FILE = "model_install_commands.sh"
 DOCKERFILE = "Dockerfile"
@@ -14,6 +15,21 @@ IDENTIFIER = "Identifier"
 
 
 class ModelURLResolver(ErsiliaBase):
+    """
+    Class to resolve the URL of a model.
+
+    This class provides methods to resolve the URL of a model based on its ID.
+
+    Parameters
+    ----------
+    model_id : str
+        The ID of the model.
+    config_json : dict, optional
+        Configuration settings in JSON format.
+    credentials_json : dict, optional
+        Credentials settings in JSON format.
+    """
+
     def __init__(self, model_id, config_json=None, credentials_json=None):
         super().__init__(config_json, credentials_json)
         self.model_id = model_id
