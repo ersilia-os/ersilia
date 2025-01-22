@@ -1955,7 +1955,9 @@ class RunnerService:
         def read_csv(path, flag=False):
             try:
                 with open(path, "r") as file:
+                    self.logger.info("Reading the lines")
                     lines = file.readlines()
+                    self.logger.info(f"Lines: {lines}")
 
                 if not lines:
                     self.logger.error(f"File at {path} is empty.")
