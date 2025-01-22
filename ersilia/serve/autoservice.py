@@ -11,9 +11,6 @@ from ..default import (
     DOCKER_INFO_FILE,
     IS_FETCHED_FROM_HOSTED_FILE,
     SERVICE_CLASS_FILE,
-    PulledDockerImageService,
-    SystemBundleService,
-    VenvEnvironmentService,
 )
 from ..utils import tmp_pid_file
 from ..utils.cache import SetupRedis
@@ -23,6 +20,9 @@ from .services import (
     DockerImageService,
     DummyService,
     HostedService,
+    PulledDockerImageService,
+    SystemBundleService,
+    VenvEnvironmentService,
 )
 
 DEFAULT_OUTPUT = None
