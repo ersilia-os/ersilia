@@ -14,7 +14,6 @@ from .utils import (
     get_command_names,
     get_commands,
     handle_error_logging,
-    save_as_json,
 )
 
 config = yaml.safe_load(Path("config.yml").read_text())
@@ -24,7 +23,6 @@ runner = config.get("runner", "single")
 cli_type = config.get("cli_type", "all")
 output_file = config.get("output_file")
 input_file = config.get("input_file")
-redirect = config.get("output_redirection", False)
 
 if runner == "single":
     model_ids = [config["model_id"]]
@@ -87,9 +85,6 @@ def execute_command(command, description="", dest_path=None, repo_path=None):
             handle_error_logging(command, description, result, config)
 
         pytest.fail(f"{description} '{' '.join(command)}' failed with error: {result}")
-
-    if description == "run" and success and config.get("output_redirection"):
-        save_as_json(result, output_file, remove_list=[input_file])
 
     checkups = apply_rules(command, description, dest_path, repo_path, config)
 
