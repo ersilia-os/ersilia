@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 import time
 from collections import namedtuple
@@ -387,23 +388,42 @@ class ModelInspector:
 
     def _validate_dockerfile(self, dockerfile_content):
         lines, errors = dockerfile_content.splitlines(), []
-        for line in lines:
-            if line.startswith("RUN pip install"):
-                cmd = line.split("RUN ")[-1]
-                result = subprocess.run(
-                    cmd,
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                )
-                if result.returncode != 0:
-                    errors.append(f"Failed to run {cmd}: {result.stderr.strip()}")
 
         if "WORKDIR /repo" not in dockerfile_content:
             errors.append("Missing 'WORKDIR /repo'.")
         if "COPY . /repo" not in dockerfile_content:
             errors.append("Missing 'COPY . /repo'.")
+
+        pip_install_pattern = re.compile(r"pip install (.+)")
+        version_pin_pattern = re.compile(r"^[a-zA-Z0-9_\-\.]+==[a-zA-Z0-9_\-\.]+$")
+
+        for line in lines:
+            line = line.strip()
+
+            match = pip_install_pattern.search(line)
+            if match:
+                packages_and_options = match.group(1).split()
+                skip_next = False
+
+                for item in packages_and_options:
+                    if skip_next:
+                        skip_next = False
+                        continue
+
+                    if item.startswith("--index-url") or item.startswith(
+                        "--extra-index-url"
+                    ):
+                        skip_next = True
+                        continue
+
+                    if item.startswith("git+"):
+                        continue
+
+                    if not version_pin_pattern.match(item):
+                        errors.append(
+                            f"Package '{item}' in line '{line}' is not version-pinned (e.g., 'package==1.0.0')."
+                        )
+
         return errors
 
     def _validate_yml(self, yml_content):
@@ -417,18 +437,48 @@ class ModelInspector:
         if not python_version:
             errors.append("Missing Python version in install.yml.")
 
+        version_pin_pattern = re.compile(r"^[a-zA-Z0-9_\-\.]+==[a-zA-Z0-9_\-\.]+$")
+
         commands = yml_data.get("commands", [])
         for command in commands:
-            if not isinstance(command, list) or command[0] != "pip":
+            if not isinstance(command, list) or len(command) < 2:
                 errors.append(f"Invalid command format: {command}")
                 continue
-            # package: name & version
-            name = command[1] if len(command) > 1 else None
+
+            tool = command[0]
+            _ = command[1]
             version = command[2] if len(command) > 2 else None
-            if not name:
-                errors.append(f"Missing package name in command: {command}")
-            if name and version:
-                pass
+
+            if tool in ("pip", "conda"):
+                if tool == "pip":
+                    pip_args = command[1:]
+                    skip_next = False
+
+                    for item in pip_args:
+                        if skip_next:
+                            skip_next = False
+                            continue
+
+                        if item.startswith("--index-url") or item.startswith(
+                            "--extra-index-url"
+                        ):
+                            skip_next = True
+                            continue
+
+                        if item.startswith("git+"):
+                            continue
+
+                        if not version_pin_pattern.match(item):
+                            errors.append(
+                                f"Package '{item}' in command '{command}' is not version-pinned (e.g., 'package==1.0.0')."
+                            )
+
+                elif tool == "conda" and not version:
+                    errors.append(
+                        f"Package in command '{command}' does not have a valid pinned version "
+                        f"(should be in the format ['conda', 'package_name', 'x.y.z'])."
+                    )
+
         return errors
 
     def _run_performance_check(self, n):
@@ -445,5 +495,5 @@ class ModelInspector:
             return Result(False, f"Error serving model: {process.stderr.strip()}")
         execution_time = time.time() - start_time
         return Result(
-            True, f"{n} predictions executed in {execution_time:.2f} seconds."
+            True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
         )

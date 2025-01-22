@@ -9,6 +9,10 @@ from ersilia.cli.commands.run import run_cmd
 from ersilia.core.model import ErsiliaModel
 from ersilia.core.session import Session
 from ersilia.serve.standard_api import StandardCSVRunApi
+from ersilia.setup.requirements.compound import (
+    ChemblWebResourceClientRequirement,
+    RdkitRequirement,
+)
 from ersilia.utils.logging import logger
 
 from .utils import create_compound_input_csv
@@ -20,10 +24,15 @@ API_NAME = "run"
 INPUT = "NCCCCCCCCCCNS(=O)(=O)c1cccc2c(Cl)cccc12"
 INPUT_CSV = "input.csv"
 RESULT_CSV = "result.csv"
+RESULT_JSON = "result.json"
 MIN_WEIGHT = 40.0
 MAX_WEIGHT = 60.0
 HEADER = ["key", "input", "value"]
 
+@pytest.fixture
+def setup():
+    RdkitRequirement()
+    ChemblWebResourceClientRequirement()
 
 @pytest.fixture
 def mock_fetcher():
@@ -119,7 +128,7 @@ def mock_std_api_post():
 
 
 @pytest.fixture
-def mock_session(compound_csv):
+def mock_session(setup, compound_csv):
     with (
         patch.object(Session, "current_model_id", return_value=MODEL_ID),
         patch.object(Session, "current_service_class", return_value="pulled_docker"),
@@ -212,9 +221,9 @@ def test_conv_api_string(
     runner = CliRunner()
 
     input_arg = INPUT
-    output_arg = RESULT_CSV
+    output_arg = RESULT_JSON
     batch_size = 10
-    result = runner.invoke(run_cmd(), ["-i", input_arg, "-b", str(batch_size)])
+    result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", str(output_arg)])
 
     assert result.exit_code == 0
     assert mock_convn_api_get_apis.called
@@ -226,9 +235,9 @@ def test_conv_api_csv(
 ):
     runner = CliRunner()
     input_arg = INPUT_CSV
-    output_arg = RESULT_CSV
+    output_arg = RESULT_JSON
     batch_size = 10
-    result = runner.invoke(run_cmd(), ["-i", input_arg, "-b", str(batch_size)])
+    result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", str(output_arg)])
     logger.info(result.output)
     assert result.exit_code == 0
     assert mock_convn_api_get_apis.called

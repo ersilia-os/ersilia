@@ -281,3 +281,38 @@ class MemoryGbBaseInformationError(ErsiliaError):
         self.message = "Memory Gb field error"
         self.hints = "Memory Gb field must be specified as an integer indicating GB of memory limit"
         ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class EnvironmentSizeMbBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Environment Size field error"
+        self.hints = "Environment Size field must be specified as a valid numeric value indicating MB of model environment and dependencies"
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ImageSizeMbBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Image Size field error"
+        self.hints = "Image Size field must be specified as a valid numeric value indicating MB of model docker image"
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ComputationalPerformanceOneBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Computational Performance One field error"
+        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 1 input prediction per second"
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ComputationalPerformanceTenBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Computational Performance Ten field error"
+        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 10 input prediction per second"
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ComputationalPerformanceHundredBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Computational Performance Hundred field error"
+        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 100 input prediction per second"
+        ErsiliaError.__init__(self, self.message, self.hints)
