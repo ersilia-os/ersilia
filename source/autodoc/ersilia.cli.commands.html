@@ -592,11 +592,14 @@ $ ersilia catalog –card &lt;model_id&gt; –as-json</p>
 - Executes tests to evaluate the model’s performance, metadata check, output consistency and more.
 - Generates and outputs performance metrics.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">With default settings:</span>
-<span class="gp">$ </span>ersilia<span class="w"> </span><span class="nb">test</span><span class="w"> </span>my_model<span class="w"> </span>-d<span class="w"> </span>/path/to/model
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">With basic testing:/</span>
+<span class="gp">$ </span>ersilia<span class="w"> </span><span class="nb">test</span><span class="w"> </span>eosxxxx<span class="w"> </span>--from_dir<span class="w"> </span>/path/to/model
 
-<span class="go">With deep testing level and inspect:</span>
-<span class="gp">$ </span>ersilia<span class="w"> </span><span class="nb">test</span><span class="w"> </span>my_model<span class="w"> </span>-d<span class="w"> </span>/path/to/model<span class="w"> </span>--level<span class="w"> </span>deep<span class="w"> </span>--inspect<span class="w"> </span>--remote
+<span class="go">With different sources to fetch the model:</span>
+<span class="gp">$ </span>ersilia<span class="w"> </span><span class="nb">test</span><span class="w"> </span>eosxxxx<span class="w"> </span>--from_github/--from_dockerhub/--from_s3
+
+<span class="go">With different levels of testing:</span>
+<span class="gp">$ </span>ersilia<span class="w"> </span><span class="nb">test</span><span class="w"> </span>eosxxxx<span class="w"> </span>--shallow<span class="w"> </span>--from_github/--from_dockerhub/--from_s3
 </pre></div>
 </div>
 </dd></dl>

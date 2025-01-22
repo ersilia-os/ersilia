@@ -336,11 +336,14 @@
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: console</span>
 
-<span class="sd">        With default settings:</span>
-<span class="sd">        $ ersilia test my_model -d /path/to/model</span>
+<span class="sd">        With basic testing:/</span>
+<span class="sd">        $ ersilia test eosxxxx --from_dir /path/to/model</span>
 
-<span class="sd">        With deep testing level and inspect:</span>
-<span class="sd">        $ ersilia test my_model -d /path/to/model --level deep --inspect --remote</span>
+<span class="sd">        With different sources to fetch the model:</span>
+<span class="sd">        $ ersilia test eosxxxx --from_github/--from_dockerhub/--from_s3</span>
+
+<span class="sd">        With different levels of testing:</span>
+<span class="sd">        $ ersilia test eosxxxx --shallow --from_github/--from_dockerhub/--from_s3</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
@@ -354,51 +357,82 @@
         <span class="s2">&quot;-l&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--level&quot;</span><span class="p">,</span>
         <span class="s2">&quot;level&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Level of testing, None: for default, deep: for deep testing&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Level of testing, None: for default, deep: for deep testing, shallow: for shallow testing&quot;</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--dir&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;dir&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Model directory&quot;</span><span class="p">,</span>
-        <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;--from_dir&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Local path where the model is stored&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--inspect&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Inspect the model: More on the docs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--from_github&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fetch fetch directly from GitHub&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--remote&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Test the model from remote git repository&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--from_dockerhub&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force fetch from DockerHub&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--remove&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Remove the model directory after testing&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--from_s3&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Force fetch from AWS S3 bucket&quot;</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Version of the model to fetch, when fetching a model from DockerHub&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--shallow&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This flag is used to check shallow checks (such as container size, output consistency..)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">inspect</span><span class="p">,</span> <span class="n">remote</span><span class="p">,</span> <span class="n">remove</span><span class="p">):</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--deep&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This flag is used to check deep checks (such as computational performance checks)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--as_json&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This flag is used to save the report as json file)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span>
+        <span class="n">level</span><span class="p">,</span>
+        <span class="n">from_dir</span><span class="p">,</span>
+        <span class="n">from_github</span><span class="p">,</span>
+        <span class="n">from_dockerhub</span><span class="p">,</span>
+        <span class="n">from_s3</span><span class="p">,</span>
+        <span class="n">version</span><span class="p">,</span>
+        <span class="n">shallow</span><span class="p">,</span>
+        <span class="n">deep</span><span class="p">,</span>
+        <span class="n">as_json</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="n">mt</span> <span class="o">=</span> <span class="n">ModelTester</span><span class="p">(</span>
-            <span class="n">model_id</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
-            <span class="nb">dir</span><span class="o">=</span><span class="nb">dir</span><span class="p">,</span>
-            <span class="n">inspect</span><span class="o">=</span><span class="n">inspect</span><span class="p">,</span>
-            <span class="n">remote</span><span class="o">=</span><span class="n">remote</span><span class="p">,</span>
-            <span class="n">remove</span><span class="o">=</span><span class="n">remove</span><span class="p">,</span>
+            <span class="n">model</span><span class="p">,</span>
+            <span class="n">level</span><span class="p">,</span>
+            <span class="n">from_dir</span><span class="p">,</span>
+            <span class="n">from_github</span><span class="p">,</span>
+            <span class="n">from_dockerhub</span><span class="p">,</span>
+            <span class="n">from_s3</span><span class="p">,</span>
+            <span class="n">version</span><span class="p">,</span>
+            <span class="n">shallow</span><span class="p">,</span>
+            <span class="n">deep</span><span class="p">,</span>
+            <span class="n">as_json</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Setting up model tester...&quot;</span><span class="p">)</span>
-        <span class="n">mt</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Testing model...&quot;</span><span class="p">)</span>
-        <span class="n">mt</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model testing started for: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">mt</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
 
 </pre></div>
         </article>
