@@ -9,6 +9,7 @@ from pathlib import Path
 EOS = os.path.join(str(Path.home()), "eos")
 if not os.path.exists(EOS):
     os.makedirs(EOS)
+EOS_PLAYGROUND = os.path.join(EOS, "playground")
 ROOT = os.path.dirname(os.path.realpath(__file__))
 BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
 CHECKSUM_NCHAR = 8

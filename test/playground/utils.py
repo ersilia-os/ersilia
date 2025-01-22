@@ -1,4 +1,3 @@
-import csv
 import json
 import os
 import yaml
@@ -27,19 +26,16 @@ def get_command_names(model_id, cli_type, config):
         list(get_commands(model_id, config).keys()) if cli_type == "all" else [cli_type]
     )
 
-
-def handle_error_logging(command, description, result, config, checkups=None):
-    if config.get("log_error", False):
-        log_path = (
-            f"{config.get('log_path')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-        )
-        with open(log_path, "w") as file:
-            file.write(f"Command: {' '.join(command)}\n")
-            file.write(f"Description: {description}\n")
-            file.write(f"Error: {result}\n")
-            if checkups:
-                for check in checkups:
-                    file.write(f"Check '{check['name']}': {check['status']}\n")
+def construct_run_cmd(config):
+    run = {}
+    for inp_type in config["input_types"]:
+        for i, output_file in enumerate(config["output_files"]):
+            out_type = os.path.splitext(output_file)[1].replace(".", "")
+            inp_data = get_inputs(config, inp_type)
+            key = f"run-{inp_type}-{out_type}"
+            val = ["ersilia", "-v", "run", "-i", inp_data, "-o", output_file]
+            run[key] = val
+    return run
 
 
 def get_inputs(config, types):
@@ -66,16 +62,19 @@ def get_inputs(config, types):
         return config["input_file"]
 
 
-def construct_run_cmd(config):
-    run = {}
-    for inp_type in config["input_types"]:
-        for i, output_file in enumerate(config["output_files"]):
-            out_type = os.path.splitext(output_file)[1].replace(".", "")
-            inp_data = get_inputs(config, inp_type)
-            key = f"run-{inp_type}-{out_type}"
-            val = ["ersilia", "-v", "run", "-i", inp_data, "-o", output_file]
-            run[key] = val
-    return run
+def handle_error_logging(command, description, result, config, checkups=None):
+    if config.get("log_error", False):
+        log_path = (
+            f"{config.get('log_path')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        )
+        with open(log_path, "w") as file:
+            file.write(f"Command: {' '.join(command)}\n")
+            file.write(f"Description: {description}\n")
+            file.write(f"Error: {result}\n")
+            if checkups:
+                for check in checkups:
+                    file.write(f"Check '{check['name']}': {check['status']}\n")
+
 
 
 if __name__ == "__main__":
