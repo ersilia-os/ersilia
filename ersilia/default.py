@@ -7,6 +7,7 @@ from pathlib import Path
 
 # EOS environmental variables
 EOS = os.path.join(str(Path.home()), "eos")
+EOS_TMP = os.path.join(EOS, "temp")
 if not os.path.exists(EOS):
     os.makedirs(EOS)
 ROOT = os.path.dirname(os.path.realpath(__file__))
