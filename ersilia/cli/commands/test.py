@@ -20,11 +20,14 @@ def test_cmd():
     --------
     .. code-block:: console
 
-        With default settings:
-        $ ersilia test my_model -d /path/to/model
+        With basic testing:/
+        $ ersilia test eosxxxx --from_dir /path/to/model
 
-        With deep testing level and inspect:
-        $ ersilia test my_model -d /path/to/model --level deep --inspect --remote
+        With different sources to fetch the model:
+        $ ersilia test eosxxxx --from_github/--from_dockerhub/--from_s3
+
+        With different levels of testing:
+        $ ersilia test eosxxxx --shallow --from_github/--from_dockerhub/--from_s3
     """
 
     @ersilia_cli.command(
@@ -38,48 +41,79 @@ def test_cmd():
         "-l",
         "--level",
         "level",
-        help="Level of testing, None: for default, deep: for deep testing",
+        help="Level of testing, None: for default, deep: for deep testing, shallow: for shallow testing",
         required=False,
         default=None,
         type=click.STRING,
     )
     @click.option(
-        "-d",
-        "--dir",
-        "dir",
-        help="Model directory",
-        required=False,
+        "--from_dir",
         default=None,
         type=click.STRING,
+        help="Local path where the model is stored",
     )
     @click.option(
-        "--inspect",
-        help="Inspect the model: More on the docs",
+        "--from_github",
         is_flag=True,
         default=False,
+        help="Fetch fetch directly from GitHub",
     )
     @click.option(
-        "--remote",
-        help="Test the model from remote git repository",
+        "--from_dockerhub",
         is_flag=True,
         default=False,
+        help="Force fetch from DockerHub",
     )
     @click.option(
-        "--remove",
-        help="Remove the model directory after testing",
+        "--from_s3", is_flag=True, default=False, help="Force fetch from AWS S3 bucket"
+    )
+    @click.option(
+        "--version",
+        default=None,
+        type=click.STRING,
+        help="Version of the model to fetch, when fetching a model from DockerHub",
+    )
+    @click.option(
+        "--shallow",
         is_flag=True,
         default=False,
+        help="This flag is used to check shallow checks (such as container size, output consistency..)",
     )
-    def test(model, level, dir, inspect, remote, remove):
+    @click.option(
+        "--deep",
+        is_flag=True,
+        default=False,
+        help="This flag is used to check deep checks (such as computational performance checks)",
+    )
+    @click.option(
+        "--as_json",
+        is_flag=True,
+        default=False,
+        help="This flag is used to save the report as json file)",
+    )
+    def test(
+        model,
+        level,
+        from_dir,
+        from_github,
+        from_dockerhub,
+        from_s3,
+        version,
+        shallow,
+        deep,
+        as_json,
+    ):
         mt = ModelTester(
-            model_id=model,
-            level=level,
-            dir=dir,
-            inspect=inspect,
-            remote=remote,
-            remove=remove,
+            model,
+            level,
+            from_dir,
+            from_github,
+            from_dockerhub,
+            from_s3,
+            version,
+            shallow,
+            deep,
+            as_json,
         )
-        echo("Setting up model tester...")
-        mt.setup()
-        echo("Testing model...")
-        mt.run(output_file=None)
+        echo(f"Model testing started for: {model}")
+        mt.run()
