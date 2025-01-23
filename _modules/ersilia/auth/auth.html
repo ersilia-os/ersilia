@@ -320,7 +320,7 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">github</span><span class="w"> </span><span class="kn">import</span> <span class="n">Github</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">github.GithubException</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnknownObjectException</span>
-<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+<span class="k">except</span> <span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
     <span class="n">Github</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">UnknownObjectException</span> <span class="o">=</span> <span class="kc">None</span>
 
