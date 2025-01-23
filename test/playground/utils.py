@@ -8,7 +8,6 @@ from pathlib import Path
 config_path = Path("config.yml")
 config = yaml.safe_load(config_path.read_text())
 
-
 def get_commands(model_id, config):
     run = construct_run_cmd(config)
     return {

@@ -22,7 +22,6 @@ runner = config.get("runner", "single")
 cli_type = config.get("cli_type", "all")
 output_file = config.get("output_files")
 input_file = config.get("input_file")
-redirect = config.get("output_redirection", False)
 
 if runner == "single":
     model_ids = [config["model_id"]]

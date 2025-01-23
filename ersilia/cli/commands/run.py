@@ -41,7 +41,7 @@ def run_cmd():
     @click.option(
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
-    @click.option("--as-table", is_flag=True, default=False)
+    @click.option("--as_table/-t", is_flag=True, default=False)
     def run(input, output, batch_size, as_table):
         session = Session(config_json=None)
         model_id = session.current_model_id()
@@ -69,23 +69,24 @@ def run_cmd():
             batch_size=batch_size,
             track_run=track_runs,
         )
+        iter_values = []
         if isinstance(result, types.GeneratorType):
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:
-                    formatted = json.dumps(result, indent=4)
-                    if as_table:
-                        print_result_table(formatted)
-                    else:
-                        echo(formatted)
-                else:
-                    echo("Something went wrong", fg="red")
+                    iter_values.append(result)
+            if as_table:
+                print_result_table(iter_values)
+            else:
+                echo(json.dumps(iter_values, indent=4))
         else:
             if as_table:
                 print_result_table(result)
             else:
                 try:
                     echo(result)
-                except:
-                    print_result_table(result)
+                except Exception:
+                    echo(
+                        f"Error: Could not print the result for output given path: {result}."
+                    )
 
     return run
