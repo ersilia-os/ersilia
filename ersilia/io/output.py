@@ -475,7 +475,6 @@ class GenericOutputAdapter(ResponseRefactor):
         """
         v = []
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
-            # Truncate large arrays/lists for logging
             if isinstance(v_, list) or hasattr(v_, "__len__"):
                 self.logger.debug(
                     "Values: {0}... (and {1} more elements)".format(
@@ -483,7 +482,7 @@ class GenericOutputAdapter(ResponseRefactor):
                     )
                 )
             else:
-                self.logger.debug(f"Values: {v_}")  # For non-array values, print as is
+                self.logger.debug(f"Values: {v_}")
 
             self.logger.debug(f"Type: {t_}")
             self.logger.debug(f"Key: {k_}")
