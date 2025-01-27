@@ -812,9 +812,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">v</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">v_</span><span class="p">,</span> <span class="n">t_</span><span class="p">,</span> <span class="n">k_</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">dtypes</span><span class="p">,</span> <span class="n">output_keys</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">v_</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">t_</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">k_</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v_</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v_</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Values: </span><span class="si">{0}</span><span class="s2">... (and </span><span class="si">{1}</span><span class="s2"> more elements)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">v_</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">v_</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v_</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="mi">0</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values: </span><span class="si">{</span><span class="n">v_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Type: </span><span class="si">{</span><span class="n">t_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Key: </span><span class="si">{</span><span class="n">k_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">t_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array_types</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">v_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">v_</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">__array_shape</span><span class="p">(</span><span class="n">k_</span><span class="p">)</span>
@@ -909,6 +917,9 @@
                     <span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No merge key&quot;</span><span class="p">)</span>
+                    <span class="c1"># Log a truncated version of the array for better clarity</span>
+                    <span class="c1"># Check if v is a large array and truncate its output</span>
+
                     <span class="n">output_keys_expanded</span> <span class="o">+=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m_</span><span class="p">)</span> <span class="k">for</span> <span class="n">m_</span> <span class="ow">in</span> <span class="n">m</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">output_keys_expanded</span> <span class="o">+=</span> <span class="p">[</span><span class="n">ok</span><span class="p">]</span>
