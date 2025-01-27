@@ -72,3 +72,39 @@ class ModelNotInLocal(object):
             )
         )
         sys.exit(0)
+
+
+class VersionNotSupported:
+    """
+    A class to handle the scenario when the python version used is less than 3.8
+
+    Attributes
+    ----------
+    versionMajor : int
+        The user's major version (e.g 3 in version 3.8).
+    versionMinor : int
+        The user's minor version (e.g 8 in version 3.8).
+
+    Methods
+    -------
+    echo()
+        prints an error message to the console in red and exits the program.
+    """
+
+    def __init__(self, versionMajor, versionMinor):
+        self.versionMajor = versionMajor
+        self.versionMinor = versionMinor
+
+    def echo(self):
+        """
+        Prints an error indicating the python version is not supported and exits the program.
+        """
+        echo(
+            "Error: This application requires Python 3.8 or higher.",
+            fg="red",
+        )
+        echo(
+            "Current version: {sys.version_info.major}.{sys.version_info.minor}",
+            fg="red",
+        )
+        sys.exit(1)
