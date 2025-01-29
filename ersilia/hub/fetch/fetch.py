@@ -25,6 +25,15 @@ from .register.standard_example import ModelStandardExample
 FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
 
 
+class BentoMLError(Exception):
+    """
+    Raised when an error occurs in BentoML-related processes.
+    """
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
 class ModelFetcher(ErsiliaBase):
     """
     ModelFetcher is responsible for fetching models from various sources.
@@ -186,24 +195,37 @@ class ModelFetcher(ErsiliaBase):
     @throw_ersilia_exception()
     def _fetch_from_bentoml(self):
         self.logger.debug("Fetching using BentoML")
-        self.check_bentoml()
-        fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
-        mf = fetch.ModelFetcherFromBentoML(
-            config_json=self.config_json,
-            credentials_json=self.credentials_json,
-            overwrite=self.overwrite,
-            repo_path=self.repo_path,
-            mode=self.mode,
-            pip=self.do_pip,
-            dockerize=self.do_docker,
-            force_from_github=self.force_from_github,
-            force_from_s3=self.force_from_s3,
-        )
-        if mf.seems_installable(model_id=self.model_id):
-            mf.fetch(model_id=self.model_id)
-        else:
-            self.logger.debug("Not installable with BentoML")
-            raise NotInstallableWithBentoML(model_id=self.model_id)
+        try:
+            self.check_bentoml()
+
+            fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
+            mf = fetch.ModelFetcherFromBentoML(
+                config_json=self.config_json,
+                credentials_json=self.credentials_json,
+                overwrite=self.overwrite,
+                repo_path=self.repo_path,
+                mode=self.mode,
+                pip=self.do_pip,
+                dockerize=self.do_docker,
+                force_from_github=self.force_from_github,
+                force_from_s3=self.force_from_s3,
+            )
+
+            # Check if the model can be installed with BentoML
+            try:
+                if mf.seems_installable(model_id=self.model_id):
+                    mf.fetch(model_id=self.model_id)
+                else:
+                    raise NotInstallableWithBentoML(model_id=self.model_id)
+
+            except NotInstallableWithBentoML:
+                raise
+
+        except NotInstallableWithBentoML:
+            raise
+
+        except Exception as e:
+            raise BentoMLError(f"An error occurred during BentoML fetching: {e}")
 
     @throw_ersilia_exception()
     def _fetch_not_from_dockerhub(self, model_id: str):
@@ -395,4 +417,20 @@ class ModelFetcher(ErsiliaBase):
                     fetch_success=True, reason="Model fetched successfully"
                 )
         else:
+            # Handle BentoML-specific errors here
+            if isinstance(fr.reason, BentoMLError):
+                self.logger.debug("BentoML fetching failed, deleting artifacts")
+                do_delete = yes_no_input(
+                    "Do you want to delete the model artifacts? [Y/n]",
+                    default_answer="Y",
+                )
+                if do_delete:
+                    md = ModelFullDeleter(overwrite=False)
+                    md.delete(model_id)
+                    self.logger.info(
+                        f"Model '{model_id}' artifacts successfully deleted."
+                    )
+                    print(
+                        f"✅ Model '{model_id}' artifacts have been successfully deleted."
+                    )
             return fr
