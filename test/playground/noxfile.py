@@ -1,161 +1,152 @@
-import shutil
-from pathlib import Path
-
+import argparse
+import json
 import nox
+import os
+import shutil
 import yaml
+from pathlib import Path
+from ersilia.default import EOS_PLAYGROUND
 
-from ersilia.utils.logging import logger
+if not os.path.exists(EOS_PLAYGROUND):
+    os.makedirs(EOS_PLAYGROUND)
 
-ORIGINAL_DIR = Path.cwd()
-config_path = Path("config.yml")
-config = yaml.safe_load(config_path.read_text())
-REPO_URL = "https://github.com/ersilia-os/ersilia.git"
-REPO_DIR = Path("ersilia")
+NOX_CWD = Path.cwd()
+NOX_PWD = Path(__file__).parent.parent.parent
+CONFIG_PATH = NOX_CWD / "config.yml"
+DEFAULT_CONFIG = yaml.safe_load(CONFIG_PATH.read_text())
+PYTHON_VERSIONS = DEFAULT_CONFIG["settings"]["python_version"]
+DEFAULT_BACKEND = DEFAULT_CONFIG["runtime"]["backend"]
 
+nox.options.envdir = Path(EOS_PLAYGROUND) / ".nox"
 
-def update_yaml_values(new_values: dict):
-    existing_config = yaml.safe_load(config_path.read_text())
-    existing_config.update(new_values)
-    config_path.write_text(yaml.dump(existing_config))
+test_packages = [
+    "pytest", 
+    "pytest-asyncio", 
+    "pytest-benchmark", 
+    "nox", 
+    "rich",
+    "fuzzywuzzy", 
+    "scipy"
+]
 
+fetch_flags = (
+    "from_github", 
+    "from_dockerhub", 
+    "from_s3", 
+    "version", 
+    "from_dir"
+)
 
-def get_python_version():
-    return config.get("python_version", "3.10.10")
+flagged_keys = { 
+        "fetch": {*fetch_flags},
+        "test": {*fetch_flags},
+        "run": {"input", "output", "as_table"},
+        "test": {*fetch_flags, "shallow", "deep", "as_json"},
+        "delete": {"all"},
+        "catalog": {"more", "as-json", "local", "hub", "local"},
+        "example": {"simple", "random", "predefined"},
+}
 
-
-def install_dependencies(session):
-    session.install(
-        "pytest",
-        "pytest-asyncio",
-        "pytest-xdist",
-        "psutil",
-        "PyYAML",
-        "rich",
-    )
-
-
-def setup_ersilia(session):
-    if REPO_DIR.exists() and config.get("overwrite_ersilia_repo", False):
-        logger.info(f"Overwriting existing repository directory: {REPO_DIR}")
-        shutil.rmtree(REPO_DIR)
-
-    if not REPO_DIR.exists():
-        session.run(
-            "git",
-            "clone",
-            REPO_URL,
-            external=True,
-        )
-    else:
-        logger.info(f"Using existing repository directory: {REPO_DIR}")
-
-    session.chdir(REPO_DIR)
-    session.install("-e", ".")
-    session.chdir(ORIGINAL_DIR)
+def parse_yaml(file_path):
+    with open(file_path, "r") as f:
+        return yaml.safe_load(f)
 
 
-def parse_and_update_config(session):
-    passed_args = {
-        arg.split("=")[0]: arg.split("=")[1] for arg in session.posargs if "=" in arg
-    }
+def preprocess_values(config_dict, flagged_keys):
+    for key, known_values in flagged_keys.items():
+        if key in config_dict:
+            values = config_dict[key]
+            if isinstance(values, str):  
+                values = [values]
+            if isinstance(values, list):
+                config_dict[key] = [
+                    f"--{val}" if val in known_values else val for val in values
+                ]
+    return config_dict
 
-    for key, value in passed_args.items():
-        if value.lower() in ("true", "false"):
-            passed_args[key] = value.lower() == "true"
-        elif "," in value:
-            passed_args[key] = value.split(",")
+def parse_posargs(posargs, config_keys):
+    parser = argparse.ArgumentParser()
+    for key in config_keys:
+        parser.add_argument(f"--{key}", nargs="*", type=str, default=None)
 
-    new_config = {key: passed_args.get(key, config.get(key)) for key in config.keys()}
+    parsed_args, _ = parser.parse_known_args(posargs)
+    parsed_dict = vars(parsed_args)
 
-    logger.info("Parsed arguments and updated configuration:")
-    for key in passed_args.keys():
-        logger.info(f"  {key}: {passed_args[key]}")
+    for key, value in parsed_dict.items():
+        if isinstance(value, list):
+            if len(value) == 1: 
+                if value[0].lower() in {"true", "false"}:
+                    parsed_dict[key] = value[0].lower() == "true"
+                elif value[0].isdigit():
+                    parsed_dict[key] = int(value[0])
+                else:
+                    parsed_dict[key] = value[0]
+    parsed_dict = preprocess_values(parsed_dict, flagged_keys)
 
-    update_yaml_values(new_config)
+    return parsed_dict
 
-    return new_config
+def get_all_subkeys(data):
+    keys = []
+    for key, value in data.items():
+        if isinstance(value, dict):
+            keys.extend(get_all_subkeys(value)) 
+        else:
+            keys.append(key)  
+    return keys
 
+def map_back_to_structure(parsed_data, default_config):
+    reconstructed = {}
+    top_level_keys = [key for key in default_config.keys() if isinstance(default_config[key], dict)]
+    for section in top_level_keys:
+        reconstructed[section] = {}
+        
+        for key in default_config[section].keys():
+            if key in parsed_data:
+                reconstructed[section][key] = parsed_data[key]
+    
+    return reconstructed
 
-@nox.session(venv_backend="conda", python=get_python_version(), reuse_venv=True)
+def replace_configs(default_config, override_config):
+    replaced_config = default_config.copy()
+    for key, value in replaced_config.items():
+        if isinstance(value, dict): 
+            if key in override_config and isinstance(override_config[key], dict):
+                replaced_config[key] = replace_configs(value, override_config[key])
+        elif key in override_config and override_config[key] is not None:
+            replaced_config[key] = override_config[key]
+    
+    return replaced_config
+
 def setup(session):
-    install_dependencies(session)
-    setup_ersilia(session)
+    session.log(f"Installing ersilia from source: {NOX_PWD}")
+    session.install("-e", str(NOX_PWD))
+    session.install(*test_packages)
+    session.env["TEST_ENV"] = "true"
 
+def run(session):
+    default_config = parse_yaml(CONFIG_PATH)
+    keys = get_all_subkeys(default_config)
+    override_config = parse_posargs(session.posargs, keys)
+    override_config = map_back_to_structure(override_config, default_config)
+    final_config = replace_configs(default_config, override_config)
+    session.env["CONFIG_DATA"] = json.dumps(final_config)
+    session.cd(NOX_CWD)
+    if final_config["settings"].get("silent"):
+        session.run("pytest", "commands.py", "--disable-warnings")
+    else:
+        session.run("pytest", "-s", "commands.py", "--disable-warnings")
 
-@nox.session(venv_backend="conda", python=get_python_version())
-def test_from_github(session):
-    install_dependencies(session)
-    setup_ersilia(session)
-    update_yaml_values({"fetch_flags": "--from_github"})
-    logger.info(
-        f'CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}'
-    )
-    parse_and_update_config(session)
-    session.run("pytest", "commands.py", "-v", silent=False)
+@nox.session(
+    venv_backend=DEFAULT_BACKEND, python=PYTHON_VERSIONS, reuse_venv=True
+)
+def execute(session):
+    setup(session)
+    run(session)
 
-
-@nox.session(venv_backend="conda", python=get_python_version(), reuse_venv=True)
-def test_from_dockerhub(session):
-    install_dependencies(session)
-    setup_ersilia(session)
-    update_yaml_values({"fetch_flags": "--from_dockerhub"})
-    logger.info(
-        f'CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}'
-    )
-    parse_and_update_config(session)
-    session.run("pytest", "commands.py", "-v", silent=False)
-
-
-@nox.session(venv_backend="conda", python=get_python_version())
-def test_auto_fetcher_decider(session):
-    install_dependencies(session)
-    setup_ersilia(session)
-    update_yaml_values({"fetch_flags": ""})
-    logger.info(
-        f'CLI test for model: {config.get("model_id")} and auto fetcher decider'
-    )
-    parse_and_update_config(session)
-    session.run("pytest", "commands.py", "-v", silent=False)
-
-
-@nox.session(venv_backend="conda", python=get_python_version())
-def test_fetch_multiple_models(session):
-    update_yaml_values(
-        {
-            "runner": "multiple",
-            "cli_type": "fetch",
-            "fetch_flags": "--from_dockerhub",
-        }
-    )
-    logger.info("Fetching and Serving Multiple Models: Fetching")
-    parse_and_update_config(session)
-    session.run("pytest", "commands.py", "-v", silent=False)
-
-
-@nox.session(venv_backend="conda", python=get_python_version())
-def test_serve_multiple_models(session):
-    update_yaml_values(
-        {"runner": "multiple", "cli_type": "serve", "delete_model": False}
-    )
-    logger.info("Fetching and Serving Multiple Models: Serving")
-    parse_and_update_config(session)
-    session.run("pytest", "commands.py", "-v", silent=False)
-
-
-@nox.session(venv_backend="conda", python=get_python_version())
-def test_conventional_run(session):
-    update_yaml_values(
-        {
-            "runner": "single",
-            "cli_type": "all",
-            "fetch_flags": "--from_dockerhub",
-            "output_files": [
-                "files/output_eos9gg2_0.json",
-                "files/output_eos9gg2_1.h5",
-            ],
-            "delete_model": True,
-        }
-    )
-    logger.info("Standard and Conventional Run: Conventional")
-    parse_and_update_config(session)
-    session.run("pytest", "commands.py", "-v", silent=False)
+@nox.session
+def clean(session):
+    session.log(f"Cleaning up {EOS_PLAYGROUND} and Config Data")
+    if "CONFIG_DATA" in os.environ:
+        del os.environ["CONFIG_DATA"]
+    shutil.rmtree(EOS_PLAYGROUND, ignore_errors=True)
+    session.log("Cleanup completed!")

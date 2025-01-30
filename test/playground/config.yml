@@ -1,25 +1,41 @@
-fetch_flags: []
-run_flags: []
-delete_flags: []
-catalog_flags: []
-test_flags: []
-example_flags: []
-enforce: true # to run necessary commands for a given command to run
-activate_docker: true
-cli: all
-input_file: files/input.csv
-output_files:
-- files/result.json
-- files/result.csv
-- files/result.h5
-input_types:
-- str
-- csv
-- list
-log_error: true
-max_runtime_minutes: 10
-model: eos3b5e
+settings:
+  activate_docker: true
+  log_error: true
+  silent: true
+  show_remark: false
+  max_runtime_minutes: 10
+  num_samples: 10
+  cli: ["all"]
+  python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+
+flags:
+  fetch: []
+  run: []
+  delete: []
+  catalog: ["--more", "--as-json"]
+  test: ["--shallow", "--from_github"]
+  example: ["-n", 10, "--random"]
+
+files:
+  input_single: input.csv
+  outputs:
+    - result.csv
+    - result.json
+    - result.h5
+  example_file: example.csv
 models:
-- eos3b5e
-- eos4e40
-- eos9gg2
+  single: eos3b5e
+
+  multiple:
+    - eos5axz
+    - eos4e40
+    - eos2r5a
+    - eos4zfy
+    - eos8fma
+  
+runtime:
+  backend: "conda"
+  runner: "single"
+  input_types:
+    - list

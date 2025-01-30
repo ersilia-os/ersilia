@@ -1,14 +1,36 @@
-import csv
 import json
-import math
+import os
+import re
+import requests
 import yaml
-from ersilia.utils.hdf5 import Hdf5DataLoader
 from pathlib import Path
+from ersilia.utils.conda import SimpleConda
+from ersilia.utils.docker import SimpleDocker
+from ersilia.utils.logging import logger
+from ersilia.default import EOS, DOCKERHUB_ORG, SESSIONS_DIR, SESSION_JSON
+from ersilia.utils.session import get_session_dir
+from ersilia.publish.test import CheckService, IOService, STATUS_CONFIGS
 
 RULE_REGISTRY = {}
 
 config_path = Path("config.yml")
 config = yaml.safe_load(config_path.read_text())
+
+
+def create_response(name, status, detail=""):
+    return {
+        "name": name,
+        "status": status,
+        "detail": detail,
+    }
+
+
+def get_configs(command):
+    flags = command[1]
+    model = flags[0]
+    source = flags[1] if len(flags) > 1 else ""
+    version = flags[2] if len(flags) > 2 else ""
+    return flags, model, source, version
 
 
 class CommandRule:
@@ -24,211 +46,235 @@ def register_rule(name):
     return decorator
 
 
-@register_rule("folder_exists")
-class FolderExistsRule(CommandRule):
+@register_rule("fetch_rule")
+class FetchRule(CommandRule):
     def __init__(self):
-        pass
+        self.sc = SimpleConda()
+        self.sd = SimpleDocker()
+        self.dest = os.path.join(EOS, "dest")
+        self.repos = os.path.join(EOS, "repository")
+        self.checkups = []
 
-    def check(self, folder_path, expected_status):
-        actual_status = Path(folder_path).exists() and any(Path(folder_path).iterdir())
-        if actual_status != expected_status:
-            raise AssertionError(
-                f"Expectation failed for FolderExistsRule: "
-                f"Expected folder to {'exist' if expected_status else 'not exist'}, "
-                f"but it {'exists' if actual_status else 'does not exist'}."
+    def check(self, command, config, std_out):
+        self.checkups.append(self._check_folders(command))
+        img_chks = self._check_docker_image(command)
+        if img_chks:
+            self.checkups.append(img_chks)
+        self.checkups.append(self._check_dest_folder_content(command))
+        env_chks = self._check_conda_env(command)
+        if env_chks:
+            self.checkups.append(env_chks)
+        return self.checkups
+
+    def _check_folders(self, command):
+        _, model, _, _ = get_configs(command)
+        path = os.path.join(self.dest, model)
+        if not os.path.exists(path):
+            return create_response(
+                name="Dest Folder Exist",
+                status=False,
+                detail=f"Folder does not exist at: {path}",
             )
-        return {
-            "name": f"Folder exists at {folder_path}",
-            "status": actual_status,
+        return create_response(name="Dest Folder Exist", status=True)
+
+    def _check_dest_folder_content(self, command):
+        _, model, _, _ = get_configs(command)
+        path = os.path.join(self.dest, model)
+        if os.path.exists(path) and os.listdir(path):
+            return create_response(name="Dest folder has content", status=True)
+        return create_response(
+            name="Dest folder has content",
+            status=False,
+            detail=f"No content exists at: {path}",
+        )
+
+    def _check_docker_image(self, command):
+        _, model, source, version = get_configs(command)
+        version = version if version else "latest"
+        if "dockerhub" in source:
+            exist = self.sd.exists(org=DOCKERHUB_ORG, img=model, tag=version)
+            return create_response(name="Docker Image Exist", status=exist)
+
+    def _check_conda_env(self, command):
+        _, model, source, _ = get_configs(command)
+        if "github" in source or "s3" in source:
+            exist = self.sc.exists(model)
+            return create_response(name="Conda venv exists", status=exist)
+
+
+@register_rule("serve_rule")
+class ServeRule(CommandRule):
+    def __init__(self):
+        self.session_dir = SESSIONS_DIR
+        self.checkups = []
+        self.current_session_dir = get_session_dir()
+
+    def check(self, command, config, std_out):
+        print(f"Session dir: {get_session_dir()}")
+        self.checkups.append(self.get_latest_folder_and_check_files(command))
+        self.checkups.append(self.check_service_class())
+        self.checkups.append(self.extract_url(std_out))
+        return self.checkups
+
+    def get_latest_folder_and_check_files(self, command):
+        _, model, _, _ = get_configs(command)
+        required_files = {
+            "console.log",
+            "current.log",
+            "_logs",
+            "logs",
+            f"{model}.pid",
+            SESSION_JSON,
         }
 
+        existing_files = set(os.listdir(self.current_session_dir))
+        required_files_exists = required_files.issubset(existing_files)
+        if required_files_exists:
+            return create_response(name="Session required files exist", status=True)
+        return create_response(
+            name="Session required files exist",
+            status=False,
+            detail=f"Session required files do not exist at: {self.current_session_dir}",
+        )
 
-@register_rule("file_exists")
-class FileExistsRule(CommandRule):
-    def __init__(self):
-        pass
+    def check_service_class(self):
+        service_class = ("pulled_docker", "conda")
+        session_file_path = os.path.join(self.current_session_dir, SESSION_JSON)
 
-    def check(self, file_path, expected_status):
-        actual_status = Path(file_path).exists()
-        if actual_status != expected_status:
-            raise AssertionError(
-                f"Expectation failed for FileExistsRule: "
-                f"Expected file to {'exist' if expected_status else 'not exist'}, "
-                f"but it {'exists' if actual_status else 'does not exist'}."
-            )
-        return {
-            "name": f"File exists at {file_path}",
-            "status": actual_status,
-        }
-
-
-@register_rule("dockerhub_status")
-class DockerHubStatusRule(CommandRule):
-    def __init__(self):
-        pass
-
-    def check(self, expected_status, dest_path):
-        dockerhub_file = Path(dest_path) / "from_dockerhub.json"
-        if dockerhub_file.exists():
-            with open(dockerhub_file, "r") as f:
-                content = f.read()
-            actual_status = f'"docker_hub": {str(expected_status).lower()}' in content
-        else:
-            actual_status = False
-
-        if actual_status != expected_status:
-            raise AssertionError(
-                f"Expectation failed for DockerHubStatusRule: "
-                f"Expected DockerHub status to be {expected_status}, but it was {actual_status}."
-            )
-        return {
-            "name": f"DockerHub status is {actual_status}",
-            "status": actual_status,
-        }
-
-
-@register_rule("file_content_check")
-class FileContentCheckRule(CommandRule):
-    # Supported data structures
-    ds = {
-        "Single": lambda x: isinstance(x, list) and len(x) == 1,
-        "List": lambda x: isinstance(x, list)
-        and len(x) > 1
-        and all(isinstance(item, (int, float)) for item in x),
-        "Flexible List": lambda x: isinstance(x, list)
-        and all(isinstance(item, (str, int, float)) for item in x),
-        "Matrix": lambda x: isinstance(x, list)
-        and all(
-            isinstance(row, list)
-            and all(isinstance(item, (int, float)) for item in row)
-            for row in x
-        ),
-        "Serializable Object": lambda x: isinstance(x, dict),
-    }
-
-    def __init__(self):
-        pass
-
-    def check(self, file_path, expected_input):
-        if not Path(file_path).exists():
-            raise FileNotFoundError(f"File {file_path} does not exist.")
-
-        file_extension = Path(file_path).suffix.lower()
-        if file_extension not in [".json", ".csv", ".h5"]:
-            raise ValueError(
-                f"Unsupported file type: {file_extension}. Only JSON, CSV, and HDF5 are supported."
+        if not os.path.exists(session_file_path):
+            return create_response(
+                name="Session file exists",
+                status=False,
+                detail=f"Session file does not exist at: {session_file_path}",
             )
 
-        if file_extension == ".json":
-            actual_status, file_length = self._check_json_content(file_path)
-        elif file_extension == ".csv":
-            actual_status, file_length = self._check_csv_content(file_path)
-        elif file_extension == ".h5":
-            actual_status, file_length = self._check_h5_content(file_path)
-
-        expected_length = self._determine_expected_length(expected_input)
-
-        if file_length != expected_length:
-            raise AssertionError(
-                f"Expectation failed for FileContentCheckRule: "
-                f"Expected length '{expected_length}', but found '{file_length}' in the file."
-            )
-
-        return {
-            "name": f"File content check at {file_path}",
-            "status": actual_status,
-            "length": file_length,
-        }
-
-    def _check_json_content(self, file_path):
-        with open(file_path, "r") as f:
-            try:
-                content = json.load(f)
-                for row in content:
-                    row = row.get("output", {}).get("outcome")
-                    self._validate_json(row)
-                length = len(content) if isinstance(content, list) else 1
-                return "not null", length
-            except json.JSONDecodeError as e:
-                raise ValueError(f"Invalid JSON content in file {file_path}: {e}")
-
-    def _check_csv_content(self, file_path):
-        with open(file_path, "r") as f:
-            reader = csv.reader(f)
-            rows = list(reader)[1:]
-            for index, row in enumerate(rows):
-                if any(self._is_invalid_value(cell) for cell in row):
-                    raise ValueError(
-                        f"Invalid value found in row {index + 1} of CSV file."
-                    )
-            return "not null", len(rows)
-
-    def _check_h5_content(self, file_path):
         try:
-            loader = Hdf5DataLoader()
-            loader.load(file_path)
-            content = loader.values or loader.keys or loader.inputs or loader.features
-            if not content:
-                raise ValueError(f"Empty content in HDF5 file {file_path}.")
-            content = (
-                content[1:]
-                if isinstance(content, list) and len(content) > 1
-                else content
+            with open(session_file_path, "r") as file:
+                data = json.load(file)
+                correct_srv_class = data.get("service_class") in service_class
+                return create_response(
+                    name=f"Session service class is correct: {data.get('service_class')}",
+                    status=correct_srv_class,
+                )
+        except (json.JSONDecodeError, KeyError):
+            return create_response(
+                name="Session service class is correct",
+                status=False,
+                detail=f"Session file is not valid at: {session_file_path}",
             )
-            for index, row in enumerate(content):
-                if any(self._is_invalid_value(cell) for cell in row):
-                    raise ValueError(
-                        f"Invalid value found in row {index + 1} of HDF5 file."
-                    )
-            return "not null", len(content)
-        except (OSError, KeyError, ValueError) as e:
-            raise ValueError(f"Invalid HDF5 content in file {file_path}: {e}")
 
-    def _determine_expected_length(self, expected_input):
-        if "str" in expected_input:
-            return 1
+    def extract_url(self, text):
+        pattern = r"http://[a-zA-Z0-9.-]+:\d+"
+        match = re.search(pattern, text)
+        url = match.group(0)
+        response = requests.get(url)
+        status_ok = response.status_code == 200
+        return create_response(name="Session url is valid", status=status_ok)
+
+
+@register_rule("run_rule")
+class RunRule(CommandRule):
+    def __init__(self):
+        self.ios = IOService(logger=logger, model_id=None, dir=None)
+        self.check_service = CheckService(
+            logger=logger,
+            model_id=None,
+            dir=None,
+            from_github=None,
+            from_dockerhub=None,
+            ios=self.ios,
+        )
+
+    def check(self, command, config, std_out):
+        return self.check_contents(command, config)
+
+    def check_contents(self, command, config):
+        flag = get_configs(command)[0]
+        output_files = flag[3]
+        inp_type = self._get_input_type(output_files)
+        res = self.check_service.validate_file_content(output_files, inp_type)
+        if res[-1] == str(STATUS_CONFIGS.PASSED):
+            return [create_response(name="file content is valid", status=True)]
         else:
-            return config["number_of_input_samples"]
+            return [
+                create_response(
+                    name="file content is not valid", status=False, detail=res[1]
+                )
+            ]
 
-    def _validate_json(self, outcome):
-        for shape, validator in self.ds.items():
-            if validator(outcome):
-                print(f"Outcome type identified as: {shape}")
+    def _get_input_type(self, inp):
+        if isinstance(inp, str):
+            return "str"
+        elif isinstance(inp, list):
+            return "list"
+        elif inp.endswith(".csv"):
+            return "csv"
+        return None
 
-                if shape in ["Single"]:
-                    if self._is_invalid_value(outcome[0]):
-                        raise ValueError(
-                            f"Invalid value '{outcome[0]}' in outcome of type '{shape}'."
-                        )
-                elif shape in ["List", "Flexible List"]:
-                    for item in outcome:
-                        if self._is_invalid_value(item):
-                            raise ValueError(
-                                f"Invalid value '{item}' in outcome of type '{shape}'."
-                            )
-                elif shape == "Matrix":
-                    for row in outcome:
-                        for item in row:
-                            if self._is_invalid_value(item):
-                                raise ValueError(
-                                    f"Invalid value '{item}' in outcome of type '{shape}'."
-                                )
-                elif shape == "Serializable Object":
-                    for key, value in outcome.items():
-                        if self._is_invalid_value(value):
-                            raise ValueError(
-                                f"Invalid value '{value}' found for key '{key}' in outcome of type '{shape}'."
-                            )
-                return
 
-        raise TypeError("Unknown outcome structure.")
+@register_rule("delete_rule")
+class DeleteRule(CommandRule):
+    def __init__(self):
+        self.dest = os.path.join(EOS, "dest")
+        self.repos = os.path.join(EOS, "repository")
+        self.sd = SimpleDocker()
+        self.sc = SimpleConda()
+        self.checkups = []
 
-    def _is_invalid_value(self, item):
-        if item in [None, "", "null"]:
-            return True
-        if isinstance(item, float) and math.isnan(item):
-            return True
-        return False
+    def check(self, command, config, std_out):
+        self.checkups.append(self._check_containers_images_removed(command))
+        self.checkups.append(self._check_dest_folder(command))
+        self.checkups.append(self._check_repo_folder(command))
+        self.checkups.append(self._check_docker_image(command))
+        self.checkups.append(self._check_conda_env(command))
+        print(self.checkups)
+        return self.checkups
+
+    def _check_repo_folder(self, command):
+        _, model, _, _ = get_configs(command)
+        path = os.path.join(self.repos, model)
+        if os.path.exists(path):
+            return create_response(
+                name="Repo Folder Not Exist",
+                status=False,
+                detail=f"Folder does not exist at: {path}",
+            )
+        return create_response(name="Repo Folder Exist", status=True)
+
+    def _check_dest_folder(self, command):
+        _, model, _, _ = get_configs(command)
+        path = os.path.join(self.dest, model)
+        if os.path.exists(path):
+            return create_response(
+                name="Dest Folder Not Exist",
+                status=False,
+                detail=f"Folder does not exist at: {path}",
+            )
+        return create_response(name="Dest Folder Exist", status=True)
+
+    def _check_containers_images_removed(self, command):
+        _, model, source, version = get_configs(command)
+        version = version if version else "latest"
+        img_name = f"{DOCKERHUB_ORG}/{model}:{version}"
+        containers = self.sd.containers(only_run=False)
+        if containers:
+            exists = img_name in containers.values()
+            return create_response(name="Containers Removed", status=not exists)
+        return create_response(name="Containers Removed", status=True)
+
+    def _check_docker_image(self, command):
+        _, model, source, version = get_configs(command)
+        version = version if version else "latest"
+        if "dockerhub" in source:
+            exist = self.sd.exists(org=DOCKERHUB_ORG, img=model, tag=version)
+            return create_response(name="Docker Image Not Exist", status=exist)
+        return create_response(name="Docker Image Not Exist", status=True)
+
+    def _check_conda_env(self, command):
+        _, model, source, _ = get_configs(command)
+        if self.sc.exists(model):
+            return create_response(name="Conda venv not exists", status=False)
+        return create_response(name="Conda venv not exists", status=True)
 
 
 def get_rule(rule_name, *args, **kwargs):
