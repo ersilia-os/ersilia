@@ -130,7 +130,7 @@ jobs:
         run: |
           nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_github
           nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_dockerhub
-          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_s3
+          nox -f test/playground/noxfile.py -s clean execute -p 3.10 -- --cli delete fetch --fetch from_s3
           nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli serve run catalog example test close delete
 
 
