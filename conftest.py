@@ -17,6 +17,12 @@ fil_path = base_path / "files"
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
     console = Console()
 
+    if not results:
+        console.print(
+            Panel.fit("No results available.", title="Summary", border_style="bold")
+        )
+        return
+
     docker_status = (
         Text("✔", style="green bold")
         if any(result["activate_docker"] for result in results)

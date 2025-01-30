@@ -128,10 +128,10 @@ jobs:
 
       - name: Run CLI Test Default
         run: |
-          nox -f test/playground/noxfile.py -s execute -- --cli delete fetch --fetch from_github
-          nox -f test/playground/noxfile.py -s execute -- --cli delete fetch --fetch from_dockerhub
-          nox -f test/playground/noxfile.py -s execute -- --cli delete fetch --fetch from_s3
-          nox -f test/playground/noxfile.py -s execute -- --cli serve run catalog example test close delete
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_github
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_dockerhub
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_s3
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli serve run catalog example test close delete
 
 
   run-cli-test-multiple:
@@ -156,8 +156,8 @@ jobs:
 
       - name: Run CLI Test Multiple
         run: |          
-          nox -f test/playground/noxfile.py -s execute -- --cli fetch --fetch from_dockerhub --runner multiple
-          nox -f test/playground/noxfile.py -s execute -- --cli serve --runner multiple
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli fetch --fetch from_dockerhub --runner multiple
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli serve --runner multiple
 
   test-colab-notebook:
     defaults:
