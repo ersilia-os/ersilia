@@ -49,7 +49,7 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
     table.add_column("Time Taken", width=15, justify="center")
     table.add_column("Max Memory", width=15, justify="center")
     table.add_column("Status", width=10, justify="right")
-    table.add_column("Checkups", width=20, justify="left")
+    table.add_column("Checkups", width=50, justify="left")
     if show_remark:
         table.add_column("Remark", width=60, justify="right")
 
