@@ -111,14 +111,7 @@ jobs:
     defaults:
       run:
         shell: bash -el {0}
-    strategy:
-      matrix:
-        session:
-          - setup
-          - test_from_github
-          - test_from_dockerhub
-          - test_auto_fetcher_decider
-          - test_conventional_run
+
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
       - uses: conda-incubator/setup-miniconda@v3
@@ -134,8 +127,16 @@ jobs:
           python -m pip install -e .[test]
 
       - name: Run CLI Test Default
-        run: |     
-          nox -f test/playground/noxfile.py -s ${{ matrix.session }}
+        run: |
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_github
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_dockerhub
+          nox -f test/playground/noxfile.py -s clean
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete fetch --fetch from_s3
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli serve run catalog example
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli close
+          nox -f test/playground/noxfile.py -s clean
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli delete test
+
 
   run-cli-test-multiple:
     needs: run-pytest
@@ -159,7 +160,7 @@ jobs:
 
       - name: Run CLI Test Multiple
         run: |          
-          nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli fetch serve --fetch from_dockerhub --runner multiple
 
   test-colab-notebook:
     defaults:
