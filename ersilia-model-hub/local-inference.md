@@ -78,6 +78,10 @@ ersilia close
 
 The fetch command will download the model from DockerHub. Please make sure to have Docker active in your system before fetching a model. The serve command will bring it alive anytime you want to use it, and with the run command you can pass the desired input and output files. Finally, close the model.
 
+{% hint style="info" %}
+If you serve a model that is not available locally, Ersilia will try to fetch it automatically, from DockerHub first and then defaulting to S3 if Docker is not active.
+{% endhint %}
+
 ### Input and output
 
 The Ersilia Model Hub takes **chemical structures** as input, which should be specified as SMILES strings. To obtain the SMILES string of your compounds, you can use resources like [PubChem](https://pubchem.ncbi.nlm.nih.gov/). Ersilia also accepts InChIKey as molecular identifiers instead of SMILES.
