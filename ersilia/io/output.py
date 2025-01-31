@@ -475,9 +475,17 @@ class GenericOutputAdapter(ResponseRefactor):
         """
         v = []
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
-            self.logger.debug(v_)
-            self.logger.debug(t_)
-            self.logger.debug(k_)
+            if isinstance(v_, list) or hasattr(v_, "__len__"):
+                self.logger.debug(
+                    "Values: {0}... (and {1} more elements)".format(
+                        v_[:10], len(v_) - 10 if len(v_) > 10 else 0
+                    )
+                )
+            else:
+                self.logger.debug(f"Values: {v_}")
+
+            self.logger.debug(f"Type: {t_}")
+            self.logger.debug(f"Key: {k_}")
             if t_ in self._array_types:
                 if v_ is None:
                     v_ = [None] * self.__array_shape(k_)
@@ -572,6 +580,9 @@ class GenericOutputAdapter(ResponseRefactor):
                     ]
                 else:
                     self.logger.debug("No merge key")
+                    # Log a truncated version of the array for better clarity
+                    # Check if v is a large array and truncate its output
+
                     output_keys_expanded += ["{0}".format(m_) for m_ in m]
             else:
                 output_keys_expanded += [ok]
