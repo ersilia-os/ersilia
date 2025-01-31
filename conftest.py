@@ -45,13 +45,13 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
     console.print(header_panel)
 
     table = Table(title="Command Execution Summary", box=box.SQUARE)
-    table.add_column("Command", width=70)
+    table.add_column("Command", width=40)
     table.add_column("Time Taken", width=15, justify="center")
     table.add_column("Max Memory", width=15, justify="center")
     table.add_column("Status", width=10, justify="right")
     table.add_column("Checkups", width=50, justify="left")
     if show_remark:
-        table.add_column("Remark", width=60, justify="right")
+        table.add_column("Remark", width=70, justify="right")
 
     for result in results:
         formatted_checkups = []

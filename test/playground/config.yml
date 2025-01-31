@@ -15,7 +15,7 @@ flags:
   delete: []
   catalog: ["--more", "--as-json"]
   test: ["--shallow", "--from_github"]
-  example: ["-n", 10, "--random"]
+  example: ["-n", 10, "--random", "-f", "example.csv"]
 
 files:
   input_single: input.csv
@@ -24,9 +24,10 @@ files:
     - result.json
     - result.h5
   example_file: example.csv
+  catalog_file: catalog.txt
+
 models:
   single: eos3b5e
-
   multiple:
     - eos5axz
     - eos4e40

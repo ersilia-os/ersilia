@@ -28,9 +28,9 @@ CMD_DEPENDENCY_MAP = {
     "fetch": ["fetch"],
     "serve": ["fetch", "serve"],
     "run": ["fetch", "serve", "run"],
-    "close": ["close"],
+    "close": ["serve", "close"],
     "catalog": ["catalog"],
-    "example": ["example"],
+    "example": ["serve", "example"],
     "delete": ["delete"],
     "test": ["test"],
 }
@@ -121,7 +121,7 @@ def get_commands_all(model_id, config):
         "run": build_command(run_cmd, flag_key="run"),
         "close": build_command(close_cmd),
         "catalog": build_command(catalog_cmd, flag_key="catalog"),
-        "example": build_command(example_cmd, flag_key="example", model_id=model_id),
+        "example": build_command(example_cmd, flag_key="example"),
         "delete": build_command(delete_cmd, flag_key="delete", model_id=model_id),
         "test": build_command(test_cmd, flag_key="test", model_id=model_id),
     }
