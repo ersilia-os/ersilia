@@ -1,3 +1,7 @@
+---
+hidden: true
+---
+
 # Team and community
 
 ### History

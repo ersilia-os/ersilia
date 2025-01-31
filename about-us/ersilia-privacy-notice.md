@@ -21,7 +21,8 @@ Ersilia collects the following data:
 You directly provide Ersilia with the data we collect. We collect data and process data when you:
 
 * Register to receive our monthly newsletter
-* Voluntarily sign up to our volunteer list
+* Sign up to our volunteer list
+* Make an individual donation and identify it for tax purposes
 
 Ersilia does not receive your data indirectly from any other source.
 
@@ -36,7 +37,7 @@ Ersilia will never share your data with any partner companies without asking per
 
 ## How do we store your data?
 
-Ersilia securely stores your data in the provided mailing server MailChimp.
+Ersilia securely stores your data in the provided mailing server MailChimp and AirTable backend.
 
 ## Marketing
 

@@ -10,7 +10,7 @@ If you are a data scientist willing to make an impact in global health, a biomed
 
 * [Newslette](https://ersilia.us7.list-manage.com/subscribe?u=103d70917512b3e12c74add5d\&id=5af7899058)r: Stay up to date with our monthly newsletter. Subscribe [here](https://ersilia.us7.list-manage.com/subscribe?u=103d70917512b3e12c74add5d\&id=5af7899058)!
 * [Blog](https://www.ersilia.io/media): Read our stories covering open science, decolonised research, drug discovery, and more.
-* [LinkedIn](https://linkedin.com/company/ersiliaio) and [X](https://x.com/ersiliaio): Follow us and learn about our activity.
+* [LinkedIn](https://linkedin.com/company/ersiliaio): Follow us and learn about our activity.
 * [Home page](https://ersilia.io): Visit our website for a high-level overview of our organisation.
 
 ## In scientific publications

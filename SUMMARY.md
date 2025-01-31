@@ -75,6 +75,7 @@
 * [Code of conduct](about-us/code-of-conduct.md)
 * [Open standards and best practices](about-us/open-standards-and-best-practices.md)
 * [Ersilia privacy notice](about-us/ersilia-privacy-notice.md)
+* [Strategic Plan 2025-2027](about-us/strategic-plan-2025-2027.md)
 * [On the use of Artificial Intelligence](about-us/on-the-use-of-artificial-intelligence.md)
 * [Ersilia, the Invisible City](about-us/ersilia-the-invisible-city.md)
 * [Strategic Plan 2021-2023](about-us/strategic-plan-2021-2023.md)
