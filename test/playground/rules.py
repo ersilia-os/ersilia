@@ -44,7 +44,9 @@ class ResponseName(Enum):
     SESSION_FILES_NOT_EXIST = "Session files not exist"
     CATALOG_JSON_CONTENT_VALID = "Catalog json content is valid"
     VALID_EXAMPLE_JSON_CONTENT = "Valid example json content"
-    VALID_EXAMPLE_CSV_CONTENT = "Valid example csv content and content length"
+    VALID_EXAMPLE_CSV_CONTENT = (
+        "Valid example csv content and content length"
+    )
     VALID_EXAMPLE_CSV_LENGTH = "Valid content length"
     VALID_CATALOG_CONTENT = "Valid catalog content"
 
@@ -73,7 +75,9 @@ def get_configs(command):
 
 class CommandRule:
     def check(self, *args, **kwargs):
-        raise NotImplementedError("Each rule must implement a check method.")
+        raise NotImplementedError(
+            "Each rule must implement a check method."
+        )
 
 
 def register_rule(name):
@@ -86,7 +90,12 @@ def register_rule(name):
 
 @register_rule("fetch_rule")
 class FetchRule(CommandRule):
-    required_files = {MODEL_SOURCE_FILE, API_SCHEMA_FILE, STATUS_JOSN, INFORMATION_FILE}
+    required_files = {
+        MODEL_SOURCE_FILE,
+        API_SCHEMA_FILE,
+        STATUS_JOSN,
+        INFORMATION_FILE,
+    }
 
     sources = {
         "github": "GitHub",
@@ -116,7 +125,7 @@ class FetchRule(CommandRule):
         return self.checkups
 
     def _check_folders(self, command):
-        _, model, _, _ = get_configs(command)
+        model = get_configs(command)[1]
         path = os.path.join(self.dest, model)
         if not os.path.exists(path):
             return create_response(
@@ -124,10 +133,13 @@ class FetchRule(CommandRule):
                 status=False,
                 detail=f"Folder does not exist at: {path}",
             )
-        return create_response(name=ResponseName.DEST_FOLDER_EXIST, status=True)
+        return create_response(
+            name=ResponseName.DEST_FOLDER_EXIST, status=True
+        )
 
     def _check_dest_file_content(self, command):
-        _, model, source, _ = get_configs(command)
+        model = get_configs(command)[1]
+        source = get_configs(command)[2]
 
         if "dockerhub" in source:
             self.required_files.add(DOCKER_INFO_FILE)
@@ -167,7 +179,6 @@ class FetchRule(CommandRule):
 
     def _check_model_source_file(self, dest_folder, source):
         source = source.replace("--from_", "")
-        print(f"Source: {source}")
         if source not in self.sources:
             self._invalid_files.append(MODEL_SOURCE_FILE)
             return
@@ -199,9 +210,13 @@ class FetchRule(CommandRule):
         try:
             with open(docker_info_file, "r") as file:
                 content = json.load(file)
-                if "dockerhub" in source and not content.get("docker_hub", False):
+                if "dockerhub" in source and not content.get(
+                    "docker_hub", False
+                ):
                     self._invalid_files.append(DOCKER_INFO_FILE)
-                elif "dockerhub" not in source and content.get("docker_hub", False):
+                elif "dockerhub" not in source and content.get(
+                    "docker_hub", False
+                ):
                     self._invalid_files.append(DOCKER_INFO_FILE)
         except Exception as e:
             self._invalid_files.append(DOCKER_INFO_FILE)
@@ -220,14 +235,23 @@ class FetchRule(CommandRule):
         _, model, source, version = get_configs(command)
         version = version if version else "latest"
         if "dockerhub" in source:
-            exist = self.sd.exists(org=DOCKERHUB_ORG, img=model, tag=version)
-            return create_response(name=ResponseName.DOCKER_IMAGE_EXIST, status=exist)
+            exist = self.sd.exists(
+                org=DOCKERHUB_ORG, img=model, tag=version
+            )
+            return create_response(
+                name=ResponseName.DOCKER_IMAGE_EXIST, 
+                status=exist
+            )
 
     def _check_conda_env(self, command):
-        _, model, source, _ = get_configs(command)
+        model = get_configs(command)[1]
+        source = get_configs(command)[2]
         if "github" in source or "s3" in source:
             exist = self.sc.exists(model)
-            return create_response(name=ResponseName.CONDA_ENV_EXISTS, status=exist)
+            return create_response(
+                name=ResponseName.CONDA_ENV_EXISTS, 
+                status=exist
+            )
 
 
 @register_rule("serve_rule")
@@ -258,13 +282,16 @@ class ServeRule(CommandRule):
 
     def get_latest_folder_and_check_files(self, command, runner):
         if runner != "multiple":
-            _, model, _, _ = get_configs(command)
+            model = get_configs(command)[1]
             self.required_files.add(f"{model}.pid")
             existing_files = set(os.listdir(self.current_session_dir))
-            required_files_exists = self.required_files.issubset(existing_files)
+            required_files_exists = self.required_files.issubset(
+                existing_files
+            )
             if required_files_exists:
                 return create_response(
-                    name=ResponseName.SESSION_REQUIRED_FILES_EXIST, status=True
+                    name=ResponseName.SESSION_REQUIRED_FILES_EXIST,
+                    status=True,
                 )
             return create_response(
                 name=ResponseName.SESSION_REQUIRED_FILES_EXIST,
@@ -275,7 +302,9 @@ class ServeRule(CommandRule):
     def check_service_class(self, runner):
         if runner != "multiple":
             service_class = ("pulled_docker", "conda")
-            session_file_path = os.path.join(self.current_session_dir, SESSION_JSON)
+            session_file_path = os.path.join(
+                self.current_session_dir, SESSION_JSON
+            )
 
             if not os.path.exists(session_file_path):
                 return create_response(
@@ -287,7 +316,9 @@ class ServeRule(CommandRule):
             try:
                 with open(session_file_path, "r") as file:
                     data = json.load(file)
-                    correct_srv_class = data.get("service_class") in service_class
+                    correct_srv_class = (
+                        data.get("service_class") in service_class
+                    )
                     return create_response(
                         name=ResponseName.SESSION_SERVICE_CLASS_CORRECT,
                         status=correct_srv_class,
@@ -306,7 +337,9 @@ class ServeRule(CommandRule):
         url = match.group(0)
         response = requests.get(url)
         status_ok = response.status_code == 200
-        return create_response(name=ResponseName.SESSION_URL_VALID, status=status_ok)
+        return create_response(
+            name=ResponseName.SESSION_URL_VALID, status=status_ok
+        )
 
 
 @register_rule("run_rule")
@@ -329,9 +362,15 @@ class RunRule(CommandRule):
         flag = get_configs(command)[0]
         output_files = flag[3]
         inp_type = self._get_input_type(output_files)
-        res = self.check_service.validate_file_content(output_files, inp_type)
+        res = self.check_service.validate_file_content(
+            output_files, inp_type
+        )
         if res[-1] == str(STATUS_CONFIGS.PASSED):
-            return [create_response(name=ResponseName.FILE_CONTENT_VALID, status=True)]
+            return [
+                create_response(
+                    name=ResponseName.FILE_CONTENT_VALID, status=True
+                )
+            ]
         else:
             return [
                 create_response(
@@ -370,7 +409,7 @@ class DeleteRule(CommandRule):
         return self.checkups
 
     def _check_repo_folder(self, command):
-        _, model, _, _ = get_configs(command)
+        model = get_configs(command)[1]
         path = os.path.join(self.repos, model)
         if os.path.exists(path):
             return create_response(
@@ -378,10 +417,12 @@ class DeleteRule(CommandRule):
                 status=False,
                 detail=f"Folder does not exist at: {path}",
             )
-        return create_response(name=ResponseName.REPO_FOLDER_EXIST, status=True)
+        return create_response(
+            name=ResponseName.REPO_FOLDER_EXIST, status=True
+        )
 
     def _check_dest_folder(self, command):
-        _, model, _, _ = get_configs(command)
+        model = get_configs(command)[1]
         path = os.path.join(self.dest, model)
         if os.path.exists(path):
             return create_response(
@@ -389,10 +430,13 @@ class DeleteRule(CommandRule):
                 status=False,
                 detail=f"Folder does not exist at: {path}",
             )
-        return create_response(name=ResponseName.DEST_FOLDER_EXIST, status=True)
+        return create_response(
+            name=ResponseName.DEST_FOLDER_EXIST, status=True
+        )
 
     def _check_containers_images_removed(self, command):
-        _, model, source, version = get_configs(command)
+        model = get_configs(command)[1]
+        version = get_configs(command)[-1]
         version = version if version else "latest"
         img_name = f"{DOCKERHUB_ORG}/{model}:{version}"
         containers = self.sd.containers(only_run=False)
@@ -401,23 +445,33 @@ class DeleteRule(CommandRule):
             return create_response(
                 name=ResponseName.CONTAINERS_REMOVED, status=not exists
             )
-        return create_response(name=ResponseName.CONTAINERS_REMOVED, status=True)
+        return create_response(
+            name=ResponseName.CONTAINERS_REMOVED, status=True
+        )
 
     def _check_docker_image(self, command):
         _, model, source, version = get_configs(command)
         version = version if version else "latest"
         if "dockerhub" in source:
-            exist = self.sd.exists(org=DOCKERHUB_ORG, img=model, tag=version)
+            exist = self.sd.exists(
+                org=DOCKERHUB_ORG, img=model, tag=version
+            )
             return create_response(
                 name=ResponseName.DOCKER_IMAGE_NOT_EXIST, status=exist
             )
-        return create_response(name=ResponseName.DOCKER_IMAGE_NOT_EXIST, status=True)
+        return create_response(
+            name=ResponseName.DOCKER_IMAGE_NOT_EXIST, status=True
+        )
 
     def _check_conda_env(self, command):
         _, model, source, _ = get_configs(command)
         if self.sc.exists(model):
-            return create_response(name=ResponseName.CONDA_ENV_NOT_EXISTS, status=False)
-        return create_response(name=ResponseName.CONDA_ENV_NOT_EXISTS, status=True)
+            return create_response(
+                name=ResponseName.CONDA_ENV_NOT_EXISTS, status=False
+            )
+        return create_response(
+            name=ResponseName.CONDA_ENV_NOT_EXISTS, status=True
+        )
 
 
 @register_rule("close_rule")
@@ -435,12 +489,16 @@ class CloseRule(CommandRule):
             SESSION_JSON,
         ]
         exists = all(
-            os.path.exists(os.path.join(EOS, self.current_session_dir, file))
+            os.path.exists(
+                os.path.join(EOS, self.current_session_dir, file)
+            )
             for file in files
         )
         if exists:
             return [
-                create_response(name=ResponseName.SESSION_FILES_NOT_EXIST, status=False)
+                create_response(
+                    name=ResponseName.SESSION_FILES_NOT_EXIST, status=False
+                )
             ]
         return [
             create_response(
@@ -466,7 +524,12 @@ class CatalogRule(CommandRule):
             data = json.loads(std_out)
             for obj in data:
                 for key, value in obj.items():
-                    if value is None or value == "" or value == [] or value == {}:
+                    if (
+                        value is None
+                        or value == ""
+                        or value == []
+                        or value == {}
+                    ):
                         return create_response(
                             name=ResponseName.CATALOG_JSON_CONTENT_VALID,
                             status=False,
@@ -485,19 +548,25 @@ class ExampleRule(CommandRule):
 
     def check(self, command, config, std_out):
         response = self.validate_json_data(std_out, command, config)
-        print(f"Response:{response}")
         return [response]
 
     def validate_json_data(self, std_out, command, config):
         flags = get_configs(command)[0]
 
         if not any(
-            flag.endswith(".csv") for flag in flags if not isinstance(flag, int)
+            flag.endswith(".csv")
+            for flag in flags
+            if not isinstance(flag, int)
         ):
             data = json.loads(std_out)
             for obj in data:
                 for key, value in obj.items():
-                    if value is None or value == "" or value == [] or value == {}:
+                    if (
+                        value is None
+                        or value == ""
+                        or value == []
+                        or value == {}
+                    ):
                         return create_response(
                             name=ResponseName.VALID_EXAMPLE_JSON_CONTENT,
                             status=False,
@@ -518,7 +587,9 @@ class ExampleRule(CommandRule):
 
     def _validate_csv_file(self, example_file, nsample):
         try:
-            with open(example_file, mode="r", newline="", encoding="utf-8") as csvfile:
+            with open(
+                example_file, mode="r", newline="", encoding="utf-8"
+            ) as csvfile:
                 reader = csv.DictReader(csvfile)
                 _row_len = 0
                 for row_number, row in enumerate(reader, start=1):
@@ -534,7 +605,7 @@ class ExampleRule(CommandRule):
                     return create_response(
                         name=ResponseName.VALID_EXAMPLE_CSV_LENGTH,
                         status=False,
-                        detail=f"Row {row_number} has incorrect number of columns. Expected: {nsample}, Found: {len(row)}",
+                        detail=f"Incorrect number of rows. Expected: {nsample}, Found: {len(row)}",
                     )
             return create_response(
                 name=ResponseName.VALID_EXAMPLE_CSV_CONTENT,
