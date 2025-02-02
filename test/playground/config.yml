@@ -13,9 +13,9 @@ flags:
   fetch: []
   run: []
   delete: []
-  catalog: ["--more", "--as-json"]
+  catalog: ["--more", "--local", "--as-json"]
   test: ["--shallow", "--from_github"]
-  example: ["-n", 10, "--random", "-f", "example.csv"]
+  example: ["--n_samples", 10]
 
 files:
   input_single: input.csv
@@ -23,8 +23,6 @@ files:
     - result.csv
     - result.json
     - result.h5
-  example_file: example.csv
-  catalog_file: catalog.txt
 
 models:
   single: eos3b5e
@@ -39,4 +37,6 @@ runtime:
   backend: "conda"
   runner: "single"
   input_types:
+    - str
     - list
+    - csv

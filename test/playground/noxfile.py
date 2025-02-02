@@ -6,6 +6,7 @@ import shutil
 import yaml
 from pathlib import Path
 from ersilia.default import EOS_PLAYGROUND
+from ersilia.utils.logging import logger
 
 if not os.path.exists(EOS_PLAYGROUND):
     os.makedirs(EOS_PLAYGROUND)
@@ -40,11 +41,10 @@ fetch_flags = (
 flagged_keys = { 
         "fetch": {*fetch_flags},
         "test": {*fetch_flags},
-        "run": {"input", "output", "as_table"},
         "test": {*fetch_flags, "shallow", "deep", "as_json"},
         "delete": {"all"},
         "catalog": {"more", "as-json", "local", "hub", "local"},
-        "example": {"simple", "random", "predefined"},
+        "example": {"simple", "random", "predefined", "complete", "file_name", "n_samples"},
 }
 
 def parse_yaml(file_path):
@@ -65,22 +65,34 @@ def preprocess_values(config_dict, flagged_keys):
     return config_dict
 
 def parse_posargs(posargs, config_keys):
-    parser = argparse.ArgumentParser()
-    for key in config_keys:
-        parser.add_argument(f"--{key}", nargs="*", type=str, default=None)
-
-    parsed_args, _ = parser.parse_known_args(posargs)
-    parsed_dict = vars(parsed_args)
+    parsed_dict = {}
+    i = 0
+    while i < len(posargs):
+        arg = posargs[i]
+        if arg.startswith("--"):
+            key = arg[2:] 
+            if key in config_keys:
+                values = []
+                i += 1
+                while i < len(posargs) and not posargs[i].startswith("--"):
+                    values.append(posargs[i])
+                    i += 1
+                parsed_dict[key] = values
+            else:
+                i += 1
+        else:
+            i += 1
 
     for key, value in parsed_dict.items():
         if isinstance(value, list):
-            if len(value) == 1: 
+            if len(value) == 1:
                 if value[0].lower() in {"true", "false"}:
                     parsed_dict[key] = value[0].lower() == "true"
                 elif value[0].isdigit():
                     parsed_dict[key] = int(value[0])
                 else:
                     parsed_dict[key] = value[0]
+
     parsed_dict = preprocess_values(parsed_dict, flagged_keys)
 
     return parsed_dict

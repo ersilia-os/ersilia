@@ -43,6 +43,10 @@ class ResponseName(Enum):
     CONDA_ENV_NOT_EXISTS = "Conda venv not exists"
     SESSION_FILES_NOT_EXIST = "Session files not exist"
     CATALOG_JSON_CONTENT_VALID = "Catalog json content is valid"
+    CATALOG_TXT_FILE_CONTENT_VALID = "Catalog txt file content is valid"
+    CATALOG_LOCAL_MODEL_COUNT_VALID = (
+        "Local catalog count and fetched  model count matching"
+    )
     VALID_EXAMPLE_JSON_CONTENT = "Valid example json content"
     VALID_EXAMPLE_CSV_CONTENT = (
         "Valid example csv content and content length"
@@ -60,9 +64,6 @@ def create_response(name, status, detail=""):
 
 
 RULE_REGISTRY = {}
-
-config_path = Path("config.yml")
-config = yaml.safe_load(config_path.read_text())
 
 
 def get_configs(command):
@@ -178,9 +179,17 @@ class FetchRule(CommandRule):
         )
 
     def _check_model_source_file(self, dest_folder, source):
+
+        if source is "":  # autofetcher
+            return
+        
         source = source.replace("--from_", "")
+
         if source not in self.sources:
-            self._invalid_files.append(MODEL_SOURCE_FILE)
+            self._invalid_files.append(
+                f"Source type [{source}] not in allowed source type\
+                    : {self.sources.values()}"
+            )
             return
 
         expected_value = self.sources[source]
@@ -190,7 +199,10 @@ class FetchRule(CommandRule):
             with open(model_source_file, "r") as file:
                 content = file.read().strip()
                 if content != expected_value:
-                    self._invalid_files.append(MODEL_SOURCE_FILE)
+                    self._invalid_files.append(
+                        f"Expected source type [{expected_value}] mismatch \
+                            source [{content}] in {MODEL_SOURCE_FILE}"
+                    )
         except Exception as e:
             self._invalid_files.append(MODEL_SOURCE_FILE)
 
@@ -204,22 +216,21 @@ class FetchRule(CommandRule):
 
     def _check_docker_info_file(self, dest_folder, source):
         docker_info_file = os.path.join(dest_folder, DOCKER_INFO_FILE)
+        error_message = f"Docker status found to be false in: {DOCKER_INFO_FILE}"
         if not os.path.exists(docker_info_file):
             return
 
         try:
             with open(docker_info_file, "r") as file:
                 content = json.load(file)
-                if "dockerhub" in source and not content.get(
-                    "docker_hub", False
-                ):
-                    self._invalid_files.append(DOCKER_INFO_FILE)
-                elif "dockerhub" not in source and content.get(
-                    "docker_hub", False
-                ):
-                    self._invalid_files.append(DOCKER_INFO_FILE)
+                status_true = content.get("docker_hub")
+                if "dockerhub" in source and not status_true:
+                    self._invalid_files.append(error_message)
+                elif not status_true:
+                    self._invalid_files.append(error_message)
+
         except Exception as e:
-            self._invalid_files.append(DOCKER_INFO_FILE)
+            self._invalid_files.append(error_message)
 
     def _check_status_file(self, dest_folder):
         status_file = os.path.join(dest_folder, STATUS_JOSN)
@@ -239,8 +250,7 @@ class FetchRule(CommandRule):
                 org=DOCKERHUB_ORG, img=model, tag=version
             )
             return create_response(
-                name=ResponseName.DOCKER_IMAGE_EXIST, 
-                status=exist
+                name=ResponseName.DOCKER_IMAGE_EXIST, status=exist
             )
 
     def _check_conda_env(self, command):
@@ -249,8 +259,7 @@ class FetchRule(CommandRule):
         if "github" in source or "s3" in source:
             exist = self.sc.exists(model)
             return create_response(
-                name=ResponseName.CONDA_ENV_EXISTS, 
-                status=exist
+                name=ResponseName.CONDA_ENV_EXISTS, status=exist
             )
 
 
@@ -368,13 +377,14 @@ class RunRule(CommandRule):
         if res[-1] == str(STATUS_CONFIGS.PASSED):
             return [
                 create_response(
-                    name=ResponseName.FILE_CONTENT_VALID, status=True
+                    name=f"{output_files} {ResponseName.FILE_CONTENT_VALID}", 
+                    status=True
                 )
             ]
         else:
             return [
                 create_response(
-                    name=ResponseName.FILE_CONTENT_NOT_VALID,
+                    name=f"{output_files} {ResponseName.FILE_CONTENT_NOT_VALID}",
                     status=False,
                     detail=res[1],
                 )
@@ -405,7 +415,6 @@ class DeleteRule(CommandRule):
         self.checkups.append(self._check_repo_folder(command))
         self.checkups.append(self._check_docker_image(command))
         self.checkups.append(self._check_conda_env(command))
-        print(self.checkups)
         return self.checkups
 
     def _check_repo_folder(self, command):
@@ -512,15 +521,25 @@ class CloseRule(CommandRule):
 @register_rule("catalog_rule")
 class CatalogRule(CommandRule):
     def __init__(self):
-        pass
+        self.dest = os.path.join(EOS, "dest")
+        self.checkups = []
 
     def check(self, command, config, std_out):
-        response = self.validate_json_data(std_out, command)
-        return [response]
+        validators = [
+            lambda: self.validate_json_data(std_out, command),
+            lambda: self.validate_catalog_counts(std_out, command),
+            lambda: self.validate_txt_data(command),
+        ]
+
+        self.checkups.extend(
+            filter(None, (validator() for validator in validators))
+        )
+
+        return self.checkups
 
     def validate_json_data(self, std_out, command):
         flags = get_configs(command)[0]
-        if "--as-json" in flags:
+        if "--as-json" in flags and std_out != "":
             data = json.loads(std_out)
             for obj in data:
                 for key, value in obj.items():
@@ -540,6 +559,46 @@ class CatalogRule(CommandRule):
                 status=True,
             )
 
+    def validate_txt_data(self, command):
+        flags = get_configs(command)[0]
+        has_file = any(flag.endswith(".txt") for flag in flags)
+        if has_file:
+            file_path = flags[flags.index("--file_name") + 1]
+            with open(file_path, "r", encoding="utf-8") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    for key, value in row.items():
+                        if value is None or value.strip() == "":
+                            return create_response(
+                                name=ResponseName.CATALOG_TXT_FILE_CONTENT_VALID,
+                                status=False,
+                                detail=f"Validation failed for key '{key}' in object: {row}",
+                            )
+            return create_response(
+                name=ResponseName.CATALOG_JSON_CONTENT_VALID,
+                status=True,
+            )
+
+    def validate_catalog_counts(self, std_out, command):
+        flags = get_configs(command)[0]
+        if "--hub" not in flags and "--as-json" in flags:
+            data_count = len(json.loads(std_out))
+            model_count = sum(
+                os.path.isdir(os.path.join(self.dest, d))
+                for d in os.listdir(self.dest)
+            )
+            is_match = data_count == model_count
+            if is_match:
+                return create_response(
+                    name=ResponseName.CATALOG_LOCAL_MODEL_COUNT_VALID,
+                    status=True,
+                )
+            return create_response(
+                name=ResponseName.CATALOG_LOCAL_MODEL_COUNT_VALID,
+                status=False,
+                detail="Number of models fetched and accessed by catalog command don't not match",
+            )
+
 
 @register_rule("example_rule")
 class ExampleRule(CommandRule):
@@ -552,12 +611,13 @@ class ExampleRule(CommandRule):
 
     def validate_json_data(self, std_out, command, config):
         flags = get_configs(command)[0]
-
+        nsample = self.get_nsamples_flag_value(flags)
+        has_predefined = self._get_predefined(flags)
         if not any(
             flag.endswith(".csv")
             for flag in flags
             if not isinstance(flag, int)
-        ):
+        ) and std_out != "":
             data = json.loads(std_out)
             for obj in data:
                 for key, value in obj.items():
@@ -572,20 +632,27 @@ class ExampleRule(CommandRule):
                             status=False,
                             detail=f"Validation failed for key '{key}' in object: {obj}",
                         )
+            if len(data) != nsample and has_predefined:
+                return create_response(
+                    name=ResponseName.VALID_EXAMPLE_CSV_LENGTH,
+                    status=False,
+                    detail=f"Incorrect number of example unputs found in json. Expected: \
+                        {nsample}, Found: {len(len(data))}",
+                )
             return create_response(
                 name=ResponseName.VALID_EXAMPLE_JSON_CONTENT,
                 status=True,
-                detail=f"Validation failed for key '{key}' in object: {obj}",
             )
         else:
-            example_file, nsample = self.get_flag_values(flags)
+            example_file = self.get_file_flag_value(flags)
             if not Path(example_file).exists():
                 return False, f"Example file not found: {example_file}"
 
-            response = self._validate_csv_file(example_file, nsample)
+            response = self._validate_csv_file(example_file, nsample, flags)
             return response
 
-    def _validate_csv_file(self, example_file, nsample):
+    def _validate_csv_file(self, example_file, nsample, flags):
+        has_predefined = self._get_predefined(flags)
         try:
             with open(
                 example_file, mode="r", newline="", encoding="utf-8"
@@ -601,12 +668,13 @@ class ExampleRule(CommandRule):
                                 status=False,
                                 detail=f"Row {row_number}, Column '{column}' contains null or empty data.",
                             )
-                if _row_len != nsample:
-                    return create_response(
-                        name=ResponseName.VALID_EXAMPLE_CSV_LENGTH,
-                        status=False,
-                        detail=f"Incorrect number of rows. Expected: {nsample}, Found: {len(row)}",
-                    )
+            if _row_len != nsample and has_predefined:
+                return create_response(
+                    name=ResponseName.VALID_EXAMPLE_CSV_LENGTH,
+                    status=False,
+                    detail=f"Incorrect number of example inputs found in csv. \
+                        Expected: {nsample}, Found: {_row_len}",
+                )
             return create_response(
                 name=ResponseName.VALID_EXAMPLE_CSV_CONTENT,
                 status=True,
@@ -614,13 +682,42 @@ class ExampleRule(CommandRule):
         except Exception as e:
             return False, f"Error reading CSV file: {str(e)}"
 
-    def get_flag_values(self, args):
+    def get_file_flag_value(self, flags):
         try:
-            file_flag_index = args.index("-f")
-            nsamples_flag_index = args.index("-n")
-            return args[file_flag_index + 1], args[nsamples_flag_index + 1]
-        except (ValueError, IndexError):
+            file_flag_index = (
+                flags.index("--file_name")
+                if "--file_name" in flags
+                else flags.index("-f")
+                if "-f" in flags
+                else None
+            )
+            return (
+                flags[file_flag_index + 1]
+                if file_flag_index is not None
+                else None
+            )
+        except (IndexError, ValueError):
             return None
+
+    def get_nsamples_flag_value(self, flags):
+        try:
+            nsamples_flag_index = (
+                flags.index("--n_samples")
+                if "--n_samples" in flags
+                else flags.index("-n")
+                if "-n" in flags
+                else None
+            )
+            return (
+                flags[nsamples_flag_index + 1]
+                if nsamples_flag_index is not None
+                else None
+            )
+        except (IndexError, ValueError):
+            return None
+
+    def _get_predefined(self, flag):
+        return "-p" in flag or "--predefined" in flag
 
 
 def get_rule(rule_name, *args, **kwargs):

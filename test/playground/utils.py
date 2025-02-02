@@ -22,7 +22,7 @@ from ersilia.cli.commands.test import test_cmd
 from ersilia.cli.commands.delete import delete_cmd
 from .rules import get_rule
 
-file_path = Path(EOS_PLAYGROUND) / 'files'
+file_path = Path(EOS_PLAYGROUND) / "files"
 
 CMD_DEPENDENCY_MAP = {
     "fetch": ["fetch"],
@@ -41,9 +41,13 @@ RAW_INPUT_URL = "https://github.com/ersilia-os/ersilia-model-hub-maintained-inpu
 def build_run_cmd(config):
     run_cli = []
     input_types = config["runtime"].get("input_types")
-    input_types = input_types if isinstance(input_types, list) else [input_types]
+    input_types = (
+        input_types if isinstance(input_types, list) else [input_types]
+    )
     output_files = config["files"].get("outputs")
-    output_files = output_files if isinstance(output_files, list) else [output_files]
+    output_files = (
+        output_files if isinstance(output_files, list) else [output_files]
+    )
     for _, inp_type in enumerate(input_types):
         for _, out_file in enumerate(output_files):
             _flag = ["-i", inp_type, "-o", out_file]
@@ -51,8 +55,15 @@ def build_run_cmd(config):
             inputs = get_inputs(config, inp_type)
             flags = ["-i", inputs, "-o", out_file]
             flag_description = f" | flag: {_flag}"
-            run_cli.append((run_cmd(), flags, f"run_cmd(): Model id not required {flag_description}"))
+            run_cli.append(
+                (
+                    run_cmd(),
+                    flags,
+                    f"run_cmd(): Model id not required {flag_description}",
+                )
+            )
     return run_cli
+
 
 def get_inputs(config, input_type):
     input_list, input_path = get_random_samples(config=config)
@@ -63,17 +74,16 @@ def get_inputs(config, input_type):
     if input_type == "csv":
         return input_path
 
+
 def get_random_samples(config, filename="inp-000.csv"):
     raw_url = RAW_INPUT_URL.replace(
-        "github.com", 
-        "raw.githubusercontent.com"
+        "github.com", "raw.githubusercontent.com"
     ).replace("/blob/", "/")
 
     raw_inp_path = os.path.join(file_path, filename)
-    num_samples  = int(config["settings"].get("num_samples"))
+    num_samples = int(config["settings"].get("num_samples"))
     input_file = os.path.join(
-        file_path, 
-        config["files"].get("input_single")
+        file_path, config["files"].get("input_single")
     )
     if not os.path.exists(raw_inp_path):
         response = requests.get(raw_url)
@@ -82,7 +92,9 @@ def get_random_samples(config, filename="inp-000.csv"):
             with open(raw_inp_path, "wb") as f:
                 f.write(response.content)
         else:
-            raise Exception(f"Failed to download file: {response.status_code}")
+            raise Exception(
+                f"Failed to download file: {response.status_code}"
+            )
 
     with open(raw_inp_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
@@ -98,11 +110,24 @@ def get_random_samples(config, filename="inp-000.csv"):
     return sampled_inputs, input_file
 
 
+def _set_n_sample_if_none(flags, flag_key):
+    if (
+        flags
+        and "example" == flag_key
+        and not any(flag in flags for flag in ("-n", "--n_samples"))
+    ):
+        flags = ["-n", 10] + flags
+    return flags
+
+
 def get_commands_all(model_id, config):
     def build_command(cmd, extra_args=None, flag_key=None, model_id=None):
         extra_args = extra_args or []
         flags = config["flags"].get(flag_key, [])
-        flag_description = f" | flag: {flags}" if flags else " | flag: Default"
+        flags = _set_n_sample_if_none(flags, flag_key)
+        flag_description = (
+            f" | flag: {flags}" if flags else " | flag: Default"
+        )
         if model_id:
             return (
                 cmd(),
@@ -116,13 +141,17 @@ def get_commands_all(model_id, config):
         )
 
     return {
-        "fetch": build_command(fetch_cmd, flag_key="fetch", model_id=model_id),
+        "fetch": build_command(
+            fetch_cmd, flag_key="fetch", model_id=model_id
+        ),
         "serve": build_command(serve_cmd, model_id=model_id),
         "run": build_command(run_cmd, flag_key="run"),
-        "close": build_command(close_cmd),
         "catalog": build_command(catalog_cmd, flag_key="catalog"),
         "example": build_command(example_cmd, flag_key="example"),
-        "delete": build_command(delete_cmd, flag_key="delete", model_id=model_id),
+        "delete": build_command(
+            delete_cmd, flag_key="delete", model_id=model_id
+        ),
+        "close": build_command(close_cmd),
         "test": build_command(test_cmd, flag_key="test", model_id=model_id),
     }
 
@@ -147,7 +176,9 @@ def get_command(model_id, config):
         cmds = CMD_DEPENDENCY_MAP[command]
         return extract_commands(cmds, model_id, config)
 
-    merged_dep = {dep for cmd in cli for dep in CMD_DEPENDENCY_MAP.get(cmd, [])}
+    merged_dep = {
+        dep for cmd in cli for dep in CMD_DEPENDENCY_MAP.get(cmd, [])
+    }
 
     return extract_commands(merged_dep, model_id, config)
 
@@ -165,7 +196,9 @@ def get_command_names(model_id, cli, config):
 def is_docker_running():
     return (
         subprocess.run(
-            ["docker", "info"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            ["docker", "info"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         ).returncode
         == 0
     )
@@ -193,7 +226,9 @@ def start_docker():
                 return
             time.sleep(2)
 
-        raise RuntimeError("Docker failed to start within the expected time.")
+        raise RuntimeError(
+            "Docker failed to start within the expected time."
+        )
 
     else:
         raise OSError(f"Unsupported platform: {system_platform}")
@@ -258,10 +293,12 @@ from datetime import datetime
 
 def handle_error_logging(command, description, result, config, checkups):
     if config["settings"].get("log_error"):
-        path = Path(EOS_PLAYGROUND) / 'logs'
+        path = Path(EOS_PLAYGROUND) / "logs"
         if not os.path.exists(path):
             os.makedirs(path)
-        file_name = f"{description}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        file_name = (
+            f"{description}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+        )
         log_path = os.path.join(path, file_name)
         with open(log_path, "w") as file:
             file.write(f"Command: {command}\n")
@@ -269,7 +306,9 @@ def handle_error_logging(command, description, result, config, checkups):
             file.write(f"Error: {result}\n")
             if checkups:
                 for check in checkups:
-                    file.write(f"Check '{check['name']}': {check['status']} and Details: '{check['detail']}'\n")
+                    file.write(
+                        f"Check '{check['name']}': {check['status']} and Details: '{check['detail']}'\n"
+                    )
 
 
 def apply_rules(command, description, config, std_out):
@@ -288,22 +327,17 @@ def apply_rules(command, description, config, std_out):
         if description in rule_mapping:
             checkups.extend(
                 get_rule(
-                    rule_mapping[description], 
-                    command=command, 
-                    config=config, 
-                    std_out=std_out
-            ))
+                    rule_mapping[description],
+                    command=command,
+                    config=config,
+                    std_out=std_out,
+                )
+            )
 
     except Exception as rule_error:
-        error_message = (
-            f"Rule exception occurred: {rule_error}\n{traceback.format_exc()}"
-        )
+        error_message = f"Rule exception occurred: {rule_error}\n{traceback.format_exc()}"
         handle_error_logging(
-            command, 
-            description, 
-            rule_error, 
-            config, 
-            checkups
+            command, description, rule_error, config, checkups
         )
         pytest.fail(error_message)
 
@@ -338,8 +372,10 @@ def get_settings(config):
         model,
     )
 
+
 if __name__ == "__main__":
     import yaml
+
     config = yaml.safe_load(open("config.yml", "r"))
     commands = get_command("eos3b5e", config)
     fetch = commands["catalog"]
