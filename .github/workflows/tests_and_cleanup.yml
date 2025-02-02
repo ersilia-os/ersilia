@@ -128,7 +128,7 @@ jobs:
 
       - name: Run Default Default
         run: |
-          nox -f test/playground/noxfile.py -s execute -p 3.12
+          nox -f test/playground/noxfile.py -s execute -p 3.10
 
   run-cli-test-multiple:
     needs: run-pytest
@@ -152,7 +152,7 @@ jobs:
 
       - name: Run CLI Test Multiple
         run: |          
-          nox -f test/playground/noxfile.py -s execute -p 3.12 -- --cli fetch serve run --fetch from_dockerhub --runner multiple
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli fetch serve run --fetch from_dockerhub --runner multiple --outputs result.csv
 
   test-colab-notebook:
     defaults:

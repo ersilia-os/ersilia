@@ -148,10 +148,10 @@ def get_commands_all(model_id, config):
         "run": build_command(run_cmd, flag_key="run"),
         "catalog": build_command(catalog_cmd, flag_key="catalog"),
         "example": build_command(example_cmd, flag_key="example"),
+        "close": build_command(close_cmd),
         "delete": build_command(
             delete_cmd, flag_key="delete", model_id=model_id
         ),
-        "close": build_command(close_cmd),
         "test": build_command(test_cmd, flag_key="test", model_id=model_id),
     }
 
