@@ -184,7 +184,7 @@ jobs:
           colima delete --all || true  
           rm -rf /Users/runner/.colima  
           echo "Starting Colima..."
-          if ! colima start--verbose; then  
+          if ! colima start --verbose; then  
             echo "Colima failed to start. Falling back to Docker Desktop."
             brew install --cask docker  
           fi
