@@ -21,378 +21,66 @@ layout:
 The **Testing Playground** provides a flexible and robust framework for validating and profiling CLI commands that are being used for managing Ersilia models from various sources, such as GitHub, DockerHub, and local directories.
 
 {% hint style="warning" %}
-The Testing Playground only works with Linux systems.
+The Testing Playground only works with Linux systems, and is oriented towards Ersilia developers with experience in our tools.
 {% endhint %}
 
-## Usage
+## TL:DR
 
-To use the Test Playground, you need to have Ersilia installed in test mode and the Ersilia repository cloned into your local, as the files will be saved in the Ersilia directory
+To use the Test Playground, you need to have Ersilia installed in test mode and the Ersilia repository cloned into your local.
 
 ```bash
-conda create -n ersilia python=3.11
+conda create -n ersilia python=3.12
 conda activate ersilia
-pip install ersilia[test]
-cd ersilia
-nox -f test/playground/noxfile.py -s setup
+git clone https://github.com/ersilia-os/ersilia.git
+pip install -e .[test]
 ```
 
-### **Tests available**
-
-1. From GitHub: the model is fetched from its source directory and installed in an independent conda environment --> `nox -f test/playground/noxfile.py -s test_from_github`
-2. From DockerHub: the model is fetched via its Docker Image and run inside a container -->
-3. AutoFetcher: the test will automatically decide which fetching system to use
-4. Fetch multiple models:
-5. Serve multiple models:
-6. Conventional run
-
-### **Playground Key Features**
-
-1. **Enhanced Testing for CLI Commands**:
-   * Supports five CLI commands currently: `delete`, `fetch`, `serve`, `run`, `close`.
-   * Ensures accurate validation of model and CLI behavior and performance.
-2. **Customizable Rules**:
-   * Users can define custom rules using the `rules.py` file, leveraging the `Registry Design Pattern` to make sure single instance of rule instantiated.
-   * Rules can specify expected behavior and perform checks after each command execution.
-3. **Resource Profiling**:
-   * After a single check performed, its memory usage, execution time, and check pass or fail of our expected behavior will be captured.
-   * Logs errors and exceptions to assist with debugging.
-4. **Pytest Integration**: -Every checks are using pytest and expecetd to pass several assertions.
-   * Collects test results in a shared list (`shared.py`) for aggregation since pytest does not allow a direct or nice reporting display in the pytest code.
-   * A global config file defined in `conftest.py` at the root of project directory which displays results in a **Rich** table with memory, runtime, and status information with pytest printhook (`pytest_terminal_summary(terminalreporter, exitstatus, config)`).
-5. **Configurable Execution**:
-   * The playground has `config.yml` file that supports several configureable options including single or multiple commdand execution of models, selecting command type, and more.
-6. **Nox Integration**:
-   * The playground is powered by `nox`. `nox` run tests in isolated or existing Python environments using `nox` sessions. All the sessions are defined in the `noxfile.py`.
-
-### **How It Works?**
-
-1.  **PLayground folder structure**
-
-    The playground folder structure are given below, one folder that wont't be explained anyhere in detail is \`files\`. It is simply used for input, output, and error logs files to be stored, to make the playgroud folder a bit cleaner.\
-
-
-    ```plaintext
-    playground
-    ├── commands.py
-    ├── config.yml
-    ├── files
-    │   ├── error_log_20241122_133958.txt
-    │   ├── input.csv
-    │   ├── result.csv
-    │   └── sample_error_log.txt
-    ├── __init__.py
-    ├── noxfile.py
-    ├── rules.py
-    ├── shared.py
-    └── utils.py
-    ```
-2.  **Defining Rules**:
-
-    The user creates rules in \`rules.py\` to validate some expected behavior. These rules are executed after each CLI command is executed. For instance we want to check folder eixtence after we fetch a model, this rule is going to get executed after the fetch command is done. Our expected behaviour is \`\`\`True\`\`\` in this case, we want the folder of the model exists. The rule structure mainly contains \`rule registry\`, \`the rule it self\` and a function to access registered rules (\`get\_rules\`).
-
-    Here is rule registry decorator looks like:
+The Playground runs on a `nox` environment, isolated from the local source. Each time we will activate a `nox` session from the `test/playground` folder in Ersilia:
 
+<pre class="language-bash"><code class="lang-bash">cd ersilia/test/playground
+<strong>nox -s execute # to start the session and run commands
+</strong>nox -s clean #to clean up all folders and session files created by nox
+</code></pre>
 
-
-    ```python
-     RULE_REGISTRY = {}
-    ```
-
-    ```python
-     def register_rule(name):
-         def decorator(cls):
-             RULE_REGISTRY[name] = cls
-             return cls
-
-         return decorator
-    ```
-
-    \
-
-
-    Here is an example rule for checking folder existence for the fetched model. When the rule is defined the minimum structure has to be satified specially the exception or assertion handling part.\
-
-
-    ```python
-     @register_rule("folder_exists")
-     class FolderExistsRule(CommandRule):
-         def __init__(self):
-             pass
-
-         def check(self, folder_path, expected_status):
-             actual_status = Path(folder_path).exists() and any(
-                 Path(folder_path).iterdir()
-             )
-             if actual_status != expected_status:
-                 raise AssertionError(
-                     f"Expectation failed for FolderExistsRule: "
-                     f"Expected folder to {'exist' if expected_status else 'not exist'}, "
-                     f"but it {'exists' if actual_status else 'does not exist'}."
-                 )
-             return {
-                 "name": f"Folder exists at {folder_path}",
-                 "status": actual_status,
-             }
-    ```
-
-
-3.  **Run Commands**:
+The `nox` command `nox -s execute` will initiate a session. A few built-in flags can be passed to it:
 
-    The rule defined above will be registed in the \`get\_rule\` function below. The design pattern for the rule definition ensures that onc instance of a single rule will be created and accessed.\
+<table><thead><tr><th width="117">Flag</th><th width="170">Status</th><th>Description</th></tr></thead><tbody><tr><td>-s</td><td>Required</td><td>Specifies the session to be run by Nox.</td></tr><tr><td>-p</td><td>Not required</td><td>Specifies the python environment. If none is specified, it will test everything in py3.8 to py3.12. More than one environment can be specified simply using <code>nox -s execute -p 3.8 3.9</code>.</td></tr><tr><td>-fb</td><td>Not required</td><td>Used to change python backends (conda, mamba, micromamba, virtualenv, venv, uv, none). Defaults to conda.</td></tr><tr><td>-v</td><td>Not required</td><td>Verbose output printed in the terminal.</td></tr></tbody></table>
 
+{% hint style="warning" %}
+The first time you use Nox in your system you will be required to grant sudo privileges so that actions like DockerHub activation can be performed
+{% endhint %}
 
-    ```python
-     def get_rule(rule_name, *args, **kwargs):
-         rule_class = RULE_REGISTRY.get(rule_name)
-         if not rule_class:
-             raise ValueError(f"Rule '{rule_name}' is not registered.")
-         return rule_class().check(*args, **kwargs)
-    ```
+{% hint style="info" %}
+Please note that nox separates built-in arguments and custom flags using `--`. Hence, all arguments not referred in this table will need to follow the following structure:
 
+`nox [built-in flags] -- [custom flags]`  &#x20;
+{% endhint %}
 
+### Structure overview
 
-    In the `commands.py` we import our rules and put them in the `apply_rules` function after the fetch section for our case and lets assume that we fetched from `--from_dockerhub`:\
+The idea behind the playground is to cover all sorts of tests we might want to do on any model, more extensively than the test command itself. Therefore, it is a highly customizable functionality and only addressed to Ersilia developers.
 
+Nox will create an isolated environment and store the files used for testing under `~/eos/playground/files` and the logs generated under `~/eos/playground/logs`. Those will be eliminated with the `nox -s clean` command.&#x20;
 
-    ```python
-     def apply_rules(command, description, dest_path, repo_path, config):
-         checkups = []
-         try:
-             if description == "fetch":
-                 if from_dockerhub:
-                     checkups.append(
-                         get_rule(
-                             rule_name="folder_exists",
-                             folder_path=dest_path,
-                             expected_status=True,
-                         )
-                     )
-         except Exception as rule_error:
-             handle_error_logging(
-                 command,
-                 description,
-                 rule_error,
-                 config,
-                 checkups
-             )
-             pytest.fail(f"Rule exception occurred: {rule_error}")
+The playground is adapted to many use cases, for example:
 
-         return checkups
-    ```
+* Test several models on python 3.12 fetching them from github
+* Test one single model across all python versions fetching from dockerhub
+* Evaluate if a model seems to have gotten slower
+* ...
 
+Below we describe the flags you can use to combine all these custom-made tests.
 
+## Ersilia playground flags
 
-    The \`apply\_rules\` function will then be executed in \`execute\_commands\` function like the snippet below. The \`create\_compund\_input\_csv\` gets executed at the start of command of execution, helps to generate input example at run time to enable auto input example file generation at github workflow. But locally we can use our own file by specifying at the \`config.yml\` with \`input\_file\` section and just remove this function. We may need some option for that in next update:\
+If no flag is specified, the command `nox -s execute` will run its default test: it will try to fetch, serve and run the model `eos3b5e` (molecular weight) in all python environments from 3.8 to the latest maintained by Ersilia. The model will be fetched from github by default and a shallow test will also be performed (see [model test](model-tester.md) section). More granularity can be specified using the built-in flags (for python versions and environments) as well as the flags specific to the Ersilia CLI:
 
+<table><thead><tr><th width="133">Flag</th><th width="147">Default</th><th width="238">Description</th><th>Example</th></tr></thead><tbody><tr><td>--cli</td><td>all</td><td>Specifies ersilia commands to run in order (fetch, serve, run, catalog, example, test, close, delete). Default is all, which executes commands in this order: "fetch", "serve", "run", "close", "catalog", "example", "delete", "test".</td><td><code>nox -s execute -- --cli fetch serve run</code><br><code>nox -s execute -- --cli run</code> </td></tr><tr><td>--fetch</td><td>--from_github</td><td>Fetches models from sources (from_github, from_dockerhub, from_s3, version)</td><td><p><code>nox -s execute -- --fetch from_s3</code></p><p><code>nox -s execute -- --fetch from_dockerhub version dev</code></p></td></tr><tr><td>--run</td><td>None</td><td>Run a model. It will try to fetch it from_dockerhub as this is Ersilia's default (depends on the activate_docker flag, see below). Best combined with the input and output flags (see below)</td><td>nox <code>-s execute -- --run</code></td></tr><tr><td>--example</td><td>["-n", 10, "--random"]</td><td>Generates example input for a model (-n, --random, -f). If we specify a </td><td><code>nox -s execute -- --example -n 10 random/predefined -c -f example.csv</code></td></tr><tr><td>--catalog</td><td>["--more", "--local", "--as-json"]</td><td>Retrieves model catalog from local or hub.</td><td><code>nox -s execute -- --catalog hub</code></td></tr><tr><td>--test</td><td>["--shallow", "--from_github"]</td><td>Tests models at different levels (shallow and deep) and from_github, from_dockerhub or from_s3.</td><td><code>nox -s execute -- --test deep from_dockerhub/from_s3/from_github</code></td></tr><tr><td>--delete</td><td>None</td><td>Used to delete models. It has only one flag: all</td><td><p></p><p><code>nox -s execute -- --delete all</code><br></p></td></tr></tbody></table>
 
-    ```python
-         def execute_command(command, description=None, dest_path=None, repo_path=None):
-             create_compound_input_csv(config.get("input_file"))
+### **Additional flags for Ersilia's CLI**
 
-             start_time, max_memory, success, result, checkups, = time.time(), 0, False, "", [] 
+<table><thead><tr><th width="133">Flag</th><th width="147">Default</th><th width="238">Description</th><th>Example</th></tr></thead><tbody><tr><td>--outputs</td><td>[results.{csv, json, h5}]</td><td>This is used with run command and used to specify output file types. Note that we only specified the file name, the path will be automatically set to ~/eos/playground/files/{file_name.{csv, json, h5}}</td><td><code>nox -s execute -- --outputs result.csv result.h5</code></td></tr><tr><td>--input_types</td><td>List of (str, list, csv)</td><td>This is also used with run command to define input formats (str, list, csv).</td><td><code>nox -s execute -- --input_types str list csv</code></td></tr><tr><td>--runner</td><td>single</td><td>Specifies execution mode (single, multiple). The single mode is used to execute commands using one model whereas the multiple mode will use multiple models to execute the given commands.</td><td><code>nox -s execute -- --runner multiple</code></td></tr><tr><td>--single</td><td>eos3b5e</td><td>Used to specify or override the default model ID used for single running mode.</td><td><code>nox -s execute -- --single model_id</code></td></tr><tr><td>--multiple</td><td>[eos5axz, eos4e40, eos2r5a, eos4zfy, eos8fma]</td><td>Used to specify or override the default model IDs used for multiple running mode.</td><td><code>nox -s execute -- --multiple model_id1 model_id2</code></td></tr></tbody></table>
 
-             proc = psutil.Popen(
-                 command, 
-                 stdout=subprocess.PIPE, 
-                 stderr=subprocess.PIPE
-             )
+### General setting flags
 
-             try:
-                 while proc.poll() is None:
-                     max_memory = max(max_memory, proc.memory_info().rss / (1024 * 1024))
-                     time.sleep(0.1)
-
-                 success = proc.returncode == 0
-                 stdout, stderr = proc.communicate()
-
-                 if success:
-                     result = stdout.decode()
-                 else:
-                     result = stderr.decode()
-
-             except Exception as e:
-                 proc.kill()
-                 result = str(e)
-
-                 if config.get("log_error", False):
-                     handle_error_logging(
-                         command,
-                         description,
-                         result,
-                         config
-                     )
-
-                 pytest.fail(
-                     f"{description} '{' '.join(command)}' failed with error: {result}"
-                 )
-
-             checkups = apply_rules(
-                 command, 
-                 description, 
-                 dest_path, 
-                 repo_path,
-                 config
-             )
-    ```
-
-
-
-    Then after this, we have a pytest function that does the tests for the commands. Here is the pytest code snippet for that.
-
-
-
-    ```python
-     @pytest.mark.parametrize("command_name", get_command_names(model_ids[0], cli_type, config))
-     def test_command(model_id, command_name):
-         commands = get_commands(model_id, config)
-         command = commands[command_name]
-         dest_path = base_path / "dest" / model_id
-         repo_path = base_path / "repository" / model_id
-
-         success, time_taken = execute_command(
-             command,
-             description=command_name,
-             dest_path=dest_path,
-             repo_path=repo_path,
-         )
-
-         assert success, f"Command '{command_name}' failed for model ID {model_id}"
-    ```
-
-
-
-    Note that the \`get\_command\_names\` function provides all the five commands and structured and appropriate way to efficiently run them on pytest test function in parameterized way. This helper function is defined in \`utils.py\` file.\
-
-4.  **Capture Results and Display**:
-
-    To be able to share data from a \`commands.py\` to a pytest print hook defined at the root in \`conftest.py\`, the \`shared.py\` was created. This file simple defined an empty list \`result = \[]\`, to store every necessary info from a pytest execution as below:\
-
-
-    ```python
-     from .shared import results
-     results.append(
-         {
-             "command": " ".join(command),
-             "description": description,
-             "time_taken": f"{(time.time() - start_time) / 60:.2f} min",
-             "max_memory": f"{max_memory:.2f} MB",
-             "status": status_text,
-             "checkups": checkups,
-             "activate_docker": docker_activated,
-             "runner": config.get("runner"),
-             "cli_type": config.get("cli_type"),
-         }
-     )
-    ```
-
-    \
-
-
-    Then aggregated test outcomes in a `shared.py` list will be presented in a Rich table within `conftest.py` then to the terminal.
-
-
-
-    Then the final thing is to call and run the pytest command file \`commands.py\` in the nox session runner \`noxfile.py\`. So by defualt ersilia has multiple selected models(defined in \`config.yml\` at \`model\_ids\` section) and we run several tests on them. Those tests include, for a runner type \`single\` are \`auto fetcher\`: to fetch models automatically from a recommened source, \`fetch from github\`, \`fetch from docker hub\`, \`serve the fetched model\` and run either \*\*Conventional Runner\*\* (its a runner that does a detail checkups on the input files schema but slower) and \*\*Standard Runner\*\* (which accepts standard input file and does a few checkups but faster) will be run. For runner type \`multiple\` fetching from a dockerhub for all \`model\_ids\` at once and serve them in batch. Before that an example session code given for \`fetching from github\` and runner type \`single\` as below:\
-
-
-    ```python
-     @nox.session(venv_backend="conda", python=get_python_version())
-     def setup(session):
-         # to install dependency
-         install_dependencies(session)
-         # to install ersilia either from a source or from dev environment
-         setup_ersilia(session)
-     
-     # Sample nox session to execute fetch fro github
-     @nox.session(venv_backend="conda", python=get_python_version())
-     def test_from_github(session):
-         install_dependencies(session)
-         logger.info(
-             f'CLI test for model: {config.get("model_id")} and {config.get("fetch_flags")}'
-         )
-         session.run("pytest", "commands.py", "-v", silent=False)
-    ```
-
-
-
-    If we need to create another session we can update the config file using `update_yaml_values` such as changing the runner type or other things. To run a nox session, we need to go to the playground folder and type the following. To only run a custom session we type:
-
-
-
-    ```bash
-    nox -s setup test_from_github
-
-    ```
-
-
-
-    To run all sessions
-
-    ```bash
-    nox
-    ```
-
-
-
-    Or we can run them from any folder but by specifying the where the nox file existed using `-f /path/to/noxfile.py`. Below is an example of minimal terminal output
-
-
-
-    ```plaintext
-     ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-     ┃ Command                       │ Status │ Runtime    │ Memory Usage   ┃
-     ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ ┫
-     ┃ ersilia fetch eos3b5e         │ PASSED │ 1.23 min   │ 128.00 MB      ┃
-     ┃ ersilia serve eos3b5e         │ PASSED │ 0.45 min   │ 64.00 MB       ┃
-     ┃ ersilia run -i input.csv      │ FAILED │ 0.78 min   │ 96.00 MB       ┃
-     ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-     
-    ```
-
-### **Configuration**
-
-The `config.yml` file specifies various options for customizing the playground structured as below:
-
-```yaml
-activate_docker: true           # To disable and enable docker at test time
-cli_type: all                   # Allow us to specify the commnad we want to run
-delete_model: true              # Allow us to delete fetched model if previously existed
-fetch_flags: --from_github      # To fetch from a specified source
-input_file: files/input.csv     # Input file path
-log_error: true                 # Enables logging the error as a file
-log_path: files/error_log       # Error logging path, better to in files folder
-max_runtime_minutes: 10         # Expected runtime for run command
-model_id: eos3b5e               # single model id
-model_ids:                      # Defines multiple mode ids
-  - eos3b5e                     |
-  - eos4e40                     |    
-  - eos9gg2                     |
-output_file: files/result.csv   # Path for output file
-output_redirection: false       # Sometimes we need our output to be redirected to json file, this enables that
-overwrite_ersilia_repo: false   # This allow us to over our existed isolated venv
-python_version: 3.10.10         # ---
-run_flags: ''                   # flags that can be add in the run command like '-o iles/result.csv'
-runner: single                  # enables single or multiple commands to be run at once
-serve_flags: ''                 # flags at serve time like "--track_runners"
-use_existing_env: true          # enables to use our existing venv(base conda venv for now)
-```
-
-### **Github action workflow intergation**
-
-In addition to using the playground locally, its also a part of in Ersilia's CI/CD workflow. Its integrated at \`test\_and\_cleanup.yml\` workflow file. For a single runner, the sessions are independent so that they were implemented to be parallely executed. But for the multiple runner they are dependent on each other (we can not serve before fetch gets completed), they were implemented to run one after the other. Example codes below:
-
-```yaml
-strategy:
-    matrix:
-    session:
-        - setup
-        - test_from_github
-        - test_from_dockerhub
-        - test_auto_fetcher_decider
-        - test_conventional_run
-
-- name: Run CLI Test Default
-    run: |
-    source activate            
-    nox -f test/playground/noxfile.py -s ${{ matrix.session }}
-```
+<table><thead><tr><th width="171">Flag</th><th width="147">Default</th><th width="238">Description</th><th>Example</th></tr></thead><tbody><tr><td>--activate_docker</td><td>true</td><td>Activates or deactivates Docker. It allows to test for example if autofetcher will decide not to fetch from Docker (default) when Docker is not active</td><td><code>nox -s execute -- --activate_docker false</code></td></tr><tr><td>--log_error</td><td>true</td><td>Enables or disables logging of errors as file, which will be stored in ~/eos/playground/logs/. Each command failures will create a standalone file, with datetime on it in a string format. For instance catalog_20250129_145802.txt</td><td><code>nox -s execute -- --log_error false</code></td></tr><tr><td>--silent</td><td>true</td><td>Enable or disable logs from ersilia command execution</td><td><code>nox -s execute -- --silent false</code></td></tr><tr><td>--show_remark</td><td>false</td><td>Displays a remark column in the final execution summary table that allows to quickly see if the ersilia commands are executed successfully</td><td><code>nox -s execute -- --show_remark true</code></td></tr><tr><td>--max_runtime_minutes</td><td>10</td><td>Sets the maximum execution time for a run command, to test model speed if seems to be slow.</td><td><code>nox -s execute -- --max_runtime_minutes 5</code></td></tr><tr><td>--num_samples</td><td>10</td><td>Sets the sample size to create input for <code>run</code> command.</td><td><code>nox -s execute -- --num_samples 5</code></td></tr></tbody></table>
