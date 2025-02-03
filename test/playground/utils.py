@@ -206,26 +206,27 @@ def is_docker_running():
         echo("Docker command not found. Ensure Docker is installed and in the PATH.")
         return False
 
-
 def start_docker():
-    system_platform = platform.system()
-
     if is_docker_running():
         echo("Docker is already running. No action needed.")
+        return
 
     echo("Starting Docker...")
+
+    system_platform = platform.system()
 
     if system_platform == "Linux":
         subprocess.run(["sudo", "systemctl", "start", "docker"], check=True)
 
     elif system_platform == "Darwin":  # macOS
-        raise RuntimeError(
-            "Docker can not start programatically on macOS"
-        )
+        if not is_docker_running():
+            echo("Docker is not running. Please start Docker Desktop manually.")
+            raise RuntimeError("Docker cannot be started programmatically on macOS.")
+        else:
+            echo("Docker is already running.")
 
     else:
         raise OSError(f"Unsupported platform: {system_platform}")
-
 
 def stop_docker():
     system_platform = platform.system()

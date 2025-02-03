@@ -176,7 +176,21 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           brew install --cask docker
-          docker --version
+          if [ -d "/Applications/Docker.app" ]; then
+            # Check if Docker is already running
+            if ! docker info > /dev/null 2>&1; then
+              echo "Starting Docker..."
+              open /Applications/Docker.app
+              echo "Waiting for Docker to start..."
+              sleep 60
+            else
+              echo "Docker is already running."
+            fi
+            docker --version
+          else
+            echo "Docker.app not found in /Applications. Skipping Docker setup."
+            exit 1
+          fi
 
       - uses: conda-incubator/setup-miniconda@v3
         with:
