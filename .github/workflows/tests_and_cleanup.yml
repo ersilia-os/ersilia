@@ -176,38 +176,39 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           echo "Updating Homebrew..."
-          brew update
+          brew update || true  # Avoid failures due to transient Homebrew issues
       
           echo "Installing QEMU..."
-          brew install qemu
+          brew install qemu || brew upgrade qemu
       
           echo "Installing Docker CLI and Colima..."
-          brew install docker colima
+          brew install docker colima || brew upgrade docker colima
+      
+          echo "Ensuring Homebrew environment is initialized..."
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+      
+          echo "Re-signing QEMU for hypervisor access..."
+          sudo codesign --force --deep --sign - /opt/homebrew/bin/qemu-system-aarch64
+      
+          echo "Deleting previous Colima instance (if any)..."
+          colima delete || true
       
           echo "Starting Colima with QEMU driver..."
           if ! colima start --vm-type=qemu; then
-            echo "Colima failed to start. Falling back to Docker Desktop..."
-            if [ -d "/Applications/Docker.app" ]; then
-              echo "Starting Docker Desktop..."
-              open /Applications/Docker.app
-              echo "Waiting for Docker to start..."
-              sleep 60
+            echo "Colima failed to start. Checking logs..."
+            cat /Users/runner/.colima/_lima/colima/ha.stderr.log || true
       
-              if docker info > /dev/null 2>&1; then
-                echo "Docker is now running."
-                docker --version
-              else
-                echo "Docker failed to start."
-                exit 1
-              fi
-            else
-              echo "Docker Desktop is not installed. Skipping Docker setup."
+            echo "Attempting a second restart..."
+            colima start --vm-type=qemu || true
+      
+            if ! colima status; then
+              echo "Colima failed again. Skipping Docker setup."
               exit 1
             fi
-          else
-            echo "Colima started successfully."
-            docker --version
           fi
+      
+          echo "Colima started successfully."
+          docker --version
     
       - uses: conda-incubator/setup-miniconda@v3
         with:
