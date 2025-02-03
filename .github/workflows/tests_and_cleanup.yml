@@ -165,48 +165,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-13]
+        os: [ubuntu-22.04, macos-latest]
         session: ${{ fromJson(needs.generate-nox-parl-jobs.outputs.session) }}
         fetch_source: ["from_github", "from_dockerhub", "from_s3"]
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
       - name: Install Docker & Colima (macOS)
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-latest'  # Only run on macOS 13
         run: |
           echo "Updating Homebrew..."
-          brew update || true  # Avoid failures due to transient Homebrew issues
-      
-          echo "Installing QEMU..."
-          brew install qemu || brew upgrade qemu
-      
+          brew update || true  
+    
           echo "Installing Docker CLI and Colima..."
-          brew install docker colima || brew upgrade docker colima
-      
-          echo "Ensuring Homebrew environment is initialized..."
-          eval "$(/opt/homebrew/bin/brew shellenv)"
-      
-          echo "Re-signing QEMU for hypervisor access..."
-          sudo codesign --force --deep --sign - /opt/homebrew/bin/qemu-system-aarch64
-      
+          brew install docker colima || brew upgrade docker colima 
+    
           echo "Cleaning up previous Colima state..."
-          colima delete --all || true
-          rm -rf /Users/runner/.colima
-      
-          echo "Starting Colima without specifying VM type..."
-          if ! colima start --cpu 4 --memory 8 --verbose; then
-            echo "Colima failed to start. Checking logs..."
-            cat /Users/runner/.colima/_lima/colima/ha.stderr.log || true
-      
-            echo "Attempting a second restart..."
-            colima start --cpu 4 --memory 8 --verbose || true
-      
-            if ! colima status; then
-              echo "Colima failed again. Falling back to Docker Desktop."
-              brew install --cask docker
-            fi
+          colima delete --all || true  
+          rm -rf /Users/runner/.colima  
+          echo "Starting Colima..."
+          if ! colima start--verbose; then  
+            echo "Colima failed to start. Falling back to Docker Desktop."
+            brew install --cask docker  
           fi
-      
+    
           echo "Docker environment started successfully."
           docker --version
     
