@@ -128,7 +128,7 @@ jobs:
 
       - name: Run Default Default
         run: |
-          nox -f test/playground/noxfile.py -s execute -p 3.10
+          nox -f test/playground/noxfile.py -s execute -p 3.12
 
   generate-nox-parl-jobs:
       needs: run-pytest
@@ -154,36 +154,55 @@ jobs:
       
         - id: set-matrix
           run: echo "session=$(nox -f test/playground/noxfile.py --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
-  checks:
-      name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
-      needs: generate-nox-parl-jobs
-      defaults:
-        run:
-          shell: bash -el {0}
-      runs-on: ${{ matrix.os }}
-      strategy:
-        fail-fast: false
-        matrix:
-          os: [ubuntu-22.04, macos-latest]
-          session: ${{ fromJson(needs.generate-nox-parl-jobs.outputs.session) }}
-          fetch_source: ["from_github", "from_dockerhub", "from_s3"]
+          
+  run-cli-test-parallel:
+    name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
+    needs: generate-nox-parl-jobs
+    defaults:
+      run:
+        shell: bash -el {0}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-latest]
+        session: ${{ fromJson(needs.generate-nox-parl-jobs.outputs.session) }}
+        fetch_source: ["from_github", "from_dockerhub", "from_s3"]
 
-      steps:
-        - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
-        - uses: wntrblm/nox@main
-        - uses: conda-incubator/setup-miniconda@v3
-          with:
-            auto-update-conda: true
-            python-version: "3.10.10"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
 
-        - name: Install dependencies
-          run: |
-            conda install git-lfs -c conda-forge
-            git-lfs install
-            conda install gh -c conda-forge
-            python -m pip install -e .[test]
-        - run: |
-            nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli delete fetch --fetch ${{ matrix.fetch_source }}
+      - name: Set up Docker
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+          sudo systemctl start docker
+          sudo docker --version
+
+      - name: Set up Docker (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install --cask docker
+          open -a Docker
+          echo "Waiting for Docker to start..."
+          sleep 30
+          docker --version
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
+
+      - name: Install dependencies
+        run: |
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+          python -m pip install -e .[test]
+
+      - run: |
+          nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli delete fetch serve run --fetch ${{ matrix.fetch_source }}
 
   run-cli-test-multiple:
     needs: run-pytest
