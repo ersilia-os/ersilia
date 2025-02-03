@@ -175,41 +175,9 @@ jobs:
       - name: Install Docker & Colima (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          echo "Updating Homebrew..."
-          brew update || true  # Avoid failures due to transient Homebrew issues
+          brew install docker
+          colima start
       
-          echo "Installing QEMU..."
-          brew install qemu || brew upgrade qemu
-      
-          echo "Installing Docker CLI and Colima..."
-          brew install docker colima || brew upgrade docker colima
-      
-          echo "Ensuring Homebrew environment is initialized..."
-          eval "$(/opt/homebrew/bin/brew shellenv)"
-      
-          echo "Re-signing QEMU for hypervisor access..."
-          sudo codesign --force --deep --sign - /opt/homebrew/bin/qemu-system-aarch64
-      
-          echo "Deleting previous Colima instance (if any)..."
-          colima delete || true
-      
-          echo "Starting Colima with QEMU driver..."
-          if ! colima start --vm-type=qemu; then
-            echo "Colima failed to start. Checking logs..."
-            cat /Users/runner/.colima/_lima/colima/ha.stderr.log || true
-      
-            echo "Attempting a second restart..."
-            colima start --vm-type=qemu || true
-      
-            if ! colima status; then
-              echo "Colima failed again. Skipping Docker setup."
-              exit 1
-            fi
-          fi
-      
-          echo "Colima started successfully."
-          docker --version
-    
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
