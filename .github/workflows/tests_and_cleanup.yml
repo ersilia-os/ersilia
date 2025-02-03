@@ -131,6 +131,7 @@ jobs:
           nox -f test/playground/noxfile.py -s execute -p 3.10
 
   generate-nox-parl-jobs:
+      needs: run-pytest
       runs-on: ubuntu-latest
       outputs:
         session: ${{ steps.set-matrix.outputs.session }}
