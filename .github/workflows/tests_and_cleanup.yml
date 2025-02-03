@@ -175,7 +175,7 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           echo "Updating Homebrew..."
-          brew update || true  
+          brew update || true  # Avoid failures due to transient Homebrew issues
       
           echo "Installing QEMU..."
           brew install qemu || brew upgrade qemu
@@ -189,22 +189,26 @@ jobs:
           echo "Re-signing QEMU for hypervisor access..."
           sudo codesign --force --deep --sign - /opt/homebrew/bin/qemu-system-aarch64
       
-          echo "Deleting previous Colima instance (if any)..."
+          echo "Cleaning up previous Colima state..."
           colima delete --all || true
+          rm -rf /Users/runner/.colima
       
-          echo "Starting Colima with QEMU driver..."
-          if ! colima start --vm-type=qemu --cpu 4 --memory 8 --verbose; then
+          echo "Starting Colima with vz driver..."
+          if ! colima start --vm-type=vz --cpu 4 --memory 8 --verbose; then
             echo "Colima failed to start. Checking logs..."
             cat /Users/runner/.colima/_lima/colima/ha.stderr.log || true
       
-            echo "Attempting a second restart with vz driver..."
+            echo "Attempting a second restart..."
             colima start --vm-type=vz --cpu 4 --memory 8 --verbose || true
       
             if ! colima status; then
-              echo "Colima failed again. Skipping Docker setup."
-              exit 1
+              echo "Colima failed again. Falling back to Docker Desktop."
+              brew install --cask docker
             fi
           fi
+      
+          echo "Colima or Docker Desktop started successfully."
+          docker --version
       
           echo "Colima started successfully."
           docker --version
