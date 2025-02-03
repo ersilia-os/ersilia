@@ -181,8 +181,8 @@ jobs:
           echo "Installing Docker CLI and Colima..."
           brew install docker colima
       
-          echo "Starting Colima..."
-          colima start
+          echo "Starting Colima with QEMU driver..."
+          colima start --vm-type=qemu
       
           echo "Waiting for Docker to become available..."
           retry=0
