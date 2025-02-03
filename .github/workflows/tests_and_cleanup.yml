@@ -172,33 +172,19 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
 
-      - name: Install Docker (macOS)
+      - name: Install Docker & Colima (macOS)
         if: matrix.os == 'macos-latest'
         run: |
           echo "Updating Homebrew..."
           brew update
       
-          echo "Installing Docker CLI..."
-          brew install docker
+          echo "Installing Docker CLI and Colima..."
+          brew install docker colima
       
-          echo "Verifying Docker installation..."
-          docker --version || { echo "Docker installation failed"; exit 1; }
+          echo "Starting Colima..."
+          colima start
       
-      - name: Start Docker Daemon (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          echo "Setting up Docker configuration..."
-          sudo mkdir -p /etc/docker
-          sudo tee /etc/docker/daemon.json > /dev/null <<EOF
-          {
-            "experimental": false
-          }
-          EOF
-      
-          echo "Starting Docker Daemon..."
-          sudo nohup dockerd > /tmp/docker.log 2>&1 &
-      
-          echo "Waiting for Docker to start..."
+          echo "Waiting for Docker to become available..."
           retry=0
           until docker info > /dev/null 2>&1 || [ $retry -eq 10 ]; do
             echo "Retry $retry..."
@@ -207,14 +193,13 @@ jobs:
           done
       
           if docker info > /dev/null 2>&1; then
-            echo "Docker is now running."
+            echo "Docker is now running inside Colima."
             docker --version
           else
             echo "Docker failed to start."
-            cat /tmp/docker.log
             exit 1
           fi
-
+    
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
