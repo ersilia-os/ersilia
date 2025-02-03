@@ -132,12 +132,14 @@ jobs:
 
   generate-nox-parl-jobs:
       needs: run-pytest
-      runs-on: ubuntu-latest
       outputs:
         session: ${{ steps.set-matrix.outputs.session }}
+      defaults:
+        run:
+          shell: bash -el {0}
+      runs-on: ubuntu-22.04
       steps:
-        - uses: actions/checkout@v3
-        - uses: wntrblm/nox@main
+        - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
         - uses: conda-incubator/setup-miniconda@v3
           with:
             auto-update-conda: true
@@ -149,22 +151,25 @@ jobs:
             git-lfs install
             conda install gh -c conda-forge
             python -m pip install -e .[test]
+      
         - id: set-matrix
-          shell: bash
           run: echo "session=$(nox -f test/playground/noxfile.py --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
   checks:
       name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
       needs: generate-nox-parl-jobs
+      defaults:
+        run:
+          shell: bash -el {0}
       runs-on: ${{ matrix.os }}
       strategy:
         fail-fast: false
         matrix:
-          os: [ubuntu-latest, macos-latest]
+          os: [ubuntu-22.04, macos-latest]
           session: ${{ fromJson(needs.generate-nox-parl-jobs.outputs.session) }}
           fetch_source: ["from_github", "from_dockerhub", "from_s3"]
 
       steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
         - uses: wntrblm/nox@main
         - uses: conda-incubator/setup-miniconda@v3
           with:
