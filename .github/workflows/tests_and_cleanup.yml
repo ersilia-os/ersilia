@@ -165,7 +165,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-latest]
+        os: [ubuntu-22.04, macos-13]
         session: ${{ fromJson(needs.generate-nox-parl-jobs.outputs.session) }}
         fetch_source: ["from_github", "from_dockerhub", "from_s3"]
 
