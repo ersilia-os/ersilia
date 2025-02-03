@@ -172,47 +172,35 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
 
-      - name: Set up Docker (macOS)
+      - name: Start Docker Daemon (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          echo "Updating Homebrew..."
-          brew update
+          sudo mkdir -p /etc/docker
+          sudo tee /etc/docker/daemon.json > /dev/null <<EOF
+          {
+            "experimental": false
+          }
+          EOF
       
-          echo "Installing Docker..."
-          brew install --cask docker
+          echo "Starting Docker Daemon..."
+          sudo nohup dockerd > /tmp/docker.log 2>&1 &
       
-          if brew list --cask | grep -q docker; then
-            echo "Docker installed successfully."
+          echo "Waiting for Docker to start..."
+          retry=0
+          until docker info > /dev/null 2>&1 || [ $retry -eq 10 ]; do
+            echo "Retry $retry..."
+            sleep 10
+            ((retry++))
+          done
       
-            if [ -d "/Applications/Docker.app" ]; then
-              echo "Starting Docker..."
-              open -a Docker
-      
-              # Wait for Docker to start with a loop instead of fixed sleep
-              echo "Waiting for Docker to become available..."
-              retry=0
-              until docker info > /dev/null 2>&1 || [ $retry -eq 10 ]; do
-                echo "Retry $retry..."
-                sleep 10
-                ((retry++))
-              done
-      
-              if docker info > /dev/null 2>&1; then
-                echo "Docker is now running."
-                docker --version
-              else
-                echo "Docker failed to start."
-                exit 1
-              fi
-            else
-              echo "Docker.app not found in /Applications. Skipping Docker setup."
-              exit 1
-            fi
+          if docker info > /dev/null 2>&1; then
+            echo "Docker is now running."
+            docker --version
           else
-            echo "Docker installation failed."
+            echo "Docker failed to start."
+            cat /tmp/docker.log
             exit 1
           fi
-
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
