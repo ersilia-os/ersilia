@@ -139,7 +139,7 @@ jobs:
         - uses: wntrblm/nox@main
         - id: set-matrix
           shell: bash
-          run: echo "session=$(nox --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
+          run: echo "session=$(nox -f test/playground/noxfile.py --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
   checks:
       name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
       needs: generate-nox-parl-jobs
