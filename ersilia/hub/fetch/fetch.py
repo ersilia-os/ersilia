@@ -10,6 +10,7 @@ from ...default import MODEL_SOURCE_FILE, PACK_METHOD_BENTOML, PACK_METHOD_FASTA
 from ...hub.delete.delete import ModelFullDeleter
 from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...setup.requirements import check_bentoml
+from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithBentoML,
     NotInstallableWithFastAPI,
@@ -23,15 +24,6 @@ from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
 
 FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
-
-
-class BentoMLError(Exception):
-    """
-    Raised when an error occurs in BentoML-related processes.
-    """
-
-    def __init__(self, message: str):
-        super().__init__(message)
 
 
 class ModelFetcher(ErsiliaBase):
@@ -195,37 +187,26 @@ class ModelFetcher(ErsiliaBase):
     @throw_ersilia_exception()
     def _fetch_from_bentoml(self):
         self.logger.debug("Fetching using BentoML")
-        try:
-            self.check_bentoml()
+        self.check_bentoml()
 
-            fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
-            mf = fetch.ModelFetcherFromBentoML(
-                config_json=self.config_json,
-                credentials_json=self.credentials_json,
-                overwrite=self.overwrite,
-                repo_path=self.repo_path,
-                mode=self.mode,
-                pip=self.do_pip,
-                dockerize=self.do_docker,
-                force_from_github=self.force_from_github,
-                force_from_s3=self.force_from_s3,
-            )
+        fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
+        mf = fetch.ModelFetcherFromBentoML(
+            config_json=self.config_json,
+            credentials_json=self.credentials_json,
+            overwrite=self.overwrite,
+            repo_path=self.repo_path,
+            mode=self.mode,
+            pip=self.do_pip,
+            dockerize=self.do_docker,
+            force_from_github=self.force_from_github,
+            force_from_s3=self.force_from_s3,
+        )
 
-            # Check if the model can be installed with BentoML
-            try:
-                if mf.seems_installable(model_id=self.model_id):
-                    mf.fetch(model_id=self.model_id)
-                else:
-                    raise NotInstallableWithBentoML(model_id=self.model_id)
-
-            except NotInstallableWithBentoML:
-                raise
-
-        except NotInstallableWithBentoML:
-            raise
-
-        except Exception as e:
-            raise BentoMLError(f"An error occurred during BentoML fetching: {e}")
+        # Check if the model can be installed with BentoML
+        if mf.seems_installable(model_id=self.model_id):
+            mf.fetch(model_id=self.model_id)
+        else:
+            raise NotInstallableWithBentoML(model_id=self.model_id)
 
     @throw_ersilia_exception()
     def _fetch_not_from_dockerhub(self, model_id: str):
@@ -385,52 +366,40 @@ class ModelFetcher(ErsiliaBase):
             fetcher = ModelFetcher(config_json=config)
             success = await fetcher.fetch(model_id="eosxxxx")
         """
-        fr = await self._fetch(model_id)
-        if fr.fetch_success:
+        try:
+            fr = await self._fetch(model_id)
+            if not fr.fetch_success:
+                return fr
+
+            self._standard_csv_example(model_id)
+            self.logger.debug("Writing model source to file")
+            model_source_file = os.path.join(
+                self._model_path(model_id), MODEL_SOURCE_FILE
+            )
             try:
-                self._standard_csv_example(model_id)
-            except StandardModelExampleError:
-                self.logger.debug("Standard model example failed, deleting artifacts")
-                do_delete = yes_no_input(
-                    "Do you want to delete the model artifacts? [Y/n]",
-                    default_answer="Y",
+                os.makedirs(self._model_path(model_id), exist_ok=True)
+            except OSError as error:
+                self.logger.error(f"Error during folder creation: {error}")
+            with open(model_source_file, "w") as f:
+                f.write(self.model_source)
+
+            return FetchResult(fetch_success=True, reason="Model fetched successfully")
+
+        except (StandardModelExampleError, BentoMLException) as err:
+            self.logger.debug(f"{type(err).__name__} occurred: {str(err)}")
+            do_delete = yes_no_input(
+                "Do you want to delete the model artifacts? [Y/n]",
+                default_answer="Y",
+            )
+            if do_delete:
+                md = ModelFullDeleter(overwrite=False)
+                md.delete(model_id)
+                self.logger.info(
+                    f"✅ Model '{model_id}' artifacts have been successfully deleted."
                 )
-                if do_delete:
-                    md = ModelFullDeleter(overwrite=False)
-                    md.delete(model_id)
-                return FetchResult(
-                    fetch_success=False,
-                    reason="Could not successfully run a standard example from the model.",
-                )
-            else:
-                self.logger.debug("Writing model source to file")
-                model_source_file = os.path.join(
-                    self._model_path(model_id), MODEL_SOURCE_FILE
-                )
-                try:
-                    os.makedirs(self._model_path(model_id), exist_ok=True)
-                except OSError as error:
-                    self.logger.error(f"Error during folder creation: {error}")
-                with open(model_source_file, "w") as f:
-                    f.write(self.model_source)
-                return FetchResult(
-                    fetch_success=True, reason="Model fetched successfully"
-                )
-        else:
-            # Handle BentoML-specific errors here
-            if isinstance(fr.reason, BentoMLError):
-                self.logger.debug("BentoML fetching failed, deleting artifacts")
-                do_delete = yes_no_input(
-                    "Do you want to delete the model artifacts? [Y/n]",
-                    default_answer="Y",
-                )
-                if do_delete:
-                    md = ModelFullDeleter(overwrite=False)
-                    md.delete(model_id)
-                    self.logger.info(
-                        f"Model '{model_id}' artifacts successfully deleted."
-                    )
-                    print(
-                        f"✅ Model '{model_id}' artifacts have been successfully deleted."
-                    )
-            return fr
+
+            reason = (
+                str(err) if str(err) else "An unknown error occurred during fetching."
+            )
+            return FetchResult(fetch_success=False, reason=reason)
+        return fr

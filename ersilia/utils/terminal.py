@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 
 try:
     from inputimeout import TimeoutOccurred, inputimeout
@@ -38,35 +39,40 @@ def is_quiet():
 
 def run_command(cmd, quiet=None):
     """
-    Run a shell command.
+    Run a shell command and return stdout, stderr, and return code.
 
     Parameters
     ----------
     cmd : str or list
         The command to run.
     quiet : bool, optional
-        Whether to run the command in quiet mode. Default is None.
+        Whether to run the command in quiet mode. Defaults to `is_quiet()`.
     """
     if quiet is None:
         quiet = is_quiet()
-    if type(cmd) == str:
-        if quiet:
-            with open(os.devnull, "w") as fp:
-                subprocess.Popen(
-                    cmd, stdout=fp, stderr=fp, shell=True, env=os.environ
-                ).wait()
-        else:
-            subprocess.Popen(cmd, shell=True, env=os.environ).wait()
-    else:
-        if quiet:
-            subprocess.check_call(
-                cmd,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                env=os.environ,
-            )
-        else:
-            subprocess.check_call(cmd, env=os.environ)
+    # Run the command and capture outputs
+    result = subprocess.run(
+        cmd,
+        shell=isinstance(cmd, str),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        env=os.environ,
+    )
+
+    # Decode outputs
+    stdout = result.stdout.strip()
+    stderr = result.stderr.strip()
+    returncode = result.returncode
+
+    # Log outputs if not in quiet mode
+    if not quiet:
+        if stdout:
+            print(stdout)
+        if stderr:
+            print(stderr, file=sys.stderr)
+
+    return stdout, stderr, returncode
 
 
 def run_command_check_output(cmd):
