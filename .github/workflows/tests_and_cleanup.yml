@@ -154,7 +154,7 @@ jobs:
       
         - id: set-matrix
           run: echo "session=$(nox -f test/playground/noxfile.py --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
-          
+
   run-cli-test-parallel:
     name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
     needs: generate-nox-parl-jobs
@@ -172,21 +172,10 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
 
-      - name: Set up Docker
-        if: matrix.os == 'ubuntu-22.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
-          sudo systemctl start docker
-          sudo docker --version
-
       - name: Set up Docker (macOS)
         if: matrix.os == 'macos-latest'
         run: |
           brew install --cask docker
-          open -a Docker
-          echo "Waiting for Docker to start..."
-          sleep 30
           docker --version
 
       - uses: conda-incubator/setup-miniconda@v3

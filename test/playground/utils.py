@@ -20,6 +20,7 @@ from ersilia.cli.commands.close import close_cmd
 from ersilia.cli.commands.run import run_cmd
 from ersilia.cli.commands.test import test_cmd
 from ersilia.cli.commands.delete import delete_cmd
+from ersilia.cli import echo
 from .rules import get_rule
 
 file_path = Path(EOS_PLAYGROUND) / "files"
@@ -194,40 +195,32 @@ def get_command_names(model_id, cli, config):
 
 
 def is_docker_running():
-    return (
-        subprocess.run(
+    try:
+        result = subprocess.run(
             ["docker", "info"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-        ).returncode
-        == 0
-    )
+        )
+        return result.returncode == 0
+    except FileNotFoundError:
+        echo("Docker command not found. Ensure Docker is installed and in the PATH.")
+        return False
 
 
 def start_docker():
     system_platform = platform.system()
 
     if is_docker_running():
-        print("Docker is already running. No action needed.")
+        echo("Docker is already running. No action needed.")
 
-    print("Starting Docker...")
+    echo("Starting Docker...")
 
     if system_platform == "Linux":
         subprocess.run(["sudo", "systemctl", "start", "docker"], check=True)
 
     elif system_platform == "Darwin":  # macOS
-        print("Opening Docker Desktop...")
-        subprocess.run(["open", "-a", "Docker"], check=True)
-
-        print("Waiting for Docker to be fully operational...")
-        for _ in range(30):
-            if is_docker_running():
-                print("Docker is ready!")
-                return
-            time.sleep(2)
-
         raise RuntimeError(
-            "Docker failed to start within the expected time."
+            "Docker can not start programatically on macOS"
         )
 
     else:
@@ -238,16 +231,16 @@ def stop_docker():
     system_platform = platform.system()
 
     if not is_docker_running():
-        print("Docker is already stopped. No action needed.")
+        echo("Docker is already stopped. No action needed.")
         return
 
-    print("Stopping Docker...")
+    echo("Stopping Docker...")
 
     if system_platform == "Linux":
         subprocess.run(["sudo", "systemctl", "stop", "docker"], check=True)
 
     elif system_platform == "Darwin":  # macOS
-        print("Stopping Docker programmatically is not supported on macOS.")
+        echo("Stopping Docker programmatically is not supported on macOS.")
         raise RuntimeError("Cannot stop Docker programmatically on macOS.")
 
     else:
@@ -256,11 +249,15 @@ def stop_docker():
 
 def manage_docker(config):
     if not config or not config["settings"].get("activate_docker"):
-        stop_docker()
+        echo("Docker activation not required.")
         return False
 
-    start_docker()
-    return True
+    try:
+        start_docker()
+        return True
+    except FileNotFoundError:
+        echo("Docker is not installed or not in the PATH. Skipping Docker-related tasks.")
+        return False
 
 
 def get_memory_usage():
@@ -282,7 +279,7 @@ def get_error(res):
 def handle_exception(exc, verbose):
     if verbose:
         click.secho("Detailed traceback:", fg="yellow")
-        traceback.print_exc()
+        traceback.echo_exc()
     else:
         click.secho(f"Error: {str(exc)}", fg="red")
         click.secho("Run with --verbose for more details.", fg="cyan")
@@ -379,4 +376,4 @@ if __name__ == "__main__":
     config = yaml.safe_load(open("config.yml", "r"))
     commands = get_command("eos3b5e", config)
     fetch = commands["catalog"]
-    print(fetch)
+    echo(fetch)
