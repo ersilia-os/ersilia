@@ -172,9 +172,22 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
 
+      - name: Install Docker (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          echo "Updating Homebrew..."
+          brew update
+      
+          echo "Installing Docker CLI..."
+          brew install docker
+      
+          echo "Verifying Docker installation..."
+          docker --version || { echo "Docker installation failed"; exit 1; }
+      
       - name: Start Docker Daemon (macOS)
         if: matrix.os == 'macos-latest'
         run: |
+          echo "Setting up Docker configuration..."
           sudo mkdir -p /etc/docker
           sudo tee /etc/docker/daemon.json > /dev/null <<EOF
           {
@@ -201,6 +214,7 @@ jobs:
             cat /tmp/docker.log
             exit 1
           fi
+
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
