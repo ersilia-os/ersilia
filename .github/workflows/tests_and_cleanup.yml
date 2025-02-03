@@ -193,13 +193,13 @@ jobs:
           colima delete --all || true
           rm -rf /Users/runner/.colima
       
-          echo "Starting Colima with vz driver..."
-          if ! colima start --vm-type=vz --cpu 4 --memory 8 --verbose; then
+          echo "Starting Colima without specifying VM type..."
+          if ! colima start --cpu 4 --memory 8 --verbose; then
             echo "Colima failed to start. Checking logs..."
             cat /Users/runner/.colima/_lima/colima/ha.stderr.log || true
       
             echo "Attempting a second restart..."
-            colima start --vm-type=vz --cpu 4 --memory 8 --verbose || true
+            colima start --cpu 4 --memory 8 --verbose || true
       
             if ! colima status; then
               echo "Colima failed again. Falling back to Docker Desktop."
@@ -207,10 +207,7 @@ jobs:
             fi
           fi
       
-          echo "Colima or Docker Desktop started successfully."
-          docker --version
-      
-          echo "Colima started successfully."
+          echo "Docker environment started successfully."
           docker --version
     
       - uses: conda-incubator/setup-miniconda@v3
