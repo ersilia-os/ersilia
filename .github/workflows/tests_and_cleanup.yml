@@ -130,6 +130,44 @@ jobs:
         run: |
           nox -f test/playground/noxfile.py -s execute -p 3.10
 
+  generate-nox-parl-jobs:
+      runs-on: ubuntu-latest
+      outputs:
+        session: ${{ steps.set-matrix.outputs.session }}
+      steps:
+        - uses: actions/checkout@v3
+        - uses: wntrblm/nox@main
+        - id: set-matrix
+          shell: bash
+          run: echo "session=$(nox --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
+  checks:
+      name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
+      needs: generate-nox-parl-jobs
+      runs-on: ${{ matrix.os }}
+      strategy:
+        fail-fast: false
+        matrix:
+          os: [ubuntu-latest, macos-latest]
+          session: ${{ fromJson(needs.generate-nox-parl-jobs.outputs.session) }}
+          fetch_source: ["from_github", "from_dockerhub", "from_s3"]
+
+      steps:
+        - uses: actions/checkout@v3
+        - uses: wntrblm/nox@main
+        - uses: conda-incubator/setup-miniconda@v3
+          with:
+            auto-update-conda: true
+            python-version: "3.10.10"
+
+        - name: Install dependencies
+          run: |
+            conda install git-lfs -c conda-forge
+            git-lfs install
+            conda install gh -c conda-forge
+            python -m pip install -e .[test]
+        - run: |
+            nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli delete fetch --fetch ${{ matrix.fetch_source }}
+
   run-cli-test-multiple:
     needs: run-pytest
     defaults:
@@ -152,7 +190,7 @@ jobs:
 
       - name: Run CLI Test Multiple
         run: |          
-          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli fetch serve run --fetch from_dockerhub --runner multiple --outputs result.csv
+          nox -f test/playground/noxfile.py -s execute -p 3.12 -- --cli serve --fetch from_dockerhub --runner multiple
 
   test-colab-notebook:
     defaults:
