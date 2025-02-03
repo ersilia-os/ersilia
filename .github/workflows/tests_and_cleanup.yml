@@ -178,26 +178,35 @@ jobs:
           echo "Updating Homebrew..."
           brew update
       
+          echo "Installing QEMU..."
+          brew install qemu
+      
           echo "Installing Docker CLI and Colima..."
           brew install docker colima
       
           echo "Starting Colima with QEMU driver..."
-          colima start --vm-type=qemu
+          if ! colima start --vm-type=qemu; then
+            echo "Colima failed to start. Falling back to Docker Desktop..."
+            if [ -d "/Applications/Docker.app" ]; then
+              echo "Starting Docker Desktop..."
+              open /Applications/Docker.app
+              echo "Waiting for Docker to start..."
+              sleep 60
       
-          echo "Waiting for Docker to become available..."
-          retry=0
-          until docker info > /dev/null 2>&1 || [ $retry -eq 10 ]; do
-            echo "Retry $retry..."
-            sleep 10
-            ((retry++))
-          done
-      
-          if docker info > /dev/null 2>&1; then
-            echo "Docker is now running inside Colima."
-            docker --version
+              if docker info > /dev/null 2>&1; then
+                echo "Docker is now running."
+                docker --version
+              else
+                echo "Docker failed to start."
+                exit 1
+              fi
+            else
+              echo "Docker Desktop is not installed. Skipping Docker setup."
+              exit 1
+            fi
           else
-            echo "Docker failed to start."
-            exit 1
+            echo "Colima started successfully."
+            docker --version
           fi
     
       - uses: conda-incubator/setup-miniconda@v3
