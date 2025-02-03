@@ -175,20 +175,41 @@ jobs:
       - name: Set up Docker (macOS)
         if: matrix.os == 'macos-latest'
         run: |
+          echo "Updating Homebrew..."
+          brew update
+      
+          echo "Installing Docker..."
           brew install --cask docker
-          if [ -d "/Applications/Docker.app" ]; then
-            # Check if Docker is already running
-            if ! docker info > /dev/null 2>&1; then
+      
+          if brew list --cask | grep -q docker; then
+            echo "Docker installed successfully."
+      
+            if [ -d "/Applications/Docker.app" ]; then
               echo "Starting Docker..."
-              open /Applications/Docker.app
-              echo "Waiting for Docker to start..."
-              sleep 60
+              open -a Docker
+      
+              # Wait for Docker to start with a loop instead of fixed sleep
+              echo "Waiting for Docker to become available..."
+              retry=0
+              until docker info > /dev/null 2>&1 || [ $retry -eq 10 ]; do
+                echo "Retry $retry..."
+                sleep 10
+                ((retry++))
+              done
+      
+              if docker info > /dev/null 2>&1; then
+                echo "Docker is now running."
+                docker --version
+              else
+                echo "Docker failed to start."
+                exit 1
+              fi
             else
-              echo "Docker is already running."
+              echo "Docker.app not found in /Applications. Skipping Docker setup."
+              exit 1
             fi
-            docker --version
           else
-            echo "Docker.app not found in /Applications. Skipping Docker setup."
+            echo "Docker installation failed."
             exit 1
           fi
 

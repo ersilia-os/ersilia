@@ -208,10 +208,10 @@ def is_docker_running():
 
 def start_docker():
     if is_docker_running():
-        echo("Docker is already running. No action needed.")
+        echo("Docker is already running. No action needed.", fg="green", bold=True)
         return
 
-    echo("Starting Docker...")
+    echo("Starting Docker...", fg="green", bold=True)
 
     system_platform = platform.system()
 
@@ -220,10 +220,10 @@ def start_docker():
 
     elif system_platform == "Darwin":  # macOS
         if not is_docker_running():
-            echo("Docker is not running. Please start Docker Desktop manually.")
+            echo("Docker is not running. Please start Docker Desktop manually.", fg="red", bold=True)
             raise RuntimeError("Docker cannot be started programmatically on macOS.")
         else:
-            echo("Docker is already running.")
+            echo("Docker is already running.", fg="green", bold=True)
 
     else:
         raise OSError(f"Unsupported platform: {system_platform}")
@@ -232,10 +232,10 @@ def stop_docker():
     system_platform = platform.system()
 
     if not is_docker_running():
-        echo("Docker is already stopped. No action needed.")
+        echo("Docker is already stopped. No action needed.", fg="green", bold=True)
         return
 
-    echo("Stopping Docker...")
+    echo("Stopping Docker...", fg="green", bold=True)
 
     if system_platform == "Linux":
         subprocess.run(["sudo", "systemctl", "stop", "docker"], check=True)
@@ -250,14 +250,14 @@ def stop_docker():
 
 def manage_docker(config):
     if not config or not config["settings"].get("activate_docker"):
-        echo("Docker activation not required.")
+        echo("Docker activation not required.", fg="yellow", bold=True)
         return False
 
     try:
         start_docker()
         return True
     except FileNotFoundError:
-        echo("Docker is not installed or not in the PATH. Skipping Docker-related tasks.")
+        echo("Docker is not installed or not in the PATH. Skipping Docker-related tasks.", fg="yellow", bold=True)
         return False
 
 
