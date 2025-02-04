@@ -31,9 +31,11 @@ def resolve_pack_method_docker(model_id):
     model_image = client.images.get(f"{DOCKERHUB_ORG}/{model_id}:{docker_tag}")
     image_history = model_image.history()
     for hist in image_history:
-        # Very hacky, but works bec we don't have nginx in ersilia-pack images
-        if "nginx" in hist["CreatedBy"]:
-            return PACK_METHOD_BENTOML
+        tags = hist.get("Tags")
+        if tags and any(tag.endswith(":latest") for tag in tags):
+            # Very hacky, but works bec we don't have nginx in ersilia-pack images
+            if "nginx" in hist["CreatedBy"]:
+                return PACK_METHOD_BENTOML
     return PACK_METHOD_FASTAPI
 
 
