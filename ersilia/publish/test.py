@@ -3,6 +3,7 @@ import docker
 import json
 import numpy as np
 import os
+import random
 import re
 import shutil
 import subprocess
@@ -1397,6 +1398,18 @@ class CheckService:
         self._run_check(self._check_model_s3_url, data, "Model S3 URL")
         self._run_check(self._check_model_arch, data, "Model Docker Architecture")
 
+    def _duplicate(self, csv_file):
+        with open(csv_file, mode="r", newline="", encoding="utf-8") as file:
+            reader = list(csv.DictReader(file))
+            if not reader:
+                return
+
+            sr = random.choice(reader)
+            duplicates = [sr.copy() for _ in range(Options.NUM_SAMPLES.value)]
+        with open(csv_file, mode="a", newline="", encoding="utf-8") as file:
+            writer = csv.DictWriter(file, fieldnames=reader[0].keys())
+            writer.writerows(duplicates)
+
     def get_inputs(self, run_example, types):
         samples = run_example(
             n_samples=Options.NUM_SAMPLES.value,
@@ -1416,6 +1429,7 @@ class CheckService:
                 simple=True,
                 try_predefined=False,
             )
+            self._duplicate(Options.INPUT_CSV.value)
             return Options.INPUT_CSV.value
 
     def _is_invalid_value(self, value):
@@ -1449,25 +1463,27 @@ class CheckService:
 
     def _check_csv(self, file_path, input_type="list"):
         self.logger.debug(f"Checking CSV file: {file_path} for {input_type} input")
-        error_details, error_final = [], []
+        error_details = []
 
         try:
             with open(file_path, "r") as f:
                 reader = csv.DictReader(f)
                 rows = list(reader)
+                self.logger.info(f"Rows: {rows}")
             error = "Invalid value"
             for row_idx, row in enumerate(rows, 1):
                 error += f" at row {row_idx}: ["
                 for key, value in row.items():
                     if self._is_invalid_value(value):
                         error += f", col {key}: [{value}]"
-
                 error = self.trim_string(error)
-                self.logger.error(error)
-                error_details.append(error)
                 error += "]"
-            if error_details:
-                error_final.append(f"Validation failed: {', '.join(error_details)}")
+                if "col" in error:
+                    self.logger.error(error)
+                    error_details.append(error)
+                    error_details.append(
+                        f"Validation failed: {', '.join(error_details)}"
+                    )
 
             output_smiles = [row.get("input") or row.get("smiles") for row in rows]
             if None in output_smiles:
