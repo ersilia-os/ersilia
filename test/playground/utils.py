@@ -373,12 +373,3 @@ def get_settings(config):
         host,
         activate_docker,
     )
-
-
-if __name__ == "__main__":
-    import yaml
-
-    config = yaml.safe_load(open("config.yml", "r"))
-    commands = get_command("eos3b5e", config)
-    fetch = commands["catalog"]
-    echo(fetch)

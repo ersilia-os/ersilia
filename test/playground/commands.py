@@ -32,12 +32,13 @@ config = json.loads(os.getenv("CONFIG_DATA"))
     show_remark,
     model,
     host,
-    docker_status
+    activate_docker
 ) = get_settings(config)
 
 def execute_command(command, description):
     def _execute(command, description):
         runner = CliRunner()
+        docker_status = activate_docker
         if host == "local":
             docker_status = manage_docker(config)
         (
