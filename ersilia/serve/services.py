@@ -21,8 +21,10 @@ from ..default import (
     PACK_METHOD_FASTAPI,
     PACKMODE_FILE,
 )
+from ..setup.requirements.bentoml import BentoMLRequirement
 from ..setup.requirements.conda import CondaRequirement
 from ..setup.requirements.docker import DockerRequirement
+from ..tools.bentoml.exceptions import BentoMLException
 from ..utils.conda import SimpleConda, StandaloneConda
 from ..utils.docker import SimpleDocker, model_image_version_reader
 from ..utils.exceptions_utils.serve_exceptions import (
@@ -87,19 +89,44 @@ class BaseServing(ErsiliaBase):
         self.logger.debug(
             "Getting info from BentoML and storing in {0}".format(tmp_file)
         )
-        run_command(cmd)
-        with open(tmp_file, "r") as f:
-            info = json.load(f)
-        self.logger.debug("Info {0}".format(info))
-        return info
+        # Check command success first
+        result = run_command(cmd)
+        if result.returncode != 0:
+            raise BentoMLException(f"BentoML info failed: {result.stderr}")
+
+        # Handle JSON parsing errors here
+        try:
+            with open(tmp_file, "r") as f:
+                return json.load(f)
+        except json.JSONDecodeError as e:
+            self.logger.error(f"Invalid BentoML output: {e}")
+            raise BentoMLException("Corrupted BentoML installation detected") from e
 
     def _get_apis_from_bento(self):
         self.logger.debug("Getting APIs from Bento")
-        info = self._get_info_from_bento()
-        apis_list = []
-        for item in info["apis"]:
-            apis_list += [item["name"]]
-        return apis_list
+        bento_requirement = BentoMLRequirement()
+
+        try:
+            info = self._get_info_from_bento()
+        except BentoMLException as e:
+            # Handle both command failures and JSON errors here
+            if "Corrupted BentoML installation" in str(e):
+                self.logger.warning("Attempting BentoML cleanup...")
+                try:
+                    bento_requirement._cleanup_corrupted_bentoml()
+                    self.logger.info("Retrying API fetch after cleanup")
+                    info = self._get_info_from_bento()  # Retry
+                except Exception as cleanup_error:
+                    raise BentoMLException(
+                        f"Cleanup failed: {cleanup_error}"
+                    ) from cleanup_error
+            else:
+                raise  # Re-raise unrelated errors
+
+        try:
+            return [item["name"] for item in info["apis"]]
+        except KeyError as e:
+            raise BentoMLException(f"Invalid API format: {e}") from e
 
     def _get_apis_from_fastapi(self):
         bundle_path = self._model_path(self.model_id)
