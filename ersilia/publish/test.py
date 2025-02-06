@@ -1024,6 +1024,7 @@ class IOService:
 
         return performance
 
+    @throw_ersilia_exception()
     def update_metadata(self, json_data):
         """
         Processes JSON/YAML metadata to extract size and performance info and then updates them.
@@ -1469,7 +1470,6 @@ class CheckService:
             with open(file_path, "r") as f:
                 reader = csv.DictReader(f)
                 rows = list(reader)
-                self.logger.info(f"Rows: {rows}")
             error = "Invalid value"
             for row_idx, row in enumerate(rows, 1):
                 error += f" at row {row_idx}: ["
@@ -1485,7 +1485,7 @@ class CheckService:
                         f"Validation failed: {', '.join(error_details)}"
                     )
 
-            output_smiles = [row.get("input") or row.get("smiles") for row in rows]
+            output_smiles = [row.get("input") for row in rows]
             if None in output_smiles:
                 error_details.append("Missing 'input' column in CSV.")
 
@@ -1520,15 +1520,11 @@ class CheckService:
         elif inp_type == "csv":
             with open(inp_data, "r") as f:
                 reader = csv.DictReader(f)
-                return [
-                    row[key]
-                    for row in reader
-                    for key in ("input", "smiles")
-                    if key in row
-                ]
+                return [row[key] for row in reader for key in ("input") if key in row]
         else:
             raise ValueError(f"Unsupported input type: {inp_type}")
 
+    @throw_ersilia_exception()
     def check_model_output_content(self, run_example, run_model):
         status = []
         self.logger.debug("Checking model output...")
@@ -1960,6 +1956,7 @@ class RunnerService:
         self.example = ExampleGenerator(model_id=self.model_id)
         self.run_using_bash = False
 
+    @throw_ersilia_exception()
     def run_model(self, inputs: list, output: str, batch: int):
         """
         Run the model with the given input and output parameters.
@@ -1985,6 +1982,7 @@ class RunnerService:
         self.logger.info(out)
         return out
 
+    @throw_ersilia_exception()
     def fetch(self):
         """
         Fetch the model repository from the specified directory.
@@ -2135,28 +2133,24 @@ class RunnerService:
                     values = line.strip().split(",")
                     values = values[2:] if flag else values
 
-                    def is_invalid_value(value):
+                    def parse(value):
                         try:
-                            int(value)
-                            return False
+                            v = int(value)
+                            return v
                         except ValueError:
                             pass
 
                         try:
-                            float(value)
-                            return False
+                            v = float(value)
+                            return v
                         except ValueError:
                             pass
 
                         if isinstance(value, str):
-                            return False
-
-                        return True
+                            return value
 
                     try:
-                        _values = [
-                            x if not is_invalid_value(x) else None for x in values
-                        ]
+                        _values = [parse(x) for x in values]
                     except ValueError as e:
                         return [], f"Invalid value detected in CSV file: {e}"
 
@@ -2261,7 +2255,12 @@ class RunnerService:
             self.logger.info(f"Bash script subprocess output: {out}")
             logs = read_logs(error_log_path)
             formatted_error = "".join(logs)
-            echo(f"Output from bash script: {formatted_error}", fg="yellow", bold=True)
+            if formatted_error:
+                echo(
+                    f"Output from bash script: {formatted_error}",
+                    fg="yellow",
+                    bold=True,
+                )
             bsh_data, _ = read_csv(bash_output_path)
             self.logger.debug("Serving the model after run.sh")
             run_subprocess(
