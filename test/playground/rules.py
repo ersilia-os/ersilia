@@ -25,9 +25,9 @@ from ersilia.publish.test import CheckService, IOService, STATUS_CONFIGS
 
 
 class ResponseName(Enum):
-    DEST_FOLDER_EXIST = "Dest Folder Exist"
+    DEST_FOLDER_EXIST = "Dest Folder Exists"
     DEST_FOLDER_HAS_CONTENT = "Dest folder has necessary files"
-    DOCKER_IMAGE_EXIST = "Docker Image Exist"
+    DOCKER_IMAGE_EXIST = "Docker Image Exists"
     CONDA_ENV_EXISTS = "Conda venv exists"
     SESSION_REQUIRED_FILES_EXIST = "Session required files exist"
     SESSION_FILE_EXISTS = "Session file exists"
@@ -35,11 +35,11 @@ class ResponseName(Enum):
     SESSION_URL_VALID = "Session url is valid"
     FILE_CONTENT_VALID = "file content is valid"
     FILE_CONTENT_NOT_VALID = "file content is not valid"
-    REPO_FOLDER_EXIST = "Repo Folder Exist"
-    REPO_FOLDER_NOT_EXIST = "Repo Folder Not Exist"
-    DEST_FOLDER_NOT_EXIST = "Dest Folder Not Exist"
-    CONTAINERS_REMOVED = "Containers Removed"
-    DOCKER_IMAGE_NOT_EXIST = "Docker Image Not Exist"
+    REPO_FOLDER_EXIST = "Repo Folder Exists"
+    REPO_FOLDER_NOT_EXIST = "Repo Folder Not Exists"
+    DEST_FOLDER_NOT_EXIST = "Dest Folder Not Existss"
+    CONTAINERS_REMOVED = "Containers Not Existss"
+    DOCKER_IMAGE_NOT_EXIST = "Docker Image Not Existss"
     CONDA_ENV_NOT_EXISTS = "Conda venv not exists"
     SESSION_FILES_NOT_EXIST = "Session files not exist"
     CATALOG_JSON_CONTENT_VALID = "Catalog json content is valid"
@@ -456,9 +456,9 @@ class DeleteRule(CommandRule):
                 return create_response(
                     name=ResponseName.CONTAINERS_REMOVED, status=not exists
                 )
-            return create_response(
-                name=ResponseName.CONTAINERS_REMOVED, status=True
-            )
+        return create_response(
+            name=ResponseName.CONTAINERS_REMOVED, status=True
+        )
 
     def _check_docker_image(self, command):
         _, model, source, version = get_configs(command)
