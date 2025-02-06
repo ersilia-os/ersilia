@@ -1504,7 +1504,12 @@ class CheckService:
         elif inp_type == "csv":
             with open(inp_data, "r") as f:
                 reader = csv.DictReader(f)
-                return [row["input"] for row in reader]
+                return [
+                    row[key]
+                    for row in reader
+                    for key in ("input", "smiles")
+                    if key in row
+                ]
         else:
             raise ValueError(f"Unsupported input type: {inp_type}")
 
@@ -1813,9 +1818,9 @@ class CheckService:
 
         run_model(inputs=input, output=output1_path, batch=100)
         run_model(inputs=input, output=output2_path, batch=100)
-        self.original_smiles_list = self._get_original_smiles_list("list", output1_path)
+        self.original_smiles_list = self._get_original_smiles_list("list", input)
         check_status_one = self._check_csv(output1_path)
-        self.original_smiles_list = self._get_original_smiles_list("list", output2_path)
+        self.original_smiles_list = self._get_original_smiles_list("list", input)
         check_status_two = self._check_csv(output2_path)
         _completed_status = []
         if check_status_one[-1] == str(STATUS_CONFIGS.FAILED) or check_status_two[
@@ -2099,9 +2104,6 @@ class RunnerService:
                 with open(path, "r") as file:
                     self.logger.info("Reading the lines")
                     lines = file.readlines()
-                    self.logger.info(
-                        f"Lines: {self.checkup_service.trim_string(lines)}"
-                    )
 
                 if not lines:
                     self.logger.error(f"File at {path} is empty.")
