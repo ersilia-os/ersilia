@@ -1476,16 +1476,15 @@ class CheckService:
                 for key, value in row.items():
                     if self._is_invalid_value(value):
                         error += f", col {key}: [{value}]"
-                error = self.trim_string(error)
                 error += "]"
-                if "col" in error:
-                    self.logger.error(error)
-                    error_details.append(error)
-                    error_details.append(
-                        f"Validation failed: {', '.join(error_details)}"
-                    )
 
-            output_smiles = [row.get("input") for row in rows]
+            if "col" in error:
+                error = self.trim_string(error)
+                self.logger.error(error)
+                error_details.append(error)
+                error_details.append(f"Validation failed: {', '.join(error_details)}")
+
+            output_smiles = [row.get("input") or row.get("smiles") for row in rows]
             if None in output_smiles:
                 error_details.append("Missing 'input' column in CSV.")
 
@@ -1520,7 +1519,12 @@ class CheckService:
         elif inp_type == "csv":
             with open(inp_data, "r") as f:
                 reader = csv.DictReader(f)
-                return [row[key] for row in reader for key in ("input") if key in row]
+                return [
+                    row[key]
+                    for row in reader
+                    for key in ("input", "smiles")
+                    if key in row
+                ]
         else:
             raise ValueError(f"Unsupported input type: {inp_type}")
 
@@ -2257,7 +2261,7 @@ class RunnerService:
             formatted_error = "".join(logs)
             if formatted_error:
                 echo(
-                    f"Output from bash script: {formatted_error}",
+                    f"Running bash: {formatted_error}",
                     fg="yellow",
                     bold=True,
                 )
