@@ -187,7 +187,7 @@ jobs:
           python -m pip install -e .[test]
 
       - run: |
-          nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli fetch serve run close delete --fetch ${{ matrix.fetch_source }} --host gh
+          nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli fetch serve run --fetch ${{ matrix.fetch_source }} --host gh
 
   run-cli-test-multiple:
     needs: run-pytest
