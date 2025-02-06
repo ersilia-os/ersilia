@@ -1404,14 +1404,7 @@ class CheckService:
             simple=True,
             try_predefined=False,
         )
-        # samples = [sample["input"] for sample in samples]
-        samples = [
-            "[Cl-].[NH4+] NLXLAEXVIDQMFP-UHFFFAOYSA-N",
-            "[Li+] HBBGRARXTFLTSG-UHFFFAOYSA-N",
-            "[Cl-].[Na+] FAPWRFPIFSIZLT-UHFFFAOYSA-M",
-            "NC(=O)c1ncn(n1)[C@@H]1O[C@H](CO)[C@@H](O)[C@H]1O",
-            "NC(=O) Zc1ncn(n1)[C@@H]1O[C@H](CO)[C@@H](O)[C@H]1O",
-        ]
+        samples = [sample["input"] for sample in samples]
         if types == "str":
             return samples[0]
         if types == "list":
