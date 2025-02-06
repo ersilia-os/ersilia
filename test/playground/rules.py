@@ -445,18 +445,20 @@ class DeleteRule(CommandRule):
 
     def _check_containers_images_removed(self, command):
         model = get_configs(command)[1]
+        source = get_configs(command)[2]
         version = get_configs(command)[-1]
         version = version if version else "latest"
         img_name = f"{DOCKERHUB_ORG}/{model}:{version}"
-        containers = self.sd.containers(only_run=False)
-        if containers:
-            exists = img_name in containers.values()
+        if "dockerhub" in source:
+            containers = self.sd.containers(only_run=False)
+            if containers:
+                exists = img_name in containers.values()
+                return create_response(
+                    name=ResponseName.CONTAINERS_REMOVED, status=not exists
+                )
             return create_response(
-                name=ResponseName.CONTAINERS_REMOVED, status=not exists
+                name=ResponseName.CONTAINERS_REMOVED, status=True
             )
-        return create_response(
-            name=ResponseName.CONTAINERS_REMOVED, status=True
-        )
 
     def _check_docker_image(self, command):
         _, model, source, version = get_configs(command)
