@@ -280,7 +280,7 @@ def get_error(res):
 def handle_exception(exc, verbose):
     if verbose:
         click.secho("Detailed traceback:", fg="yellow")
-        traceback.echo_exc()
+        traceback.print_exc()
     else:
         click.secho(f"Error: {str(exc)}", fg="red")
         click.secho("Run with --verbose for more details.", fg="cyan")
