@@ -167,31 +167,12 @@ jobs:
       matrix:
         os: [ubuntu-22.04, macos-latest]
         session: ${{ fromJson(needs.generate-nox-parl-jobs.outputs.session) }}
-        fetch_source: ["from_github", "from_dockerhub", "from_s3"]
-
+        fetch_source: ["from_github", "from_s3"]
+        include:
+          - os: ubuntu-22.04
+            fetch_source: "from_dockerhub"
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
-      - name: Install Docker & Colima (macOS)
-        if: matrix.os == 'macos-latest'  # Only run on macOS 13
-        run: |
-          echo "Updating Homebrew..."
-          brew update || true  
-    
-          echo "Installing Docker CLI and Colima..."
-          brew install docker colima || brew upgrade docker colima 
-    
-          echo "Cleaning up previous Colima state..."
-          colima delete --all || true  
-          rm -rf /Users/runner/.colima  
-          echo "Starting Colima..."
-          if ! colima start --verbose; then  
-            echo "Colima failed to start. Falling back to Docker Desktop."
-            brew install --cask docker  
-          fi
-    
-          echo "Docker environment started successfully."
-          docker --version
-    
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -205,7 +186,7 @@ jobs:
           python -m pip install -e .[test]
 
       - run: |
-          nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli delete fetch serve run --fetch ${{ matrix.fetch_source }}
+          nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli delete fetch serve run --fetch ${{ matrix.fetch_source }} --host gh
 
   run-cli-test-multiple:
     needs: run-pytest

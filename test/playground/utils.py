@@ -357,7 +357,9 @@ def get_settings(config):
     max_runtime_minutes = setting_config.get("max_runtime_minutes")
     base_path = Path.home() / "eos"
     show_remark = setting_config.get("show_remark")
+    host = config["runtime"].get("host")
     model = model_config.get("single")
+    activate_docker = setting_config.get("activate_docker")
 
     return (
         runner_mode,
@@ -368,6 +370,8 @@ def get_settings(config):
         base_path,
         show_remark,
         model,
+        host,
+        activate_docker,
     )
 
 

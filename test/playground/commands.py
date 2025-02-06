@@ -30,13 +30,16 @@ config = json.loads(os.getenv("CONFIG_DATA"))
     max_runtime_minutes, 
     base_path, 
     show_remark,
-    model
+    model,
+    host,
+    docker_status
 ) = get_settings(config)
 
 def execute_command(command, description):
     def _execute(command, description):
         runner = CliRunner()
-        docker_activated = manage_docker(config)
+        if host == "local":
+            docker_status = manage_docker(config)
         (
             start_time,
             max_memory,
@@ -97,7 +100,7 @@ def execute_command(command, description):
                 "max_memory": f"{max_memory:.2f} MB",
                 "status": status_text,
                 "checkups": checkups,
-                "activate_docker": docker_activated,
+                "activate_docker": docker_status,
                 "runner": runner_mode,
                 "cli": cli,
                 "show_remark": show_remark,
