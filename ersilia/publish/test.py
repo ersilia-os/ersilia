@@ -1,18 +1,18 @@
 import csv
 import docker
 import json
+import numpy as np
 import os
 import re
-import numpy as np
+import shutil
 import subprocess
-import zipfile
 import sys
 import warnings
 import tempfile
 import traceback
-from pathlib import Path
 import yaml
-import sys
+import zipfile
+from pathlib import Path
 from dataclasses import dataclass
 from enum import Enum
 from typing import Callable
@@ -45,6 +45,7 @@ from ..default import (
     S3_BUCKET_URL_ZIP,
     DOCKERHUB_ORG,
 )
+from ..core.modelbase import ModelBase
 from ..hub.fetch.actions.template_resolver import TemplateResolver
 from ..io.input import ExampleGenerator
 from ..hub.content.card import ModelCard
@@ -70,6 +71,7 @@ class Options(Enum):
     NUM_SAMPLES = 5
     BASE = "base"
     OUTPUT_CSV = "result.csv"
+    EXAMPLE_CSV = "example.csv"
     INPUT_CSV = "input.csv"
     OUTPUT1_CSV = "output1.csv"
     OUTPUT2_CSV = "output2.csv"
@@ -79,6 +81,31 @@ class Options(Enum):
         "file.json",
     ]
     INPUT_TYPES = ["str", "list", "csv"]
+
+    def __getattribute__(self, name):
+        file_path = os.path.join(EOS_TMP, "files")
+        if not os.path.exists(file_path):
+            os.makedirs(file_path, exist_ok=True)
+        value = super().__getattribute__(name)
+        if (
+            name == "value"
+            and isinstance(value, str)
+            and not value.startswith(EOS_TMP)
+            and any(value.endswith(ext) for ext in (".csv", "h5", "json"))
+        ):
+            return os.path.join(file_path, value)
+        elif (
+            name == "value"
+            and isinstance(value, list)
+            and any(
+                path.endswith(ext) for path in value for ext in (".csv", "h5", "json")
+            )
+        ):
+            return [
+                os.path.join(file_path, file) if not file.startswith(EOS_TMP) else file
+                for file in value
+            ]
+        return value
 
 
 class Checks(Enum):
@@ -130,10 +157,10 @@ class TableConfig:
 
 TABLE_CONFIGS = {
     TableType.MODEL_INFORMATION_CHECKS: TableConfig(
-        title="Model Information Checks", headers=["Check", "Status"]
+        title="Model Information Checks", headers=["Check", "Details", "Status"]
     ),
     TableType.MODEL_FILE_CHECKS: TableConfig(
-        title="Model File Checks", headers=["Check", "Status"]
+        title="Model File Checks", headers=["Check", "Details", "Status"]
     ),
     TableType.MODEL_DIRECTORY_SIZES: TableConfig(
         title="Model Directory Sizes", headers=["Check", "Size"]
@@ -592,11 +619,21 @@ class SetupService:
                 if parts[0] == model_id:
                     return parts[-1]
         except subprocess.CalledProcessError as e:
-            print(f"Error running conda command: {e.stderr}")
+            logger.error(f"Error running conda command: {e.stderr}")
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            logger.error(f"Unexpected error: {e}")
 
         return None
+
+    def clean(self):
+        """
+        Clean the temporary directory.
+        """
+        if os.path.exists(EOS_TMP):
+            shutil.rmtree(EOS_TMP)
+            echo("Temporary directory does not exist: {EOS_TMP}", fg="yellow")
+        else:
+            echo("Temporary directory does not exist: {EOS_TMP}", fg="yellow")
 
 
 class IOService:
@@ -652,6 +689,7 @@ class IOService:
         self.model_size = 0
         self.console = Console()
         self.check_results = []
+        self.original_smiles_list = []
         self.simple_docker = SimpleDocker()
         self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
 
@@ -663,11 +701,19 @@ class IOService:
                 check_function(additional_info)
             else:
                 check_function(data)
-            self.check_results.append((check_name, str(STATUS_CONFIGS.PASSED)))
+            details = (
+                f"Field {check_name} has correct entry." if data else f"File exists"
+            )
+            self.check_results.append((check_name, details, str(STATUS_CONFIGS.PASSED)))
             return True
         except Exception as e:
-            self.logger.error(f"Check '{check_name}' failed: {e}")
-            self.check_results.append((check_name, str(STATUS_CONFIGS.FAILED)))
+            details = (
+                f"Field {check_name} has invalid value"
+                if data
+                else f"File check {check_name} not exists"
+            )
+            self.logger.error(details)
+            self.check_results.append((check_name, details, str(STATUS_CONFIGS.FAILED)))
             return False
 
     def _get_metadata(self):
@@ -909,7 +955,7 @@ class IOService:
             image = client.images.get(image_name)
             size_bytes = image.attrs["Size"]
             size_mb = size_bytes / (1024**2)
-            return f"{size_mb:.2f} MB", Checks.SIZE_CACL_SUCCESS.value
+            return f"{size_mb:.2f}", Checks.SIZE_CACL_SUCCESS.value
         except docker.errors.ImageNotFound:
             return f"Image '{image_name}' not found.", Checks.SIZE_CACL_FAILED.value
         except Exception as e:
@@ -952,6 +998,9 @@ class IOService:
                 self.logger.info(f"Environment Size: {env_size}")
                 sizes["Environment Size"] = float(env_size)
             if keys[1] in validation_results:
+                self.logger.info(
+                    f"Image Key: {keys[1]} and validation result {validation_results}"
+                )
                 img_size = validation_results[keys[1]]
                 self.logger.info(f"Image Size: {img_size}")
                 sizes["Image Size"] = float(img_size)
@@ -1355,7 +1404,14 @@ class CheckService:
             simple=True,
             try_predefined=False,
         )
-        samples = [sample["input"] for sample in samples]
+        # samples = [sample["input"] for sample in samples]
+        samples = [
+            "[Cl-].[NH4+] NLXLAEXVIDQMFP-UHFFFAOYSA-N",
+            "[Li+] HBBGRARXTFLTSG-UHFFFAOYSA-N",
+            "[Cl-].[Na+] FAPWRFPIFSIZLT-UHFFFAOYSA-M",
+            "NC(=O)c1ncn(n1)[C@@H]1O[C@H](CO)[C@@H](O)[C@H]1O",
+            "NC(=O) Zc1ncn(n1)[C@@H]1O[C@H](CO)[C@@H](O)[C@H]1O",
+        ]
         if types == "str":
             return samples[0]
         if types == "list":
@@ -1368,18 +1424,6 @@ class CheckService:
                 try_predefined=False,
             )
             return Options.INPUT_CSV.value
-
-    def check_model_output_content(self, run_example, run_model):
-        status = []
-        self.logger.debug("Checking model output...")
-        for inp_type in Options.INPUT_TYPES.value:
-            for i, output_file in enumerate(Options.OUTPUT_FILES.value):
-                inp_data = self.get_inputs(run_example, inp_type)
-                self.logger.debug(f"Input data: {inp_data}")
-                run_model(inputs=inp_data, output=output_file, batch=100)
-                _status = self.validate_file_content(output_file, inp_type)
-                status.append(_status)
-        return status
 
     def _is_invalid_value(self, value):
         try:
@@ -1401,101 +1445,165 @@ class CheckService:
             return True
         return False
 
+    def trim_string(self, text, max_length=100):
+        if len(text) <= max_length:
+            return text
+        return (
+            text[:max_length].rsplit(" ", 1)[0] + "..."
+            if " " in text[:max_length]
+            else text[:max_length] + "..."
+        )
+
     def _check_csv(self, file_path, input_type="list"):
-        self.logger.debug(f"Checking CSV file: {file_path}")
-        error_details = []
+        self.logger.debug(f"Checking CSV file: {file_path} for {input_type} input")
+        error_details, error_final = [], []
 
-        with open(file_path, "r") as f:
-            reader = csv.reader(f)
-            rows = list(reader)[1:]
+        try:
+            with open(file_path, "r") as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+            error = "Invalid value"
+            for row_idx, row in enumerate(rows, 1):
+                error += f" at row {row_idx}: ["
+                for key, value in row.items():
+                    if self._is_invalid_value(value):
+                        error += f", col {key}: [{value}]"
 
-            for row_index, row in enumerate(rows, start=2):
-                for col_index, cell in enumerate(row, start=1):
-                    self.logger.info(f"CSV content check for input type {input_type}")
-                    try:
-                        parsed_cell = (
-                            eval(cell)
-                            if isinstance(cell, str) and cell.startswith(("[", "{"))
-                            else cell
-                        )
-                    except Exception as e:
-                        parsed_cell = cell
+                error = self.trim_string(error)
+                self.logger.error(error)
+                error_details.append(error)
+                error += "]"
+            if error_details:
+                error_final.append(f"Validation failed: {', '.join(error_details)}")
 
-                    if self._is_invalid_value(parsed_cell):
-                        self.logger.error(f"Invalid cell found: {cell}")
-                        error_details.append(
-                            f"Row {row_index}, Column {col_index}: {repr(cell)}"
-                        )
+            output_smiles = [row.get("input") or row.get("smiles") for row in rows]
+            if None in output_smiles:
+                error_details.append("Missing 'input' column in CSV.")
 
-        if error_details:
+            elif (
+                self.original_smiles_list and output_smiles != self.original_smiles_list
+            ):
+                error_details.append("Input SMILES mismatch or order incorrect in CSV.")
+
+            if error_details:
+                return (
+                    f"{input_type.upper()}-CSV",
+                    f"Validation failed: {', '.join(error_details)}",
+                    str(STATUS_CONFIGS.FAILED),
+                )
             return (
                 f"{input_type.upper()}-CSV",
-                f"Invalid values found in CSV content: {error_details} issues detected.",
+                "Valid Content and Input Match",
+                str(STATUS_CONFIGS.PASSED),
+            )
+        except Exception as e:
+            return (
+                f"{input_type.upper()}-CSV",
+                f"Validation error: {str(e)}",
                 str(STATUS_CONFIGS.FAILED),
             )
 
-        return (
-            f"{input_type.upper()}-CSV",
-            "Valid Content",
-            str(STATUS_CONFIGS.PASSED),
-        )
+    def _get_original_smiles_list(self, inp_type, inp_data):
+        if inp_type == "str":
+            return [inp_data]
+        elif inp_type == "list":
+            return json.loads(inp_data)
+        elif inp_type == "csv":
+            with open(inp_data, "r") as f:
+                reader = csv.DictReader(f)
+                return [row["input"] for row in reader]
+        else:
+            raise ValueError(f"Unsupported input type: {inp_type}")
+
+    def check_model_output_content(self, run_example, run_model):
+        status = []
+        self.logger.debug("Checking model output...")
+        for inp_type in Options.INPUT_TYPES.value:
+            for output_file in Options.OUTPUT_FILES.value:
+                inp_data = self.get_inputs(run_example, inp_type)
+                self.original_smiles_list = self._get_original_smiles_list(
+                    inp_type, inp_data
+                )
+                self.logger.debug(f"Input data: {inp_data}")
+                run_model(inputs=inp_data, output=output_file, batch=100)
+                _status = self.validate_file_content(output_file, inp_type)
+                status.append(_status)
+        return status
 
     def validate_file_content(self, file_path, input_type):
-        def check_json(file_path):
-            self.logger.debug(f"Checking JSON file: {file_path}")
-            error_details = []
+        """
+        Validate output file content and check input SMILES match.
+        """
 
+        def check_json():
+            self.logger.debug(
+                f"Checking JSON file: {file_path} for input: {input_type}"
+            )
+            error_details = []
             try:
                 with open(file_path, "r") as f:
                     content = json.load(f)
 
-                self.logger.debug(f"Content: {content}")
-
                 def _validate_item(item, path="result"):
                     if self._is_invalid_value(item):
-                        self.logger.error(f"Json content invalud value: {item}")
-                        error_details.append(f"{repr(item)}")
+                        self.logger.error(f"Invalid value at {path}: {item}")
+                        error_details.append(f"Invalid value at {path}: {item}")
                     elif isinstance(item, dict):
                         for key, value in item.items():
-                            _validate_item(value, f"{path} -> {key}")
+                            _validate_item(value, f"{path}.{key}")
                     elif isinstance(item, list):
-                        for index, value in enumerate(item):
-                            _validate_item(value, f"{path}[{index}]")
+                        for idx, val in enumerate(item):
+                            _validate_item(val, f"{path}[{idx}]")
 
                 _validate_item(content)
+
+                try:
+                    output_smiles = []
+                    for item in content:
+                        if "input" in item and isinstance(item["input"], dict):
+                            output_smiles.append(item["input"].get("input", None))
+                        else:
+                            error_details.append(
+                                "Missing 'input' structure in JSON item"
+                            )
+                            break
+                    self.logger.info(
+                        f"Matching the input SMILES in JSON file:\
+                              {output_smiles} and original smiles: {self.original_smiles_list}"
+                    )
+                    if output_smiles != self.original_smiles_list:
+                        error_details.append(
+                            "Input SMILES mismatch or order incorrect in JSON."
+                        )
+                except Exception as e:
+                    error_details.append(f"Error checking SMILES in JSON: {str(e)}")
 
                 if error_details:
                     return (
                         f"{input_type.upper()}-JSON",
-                        f"Invalid values found in JSON content: {error_details}.",
+                        f"Validation failed: {', '.join(error_details)}",
                         str(STATUS_CONFIGS.FAILED),
                     )
-
                 return (
                     f"{input_type.upper()}-JSON",
-                    "Valid Content",
+                    "Valid Content and Input Match",
                     str(STATUS_CONFIGS.PASSED),
-                )
-            except json.JSONDecodeError as e:
-                return (
-                    f"{input_type.upper()}-JSON",
-                    f"Invalid JSON content: {e}",
-                    str(STATUS_CONFIGS.FAILED),
                 )
             except Exception as e:
                 return (
                     f"{input_type.upper()}-JSON",
-                    f"Unexpected error during JSON check: {e}",
+                    f"Validation error: {str(e)}",
                     str(STATUS_CONFIGS.FAILED),
                 )
 
-        def check_h5(file_path):
+        def check_h5():
             self.logger.debug(f"Checking HDF5 file: {file_path}")
             error_details = []
 
             try:
                 loader = Hdf5DataLoader()
                 loader.load(file_path)
+
                 content = next(
                     (
                         x
@@ -1510,93 +1618,129 @@ class CheckService:
                     None,
                 )
 
-                self.logger.debug(f"Content: {content}")
+                output_smiles = (
+                    [s for s in loader.inputs] if loader.inputs is not None else []
+                )
+
                 if content is None or (hasattr(content, "size") and content.size == 0):
-                    return (
-                        f"{input_type.upper()}-HDF5",
-                        "Empty content",
-                        str(STATUS_CONFIGS.FAILED),
-                    )
+                    error_details.append("Empty content")
 
                 content_array = np.array(content)
                 if np.isnan(content_array).any():
                     nan_indices = np.argwhere(np.isnan(content_array))
+                    error = "H5 content invalud value at index: "
                     for index in nan_indices:
-                        self.logger.error(f"H5 content invalud value at index: {index}")
-                        error_details.append(f"NaN detected at index: {tuple(index)}")
+                        error += f"{index}, "
+                    error = self.trim_string(error)
+                    self.logger.error(error)
+                    error_details.append(error)
 
                 if error_details:
                     return (
                         f"{input_type.upper()}-HDF5",
-                        f"Invalid values found in HDF5 content: {error_details}",
+                        error_details,
                         str(STATUS_CONFIGS.FAILED),
                     )
 
-                return (
-                    f"{input_type.upper()}-HDF5",
-                    "Valid Content",
-                    str(STATUS_CONFIGS.PASSED),
+                self.logger.info(
+                    f"Matching the input SMILES in HDF5 file: \
+                        {output_smiles} and original smiles: {self.original_smiles_list}"
                 )
+                if output_smiles != self.original_smiles_list:
+                    error_details.append(
+                        f"SMILES mismatch. \
+                            Expected {len(self.original_smiles_list)} items, got {len(output_smiles)}"
+                    )
+
+                return (
+                    f"{input_type}-HDF5",
+                    "Valid content"
+                    if not error_details
+                    else f"Errors: {', '.join(error_details)}",
+                    str(
+                        STATUS_CONFIGS.PASSED
+                        if not error_details
+                        else STATUS_CONFIGS.FAILED
+                    ),
+                )
+
             except Exception as e:
                 return (
-                    f"{input_type.upper()}-HDF5",
-                    f"Invalid HDF5 content: {e}",
+                    f"{input_type}-HDF5",
+                    f"Validation error: {str(e)}",
                     str(STATUS_CONFIGS.FAILED),
                 )
 
         if not Path(file_path).exists():
-            raise FileNotFoundError(f"File {file_path} does not exist.")
+            raise FileNotFoundError(f"File {file_path} not found.")
 
-        file_extension = Path(file_path).suffix.lower()
-        if file_extension == ".json":
-            return check_json(file_path)
-        elif file_extension == ".csv":
-            return self._check_csv(file_path, input_type=input_type)
-        elif file_extension == ".h5":
-            return check_h5(file_path)
+        file_ext = Path(file_path).suffix.lower()
+        if file_ext == ".json":
+            return check_json()
+        elif file_ext == ".h5":
+            return check_h5()
+        elif file_ext == ".csv":
+            return self._check_csv(file_path, input_type)
         else:
-            raise ValueError(
-                f"Unsupported file type: {file_extension}. Supported types are JSON, CSV, and HDF5."
-            )
+            raise ValueError(f"Unsupported file type: {file_ext}")
 
     @throw_ersilia_exception()
-    def check_example_input(self, run_model, run_example):
+    def check_model_predefined_example_input(self, run_example):
         """
-        Check if the model can run with example input without error.
+        Check if the model has valid predefined example or not.
 
         Parameters
         ----------
-        output : file-like object
-            The output file to write to.
-        run_model : callable
-            Function to run the model.
         run_example : callable
             Function to generate example input.
         """
+
+        def has_no_none(obj):
+            if obj is None:
+                return False
+            elif isinstance(obj, dict):
+                return all(has_no_none(value) for value in obj.values())
+            elif isinstance(obj, (list, tuple)):
+                return all(has_no_none(item) for item in obj)
+            else:
+                return True
+
         self.logger.debug("Checking model with example input...")
-        output = Options.OUTPUT_CSV.value
-        input = run_example(
-            n_samples=Options.NUM_SAMPLES.value,
-            file_name=None,
+        run_example(
+            n_samples=30,
+            file_name=Options.EXAMPLE_CSV.value,
             simple=True,
             try_predefined=True,
         )
-        input = json.dumps([input["input"] for input in input])
-
-        self.logger.debug(
-            "Testing model on input of 5 smiles given by 'example' command"
-        )
-
-        run_model(inputs=input, output=output, batch=100)
-
-        csv_content, _completed_status = input, []
-        if csv_content:
+        with open(Options.EXAMPLE_CSV.value, "r") as f:
+            reader = csv.DictReader(f)
+            examples = [row for row in reader]
+            self.logger.info(f"Reading csv at predefined example section: {examples}")
+        is_valid = has_no_none(examples)
+        _completed_status = []
+        if len(examples) == 30:
             _completed_status.append(
-                (Checks.PREDEFINED_EXAMPLE.value, str(STATUS_CONFIGS.PASSED))
+                (
+                    Checks.PREDEFINED_EXAMPLE.value,
+                    "No predefined example found",
+                    str(STATUS_CONFIGS.FAILED),
+                )
+            )
+        elif not is_valid and len(examples) != 30:
+            _completed_status.append(
+                (
+                    Checks.PREDEFINED_EXAMPLE.value,
+                    "Predefined example has invalid values (None)",
+                    str(STATUS_CONFIGS.FAILED),
+                )
             )
         else:
             _completed_status.append(
-                (Checks.PREDEFINED_EXAMPLE.value, str(STATUS_CONFIGS.FAILED))
+                (
+                    Checks.PREDEFINED_EXAMPLE.value,
+                    "Predfined example check is successfull",
+                    str(STATUS_CONFIGS.PASSED),
+                )
             )
         return _completed_status
 
@@ -1658,6 +1802,7 @@ class CheckService:
                 raise FileNotFoundError(f"File not found: {absolute_path}")
             with open(absolute_path, mode="r") as csv_file:
                 reader = csv.DictReader(csv_file)
+                self.logger.info(f"Reading csv at consistency outout section: {reader}")
                 return [row for row in reader]
 
         output1_path = os.path.abspath(Options.OUTPUT1_CSV.value)
@@ -1675,8 +1820,9 @@ class CheckService:
 
         run_model(inputs=input, output=output1_path, batch=100)
         run_model(inputs=input, output=output2_path, batch=100)
-
+        self.original_smiles_list = self._get_original_smiles_list("list", output1_path)
         check_status_one = self._check_csv(output1_path)
+        self.original_smiles_list = self._get_original_smiles_list("list", output2_path)
         check_status_two = self._check_csv(output2_path)
         _completed_status = []
         if check_status_one[-1] == str(STATUS_CONFIGS.FAILED) or check_status_two[
@@ -1694,6 +1840,7 @@ class CheckService:
         else:
             data1 = read_csv(output1_path)
             data2 = read_csv(output1_path)
+
             try:
                 for res1, res2 in zip(data1, data2):
                     for key in res1:
@@ -1701,7 +1848,6 @@ class CheckService:
                             validate_output(res1[key], res2[key])
                         else:
                             raise KeyError(f"Key '{key}' not found in second result.")
-                self.logger.info("Model output is consistent")
                 _completed_status.append(
                     (
                         Checks.MODEL_CONSISTENCY.value,
@@ -1710,7 +1856,6 @@ class CheckService:
                     )
                 )
             except:
-                self.logger.info("incons")
                 return _completed_status.append(
                     (
                         Checks.MODEL_CONSISTENCY.value,
@@ -1718,7 +1863,6 @@ class CheckService:
                         str(STATUS_CONFIGS.FAILED),
                     )
                 )
-        self.logger.error(f"Completed status: {_completed_status}")
         return _completed_status
 
 
@@ -1832,7 +1976,7 @@ class RunnerService:
         Fetch the model repository from the specified directory.
         """
 
-        def _fetch(dir, model_id, logger):
+        def _fetch(model_id, logger):
             loc = (
                 ["--from_dir", self.dir]
                 if self.from_github or self.from_s3
@@ -1858,7 +2002,7 @@ class RunnerService:
                 ),
                 logger=self.logger,
             )
-        _fetch(self.dir, self.model_id, self.logger)
+        _fetch(self.model_id, self.logger)
 
     def run_example(
         self,
@@ -1886,12 +2030,13 @@ class RunnerService:
         list
             List of generated input samples.
         """
-        return self.example.example(
+        examples = self.example.example(
             n_samples=n_samples,
             file_name=file_name,
             simple=simple,
             try_predefined=try_predefined,
         )
+        return examples
 
     @throw_ersilia_exception()
     def run_bash(self):
@@ -1953,11 +2098,17 @@ class RunnerService:
             return _completed_status
 
         def read_csv(path, flag=False):
+            if not os.path.exists(path):
+                raise FileNotFoundError(
+                    f"File not found this might be due to error happened when executing the run.sh: {path}"
+                )
             try:
                 with open(path, "r") as file:
                     self.logger.info("Reading the lines")
                     lines = file.readlines()
-                    self.logger.info(f"Lines: {lines}")
+                    self.logger.info(
+                        f"Lines: {self.checkup_service.trim_string(lines)}"
+                    )
 
                 if not lines:
                     self.logger.error(f"File at {path} is empty.")
@@ -1970,7 +2121,6 @@ class RunnerService:
                 data = []
 
                 for line in lines[1:]:
-                    self.logger.debug(f"Processing line: {line.strip()}")
                     values = line.strip().split(",")
                     values = values[2:] if flag else values
 
@@ -2006,19 +2156,59 @@ class RunnerService:
             except Exception as e:
                 raise RuntimeError(f"Failed to read CSV from {path}.") from e
 
+        def read_logs(path):
+            if not os.path.exists(path):
+                raise FileNotFoundError(f"File not found: {path}")
+            with open(path, "r") as file:
+                return file.readlines()
+
+        def rename_col(path, old_col_name="input", new_col_name="smiles"):
+            with open(path, "r", newline="") as infile:
+                reader = csv.reader(infile)
+                rows = list(reader)
+                self.logger.info(f"Rows before rename: {rows}")
+
+                if rows and old_col_name in rows[0]:
+                    col_index = rows[0].index(old_col_name)
+                    rows[0][col_index] = new_col_name
+
+                with open(path, "w", newline="") as outfile:
+                    writer = csv.writer(outfile)
+                    writer.writerows(rows)
+
         def run_subprocess(command, env_vars=None):
+            env = os.environ.copy()
+            if env_vars:
+                env.update(env_vars)
+
             try:
-                result = subprocess.run(
+                process = subprocess.Popen(
                     command,
-                    capture_output=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
                     text=True,
-                    check=True,
-                    env=env_vars,
+                    env=env,
                 )
-                self.logger.debug(f"Subprocess output: {result.stdout}")
-                return result.stdout
-            except subprocess.CalledProcessError as e:
-                raise RuntimeError("Subprocess execution failed.") from e
+                stdout, stderr = process.communicate()
+                return_code = process.returncode
+
+                if return_code != 0:
+                    raise RuntimeError(
+                        f"Subprocess failed with return code {return_code}: {stderr.strip()}"
+                    )
+
+                return stdout.strip(), stderr.strip(), return_code
+
+            except FileNotFoundError as e:
+                raise FileNotFoundError(f"Command not found: {command[0]}") from e
+
+            except PermissionError as e:
+                raise PermissionError(f"Permission denied: {command}") from e
+
+            except Exception as e:
+                raise RuntimeError(
+                    f"Unexpected error while running subprocess: {str(e)}"
+                ) from e
 
         with tempfile.TemporaryDirectory() as temp_dir:
             model_path = os.path.join(self.dir)
@@ -2035,6 +2225,7 @@ class RunnerService:
                 simple=True,
                 try_predefined=False,
             )
+            rename_col(input_file_path)
 
             run_sh_path = os.path.join(model_path, "model", "framework", RUN_FILE)
             if not os.path.exists(run_sh_path):
@@ -2057,6 +2248,9 @@ class RunnerService:
             self.logger.debug(f"Running bash script: {temp_script_path}")
             out = run_subprocess(["bash", temp_script_path])
             self.logger.info(f"Bash script subprocess output: {out}")
+            logs = read_logs(error_log_path)
+            formatted_error = "".join(logs)
+            echo(f"Output from bash script: {formatted_error}", fg="yellow", bold=True)
             bsh_data, _ = read_csv(bash_output_path)
             self.logger.debug("Serving the model after run.sh")
             run_subprocess(
@@ -2072,6 +2266,9 @@ class RunnerService:
                 ["ersilia", "-v", "run", "-i", input_file_path, "-o", output_path]
             )
             ers_data, _ = read_csv(output_path, flag=True)
+            self.checkup_service.original_smiles_list = (
+                self.checkup_service._get_original_smiles_list("csv", input_file_path)
+            )
             check_status = self.checkup_service._check_csv(
                 output_path, input_type="csv"
             )
@@ -2143,6 +2340,11 @@ class RunnerService:
                 results.extend(shallow_results)
                 results.append(deep_results)
 
+            if self.as_json:
+                self.ios_service.update_metadata(results)
+
+            echo("Model tests and checks completed.", fg="green", bold=True)
+
         except Exception as error:
             tb = traceback.format_exc()
             exp = {
@@ -2150,13 +2352,9 @@ class RunnerService:
                 "traceback": tb,
             }
             results.append(exp)
-            echo(f"An error occurred: {error}\nTraceback:\n{tb}")
-
-        finally:
-            self.ios_service.update_metadata(results)
+            echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             if self.as_json:
-                self.ios_service.collect_and_save_json(results, self.report_file)
-            echo("Run process completed.")
+                self.ios_service.update_metadata(results)
 
     def _perform_basic_checks(self):
         results = []
@@ -2185,19 +2383,25 @@ class RunnerService:
     @show_loader(text="Performing shallow checks", color="cyan")
     def _perform_shallow_checks(self):
         self.fetch()
-        model_output = self.checkup_service.check_model_output_content(
-            self.run_example, self.run_model
-        )
+
         results, _validations = [], []
 
         if self.from_github or self.from_s3:
             _validations.extend(self._log_env_sizes())
 
         if self.from_dockerhub:
-            message, docker_size = self.ios_service.calculate_image_size(
+            docker_size, message = self.ios_service.calculate_image_size(
                 tag=self.version if self.version else "latest"
             )
             _validations.append((Checks.IMAGE_SIZE.value, message, docker_size))
+
+        model_output = self.checkup_service.check_model_output_content(
+            self.run_example, self.run_model
+        )
+
+        results.append(
+            self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)
+        )
 
         _validations.extend(self._run_single_and_example_input_checks())
 
@@ -2206,14 +2410,9 @@ class RunnerService:
                 TableType.SHALLOW_CHECK_SUMMARY, _validations, large=True
             )
         )
-
         bash_results = self.run_bash()
         results.append(
             self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
-        )
-
-        results.append(
-            self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)
         )
 
         return results
@@ -2221,7 +2420,6 @@ class RunnerService:
     @show_loader(text="Performing deep checks", color="cyan")
     def _perform_deep_checks(self):
         performance_data = self.inspector.run(["computational_performance_tracking"])
-        self.logger.info(f"Performance data: {performance_data}")
         return self._generate_table_from_check(
             TableType.COMPUTATIONAL_PERFORMANCE, performance_data, large=True
         )
@@ -2245,7 +2443,7 @@ class RunnerService:
     def _run_single_and_example_input_checks(self):
         results = []
         results.extend(
-            self.checkup_service.check_example_input(self.run_model, self.run_example)
+            self.checkup_service.check_model_predefined_example_input(self.run_example)
         )
         results.extend(
             self.checkup_service.check_consistent_output(
@@ -2290,6 +2488,8 @@ class ModelTester(ErsiliaBase):
         Flag indicating whether to perform deep checks.
     as_json : bool
         Flag indicating whether to output results as JSON.
+    clean : bool
+        Flag indicating whether to clean temp folder.
     """
 
     def __init__(
@@ -2304,14 +2504,18 @@ class ModelTester(ErsiliaBase):
         shallow,
         deep,
         as_json,
+        clean,
     ):
         ErsiliaBase.__init__(self, config_json=None, credentials_json=None)
+        clean and self.clean_temp()
+        ModelBase(model_id_or_slug=model).is_valid()
         self.model_id = model
         self.level = level
         self.from_dir = from_dir
         self.model_dir = os.path.join(EOS_TMP, self.model_id)
         self.dir = from_dir or self.model_dir
-        self.from_github = from_github
+        self.defaul_source = not any([from_dir, from_dockerhub, from_github, from_s3])
+        self.from_github = True if self.defaul_source else from_github
         self.from_dockerhub = from_dockerhub
         self.from_s3 = from_s3
         self.version = version
@@ -2367,3 +2571,20 @@ class ModelTester(ErsiliaBase):
         Run the model tester.
         """
         self.runner.run()
+
+    def clean_temp(self):
+        """
+        Clean up the temp model directory.
+        """
+        echo("cleaning the temp directory...", fg="yellow", bold=True)
+        if os.path.exists(EOS_TMP):
+            shutil.rmtree(EOS_TMP)
+        else:
+            echo("Temp directory does not exist!", fg="yellow", bold=True)
+        sys.exit(
+            echo(
+                "Test command existed after cleaning temp directory.",
+                fg="green",
+                bold=True,
+            )
+        )
