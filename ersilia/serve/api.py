@@ -4,9 +4,11 @@ import json
 import os
 import time
 
+import click
 import requests
 
 from .. import ErsiliaBase, logger
+from ..default import API_SCHEMA_FILE, DEFAULT_API_NAME
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
 from ..lake.interface import IsauraInterface
@@ -15,7 +17,7 @@ from ..utils.logging import make_temp_dir
 from .schema import ApiSchema
 
 
-class Api(object):
+class Api(ErsiliaBase):
     """
     Class to interact with the API for a given model.
 
@@ -51,6 +53,7 @@ class Api(object):
     """
 
     def __init__(self, model_id, url, api_name, save_to_lake, config_json):
+        ErsiliaBase.__init__(self, config_json=None)
         self.config_json = config_json
         self.model_id = model_id
         self.input_adapter = GenericInputAdapter(
@@ -148,6 +151,9 @@ class Api(object):
             result = [{"input": input[0], "output": self._empty_output}]
             result = json.dumps(result, indent=4)
             result = self.__result_returner(result, output)
+        click.echo(result)
+        result = self._standardize_schema(result)
+        click.echo(result)
         return result
 
     def post(self, input, output, batch_size):
@@ -460,3 +466,65 @@ class Api(object):
             return True
         else:
             return False
+
+    def _load_schema(self, api_type):
+        self.schema_file = os.path.join(
+            self._model_path(self.model_id), API_SCHEMA_FILE
+        )
+        with open(self.schema_file) as f:
+            schema = json.load(f)
+        click.echo(schema)
+        output_schema = schema[api_type].get("output", {})
+
+        expected_output_keys = []
+        for field in output_schema.values():
+            expected_output_keys.extend(field.get("meta", []))
+        self.logger.info(f"Expected keys: {expected_output_keys}")
+        return expected_output_keys
+
+    def _detect_mismatch(self, data):
+        expected_output_keys = self._load_schema(DEFAULT_API_NAME)
+        expected_keys = set(expected_output_keys)
+        mismatches = []
+        for i, entry in enumerate(data):
+            self.logger.info(f"Entry: {entry}")
+            output = entry.get("output", {})
+            actual_keys = set(output.keys())
+            if actual_keys != expected_keys:
+                missing = expected_keys - actual_keys
+                extra = actual_keys - expected_keys
+                mismatches.append(
+                    {
+                        "index": i,
+                        "missing_keys": list(missing),
+                        "extra_keys": list(extra),
+                    }
+                )
+        return mismatches
+
+    def _standardize_schema(self, data):
+        data = json.loads(data)
+        mismatches = self._detect_mismatch(data)
+        expected_output_keys = self._load_schema(DEFAULT_API_NAME)
+        expected_keys = set(expected_output_keys)
+        for mismatch in mismatches:
+            index = mismatch["index"]
+            output = data[index].get("output", {})
+
+            extra_keys = [k for k in output.keys() if k not in expected_keys]
+            for k in extra_keys:
+                del output[k]
+
+            none_list_keys = [
+                k
+                for k, v in output.items()
+                if isinstance(v, list) and all(x is None for x in v)
+            ]
+            for k in none_list_keys:
+                del output[k]
+
+            for key in expected_keys:
+                if key not in output:
+                    output[key] = None
+        data = json.dumps(data, indent=4)
+        return data
