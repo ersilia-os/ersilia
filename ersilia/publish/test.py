@@ -2347,16 +2347,17 @@ class RunnerService:
             if self.shallow:
                 shallow_results = self._perform_shallow_checks()
                 results.extend(shallow_results)
+                self.ios_service.update_metadata(results)
 
             if self.deep:
                 shallow_results = self._perform_shallow_checks()
                 deep_results = self._perform_deep_checks()
                 results.extend(shallow_results)
                 results.append(deep_results)
-
-            if self.as_json:
                 self.ios_service.update_metadata(results)
 
+            if self.as_json:
+                self.ios_service.collect_and_save_json(results, self.report_file)
             echo("Model tests and checks completed.", fg="green", bold=True)
 
         except Exception as error:
@@ -2368,7 +2369,7 @@ class RunnerService:
             results.append(exp)
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             if self.as_json:
-                self.ios_service.update_metadata(results)
+                self.ios_service.collect_and_save_json(results, self.report_file)
 
     def _perform_basic_checks(self):
         results = []
