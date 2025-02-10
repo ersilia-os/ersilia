@@ -8,7 +8,7 @@ import click
 import requests
 
 from .. import ErsiliaBase, logger
-from ..default import API_SCHEMA_FILE, DEFAULT_API_NAME
+from ..default import API_SCHEMA_FILE
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
 from ..lake.interface import IsauraInterface
@@ -151,9 +151,12 @@ class Api(ErsiliaBase):
             result = [{"input": input[0], "output": self._empty_output}]
             result = json.dumps(result, indent=4)
             result = self.__result_returner(result, output)
-        click.echo(result)
+        click.echo("This is going to get executed")
+        with open("data_org.json", "w") as f:
+            json.dump(json.loads(result), f, indent=4)
         result = self._standardize_schema(result)
-        click.echo(result)
+        click.echo("Then this will proceed")
+
         return result
 
     def post(self, input, output, batch_size):
@@ -467,64 +470,148 @@ class Api(ErsiliaBase):
         else:
             return False
 
-    def _load_schema(self, api_type):
+    def _load_api_schema(self):
         self.schema_file = os.path.join(
             self._model_path(self.model_id), API_SCHEMA_FILE
         )
-        with open(self.schema_file) as f:
+        with open(self.schema_file, "r") as f:
             schema = json.load(f)
-        click.echo(schema)
-        output_schema = schema[api_type].get("output", {})
 
-        expected_output_keys = []
-        for field in output_schema.values():
-            expected_output_keys.extend(field.get("meta", []))
-        self.logger.info(f"Expected keys: {expected_output_keys}")
-        return expected_output_keys
+        output_schema = schema.get("run", {}).get("output", {})
+        if not output_schema:
+            raise ValueError("No output schema found in the API schema file.")
+
+        outcome_key, outcome_details = next(iter(output_schema.items()))
+        reference_keys = outcome_details.get("meta", [])
+
+        return outcome_key, reference_keys
 
     def _detect_mismatch(self, data):
-        expected_output_keys = self._load_schema(DEFAULT_API_NAME)
-        expected_keys = set(expected_output_keys)
+        outcome_key, reference_keys = self._load_api_schema()
         mismatches = []
+        expected_keys = set(reference_keys)
+
         for i, entry in enumerate(data):
-            self.logger.info(f"Entry: {entry}")
             output = entry.get("output", {})
-            actual_keys = set(output.keys())
-            if actual_keys != expected_keys:
-                missing = expected_keys - actual_keys
-                extra = actual_keys - expected_keys
+
+            if outcome_key in output and isinstance(output[outcome_key], dict):
+                container = output[outcome_key]
+            else:
+                container = output
+
+            if isinstance(container, list):
+                container = {
+                    key: container[idx] if idx < len(container) else None
+                    for idx, key in enumerate(reference_keys)
+                }
+
+            if isinstance(container, dict):
+                actual_keys = set(container.keys())
+            else:
+                actual_keys = set()
+
+            missing_keys = list(expected_keys - actual_keys)
+            extra_keys = list(actual_keys - expected_keys)
+
+            if missing_keys or extra_keys:
                 mismatches.append(
                     {
                         "index": i,
-                        "missing_keys": list(missing),
-                        "extra_keys": list(extra),
+                        "missing_keys": missing_keys,
+                        "extra_keys": extra_keys,
                     }
                 )
+
         return mismatches
 
-    def _standardize_schema(self, data):
+    def _standardize_schema(self, data, force_list=True):
         data = json.loads(data)
+        outcome_key, reference_keys = self._load_api_schema()
         mismatches = self._detect_mismatch(data)
-        expected_output_keys = self._load_schema(DEFAULT_API_NAME)
-        expected_keys = set(expected_output_keys)
-        for mismatch in mismatches:
-            index = mismatch["index"]
-            output = data[index].get("output", {})
 
-            extra_keys = [k for k in output.keys() if k not in expected_keys]
-            for k in extra_keys:
-                del output[k]
+        if force_list:
+            for entry in data:
+                output = entry.get("output", {})
+                if outcome_key in output:
+                    nested = output[outcome_key]
+                    if isinstance(nested, dict):
+                        container = nested
+                    elif isinstance(nested, list):
+                        container = {
+                            key: nested[i] if i < len(nested) else None
+                            for i, key in enumerate(reference_keys)
+                        }
+                    else:
+                        container = (
+                            {reference_keys[0]: nested} if reference_keys else {}
+                        )
+                else:
+                    if isinstance(output, list):
+                        container = {
+                            key: output[i] if i < len(output) else None
+                            for i, key in enumerate(reference_keys)
+                        }
+                    elif isinstance(output, dict):
+                        container = output
+                    else:
+                        container = (
+                            {reference_keys[0]: output} if reference_keys else {}
+                        )
 
-            none_list_keys = [
-                k
-                for k, v in output.items()
-                if isinstance(v, list) and all(x is None for x in v)
-            ]
-            for k in none_list_keys:
-                del output[k]
+                standardized = {key: container.get(key, None) for key in reference_keys}
+                standard_list = [standardized[key] for key in reference_keys]
+                entry["output"] = {outcome_key: standard_list}
+            data = json.dumps(data, indent=4)
 
-            for key in expected_keys:
-                if key not in output:
-                    output[key] = None
-        data = json.dumps(data, indent=4)
-        return data
+            return data
+        else:
+            for mismatch in mismatches:
+                idx = mismatch["index"]
+                entry = data[idx]
+                output = entry.get("output", {})
+
+                if outcome_key in output and isinstance(output[outcome_key], dict):
+                    container = output[outcome_key]
+                    container_is_nested = True
+                else:
+                    container = output
+                    container_is_nested = False
+
+                if isinstance(container, list):
+                    container = {
+                        key: container[i] if i < len(container) else None
+                        for i, key in enumerate(reference_keys)
+                    }
+                elif isinstance(container, dict):
+                    if not any(k in reference_keys for k in container.keys()):
+                        values = list(container.values())
+                        container = {
+                            key: values[i] if i < len(values) else None
+                            for i, key in enumerate(reference_keys)
+                        }
+                    else:
+                        new_container = {}
+                        extra_keys = [k for k in container if k not in reference_keys]
+                        extra_values = [container[k] for k in extra_keys]
+                        for key in reference_keys:
+                            if key in container:
+                                new_container[key] = container[key]
+                            elif extra_values:
+                                new_container[key] = extra_values.pop(0)
+                            else:
+                                new_container[key] = None
+                        container = new_container
+                else:
+                    container = (
+                        {reference_keys[0]: container} if reference_keys else container
+                    )
+
+                if container_is_nested:
+                    new_list = [container.get(key) for key in reference_keys]
+                    output[outcome_key] = new_list
+                else:
+                    entry["output"] = container
+
+            data = json.dumps(data, indent=4)
+
+            return data
