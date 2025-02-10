@@ -8,7 +8,7 @@ import click
 import requests
 
 from .. import ErsiliaBase, logger
-from ..default import API_SCHEMA_FILE
+from ..default import API_SCHEMA_FILE, DEFAULT_API_NAME
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
 from ..lake.interface import IsauraInterface
@@ -477,7 +477,7 @@ class Api(ErsiliaBase):
         with open(self.schema_file, "r") as f:
             schema = json.load(f)
 
-        output_schema = schema.get("run", {}).get("output", {})
+        output_schema = schema.get(DEFAULT_API_NAME, {}).get("output", {})
         if not output_schema:
             raise ValueError("No output schema found in the API schema file.")
 
