@@ -158,41 +158,41 @@ class TableConfig:
 
 TABLE_CONFIGS = {
     TableType.MODEL_INFORMATION_CHECKS: TableConfig(
-        title="Model Information Checks", headers=["Check", "Details", "Status"]
+        title="\nModel Information Checks", headers=["Check", "Details", "Status"]
     ),
     TableType.MODEL_FILE_CHECKS: TableConfig(
-        title="Model File Checks", headers=["Check", "Details", "Status"]
+        title="\nModel File Checks", headers=["Check", "Details", "Status"]
     ),
     TableType.MODEL_DIRECTORY_SIZES: TableConfig(
-        title="Model Directory Sizes", headers=["Check", "Size"]
+        title="\nModel Directory Sizes", headers=["Check", "Size"]
     ),
     TableType.RUNNER_CHECKUP_STATUS: TableConfig(
-        title="Runner Checkup Status",
+        title="\nRunner Checkup Status",
         headers=["Runner", "Status"],
     ),
     TableType.FINAL_RUN_SUMMARY: TableConfig(
-        title="Test Run Summary", headers=["Check", "Status"]
+        title="\nTest Run Summary", headers=["Check", "Status"]
     ),
     TableType.DEPENDECY_CHECK: TableConfig(
-        title="Dependency Check", headers=["Check", "Status"]
+        title="\nDependency Check", headers=["Check", "Status"]
     ),
     TableType.COMPUTATIONAL_PERFORMANCE: TableConfig(
-        title="Computational Performance Summary", headers=["Check", "Status"]
+        title="\nComputational Performance Summary", headers=["Check", "Status"]
     ),
     TableType.SHALLOW_CHECK_SUMMARY: TableConfig(
-        title="Validation and Size Check Results",
+        title="\nValidation and Size Check Results",
         headers=["Check", "Details", "Status"],
     ),
     TableType.MODEL_OUTPUT: TableConfig(
-        title="Model Output Content Validation Summary",
+        title="\nModel Output Content Validation Summary",
         headers=["Check", "Detail", "Status"],
     ),
     TableType.CONSISTENCY_BASH: TableConfig(
-        title="Consistency Summary Between Ersilia and Bash Execution Outputs",
+        title="\nConsistency Summary Between Ersilia and Bash Execution Outputs",
         headers=["Check", "Result", "Status"],
     ),
     TableType.INSPECT_SUMMARY: TableConfig(
-        title="Inspect Summary", headers=["Check", "Status"]
+        title="\nInspect Summary", headers=["Check", "Status"]
     ),
 }
 
@@ -578,13 +578,17 @@ class SetupService:
 
         except subprocess.CalledProcessError as e:
             logger.error(f"Error executing command: {e}")
+            echo(f"\n Error executing command: {e}", fg="red")
             if e.output:
                 logger.debug(f"Output: {e.output.strip()}")
+                echo(f"Output: {e.output.strip()}", fg="red")
             if e.stderr:
                 logger.error(f"Error: {e.stderr.strip()}")
+                echo(f"Error: {e.stderr.strip()}", fg="red")
             sys.exit(1)
         except Exception as e:
             logger.debug(f"Unexpected error: {e}")
+            echo(f"\n Unexpected error: {e}", fg="red")
             sys.exit(1)
 
     @staticmethod
@@ -621,20 +625,12 @@ class SetupService:
                     return parts[-1]
         except subprocess.CalledProcessError as e:
             logger.error(f"Error running conda command: {e.stderr}")
+            echo(f"Error running conda command: {e.stderr}", fg="red")
         except Exception as e:
             logger.error(f"Unexpected error: {e}")
+            echo(f"Unexpected error: {e}", fg="red")
 
         return None
-
-    def clean(self):
-        """
-        Clean the temporary directory.
-        """
-        if os.path.exists(EOS_TMP):
-            shutil.rmtree(EOS_TMP)
-            echo("Temporary directory does not exist: {EOS_TMP}", fg="yellow")
-        else:
-            echo("Temporary directory does not exist: {EOS_TMP}", fg="yellow")
 
 
 class IOService:
@@ -907,6 +903,7 @@ class IOService:
             self.logger.error(
                 f"Error calculating size of Conda environment '{self.model_id}': {e}"
             )
+            echo(f"Error calculating size of Conda environment '{self.model_id}': {e}")
             return 0
 
     def calculate_directory_size(self, path: str) -> int:
@@ -934,6 +931,7 @@ class IOService:
             return size
         except Exception as e:
             self.logger.error(f"Error calculating directory size for {path}: {e}")
+            echo(f"Error calculating directory size for {path}: {e}")
             return 0
 
     def calculate_image_size(self, tag="latest"):
@@ -1668,7 +1666,7 @@ class CheckService:
 
                 return (
                     f"{input_type}-HDF5",
-                    "Valid content"
+                    "Valid content and Input Match"
                     if not error_details
                     else f"Errors: {', '.join(error_details)}",
                     str(
@@ -2254,7 +2252,7 @@ class RunnerService:
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
 
-            self.logger.debug(f"Running bash script: {temp_script_path}")
+            self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
             out = run_subprocess(["bash", temp_script_path])
             self.logger.info(f"Bash script subprocess output: {out}")
             logs = read_logs(error_log_path)
