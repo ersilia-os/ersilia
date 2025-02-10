@@ -145,7 +145,7 @@ class DataFrame(object):
             writer = csv.writer(f, delimiter=delimiter)
             writer.writerow(self.columns)
             for i, row in enumerate(self.data):
-                writer.writerow(row)
+                writer.writerow(["None" if val is None else val for val in row])
 
     def write(self, file_name: str, delimiter: str = None):
         """
@@ -673,12 +673,17 @@ class GenericOutputAdapter(ResponseRefactor):
                     if dtype:
                         are_dtypes_informative = True
                 if output_keys_expanded is None:
+                    self.logger.warning(
+                        f"Output key not expanded: val {vals} and {output_keys}"
+                    )
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
+                    self.logger.info(f"Expanded output keys: {output_keys_expanded}")
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
                         self.dtypes = [t]
                 vals = self.__cast_values(vals, self.dtypes, output_keys)
+                self.logger.info(f"Casted values: {vals}")
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)
@@ -820,18 +825,9 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = "json"
         else:
             extension = None
+        df = self._to_dataframe(result, model_id)
         delimiters = {"csv": ",", "tsv": "\t", "h5": None}
-        if extension in ["csv", "tsv", "h5"]:
-            R = []
-
-            # Flatten the JSON object
-            for r in json.loads(result):
-                inp = r["input"]
-                out = r["output"]
-                vals = [out[k] for k in out.keys()]
-                R += [[inp["key"], inp["input"]] + vals]
-
-            df = DataFrame(data=R, columns=["key", "input"] + [k for k in out.keys()])
+        if extension in ["tsv", "h5", "csv"]:
             df.write(output, delimiter=delimiters[extension])
         elif extension == "json":
             data = json.loads(result)
