@@ -3,7 +3,6 @@ import json
 import os
 import re
 import requests
-import yaml
 from enum import Enum
 from pathlib import Path
 from ersilia.utils.conda import SimpleConda
