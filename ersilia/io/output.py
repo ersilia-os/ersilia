@@ -1,5 +1,4 @@
 import collections
-import csv
 import json
 import os
 import random
@@ -139,13 +138,16 @@ class DataFrame(object):
         delimiter : str, optional
             The delimiter to use in the text file (default is None).
         """
+        if delimiter is None:
+            delimiter = self._get_delimiter(file_name)
+        none_str = "None"
         with open(file_name, "w", newline="") as f:
-            if delimiter is None:
-                delimiter = self._get_delimiter(file_name)
-            writer = csv.writer(f, delimiter=delimiter)
-            writer.writerow(self.columns)
-            for i, row in enumerate(self.data):
-                writer.writerow(["None" if val is None else val for val in row])
+            f.write(delimiter.join(self.columns) + "\n")
+            for row in self.data:
+                row_str = delimiter.join(
+                    none_str if val is None else str(val) for val in row
+                )
+                f.write(row_str + "\n")
 
     def write(self, file_name: str, delimiter: str = None):
         """
