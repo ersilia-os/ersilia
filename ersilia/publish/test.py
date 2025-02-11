@@ -686,7 +686,6 @@ class IOService:
         self.model_size = 0
         self.console = Console()
         self.check_results = []
-        self.original_smiles_list = []
         self.simple_docker = SimpleDocker()
         self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
 
@@ -1146,6 +1145,7 @@ class CheckService:
         self._generate_table = ios._generate_table
         self.get_file_requirements = ios.get_file_requirements
         self.console = ios.console
+        self.original_smiles_list = []
         self.check_results = ios.check_results
         self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
 
