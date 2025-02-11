@@ -4,7 +4,6 @@ import json
 import os
 import time
 
-import click
 import requests
 
 from .. import ErsiliaBase, logger
@@ -113,58 +112,44 @@ class Api(ErsiliaBase):
             )
             return [{"output": output}]
 
-    def _post_batch(self, url, input_batch):
-        if not input_batch:
-            return []
-
-        try:
-            # Attempt to process the entire batch
-            response = requests.post(url, json=input_batch)
-            self.logger.debug("Status code: {0}".format(response.status_code))
-            response.raise_for_status()  # Will raise an HTTPError for non-200 status codes.
-            result = response.json()
-            # Adapt the response if necessary (e.g. reformat, validate, etc.)
-            result = self.output_adapter.refactor_response(result)
-            return result
-        except Exception as e:
-            self.logger.error(
-                "Error processing batch of size {}: {}".format(len(input_batch), e)
-            )
-            # Base case: a single compound still failing is marked as a failure.
-            if len(input_batch) == 1:
-                return [self._empty_output]
-            # Otherwise, split the batch into two halves and process recursively.
-            mid = len(input_batch) // 2
-            left_results = self._post_batch(url, input_batch[:mid])
-            right_results = self._post_batch(url, input_batch[mid:])
-            return left_results + right_results
-
     def _do_post(self, input, output):
-        # Build the URL based on the API name.
         url = "{0}/{1}".format(self.url, self.api_name)
         if self._do_sleep:
             time.sleep(3)
-
-        # Process the batch recursively.
-        results = self._post_batch(url, input)
-
-        # Combine each input with its corresponding output.
-        combined_results = []
-        for compound, res in zip(input, results):
-            combined_results.append({"input": compound, "output": res})
-
-        result_json = json.dumps(combined_results, indent=4)
-        return self.__result_returner(result_json, output)
+        response = requests.post(url, json=input)
+        self.logger.debug("Status code: {0}".format(response.status_code))
+        if response.status_code == 200:
+            result_ = response.json()
+            result_ = self.output_adapter.refactor_response(result_)
+            result = []
+            for i, o in zip(input, result_):
+                result += [{"input": i, "output": o}]
+            result = json.dumps(result, indent=4)
+            return self.__result_returner(result, output)
+        else:
+            self.logger.error("Status Code: {0}".format(response.status_code))
+            return None
 
     def _post(self, input, output):
         result = self._do_post(input, output)
-
-        click.echo("This is going to get executed")
-        with open("data_org.json", "w") as f:
-            json.dump(json.loads(result), f, indent=4)
-
-        result = self._standardize_schema(result)
-        click.echo("Then this will proceed")
+        if result is None and self._batch_size > 1 and len(input) > 1:
+            self.logger.warning(
+                "Batch prediction didn't seem to work. Doing predictions one by one..."
+            )
+            result = []
+            for inp_one in input:
+                r = self._do_post([inp_one], output=None)
+                if r is None:
+                    r = [{"input": inp_one, "output": self._empty_output}]
+                else:
+                    r = json.loads(r)
+                result += r
+            result = json.dumps(result, indent=4)
+            result = self.__result_returner(result, output)
+        if result is None and len(input) == 1:
+            result = [{"input": input[0], "output": self._empty_output}]
+            result = json.dumps(result, indent=4)
+            result = self.__result_returner(result, output)
         return result
 
     def post(self, input, output, batch_size):
