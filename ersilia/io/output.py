@@ -685,7 +685,6 @@ class GenericOutputAdapter(ResponseRefactor):
                     if len(output_keys) == 1:
                         self.dtypes = [t]
                 vals = self.__cast_values(vals, self.dtypes, output_keys)
-                self.logger.info(f"Casted values: {vals}")
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)

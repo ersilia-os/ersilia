@@ -112,44 +112,50 @@ class Api(ErsiliaBase):
             )
             return [{"output": output}]
 
+    def _post_batch(self, url, input_batch):
+        if not input_batch:
+            return []
+
+        try:
+            response = requests.post(url, json=input_batch)
+            self.logger.debug("Status code: {0}".format(response.status_code))
+            response.raise_for_status()
+            result = response.json()
+            result = self.output_adapter.refactor_response(result)
+            return result
+        except Exception as e:
+            self.logger.error(
+                "Error processing batch of size {}: {}".format(len(input_batch), e)
+            )
+            if len(input_batch) == 1:
+                return [self._empty_output]
+            mid = len(input_batch) // 2
+            left_results = self._post_batch(url, input_batch[:mid])
+            right_results = self._post_batch(url, input_batch[mid:])
+            return left_results + right_results
+
     def _do_post(self, input, output):
         url = "{0}/{1}".format(self.url, self.api_name)
         if self._do_sleep:
             time.sleep(3)
-        response = requests.post(url, json=input)
-        self.logger.debug("Status code: {0}".format(response.status_code))
-        if response.status_code == 200:
-            result_ = response.json()
-            result_ = self.output_adapter.refactor_response(result_)
-            result = []
-            for i, o in zip(input, result_):
-                result += [{"input": i, "output": o}]
-            result = json.dumps(result, indent=4)
-            return self.__result_returner(result, output)
-        else:
-            self.logger.error("Status Code: {0}".format(response.status_code))
-            return None
+
+        results = self._post_batch(url, input)
+
+        combined_results = []
+        for compound, res in zip(input, results):
+            combined_results.append({"input": compound, "output": res})
+
+        result_json = json.dumps(combined_results, indent=4)
+        return self.__result_returner(result_json, output)
 
     def _post(self, input, output):
+        import time
+
+        st = time.time()
         result = self._do_post(input, output)
-        if result is None and self._batch_size > 1 and len(input) > 1:
-            self.logger.warning(
-                "Batch prediction didn't seem to work. Doing predictions one by one..."
-            )
-            result = []
-            for inp_one in input:
-                r = self._do_post([inp_one], output=None)
-                if r is None:
-                    r = [{"input": inp_one, "output": self._empty_output}]
-                else:
-                    r = json.loads(r)
-                result += r
-            result = json.dumps(result, indent=4)
-            result = self.__result_returner(result, output)
-        if result is None and len(input) == 1:
-            result = [{"input": input[0], "output": self._empty_output}]
-            result = json.dumps(result, indent=4)
-            result = self.__result_returner(result, output)
+        result = self._standardize_schema(result)
+        et = time.time()
+        self.logger.debug("Time taken: {0}".format(et - st))
         return result
 
     def post(self, input, output, batch_size):
@@ -520,44 +526,19 @@ class Api(ErsiliaBase):
     def _standardize_schema(self, data, force_list=True):
         data = json.loads(data)
         outcome_key, reference_keys = self._load_api_schema()
-        mismatches = self._detect_mismatch(data)
 
         if force_list:
             for entry in data:
                 output = entry.get("output", {})
-                if outcome_key in output:
-                    nested = output[outcome_key]
-                    if isinstance(nested, dict):
-                        container = nested
-                    elif isinstance(nested, list):
-                        container = {
-                            key: nested[i] if i < len(nested) else None
-                            for i, key in enumerate(reference_keys)
-                        }
-                    else:
-                        container = (
-                            {reference_keys[0]: nested} if reference_keys else {}
-                        )
-                else:
-                    if isinstance(output, list):
-                        container = {
-                            key: output[i] if i < len(output) else None
-                            for i, key in enumerate(reference_keys)
-                        }
-                    elif isinstance(output, dict):
-                        container = output
-                    else:
-                        container = (
-                            {reference_keys[0]: output} if reference_keys else {}
-                        )
-
+                container = self._extract_data_container_force(
+                    output, outcome_key, reference_keys
+                )
                 standardized = {key: container.get(key, None) for key in reference_keys}
-                standard_list = [standardized[key] for key in reference_keys]
-                entry["output"] = {outcome_key: standard_list}
-            data = json.dumps(data, indent=4)
-
-            return data
+                entry["output"] = {
+                    outcome_key: [standardized[key] for key in reference_keys]
+                }
         else:
+            mismatches = self._detect_mismatch(data)
             for mismatch in mismatches:
                 idx = mismatch["index"]
                 entry = data[idx]
@@ -570,41 +551,61 @@ class Api(ErsiliaBase):
                     container = output
                     container_is_nested = False
 
-                if isinstance(container, list):
-                    container = {
-                        key: container[i] if i < len(container) else None
-                        for i, key in enumerate(reference_keys)
-                    }
-                elif isinstance(container, dict):
-                    if not any(k in reference_keys for k in container.keys()):
-                        values = list(container.values())
-                        container = {
-                            key: values[i] if i < len(values) else None
-                            for i, key in enumerate(reference_keys)
-                        }
-                    else:
-                        new_container = {}
-                        extra_keys = [k for k in container if k not in reference_keys]
-                        extra_values = [container[k] for k in extra_keys]
-                        for key in reference_keys:
-                            if key in container:
-                                new_container[key] = container[key]
-                            elif extra_values:
-                                new_container[key] = extra_values.pop(0)
-                            else:
-                                new_container[key] = None
-                        container = new_container
-                else:
-                    container = (
-                        {reference_keys[0]: container} if reference_keys else container
-                    )
-
+                container = self._normalize_container(container, reference_keys)
                 if container_is_nested:
-                    new_list = [container.get(key) for key in reference_keys]
-                    output[outcome_key] = new_list
+                    output[outcome_key] = [
+                        container.get(key, None) for key in reference_keys
+                    ]
                 else:
                     entry["output"] = container
 
-            data = json.dumps(data, indent=4)
+        return json.dumps(data, indent=4)
 
-            return data
+    def _extract_data_container_force(self, output, outcome_key, reference_keys):
+        if outcome_key in output:
+            nested = output[outcome_key]
+            if isinstance(nested, dict):
+                return nested
+            elif isinstance(nested, list):
+                return self._convert_list_to_dict(nested, reference_keys)
+            else:
+                return {reference_keys[0]: nested} if reference_keys else {}
+        else:
+            if isinstance(output, list):
+                return self._convert_list_to_dict(output, reference_keys)
+            elif isinstance(output, dict):
+                return output
+            else:
+                return {reference_keys[0]: output} if reference_keys else {}
+
+    def _normalize_container(self, container, reference_keys):
+        if isinstance(container, list):
+            return self._convert_list_to_dict(container, reference_keys)
+        elif isinstance(container, dict):
+            if not any(key in reference_keys for key in container.keys()):
+                values = list(container.values())
+                return {
+                    key: values[i] if i < len(values) else None
+                    for i, key in enumerate(reference_keys)
+                }
+            else:
+                new_container = {}
+                extra_values = [
+                    container[k] for k in container if k not in reference_keys
+                ]
+                for key in reference_keys:
+                    if key in container:
+                        new_container[key] = container[key]
+                    elif extra_values:
+                        new_container[key] = extra_values.pop(0)
+                    else:
+                        new_container[key] = None
+                return new_container
+        else:
+            return {reference_keys[0]: container} if reference_keys else container
+
+    def _convert_list_to_dict(self, lst, reference_keys):
+        return {
+            key: lst[i] if i < len(lst) else None
+            for i, key in enumerate(reference_keys)
+        }
