@@ -74,7 +74,7 @@ def execute_command(command, description):
         except Exception as e:
             handle_exception(e, silent)
             error_message = f"An exception occurred:\n{traceback.format_exc()}"
-            handle_error_logging(command, description, error_message, config)
+            handle_error_logging(command, description, error_message, config, checkups)
             pytest.fail(f"{description} '{command[2]}' failed with error:\n{error_message}")
 
         checkups = apply_rules(command, description, config, result)
