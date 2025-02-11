@@ -117,5 +117,3 @@ def test_cmd():
         )
         echo(f"Model testing started for: {model}")
         mt.run()
-
-    return test

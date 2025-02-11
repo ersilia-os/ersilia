@@ -104,74 +104,21 @@ jobs:
         run: |     
           pip install pytest pytest-benchmark pytest-asyncio rdkit-pypi nox rich fuzzywuzzy scipy pyairtable
           pytest
-                    
-  run-default-cli-test:
+
+  run-cli-test-single:
     needs: run-pytest
     runs-on: ubuntu-22.04
     defaults:
       run:
         shell: bash -el {0}
-
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          python-version: "3.10.10"
-
-      - name: Install dependencies
-        run: |
-          conda install git-lfs -c conda-forge
-          git-lfs install
-          conda install gh -c conda-forge
-          python -m pip install -e .[test]
-
-      - name: Run Default Default
-        run: |
-          nox -f test/playground/noxfile.py -s execute -p 3.12
-
-  generate-nox-parl-jobs:
-      needs: run-pytest
-      outputs:
-        session: ${{ steps.set-matrix.outputs.session }}
-      defaults:
-        run:
-          shell: bash -el {0}
-      runs-on: ubuntu-22.04
-      steps:
-        - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
-        - uses: conda-incubator/setup-miniconda@v3
-          with:
-            auto-update-conda: true
-            python-version: "3.10.10"
-
-        - name: Install dependencies
-          run: |
-            conda install git-lfs -c conda-forge
-            git-lfs install
-            conda install gh -c conda-forge
-            python -m pip install -e .[test]
-      
-        - id: set-matrix
-          run: echo "session=$(nox -f test/playground/noxfile.py --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
-
-  run-cli-test-parallel:
-    name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
-    needs: generate-nox-parl-jobs
-    defaults:
-      run:
-        shell: bash -el {0}
-    runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-latest]
-        session: ${{ fromJson(needs.generate-nox-parl-jobs.outputs.session) }}
-        fetch_source: ["from_github", "from_s3", "from_dockerhub"]
-
-        exclude:
-          - os: macos-latest
-            fetch_source: from_dockerhub  
+        session:
+          - setup
+          - test_from_github
+          - test_from_dockerhub
+          - test_auto_fetcher_decider
+          - test_conventional_run
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
       - uses: conda-incubator/setup-miniconda@v3
@@ -186,8 +133,9 @@ jobs:
           conda install gh -c conda-forge
           python -m pip install -e .[test]
 
-      - run: |
-          nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli fetch serve run --fetch ${{ matrix.fetch_source }} --host gh
+      - name: Run CLI Test Default
+        run: |     
+          nox -f test/playground/noxfile.py -s ${{ matrix.session }}
 
   run-cli-test-multiple:
     needs: run-pytest
@@ -211,7 +159,7 @@ jobs:
 
       - name: Run CLI Test Multiple
         run: |          
-          nox -f test/playground/noxfile.py -s execute -p 3.12 -- --cli serve --fetch from_dockerhub --runner multiple
+          nox -f test/playground/noxfile.py -s setup test_fetch_multiple_models test_serve_multiple_models
 
   test-colab-notebook:
     defaults:

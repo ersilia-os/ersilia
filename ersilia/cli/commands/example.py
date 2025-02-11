@@ -44,5 +44,3 @@ def example_cmd():
             )
         else:
             eg.example(n_samples, file_name, simple, try_predefined=not random)
-
-    return example

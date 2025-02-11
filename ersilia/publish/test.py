@@ -429,8 +429,6 @@ class SetupService:
         self.conda = SimpleConda()
 
     def _handle_overwrite(self) -> bool:
-        if os.getenv("TEST_ENV") == "true":
-            return True
         if os.path.exists(self.dir):
             self.logger.info(f"Directory {self.dir} already exists.")
             return yes_no_input(
