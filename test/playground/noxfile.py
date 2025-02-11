@@ -18,7 +18,7 @@ DEFAULT_CONFIG = yaml.safe_load(CONFIG_PATH.read_text())
 PYTHON_VERSIONS = DEFAULT_CONFIG["settings"]["python_version"]
 DEFAULT_BACKEND = DEFAULT_CONFIG["runtime"]["backend"]
 
-nox.options.envdir = Path(EOS_PLAYGROUND) / ".nox"
+nox.options.envdir = str(Path(EOS_PLAYGROUND) / ".nox")
 
 test_packages = [
     "pytest", 
