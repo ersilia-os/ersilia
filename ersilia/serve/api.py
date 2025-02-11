@@ -470,18 +470,20 @@ class Api(ErsiliaBase):
             return False
 
     def _load_api_schema(self):
+        outcome_key, reference_keys = "outcome", []
         self.schema_file = os.path.join(
             self._model_path(self.model_id), API_SCHEMA_FILE
         )
-        with open(self.schema_file, "r") as f:
-            schema = json.load(f)
+        if os.path.exists(self.schema_file):
+            with open(self.schema_file, "r") as f:
+                schema = json.load(f)
 
-        output_schema = schema.get(DEFAULT_API_NAME, {}).get("output", {})
-        if not output_schema:
-            raise ValueError("No output schema found in the API schema file.")
+            output_schema = schema.get(DEFAULT_API_NAME, {}).get("output", {})
+            if not output_schema:
+                raise ValueError("No output schema found in the API schema file.")
 
-        outcome_key, outcome_details = next(iter(output_schema.items()))
-        reference_keys = outcome_details.get("meta", [])
+            outcome_key, outcome_details = next(iter(output_schema.items()))
+            reference_keys = outcome_details.get("meta", [])
 
         return outcome_key, reference_keys
 
