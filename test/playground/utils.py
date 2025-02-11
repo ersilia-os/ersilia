@@ -59,7 +59,7 @@ def build_run_cmd(config):
                 (
                     run_cmd(),
                     flags,
-                    f"run_cmd(): Model id not required {flag_description}",
+                    f"run_cmd(): {flag_description}",
                 )
             )
     return run_cli
@@ -101,7 +101,7 @@ def get_random_samples(config, filename="inp-000.csv"):
         lines = f.readlines()
 
     data = [line.strip().split(",") for line in lines[1:]]
-    sampled_rows = random.sample(data, min(num_samples, len(data)))
+    sampled_rows = data[:num_samples]
 
     with open(input_file, "w", encoding="utf-8") as f:
         f.write(lines[0])
