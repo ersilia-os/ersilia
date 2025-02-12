@@ -20,6 +20,7 @@ jobs:
           BRANCH: "main"
           AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
         run: |
+          pip install .
           pip install requests pyairtable
           echo "Updating metadata to AirTable"
           python3 .github/scripts/airtableops.py airtable-update --user $USER_NAME --repo $REPO_NAME --branch $BRANCH --api-key $AIRTABLE_API_KEY
