@@ -23,6 +23,6 @@ jobs:
           pip install .
           pip install requests pyairtable
           echo "Updating metadata to AirTable"
-          python3 .github/scripts/airtableops.py airtable-update --user $USER_NAME --repo $REPO_NAME --branch $BRANCH --api-key $AIRTABLE_API_KEY
+          python3 .github/scripts/airtableops.py airtable-update --user $USER_NAME --repo $MODEL_ID --branch $BRANCH --api-key $AIRTABLE_API_KEY
           rm airtableops.py
   
