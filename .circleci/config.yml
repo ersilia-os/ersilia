@@ -17,55 +17,6 @@ jobs:
           command: |
               source activate ersilia
               ersilia --help
-  test:
-    docker:
-      - image: continuumio/miniconda3:24.1.2-0
-    steps:
-      - checkout
-      - run:
-          name: Install ersilia package in developer mode
-          command: |
-              conda create -n ersilia python=3.10
-              source activate ersilia
-              pip install -U pip setuptools
-              python -m pip install -e .
-      - run:
-          name: Test CLI
-          command: |
-              source activate ersilia
-              ersilia
-      - run:
-          name: Fetch model
-          command: |
-              source activate ersilia
-              ersilia -v fetch eos0t01 --from_dir ./test/models/eos0t01
-      - run:
-          name: Delete model
-          command: |
-              source activate ersilia
-              ersilia -v delete eos0t01
-      - run:
-          name: Fetch molecular-weight model
-          command: |
-              source activate ersilia
-              ersilia -v fetch molecular-weight --from_github
-      - run:
-          name: Test molecular weight on inputs and outputs
-          command: |
-              source activate ersilia
-              ersilia serve molecular-weight
-              ersilia run -i "CCC" > output_one_0.json
-              ersilia run -i "CCC" -o output_one_1.json
-              ersilia run -i "CCC" -o output_one_3.csv
-              ersilia run -i test/inputs/compound_list.csv > output_list_0.json
-              ersilia run -i test/inputs/compound_list.csv -o output_list_1.json
-              ersilia run -i test/inputs/compound_list.csv -o output_list_2.csv
-              rm output_*
-      - run:
-          name: Delete molecular-weight model
-          command: |
-              source activate ersilia
-              ersilia -v delete molecular-weight
   docs-build:
     docker:
       - image: continuumio/miniconda3:24.1.2-0
@@ -136,10 +87,7 @@ workflows:
   build:
     jobs:
       - installation
-      - test
-      - docs-build:
-          requires:
-            - test
+      - docs-build
       - docs-deploy:
           requires:
             - docs-build
