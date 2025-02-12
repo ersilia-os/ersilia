@@ -164,9 +164,7 @@ class ErsiliaModel(ErsiliaBase):
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
 
-        assert (
-            self._is_valid
-        ), "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
             model
         )
         self.config_json = config_json

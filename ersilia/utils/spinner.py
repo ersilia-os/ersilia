@@ -19,7 +19,7 @@ class Spinner:
     A colorful and animated loader for terminal applications.
     """
 
-    def __init__(self, text="Loading...", spinner=None, color="cyan"):
+    def __init__(self, text="\nLoading...\n", spinner=None, color="cyan"):
         self.text = text
         self.spinner = spinner or ["⠋", "⠙", "⠸", "⠴", "⠦", "⠇"]
         self.spinner = itertools.cycle(self.spinner)
@@ -63,15 +63,12 @@ class Spinner:
             sys.stdout.flush()
 
     def _pause(self):
-        """Pause the spinner for blocking operations like prompts."""
         with self.lock:
             self.is_paused = True
-            # Clear the spinner line before pausing
             sys.stdout.write("\r")
             sys.stdout.flush()
 
     def _resume(self):
-        """Resume the spinner after a pause."""
         with self.lock:
             self.is_paused = False
 
@@ -86,7 +83,7 @@ class Spinner:
             time.sleep(0.1)
 
 
-def show_loader(text="Loading...", color="cyan"):
+def show_loader(text="\nLoading...\n", color="cyan"):
     def decorator(func):
         def wrapper(*args, **kwargs):
             loader = Spinner(text=text, color=color)
