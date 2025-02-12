@@ -7,7 +7,6 @@ import random
 import requests
 import subprocess
 import click
-import time
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -60,7 +59,7 @@ def build_run_cmd(config):
                 (
                     run_cmd(),
                     flags,
-                    f"run_cmd(): Model id not required {flag_description}",
+                    f"run_cmd(): {flag_description}",
                 )
             )
     return run_cli
@@ -68,6 +67,7 @@ def build_run_cmd(config):
 
 def get_inputs(config, input_type):
     input_list, input_path = get_random_samples(config=config)
+    input_list = [inp[1] for inp in input_list]
     if input_type == "str":
         return input_list[0]
     if input_type == "list":
@@ -101,14 +101,13 @@ def get_random_samples(config, filename="inp-000.csv"):
         lines = f.readlines()
 
     data = [line.strip().split(",") for line in lines[1:]]
-    sampled_rows = random.sample(data, min(num_samples, len(data)))
-    sampled_inputs = [row[1] for row in sampled_rows]
+    sampled_rows = data[:num_samples]
 
     with open(input_file, "w", encoding="utf-8") as f:
         f.write(lines[0])
         f.writelines(",".join(row) + "\n" for row in sampled_rows)
 
-    return sampled_inputs, input_file
+    return sampled_rows, input_file
 
 
 def _set_n_sample_if_none(flags, flag_key):
@@ -284,9 +283,6 @@ def handle_exception(exc, verbose):
     else:
         click.secho(f"Error: {str(exc)}", fg="red")
         click.secho("Run with --verbose for more details.", fg="cyan")
-
-
-from datetime import datetime
 
 
 def handle_error_logging(command, description, result, config, checkups):

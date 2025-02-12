@@ -48,6 +48,13 @@ class EmptyField(ErsiliaError):
         super().__init__(self.message, self.hints)
 
 
+class EmptyKey(ErsiliaError):
+    def __init__(self, empty_field):
+        self.message = "The {0} key in the model card is empty.".format(empty_field)
+        self.hints = "Check the model information, usually available in a metadata.json file or metadata.yml file."
+        super().__init__(self.message, self.hints)
+
+
 class InvalidEntry(ErsiliaError):
     def __init__(self, invalid_field):
         self.message = (
