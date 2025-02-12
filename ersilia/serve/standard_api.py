@@ -383,11 +383,7 @@ class StandardCSVRunApi(ErsiliaBase):
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
                 smiles = row.get(key)
-                if (
-                    smiles
-                    and smiles not in smiles_list
-                    and self.validate_smiles(smiles)
-                ):
+                if self.validate_smiles(smiles):
                     smiles_list.append(smiles)
         return smiles_list
 
@@ -434,7 +430,7 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def is_amenable(self, output_data):
         """
-        Check if the output data is amenable for a standard run.
+        Check if the input and output data are amenable for a standard run.
 
         Parameters
         ----------
@@ -444,7 +440,7 @@ class StandardCSVRunApi(ErsiliaBase):
         Returns
         -------
         bool
-            True if the output data is amenable for a standard run, False otherwise.
+            True if the request is amenable for a standard run, False otherwise.
         """
         if not self.header:
             self.logger.debug("Not amenable for standard run: header not found")

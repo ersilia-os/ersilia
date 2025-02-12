@@ -1,3 +1,4 @@
+import ast
 import csv
 import json
 import os
@@ -8,6 +9,7 @@ from pathlib import Path
 from ersilia.utils.conda import SimpleConda
 from ersilia.utils.docker import SimpleDocker
 from ersilia.utils.logging import logger
+from ersilia.cli import echo
 from ersilia.default import (
     EOS,
     DOCKERHUB_ORG,
@@ -47,9 +49,7 @@ class ResponseName(Enum):
         "Local catalog count and fetched  model count matching"
     )
     VALID_EXAMPLE_JSON_CONTENT = "Valid example json content"
-    VALID_EXAMPLE_CSV_CONTENT = (
-        "Valid example csv content and content length"
-    )
+    VALID_EXAMPLE_CSV_CONTENT = "Valid example csv content and content length"
     VALID_EXAMPLE_CSV_LENGTH = "Valid content length"
     VALID_CATALOG_CONTENT = "Valid catalog content"
 
@@ -75,9 +75,7 @@ def get_configs(command):
 
 class CommandRule:
     def check(self, *args, **kwargs):
-        raise NotImplementedError(
-            "Each rule must implement a check method."
-        )
+        raise NotImplementedError("Each rule must implement a check method.")
 
 
 def register_rule(name):
@@ -133,9 +131,7 @@ class FetchRule(CommandRule):
                 status=False,
                 detail=f"Folder does not exist at: {path}",
             )
-        return create_response(
-            name=ResponseName.DEST_FOLDER_EXIST, status=True
-        )
+        return create_response(name=ResponseName.DEST_FOLDER_EXIST, status=True)
 
     def _check_dest_file_content(self, command):
         model = get_configs(command)[1]
@@ -178,10 +174,9 @@ class FetchRule(CommandRule):
         )
 
     def _check_model_source_file(self, dest_folder, source):
-
         if source is "":  # autofetcher
             return
-        
+
         source = source.replace("--from_", "")
 
         if source not in self.sources:
@@ -245,21 +240,15 @@ class FetchRule(CommandRule):
         _, model, source, version = get_configs(command)
         version = version if version else "latest"
         if "dockerhub" in source:
-            exist = self.sd.exists(
-                org=DOCKERHUB_ORG, img=model, tag=version
-            )
-            return create_response(
-                name=ResponseName.DOCKER_IMAGE_EXIST, status=exist
-            )
+            exist = self.sd.exists(org=DOCKERHUB_ORG, img=model, tag=version)
+            return create_response(name=ResponseName.DOCKER_IMAGE_EXIST, status=exist)
 
     def _check_conda_env(self, command):
         model = get_configs(command)[1]
         source = get_configs(command)[2]
         if "github" in source or "s3" in source:
             exist = self.sc.exists(model)
-            return create_response(
-                name=ResponseName.CONDA_ENV_EXISTS, status=exist
-            )
+            return create_response(name=ResponseName.CONDA_ENV_EXISTS, status=exist)
 
 
 @register_rule("serve_rule")
@@ -293,9 +282,7 @@ class ServeRule(CommandRule):
             model = get_configs(command)[1]
             self.required_files.add(f"{model}.pid")
             existing_files = set(os.listdir(self.current_session_dir))
-            required_files_exists = self.required_files.issubset(
-                existing_files
-            )
+            required_files_exists = self.required_files.issubset(existing_files)
             if required_files_exists:
                 return create_response(
                     name=ResponseName.SESSION_REQUIRED_FILES_EXIST,
@@ -310,9 +297,7 @@ class ServeRule(CommandRule):
     def check_service_class(self, runner):
         if runner != "multiple":
             service_class = ("pulled_docker", "conda")
-            session_file_path = os.path.join(
-                self.current_session_dir, SESSION_JSON
-            )
+            session_file_path = os.path.join(self.current_session_dir, SESSION_JSON)
 
             if not os.path.exists(session_file_path):
                 return create_response(
@@ -324,9 +309,7 @@ class ServeRule(CommandRule):
             try:
                 with open(session_file_path, "r") as file:
                     data = json.load(file)
-                    correct_srv_class = (
-                        data.get("service_class") in service_class
-                    )
+                    correct_srv_class = data.get("service_class") in service_class
                     return create_response(
                         name=ResponseName.SESSION_SERVICE_CLASS_CORRECT,
                         status=correct_srv_class,
@@ -345,9 +328,7 @@ class ServeRule(CommandRule):
         url = match.group(0)
         response = requests.get(url)
         status_ok = response.status_code == 200
-        return create_response(
-            name=ResponseName.SESSION_URL_VALID, status=status_ok
-        )
+        return create_response(name=ResponseName.SESSION_URL_VALID, status=status_ok)
 
 
 @register_rule("run_rule")
@@ -369,15 +350,22 @@ class RunRule(CommandRule):
     def check_contents(self, command, config):
         flag = get_configs(command)[0]
         output_files = flag[3]
-        inp_type = self._get_input_type(output_files)
-        res = self.check_service.validate_file_content(
-            output_files, inp_type
+        input_data = flag[1]
+        inp_type = self._get_input_type(command, "-i")
+        echo(
+            f"Input type: {inp_type} | Input: {input_data} | Output: {output_files}",
+            fg="yellow",
+            bold=True,
         )
+        self.check_service.original_smiles_list = (
+            self.check_service._get_original_smiles_list(inp_type, input_data)
+        )
+        res = self.check_service.validate_file_content(output_files, inp_type)
         if res[-1] == str(STATUS_CONFIGS.PASSED):
             return [
                 create_response(
-                    name=f"{output_files} {ResponseName.FILE_CONTENT_VALID}", 
-                    status=True
+                    name=f"{output_files} {ResponseName.FILE_CONTENT_VALID}",
+                    status=True,
                 )
             ]
         else:
@@ -389,14 +377,30 @@ class RunRule(CommandRule):
                 )
             ]
 
-    def _get_input_type(self, inp):
-        if isinstance(inp, str):
-            return "str"
-        elif isinstance(inp, list):
-            return "list"
-        elif inp.endswith(".csv"):
-            return "csv"
-        return None
+    def _get_input_type(self, command, flag_key=None):
+        info = command[-1]
+        match = re.search(r"flag:\s*(\[[^\]]+\])", info)
+        if not match:
+            raise ValueError("No flag information found in the provided command tuple.")
+
+        flag_list_str = match.group(1)
+        try:
+            flag_list = ast.literal_eval(flag_list_str)
+        except Exception as e:
+            raise ValueError(f"Error parsing flag list: {e}")
+
+        if not isinstance(flag_list, list) or len(flag_list) % 2 != 0:
+            raise ValueError(
+                "Flag information is not a valid list of flag-value pairs."
+            )
+
+        flag_dict = {
+            flag_list[i]: flag_list[i + 1] for i in range(0, len(flag_list), 2)
+        }
+
+        if flag_key is not None:
+            return flag_dict.get(flag_key)
+        return flag_dict
 
 
 @register_rule("delete_rule")
@@ -425,9 +429,7 @@ class DeleteRule(CommandRule):
                 status=False,
                 detail=f"Folder does not exist at: {path}",
             )
-        return create_response(
-            name=ResponseName.REPO_FOLDER_EXIST, status=True
-        )
+        return create_response(name=ResponseName.REPO_FOLDER_EXIST, status=True)
 
     def _check_dest_folder(self, command):
         model = get_configs(command)[1]
@@ -438,9 +440,7 @@ class DeleteRule(CommandRule):
                 status=False,
                 detail=f"Folder does not exist at: {path}",
             )
-        return create_response(
-            name=ResponseName.DEST_FOLDER_EXIST, status=True
-        )
+        return create_response(name=ResponseName.DEST_FOLDER_EXIST, status=True)
 
     def _check_containers_images_removed(self, command):
         model = get_configs(command)[1]
@@ -455,33 +455,23 @@ class DeleteRule(CommandRule):
                 return create_response(
                     name=ResponseName.CONTAINERS_REMOVED, status=not exists
                 )
-        return create_response(
-            name=ResponseName.CONTAINERS_REMOVED, status=True
-        )
+        return create_response(name=ResponseName.CONTAINERS_REMOVED, status=True)
 
     def _check_docker_image(self, command):
         _, model, source, version = get_configs(command)
         version = version if version else "latest"
         if "dockerhub" in source:
-            exist = self.sd.exists(
-                org=DOCKERHUB_ORG, img=model, tag=version
-            )
+            exist = self.sd.exists(org=DOCKERHUB_ORG, img=model, tag=version)
             return create_response(
                 name=ResponseName.DOCKER_IMAGE_NOT_EXIST, status=exist
             )
-        return create_response(
-            name=ResponseName.DOCKER_IMAGE_NOT_EXIST, status=True
-        )
+        return create_response(name=ResponseName.DOCKER_IMAGE_NOT_EXIST, status=True)
 
     def _check_conda_env(self, command):
         _, model, source, _ = get_configs(command)
         if self.sc.exists(model):
-            return create_response(
-                name=ResponseName.CONDA_ENV_NOT_EXISTS, status=False
-            )
-        return create_response(
-            name=ResponseName.CONDA_ENV_NOT_EXISTS, status=True
-        )
+            return create_response(name=ResponseName.CONDA_ENV_NOT_EXISTS, status=False)
+        return create_response(name=ResponseName.CONDA_ENV_NOT_EXISTS, status=True)
 
 
 @register_rule("close_rule")
@@ -499,16 +489,12 @@ class CloseRule(CommandRule):
             SESSION_JSON,
         ]
         exists = all(
-            os.path.exists(
-                os.path.join(EOS, self.current_session_dir, file)
-            )
+            os.path.exists(os.path.join(EOS, self.current_session_dir, file))
             for file in files
         )
         if exists:
             return [
-                create_response(
-                    name=ResponseName.SESSION_FILES_NOT_EXIST, status=False
-                )
+                create_response(name=ResponseName.SESSION_FILES_NOT_EXIST, status=False)
             ]
         return [
             create_response(
@@ -532,9 +518,7 @@ class CatalogRule(CommandRule):
             lambda: self.validate_txt_data(command),
         ]
 
-        self.checkups.extend(
-            filter(None, (validator() for validator in validators))
-        )
+        self.checkups.extend(filter(None, (validator() for validator in validators)))
 
         return self.checkups
 
@@ -544,12 +528,7 @@ class CatalogRule(CommandRule):
             data = json.loads(std_out)
             for obj in data:
                 for key, value in obj.items():
-                    if (
-                        value is None
-                        or value == ""
-                        or value == []
-                        or value == {}
-                    ):
+                    if value is None or value == "" or value == [] or value == {}:
                         return create_response(
                             name=ResponseName.CATALOG_JSON_CONTENT_VALID,
                             status=False,
@@ -585,8 +564,7 @@ class CatalogRule(CommandRule):
         if "--hub" not in flags and "--as-json" in flags:
             data_count = len(json.loads(std_out))
             model_count = sum(
-                os.path.isdir(os.path.join(self.dest, d))
-                for d in os.listdir(self.dest)
+                os.path.isdir(os.path.join(self.dest, d)) for d in os.listdir(self.dest)
             )
             is_match = data_count == model_count
             if is_match:
@@ -614,20 +592,16 @@ class ExampleRule(CommandRule):
         flags = get_configs(command)[0]
         nsample = self.get_nsamples_flag_value(flags)
         has_predefined = self._get_predefined(flags)
-        if not any(
-            flag.endswith(".csv")
-            for flag in flags
-            if not isinstance(flag, int)
-        ) and std_out != "":
+        if (
+            not any(
+                flag.endswith(".csv") for flag in flags if not isinstance(flag, int)
+            )
+            and std_out != ""
+        ):
             data = json.loads(std_out)
             for obj in data:
                 for key, value in obj.items():
-                    if (
-                        value is None
-                        or value == ""
-                        or value == []
-                        or value == {}
-                    ):
+                    if value is None or value == "" or value == [] or value == {}:
                         return create_response(
                             name=ResponseName.VALID_EXAMPLE_JSON_CONTENT,
                             status=False,
@@ -655,9 +629,7 @@ class ExampleRule(CommandRule):
     def _validate_csv_file(self, example_file, nsample, flags):
         has_predefined = self._get_predefined(flags)
         try:
-            with open(
-                example_file, mode="r", newline="", encoding="utf-8"
-            ) as csvfile:
+            with open(example_file, mode="r", newline="", encoding="utf-8") as csvfile:
                 reader = csv.DictReader(csvfile)
                 _row_len = 0
                 for row_number, row in enumerate(reader, start=1):
@@ -692,11 +664,7 @@ class ExampleRule(CommandRule):
                 if "-f" in flags
                 else None
             )
-            return (
-                flags[file_flag_index + 1]
-                if file_flag_index is not None
-                else None
-            )
+            return flags[file_flag_index + 1] if file_flag_index is not None else None
         except (IndexError, ValueError):
             return None
 

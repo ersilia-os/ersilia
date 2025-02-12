@@ -46,8 +46,8 @@ class ModelRegisterer(ErsiliaBase):
 
         This method registers the model in the file system indicating it was fetched from DockerHub.
         """
-        if 'img_tag' in kwargs:
-            img_tag = kwargs['img_tag']
+        if "img_tag" in kwargs:
+            img_tag = kwargs["img_tag"]
             data = {"docker_hub": True, "tag": img_tag}
         else:
             data = {"docker_hub": True}
