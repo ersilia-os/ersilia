@@ -735,14 +735,19 @@
             <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Missing &#39;COPY . /repo&#39;.&quot;</span><span class="p">)</span>
 
         <span class="n">pip_install_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;pip install (.+)&quot;</span><span class="p">)</span>
-        <span class="n">version_pin_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[a-zA-Z0-9_\-\.]+==[a-zA-Z0-9_\-\.]+$&quot;</span><span class="p">)</span>
+        <span class="n">version_pin_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;^[a-zA-Z0-9_\-\.]+(==|&gt;=|&lt;=|&gt;|&lt;)[a-zA-Z0-9_\-\.]+$&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
             <span class="n">match</span> <span class="o">=</span> <span class="n">pip_install_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-                <span class="n">packages_and_options</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">install_cmd</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span>
+                    <span class="s2">&quot;#&quot;</span>
+                <span class="p">)</span>  <span class="c1"># Remove comments, this actually crashes things</span>
+                <span class="n">packages_and_options</span> <span class="o">=</span> <span class="n">install_cmd</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                 <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">False</span>
 
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">packages_and_options</span><span class="p">:</span>
@@ -775,9 +780,13 @@
 
         <span class="n">python_version</span> <span class="o">=</span> <span class="n">yml_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">python_version</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Missing Python version in install.yml.&quot;</span><span class="p">)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Missing Python version in dependency.yml.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\d+(\.\d+){0,2}$&quot;</span><span class="p">,</span> <span class="n">python_version</span><span class="p">):</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid Python version format: </span><span class="si">{</span><span class="n">python_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="n">version_pin_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[a-zA-Z0-9_\-\.]+==[a-zA-Z0-9_\-\.]+$&quot;</span><span class="p">)</span>
+        <span class="n">version_pin_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;^[a-zA-Z0-9_\-\.]+(==|&gt;=|&lt;=|&gt;|&lt;)[a-zA-Z0-9_\-\.]+$&quot;</span>
+        <span class="p">)</span>
 
         <span class="n">commands</span> <span class="o">=</span> <span class="n">yml_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;commands&quot;</span><span class="p">,</span> <span class="p">[])</span>
         <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
@@ -786,37 +795,40 @@
                 <span class="k">continue</span>
 
             <span class="n">tool</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">package</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">version</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="kc">None</span>
-
+            <span class="n">additional_args</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="k">else</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">tool</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;conda&quot;</span><span class="p">):</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported package manager: </span><span class="si">{</span><span class="n">tool</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">version</span><span class="p">:</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Missing version for package &#39;</span><span class="si">{</span><span class="n">package</span><span class="si">}</span><span class="s2">&#39; in command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
             <span class="k">if</span> <span class="n">tool</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;conda&quot;</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">tool</span> <span class="o">==</span> <span class="s2">&quot;pip&quot;</span><span class="p">:</span>
-                    <span class="n">pip_args</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-                    <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">package</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git+&quot;</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">version</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">version_pin_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">package</span><span class="si">}</span><span class="s2">==</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">):</span>
+                        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Package &#39;</span><span class="si">{</span><span class="n">package</span><span class="si">}</span><span class="s2">&#39; in command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39; is not properly version-pinned.&quot;</span>
+                        <span class="p">)</span>
 
-                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pip_args</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">skip_next</span><span class="p">:</span>
-                            <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">False</span>
-                            <span class="k">continue</span>
-
-                        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;--index-url&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">additional_args</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;--index-url&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">arg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
                             <span class="s2">&quot;--extra-index-url&quot;</span>
                         <span class="p">):</span>
-                            <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">True</span>
                             <span class="k">continue</span>
-
-                        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git+&quot;</span><span class="p">):</span>
-                            <span class="k">continue</span>
-
-                        <span class="k">if</span> <span class="ow">not</span> <span class="n">version_pin_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">version_pin_pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
                             <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                                <span class="sa">f</span><span class="s2">&quot;Package &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39; in command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39; is not version-pinned (e.g., &#39;package==1.0.0&#39;).&quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;Unexpected argument in command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">&quot;</span>
                             <span class="p">)</span>
 
                 <span class="k">elif</span> <span class="n">tool</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">version</span><span class="p">:</span>
                     <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Package in command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39; does not have a valid pinned version &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;(should be in the format [&#39;conda&#39;, &#39;package_name&#39;, &#39;x.y.z&#39;]).&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Package &#39;</span><span class="si">{</span><span class="n">package</span><span class="si">}</span><span class="s2">&#39; in command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39; does not have a valid pinned version.&quot;</span>
                     <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">errors</span>

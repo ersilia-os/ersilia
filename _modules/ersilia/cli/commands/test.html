@@ -402,10 +402,16 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This flag is used to check deep checks (such as computational performance checks)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--as_json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--as-json&quot;</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This flag is used to save the report as json file)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--clean&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;This flag is used to clean out the temp folder after testing&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">test</span><span class="p">(</span>
         <span class="n">model</span><span class="p">,</span>
@@ -418,6 +424,7 @@
         <span class="n">shallow</span><span class="p">,</span>
         <span class="n">deep</span><span class="p">,</span>
         <span class="n">as_json</span><span class="p">,</span>
+        <span class="n">clean</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">mt</span> <span class="o">=</span> <span class="n">ModelTester</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span>
@@ -430,6 +437,7 @@
             <span class="n">shallow</span><span class="p">,</span>
             <span class="n">deep</span><span class="p">,</span>
             <span class="n">as_json</span><span class="p">,</span>
+            <span class="n">clean</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model testing started for: </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">mt</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
