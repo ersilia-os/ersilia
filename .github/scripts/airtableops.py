@@ -9,7 +9,7 @@ from ersilia.utils.logging import make_temp_dir
 from ersilia.utils.terminal import run_command
 
 GITHUB_ORG = "ersilia-os"
-AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
+AIRTABLE_MODEL_HUB_BASE_ID = "appR6ZwgLgG8RTdoU"
 AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 AIRTABLE_MAX_ROWS = 100000
 AIRTABLE_PAGE_SIZE = 100

@@ -1,29 +1,27 @@
-name: Update a given model with current eos-template workflows
+name: Metadata update
 
-on:  
-  # Allows you to run this workflow manually from the Actions tab
+on:
   workflow_dispatch:
-    inputs:
-      model_id:
-        description: Model ID
-        required: true
-        type: string
-
-env:
-  MODEL_ID: ${{ github.event.inputs.model_id }}
 
 jobs:
-  update-workflows:
+  update-metadata:
+    strategy:
+      matrix:
+        model-id: ["eos9gg2", "eos80ch", "eos8fma"]
     runs-on: ubuntu-latest
+
     steps:
-      - uses: de-vri-es/setup-git-credentials@v2
-        with:
-          credentials: ${{secrets.GIT_CREDENTIALS}}
-          
-      - name: Update model workflows using script
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: run script
+        id: run-script
+        env:
+          MODEL_ID: ${{ matrix.model-id }}
+          USER_NAME: ${{ github.repository_owner }}
+          BRANCH: "main"
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
         run: |
-          git lfs install
-          git config --global user.name "ersilia-bot"
-          git config --global user.email "ersilia-bot@users.noreply.github.com"
-          wget https://raw.githubusercontent.com/ersilia-os/ersilia/master/.github/scripts/update_model_workflows_from_template.py
-          python update_model_workflows_from_template.py $MODEL_ID
+          pip install requests pyairtable
+          echo "Updating metadata to AirTable"
+          python3 .github/scripts/airtableops.py airtable-update --user $USER_NAME --repo $REPO_NAME --branch $BRANCH --api-key $AIRTABLE_API_KEY
+          rm airtableops.py
+  
