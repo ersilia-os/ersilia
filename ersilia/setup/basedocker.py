@@ -78,9 +78,7 @@ class SetupBaseDocker(ErsiliaBase):
         COPY . .
 
         RUN pip install .
-        """.format(
-            tag, self.cfg.ENV.DOCKER.IMAGE_WORKDIR
-        )
+        """.format(tag, self.cfg.ENV.DOCKER.IMAGE_WORKDIR)
         path = os.path.join(tmp_repo, "Dockerfile")
         with open(path, "w") as f:
             lines = dockerfile.split("\n")
