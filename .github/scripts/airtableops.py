@@ -179,7 +179,7 @@ class ReadmeMetadata:
                 f.write(text)
 
 
-class ReadmeUpdater:
+class FileUpdater:
     def __init__(self, model_id=None, repo_path=None, commit=True):
         self.model_id = model_id
         if repo_path is not None:
@@ -211,6 +211,11 @@ class ReadmeUpdater:
                 )
             )
 
+
+class ReadmeUpdater(FileUpdater):
+    def __init__(self, model_id, repo_path=None):
+        super().__init__(model_id=model_id, repo_path=repo_path)
+
     def update_remote(self):
         self._git_clone()
         rm = ReadmeMetadata(model_id=self.model_id)
@@ -225,6 +230,50 @@ class ReadmeUpdater:
         bi = rm.read_information()
         readme_file = os.path.join(self.repo_path, "README.md")
         rm.write_information(data=bi, readme_path=readme_file)
+        if self.commit:
+            self._git_push()
+
+    def update(self):
+        if self.repo_path is None:
+            self.update_remote()
+        else:
+            self.update_local()
+
+
+class MetadataUpdater(FileUpdater):
+    def __init__(self, model_id, repo_path=None):
+        super().__init__(model_id=model_id, repo_path=repo_path)
+
+    def read_information(self):
+        am = AirtableMetadata(model_id=self.model_id)
+        bi = am.read_information()
+        print(bi.as_dict())                                                                     
+        return bi
+
+    def update_remote(self):
+        self._git_clone()
+        am = AirtableMetadata(model_id=self.model_id)
+        bi = am.read_information()
+        rm = RepoMetadataFile(model_id=self.model_id, config_json=None)
+        rm.get_json_or_yaml_file()
+        if rm.is_json:
+            tmp_file = os.path.join(self.tmp_folder, self.model_id, "metadata.json")
+        else:
+            tmp_file = os.path.join(self.tmp_folder, self.model_id, "metadata.yml")
+        rm.write_information(data=bi, json_or_yaml_path=tmp_file)
+        if self.commit:
+            self._git_push()
+
+    def update_local(self):
+        am = AirtableMetadata(model_id=self.model_id)
+        bi = am.read_information()
+        rm = RepoMetadataFile(model_id=self.model_id, config_json=None)
+        rm.get_json_or_yaml_file()
+        if rm.is_json:
+            tmp_file = os.path.join(self.tmp_folder, self.model_id, "metadata.json")
+        else:
+            tmp_file = os.path.join(self.tmp_folder, self.model_id, "metadata.yml")
+        rm.write_information(data=bi, json_or_yaml_path=tmp_file)
         if self.commit:
             self._git_push()
 
@@ -271,12 +320,15 @@ def update_metadata_to_airtable(user, repo, branch, api_key):
     am = AirtableMetadata(model_id=repo, api_key=api_key, mode="rw")
     am.write_information(data)
 
-
 def update_readme_from_airtable(repo, path):
     # Works with readme-update option
     rm = ReadmeUpdater(model_id=repo, repo_path=path, commit=False)
     rm.update()
 
+def update_metadata_from_airtable(repo, path):
+    # Works with metadata-update option
+    rm = MetadataUpdater(model_id=repo, repo_path=path, commit=False)
+    rm.update()
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
@@ -295,6 +347,9 @@ if __name__ == "__main__":
     readme_update = subparsers.add_parser(
         "readme-update", help="Update README from AirTable"
     )
+    metadata_update = subparsers.add_parser(
+        "metadata-update", help="Update metadata from AirTable"
+    )
 
     # Options for airtable-insert
     airtable_insert.add_argument("--model", type=str, required=True)
@@ -309,7 +364,10 @@ if __name__ == "__main__":
 
     # Options for readme-update
     readme_update.add_argument("--repo", type=str, required=True)
-    readme_update.add_argument("--path", type=str, required=True)
+    readme_update.add_argument("--path", type=str, required=False)
+
+    metadata_update.add_argument("--repo", type=str, required=True)
+    metadata_update.add_argument("--path", type=str, required=False)
 
     args = parser.parse_args()
 
@@ -324,6 +382,10 @@ if __name__ == "__main__":
     elif args.command == "readme-update":
         print("Updating README from AirTable")
         update_readme_from_airtable(args.repo, args.path)
+    
+    elif args.command == "metadata-update":
+        print("Updating metadata from AirTable")
+        update_metadata_from_airtable(args.repo, args.path)
 
     else:
         print("Invalid command")

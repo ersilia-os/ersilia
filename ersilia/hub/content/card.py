@@ -43,6 +43,7 @@ class RepoMetadataFile(ErsiliaBase):
     def __init__(self, model_id=None, config_json=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.is_json = False
 
     def _github_json_url(self, org=None, branch=None):
         if org is None:
@@ -73,6 +74,7 @@ class RepoMetadataFile(ErsiliaBase):
             else:
                 return yaml.safe_load(r.content)
         else:
+            self.is_json = True
             return json.loads(r.content)
 
     def get_json_or_yaml_file(self, org: str = None, branch: str = None) -> dict:
