@@ -734,11 +734,7 @@
             <span class="n">key</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="n">smiles</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">smiles</span>
-                    <span class="ow">and</span> <span class="n">smiles</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">smiles_list</span>
-                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-                <span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">):</span>
                     <span class="n">smiles_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">smiles_list</span></div>
 
@@ -791,7 +787,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_amenable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_amenable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if the output data is amenable for a standard run.</span>
+<span class="sd">        Check if the input and output data are amenable for a standard run.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -801,7 +797,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
-<span class="sd">            True if the output data is amenable for a standard run, False otherwise.</span>
+<span class="sd">            True if the request is amenable for a standard run, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Not amenable for standard run: header not found&quot;</span><span class="p">)</span>
