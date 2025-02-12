@@ -11,6 +11,8 @@ except:
     inputimeout = None
     TimeoutOccurred = None
 
+from collections import namedtuple
+
 from ..default import OUTPUT_DATASTRUCTURE, VERBOSE_FILE
 from ..utils.logging import make_temp_dir
 from ..utils.session import get_session_dir
@@ -39,17 +41,19 @@ def is_quiet():
 
 def run_command(cmd, quiet=None):
     """
-    Run a shell command and return stdout, stderr, and return code.
+    Run a shell command and return a named tuple with stdout, stderr, and return code.
 
     Parameters
     ----------
     cmd : str or list
         The command to run.
     quiet : bool, optional
-        Whether to run the command in quiet mode. Defaults to `is_quiet()`.
+        Whether to run the command in quiet mode. Defaults to is_quiet().
     """
+    # You must define or import is_quiet() somewhere in your code.
     if quiet is None:
         quiet = is_quiet()
+
     # Run the command and capture outputs
     result = subprocess.run(
         cmd,
@@ -60,19 +64,21 @@ def run_command(cmd, quiet=None):
         env=os.environ,
     )
 
-    # Decode outputs
-    stdout = result.stdout.strip()
-    stderr = result.stderr.strip()
-    returncode = result.returncode
+    CommandResult = namedtuple("CommandResult", ["returncode", "stdout", "stderr"])
+    stdout_str = result.stdout.strip()
+    stderr_str = result.stderr.strip()
+    output = CommandResult(
+        returncode=result.returncode, stdout=stdout_str, stderr=stderr_str
+    )
 
     # Log outputs if not in quiet mode
     if not quiet:
-        if stdout:
-            print(stdout)
-        if stderr:
-            print(stderr, file=sys.stderr)
+        if stdout_str:
+            print(stdout_str)
+        if stderr_str:
+            print(stderr_str, file=sys.stderr)
 
-    return stdout, stderr, returncode
+    return output
 
 
 def run_command_check_output(cmd):

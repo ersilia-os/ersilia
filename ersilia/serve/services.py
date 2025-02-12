@@ -21,7 +21,9 @@ from ..default import (
     PACK_METHOD_FASTAPI,
     PACKMODE_FILE,
 )
-from ..setup.requirements.bentoml import BentoMLRequirement
+from ..setup.requirements.bentoml_requirement import BentoMLRequirement
+
+# from ..setup.requirements.bentoml import BentoMLRequirement
 from ..setup.requirements.conda import CondaRequirement
 from ..setup.requirements.docker import DockerRequirement
 from ..tools.bentoml.exceptions import BentoMLException
