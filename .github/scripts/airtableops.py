@@ -327,8 +327,8 @@ def update_readme_from_airtable(repo, path):
 
 def update_metadata_from_airtable(repo, path):
     # Works with metadata-update option
-    rm = MetadataUpdater(model_id=repo, repo_path=path, commit=False)
-    rm.update()
+    md = MetadataUpdater(model_id=repo, repo_path=path)
+    md.update()
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
