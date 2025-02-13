@@ -1,5 +1,4 @@
 import collections
-import csv
 import json
 import os
 import random
@@ -139,13 +138,16 @@ class DataFrame(object):
         delimiter : str, optional
             The delimiter to use in the text file (default is None).
         """
+        if delimiter is None:
+            delimiter = self._get_delimiter(file_name)
+        none_str = "None"
         with open(file_name, "w", newline="") as f:
-            if delimiter is None:
-                delimiter = self._get_delimiter(file_name)
-            writer = csv.writer(f, delimiter=delimiter)
-            writer.writerow(self.columns)
-            for i, row in enumerate(self.data):
-                writer.writerow(row)
+            f.write(delimiter.join(self.columns) + "\n")
+            for row in self.data:
+                row_str = delimiter.join(
+                    none_str if val is None else str(val) for val in row
+                )
+                f.write(row_str + "\n")
 
     def write(self, file_name: str, delimiter: str = None):
         """
@@ -673,7 +675,11 @@ class GenericOutputAdapter(ResponseRefactor):
                     if dtype:
                         are_dtypes_informative = True
                 if output_keys_expanded is None:
+                    self.logger.warning(
+                        f"Output key not expanded: val {vals} and {output_keys}"
+                    )
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
+                    self.logger.info(f"Expanded output keys: {output_keys_expanded}")
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
@@ -820,18 +826,9 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = "json"
         else:
             extension = None
+        df = self._to_dataframe(result, model_id)
         delimiters = {"csv": ",", "tsv": "\t", "h5": None}
-        if extension in ["csv", "tsv", "h5"]:
-            R = []
-
-            # Flatten the JSON object
-            for r in json.loads(result):
-                inp = r["input"]
-                out = r["output"]
-                vals = [out[k] for k in out.keys()]
-                R += [[inp["key"], inp["input"]] + vals]
-
-            df = DataFrame(data=R, columns=["key", "input"] + [k for k in out.keys()])
+        if extension in ["tsv", "h5", "csv"]:
             df.write(output, delimiter=delimiters[extension])
         elif extension == "json":
             data = json.loads(result)
