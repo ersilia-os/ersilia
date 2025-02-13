@@ -26,7 +26,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     InputBaseInformationError,
     InputShapeBaseInformationError,
     LicenseBaseInformationError,
-    ModeBaseInformationError,
     OutputBaseInformationError,
     OutputConsistencyBaseInformationError,
     OutputDimensionBaseInformationError,
@@ -83,8 +82,6 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the model’s title.
         _description : None
             Placeholder for a description of the model.
-        _mode : None
-            Placeholder for the training mode, one of 'retrained', 'pretrained', 'in-house', or 'online'.
         _task : None
             Placeholder for the primary task associated with the model, such as 'classification', or 'regression'.
         _subtask : None
@@ -151,7 +148,6 @@ class BaseInformation(ErsiliaBase):
         self._status = None
         self._title = None
         self._description = None
-        self._mode = None
         self._task = None
         self._subtask = None
         self._input = None
@@ -359,37 +355,6 @@ class BaseInformation(ErsiliaBase):
         if new_description == self._title:
             raise DescriptionBaseInformationError
         self._description = new_description
-
-    @property
-    def mode(self):
-        """
-        Get the model mode.
-
-        Returns
-        -------
-        str
-            The model mode.
-        """
-        return self._mode
-
-    @mode.setter
-    def mode(self, new_mode):
-        """
-        Set the model mode.
-
-        Parameters
-        ----------
-        new_mode : str
-            The new model mode.
-
-        Raises
-        ------
-        ModeBaseInformationError
-            If the mode is not valid.
-        """
-        if new_mode not in self._read_default_fields("Mode"):
-            raise ModeBaseInformationError
-        self._mode = new_mode
 
     @property
     def source(self):
@@ -1400,7 +1365,6 @@ class BaseInformation(ErsiliaBase):
             "Status": self.status,
             "Title": self.title,
             "Description": self.description,
-            "Mode": self.mode,
             "Source": self.source,
             "Source Type": self.source_type,
             "Input": self.input,
@@ -1451,7 +1415,6 @@ class BaseInformation(ErsiliaBase):
         self._assign("status", "Status", data)
         self._assign("title", "Title", data)
         self._assign("description", "Description", data)
-        self._assign("mode", "Mode", data)
         self._assign("source", "Source", data)
         self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
