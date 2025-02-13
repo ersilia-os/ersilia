@@ -18,7 +18,7 @@ jobs:
           MODEL_ID: ${{ matrix.model-id }}
           USER_NAME: ${{ github.repository_owner }}
           BRANCH: "main"
-          AIRTABLE_API_KEY: ${{ secrets.TEMP_AIRTABLE_API_KEY }}
+          AIRTABLE_API_KEY: ${{ secrets.AIRTABLE_API_KEY }}
         run: |
           pip install .
           pip install requests pyairtable

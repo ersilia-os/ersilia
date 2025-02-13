@@ -200,13 +200,13 @@ class FileUpdater:
     def _git_push(self):
         if self.repo_path is None:
             run_command(
-                'cd {0}/{1}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {2}'.format(
+                'cd {0}/{1}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating file from AirTable [skip ci]"; git push; cd {2}'.format(
                     self.tmp_folder, self.model_id, self.cwd
                 )
             )
         else:
             run_command(
-                'cd {0}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {1}'.format(
+                'cd {0}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating file from AirTable [skip ci]"; git push; cd {1}'.format(
                     self.repo_path, self.cwd
                 )
             )
