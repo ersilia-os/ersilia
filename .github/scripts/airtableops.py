@@ -241,18 +241,19 @@ class ReadmeUpdater(FileUpdater):
 
 
 class MetadataUpdater(FileUpdater):
-    def __init__(self, model_id, repo_path=None):
+    def __init__(self, model_id, repo_path=None, api_key=None):
         super().__init__(model_id=model_id, repo_path=repo_path)
+        self.api_key = api_key
 
     def read_information(self):
-        am = AirtableMetadata(model_id=self.model_id)
+        am = AirtableMetadata(model_id=self.model_id, api_key=self.api_key, mode="rw")
         bi = am.read_information()
         print(bi.as_dict())                                                                     
         return bi
 
     def update_remote(self):
         self._git_clone()
-        am = AirtableMetadata(model_id=self.model_id)
+        am = AirtableMetadata(model_id=self.model_id, api_key=self.api_key, mode="rw")
         bi = am.read_information()
         rm = RepoMetadataFile(model_id=self.model_id, config_json=None)
         rm.get_json_or_yaml_file()
@@ -325,9 +326,9 @@ def update_readme_from_airtable(repo, path):
     rm = ReadmeUpdater(model_id=repo, repo_path=path, commit=False)
     rm.update()
 
-def update_metadata_from_airtable(repo, path):
+def update_metadata_from_airtable(repo, path, api_key):
     # Works with metadata-update option
-    md = MetadataUpdater(model_id=repo, repo_path=path)
+    md = MetadataUpdater(model_id=repo, repo_path=path, api_key=api_key)
     md.update()
 
 if __name__ == "__main__":
@@ -368,6 +369,7 @@ if __name__ == "__main__":
 
     metadata_update.add_argument("--repo", type=str, required=True)
     metadata_update.add_argument("--path", type=str, required=False)
+    metadata_update.add_argument("--api-key", type=str, required=True)
 
     args = parser.parse_args()
 
@@ -385,7 +387,7 @@ if __name__ == "__main__":
     
     elif args.command == "metadata-update":
         print("Updating metadata from AirTable")
-        update_metadata_from_airtable(args.repo, args.path)
+        update_metadata_from_airtable(repo=args.repo, path=args.path, api_key=args.api_key)
 
     else:
         print("Invalid command")
