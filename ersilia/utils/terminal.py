@@ -50,7 +50,7 @@ def run_command(cmd, quiet=None):
     quiet : bool, optional
         Whether to run the command in quiet mode. Defaults to is_quiet().
     """
-    # You must define or import is_quiet() somewhere in your code.
+
     if quiet is None:
         quiet = is_quiet()
 
