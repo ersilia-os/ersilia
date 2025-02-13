@@ -255,6 +255,8 @@ class MetadataUpdater(FileUpdater):
         self._git_clone()
         am = AirtableMetadata(model_id=self.model_id, api_key=self.api_key, mode="rw")
         bi = am.read_information()
+        print("Record from AirTable:")
+        print(bi.as_dict())
         rm = RepoMetadataFile(model_id=self.model_id, config_json=None)
         rm.get_json_or_yaml_file()
         if rm.is_json:
