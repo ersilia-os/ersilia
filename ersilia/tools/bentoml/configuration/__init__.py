@@ -17,7 +17,15 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-from bentoml import __version__
+try:
+    from bentoml import __version__
+except ModuleNotFoundError:
+    from ersilia.setup.requirements.bentoml_requirement import BentoMLRequirement
+
+    req = BentoMLRequirement()
+    req.install()
+    from bentoml import __version__
+
 from bentoml import _version as version_mod
 from bentoml.configuration.configparser import BentoMLConfigParser
 from bentoml.exceptions import BentoMLConfigException

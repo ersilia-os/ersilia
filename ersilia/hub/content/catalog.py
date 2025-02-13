@@ -3,13 +3,13 @@
 import csv
 import json
 import os
-import shutil
-import subprocess
 
 from ... import ErsiliaBase
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...default import BENTOML_PATH, MODEL_SOURCE_FILE, TableConstants
+from ...default import MODEL_SOURCE_FILE, TableConstants
+from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.identifiers.model import ModelIdentifier
+from ...utils.terminal import run_command
 from .card import ModelCard
 
 try:
@@ -357,26 +357,37 @@ class ModelCatalog(ErsiliaBase):
             The catalog table containing the models available as BentoServices.
         """
         try:
-            result = subprocess.run(
-                ["bentoml", "list"], stdout=subprocess.PIPE, env=os.environ, timeout=10
-            )
-        except Exception:
-            shutil.rmtree(BENTOML_PATH)
-            return None
-        result = [r for r in result.stdout.decode("utf-8").split("\n") if r]
-        if len(result) == 1:
-            return
-        columns = ["BENTO_SERVICE", "AGE", "APIS", "ARTIFACTS"]
-        header = result[0]
-        values = result[1:]
-        cut_idxs = []
-        for col in columns:
-            cut_idxs += [header.find(col)]
-        R = []
-        for row in values:
-            r = []
-            for i, idx in enumerate(zip(cut_idxs, cut_idxs[1:] + [None])):
-                r += [row[idx[0] : idx[1]].rstrip()]
-            R += [[r[0].split(":")[0]] + r]
-        columns = ["Identifier"] + columns
-        return CatalogTable(data=R, columns=columns)
+            stdout, stderr, returncode = run_command(["bentoml", "list"], quiet=True)
+            if returncode != 0:
+                raise BentoMLException(f"BentoML list failed: {stderr}")
+
+            # Process stdout to build CatalogTable
+            output_lines = stdout.split("\n")
+            if not output_lines or len(output_lines) == 1:
+                return CatalogTable(data=[], columns=[])  # Return empty table
+
+            # Extract columns and values
+            columns = ["BENTO_SERVICE", "AGE", "APIS", "ARTIFACTS"]
+            header = output_lines[0]
+            values = output_lines[1:]
+
+            # Parse table data
+            cut_idxs = [header.find(col) for col in columns]
+            R = []
+            for row in values:
+                r = []
+                for i, idx in enumerate(zip(cut_idxs, cut_idxs[1:] + [None])):
+                    r.append(
+                        row[idx[0] : idx[1]].rstrip()
+                        if idx[1]
+                        else row[idx[0] :].rstrip()
+                    )
+                R.append([r[0].split(":")[0]] + r)
+
+            return CatalogTable(data=R, columns=["Identifier"] + columns)
+
+        except BentoMLException:
+            raise
+        except Exception as e:
+            self.logger.error(f"Unexpected error: {str(e)}")
+            raise BentoMLException(f"Failed to fetch BentoML models: {str(e)}")
