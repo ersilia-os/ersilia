@@ -27,7 +27,7 @@ And an entrypoint script called `docker-entrypoint.sh`.
 5. This step assumes you are inside the ersilia-pack directory and you have completed Step 4. Build the base docker image, eg for Python 3.12 conda image, as follows:
 
 ```
-docker build -f Dockerfile3.12-slim-bullseye -t ersiliaos/ersiliapack-py312:latest .
+docker build -f Dockerfile.pip3.12-slim-bullseye -t ersiliaos/ersiliapack-py312:latest .
 ```
 
 ### Local build - model
