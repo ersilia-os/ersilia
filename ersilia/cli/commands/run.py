@@ -1,10 +1,12 @@
 import json
+import os
 import types
 
 import click
 
 from ... import ErsiliaModel
 from ...core.session import Session
+from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ...utils.terminal import print_result_table
 from .. import echo
 from . import ersilia_cli
@@ -63,30 +65,39 @@ def run_cmd():
             config_json=None,
             track_runs=track_runs,
         )
-        result = mdl.run(
-            input=input,
-            output=output,
-            batch_size=batch_size,
-            track_run=track_runs,
-        )
-        iter_values = []
-        if isinstance(result, types.GeneratorType):
-            for result in mdl.run(input=input, output=output, batch_size=batch_size):
-                if result is not None:
-                    iter_values.append(result)
-            if as_table:
-                print_result_table(iter_values)
+        try:
+            result = mdl.run(
+                input=input,
+                output=output,
+                batch_size=batch_size,
+                track_run=track_runs,
+            )
+            iter_values = []
+            if isinstance(result, types.GeneratorType):
+                for result in mdl.run(
+                    input=input, output=output, batch_size=batch_size
+                ):
+                    if result is not None:
+                        iter_values.append(result)
+                if as_table:
+                    print_result_table(iter_values)
+                else:
+                    echo(json.dumps(iter_values, indent=4))
             else:
-                echo(json.dumps(iter_values, indent=4))
-        else:
-            if as_table:
-                print_result_table(result)
-            else:
-                try:
-                    echo(result)
-                except Exception:
-                    echo(
-                        f"Error: Could not print the result for output given path: {result}."
-                    )
+                if as_table:
+                    print_result_table(result)
+                else:
+                    try:
+                        echo(result)
+                    except Exception:
+                        echo(
+                            f"Error: Could not print the result for output given path: {result}."
+                        )
+        except UnprocessableInputError as e:
+            echo(f"❌ Error: {e.message}", fg="red")
+            echo(f"💡 {e.hints}")
+            if output and os.path.exists(output):
+                os.remove(output)
+            return
 
     return run
