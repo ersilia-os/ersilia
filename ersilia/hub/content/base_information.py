@@ -948,7 +948,10 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if new_publication_year < 1900 or new_publication_year > datetime.today("Y"):
+        if (
+            new_publication_year < 1900
+            or new_publication_year > datetime.date.today().year
+        ):
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1230,7 +1233,9 @@ class BaseInformation(ErsiliaBase):
         EnvironmentSizeMbBaseInformationError
             If the environment size value is not valid.
         """
-        if not isinstance(new_environment_size, (int, float)):
+        if not new_environment_size:
+            new_environment_size = 0
+        elif not isinstance(new_environment_size, (int, float)):
             raise EnvironmentSizeMbBaseInformationError
         self._environment_size_mb = new_environment_size
 
@@ -1259,7 +1264,9 @@ class BaseInformation(ErsiliaBase):
         ImageSizeMbBaseInformationError
             If `new_image_size_mb` is not an integer.
         """
-        if not isinstance(new_image_size_mb, (int, float)):
+        if not new_image_size_mb:
+            new_image_size_mb = 0
+        elif not isinstance(new_image_size_mb, (int, float)):
             raise ImageSizeMbBaseInformationError
         self._image_size_mb = new_image_size_mb
 
@@ -1288,7 +1295,9 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceOneBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not isinstance(new_value, (int, float)):
+        if not new_value:
+            new_value = 0
+        elif not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceOneBaseInformationError
         self._computational_performance_one = new_value
 
@@ -1317,7 +1326,9 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceTenBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not isinstance(new_value, (int, float)):
+        if not new_value:
+            new_value = 0
+        elif not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceTenBaseInformationError
         self._computational_performance_ten = new_value
 
@@ -1346,7 +1357,9 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceHundredBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not isinstance(new_value, (int, float)):
+        if not new_value:
+            new_value = 0
+        elif not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceHundredBaseInformationError
         self._computational_performance_hund = new_value
 

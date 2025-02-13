@@ -156,7 +156,7 @@ class RepoMetadataFile(ErsiliaBase):
             path = json_or_yaml_path
             with open(path, "w") as f:
                 json.dump(data, f, indent=4)
-        elif json_or_yaml_path.endswith(".yaml"):
+        elif json_or_yaml_path.endswith(".yml"):
             path = json_or_yaml_path
             with open(path, "w") as f:
                 yaml.dump(data, f)
