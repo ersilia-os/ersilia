@@ -1,13 +1,12 @@
+import os
+import subprocess
 import sys
 from threading import Lock
 from typing import Optional
 
-from packaging import version
-from packaging.version import InvalidVersion
-
+from ...default import EOS
 from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.logging import logger
-from ...utils.terminal import run_command
 
 
 class BentoMLRequirement(object):
@@ -29,33 +28,28 @@ class BentoMLRequirement(object):
             return False
 
     def _get_bentoml_version(self) -> Optional[str]:
-        """Get BentoML version using run_command"""
-        result = run_command([sys.executable, "-m", "bentoml", "--version"])
+        """Get BentoML version using subprocess.Popen"""
+        version_file = os.path.join(EOS, "bentomlversion.txt")
 
-        if result.returncode != 0:
-            self.logger.error(f"BentoML version check failed: {result.stderr}")
-            return None
+        if not os.path.exists(version_file):
+            cmd = "bentoml --version > {0}".format(version_file)
+            subprocess.Popen(cmd, shell=True).wait()
 
-        # Extract version from "python -m bentoml, version 0.11.0"
-        version_str = result.stdout.split("version")[-1].strip()
+        with open(version_file, "r") as f:
+            version_str = f.read().strip()
+
+        version_str = version_str.split("version")[-1].strip()
         return version_str
-
-        # try:
-        #    return version.parse(version_str).public
-        # except InvalidVersion:
-        #    self.logger.error(f"Invalid BentoML version detected: {version_str}")
-        #    return None
 
     def is_bentoml_ersilia_version(self) -> bool:
         """Checks if the installed BentoML version is the Ersilia version."""
         version_str = self._get_bentoml_version()
+        print("We got version", version_str)
         if not version_str:
             return False
-        try:
-            return version.parse(version_str) == version.parse("0.11.0")
-        except InvalidVersion:
-            self.logger.error(f"Invalid BentoML version detected: {version_str}")
-            return False
+        if "0.11.0" in version_str:
+            return True
+        return False
 
     def _cleanup_corrupted_bentoml(self) -> None:
         """Forcefully uninstall BentoML and reinstall the correct version."""
@@ -63,7 +57,7 @@ class BentoMLRequirement(object):
             self.logger.info("Cleaning up corrupted BentoML installation...")
 
             if self.is_installed():
-                result = run_command(
+                result = subprocess.Popen(
                     [sys.executable, "-m", "pip", "uninstall", "bentoml", "-y"]
                 )
                 if result.returncode != 0:
@@ -86,7 +80,7 @@ class BentoMLRequirement(object):
                 # 1. Uninstall if wrong version exists
                 if self.is_installed() and not self.is_bentoml_ersilia_version():
                     self.logger.info("Uninstalling incompatible BentoML...")
-                    uninstall_result = run_command(
+                    uninstall_result = subprocess.Popen(
                         [sys.executable, "-m", "pip", "uninstall", "bentoml", "-y"]
                     )
                     if uninstall_result.returncode != 0:
@@ -96,17 +90,11 @@ class BentoMLRequirement(object):
 
                 # 2. Install specific version
                 self.logger.info("Installing Ersilia-compatible BentoML...")
-                install_result = run_command(
-                    [
-                        sys.executable,
-                        "-m",
-                        "pip",
-                        "install",
-                        "-U",
-                        "git+https://github.com/ersilia-os/bentoml-ersilia.git",
-                    ]
+                cmd = "{0} -m pip install -U git+https://github.com/ersilia-os/bentoml-ersilia.git".format(
+                    sys.executable
                 )
-                if install_result.returncode != 0:
+                install_result = subprocess.Popen(cmd, shell=True).wait()
+                if install_result != 0:
                     raise BentoMLException(f"Install failed: {install_result.stderr}")
 
                 # 3. Post-install verification
