@@ -395,14 +395,19 @@ class ModelInspector:
             errors.append("Missing 'COPY . /repo'.")
 
         pip_install_pattern = re.compile(r"pip install (.+)")
-        version_pin_pattern = re.compile(r"^[a-zA-Z0-9_\-\.]+==[a-zA-Z0-9_\-\.]+$")
+        version_pin_pattern = re.compile(
+            r"^[a-zA-Z0-9_\-\.]+(==|>=|<=|>|<)[a-zA-Z0-9_\-\.]+$"
+        )
 
         for line in lines:
             line = line.strip()
 
             match = pip_install_pattern.search(line)
             if match:
-                packages_and_options = match.group(1).split()
+                install_cmd, _, _ = match.group(1).partition(
+                    "#"
+                )  # Remove comments, this actually crashes things
+                packages_and_options = install_cmd.strip().split()
                 skip_next = False
 
                 for item in packages_and_options:
@@ -435,9 +440,13 @@ class ModelInspector:
 
         python_version = yml_data.get("python")
         if not python_version:
-            errors.append("Missing Python version in install.yml.")
+            errors.append("Missing Python version in dependency.yml.")
+        elif not re.match(r"^\d+(\.\d+){0,2}$", python_version):
+            errors.append(f"Invalid Python version format: {python_version}")
 
-        version_pin_pattern = re.compile(r"^[a-zA-Z0-9_\-\.]+==[a-zA-Z0-9_\-\.]+$")
+        version_pin_pattern = re.compile(
+            r"^[a-zA-Z0-9_\-\.]+(==|>=|<=|>|<)[a-zA-Z0-9_\-\.]+$"
+        )
 
         commands = yml_data.get("commands", [])
         for command in commands:
@@ -446,37 +455,40 @@ class ModelInspector:
                 continue
 
             tool = command[0]
-            _ = command[1]
+            package = command[1]
             version = command[2] if len(command) > 2 else None
-
+            additional_args = command[3:] if len(command) > 3 else []
+            if tool not in ("pip", "conda"):
+                errors.append(f"Unsupported package manager: {tool}")
+                continue
+            if not version:
+                errors.append(
+                    f"Missing version for package '{package}' in command '{command}'."
+                )
             if tool in ("pip", "conda"):
                 if tool == "pip":
-                    pip_args = command[1:]
-                    skip_next = False
+                    if package.startswith("git+"):
+                        continue
+                    if version and not version_pin_pattern.match(
+                        f"{package}=={version}"
+                    ):
+                        errors.append(
+                            f"Package '{package}' in command '{command}' is not properly version-pinned."
+                        )
 
-                    for item in pip_args:
-                        if skip_next:
-                            skip_next = False
-                            continue
-
-                        if item.startswith("--index-url") or item.startswith(
+                    for arg in additional_args:
+                        if arg.startswith("--index-url") or arg.startswith(
                             "--extra-index-url"
                         ):
-                            skip_next = True
                             continue
-
-                        if item.startswith("git+"):
-                            continue
-
-                        if not version_pin_pattern.match(item):
+                        if not version_pin_pattern.match(arg):
                             errors.append(
-                                f"Package '{item}' in command '{command}' is not version-pinned (e.g., 'package==1.0.0')."
+                                f"Unexpected argument in command '{command}': {arg}"
                             )
 
                 elif tool == "conda" and not version:
                     errors.append(
-                        f"Package in command '{command}' does not have a valid pinned version "
-                        f"(should be in the format ['conda', 'package_name', 'x.y.z'])."
+                        f"Package '{package}' in command '{command}' does not have a valid pinned version."
                     )
 
         return errors

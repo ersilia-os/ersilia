@@ -1,20 +1,43 @@
-activate_docker: true
-cli_type: all
-delete_model: true
-fetch_flags: --from_github
-input_file: files/input.csv
-log_error: true
-log_path: files/error_log
-max_runtime_minutes: 10
-model_id: eos3b5e
-model_ids:
-- eos3b5e
-- eos4e40
-- eos9gg2
-output_file: files/result.csv
-overwrite_ersilia_repo: false
-python_version: 3.10.10
-run_flags: ''
-runner: single
-serve_flags: ''
-use_existing_env: true
+settings:
+  activate_docker: true
+  log_error: true
+  silent: true
+  show_remark: false
+  max_runtime_minutes: 10
+  num_samples: 10
+  cli: ["all"]
+  python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+
+flags:
+  fetch: []
+  run: []
+  delete: []
+  catalog: ["--more", "--local", "--as-json"]
+  test: ["--shallow", "--from_github"]
+  example: ["--n_samples", 10]
+
+files:
+  input_single: input.csv
+  outputs:
+    - result.csv
+    - result.json
+    - result.h5
+
+models:
+  single: eos3b5e
+  multiple:
+    - eos5axz
+    - eos4e40
+    - eos2r5a
+    - eos4zfy
+    - eos8fma
+  
+runtime:
+  backend: "conda"
+  runner: "single"
+  input_types:
+    - str
+    - list
+    - csv
+  host: "local"
