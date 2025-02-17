@@ -1,15 +1,13 @@
 import os
 import subprocess
 import sys
-import os
-import subprocess
 from threading import Lock
 from typing import Optional
 
-from .setuptools_req import verify_setuptools
+from ...default import EOS
 from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.logging import logger
-from ...default import EOS
+from .setuptools_req import verify_setuptools
 
 
 class BentoMLRequirement(object):
@@ -106,7 +104,7 @@ class BentoMLRequirement(object):
 
             except BentoMLException as e:
                 self.logger.error(f"Install attempt failed: {str(e)}")
-                self.logger.warning(f"Attempts remaining: {retries-1}")
+                self.logger.warning(f"Attempts remaining: {retries - 1}")
 
                 try:
                     self._cleanup_corrupted_bentoml()

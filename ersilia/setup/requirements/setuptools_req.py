@@ -1,5 +1,6 @@
-import sys
 import subprocess
+import sys
+
 
 def verify_setuptools():
     try:
@@ -7,5 +8,5 @@ def verify_setuptools():
     except ImportError:
         cmd = f"{sys.executable} -m pip install setuptools"
         result = subprocess.Popen(cmd, shell=True).wait()
-        if result!= 0:
+        if result != 0:
             raise RuntimeError("Failed to install setuptools.")
