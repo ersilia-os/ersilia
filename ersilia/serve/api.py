@@ -7,6 +7,7 @@ import time
 import requests
 
 from .. import ErsiliaBase, logger
+from ..default import API_SCHEMA_FILE, DEFAULT_API_NAME
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
 from ..lake.interface import IsauraInterface
@@ -15,7 +16,7 @@ from ..utils.logging import make_temp_dir
 from .schema import ApiSchema
 
 
-class Api(object):
+class Api(ErsiliaBase):
     """
     Class to interact with the API for a given model.
 
@@ -51,6 +52,7 @@ class Api(object):
     """
 
     def __init__(self, model_id, url, api_name, save_to_lake, config_json):
+        ErsiliaBase.__init__(self, config_json=None)
         self.config_json = config_json
         self.model_id = model_id
         self.input_adapter = GenericInputAdapter(
@@ -110,44 +112,50 @@ class Api(object):
             )
             return [{"output": output}]
 
+    def _post_batch(self, url, input_batch):
+        if not input_batch:
+            return []
+
+        try:
+            response = requests.post(url, json=input_batch)
+            self.logger.debug("Status code: {0}".format(response.status_code))
+            response.raise_for_status()
+            result = response.json()
+            result = self.output_adapter.refactor_response(result)
+            return result
+        except Exception as e:
+            self.logger.error(
+                "Error processing batch of size {}: {}".format(len(input_batch), e)
+            )
+            if len(input_batch) == 1:
+                return [self._empty_output]
+            mid = len(input_batch) // 2
+            left_results = self._post_batch(url, input_batch[:mid])
+            right_results = self._post_batch(url, input_batch[mid:])
+            return left_results + right_results
+
     def _do_post(self, input, output):
         url = "{0}/{1}".format(self.url, self.api_name)
         if self._do_sleep:
             time.sleep(3)
-        response = requests.post(url, json=input)
-        self.logger.debug("Status code: {0}".format(response.status_code))
-        if response.status_code == 200:
-            result_ = response.json()
-            result_ = self.output_adapter.refactor_response(result_)
-            result = []
-            for i, o in zip(input, result_):
-                result += [{"input": i, "output": o}]
-            result = json.dumps(result, indent=4)
-            return self.__result_returner(result, output)
-        else:
-            self.logger.error("Status Code: {0}".format(response.status_code))
-            return None
+
+        results = self._post_batch(url, input)
+
+        combined_results = []
+        for compound, res in zip(input, results):
+            combined_results.append({"input": compound, "output": res})
+
+        result_json = json.dumps(combined_results, indent=4)
+        return self.__result_returner(result_json, output)
 
     def _post(self, input, output):
+        import time
+
+        st = time.time()
         result = self._do_post(input, output)
-        if result is None and self._batch_size > 1 and len(input) > 1:
-            self.logger.warning(
-                "Batch prediction didn't seem to work. Doing predictions one by one..."
-            )
-            result = []
-            for inp_one in input:
-                r = self._do_post([inp_one], output=None)
-                if r is None:
-                    r = [{"input": inp_one, "output": self._empty_output}]
-                else:
-                    r = json.loads(r)
-                result += r
-            result = json.dumps(result, indent=4)
-            result = self.__result_returner(result, output)
-        if result is None and len(input) == 1:
-            result = [{"input": input[0], "output": self._empty_output}]
-            result = json.dumps(result, indent=4)
-            result = self.__result_returner(result, output)
+        result = self._standardize_schema(result)
+        et = time.time()
+        self.logger.debug("Time taken: {0}".format(et - st))
         return result
 
     def post(self, input, output, batch_size):
@@ -460,3 +468,146 @@ class Api(object):
             return True
         else:
             return False
+
+    def _load_api_schema(self):
+        outcome_key, reference_keys = "outcome", []
+        self.schema_file = os.path.join(
+            self._model_path(self.model_id), API_SCHEMA_FILE
+        )
+        if os.path.exists(self.schema_file):
+            with open(self.schema_file, "r") as f:
+                schema = json.load(f)
+
+            output_schema = schema.get(DEFAULT_API_NAME, {}).get("output", {})
+            if not output_schema:
+                raise ValueError("No output schema found in the API schema file.")
+
+            outcome_key, outcome_details = next(iter(output_schema.items()))
+            reference_keys = outcome_details.get("meta", [])
+
+        return outcome_key, reference_keys
+
+    def _detect_mismatch(self, data):
+        outcome_key, reference_keys = self._load_api_schema()
+        mismatches = []
+        expected_keys = set(reference_keys)
+
+        for i, entry in enumerate(data):
+            output = entry.get("output", {})
+
+            if outcome_key in output and isinstance(output[outcome_key], dict):
+                container = output[outcome_key]
+            else:
+                container = output
+
+            if isinstance(container, list):
+                container = {
+                    key: container[idx] if idx < len(container) else None
+                    for idx, key in enumerate(reference_keys)
+                }
+
+            if isinstance(container, dict):
+                actual_keys = set(container.keys())
+            else:
+                actual_keys = set()
+
+            missing_keys = list(expected_keys - actual_keys)
+            extra_keys = list(actual_keys - expected_keys)
+
+            if missing_keys or extra_keys:
+                mismatches.append(
+                    {
+                        "index": i,
+                        "missing_keys": missing_keys,
+                        "extra_keys": extra_keys,
+                    }
+                )
+
+        return mismatches
+
+    def _standardize_schema(self, data, force_list=True):
+        data = json.loads(data)
+        outcome_key, reference_keys = self._load_api_schema()
+
+        if force_list:
+            for entry in data:
+                output = entry.get("output", {})
+                container = self._extract_data_container_force(
+                    output, outcome_key, reference_keys
+                )
+                standardized = {key: container.get(key, None) for key in reference_keys}
+                entry["output"] = {
+                    outcome_key: [standardized[key] for key in reference_keys]
+                }
+        else:
+            mismatches = self._detect_mismatch(data)
+            for mismatch in mismatches:
+                idx = mismatch["index"]
+                entry = data[idx]
+                output = entry.get("output", {})
+
+                if outcome_key in output and isinstance(output[outcome_key], dict):
+                    container = output[outcome_key]
+                    container_is_nested = True
+                else:
+                    container = output
+                    container_is_nested = False
+
+                container = self._normalize_container(container, reference_keys)
+                if container_is_nested:
+                    output[outcome_key] = [
+                        container.get(key, None) for key in reference_keys
+                    ]
+                else:
+                    entry["output"] = container
+
+        return json.dumps(data, indent=4)
+
+    def _extract_data_container_force(self, output, outcome_key, reference_keys):
+        if outcome_key in output:
+            nested = output[outcome_key]
+            if isinstance(nested, dict):
+                return nested
+            elif isinstance(nested, list):
+                return self._convert_list_to_dict(nested, reference_keys)
+            else:
+                return {reference_keys[0]: nested} if reference_keys else {}
+        else:
+            if isinstance(output, list):
+                return self._convert_list_to_dict(output, reference_keys)
+            elif isinstance(output, dict):
+                return output
+            else:
+                return {reference_keys[0]: output} if reference_keys else {}
+
+    def _normalize_container(self, container, reference_keys):
+        if isinstance(container, list):
+            return self._convert_list_to_dict(container, reference_keys)
+        elif isinstance(container, dict):
+            if not any(key in reference_keys for key in container.keys()):
+                values = list(container.values())
+                return {
+                    key: values[i] if i < len(values) else None
+                    for i, key in enumerate(reference_keys)
+                }
+            else:
+                new_container = {}
+                extra_values = [
+                    container[k] for k in container if k not in reference_keys
+                ]
+                for key in reference_keys:
+                    if key in container:
+                        new_container[key] = container[key]
+                    elif extra_values:
+                        new_container[key] = extra_values.pop(0)
+                    else:
+                        new_container[key] = None
+                return new_container
+        else:
+            return {reference_keys[0]: container} if reference_keys else container
+
+    def _convert_list_to_dict(self, lst, reference_keys):
+        return {
+            key: lst[i] if i < len(lst) else None
+            for i, key in enumerate(reference_keys)
+        }
