@@ -211,7 +211,7 @@ jobs:
 
       - name: Run CLI Test Multiple
         run: |          
-          nox -f test/playground/noxfile.py -s execute -p 3.12 -- --cli serve --fetch from_dockerhub --runner multiple
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli serve --fetch from_dockerhub --runner multiple --silent false
 
   test-colab-notebook:
     defaults:
