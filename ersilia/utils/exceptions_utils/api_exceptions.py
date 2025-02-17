@@ -18,6 +18,18 @@ class InputFileNotFoundError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
+class UnprocessableInputError(ErsiliaError):
+    def __init__(self):
+        self.message = "Input data is invalid and cannot be processed"
+        self.hints = (
+            "No output file will be created.\n"
+            "- Check your input data format and content\n"
+            "- Ensure chemical structures/identifiers are valid\n"
+            "- Verify input matches the model's requirements(valid SMILES)"
+        )
+        super().__init__(self.message, self.hints)
+
+
 class ApiSpecifiedOutputError(ErsiliaError):
     def __init__(self):
         self.message = "Specified output is not correct"
