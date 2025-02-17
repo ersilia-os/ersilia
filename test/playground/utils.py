@@ -3,15 +3,17 @@ import os
 import platform
 import psutil
 import pytest
-import random
 import requests
 import subprocess
 import click
 import traceback
 from datetime import datetime
 from pathlib import Path
-from rdkit import Chem
 from ersilia.default import EOS_PLAYGROUND
+from ersilia.setup.requirements.compound import (
+    ChemblWebResourceClientRequirement,
+    RdkitRequirement,
+)
 from ersilia.cli.commands.example import example_cmd
 from ersilia.cli.commands.catalog import catalog_cmd
 from ersilia.cli.commands.fetch import fetch_cmd
@@ -22,6 +24,13 @@ from ersilia.cli.commands.test import test_cmd
 from ersilia.cli.commands.delete import delete_cmd
 from ersilia.cli import echo
 from .rules import get_rule
+
+try:
+    from rdkit import Chem
+except:
+    ChemblWebResourceClientRequirement()
+    RdkitRequirement()
+
 
 file_path = Path(EOS_PLAYGROUND) / "files"
 
