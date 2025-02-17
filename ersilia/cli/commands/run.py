@@ -6,6 +6,8 @@ import click
 
 from ... import ErsiliaModel
 from ...core.session import Session
+from ...io.shape import InputShapeSingle
+from ...io.types.compound import IO
 from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ...utils.terminal import print_result_table
 from .. import echo
@@ -66,6 +68,12 @@ def run_cmd():
             track_runs=track_runs,
         )
         try:
+            # Early validation: if input is not a file, assume it's a SMILES string.
+            if not os.path.isfile(input):
+                io_instance = IO(InputShapeSingle())
+                if not io_instance.is_input(input):
+                    raise UnprocessableInputError()
+
             result = mdl.run(
                 input=input,
                 output=output,
@@ -95,9 +103,9 @@ def run_cmd():
                         )
         except UnprocessableInputError as e:
             echo(f"❌ Error: {e.message}", fg="red")
-            echo(f"💡 {e.hints}")
+            echo(f"💡 {e.hints}", fg="yellow")
             if output and os.path.exists(output):
                 os.remove(output)
             return
 
-    return run
+        return

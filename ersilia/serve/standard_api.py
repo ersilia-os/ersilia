@@ -18,6 +18,7 @@ from ..default import (
 )
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
+from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -248,7 +249,7 @@ class StandardCSVRunApi(ErsiliaBase):
             List of dictionaries containing encoded SMILES strings.
         """
         if not input_data or all(not s.strip() for s in input_data):
-            raise ValueError(
+            raise UnprocessableInputError(
                 "The list of SMILES strings is empty or contains only empty strings."
             )
         return [
@@ -272,7 +273,7 @@ class StandardCSVRunApi(ErsiliaBase):
             List containing a dictionary with the encoded SMILES string.
         """
         if not self.validate_smiles(input):
-            raise ValueError("The SMILES string is invalid.")
+            raise UnprocessableInputError("The SMILES string is invalid.")
         key = self.encoder.encode(input)
         return [{"key": key, "input": input, "text": input}]
 
@@ -427,7 +428,7 @@ class StandardCSVRunApi(ErsiliaBase):
         elif isinstance(input_data, list):
             return self.parse_smiles_list(input_data)
         else:
-            raise ValueError(
+            raise UnprocessableInputError(
                 "Input must be either a file path (string), a SMILES string, or a list of SMILES strings."
             )
 
