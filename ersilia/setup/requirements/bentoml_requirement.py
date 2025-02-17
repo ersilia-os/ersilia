@@ -1,12 +1,15 @@
 import os
 import subprocess
 import sys
+import os
+import subprocess
 from threading import Lock
 from typing import Optional
 
-from ...default import EOS
+from .setuptools_req import verify_setuptools
 from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.logging import logger
+from ...default import EOS
 
 
 class BentoMLRequirement(object):
@@ -15,6 +18,7 @@ class BentoMLRequirement(object):
     _lock = Lock()
 
     def __init__(self):
+        verify_setuptools()
         self.logger = logger
 
     def is_installed(self) -> bool:
@@ -44,7 +48,6 @@ class BentoMLRequirement(object):
     def is_bentoml_ersilia_version(self) -> bool:
         """Checks if the installed BentoML version is the Ersilia version."""
         version_str = self._get_bentoml_version()
-        print("We got version", version_str)
         if not version_str:
             return False
         if "0.11.0" in version_str:
@@ -90,9 +93,7 @@ class BentoMLRequirement(object):
 
                 # 2. Install specific version
                 self.logger.info("Installing Ersilia-compatible BentoML...")
-                cmd = "{0} -m pip install -U git+https://github.com/ersilia-os/bentoml-ersilia.git".format(
-                    sys.executable
-                )
+                cmd = f"{sys.executable} -m pip install -U git+https://github.com/ersilia-os/bentoml-ersilia.git"
                 install_result = subprocess.Popen(cmd, shell=True).wait()
                 if install_result != 0:
                     raise BentoMLException(f"Install failed: {install_result.stderr}")
