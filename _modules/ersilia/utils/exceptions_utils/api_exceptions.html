@@ -338,6 +338,21 @@
 
 
 
+<div class="viewcode-block" id="UnprocessableInputError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.UnprocessableInputError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnprocessableInputError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Input data is invalid and cannot be processed&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;No output file will be created.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- Check your input data format and content</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- Ensure chemical structures/identifiers are valid</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;- Verify input matches the model&#39;s requirements(valid SMILES)&quot;</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="ApiSpecifiedOutputError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.ApiSpecifiedOutputError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApiSpecifiedOutputError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
