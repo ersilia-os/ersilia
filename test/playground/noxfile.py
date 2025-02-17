@@ -1,4 +1,3 @@
-import argparse
 import json
 import nox
 import os
@@ -6,8 +5,10 @@ import shutil
 import yaml
 from pathlib import Path
 from ersilia.default import EOS_PLAYGROUND
-from ersilia.utils.logging import logger
-
+from ersilia.setup.requirements.compound import (
+    ChemblWebResourceClientRequirement,
+    RdkitRequirement,
+)
 if not os.path.exists(EOS_PLAYGROUND):
     os.makedirs(EOS_PLAYGROUND)
 
@@ -46,6 +47,10 @@ flagged_keys = {
         "catalog": {"more", "as-json", "local", "hub", "local"},
         "example": {"simple", "random", "predefined", "complete", "file_name", "n_samples"},
 }
+
+def setup_rdkit():
+    RdkitRequirement()
+    ChemblWebResourceClientRequirement()
 
 def parse_yaml(file_path):
     with open(file_path, "r") as f:
@@ -130,6 +135,7 @@ def replace_configs(default_config, override_config):
     return replaced_config
 
 def setup(session):
+    setup_rdkit()
     session.log(f"Installing ersilia from source: {NOX_PWD}")
     session.install("-e", str(NOX_PWD))
     session.install(*test_packages)
