@@ -27,9 +27,13 @@ from .rules import get_rule
 
 try:
     from rdkit import Chem
-except:
+except ImportError:
     ChemblWebResourceClientRequirement()
     RdkitRequirement()
+    try:
+        from rdkit import Chem
+    except ImportError as e:
+        raise ImportError("Failed to import 'rdkit' even after attempting to install dependencies.") from e
 
 
 file_path = Path(EOS_PLAYGROUND) / "files"
