@@ -1,11 +1,12 @@
 import subprocess
+import importlib
 import sys
 
 
 def verify_setuptools():
     try:
-        import setuptools
-    except ImportError:
+        importlib.import_module("setuptools")
+    except ModuleNotFoundError:
         cmd = f"{sys.executable} -m pip install setuptools"
         result = subprocess.Popen(cmd, shell=True).wait()
         if result != 0:
