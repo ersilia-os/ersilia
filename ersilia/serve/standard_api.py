@@ -14,7 +14,7 @@ from ..default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
     INFORMATION_FILE,
-    PREDEFINED_EXAMPLE_FILES,
+    PREDEFINED_EXAMPLE_OUTPUT_FILES,
 )
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
@@ -201,11 +201,11 @@ class StandardCSVRunApi(ErsiliaBase):
            Returns the header which is a list of column names, or None if the header could not be determined.
         """
         file = None
-        for pf in PREDEFINED_EXAMPLE_FILES:
+        for pf in PREDEFINED_EXAMPLE_OUTPUT_FILES:
             if os.path.exists(os.path.join(self.path, pf)):
                 file = os.path.join(self.path, pf)
                 self.logger.debug(
-                    f"Determining header from predefined example file: {pf}"
+                    f"Determining header from predefined example output file: {pf}"
                 )
                 break
         if not file and os.path.exists(self.standard_output_csv):
