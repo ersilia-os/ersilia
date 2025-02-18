@@ -9,6 +9,7 @@ from .. import ErsiliaBase
 from ..db.hubdata.interfaces import JsonModelsInterface
 from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
 from ..serve.schema import ApiSchema
+from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..utils.logging import make_temp_dir
 from ..utils.paths import resolve_pack_method
@@ -51,6 +52,13 @@ class DataFrame(object):
         """
         self.data = data
         self.columns = columns
+
+    def _is_unprocessable_input(self) -> bool:
+        """Check if the data contains a single row with UNPROCESSABLE_INPUT."""
+        if len(self.data) != 1:
+            return False
+        row = self.data[0]
+        return row[0] == "UNPROCESSABLE_INPUT" and row[1] == "UNPROCESSABLE_INPUT"
 
     @staticmethod
     def _is_h5(file_name: str) -> bool:
@@ -160,6 +168,8 @@ class DataFrame(object):
         delimiter : str, optional
             The delimiter to use in the text file (default is None).
         """
+        if self._is_unprocessable_input():
+            raise UnprocessableInputError()
         if self._is_h5(file_name):
             self.write_hdf5(file_name)
         else:

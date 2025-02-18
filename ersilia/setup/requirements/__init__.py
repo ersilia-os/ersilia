@@ -1,4 +1,4 @@
-from .bentoml import BentoMLRequirement
+from .bentoml_requirement import BentoMLRequirement
 
 
 def check_bentoml():

@@ -1,11 +1,12 @@
 import os
-import subprocess
 from pathlib import Path
 
 from .. import logger
 from ..default import EOS
+from ..tools.bentoml.exceptions import BentoMLException
 from ..utils.config import Config, Credentials
 from ..utils.paths import resolve_pack_method
+from ..utils.terminal import run_command
 
 home = str(Path.home())
 
@@ -70,6 +71,7 @@ class ErsiliaBase(object):
         tag = self._get_latest_bentoml_tag(model_id)
         path = os.path.join(self._bentoml_dir, model_id)
         if not os.path.exists(path):
+            self.logger.debug(f"BentoML path not found: {path}")
             return None
         if tag is not None:
             return os.path.join(path, tag)
@@ -80,6 +82,7 @@ class ErsiliaBase(object):
         tag = self._get_latest_bundle_tag(model_id)
         path = os.path.join(self._bundles_dir, model_id)
         if not os.path.exists(path):
+            self.logger.debug(f"Bundle path not found: {path}")
             return None
         if tag is not None:
             return os.path.join(path, tag)
@@ -90,16 +93,21 @@ class ErsiliaBase(object):
         bundle_path = self._get_bundle_location(model_id)
         if resolve_pack_method(bundle_path) != "bentoml":
             return None
-        cmd = ["bentoml", "get", "%s:latest" % model_id, "--print-location", "--quiet"]
-        result = subprocess.run(cmd, stdout=subprocess.PIPE)
-        result = result.stdout.decode("utf-8").rstrip()
-        return result
+
+        cmd = ["bentoml", "get", f"{model_id}:latest", "--print-location", "--quiet"]
+        stdout, stderr, returncode = run_command(cmd, quiet=True)
+
+        if returncode != 0:
+            self.logger.error(f"BentoML command failed: {stderr}")
+            raise BentoMLException(f"BentoML error: {stderr}")
+        return stdout.strip()
 
     def _is_ready(self, model_id):
         """Check whether a model exists in the local computer"""
         try:
             self._get_latest_bundle_tag(model_id)
-        except:
+        except Exception as e:
+            self.logger.debug(f"Model {model_id} not ready: {str(e)}")
             return False
         path = os.path.join(self._abs_path(self._dest_dir), model_id)
         if not os.path.exists(path):
@@ -108,5 +116,6 @@ class ErsiliaBase(object):
 
     def _has_credentials(self):
         if self.cred is None:
+            self.logger.warning("No credentials found.")
             return False
         return True
