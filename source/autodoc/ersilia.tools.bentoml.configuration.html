@@ -323,11 +323,123 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="ersilia-tools-bentoml-configuration-configparser-module">
-<h2>ersilia.tools.bentoml.configuration.configparser module<a class="headerlink" href="#ersilia-tools-bentoml-configuration-configparser-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.tools.bentoml.configuration.configparser">
+<span id="ersilia-tools-bentoml-configuration-configparser-module"></span><h2>ersilia.tools.bentoml.configuration.configparser module<a class="headerlink" href="#module-ersilia.tools.bentoml.configuration.configparser" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.configparser.</span></span><span class="sig-name descname"><span class="pre">BentoMLConfigParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration/configparser.html#BentoMLConfigParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigParser</span></code></p>
+<p>BentoML configuration parser.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>default_config</strong> (<em>str</em>) – Serve as default value when conf key not presented in environment var or user local config file.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">display_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration/configparser.html#BentoMLConfigParser.as_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser.as_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the configuration to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>display_source</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, include the source of the configuration value (default is False).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The configuration as a dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration/configparser.html#BentoMLConfigParser.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser.get" title="Link to this definition">¶</a></dt>
+<dd><p>A simple hierarchical config access, priority order:
+1. environment var
+2. user config file
+3. bentoml default config file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section</strong> (<em>str</em>) – The section of the configuration.</p></li>
+<li><p><strong>key</strong> (<em>str</em><em>, </em><em>optional</em>) – The key within the section of the configuration. If not provided, the section is used as the key.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value of the configuration.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="ersilia.tools.bentoml.html#ersilia.tools.bentoml.exceptions.BentoMLConfigException" title="ersilia.tools.bentoml.exceptions.BentoMLConfigException"><strong>BentoMLConfigException</strong></a> – If the section/key is not found in the configuration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.tools.bentoml.configuration">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.tools.bentoml.configuration" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.config">
+<span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.</span></span><span class="sig-name descname"><span class="pre">config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration.html#config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.config" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.expand_env_var">
+<span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.</span></span><span class="sig-name descname"><span class="pre">expand_env_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_var</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration.html#expand_env_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.expand_env_var" title="Link to this definition">¶</a></dt>
+<dd><p>Expands potentially nested env var by repeatedly applying <cite>expandvars</cite> and
+<cite>expanduser</cite> until interpolation stops having any effect.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.get_bentoml_deploy_version">
+<span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.</span></span><span class="sig-name descname"><span class="pre">get_bentoml_deploy_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration.html#get_bentoml_deploy_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.get_bentoml_deploy_version" title="Link to this definition">¶</a></dt>
+<dd><p>BentoML version to use for generated docker image or serverless function bundle to
+be deployed, this can be changed to an url to your fork of BentoML on github, or an
+url to your custom BentoML build, for example:</p>
+<p>bentoml_deploy_version = git+https://github.com/{username}/bentoml.git&#64;{branch}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.get_debug_mode">
+<span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.</span></span><span class="sig-name descname"><span class="pre">get_debug_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration.html#get_debug_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.get_debug_mode" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.get_local_config_file">
+<span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.</span></span><span class="sig-name descname"><span class="pre">get_local_config_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration.html#get_local_config_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.get_local_config_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.load_config">
+<span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.</span></span><span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration.html#load_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.load_config" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.parameterized_config">
+<span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.</span></span><span class="sig-name descname"><span class="pre">parameterized_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration.html#parameterized_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.parameterized_config" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a configuration from the provided template + variables defined in
+current scope</p>
+<p>:param : param template: a config content templated with {{variables}}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>config content after templated with locals() and globals()</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.configuration.set_debug_mode">
+<span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.configuration.</span></span><span class="sig-name descname"><span class="pre">set_debug_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug_mode_on</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/configuration.html#set_debug_mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.configuration.set_debug_mode" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 </section>
 
@@ -388,8 +500,25 @@
             <ul>
 <li><a class="reference internal" href="#">ersilia.tools.bentoml.configuration package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#ersilia-tools-bentoml-configuration-configparser-module">ersilia.tools.bentoml.configuration.configparser module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-ersilia.tools.bentoml.configuration.configparser">ersilia.tools.bentoml.configuration.configparser module</a><ul>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser"><code class="docutils literal notranslate"><span class="pre">BentoMLConfigParser</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser.as_dict"><code class="docutils literal notranslate"><span class="pre">BentoMLConfigParser.as_dict()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.configparser.BentoMLConfigParser.get"><code class="docutils literal notranslate"><span class="pre">BentoMLConfigParser.get()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.tools.bentoml.configuration">Module contents</a><ul>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.config"><code class="docutils literal notranslate"><span class="pre">config()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.expand_env_var"><code class="docutils literal notranslate"><span class="pre">expand_env_var()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.get_bentoml_deploy_version"><code class="docutils literal notranslate"><span class="pre">get_bentoml_deploy_version()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.get_debug_mode"><code class="docutils literal notranslate"><span class="pre">get_debug_mode()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.get_local_config_file"><code class="docutils literal notranslate"><span class="pre">get_local_config_file()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.parameterized_config"><code class="docutils literal notranslate"><span class="pre">parameterized_config()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.configuration.set_debug_mode"><code class="docutils literal notranslate"><span class="pre">set_debug_mode()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

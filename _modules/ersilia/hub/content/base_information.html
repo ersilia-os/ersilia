@@ -340,7 +340,6 @@
     <span class="n">InputBaseInformationError</span><span class="p">,</span>
     <span class="n">InputShapeBaseInformationError</span><span class="p">,</span>
     <span class="n">LicenseBaseInformationError</span><span class="p">,</span>
-    <span class="n">ModeBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputConsistencyBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputDimensionBaseInformationError</span><span class="p">,</span>
@@ -399,8 +398,6 @@
 <span class="sd">            Placeholder for the model’s title.</span>
 <span class="sd">        _description : None</span>
 <span class="sd">            Placeholder for a description of the model.</span>
-<span class="sd">        _mode : None</span>
-<span class="sd">            Placeholder for the training mode, one of &#39;retrained&#39;, &#39;pretrained&#39;, &#39;in-house&#39;, or &#39;online&#39;.</span>
 <span class="sd">        _task : None</span>
 <span class="sd">            Placeholder for the primary task associated with the model, such as &#39;classification&#39;, or &#39;regression&#39;.</span>
 <span class="sd">        _subtask : None</span>
@@ -467,7 +464,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subtask</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="kc">None</span>
@@ -675,37 +671,6 @@
         <span class="k">if</span> <span class="n">new_description</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DescriptionBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_description</span> <span class="o">=</span> <span class="n">new_description</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the model mode.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The model mode.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span>
-
-    <span class="nd">@mode</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_mode</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the model mode.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        new_mode : str</span>
-<span class="sd">            The new model mode.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ModeBaseInformationError</span>
-<span class="sd">            If the mode is not valid.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Mode&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">ModeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">new_mode</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1299,7 +1264,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_publication_year</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PublicationYearBaseInformationError</span>
-        <span class="k">if</span> <span class="n">new_publication_year</span> <span class="o">&lt;</span> <span class="mi">1900</span> <span class="ow">or</span> <span class="n">new_publication_year</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">new_publication_year</span> <span class="o">&lt;</span> <span class="mi">1900</span>
+            <span class="ow">or</span> <span class="n">new_publication_year</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">year</span>
+        <span class="p">):</span>
             <span class="k">raise</span> <span class="n">PublicationBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_publication_year</span> <span class="o">=</span> <span class="n">new_publication_year</span>
 
@@ -1581,7 +1549,9 @@
 <span class="sd">        EnvironmentSizeMbBaseInformationError</span>
 <span class="sd">            If the environment size value is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_environment_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_environment_size</span><span class="p">:</span>
+            <span class="n">new_environment_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_environment_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">EnvironmentSizeMbBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size_mb</span> <span class="o">=</span> <span class="n">new_environment_size</span>
 
@@ -1610,7 +1580,9 @@
 <span class="sd">        ImageSizeMbBaseInformationError</span>
 <span class="sd">            If `new_image_size_mb` is not an integer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_image_size_mb</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_image_size_mb</span><span class="p">:</span>
+            <span class="n">new_image_size_mb</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_image_size_mb</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ImageSizeMbBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_size_mb</span> <span class="o">=</span> <span class="n">new_image_size_mb</span>
 
@@ -1639,7 +1611,9 @@
 <span class="sd">        ComputationalPerformanceOneBaseInformationError</span>
 <span class="sd">            If `new_value` is not an int or float.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_value</span><span class="p">:</span>
+            <span class="n">new_value</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceOneBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="n">new_value</span>
 
@@ -1668,7 +1642,9 @@
 <span class="sd">        ComputationalPerformanceTenBaseInformationError</span>
 <span class="sd">            If `new_value` is not an int or float.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_value</span><span class="p">:</span>
+            <span class="n">new_value</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceTenBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="n">new_value</span>
 
@@ -1697,7 +1673,9 @@
 <span class="sd">        ComputationalPerformanceHundredBaseInformationError</span>
 <span class="sd">            If `new_value` is not an int or float.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_value</span><span class="p">:</span>
+            <span class="n">new_value</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceHundredBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="n">new_value</span>
 
@@ -1718,7 +1696,6 @@
             <span class="s2">&quot;Status&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
             <span class="s2">&quot;Title&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
             <span class="s2">&quot;Description&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
-            <span class="s2">&quot;Mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
             <span class="s2">&quot;Source&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
             <span class="s2">&quot;Source Type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="p">,</span>
             <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span>
@@ -1772,7 +1749,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;Mode&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;Source&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;Input&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>

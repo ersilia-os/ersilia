@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>ersilia.setup.requirements.bentoml - Ersilia documentation</title>
+        <title>ersilia.setup.requirements.setuptools_req - Ersilia documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -311,98 +311,22 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for ersilia.setup.requirements.bentoml</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+          <h1>Source code for ersilia.setup.requirements.setuptools_req</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOS</span>
 
-
-<div class="viewcode-block" id="BentoMLRequirement">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">BentoMLRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class to handle the installation and version checking of BentoML for Ersilia.</span>
-
-<span class="sd">    Methods</span>
-<span class="sd">    -------</span>
-<span class="sd">    is_installed()</span>
-<span class="sd">        Checks if BentoML is installed.</span>
-<span class="sd">    is_bentoml_ersilia_version()</span>
-<span class="sd">        Checks if the installed BentoML version is the Ersilia version.</span>
-<span class="sd">    install()</span>
-<span class="sd">        Installs the Ersilia version of BentoML.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span>
-
-<div class="viewcode-block" id="BentoMLRequirement.is_installed">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement.is_installed">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks if BentoML is installed.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        bool</span>
-<span class="sd">            True if BentoML is installed, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">bentoml</span>  <span class="c1"># noqa: F401</span>
-
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div>
-
-
-<div class="viewcode-block" id="BentoMLRequirement.is_bentoml_ersilia_version">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement.is_bentoml_ersilia_version">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_bentoml_ersilia_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Checks if the installed BentoML version is the Ersilia version.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        bool</span>
-<span class="sd">            True if the installed BentoML version is the Ersilia version, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="n">version_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;bentomlversion.txt&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">version_file</span><span class="p">):</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;bentoml --version &gt; </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version_file</span><span class="p">)</span>
-            <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">version_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s2">&quot;0.11.0&quot;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span></div>
-
-
-<div class="viewcode-block" id="BentoMLRequirement.install">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.bentoml.BentoMLRequirement.install">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Installs the Ersilia version of BentoML.</span>
-
-<span class="sd">        This method installs the BentoML package from the Ersilia GitHub repository.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Installing bentoml (the ersilia version)&quot;</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> -m pip install -U git+https://github.com/ersilia-os/bentoml-ersilia.git&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
-        <span class="p">)</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
-</div>
+<div class="viewcode-block" id="verify_setuptools">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.setuptools_req.verify_setuptools">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">verify_setuptools</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;setuptools&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="si">}</span><span class="s2"> -m pip install setuptools&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to install setuptools.&quot;</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

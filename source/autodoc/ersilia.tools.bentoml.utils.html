@@ -323,11 +323,62 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="ersilia-tools-bentoml-utils-dataclasses-module">
-<h2>ersilia.tools.bentoml.utils.dataclasses module<a class="headerlink" href="#ersilia-tools-bentoml-utils-dataclasses-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.tools.bentoml.utils.dataclasses">
+<span id="ersilia-tools-bentoml-utils-dataclasses-module"></span><h2>ersilia.tools.bentoml.utils.dataclasses module<a class="headerlink" href="#module-ersilia.tools.bentoml.utils.dataclasses" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.utils.dataclasses.DataclassJsonEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.utils.dataclasses.</span></span><span class="sig-name descname"><span class="pre">DataclassJsonEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_ascii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/utils/dataclasses.html#DataclassJsonEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.utils.dataclasses.DataclassJsonEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">JSONEncoder</span></code></p>
+<p>Special JSON encoder for dataclass types.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.utils.dataclasses.DataclassJsonEncoder.default">
+<span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">o</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/utils/dataclasses.html#DataclassJsonEncoder.default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.utils.dataclasses.DataclassJsonEncoder.default" title="Link to this definition">¶</a></dt>
+<dd><p>Override the default method to handle dataclass objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">o</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/utils/dataclasses.html#DataclassJsonEncoder.default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd><p>Override the default method to handle dataclass objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>o</strong> (<em>object</em>) – The object to encode.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The encoded object as a dictionary.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.utils.dataclasses.json_serializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.tools.bentoml.utils.dataclasses.</span></span><span class="sig-name descname"><span class="pre">json_serializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/utils/dataclasses.html#json_serializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.utils.dataclasses.json_serializer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A decorator for serializing dataclass objects to JSON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fields</strong> (<em>list</em><em>, </em><em>optional</em>) – The fields to include in the JSON output (default is None, which includes all fields).</p></li>
+<li><p><strong>compat</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, only include fields that have non-default values (default is False).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.tools.bentoml.utils.dataclasses.json_serializer.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">klass</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/tools/bentoml/utils/dataclasses.html#json_serializer.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.tools.bentoml.utils.dataclasses.json_serializer.__call__" title="Link to this definition">¶</a></dt>
+<dd><p>Apply the decorator to the dataclass.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.tools.bentoml.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.tools.bentoml.utils" title="Link to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -388,8 +439,19 @@
             <ul>
 <li><a class="reference internal" href="#">ersilia.tools.bentoml.utils package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#ersilia-tools-bentoml-utils-dataclasses-module">ersilia.tools.bentoml.utils.dataclasses module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-ersilia.tools.bentoml.utils.dataclasses">ersilia.tools.bentoml.utils.dataclasses module</a><ul>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.utils.dataclasses.DataclassJsonEncoder"><code class="docutils literal notranslate"><span class="pre">DataclassJsonEncoder</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.utils.dataclasses.DataclassJsonEncoder.default"><code class="docutils literal notranslate"><span class="pre">DataclassJsonEncoder.default()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">DataclassJsonEncoder.default()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.utils.dataclasses.json_serializer"><code class="docutils literal notranslate"><span class="pre">json_serializer</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.tools.bentoml.utils.dataclasses.json_serializer.__call__"><code class="docutils literal notranslate"><span class="pre">json_serializer.__call__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.tools.bentoml.utils">Module contents</a></li>
 </ul>
 </li>
 </ul>

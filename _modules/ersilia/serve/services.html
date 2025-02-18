@@ -335,8 +335,12 @@
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
     <span class="n">PACKMODE_FILE</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..setup.requirements.bentoml_requirement</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLRequirement</span>
+
+<span class="c1"># from ..setup.requirements.bentoml import BentoMLRequirement</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..setup.requirements.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">CondaRequirement</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..setup.requirements.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerRequirement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..tools.bentoml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleConda</span><span class="p">,</span> <span class="n">StandaloneConda</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">model_image_version_reader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.serve_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -403,19 +407,44 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Getting info from BentoML and storing in </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Info </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">info</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">info</span>
+        <span class="c1"># Check command success first</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BentoMLException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BentoML info failed: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Handle JSON parsing errors here</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid BentoML output: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">BentoMLException</span><span class="p">(</span><span class="s2">&quot;Corrupted BentoML installation detected&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis_from_bento</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting APIs from Bento&quot;</span><span class="p">)</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info_from_bento</span><span class="p">()</span>
-        <span class="n">apis_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;apis&quot;</span><span class="p">]:</span>
-            <span class="n">apis_list</span> <span class="o">+=</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="n">apis_list</span>
+        <span class="n">bento_requirement</span> <span class="o">=</span> <span class="n">BentoMLRequirement</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info_from_bento</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">BentoMLException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Handle both command failures and JSON errors here</span>
+            <span class="k">if</span> <span class="s2">&quot;Corrupted BentoML installation&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Attempting BentoML cleanup...&quot;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">bento_requirement</span><span class="o">.</span><span class="n">_cleanup_corrupted_bentoml</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Retrying API fetch after cleanup&quot;</span><span class="p">)</span>
+                    <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info_from_bento</span><span class="p">()</span>  <span class="c1"># Retry</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">cleanup_error</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">BentoMLException</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Cleanup failed: </span><span class="si">{</span><span class="n">cleanup_error</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">cleanup_error</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span>  <span class="c1"># Re-raise unrelated errors</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;apis&quot;</span><span class="p">]]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">BentoMLException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid API format: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis_from_fastapi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">bundle_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
