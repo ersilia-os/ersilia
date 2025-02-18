@@ -3,12 +3,15 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 
 try:
     from inputimeout import TimeoutOccurred, inputimeout
 except:
     inputimeout = None
     TimeoutOccurred = None
+
+from collections import namedtuple
 
 from ..default import OUTPUT_DATASTRUCTURE, VERBOSE_FILE
 from ..utils.logging import make_temp_dir
@@ -38,35 +41,44 @@ def is_quiet():
 
 def run_command(cmd, quiet=None):
     """
-    Run a shell command.
+    Run a shell command and return a named tuple with stdout, stderr, and return code.
 
     Parameters
     ----------
     cmd : str or list
         The command to run.
     quiet : bool, optional
-        Whether to run the command in quiet mode. Default is None.
+        Whether to run the command in quiet mode. Defaults to is_quiet().
     """
+
     if quiet is None:
         quiet = is_quiet()
-    if type(cmd) == str:
-        if quiet:
-            with open(os.devnull, "w") as fp:
-                subprocess.Popen(
-                    cmd, stdout=fp, stderr=fp, shell=True, env=os.environ
-                ).wait()
-        else:
-            subprocess.Popen(cmd, shell=True, env=os.environ).wait()
-    else:
-        if quiet:
-            subprocess.check_call(
-                cmd,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                env=os.environ,
-            )
-        else:
-            subprocess.check_call(cmd, env=os.environ)
+
+    # Run the command and capture outputs
+    result = subprocess.run(
+        cmd,
+        shell=isinstance(cmd, str),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        env=os.environ,
+    )
+
+    CommandResult = namedtuple("CommandResult", ["returncode", "stdout", "stderr"])
+    stdout_str = result.stdout.strip()
+    stderr_str = result.stderr.strip()
+    output = CommandResult(
+        returncode=result.returncode, stdout=stdout_str, stderr=stderr_str
+    )
+
+    # Log outputs if not in quiet mode
+    if not quiet:
+        if stdout_str:
+            print(stdout_str)
+        if stderr_str:
+            print(stderr_str, file=sys.stderr)
+
+    return output
 
 
 def run_command_check_output(cmd):
