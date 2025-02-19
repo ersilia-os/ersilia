@@ -116,7 +116,7 @@ class AirtableMetadata(AirtableInterface):
 
 
 class ReadmeMetadata:
-    def __init__(self, model_id, config_json=None):
+    def __init__(self, model_id):
         self.model_id = model_id
 
     def read_information(self):
