@@ -328,7 +328,7 @@
     <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span><span class="p">,</span>
     <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span><span class="p">,</span>
     <span class="n">INFORMATION_FILE</span><span class="p">,</span>
-    <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">,</span>
+    <span class="n">PREDEFINED_EXAMPLE_OUTPUT_FILES</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..store.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceStoreApi</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputSource</span>
@@ -531,11 +531,11 @@
 <span class="sd">           Returns the header which is a list of column names, or None if the header could not be determined.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">file</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">for</span> <span class="n">pf</span> <span class="ow">in</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pf</span> <span class="ow">in</span> <span class="n">PREDEFINED_EXAMPLE_OUTPUT_FILES</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">pf</span><span class="p">)):</span>
                 <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">pf</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Determining header from predefined example file: </span><span class="si">{</span><span class="n">pf</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Determining header from predefined example output file: </span><span class="si">{</span><span class="n">pf</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="k">break</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_output_csv</span><span class="p">):</span>

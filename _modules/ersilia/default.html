@@ -358,13 +358,21 @@
 <span class="n">MODEL_CONFIG_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;config.json&quot;</span>
 <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;example_standard_input.csv&quot;</span>
 <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;example_standard_output.csv&quot;</span>
-<span class="n">PREDEFINED_EXAMPLE_FILES</span> <span class="o">=</span> <span class="p">[</span>
+
+<span class="n">PREDEFINED_EXAMPLE_INPUT_FILES</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;model/framework/examples/input.csv&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;model/framework/examples/output.csv&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model/framework/input.csv&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;model/framework/example.csv&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">PREDEFINED_EXAMPLE_OUTPUT_FILES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;model/framework/examples/output.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model/framework/output.csv&quot;</span><span class="p">,</span>
     <span class="s2">&quot;example.csv&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+<span class="c1"># For backward compatibility:</span>
+<span class="n">PREDEFINED_EXAMPLE_FILES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">PREDEFINED_EXAMPLE_INPUT_FILES</span> <span class="o">+</span> <span class="n">PREDEFINED_EXAMPLE_OUTPUT_FILES</span>
+<span class="p">)</span>
 <span class="n">DEFAULT_ERSILIA_ERROR_EXIT_CODE</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">METADATA_JSON_FILE</span> <span class="o">=</span> <span class="s2">&quot;metadata.json&quot;</span>
 <span class="n">METADATA_YAML_FILE</span> <span class="o">=</span> <span class="s2">&quot;metadata.yml&quot;</span>
