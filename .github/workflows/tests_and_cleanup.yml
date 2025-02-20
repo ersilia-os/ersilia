@@ -152,7 +152,7 @@ jobs:
             python -m pip install -e .[test]
       
         - id: set-matrix
-          run: echo "session=$(nox -f test/playground/noxfile.py --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
+          run: echo "session=$(nox -f test/playground/noxfile.py --json -l 2>&1 | tail -n 1 | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
 
   run-cli-test-parallel:
     name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
