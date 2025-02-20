@@ -1,6 +1,7 @@
 import os
 
 from ... import ErsiliaBase
+from ...default import PREDEFINED_EXAMPLE_INPUT_FILES, PREDEFINED_EXAMPLE_OUTPUT_FILES
 from ...utils.logging import make_temp_dir
 from ...utils.terminal import run_command
 
@@ -131,22 +132,40 @@ class EmptyOutputError(ErsiliaError):
         framework_dir = os.path.join(
             bundle_dir, self.model_id, "artifacts", "framework"
         )
+
         bash_executables = ["run.sh", "run_predict.sh", "run_calculate.sh"]
-        for exec_file in os.listdir(framework_dir):
-            if exec_file in bash_executables:
+        exec_file = None
+        for file_name in os.listdir(framework_dir):
+            if file_name in bash_executables:
+                exec_file = os.path.join(framework_dir, file_name)
                 break
-        exec_file = os.path.join(framework_dir, exec_file)
-        input_file = os.path.join(framework_dir, "example_input.csv")
-        output_file = os.path.join(framework_dir, "example_output.csv")
+        if not exec_file:
+            raise Exception("No bash executable found in framework directory")
+
+        input_file = None
+        for file in PREDEFINED_EXAMPLE_INPUT_FILES:
+            file_path = os.path.join(framework_dir, file)
+            if os.path.exists(file_path):
+                input_file = file_path
+                break
+
+        output_file = None
+        for file in PREDEFINED_EXAMPLE_OUTPUT_FILES:
+            file_path = os.path.join(framework_dir, file)
+            if os.path.exists(file_path):
+                output_file = file_path
+                break
+
         tmp_folder = make_temp_dir(prefix="ersilia-")
         log_file = os.path.join(tmp_folder, "terminal.log")
-        run_command(
-            "ersilia example inputs {0} -n 3 -f {1}".format(self.model_id, input_file)
-        )
+
+        run_command("ersilia example {0} -n 3 -f {1}".format(self.model_id, input_file))
+
         cmd = "bash {0} {1} {2} {3} 2>&1 | tee -a {4}".format(
             exec_file, framework_dir, input_file, output_file, log_file
         )
         run_command(cmd)
+
         with open(log_file, "r") as f:
             log = f.read()
         return log
