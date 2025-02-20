@@ -1042,7 +1042,7 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if new_publication_year < 1900 or new_publication_year > datetime.date.today().year:
+        if new_publication_year < 1900 or new_publication_year > datetime.today("Y"):
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1605,8 +1605,8 @@ class BaseInformation(ErsiliaBase):
             "Title": self.title,
             "Description": self.description,
             "Mode": self.mode,
-            # "Source": self.source,
-            # "Source Type": self.source_type,
+            "Source": self.source,
+            "Source Type": self.source_type,
             "Input": self.input,
             "Input Shape": self.input_shape,
             # "Input Dimension": self.input_dimension,
@@ -1660,9 +1660,8 @@ class BaseInformation(ErsiliaBase):
         self._assign("status", "Status", data)
         self._assign("title", "Title", data)
         self._assign("description", "Description", data)
-        self._assign("mode", "Mode", data)
-        # self._assign("source", "Source", data)
-        # self._assign("source_type", "Source Type", data)
+        self._assign("source", "Source", data)
+        self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
         self._assign("input_shape", "Input Shape", data)
         # self._assign("input_dimension", "Input Dimension", data)
