@@ -1,4 +1,3 @@
-import argparse
 import json
 import nox
 import os
@@ -6,7 +5,6 @@ import shutil
 import yaml
 from pathlib import Path
 from ersilia.default import EOS_PLAYGROUND
-from ersilia.utils.logging import logger
 
 if not os.path.exists(EOS_PLAYGROUND):
     os.makedirs(EOS_PLAYGROUND)

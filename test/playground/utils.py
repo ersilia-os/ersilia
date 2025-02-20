@@ -3,7 +3,6 @@ import os
 import platform
 import psutil
 import pytest
-import random
 import requests
 import subprocess
 import click
@@ -11,6 +10,10 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 from ersilia.default import EOS_PLAYGROUND
+from ersilia.setup.requirements.compound import (
+    ChemblWebResourceClientRequirement,
+    RdkitRequirement,
+)
 from ersilia.cli.commands.example import example_cmd
 from ersilia.cli.commands.catalog import catalog_cmd
 from ersilia.cli.commands.fetch import fetch_cmd
@@ -21,6 +24,17 @@ from ersilia.cli.commands.test import test_cmd
 from ersilia.cli.commands.delete import delete_cmd
 from ersilia.cli import echo
 from .rules import get_rule
+
+try:
+    from rdkit import Chem
+except ImportError:
+    ChemblWebResourceClientRequirement()
+    RdkitRequirement()
+    try:
+        from rdkit import Chem
+    except ImportError as e:
+        raise ImportError("Failed to import 'rdkit' even after attempting to install dependencies.") from e
+
 
 file_path = Path(EOS_PLAYGROUND) / "files"
 
@@ -67,7 +81,6 @@ def build_run_cmd(config):
 
 def get_inputs(config, input_type):
     input_list, input_path = get_random_samples(config=config)
-    input_list = [inp[1] for inp in input_list]
     if input_type == "str":
         return input_list[0]
     if input_type == "list":
@@ -101,13 +114,20 @@ def get_random_samples(config, filename="inp-000.csv"):
         lines = f.readlines()
 
     data = [line.strip().split(",") for line in lines[1:]]
-    sampled_rows = data[:num_samples]
+    smiles_list = [row[1] for row in data if len(row) > 1]
+    smiles_list = smiles_list[500:]
+    
+    def is_valid_smile(smile):
+        return Chem.MolFromSmiles(smile) is not None
+
+    valid_smiles = [smile for smile in smiles_list if is_valid_smile(smile)]
+    sampled = valid_smiles[:num_samples]
 
     with open(input_file, "w", encoding="utf-8") as f:
-        f.write(lines[0])
-        f.writelines(",".join(row) + "\n" for row in sampled_rows)
+        f.write("input\n")
+        f.writelines(row + "\n" for row in sampled)
 
-    return sampled_rows, input_file
+    return sampled, input_file
 
 
 def _set_n_sample_if_none(flags, flag_key):
