@@ -22,7 +22,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Ersilia
         run: |
-          python -m pip install git+https://github.com/ersilia-os/bentoml-ersilia.git
           python -m pip install -e .
       - name: Test help command
         run: |
@@ -153,7 +152,7 @@ jobs:
             python -m pip install -e .[test]
       
         - id: set-matrix
-          run: echo "session=$(nox -f test/playground/noxfile.py --json -l | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
+          run: echo "session=$(nox -f test/playground/noxfile.py --json -l 2>&1 | tail -n 1 | jq -c '[.[].session]')" | tee --append $GITHUB_OUTPUT
 
   run-cli-test-parallel:
     name: Session ${{ matrix.session }} on ${{ matrix.os }} - Fetch ${{ matrix.fetch_source }}
@@ -211,7 +210,7 @@ jobs:
 
       - name: Run CLI Test Multiple
         run: |          
-          nox -f test/playground/noxfile.py -s execute -p 3.12 -- --cli serve --fetch from_dockerhub --runner multiple
+          nox -f test/playground/noxfile.py -s execute -p 3.10 -- --cli serve --fetch from_dockerhub --runner multiple --silent false
 
   test-colab-notebook:
     defaults:
