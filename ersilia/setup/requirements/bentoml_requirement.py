@@ -24,9 +24,9 @@ class BentoMLRequirement(object):
         Checks if BentoML is installed.
         """
         try:
-            import bentoml  # noqa: F401
-
-            return True
+            res = run_command("bentoml --version")
+            if "bentoml" in res:
+                return True
         except ImportError:
             self.logger.debug("BentoML is not installed")
             return False
@@ -60,7 +60,7 @@ class BentoMLRequirement(object):
             self.logger.info("Cleaning up corrupted BentoML installation...")
 
             if self.is_installed():
-                cmd = f"{sys.executable} -m pip uninstall bentoml -y"
+                cmd = "python -m pip uninstall bentoml -y"
                 run_command(cmd)
             self.install(retries=1)
 
