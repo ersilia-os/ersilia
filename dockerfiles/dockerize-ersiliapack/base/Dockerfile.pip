@@ -4,6 +4,6 @@ COPY . /ersilia-pack
 RUN apt-get clean && apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* && cd /ersilia-pack && pip install -e . && \
     mv /ersilia-pack/docker-entrypoint.sh /root/docker-entrypoint.sh && \
-    chmod + /root/docker-entrypoint.sh 
+    chmod +x /root/docker-entrypoint.sh 
 EXPOSE 80
 ENTRYPOINT [ "sh", "/root/docker-entrypoint.sh"]
