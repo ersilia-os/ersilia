@@ -1,5 +1,4 @@
 import os
-import sys
 from threading import Lock
 from typing import Optional
 
@@ -24,6 +23,7 @@ class BentoMLRequirement(object):
         Checks if BentoML is installed.
         """
         res = run_command("bentoml --version")
+        self.logger.debug(f"Checking if BentoML is installed: {res}")
         if "bentoml" in res:
             return True
         else:
@@ -76,9 +76,7 @@ class BentoMLRequirement(object):
 
             try:
                 if self.is_installed() and not self.is_bentoml_ersilia_version():
-                    self.logger.info("Uninstalling incompatible BentoML...")
-
-                    cmd = f"{sys.executable} -m pip uninstall bentoml -y"
+                    cmd = "python -m pip uninstall bentoml -y"
                     run_command(cmd)
                 cmd = "python -m pip install -U git+https://github.com/ersilia-os/bentoml-ersilia.git"
                 run_command(cmd)
