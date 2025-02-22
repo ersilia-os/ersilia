@@ -1401,35 +1401,35 @@ class BaseInformation(ErsiliaBase):
             "Title": self.title,
             "Description": self.description,
             "Mode": self.mode,
-            "Source": self.source,
-            "Source Type": self.source_type,
+            # "Source": self.source,
+            # "Source Type": self.source_type,
             "Input": self.input,
             "Input Shape": self.input_shape,
             "Task": self.task,
-            "Subtask": self.subtask,
-            "Biomedical Area": self.biomedical_area,
-            "Target organism": self.target_organism,
+            # "Subtask": self.subtask,
+            # "Biomedical Area": self.biomedical_area,
+            # "Target organism": self.target_organism,
             "Output": self.output,
             "Output Type": self.output_type,
             "Output Shape": self.output_shape,
-            "Output Dimension": self.output_dimension,
-            "Output Consistency": self.output_consistency,
+            # "Output Dimension": self.output_dimension,
+            # "Output Consistency": self.output_consistency,
             "Interpretation": self.interpretation,
             "Tag": self.tag,
             "Publication": self.publication,
-            "Publication Type": self.publication_type,
-            "Publication Year": self.publication_year,
+            # "Publication Type": self.publication_type,
+            # "Publication Year": self.publication_year,
             "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
-            "Environment Size": self.environment_size,
-            "Image Size": self.image_size_mb,
-            "Computational Performance 1": self.computational_performance_one,
-            "Computational Performance 10": self.computational_performance_ten,
-            "Computational Performance 100": self.computational_performance_hund,
+            # "Environment Size": self.environment_size,
+            # "Image Size": self.image_size_mb,
+            # "Computational Performance 1": self.computational_performance_one,
+            # "Computational Performance 10": self.computational_performance_ten,
+            # "Computational Performance 100": self.computational_performance_hund,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1452,38 +1452,38 @@ class BaseInformation(ErsiliaBase):
         self._assign("title", "Title", data)
         self._assign("description", "Description", data)
         self._assign("mode", "Mode", data)
-        self._assign("source", "Source", data)
-        self._assign("source_type", "Source Type", data)
+        # self._assign("source", "Source", data)
+        # self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
         self._assign("input_shape", "Input Shape", data)
         self._assign("task", "Task", data)
-        self._assign("subtask", "Subtask", data)
-        self._assign("biomedical_area", "Biomedical Area", data)
-        self._assign("target_organism", "Target Organism", data)
+        # self._assign("subtask", "Subtask", data)
+        # self._assign("biomedical_area", "Biomedical Area", data)
+        # self._assign("target_organism", "Target Organism", data)
         self._assign("output", "Output", data)
         self._assign("output_type", "Output Type", data)
         self._assign("output_shape", "Output Shape", data)
-        self._assign("output_dimension", "Output Dimension", data)
-        self._assign("output_consistency", "Output Consistency", data)
+        # self._assign("output_dimension", "Output Dimension", data)
+        # self._assign("output_consistency", "Output Consistency", data)
         self._assign("interpretation", "Interpretation", data)
         self._assign("tag", "Tag", data)
         self._assign("publication", "Publication", data)
-        self._assign("publication_type", "Publication Type", data)
-        self._assign("publication_year", "Publication Year", data)
+        # self._assign("publication_type", "Publication Type", data)
+        # self._assign("publication_year", "Publication Year", data)
         self._assign("source_code", "Source Code", data)
         self._assign("license", "License", data)
         self._assign("contributor", "Contributor", data)
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
-        self._assign("environment_size", "Environment Size", data)
-        self._assign("image_size_mb", "Image Size", data)
-        self._assign(
-            "computational_performance_one", "Computational Performance 1", data
-        )
-        self._assign(
-            "computational_performance_ten", "Computational Performance 10", data
-        )
-        self._assign(
-            "computational_performance_hund", "Computational Performance 100", data
-        )
+        # self._assign("environment_size", "Environment Size", data)
+        # self._assign("image_size_mb", "Image Size", data)
+        # self._assign(
+        #     "computational_performance_one", "Computational Performance 1", data
+        # )
+        # self._assign(
+        #     "computational_performance_ten", "Computational Performance 10", data
+        # )
+        # self._assign(
+        #     "computational_performance_hund", "Computational Performance 100", data
+        # )
