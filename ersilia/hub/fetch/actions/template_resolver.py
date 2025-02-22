@@ -1,5 +1,6 @@
 import http.client
 import os
+import shutil
 import urllib.parse
 import tempfile
 
@@ -85,7 +86,7 @@ class TemplateResolver(BaseAction):
     def _place_dockerfile_in_tmp(self) -> str:
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         if self.repo_path is not None:
-            os.copy(os.path.join(self.repo_path, "Dockerfile"), os.path.join(tmp_folder, "Dockerfile"))
+            shutil.copy(os.path.join(self.repo_path, "Dockerfile"), os.path.join(tmp_folder, "Dockerfile"))
         else:
             url = "https://raw.githubusercontent.com/{0}/{1}/main/Dockerfile".format(
                 GITHUB_ORG, self.model_id
