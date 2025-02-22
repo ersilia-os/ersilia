@@ -1162,12 +1162,16 @@
 <span class="sd">            The adapted result.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">api_name</span> <span class="o">!=</span> <span class="s2">&quot;run&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Api was not run&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model ID is None&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output is None&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">was_fast_api</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Was not FastAPI&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">):</span>
             <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;csv&quot;</span>
@@ -1221,9 +1225,12 @@
         <span class="n">adapted_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adapt_when_fastapi_was_used</span><span class="p">(</span>
             <span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Adapted result: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">adapted_result</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">adapted_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Adapting generic&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Adapting non-generic&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">adapted_result</span></div>
 </div>
 
