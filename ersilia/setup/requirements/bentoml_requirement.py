@@ -2,6 +2,7 @@ import os
 import sys
 from threading import Lock
 from typing import Optional
+import tempfile
 
 from ...default import EOS
 from ...tools.bentoml.exceptions import BentoMLException
@@ -32,7 +33,8 @@ class BentoMLRequirement(object):
             return False
 
     def _get_bentoml_version(self) -> Optional[str]:
-        version_file = os.path.join(EOS, "bentomlversion.txt")
+        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
+        version_file = os.path.join(tmp_dir, "bentomlversion.txt")
 
         if not os.path.exists(version_file):
             cmd = "bentoml --version > {0}".format(version_file)
@@ -49,6 +51,7 @@ class BentoMLRequirement(object):
         Checks if the installed BentoML version is the Ersilia version
         ."""
         version_str = self._get_bentoml_version()
+        print(version_str)
         if not version_str:
             return False
         if "0.11.0" in version_str:
