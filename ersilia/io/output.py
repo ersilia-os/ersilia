@@ -819,12 +819,16 @@ class GenericOutputAdapter(ResponseRefactor):
             The adapted result.
         """
         if api_name != "run":
+            self.logger.debug("Api was not run")
             return None
         if model_id is None:
+            self.logger.debug("Model ID is None")
             return None
         if output is None:
+            self.logger.debug("Output is None")
             return None
         if not self.was_fast_api:
+            self.logger.debug("Was not FastAPI")
             return None
         if self._has_extension(output, "csv"):
             extension = "csv"
@@ -876,9 +880,12 @@ class GenericOutputAdapter(ResponseRefactor):
         adapted_result = self._adapt_when_fastapi_was_used(
             result, output, model_id, api_name
         )
+        self.logger.debug("Adapted result: {0}".format(adapted_result))
         if adapted_result is None:
+            self.logger.debug("Adapting generic")
             return self._adapt_generic(result, output, model_id, api_name)
         else:
+            self.logger.debug("Adapting non-generic")
             return adapted_result
 
 
