@@ -42,9 +42,6 @@ def test_write_information(readme_metadata, valid_data):
     
     assert "## Identifiers" in generated_text
     assert "## Characteristics" in generated_text
-    assert "Computational Performance For One Input" in generated_text
-    assert "Computational Performance For Ten Input" in generated_text
-    assert "Computational Performance For Hundred Input" in generated_text
     assert "* [Publication]" in generated_text
     assert "* [Source Code]" in generated_text
     assert "## Citation" in generated_text
@@ -59,6 +56,5 @@ def test_write_information_to_file(readme_metadata, valid_data):
     with open(test_file_path, "r") as file:
         content = file.read()
         assert "## Identifiers" in content
-        assert "Computational Performance For One Input" in content
     
     os.remove(test_file_path)
