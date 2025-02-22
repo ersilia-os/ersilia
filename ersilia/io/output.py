@@ -836,6 +836,8 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = "json"
         else:
             extension = None
+        self.logger.debug(f"Extension: {extension}")
+        self.logger.debug(f"Result: {result}")
         df = self._to_dataframe(result, model_id)
         delimiters = {"csv": ",", "tsv": "\t", "h5": None}
         if extension in ["tsv", "h5", "csv"]:
@@ -870,6 +872,7 @@ class GenericOutputAdapter(ResponseRefactor):
         dict
             The adapted result.
         """
+        self.logger.debug(f"Adapting {result} to {output}")
         adapted_result = self._adapt_when_fastapi_was_used(
             result, output, model_id, api_name
         )
