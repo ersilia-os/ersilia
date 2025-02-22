@@ -1993,7 +1993,7 @@ class RunnerService:
         def _fetch(model_id, logger):
             loc = (
                 ["--from_dir", self.dir]
-                if self.from_github or self.from_s3
+                if self.from_github or self.from_s3 or self.from_dir
                 else ["--from_dockerhub"]
                 + (["--version", self.version] if self.version else [])
             )
@@ -2527,8 +2527,8 @@ class ModelTester(ErsiliaBase):
         self.from_dir = from_dir
         self.model_dir = os.path.join(EOS_TMP, self.model_id)
         self.dir = from_dir or self.model_dir
-        self.defaul_source = not any([from_dir, from_dockerhub, from_github, from_s3])
-        self.from_github = True if self.defaul_source else from_github
+        self.default_source = not any([from_dir, from_dockerhub, from_github, from_s3])
+        self.from_github = True if self.default_source else from_github
         self.from_dockerhub = from_dockerhub
         self.from_s3 = from_s3
         self.version = version
