@@ -4,7 +4,7 @@ description: >-
   tools!
 ---
 
-# Getting started
+# Ersilia's Ecosystem
 
 Ersilia develops and implements AI/ML tools for infectious disease research. This documentation will be useful if you are...
 
@@ -19,7 +19,7 @@ All of our work is openly available through our GitHub organisation page. Below 
 
 The Ersilia Model Hub is our main platform. It serves ready-to-use AI models related to the drug discovery cascade. Models can be browsed in our [website](https://ersilia.io/model-hub), and can run locally (see [Installation ](../ersilia-model-hub/installation.md)instructions) and we also offer a selection of them for online inference (please select those available Online through our [website](https://ersilia.io/model-hub)) as well as an [open service](https://github.com/ersilia-self-service) based on GitHub.
 
-Detailed information about the Hub, its components and how to use it and contribute to its backend as well as contribute models can be found in the Ersilia Model Hub GitBook [section](broken-reference).
+Detailed information about the Hub, its components and how to use it and contribute to its backend as well as contribute models can be found in the Ersilia Model Hub GitBook [section](broken-reference). Developers may look into the [API documentation](https://ersilia-os.github.io/ersilia) for an in-depth view of the code.
 
 The repositories linked to the Hub are:
 
