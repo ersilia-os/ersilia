@@ -288,6 +288,14 @@ class DockerfileFile(object):
         return result
 
     def get_python_version(self) -> str:
+        """
+        Get the python version.
+
+        Returns
+        -------
+        str
+            Python version in the format py**
+        """
         result = self.get_bentoml_version()
         return result["python"]
 
