@@ -183,25 +183,16 @@ class Api(ErsiliaBase):
         self.logger.debug("Batch size {0}".format(batch_size))
         unique_input, mapping = self._unique_input(input)
         results_ = {}
-        self.logger.debug("Posting unique input...")
         for res in self.post_unique_input(
             input=unique_input, output=None, batch_size=batch_size
         ):
             for i in mapping[res["input"]["key"]]:
-                self.logger.debug(i)
-                self.logger.debug(res)
                 results_[i] = res
         self.logger.debug("Done with unique posting")
         sorted_idxs = sorted(results_.keys())
-        self.logger.debug(sorted_idxs)
-        self.logger.debug(results_)
         results = [results_[i] for i in sorted_idxs]
-        self.logger.debug("Results after unique posting")
-        self.logger.debug(results)
         if output is not None:
-            print("Output is not None", output)
             results = json.dumps(results)
-            print(results)
             self.output_adapter.adapt(
                 results, output, model_id=self.model_id, api_name=self.api_name
             )

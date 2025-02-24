@@ -877,7 +877,6 @@ class GenericOutputAdapter(ResponseRefactor):
         dict
             The adapted result.
         """
-        self.logger.debug(f"Adapting {result} to {output}")
         adapted_result = self._adapt_when_fastapi_was_used(
             result, output, model_id, api_name
         )
