@@ -501,6 +501,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Batch size </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">batch_size</span><span class="p">))</span>
         <span class="n">unique_input</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unique_input</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="n">results_</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Posting unique input...&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_unique_input</span><span class="p">(</span>
             <span class="nb">input</span><span class="o">=</span><span class="n">unique_input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
         <span class="p">):</span>
@@ -581,6 +582,7 @@
             <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="p">[</span><span class="n">output</span><span class="p">]:</span>
                 <span class="k">yield</span> <span class="n">o</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Posting only calculations&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_adapter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
@@ -736,9 +738,11 @@
             <span class="ow">or</span> <span class="ow">not</span> <span class="n">schema</span><span class="o">.</span><span class="n">is_h5_serializable</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_name</span><span class="p">)</span>
             <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">lake</span><span class="o">.</span><span class="n">is_available</span>
         <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Not amenable to HDF5 serialization&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_only_calculations</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">res</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Amenable to HDF5 serialization&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_amenable_to_h5</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">res</span></div>
 

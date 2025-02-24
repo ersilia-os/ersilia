@@ -1137,6 +1137,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">):</span>
             <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dataframe</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
             <span class="n">df</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Returning result&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_adapt_when_fastapi_was_used</span><span class="p">(</span>
