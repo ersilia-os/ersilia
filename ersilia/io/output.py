@@ -794,6 +794,7 @@ class GenericOutputAdapter(ResponseRefactor):
         if self._has_extension(output, "h5"):
             df = self._to_dataframe(result, model_id)
             df.write(output)
+        self.logger.debug("Returning result")
         return result
 
     def _adapt_when_fastapi_was_used(

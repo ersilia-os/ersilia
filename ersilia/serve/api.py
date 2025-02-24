@@ -183,6 +183,7 @@ class Api(ErsiliaBase):
         self.logger.debug("Batch size {0}".format(batch_size))
         unique_input, mapping = self._unique_input(input)
         results_ = {}
+        self.logger.debug("Posting unique input...")
         for res in self.post_unique_input(
             input=unique_input, output=None, batch_size=batch_size
         ):
@@ -257,6 +258,7 @@ class Api(ErsiliaBase):
             for o in [output]:
                 yield o
         else:
+            self.logger.debug("Posting only calculations")
             for input in self.input_adapter.adapt(input, batch_size=batch_size):
                 result = json.loads(self._post(input, output))
                 for r in result:
@@ -403,9 +405,11 @@ class Api(ErsiliaBase):
             or not schema.is_h5_serializable(api_name=self.api_name)
             or not self.lake.is_available
         ):
+            self.logger.debug("Not amenable to HDF5 serialization")
             for res in self.post_only_calculations(input, output, batch_size):
                 yield res
         else:
+            self.logger.debug("Amenable to HDF5 serialization")
             for res in self.post_amenable_to_h5(input, output, batch_size):
                 yield res
 
