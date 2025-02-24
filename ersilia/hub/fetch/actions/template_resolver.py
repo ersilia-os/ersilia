@@ -1,10 +1,10 @@
 import http.client
 import os
 import shutil
-import urllib.parse
 import tempfile
+import urllib.parse
 
-from ....default import ALLOWED_API_NAMES, GITHUB_ORG, BENTOML_APPROVED_PYTHON_VERSIONS
+from ....default import ALLOWED_API_NAMES, BENTOML_APPROVED_PYTHON_VERSIONS, GITHUB_ORG
 from ...bundle.repo import DockerfileFile
 from . import BaseAction
 
@@ -86,7 +86,10 @@ class TemplateResolver(BaseAction):
     def _place_dockerfile_in_tmp(self) -> str:
         tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
         if self.repo_path is not None:
-            shutil.copy(os.path.join(self.repo_path, "Dockerfile"), os.path.join(tmp_folder, "Dockerfile"))
+            shutil.copy(
+                os.path.join(self.repo_path, "Dockerfile"),
+                os.path.join(tmp_folder, "Dockerfile"),
+            )
         else:
             url = "https://raw.githubusercontent.com/{0}/{1}/main/Dockerfile".format(
                 GITHUB_ORG, self.model_id
@@ -116,6 +119,9 @@ class TemplateResolver(BaseAction):
         if not self._check_file("src/service.py"):
             return False
         dockerfile_tmp_dir = self._place_dockerfile_in_tmp()
-        if DockerfileFile(path=dockerfile_tmp_dir).get_python_version() not in BENTOML_APPROVED_PYTHON_VERSIONS:
+        if (
+            DockerfileFile(path=dockerfile_tmp_dir).get_python_version()
+            not in BENTOML_APPROVED_PYTHON_VERSIONS
+        ):
             return False
         return True

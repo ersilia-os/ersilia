@@ -1,10 +1,9 @@
 import os
 import sys
+import tempfile
 from threading import Lock
 from typing import Optional
-import tempfile
 
-from ...default import EOS
 from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.logging import logger
 from ...utils.terminal import run_command
