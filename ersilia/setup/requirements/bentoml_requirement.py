@@ -1,9 +1,10 @@
+import importlib.util
 import os
 import sys
-import tempfile
 from threading import Lock
 from typing import Optional
 
+from ...default import EOS
 from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.logging import logger
 from ...utils.terminal import run_command
@@ -23,17 +24,15 @@ class BentoMLRequirement(object):
         """
         Checks if BentoML is installed.
         """
-        try:
-            import bentoml  # noqa: F401
-
+        module_name = "bentoml"
+        if importlib.util.find_spec(module_name) is not None:
             return True
-        except ImportError:
+        else:
             self.logger.debug("BentoML is not installed")
             return False
 
     def _get_bentoml_version(self) -> Optional[str]:
-        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
-        version_file = os.path.join(tmp_dir, "bentomlversion.txt")
+        version_file = os.path.join(EOS, "bentomlversion.txt")
 
         if not os.path.exists(version_file):
             cmd = "bentoml --version > {0}".format(version_file)
@@ -41,6 +40,11 @@ class BentoMLRequirement(object):
 
         with open(version_file, "r") as f:
             version_str = f.read().strip()
+
+        if not version_str.startswith("bentoml, version"):
+            raise Exception(
+                "BentoML version was not stored correctly. Please check the bentomlversion.txt file in the eos folder"
+            )
 
         version_str = version_str.split("version")[-1].strip()
         return version_str
@@ -50,7 +54,6 @@ class BentoMLRequirement(object):
         Checks if the installed BentoML version is the Ersilia version
         ."""
         version_str = self._get_bentoml_version()
-        print(version_str)
         if not version_str:
             return False
         if "0.11.0" in version_str:

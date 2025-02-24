@@ -342,7 +342,6 @@ class ModelSniffer(BaseAction):
             results = [
                 result for result in self.model.autoservice.api(api_name, self.inputs)
             ]
-            self.logger.debug("These are the results for API {0}".format(api_name))
             self.logger.debug(str(results)[:1000])
             for r in results:
                 if not r["output"]:
