@@ -326,23 +326,19 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
-<span class="k">try</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;bentoml&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">bentoml</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
-<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">ersilia.setup.requirements.bentoml_requirement</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLRequirement</span>
-
-    <span class="n">req</span> <span class="o">=</span> <span class="n">BentoMLRequirement</span><span class="p">()</span>
-    <span class="n">req</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">bentoml</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">bentoml</span><span class="w"> </span><span class="kn">import</span> <span class="n">_version</span> <span class="k">as</span> <span class="n">version_mod</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">bentoml.configuration.configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLConfigParser</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">bentoml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLConfigException</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">bentoml</span><span class="w"> </span><span class="kn">import</span> <span class="n">_version</span> <span class="k">as</span> <span class="n">version_mod</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">bentoml.configuration.configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLConfigParser</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">bentoml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLConfigException</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">__version__</span> <span class="o">=</span> <span class="s2">&quot;0.0.0&quot;</span>
 
 <span class="c1"># Note this file is loaded prior to logging being configured, thus logger is only</span>
 <span class="c1"># used within functions in this file</span>

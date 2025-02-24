@@ -319,6 +319,8 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.check_bentoml">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_bentoml</span><span class="p">():</span>
     <span class="n">req</span> <span class="o">=</span> <span class="n">BentoMLRequirement</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">req</span><span class="o">.</span><span class="n">is_bentoml_ersilia_version</span><span class="p">():</span>
         <span class="n">req</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
     <span class="k">return</span></div>
