@@ -19,6 +19,7 @@ from enum import Enum
 from typing import Callable
 from typing import List, Any
 import warnings
+
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 
 # ruff: noqa

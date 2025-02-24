@@ -76,7 +76,14 @@ DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
 PACK_METHOD_FASTAPI = "fastapi"
 PACK_METHOD_BENTOML = "bentoml"
-BENTOML_APPROVED_PYTHON_VERSIONS = ["py36","py37","py38","py39","py310","py311"] # TODO check if this is correct
+BENTOML_APPROVED_PYTHON_VERSIONS = [
+    "py36",
+    "py37",
+    "py38",
+    "py39",
+    "py310",
+    "py311",
+]  # TODO check if this is correct
 # Session and logging
 SESSIONS_DIR = os.path.join(EOS, "sessions")
 if not os.path.exists(SESSIONS_DIR):
