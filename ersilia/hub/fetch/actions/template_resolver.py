@@ -1,8 +1,11 @@
 import http.client
 import os
+import shutil
 import urllib.parse
+import tempfile
 
-from ....default import ALLOWED_API_NAMES, GITHUB_ORG
+from ....default import ALLOWED_API_NAMES, GITHUB_ORG, BENTOML_APPROVED_PYTHON_VERSIONS
+from ...bundle.repo import DockerfileFile
 from . import BaseAction
 
 
@@ -80,6 +83,23 @@ class TemplateResolver(BaseAction):
             return False
         return True
 
+    def _place_dockerfile_in_tmp(self) -> str:
+        tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+        if self.repo_path is not None:
+            shutil.copy(os.path.join(self.repo_path, "Dockerfile"), os.path.join(tmp_folder, "Dockerfile"))
+        else:
+            url = "https://raw.githubusercontent.com/{0}/{1}/main/Dockerfile".format(
+                GITHUB_ORG, self.model_id
+            )
+            parsed_url = urllib.parse.urlparse(url)
+            conn = http.client.HTTPSConnection(parsed_url.netloc)
+            conn.request("GET", parsed_url.path)
+            response = conn.getresponse()
+            with open(os.path.join(tmp_folder, "Dockerfile"), "w") as f:
+                f.write(response.read().decode("utf-8"))
+            conn.close()
+        return tmp_folder
+
     def is_bentoml(self) -> bool:
         """
         Checks if the model uses BentoML.
@@ -94,5 +114,8 @@ class TemplateResolver(BaseAction):
         if not self._check_file("Dockerfile"):
             return False
         if not self._check_file("src/service.py"):
+            return False
+        dockerfile_tmp_dir = self._place_dockerfile_in_tmp()
+        if DockerfileFile(path=dockerfile_tmp_dir).get_python_version() not in BENTOML_APPROVED_PYTHON_VERSIONS:
             return False
         return True

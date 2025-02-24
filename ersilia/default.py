@@ -44,13 +44,21 @@ FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"
 EXAMPLE_STANDARD_INPUT_CSV_FILENAME = "example_standard_input.csv"
 EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
-PREDEFINED_EXAMPLE_FILES = [
+
+PREDEFINED_EXAMPLE_INPUT_FILES = [
     "model/framework/examples/input.csv",
-    "model/framework/examples/output.csv",
     "model/framework/input.csv",
-    "model/framework/example.csv",
+]
+
+PREDEFINED_EXAMPLE_OUTPUT_FILES = [
+    "model/framework/examples/output.csv",
+    "model/framework/output.csv",
     "example.csv",
 ]
+# For backward compatibility:
+PREDEFINED_EXAMPLE_FILES = (
+    PREDEFINED_EXAMPLE_INPUT_FILES + PREDEFINED_EXAMPLE_OUTPUT_FILES
+)
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
 METADATA_YAML_FILE = "metadata.yml"
@@ -68,6 +76,7 @@ DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
 PACK_METHOD_FASTAPI = "fastapi"
 PACK_METHOD_BENTOML = "bentoml"
+BENTOML_APPROVED_PYTHON_VERSIONS = ["py36","py37","py38","py39","py310","py311"] # TODO check if this is correct
 # Session and logging
 SESSIONS_DIR = os.path.join(EOS, "sessions")
 if not os.path.exists(SESSIONS_DIR):

@@ -26,6 +26,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     InputBaseInformationError,
     InputShapeBaseInformationError,
     LicenseBaseInformationError,
+    ModeBaseInformationError,
     OutputBaseInformationError,
     OutputConsistencyBaseInformationError,
     OutputDimensionBaseInformationError,
@@ -82,6 +83,8 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the model’s title.
         _description : None
             Placeholder for a description of the model.
+        _mode : None
+            Placeholder for the training mode, one of 'retrained', 'pretrained', 'in-house', or 'online'.
         _task : None
             Placeholder for the primary task associated with the model, such as 'classification', or 'regression'.
         _subtask : None
@@ -148,6 +151,7 @@ class BaseInformation(ErsiliaBase):
         self._status = None
         self._title = None
         self._description = None
+        self._mode = None
         self._task = None
         self._subtask = None
         self._input = None
@@ -355,6 +359,37 @@ class BaseInformation(ErsiliaBase):
         if new_description == self._title:
             raise DescriptionBaseInformationError
         self._description = new_description
+
+    @property
+    def mode(self):
+        """
+        Get the model mode.
+
+        Returns
+        -------
+        str
+            The model mode.
+        """
+        return self._mode
+
+    @mode.setter
+    def mode(self, new_mode):
+        """
+        Set the model mode.
+
+        Parameters
+        ----------
+        new_mode : str
+            The new model mode.
+
+        Raises
+        ------
+        ModeBaseInformationError
+            If the mode is not valid.
+        """
+        if new_mode not in self._read_default_fields("Mode"):
+            raise ModeBaseInformationError
+        self._mode = new_mode
 
     @property
     def source(self):
@@ -948,10 +983,7 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if (
-            new_publication_year < 1900
-            or new_publication_year > datetime.date.today().year
-        ):
+        if new_publication_year < 1900 or new_publication_year > datetime.today("Y"):
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1233,9 +1265,7 @@ class BaseInformation(ErsiliaBase):
         EnvironmentSizeMbBaseInformationError
             If the environment size value is not valid.
         """
-        if not new_environment_size:
-            new_environment_size = 0
-        elif not isinstance(new_environment_size, (int, float)):
+        if not isinstance(new_environment_size, (int, float)):
             raise EnvironmentSizeMbBaseInformationError
         self._environment_size_mb = new_environment_size
 
@@ -1264,9 +1294,7 @@ class BaseInformation(ErsiliaBase):
         ImageSizeMbBaseInformationError
             If `new_image_size_mb` is not an integer.
         """
-        if not new_image_size_mb:
-            new_image_size_mb = 0
-        elif not isinstance(new_image_size_mb, (int, float)):
+        if not isinstance(new_image_size_mb, (int, float)):
             raise ImageSizeMbBaseInformationError
         self._image_size_mb = new_image_size_mb
 
@@ -1295,9 +1323,7 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceOneBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not new_value:
-            new_value = 0
-        elif not isinstance(new_value, (int, float)):
+        if not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceOneBaseInformationError
         self._computational_performance_one = new_value
 
@@ -1326,9 +1352,7 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceTenBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not new_value:
-            new_value = 0
-        elif not isinstance(new_value, (int, float)):
+        if not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceTenBaseInformationError
         self._computational_performance_ten = new_value
 
@@ -1357,9 +1381,7 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceHundredBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not new_value:
-            new_value = 0
-        elif not isinstance(new_value, (int, float)):
+        if not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceHundredBaseInformationError
         self._computational_performance_hund = new_value
 
@@ -1378,35 +1400,36 @@ class BaseInformation(ErsiliaBase):
             "Status": self.status,
             "Title": self.title,
             "Description": self.description,
-            "Source": self.source,
-            "Source Type": self.source_type,
+            "Mode": self.mode,
+            # "Source": self.source,
+            # "Source Type": self.source_type,
             "Input": self.input,
             "Input Shape": self.input_shape,
             "Task": self.task,
-            "Subtask": self.subtask,
-            "Biomedical Area": self.biomedical_area,
-            "Target organism": self.target_organism,
+            # "Subtask": self.subtask,
+            # "Biomedical Area": self.biomedical_area,
+            # "Target organism": self.target_organism,
             "Output": self.output,
             "Output Type": self.output_type,
             "Output Shape": self.output_shape,
-            "Output Dimension": self.output_dimension,
-            "Output Consistency": self.output_consistency,
+            # "Output Dimension": self.output_dimension,
+            # "Output Consistency": self.output_consistency,
             "Interpretation": self.interpretation,
             "Tag": self.tag,
             "Publication": self.publication,
-            "Publication Type": self.publication_type,
-            "Publication Year": self.publication_year,
+            # "Publication Type": self.publication_type,
+            # "Publication Year": self.publication_year,
             "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
-            "Environment Size": self.environment_size,
-            "Image Size": self.image_size_mb,
-            "Computational Performance 1": self.computational_performance_one,
-            "Computational Performance 10": self.computational_performance_ten,
-            "Computational Performance 100": self.computational_performance_hund,
+            # "Environment Size": self.environment_size,
+            # "Image Size": self.image_size_mb,
+            # "Computational Performance 1": self.computational_performance_one,
+            # "Computational Performance 10": self.computational_performance_ten,
+            # "Computational Performance 100": self.computational_performance_hund,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1428,38 +1451,39 @@ class BaseInformation(ErsiliaBase):
         self._assign("status", "Status", data)
         self._assign("title", "Title", data)
         self._assign("description", "Description", data)
-        self._assign("source", "Source", data)
-        self._assign("source_type", "Source Type", data)
+        self._assign("mode", "Mode", data)
+        # self._assign("source", "Source", data)
+        # self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
         self._assign("input_shape", "Input Shape", data)
         self._assign("task", "Task", data)
-        self._assign("subtask", "Subtask", data)
-        self._assign("biomedical_area", "Biomedical Area", data)
-        self._assign("target_organism", "Target Organism", data)
+        # self._assign("subtask", "Subtask", data)
+        # self._assign("biomedical_area", "Biomedical Area", data)
+        # self._assign("target_organism", "Target Organism", data)
         self._assign("output", "Output", data)
         self._assign("output_type", "Output Type", data)
         self._assign("output_shape", "Output Shape", data)
-        self._assign("output_dimension", "Output Dimension", data)
-        self._assign("output_consistency", "Output Consistency", data)
+        # self._assign("output_dimension", "Output Dimension", data)
+        # self._assign("output_consistency", "Output Consistency", data)
         self._assign("interpretation", "Interpretation", data)
         self._assign("tag", "Tag", data)
         self._assign("publication", "Publication", data)
-        self._assign("publication_type", "Publication Type", data)
-        self._assign("publication_year", "Publication Year", data)
+        # self._assign("publication_type", "Publication Type", data)
+        # self._assign("publication_year", "Publication Year", data)
         self._assign("source_code", "Source Code", data)
         self._assign("license", "License", data)
         self._assign("contributor", "Contributor", data)
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
-        self._assign("environment_size", "Environment Size", data)
-        self._assign("image_size_mb", "Image Size", data)
-        self._assign(
-            "computational_performance_one", "Computational Performance 1", data
-        )
-        self._assign(
-            "computational_performance_ten", "Computational Performance 10", data
-        )
-        self._assign(
-            "computational_performance_hund", "Computational Performance 100", data
-        )
+        # self._assign("environment_size", "Environment Size", data)
+        # self._assign("image_size_mb", "Image Size", data)
+        # self._assign(
+        #     "computational_performance_one", "Computational Performance 1", data
+        # )
+        # self._assign(
+        #     "computational_performance_ten", "Computational Performance 10", data
+        # )
+        # self._assign(
+        #     "computational_performance_hund", "Computational Performance 100", data
+        # )

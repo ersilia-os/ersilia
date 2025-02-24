@@ -287,6 +287,10 @@ class DockerfileFile(object):
                 result["python"] = "py310"
         return result
 
+    def get_python_version(self) -> str:
+        result = self.get_bentoml_version()
+        return result["python"]
+
     def has_runs(self) -> bool:
         """
         Check if the Dockerfile contains RUN commands.

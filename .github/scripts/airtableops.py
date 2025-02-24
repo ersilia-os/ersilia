@@ -141,10 +141,6 @@ class ReadmeMetadata:
         text += "* Output Type: `{0}`\n".format(", ".join(d["Output Type"]))
         text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
         text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
-        text += "## Baseline Performance\n\n"
-        text += "* Computational Performance For One Input: `{0}`\n".format(d["Computational Performance 1"])
-        text += "* Computational Performance For Ten Input: `{0}`\n".format(d["Computational Performance 10"])
-        text += "* Computational Performance For Hundred Input: `{0}`\n".format(d["Computational Performance 100"])
         text += "## References\n\n"
         text += "* [Publication]({0})\n".format(d["Publication"])
         text += "* [Source Code]({0})\n".format(d["Source Code"])
