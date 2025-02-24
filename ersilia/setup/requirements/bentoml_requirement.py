@@ -7,7 +7,7 @@ from typing import Optional
 from ...default import EOS
 from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.logging import logger
-from ...utils.terminal import run_command, yes_no_input
+from ...utils.terminal import run_command
 from .setuptools_req import verify_setuptools
 
 
@@ -73,12 +73,6 @@ class BentoMLRequirement(object):
         """
         Installs the Ersilia version of BentoML with error handling.
         """
-        do_install = yes_no_input(
-            "Ersilia is trying to install BentoML. Do you want to install this library? [Y/n]",
-            default_answer="Y",
-        )
-        if not do_install:
-            return
         with self._lock:
             if retries <= 0:
                 self.logger.critical(
