@@ -16,6 +16,9 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     ComputationalPerformanceHundredBaseInformationError,
     ComputationalPerformanceOneBaseInformationError,
     ComputationalPerformanceTenBaseInformationError,
+    ContributingDateBaseInformationError,
+    ContributorBaseInformationError,
+    DeploymentBaseInformationError,
     DescriptionBaseInformationError,
     DockerArchitectureBaseInformationError,
     DockerhubBaseInformationError,
@@ -24,14 +27,18 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     IdentifierBaseInformationError,
     ImageSizeMbBaseInformationError,
     InputBaseInformationError,
+    InputDimensionBaseInformationError,
     InputShapeBaseInformationError,
+    InterpretationBaseInformationError,
     LicenseBaseInformationError,
     ModeBaseInformationError,
+    ModelSizeMbBaseInformationError,
     OutputBaseInformationError,
     OutputConsistencyBaseInformationError,
     OutputDimensionBaseInformationError,
     OutputShapeBaseInformationError,
     OutputTypeBaseInformationError,
+    PackMethodBaseInformationError,
     PublicationBaseInformationError,
     PublicationTypeBaseInformationError,
     PublicationYearBaseInformationError,
@@ -93,6 +100,8 @@ class BaseInformation(ErsiliaBase):
             Placeholder for input data specifications, such as 'Compound'.
         _input_shape : None
             Placeholder for the shape of the input data.
+        _input_dimension: None
+            Placeholder for dimensional notes about the input.
         _output : None
             Placeholder for output data specifications, such as 'Probability', or 'Compound'.
         _output_type : None
@@ -123,6 +132,8 @@ class BaseInformation(ErsiliaBase):
             Placeholder for license information.
         _contributor : None
             Placeholder for contributor information.
+        _contributing_date : None
+            Placeholder for the date of contribution.
         _dockerhub : None
             Placeholder for Docker Hub repository details.
         _docker_architecture : None
@@ -133,6 +144,8 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the source of the model, one of 'Local', or 'Online'
         _source_type: None
             Placeholder for the type of source of the model, one of 'Internal', 'External', or 'Replicated'.
+        _model_size_mb: None
+            Placeholder for the size of the model (code and checkpoints) in megabytes.
         _environment_size_mb : None
             Placeholder for environment size in megabytes.
         _image_size_mb : None
@@ -143,6 +156,10 @@ class BaseInformation(ErsiliaBase):
             Placeholder for ten-run computational performance.
         _computational_performance_hund : None
             Placeholder for hundred-run computational performance.
+        _pack_method : None
+            Placeholder for the method used to pack the model.
+        _deployment: None
+            Placeholder for the deployment method used
         """
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self._github = None
@@ -156,6 +173,7 @@ class BaseInformation(ErsiliaBase):
         self._subtask = None
         self._input = None
         self._input_shape = None
+        self._input_dimension = None
         self._output = None
         self._output_type = None
         self._output_shape = None
@@ -171,16 +189,20 @@ class BaseInformation(ErsiliaBase):
         self._source_code = None
         self._license = None
         self._contributor = None
+        self._contributing_date = None
         self._dockerhub = None
         self._docker_architecture = None
         self._s3 = None
         self._source = None
         self._source_type = None
+        self._model_size_mb = None
         self._environment_size_mb = None
         self._image_size_mb = None
         self._computational_performance_one = None
         self._computational_performance_ten = None
         self._computational_performance_hund = None
+        self._pack_method = None
+        self._deployment = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -521,6 +543,39 @@ class BaseInformation(ErsiliaBase):
         self._input_shape = new_input_shape
 
     @property
+    def input_dimension(self):
+        """
+        Get the model input dimension.
+
+        Returns
+        -------
+        int
+            The model input dimension.
+        """
+        return self._input_dimension
+
+    @input_dimension.setter
+    def input_dimension(self, new_input_dimension):
+        """
+        Set the model output dimension.
+
+        Parameters
+        ----------
+        new_input_dimension : int
+            The new model output dimension.
+
+        Raises
+        ------
+        OutputDimensionBaseInformationError
+            If the output dimension is not valid.
+        """
+        if type(new_input_dimension) is not int:
+            raise InputDimensionBaseInformationError
+        if new_input_dimension < 1:
+            raise InputDimensionBaseInformationError
+        self._input_dimension = new_input_dimension
+
+    @property
     def task(self):
         """
         Get the model task.
@@ -853,6 +908,10 @@ class BaseInformation(ErsiliaBase):
         new_interpretation : str
             The new model interpretation.
         """
+        if len(new_interpretation) > 300:
+            raise InterpretationBaseInformationError
+        if len(new_interpretation) < 10:
+            raise InterpretationBaseInformationError
         self._interpretation = new_interpretation
 
     @property
@@ -1239,6 +1298,37 @@ class BaseInformation(ErsiliaBase):
         return self._both_identifiers
 
     @property
+    def model_size(self):
+        """
+        Get the model size in Mb.
+
+        Returns
+        -------
+        int
+            The model size in Mb.
+        """
+        return self._model_size_mb
+
+    @model_size.setter
+    def model_size(self, new_model_size):
+        """
+        Set the model size in MB.
+
+        Parameters
+        ----------
+        new_model_size : int
+            The new model size in MB.
+
+        Raises
+        ------
+        ModelSizeMbBaseInformationError
+            If the model size value is not valid.
+        """
+        if not isinstance(new_model_size, (int, float)):
+            raise ModelSizeMbBaseInformationError
+        self._model_size_mb = new_model_size
+
+    @property
     def environment_size(self):
         """
         Get the model evironment Size in Mb.
@@ -1385,6 +1475,120 @@ class BaseInformation(ErsiliaBase):
             raise ComputationalPerformanceHundredBaseInformationError
         self._computational_performance_hund = new_value
 
+    @property
+    def pack_method(self):
+        """
+        Get the model pack method.
+
+        Returns
+        -------
+        str
+            The model pack method.
+        """
+        return self._pack_method
+
+    @pack_method.setter
+    def pack_method(self, new_pack_method):
+        """
+        Set the model pack method.
+
+        Parameters
+        ----------
+        pack_method : str
+            The new model pack method.
+        Raises
+        ------
+        PackMethodBaseInformationError
+            If the pack method is not valid.
+        """
+        if new_pack_method not in self._read_default_fields("Pack Method"):
+            raise PackMethodBaseInformationError
+        self._pack_method = new_pack_method
+
+    @property
+    def contributing_date(self):
+        """
+        Get the model contributing date.
+
+        Returns
+        -------
+        str
+            The model contributing date.
+        """
+        return self._contributing_date
+
+    @contributing_date.setter
+    def contributing_date(self, new_contributing_date):
+        """
+        Set the model contributing date.
+
+        Parameters
+        ----------
+        contributing_date : str
+            The model contributing date.
+        """
+        if new_contributing_date != datetime.now().strftime("-%d-%m-%Y"):
+            raise ContributingDateBaseInformationError
+        self._contributing_date = new_contributing_date
+
+    @property
+    def contributor(self):
+        """
+        Get the model contributor.
+
+        Returns
+        -------
+        str
+            Model contributor github handle.
+        """
+        return self._contributor
+
+    @contributor.setter
+    def contributor(self, new_contributor):
+        """
+        Set the model contributor.
+
+        Parameters
+        ----------
+        contributor : str
+            Model contributor github handle.
+        """
+        if not isinstance(new_contributor, str) or not new_contributor.strip():
+            raise ContributorBaseInformationError
+        self._contributor = new_contributor
+
+    @property
+    def deployment(self):
+        """
+        Get the model deployment.
+
+        Returns
+        -------
+        str
+            The model deployment.
+
+        """
+        return self._deployment
+
+    @deployment.setter
+    def deployment(self, new_deployment):
+        """
+        Set the model deployment.
+
+        Parameters
+        ----------
+        deployment : str
+            The model deployment.
+        """
+        if type(new_deployment) is str:
+            new_deployment = [new_deployment]
+        if type(new_deployment) is not list:
+            raise DeploymentBaseInformationError
+        for nt in new_deployment:
+            if nt not in self._read_default_fields("Deployment"):
+                raise DeploymentBaseInformationError
+        self._deployment = new_deployment
+
     def as_dict(self):
         """
         Convert the model information to a dictionary.
@@ -1405,6 +1609,7 @@ class BaseInformation(ErsiliaBase):
             # "Source Type": self.source_type,
             "Input": self.input,
             "Input Shape": self.input_shape,
+            # "Input Dimension": self.input_dimension,
             "Task": self.task,
             # "Subtask": self.subtask,
             # "Biomedical Area": self.biomedical_area,
@@ -1422,14 +1627,18 @@ class BaseInformation(ErsiliaBase):
             "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
+            "Contributing Date": self.contributing_date,
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
+            # "Model Size": self.model_size_mb,
             # "Environment Size": self.environment_size,
             # "Image Size": self.image_size_mb,
             # "Computational Performance 1": self.computational_performance_one,
             # "Computational Performance 10": self.computational_performance_ten,
             # "Computational Performance 100": self.computational_performance_hund,
+            # "Pack Method": self.pack_method,
+            # "Deployment": self.deployment,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1456,6 +1665,7 @@ class BaseInformation(ErsiliaBase):
         # self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
         self._assign("input_shape", "Input Shape", data)
+        # self._assign("input_dimension", "Input Dimension", data)
         self._assign("task", "Task", data)
         # self._assign("subtask", "Subtask", data)
         # self._assign("biomedical_area", "Biomedical Area", data)
@@ -1473,9 +1683,11 @@ class BaseInformation(ErsiliaBase):
         self._assign("source_code", "Source Code", data)
         self._assign("license", "License", data)
         self._assign("contributor", "Contributor", data)
+        self._assign("contributing_date", "Contributing Date", data)
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
+        # self._assign("model_size_mb", "Model Size", data)
         # self._assign("environment_size", "Environment Size", data)
         # self._assign("image_size_mb", "Image Size", data)
         # self._assign(
@@ -1487,3 +1699,5 @@ class BaseInformation(ErsiliaBase):
         # self._assign(
         #     "computational_performance_hund", "Computational Performance 100", data
         # )
+        # self._assign("pack_method", "Pack Method", data)
+        # self._assign("deployment", "Deployment", data)

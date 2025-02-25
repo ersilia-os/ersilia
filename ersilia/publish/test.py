@@ -673,11 +673,11 @@ class IOService:
         "LICENSE",
     ]
 
-    ERSILIAPACK_BACK_FILES =[
+    ERSILIAPACK_BACK_FILES = [
         DOCKERFILE_FILE,
         METADATA_JSON_FILE,
         RUN_FILE,
-        PREDEFINED_EXAMPLE_FILES[0], 
+        PREDEFINED_EXAMPLE_FILES[0],
         PREDEFINED_EXAMPLE_FILES[1],
         "src/service.py",
         "pack.py",
@@ -703,8 +703,10 @@ class IOService:
         self.console = Console()
         self.check_results = []
         self.simple_docker = SimpleDocker()
-        self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir) #TODO THIS IS BEING INSTANTIATED BELOW ALREADY
-    
+        self.resolver = TemplateResolver(
+            model_id=model_id, repo_path=self.dir
+        )  # TODO THIS IS BEING INSTANTIATED BELOW ALREADY
+
     @staticmethod
     def get_model_type(model_id: str, repo_path: str) -> str:
         """
@@ -786,7 +788,7 @@ class IOService:
         else:
             raise ValueError("Metadata file not found.")
         return path
-    
+
     def _read_metadata(self):
         path = self._get_metadata_file()
         with open(path, "r") as file:
@@ -797,7 +799,7 @@ class IOService:
             else:
                 raise ValueError(f"Unsupported file format: {path}")
         return data
-    
+
     def _get_install_file(self):
         if DOCKERFILE_FILE in self.get_file_requirements():
             path = os.path.join(self.dir, DOCKERFILE_FILE)
@@ -806,7 +808,7 @@ class IOService:
         else:
             raise ValueError("Install file not found.")
         return path
-    
+
     def collect_and_save_json(self, results, output_file):
         """
         Helper function to collect JSON results and save them to a file.
