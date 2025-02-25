@@ -126,7 +126,11 @@ class ReadmeMetadata:
         print(bi.as_dict())
         return bi
 
-    def write_information(self, data: BaseInformation, readme_path=None):
+    def write_information_0(self, data: BaseInformation, readme_path=None):
+        """
+        Generates the README file using the old format.
+        
+        """
         d = data.as_dict()
         text = "# {0}\n\n".format(d["Title"])
         text += "{0}\n\n".format(d["Description"].rstrip("\n"))
@@ -173,6 +177,129 @@ class ReadmeMetadata:
         else:
             with open(readme_path, "w") as f:
                 f.write(text)
+
+    def write_information_1(self, data: BaseInformation, readme_path=None):
+        """
+        Generates the README file using the new format.
+        """
+        d = data.as_dict()
+        text = "# {0}\n\n".format(d.get("Title", "Model Title"))
+        # Description and incorporation date
+        text += "**Description**  \n"
+        text += "{0}\n\n".format(d.get("Description", "No description provided").rstrip("\n"))
+        if "Model Incorporation Date" in d:
+            text += "**Model Incorporation Date:** {0}\n\n".format(d["Model Incorporation Date"])
+        text += "---\n\n"
+
+        # Identifiers
+        text += "## Identifiers\n"
+        text += "- **Ersilia Identifier:** {0}\n".format(d.get("Identifier", ""))
+        text += "- **Slug:** {0}\n\n".format(d.get("Slug", ""))
+
+        # Domain
+        text += "## Domain\n"
+        text += "- **Task:** {0}\n".format(d.get("Task", ""))
+        text += "- **Subtask:** {0}\n".format(d.get("Subtask", ""))
+        text += "- **Biomedical Area:** {0}\n".format(d.get("Biomedical Area", ""))
+        text += "- **Target Organism:** {0}\n".format(d.get("Target Organism", ""))
+        text += "- **Tags:** {0}\n\n".format(d.get("Tags", ""))
+
+        # Input
+        text += "## Input\n"
+        text += "- **Input Type:** {0}\n".format(d.get("Input", ""))
+        text += "- **Input Shape:** {0}\n\n".format(d.get("Input Shape", ""))
+
+        # Output
+        text += "## Output\n"
+        text += "- **Output Type:** {0}\n".format(d.get("Output", ""))
+        text += "- **Output Dimension:** {0}\n".format(d.get("Output Dimension", ""))
+        text += "- **Output Consistency:** {0}\n".format(d.get("Output Consistency", ""))
+        text += "- **Interpretation:** {0}\n\n".format(d.get("Interpretation", ""))
+
+        # Output Columns (if provided)
+        if "Output Columns" in d:
+            text += "**Output Columns (up to 10):**\n\n"
+            text += "| Name | Type | Direction | Description |\n"
+            text += "|------|------|-----------|-------------|\n"
+            for col in d["Output Columns"]:
+                text += "| {0} | {1} | {2} | {3} |\n".format(
+                    col.get("Name", ""),
+                    col.get("Type", ""),
+                    col.get("Direction", ""),
+                    col.get("Description", "")
+                )
+            text += "\n"
+
+        # Source and Deployment
+        text += "## Source and Deployment\n"
+        text += "- **Source:** {0}\n".format(d.get("Source", ""))
+        text += "- **Source Type:** {0}\n".format(d.get("Source Type", ""))
+        if "DockerHub" in d:
+            text += "- **DockerHub:** {0}\n".format(d["DockerHub"])
+        text += "\n"
+
+        # Resource Consumption
+        text += "## Resource Consumption\n"
+        text += "- **Model Size:** {0}\n".format(d.get("Model Size", ""))
+        text += "- **Environment Size:** {0}\n".format(d.get("Environment Size", ""))
+        text += "- **Image Size:** {0}\n".format(d.get("Image Size", ""))
+        text += "\n"
+        text += "**Computational Performance:**\n"
+        text += "- **1 input:** {0}\n".format(d.get("Computational Performance 1", ""))
+        text += "- **10 inputs:** {0}\n".format(d.get("Computational Performance 10", ""))
+        text += "- **100 inputs:** {0}\n".format(d.get("Computational Performance 100", ""))
+        text += "\n"
+
+        # References
+        text += "## References\n"
+        text += "- **Source Code:** {0}\n".format(d.get("Source Code", ""))
+        text += "- **Publication:** {0}\n".format(d.get("Publication", ""))
+        if "Publication Type" in d:
+            text += "  - **Publication Type:** {0}\n".format(d["Publication Type"])
+        if "Publication Year" in d:
+            text += "  - **Publication Year:** {0}\n".format(d["Publication Year"])
+        text += "\n"
+
+        # License
+        text += "## License\n"
+        text += "- **Package License:** {0}\n".format(d.get("Package License", ""))
+        text += "- **Model License:** {0}\n".format(d.get("Model License", ""))
+        text += "\n"
+        text += "**Notice:**  \n"
+        text += "Ersilia grants access to these models \"as is\" provided by the original authors. Please refer to the original code repository and/or publication if you use the model in your research.\n\n"
+
+        # About Ersilia
+        text += "## About Ersilia\n"
+        text += "The Ersilia Open Source Initiative is a non-profit organization fueling sustainable research in the Global South.\n"
+        if readme_path is None:
+            return text
+        else:
+            with open(readme_path, "w") as f:
+                f.write(text)
+
+    def write_information(self, data: BaseInformation, readme_path=None, version=None):
+        """
+        Dynamically selects the appropriate README format based on the provided version flag
+        or by inspecting the metadata.
+        
+        :param data: A BaseInformation instance containing the model metadata.
+        :param readme_path: If provided, the README will be written to this path.
+        :param version: '0' for old format, '1' for new format. If None, auto-detection is attempted.
+        :return: The generated README text (if readme_path is None).
+        """
+        d = data.as_dict()
+        if version is None:
+            # Auto-detect based on the presence of keys specific to the new format.
+            if "Output Columns" in d or "Model Incorporation Date" in d:
+                version = "1"
+            else:
+                version = "0"
+        if version == "0":
+            return self.write_information_0(data, readme_path)
+        elif version == "1":
+            return self.write_information_1(data, readme_path)
+        else:
+            raise ValueError("Unknown version specified for README generation.")
 
 
 class ReadmeUpdater:

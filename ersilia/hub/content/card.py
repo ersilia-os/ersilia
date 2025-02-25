@@ -5,10 +5,7 @@ import requests
 import yaml
 
 from ... import ErsiliaBase
-from ...auth.auth import Auth
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...utils.logging import make_temp_dir
-from ...utils.terminal import run_command
 from .base_information import BaseInformation
 
 try:
@@ -206,111 +203,204 @@ class MetadataCard(ErsiliaBase):
             return
 
 
-class ReadmeCard(ErsiliaBase):
+class ReadmeCardVersion0(ErsiliaBase):
     """
-    Class to handle the README card of a model.
-
-    This class provides methods to get the README card of a model from GitHub.
-
-    Parameters
-    ----------
-    config_json : dict
-        Configuration settings in JSON format.
+    Parser for the old README format.
     """
 
     def __init__(self, config_json):
-        ErsiliaBase.__init__(self, config_json=config_json)
+        super().__init__(config_json=config_json)
+
+    def _parse_title(self, lines):
+        for line in lines:
+            if line.startswith("# "):
+                return line[2:].strip()
+        return "Unknown Title"
+
+    def _parse_description(self, lines):
+        text = "\n".join(lines)
+        try:
+            return text.split("# ")[1].split("\n", 1)[1].split("##")[0].strip()
+        except IndexError:
+            return "No description found."
+
+    def parse_text(self, text, model_id):
+        """
+        Parses the text from an old-format README file and returns a dictionary of metadata.
+        Parameters:
+            text (str): The README file content.
+            model_id (str): The model identifier.
+        Returns:
+            dict: Parsed metadata.
+        """
+        lines = text.splitlines()
+        results = {
+            "model_id": model_id,
+            "title": self._parse_title(lines),
+            "description": self._parse_description(lines),
+            "github_url": "https://github.com/ersilia-os/{}".format(model_id),
+        }
+        return results
+
+
+class ReadmeCardVersion1(ErsiliaBase):
+    """
+    Parser for the new README format.
+    Extracts sections (e.g., Description, Identifiers, Domain, etc.) based on header markers.
+    """
+
+    def __init__(self, config_json):
+        super().__init__(config_json=config_json)
+
+    def _extract_section(self, text, header, next_marker="\n## "):
+        """
+        Extracts text from a section starting with the given header.
+        Extraction stops at the next header marker.
+        """
+        if header in text:
+            section = text.split(header, 1)[1]
+            if next_marker in section:
+                section = section.split(next_marker, 1)[0]
+            return section.strip()
+        return ""
+
+    def parse_text(self, text, model_id):
+        """
+        Parses the text from a new-format README file and returns a dictionary of metadata.
+        Parameters:
+            text (str): The README file content.
+            model_id (str): The model identifier.
+
+        Returns:
+            dict: Parsed metadata with detailed sections.
+        """
+        results = {"model_id": model_id}
+        lines = text.splitlines()
+        # Title: first markdown header (# )
+        for line in lines:
+            if line.startswith("# "):
+                results["title"] = line[2:].strip()
+                break
+        # Extract sections using expected header markers:
+        results["description"] = (
+            self._extract_section(text, "**Description**") or "No description provided."
+        )
+        results["model_incorporation_date"] = self._extract_section(
+            text, "**Model Incorporation Date:**"
+        )
+        results["identifiers"] = self._extract_section(text, "## Identifiers")
+        results["domain"] = self._extract_section(text, "## Domain")
+        results["input"] = self._extract_section(text, "## Input")
+        results["output"] = self._extract_section(text, "## Output")
+        results["output_columns"] = self._extract_section(
+            text, "**Output Columns (up to 10):**"
+        )
+        results["source_and_deployment"] = self._extract_section(
+            text, "## Source and Deployment"
+        )
+        results["resource_consumption"] = self._extract_section(
+            text, "## Resource Consumption"
+        )
+        results["references"] = self._extract_section(text, "## References")
+        results["license"] = self._extract_section(text, "## License")
+        results["about_ersilia"] = self._extract_section(text, "## About Ersilia")
+        results["github_url"] = "https://github.com/ersilia-os/{}".format(model_id)
+        return results
+
+
+class ReadmeCardResolver(ErsiliaBase):
+    """
+    Resolves which README parser to use based on the file content.
+    """
+
+    def __init__(self, config_json):
+        super().__init__(config_json=config_json)
+        self.parser_v0 = ReadmeCardVersion0(config_json)
+        self.parser_v1 = ReadmeCardVersion1(config_json)
+        # Optionally use a local destination directory if provided in config
+        self._dest_dir = config_json.get("dest_dir") if config_json else None
 
     def _raw_readme_url(self, model_id):
-        url = (
+        """
+        Constructs the raw GitHub URL for the README file of the model.
+
+        Parameters:
+            model_id (str): The model identifier.
+        Returns:
+            str: The raw URL of the README.
+        """
+        return (
             "https://raw.githubusercontent.com/ersilia-os/{0}/master/README.md".format(
                 model_id
             )
         )
-        return url
 
-    def _gh_view(self, model_id):
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "view.md")
-        cmd = "gh repo view {0}/{1} > {2}".format("ersilia-os", model_id, tmp_file)
-        run_command(cmd)
-        with open(tmp_file, "r") as f:
-            text = f.read()
-        return text
-
-    def _title(self, lines):
-        """Title is determined by the first main header in markdown"""
-        for l in lines:
-            if l[:2] == "# ":
-                s = l[2:].strip()
-                return s
-
-    def _description(self, lines):
-        """Description is what comes after the title and before the next header"""
-        text = "\n".join(lines)
-        return text.split("# ")[1].split("\n")[1].split("#")[0].strip()
-
-    def _mode(self, lines):
-        text = "\n".join(lines)
-        return text.split("# ")[1].split("\n")[1].split("#")[0].strip()
-
-    def _model_github_url(self, model_id):
-        return "https://github.com/ersilia-os/{0}".format(model_id)
-
-    def parse(self, model_id):
+    def get_readme_text(self, model_id):
         """
-        Parse the model information from the README file.
+        Gets the README text for a given model, either locally or from GitHub.
 
-        Parameters
-        ----------
-        model_id : str
-            The model identifier.
+        Parameters:
+            model_id (str): The model identifier.
+
+        Returns:
+            str or None: The README text, or None if not found.
         """
-        readme = os.path.join(self._dest_dir, model_id, "README.md")
-        if os.path.exists(readme):
-            with open(readme, "r") as f:
-                text = f.read()
+        # Attempt to read the README file locally if _dest_dir is provided
+        if self._dest_dir:
+            readme_path = os.path.join(self._dest_dir, model_id, "README.md")
+            if os.path.exists(readme_path):
+                with open(readme_path, "r") as f:
+                    return f.read()
+        # Otherwise, fetch the README from GitHub
+        r = requests.get(self._raw_readme_url(model_id))
+        if r.status_code == 200:
+            return r.text
+        return None
+
+    def resolve_and_parse(self, model_id):
+        """
+        Determines the README format and parses the text accordingly.
+
+        Parameters:
+            model_id (str): The model identifier.
+
+        Returns:
+            dict or None: The parsed README metadata.
+        """
+        text = self.get_readme_text(model_id)
+        if not text:
+            return None
+        if "## Domain" in text or "**Output Columns (up to 10):**" in text:
+            return self.parser_v1.parse_text(text, model_id)
         else:
-            if Auth().is_contributor():
-                text = self._gh_view(model_id)
-                if not text:
-                    return None
-                text = "--".join(text.split("--")[1:])
-            else:
-                r = requests.get(self._raw_readme_url(model_id))
-                if r.status_code != 200:
-                    return None
-                text = r.text
-        lines = text.split(os.linesep)
-        results = {
-            "model_id": model_id,
-            "title": self._title(lines),
-            "description": self._description(lines),
-            "mode": self._mode(lines),
-            "github_url": self._model_github_url(model_id),
-        }
-        return results
+            return self.parser_v0.parse_text(text, model_id)
+
+
+class ReadmeCard(ErsiliaBase):
+    """
+    Updated class to handle the README card of a model.
+    Supports both the old and new README formats by leveraging the resolver.
+    """
+
+    def __init__(self, config_json):
+        super().__init__(config_json=config_json)
+        self.resolver = ReadmeCardResolver(config_json)
 
     def get(self, model_id: str = None, slug: str = None) -> dict:
         """
-        Get the README card of a model from GitHub.
+        Retrieves and parses the README file for a model.
+        Automatically determines whether the file is in the old or new format.
 
-        Parameters
-        ----------
-        model_id : str, optional
-            The ID of the model.
-        slug : str, optional
-            The slug of the model.
+        Parameters:
+            model_id (str): The model identifier.
+            slug (str, optional): The model slug (not used here).
 
-        Returns
-        -------
-        dict
-            The README card of the model.
+        Returns:
+            dict: The parsed metadata extracted from the README file.
         """
         if model_id:
-            return self.parse(model_id)
-        else:
-            return None
+            return self.resolver.resolve_and_parse(model_id)
+        return None
 
 
 class LocalCard(ErsiliaBase):
