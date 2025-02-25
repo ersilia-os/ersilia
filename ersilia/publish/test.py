@@ -658,14 +658,27 @@ class IOService:
             model_id="model_id",
             dir="/path/to/dir",
         )
-        ios.read_information()
+        ios.read_metadata()
     """
 
     RUN_FILE = f"model/framework/{RUN_FILE}"
+
     BENTOML_FILES = [
         DOCKERFILE_FILE,
         METADATA_JSON_FILE,
         RUN_FILE,
+        "src/service.py",
+        "pack.py",
+        "README.md",
+        "LICENSE",
+    ]
+
+    ERSILIAPACK_BACK_FILES =[
+        DOCKERFILE_FILE,
+        METADATA_JSON_FILE,
+        RUN_FILE,
+        PREDEFINED_EXAMPLE_FILES[0], 
+        PREDEFINED_EXAMPLE_FILES[1],
         "src/service.py",
         "pack.py",
         "README.md",
@@ -690,7 +703,57 @@ class IOService:
         self.console = Console()
         self.check_results = []
         self.simple_docker = SimpleDocker()
-        self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
+        self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir) #TODO THIS IS BEING INSTANTIATED BELOW ALREADY
+    
+    @staticmethod
+    def get_model_type(model_id: str, repo_path: str) -> str:
+        """
+        Get the type of the model based on the repository contents.
+
+        Parameters
+        ----------
+        model_id : str
+            Identifier of the model.
+        repo_path : str
+            Path to the model repository.
+
+        Returns
+        -------
+        str
+            The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).
+        """
+        resolver = TemplateResolver(model_id=model_id, repo_path=repo_path)
+        if resolver.is_bentoml():
+            return PACK_METHOD_BENTOML
+        elif resolver.is_fastapi():
+            return PACK_METHOD_FASTAPI
+        else:
+            return None
+
+    def get_file_requirements(self) -> List[str]:
+        """
+        Get the list of required files for the model.
+
+        Returns
+        -------
+        List[str]
+            List of required files.
+
+        Raises
+        ------
+        ValueError
+            If the model type is unsupported.
+        """
+        type = IOService.get_model_type(model_id=self.model_id, repo_path=self.dir)
+        if type == PACK_METHOD_BENTOML:
+            return self.BENTOML_FILES
+        elif type == PACK_METHOD_FASTAPI:
+            if os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE):
+                return self.ERSILIAPACK_BACK_FILES
+            else:
+                return self.ERSILIAPACK_FILES
+        else:
+            raise ValueError(f"Unsupported model type: {type}")
 
     def _run_check(
         self, check_function, data, check_name: str, additional_info=None
@@ -715,10 +778,17 @@ class IOService:
             self.check_results.append((check_name, details, str(STATUS_CONFIGS.FAILED)))
             return False
 
-    def _get_metadata(self):
-        path = METADATA_JSON_FILE if self.resolver.is_bentoml() else METADATA_YAML_FILE
-        path = os.path.join(self.dir, path)
-
+    def _get_metadata_file(self):
+        if METADATA_JSON_FILE in self.get_file_requirements():
+            path = os.path.join(self.dir, METADATA_JSON_FILE)
+        elif METADATA_YAML_FILE in self.get_file_requirements():
+            path = os.path.join(self.dir, METADATA_YAML_FILE)
+        else:
+            raise ValueError("Metadata file not found.")
+        return path
+    
+    def _read_metadata(self):
+        path = self._get_metadata_file()
         with open(path, "r") as file:
             if path.endswith(".json"):
                 data = json.load(file)
@@ -727,7 +797,16 @@ class IOService:
             else:
                 raise ValueError(f"Unsupported file format: {path}")
         return data
-
+    
+    def _get_install_file(self):
+        if DOCKERFILE_FILE in self.get_file_requirements():
+            path = os.path.join(self.dir, DOCKERFILE_FILE)
+        elif INSTALL_YAML_FILE in self.get_file_requirements():
+            path = os.path.join(self.dir, METADATA_YAML_FILE)
+        else:
+            raise ValueError("Install file not found.")
+        return path
+    
     def collect_and_save_json(self, results, output_file):
         """
         Helper function to collect JSON results and save them to a file.
@@ -814,75 +893,6 @@ class IOService:
         self.console.print(table)
 
         return json_data
-
-    @staticmethod
-    def get_model_type(model_id: str, repo_path: str) -> str:
-        """
-        Get the type of the model based on the repository contents.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model.
-        repo_path : str
-            Path to the model repository.
-
-        Returns
-        -------
-        str
-            The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).
-        """
-        resolver = TemplateResolver(model_id=model_id, repo_path=repo_path)
-        if resolver.is_bentoml():
-            return PACK_METHOD_BENTOML
-        elif resolver.is_fastapi():
-            return PACK_METHOD_FASTAPI
-        else:
-            return None
-
-    def get_file_requirements(self) -> List[str]:
-        """
-        Get the list of required files for the model.
-
-        Returns
-        -------
-        List[str]
-            List of required files.
-
-        Raises
-        ------
-        ValueError
-            If the model type is unsupported.
-        """
-        type = IOService.get_model_type(model_id=self.model_id, repo_path=self.dir)
-        if type == PACK_METHOD_BENTOML:
-            return self.BENTOML_FILES
-        elif type == PACK_METHOD_FASTAPI:
-            return self.ERSILIAPACK_FILES
-        else:
-            raise ValueError(f"Unsupported model type: {type}")
-
-    def read_information(self) -> dict:
-        """
-        Read the information file for the model.
-
-        Returns
-        -------
-        dict
-            The contents of the information file.
-
-        Raises
-        ------
-        FileNotFoundError
-            If the information file does not exist.
-        """
-        file = os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE)
-        if not os.path.exists(file):
-            raise FileNotFoundError(
-                f"Information file does not exist for model {self.model_id}"
-            )
-        with open(file, "r") as f:
-            return json.load(f)
 
     def get_conda_env_size(self):
         """
@@ -1041,7 +1051,7 @@ class IOService:
         """
         sizes = self._extract_size(json_data)
         exec_times = self._extract_execution_times(json_data)
-        metadata = self._get_metadata()
+        metadata = self._read_metadata()
         metadata.update(sizes)
         metadata.update(exec_times)
 
@@ -1050,7 +1060,7 @@ class IOService:
         )
 
     def _save_file(self, metadata):
-        path = METADATA_JSON_FILE if self.resolver.is_bentoml() else METADATA_YAML_FILE
+        path = self._get_metadata_file()
         path = os.path.join(self.dir, path)
         with open(path, "w") as file:
             if path.endswith(".json"):
@@ -1145,25 +1155,13 @@ class CheckService:
         self.from_github = from_github
         self.from_dockerhub = from_dockerhub
         self._run_check = ios._run_check
+        self._read_metadata = ios._read_metadata
         self._generate_table = ios._generate_table
         self.get_file_requirements = ios.get_file_requirements
         self.console = ios.console
         self.original_smiles_list = []
         self.check_results = ios.check_results
         self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
-
-    def _get_metadata(self):
-        path = METADATA_JSON_FILE if self.resolver.is_bentoml() else METADATA_YAML_FILE
-        path = os.path.join(self.dir, path)
-
-        with open(path, "r") as file:
-            if path.endswith(".json"):
-                data = json.load(file)
-            elif path.endswith((".yml", ".yaml")):
-                data = yaml.safe_load(file)
-            else:
-                raise ValueError(f"Unsupported file format: {path}")
-        return data
 
     def _check_file_existence(self, path):
         if not os.path.exists(os.path.join(self.dir, path)):
@@ -1378,7 +1376,8 @@ class CheckService:
             The output file to write to.
         """
         self.logger.debug(f"Beginning checks for {self.model_id} model information")
-        data = self._get_metadata()
+        data = self._read_metadata()
+        print(data)
 
         self._run_check(self._check_model_id, data, "Model ID")
         self._run_check(self._check_model_slug, data, "Model Slug")
