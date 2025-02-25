@@ -14,6 +14,7 @@ from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithBentoML,
     NotInstallableWithFastAPI,
     StandardModelExampleError,
+    WithToolFetchingNotWorking,
 )
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...utils.terminal import yes_no_input
@@ -140,10 +141,10 @@ class ModelFetcher(ErsiliaBase):
     @throw_ersilia_exception()
     def _decide_fetcher(self, model_id: str) -> str:
         tr = TemplateResolver(model_id=model_id, repo_path=self.repo_path)
-        if tr.is_bentoml():
-            return PACK_METHOD_BENTOML
-        elif tr.is_fastapi():
+        if tr.is_fastapi():
             return PACK_METHOD_FASTAPI
+        elif tr.is_bentoml():
+            return PACK_METHOD_BENTOML
         else:
             raise Exception("No fetcher available")
 
@@ -195,10 +196,15 @@ class ModelFetcher(ErsiliaBase):
         self.model_id = model_id
         is_fetched = False
 
+        tr = TemplateResolver(model_id=model_id, repo_path=self.repo_path)
         if self.force_with_fastapi:
+            if not tr.is_fastapi():
+                raise WithToolFetchingNotWorking(tool="fastapi")
             self._fetch_from_fastapi()
             is_fetched = True
         if self.force_with_bentoml:
+            if not tr.is_bentoml():
+                raise WithToolFetchingNotWorking(tool="bentoml")
             self._fetch_from_bentoml()
             is_fetched = True
 
