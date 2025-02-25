@@ -1,3 +1,4 @@
+import csv
 import os
 
 from .... import ErsiliaBase, throw_ersilia_exception
@@ -35,6 +36,31 @@ class ModelStandardExample(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.model_id = model_id
 
+    def _less_on_file(self, output_csv: str) -> list:
+        max_rows = 5
+        max_cols = 10
+        lines = []
+        with open(output_csv, newline="", encoding="utf-8") as csvfile:
+            reader = csv.reader(csvfile)
+            data = []
+            for i, r in enumerate(reader):
+                data += [r]
+                if i > max_rows:
+                    break
+            col_widths = [max(len(str(item)) for item in col) for col in zip(*data)]
+            for row in data:
+                lines += [
+                    " | ".join(
+                        f"{int(item):<{col_widths[i]}}"
+                        if item.isdigit()
+                        else f"{float(item):<{col_widths[i]}.2f}"
+                        if item.replace(".", "", 1).isdigit()
+                        else f"{item:<{col_widths[i]}}"
+                        for i, item in enumerate(row[:max_cols])
+                    )
+                ]
+        return lines
+
     @throw_ersilia_exception(exit=False)
     def _check_file_exists(self, output_csv: str):
         if not os.path.exists(output_csv):
@@ -42,6 +68,10 @@ class ModelStandardExample(ErsiliaBase):
                 model_id=self.model_id, file_name=output_csv
             )
         self.logger.debug("File {0} created successfully!".format(output_csv))
+        self.logger.debug("This is the output (maximum 5 rows, 10 columns)")
+        lines = self._less_on_file(output_csv=output_csv)
+        for l in lines:
+            self.logger.debug(l)
 
     def run(self):
         """

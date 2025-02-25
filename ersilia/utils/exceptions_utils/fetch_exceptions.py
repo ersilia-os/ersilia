@@ -221,3 +221,22 @@ class SniffFastApiColumnTypesIncompatibility(ErsiliaError):
     def _get_hints(self):
         text = "Check the model repository and make sure that the type column is purely numeric or string."
         return text
+
+
+class WithToolFetchingNotWorking(ErsiliaError):
+    def __init__(self, tool):
+        assert tool in ["bentoml", "fastapi"]
+        self.tool = tool
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = "Fetching with {0} did not work".format(self.tool)
+        return text
+
+    def _get_hints(self):
+        text = "Check the model repository structure and make sure that all files and Python versions are correct to fetch with {0}".format(
+            self.tool
+        )
+        return text

@@ -79,7 +79,14 @@ BENTOML_APPROVED_PYTHON_VERSIONS = [
     "py39",
     "py310",
     "py311",
-]  # TODO check if this is correct
+]
+FASTAPI_APPROVED_PYTHON_VERSIONS = [
+    "py38",
+    "py39",
+    "py310",
+    "py311",
+    "py312",
+]
 # Session and logging
 SESSIONS_DIR = os.path.join(EOS, "sessions")
 if not os.path.exists(SESSIONS_DIR):
