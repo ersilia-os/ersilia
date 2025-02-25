@@ -318,7 +318,12 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">urllib.parse</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALLOWED_API_NAMES</span><span class="p">,</span> <span class="n">BENTOML_APPROVED_PYTHON_VERSIONS</span><span class="p">,</span> <span class="n">GITHUB_ORG</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ALLOWED_API_NAMES</span><span class="p">,</span>
+    <span class="n">BENTOML_APPROVED_PYTHON_VERSIONS</span><span class="p">,</span>
+    <span class="n">FASTAPI_APPROVED_PYTHON_VERSIONS</span><span class="p">,</span>
+    <span class="n">GITHUB_ORG</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...bundle.repo</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileFile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAction</span>
 
@@ -391,7 +396,21 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the model uses FastAPI, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_file</span><span class="p">(</span><span class="s2">&quot;model/framework/columns/run_columns.csv&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No run columns file&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_file</span><span class="p">(</span>
+            <span class="s2">&quot;model/framework/examples/input.csv&quot;</span>
+        <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_file</span><span class="p">(</span><span class="s2">&quot;model/framework/examples/run_input.csv&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No example input file&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_file</span><span class="p">(</span>
+            <span class="s2">&quot;model/framework/examples/output.csv&quot;</span>
+        <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_file</span><span class="p">(</span><span class="s2">&quot;model/framework/examples/run_output.csv&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No example output file&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_file</span><span class="p">(</span><span class="s2">&quot;Dockerfile&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_file</span><span class="p">(</span><span class="s2">&quot;install.yml&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No Dockerfile or installs file&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">has_sh</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">allowed_api</span> <span class="ow">in</span> <span class="n">ALLOWED_API_NAMES</span><span class="p">:</span>
@@ -399,6 +418,13 @@
                 <span class="n">has_sh</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">has_sh</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_file</span><span class="p">(</span><span class="s2">&quot;Dockerfile&quot;</span><span class="p">):</span>
+            <span class="n">dockerfile_tmp_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_place_dockerfile_in_tmp</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">DockerfileFile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">dockerfile_tmp_dir</span><span class="p">)</span><span class="o">.</span><span class="n">get_python_version</span><span class="p">()</span>
+                <span class="ow">not</span> <span class="ow">in</span> <span class="n">FASTAPI_APPROVED_PYTHON_VERSIONS</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 

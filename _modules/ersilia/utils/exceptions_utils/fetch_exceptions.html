@@ -583,6 +583,28 @@
         <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Check the model repository and make sure that the type column is purely numeric or string.&quot;</span>
         <span class="k">return</span> <span class="n">text</span></div>
 
+
+
+<div class="viewcode-block" id="WithToolFetchingNotWorking">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.WithToolFetchingNotWorking">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">WithToolFetchingNotWorking</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">tool</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bentoml&quot;</span><span class="p">,</span> <span class="s2">&quot;fastapi&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tool</span> <span class="o">=</span> <span class="n">tool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_hints</span><span class="p">()</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Fetching with </span><span class="si">{0}</span><span class="s2"> did not work&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tool</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Check the model repository structure and make sure that all files and Python versions are correct to fetch with </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tool</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">text</span></div>
+
 </pre></div>
         </article>
       </div>

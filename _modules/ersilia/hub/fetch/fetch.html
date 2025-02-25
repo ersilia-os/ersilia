@@ -328,6 +328,7 @@
     <span class="n">NotInstallableWithBentoML</span><span class="p">,</span>
     <span class="n">NotInstallableWithFastAPI</span><span class="p">,</span>
     <span class="n">StandardModelExampleError</span><span class="p">,</span>
+    <span class="n">WithToolFetchingNotWorking</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_input</span>
@@ -456,10 +457,10 @@
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_decide_fetcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">tr</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
-        <span class="k">elif</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
+        <span class="k">elif</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No fetcher available&quot;</span><span class="p">)</span>
 
@@ -511,10 +512,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">False</span>
 
+        <span class="n">tr</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_with_fastapi</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">WithToolFetchingNotWorking</span><span class="p">(</span><span class="n">tool</span><span class="o">=</span><span class="s2">&quot;fastapi&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_fastapi</span><span class="p">()</span>
             <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_with_bentoml</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">WithToolFetchingNotWorking</span><span class="p">(</span><span class="n">tool</span><span class="o">=</span><span class="s2">&quot;bentoml&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_bentoml</span><span class="p">()</span>
             <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">True</span>
 
