@@ -1028,11 +1028,11 @@
         <span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="n">ERSILIAPACK_BACK_FILES</span> <span class="o">=</span><span class="p">[</span>
+    <span class="n">ERSILIAPACK_BACK_FILES</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
         <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
         <span class="n">RUN_FILE</span><span class="p">,</span>
-        <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
+        <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
         <span class="s2">&quot;src/service.py&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pack.py&quot;</span><span class="p">,</span>
@@ -1058,8 +1058,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span> <span class="c1">#TODO THIS IS BEING INSTANTIATED BELOW ALREADY</span>
-    
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span>
+        <span class="p">)</span>  <span class="c1"># TODO THIS IS BEING INSTANTIATED BELOW ALREADY</span>
+
 <div class="viewcode-block" id="IOService.get_model_type">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_model_type">[docs]</a>
     <span class="nd">@staticmethod</span>
@@ -1147,7 +1149,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Metadata file not found.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">path</span>
-    
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata_file</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
@@ -1158,7 +1160,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file format: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
-    
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_install_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">DOCKERFILE_FILE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_requirements</span><span class="p">():</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span><span class="p">)</span>
@@ -1167,7 +1169,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Install file not found.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">path</span>
-    
+
 <div class="viewcode-block" id="IOService.collect_and_save_json">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.collect_and_save_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">collect_and_save_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>

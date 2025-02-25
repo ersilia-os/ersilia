@@ -330,6 +330,9 @@
     <span class="n">ComputationalPerformanceHundredBaseInformationError</span><span class="p">,</span>
     <span class="n">ComputationalPerformanceOneBaseInformationError</span><span class="p">,</span>
     <span class="n">ComputationalPerformanceTenBaseInformationError</span><span class="p">,</span>
+    <span class="n">ContributingDateBaseInformationError</span><span class="p">,</span>
+    <span class="n">ContributorBaseInformationError</span><span class="p">,</span>
+    <span class="n">DeploymentBaseInformationError</span><span class="p">,</span>
     <span class="n">DescriptionBaseInformationError</span><span class="p">,</span>
     <span class="n">DockerArchitectureBaseInformationError</span><span class="p">,</span>
     <span class="n">DockerhubBaseInformationError</span><span class="p">,</span>
@@ -338,14 +341,18 @@
     <span class="n">IdentifierBaseInformationError</span><span class="p">,</span>
     <span class="n">ImageSizeMbBaseInformationError</span><span class="p">,</span>
     <span class="n">InputBaseInformationError</span><span class="p">,</span>
+    <span class="n">InputDimensionBaseInformationError</span><span class="p">,</span>
     <span class="n">InputShapeBaseInformationError</span><span class="p">,</span>
+    <span class="n">InterpretationBaseInformationError</span><span class="p">,</span>
     <span class="n">LicenseBaseInformationError</span><span class="p">,</span>
     <span class="n">ModeBaseInformationError</span><span class="p">,</span>
+    <span class="n">ModelSizeMbBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputConsistencyBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputDimensionBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputShapeBaseInformationError</span><span class="p">,</span>
     <span class="n">OutputTypeBaseInformationError</span><span class="p">,</span>
+    <span class="n">PackMethodBaseInformationError</span><span class="p">,</span>
     <span class="n">PublicationBaseInformationError</span><span class="p">,</span>
     <span class="n">PublicationTypeBaseInformationError</span><span class="p">,</span>
     <span class="n">PublicationYearBaseInformationError</span><span class="p">,</span>
@@ -409,6 +416,8 @@
 <span class="sd">            Placeholder for input data specifications, such as &#39;Compound&#39;.</span>
 <span class="sd">        _input_shape : None</span>
 <span class="sd">            Placeholder for the shape of the input data.</span>
+<span class="sd">        _input_dimension: None</span>
+<span class="sd">            Placeholder for dimensional notes about the input.</span>
 <span class="sd">        _output : None</span>
 <span class="sd">            Placeholder for output data specifications, such as &#39;Probability&#39;, or &#39;Compound&#39;.</span>
 <span class="sd">        _output_type : None</span>
@@ -439,6 +448,8 @@
 <span class="sd">            Placeholder for license information.</span>
 <span class="sd">        _contributor : None</span>
 <span class="sd">            Placeholder for contributor information.</span>
+<span class="sd">        _contributing_date : None</span>
+<span class="sd">            Placeholder for the date of contribution.</span>
 <span class="sd">        _dockerhub : None</span>
 <span class="sd">            Placeholder for Docker Hub repository details.</span>
 <span class="sd">        _docker_architecture : None</span>
@@ -449,6 +460,8 @@
 <span class="sd">            Placeholder for the source of the model, one of &#39;Local&#39;, or &#39;Online&#39;</span>
 <span class="sd">        _source_type: None</span>
 <span class="sd">            Placeholder for the type of source of the model, one of &#39;Internal&#39;, &#39;External&#39;, or &#39;Replicated&#39;.</span>
+<span class="sd">        _model_size_mb: None</span>
+<span class="sd">            Placeholder for the size of the model (code and checkpoints) in megabytes.</span>
 <span class="sd">        _environment_size_mb : None</span>
 <span class="sd">            Placeholder for environment size in megabytes.</span>
 <span class="sd">        _image_size_mb : None</span>
@@ -459,6 +472,10 @@
 <span class="sd">            Placeholder for ten-run computational performance.</span>
 <span class="sd">        _computational_performance_hund : None</span>
 <span class="sd">            Placeholder for hundred-run computational performance.</span>
+<span class="sd">        _pack_method : None</span>
+<span class="sd">            Placeholder for the method used to pack the model.</span>
+<span class="sd">        _deployment: None</span>
+<span class="sd">            Placeholder for the deployment method used</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_github</span> <span class="o">=</span> <span class="kc">None</span>
@@ -472,6 +489,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subtask</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_dimension</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="kc">None</span>
@@ -487,16 +505,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contributing_date</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_size_mb</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size_mb</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_size_mb</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pack_method</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deployment</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url_string</span><span class="p">)</span>
@@ -837,6 +859,39 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="n">new_input_shape</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model input dimension.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The model input dimension.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_dimension</span>
+
+    <span class="nd">@input_dimension</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">input_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_input_dimension</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model output dimension.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_input_dimension : int</span>
+<span class="sd">            The new model output dimension.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        OutputDimensionBaseInformationError</span>
+<span class="sd">            If the output dimension is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_input_dimension</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputDimensionBaseInformationError</span>
+        <span class="k">if</span> <span class="n">new_input_dimension</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputDimensionBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_dimension</span> <span class="o">=</span> <span class="n">new_input_dimension</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model task.</span>
@@ -1169,6 +1224,10 @@
 <span class="sd">        new_interpretation : str</span>
 <span class="sd">            The new model interpretation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_interpretation</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">300</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InterpretationBaseInformationError</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_interpretation</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InterpretationBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpretation</span> <span class="o">=</span> <span class="n">new_interpretation</span>
 
     <span class="nd">@property</span>
@@ -1555,6 +1614,37 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_both_identifiers</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model size in Mb.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The model size in Mb.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_size_mb</span>
+
+    <span class="nd">@model_size</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model size in MB.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_model_size : int</span>
+<span class="sd">            The new model size in MB.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ModelSizeMbBaseInformationError</span>
+<span class="sd">            If the model size value is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_model_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">ModelSizeMbBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_size_mb</span> <span class="o">=</span> <span class="n">new_model_size</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">environment_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model evironment Size in Mb.</span>
@@ -1701,6 +1791,120 @@
             <span class="k">raise</span> <span class="n">ComputationalPerformanceHundredBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="n">new_value</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model pack method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model pack method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pack_method</span>
+
+    <span class="nd">@pack_method</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_pack_method</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model pack method.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pack_method : str</span>
+<span class="sd">            The new model pack method.</span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        PackMethodBaseInformationError</span>
+<span class="sd">            If the pack method is not valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">new_pack_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Pack Method&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PackMethodBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pack_method</span> <span class="o">=</span> <span class="n">new_pack_method</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contributing_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model contributing date.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model contributing date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contributing_date</span>
+
+    <span class="nd">@contributing_date</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contributing_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_contributing_date</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model contributing date.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        contributing_date : str</span>
+<span class="sd">            The model contributing date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">new_contributing_date</span> <span class="o">!=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;-</span><span class="si">%d</span><span class="s2">-%m-%Y&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ContributingDateBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contributing_date</span> <span class="o">=</span> <span class="n">new_contributing_date</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model contributor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            Model contributor github handle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span>
+
+    <span class="nd">@contributor</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_contributor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model contributor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        contributor : str</span>
+<span class="sd">            Model contributor github handle.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_contributor</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">new_contributor</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">ContributorBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="n">new_contributor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">deployment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model deployment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The model deployment.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deployment</span>
+
+    <span class="nd">@deployment</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">deployment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_deployment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the model deployment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        deployment : str</span>
+<span class="sd">            The model deployment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">new_deployment</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_deployment</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DeploymentBaseInformationError</span>
+        <span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="n">new_deployment</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Deployment&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DeploymentBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deployment</span> <span class="o">=</span> <span class="n">new_deployment</span>
+
 <div class="viewcode-block" id="BaseInformation.as_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation.as_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1723,6 +1927,7 @@
             <span class="c1"># &quot;Source Type&quot;: self.source_type,</span>
             <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span>
             <span class="s2">&quot;Input Shape&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span>
+            <span class="c1"># &quot;Input Dimension&quot;: self.input_dimension,</span>
             <span class="s2">&quot;Task&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">,</span>
             <span class="c1"># &quot;Subtask&quot;: self.subtask,</span>
             <span class="c1"># &quot;Biomedical Area&quot;: self.biomedical_area,</span>
@@ -1740,14 +1945,18 @@
             <span class="s2">&quot;Source Code&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_code</span><span class="p">,</span>
             <span class="s2">&quot;License&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">,</span>
             <span class="s2">&quot;Contributor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span><span class="p">,</span>
+            <span class="s2">&quot;Contributing Date&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contributing_date</span><span class="p">,</span>
             <span class="s2">&quot;DockerHub&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span><span class="p">,</span>
             <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span><span class="p">,</span>
             <span class="s2">&quot;S3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="p">,</span>
+            <span class="c1"># &quot;Model Size&quot;: self.model_size_mb,</span>
             <span class="c1"># &quot;Environment Size&quot;: self.environment_size,</span>
             <span class="c1"># &quot;Image Size&quot;: self.image_size_mb,</span>
             <span class="c1"># &quot;Computational Performance 1&quot;: self.computational_performance_one,</span>
             <span class="c1"># &quot;Computational Performance 10&quot;: self.computational_performance_ten,</span>
             <span class="c1"># &quot;Computational Performance 100&quot;: self.computational_performance_hund,</span>
+            <span class="c1"># &quot;Pack Method&quot;: self.pack_method,</span>
+            <span class="c1"># &quot;Deployment&quot;: self.deployment,</span>
         <span class="p">}</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
@@ -1777,6 +1986,7 @@
         <span class="c1"># self._assign(&quot;source_type&quot;, &quot;Source Type&quot;, data)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;Input&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;input_shape&quot;</span><span class="p">,</span> <span class="s2">&quot;Input Shape&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="c1"># self._assign(&quot;input_dimension&quot;, &quot;Input Dimension&quot;, data)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="c1"># self._assign(&quot;subtask&quot;, &quot;Subtask&quot;, data)</span>
         <span class="c1"># self._assign(&quot;biomedical_area&quot;, &quot;Biomedical Area&quot;, data)</span>
@@ -1794,11 +2004,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source_code&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span> <span class="s2">&quot;License&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;contributor&quot;</span><span class="p">,</span> <span class="s2">&quot;Contributor&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;contributing_date&quot;</span><span class="p">,</span> <span class="s2">&quot;Contributing Date&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;dockerhub&quot;</span><span class="p">,</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;docker_architecture&quot;</span><span class="p">,</span> <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 </div>
 
+        <span class="c1"># self._assign(&quot;model_size_mb&quot;, &quot;Model Size&quot;, data)</span>
         <span class="c1"># self._assign(&quot;environment_size&quot;, &quot;Environment Size&quot;, data)</span>
         <span class="c1"># self._assign(&quot;image_size_mb&quot;, &quot;Image Size&quot;, data)</span>
         <span class="c1"># self._assign(</span>
@@ -1810,6 +2022,8 @@
         <span class="c1"># self._assign(</span>
         <span class="c1">#     &quot;computational_performance_hund&quot;, &quot;Computational Performance 100&quot;, data</span>
         <span class="c1"># )</span>
+        <span class="c1"># self._assign(&quot;pack_method&quot;, &quot;Pack Method&quot;, data)</span>
+        <span class="c1"># self._assign(&quot;deployment&quot;, &quot;Deployment&quot;, data)</span>
 </pre></div>
         </article>
       </div>
