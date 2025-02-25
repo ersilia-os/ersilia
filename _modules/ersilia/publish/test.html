@@ -1013,14 +1013,27 @@
 <span class="sd">            model_id=&quot;model_id&quot;,</span>
 <span class="sd">            dir=&quot;/path/to/dir&quot;,</span>
 <span class="sd">        )</span>
-<span class="sd">        ios.read_information()</span>
+<span class="sd">        ios.read_metadata()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">RUN_FILE</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;model/framework/</span><span class="si">{</span><span class="n">RUN_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
+
     <span class="n">BENTOML_FILES</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
         <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
         <span class="n">RUN_FILE</span><span class="p">,</span>
+        <span class="s2">&quot;src/service.py&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pack.py&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LICENSE&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">ERSILIAPACK_BACK_FILES</span> <span class="o">=</span><span class="p">[</span>
+        <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
+        <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
+        <span class="n">RUN_FILE</span><span class="p">,</span>
+        <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
+        <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
         <span class="s2">&quot;src/service.py&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pack.py&quot;</span><span class="p">,</span>
         <span class="s2">&quot;README.md&quot;</span><span class="p">,</span>
@@ -1045,7 +1058,63 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span> <span class="c1">#TODO THIS IS BEING INSTANTIATED BELOW ALREADY</span>
+    
+<div class="viewcode-block" id="IOService.get_model_type">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_model_type">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_type</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the type of the model based on the repository contents.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            Identifier of the model.</span>
+<span class="sd">        repo_path : str</span>
+<span class="sd">            Path to the model repository.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
+        <span class="k">elif</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="IOService.get_file_requirements">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_file_requirements">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the list of required files for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        List[str]</span>
+<span class="sd">            List of required files.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the model type is unsupported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">type</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">get_model_type</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">BENTOML_FILES</span>
+        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS_TMP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERSILIAPACK_BACK_FILES</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERSILIAPACK_FILES</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported model type: </span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_check</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">check_function</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">check_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">additional_info</span><span class="o">=</span><span class="kc">None</span>
@@ -1070,10 +1139,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">check_name</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)))</span>
             <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">METADATA_JSON_FILE</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">()</span> <span class="k">else</span> <span class="n">METADATA_YAML_FILE</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_metadata_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">METADATA_JSON_FILE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_requirements</span><span class="p">():</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">METADATA_YAML_FILE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_requirements</span><span class="p">():</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Metadata file not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata_file</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
@@ -1082,7 +1158,16 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file format: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
-
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_install_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">DOCKERFILE_FILE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_requirements</span><span class="p">():</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">INSTALL_YAML_FILE</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_requirements</span><span class="p">():</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">METADATA_YAML_FILE</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Install file not found.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">path</span>
+    
 <div class="viewcode-block" id="IOService.collect_and_save_json">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.collect_and_save_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">collect_and_save_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
@@ -1172,84 +1257,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">json_data</span>
-
-<div class="viewcode-block" id="IOService.get_model_type">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_model_type">[docs]</a>
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_type</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the type of the model based on the repository contents.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model_id : str</span>
-<span class="sd">            Identifier of the model.</span>
-<span class="sd">        repo_path : str</span>
-<span class="sd">            Path to the model repository.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
-        <span class="k">elif</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span></div>
-
-
-<div class="viewcode-block" id="IOService.get_file_requirements">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_file_requirements">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the list of required files for the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        List[str]</span>
-<span class="sd">            List of required files.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ValueError</span>
-<span class="sd">            If the model type is unsupported.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">type</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">get_model_type</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">BENTOML_FILES</span>
-        <span class="k">elif</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ERSILIAPACK_FILES</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported model type: </span><span class="si">{</span><span class="nb">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="IOService.read_information">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.read_information">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">read_information</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read the information file for the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            The contents of the information file.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        FileNotFoundError</span>
-<span class="sd">            If the information file does not exist.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS_TMP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Information file does not exist for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="IOService.get_conda_env_size">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.test.IOService.get_conda_env_size">[docs]</a>
@@ -1417,7 +1424,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_size</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
         <span class="n">exec_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_execution_times</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
-        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata</span><span class="p">()</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
         <span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span>
         <span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">exec_times</span><span class="p">)</span>
 
@@ -1426,7 +1433,7 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_save_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">METADATA_JSON_FILE</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">()</span> <span class="k">else</span> <span class="n">METADATA_YAML_FILE</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata_file</span><span class="p">()</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
@@ -1524,25 +1531,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">from_github</span> <span class="o">=</span> <span class="n">from_github</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">from_dockerhub</span> <span class="o">=</span> <span class="n">from_dockerhub</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span> <span class="o">=</span> <span class="n">ios</span><span class="o">.</span><span class="n">_run_check</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_metadata</span> <span class="o">=</span> <span class="n">ios</span><span class="o">.</span><span class="n">_read_metadata</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table</span> <span class="o">=</span> <span class="n">ios</span><span class="o">.</span><span class="n">_generate_table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_file_requirements</span> <span class="o">=</span> <span class="n">ios</span><span class="o">.</span><span class="n">get_file_requirements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">ios</span><span class="o">.</span><span class="n">console</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span> <span class="o">=</span> <span class="n">ios</span><span class="o">.</span><span class="n">check_results</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">METADATA_JSON_FILE</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">()</span> <span class="k">else</span> <span class="n">METADATA_YAML_FILE</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">)):</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file format: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_file_existence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">path</span><span class="p">)):</span>
@@ -1760,7 +1755,8 @@
 <span class="sd">            The output file to write to.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Beginning checks for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> model information&quot;</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_id</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model ID&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_slug</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Slug&quot;</span><span class="p">)</span>

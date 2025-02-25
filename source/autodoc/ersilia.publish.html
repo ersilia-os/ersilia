@@ -422,7 +422,7 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.inspect.ModelInspector.ERSILIAPACK_FILES">
-<span class="sig-name descname"><span class="pre">ERSILIAPACK_FILES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE',</span> <span class="pre">'install.yml',</span> <span class="pre">'metadata.yml',</span> <span class="pre">'model/framework/examples/input.csv',</span> <span class="pre">'model/framework/input.csv',</span> <span class="pre">'.dockerignore',</span> <span class="pre">'.gitignore',</span> <span class="pre">'.gitattributes']</span></em><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.ERSILIAPACK_FILES" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ERSILIAPACK_FILES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE',</span> <span class="pre">'install.yml',</span> <span class="pre">'metadata.yml',</span> <span class="pre">'model/framework/examples/run_input.csv',</span> <span class="pre">'model/framework/examples/run_output.csv',</span> <span class="pre">'.dockerignore',</span> <span class="pre">'.gitignore',</span> <span class="pre">'.gitattributes']</span></em><a class="headerlink" href="#ersilia.publish.inspect.ModelInspector.ERSILIAPACK_FILES" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1053,7 +1053,7 @@
     <span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;model_id&quot;</span><span class="p">,</span>
     <span class="nb">dir</span><span class="o">=</span><span class="s2">&quot;/path/to/dir&quot;</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">ios</span><span class="o">.</span><span class="n">read_information</span><span class="p">()</span>
+<span class="n">ios</span><span class="o">.</span><span class="n">read_metadata</span><span class="p">()</span>
 </pre></div>
 </div>
 <dl class="py attribute">
@@ -1062,8 +1062,13 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.IOService.ERSILIAPACK_BACK_FILES">
+<span class="sig-name descname"><span class="pre">ERSILIAPACK_BACK_FILES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['Dockerfile',</span> <span class="pre">'metadata.json',</span> <span class="pre">'model/framework/run.sh',</span> <span class="pre">'model/framework/examples/run_input.csv',</span> <span class="pre">'model/framework/examples/run_output.csv',</span> <span class="pre">'src/service.py',</span> <span class="pre">'pack.py',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE']</span></em><a class="headerlink" href="#ersilia.publish.test.IOService.ERSILIAPACK_BACK_FILES" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.IOService.ERSILIAPACK_FILES">
-<span class="sig-name descname"><span class="pre">ERSILIAPACK_FILES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['install.yml',</span> <span class="pre">'metadata.yml',</span> <span class="pre">'model/framework/examples/input.csv',</span> <span class="pre">'model/framework/input.csv',</span> <span class="pre">'model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE']</span></em><a class="headerlink" href="#ersilia.publish.test.IOService.ERSILIAPACK_FILES" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ERSILIAPACK_FILES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['install.yml',</span> <span class="pre">'metadata.yml',</span> <span class="pre">'model/framework/examples/run_input.csv',</span> <span class="pre">'model/framework/examples/run_output.csv',</span> <span class="pre">'model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE']</span></em><a class="headerlink" href="#ersilia.publish.test.IOService.ERSILIAPACK_FILES" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1171,23 +1176,6 @@
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.publish.test.IOService.read_information">
-<span class="sig-name descname"><span class="pre">read_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/publish/test.html#IOService.read_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.IOService.read_information" title="Link to this definition">¶</a></dt>
-<dd><p>Read the information file for the model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The contents of the information file.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>FileNotFoundError</strong> – If the information file does not exist.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1789,6 +1777,7 @@
 </li>
 <li><a class="reference internal" href="#ersilia.publish.test.IOService"><code class="docutils literal notranslate"><span class="pre">IOService</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.publish.test.IOService.BENTOML_FILES"><code class="docutils literal notranslate"><span class="pre">IOService.BENTOML_FILES</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.IOService.ERSILIAPACK_BACK_FILES"><code class="docutils literal notranslate"><span class="pre">IOService.ERSILIAPACK_BACK_FILES</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.IOService.ERSILIAPACK_FILES"><code class="docutils literal notranslate"><span class="pre">IOService.ERSILIAPACK_FILES</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.IOService.RUN_FILE"><code class="docutils literal notranslate"><span class="pre">IOService.RUN_FILE</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.IOService.calculate_directory_size"><code class="docutils literal notranslate"><span class="pre">IOService.calculate_directory_size()</span></code></a></li>
@@ -1799,7 +1788,6 @@
 <li><a class="reference internal" href="#ersilia.publish.test.IOService.get_env_sizes"><code class="docutils literal notranslate"><span class="pre">IOService.get_env_sizes()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.IOService.get_file_requirements"><code class="docutils literal notranslate"><span class="pre">IOService.get_file_requirements()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.IOService.get_model_type"><code class="docutils literal notranslate"><span class="pre">IOService.get_model_type()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.publish.test.IOService.read_information"><code class="docutils literal notranslate"><span class="pre">IOService.read_information()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.IOService.update_metadata"><code class="docutils literal notranslate"><span class="pre">IOService.update_metadata()</span></code></a></li>
 </ul>
 </li>
