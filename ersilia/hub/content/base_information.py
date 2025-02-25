@@ -27,8 +27,8 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     IdentifierBaseInformationError,
     ImageSizeMbBaseInformationError,
     InputBaseInformationError,
-    InputShapeBaseInformationError,
     InputDimensionBaseInformationError,
+    InputShapeBaseInformationError,
     InterpretationBaseInformationError,
     LicenseBaseInformationError,
     ModeBaseInformationError,
@@ -1308,7 +1308,7 @@ class BaseInformation(ErsiliaBase):
             The model size in Mb.
         """
         return self._model_size_mb
-    
+
     @model_size.setter
     def model_size(self, new_model_size):
         """
@@ -1474,7 +1474,7 @@ class BaseInformation(ErsiliaBase):
         if not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceHundredBaseInformationError
         self._computational_performance_hund = new_value
-    
+
     @property
     def pack_method(self):
         """
@@ -1486,12 +1486,13 @@ class BaseInformation(ErsiliaBase):
             The model pack method.
         """
         return self._pack_method
+
     @pack_method.setter
     def pack_method(self, new_pack_method):
         """
         Set the model pack method.
 
-        Parameters 
+        Parameters
         ----------
         pack_method : str
             The new model pack method.
@@ -1510,19 +1511,19 @@ class BaseInformation(ErsiliaBase):
         Get the model contributing date.
 
         Returns
-        ------- 
+        -------
         str
             The model contributing date.
         """
         return self._contributing_date
-    
+
     @contributing_date.setter
     def contributing_date(self, new_contributing_date):
         """
         Set the model contributing date.
 
         Parameters
-        ---------- 
+        ----------
         contributing_date : str
             The model contributing date.
         """
@@ -1541,7 +1542,7 @@ class BaseInformation(ErsiliaBase):
             Model contributor github handle.
         """
         return self._contributor
-    
+
     @contributor.setter
     def contributor(self, new_contributor):
         """
@@ -1565,15 +1566,15 @@ class BaseInformation(ErsiliaBase):
         -------
         str
             The model deployment.
-        
+
         """
         return self._deployment
-    
+
     @deployment.setter
     def deployment(self, new_deployment):
         """
         Set the model deployment.
-        
+
         Parameters
         ----------
         deployment : str
