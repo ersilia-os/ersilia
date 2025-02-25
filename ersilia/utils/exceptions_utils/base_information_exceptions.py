@@ -147,6 +147,11 @@ class InputShapeBaseInformationError(ErsiliaError):
         )
         ErsiliaError.__init__(self, self.message, self.hints)
 
+class InputDimensionBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong input dimension"
+        self.hints = "Dimension should be at least 1"
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 class OutputBaseInformationError(ErsiliaError):
     def __init__(self):
@@ -177,7 +182,7 @@ class OutputShapeBaseInformationError(ErsiliaError):
 
 class OutputDimensionBaseInformationError(ErsiliaError):
     def __init__(self):
-        self.message = "Wrong dimension"
+        self.message = "Wrong output dimension"
         self.hints = "Dimension should be at least 1"
         ErsiliaError.__init__(self, self.message, self.hints)
 
@@ -296,6 +301,12 @@ class ImageSizeMbBaseInformationError(ErsiliaError):
         self.hints = "Image Size field must be specified as a valid numeric value indicating MB of model docker image"
         ErsiliaError.__init__(self, self.message, self.hints)
 
+class ModelSizeMbBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Model Size field error"
+        self.hints = "Model Size field must be specified as a valid numeric value indicating MB of model directory"
+        ErsiliaError.__init__(self, self.message, self.hints)
+
 
 class ComputationalPerformanceOneBaseInformationError(ErsiliaError):
     def __init__(self):
@@ -315,4 +326,38 @@ class ComputationalPerformanceHundredBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Computational Performance Hundred field error"
         self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 100 input prediction per second"
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+class PackMethodBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Pack Method field error"
+        self.hints = "Only one of the following pack methods is allowed: {}".format(
+            ", ".join(_read_default_fields("Pack Method"))
+        )
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+class ContributorBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Contributor field error"
+        self.hints = "Contributor must be a valid github username"
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+class ContributingDateBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Contributing Date field error"
+        self.hints = "Contributing Date must be a valid date"
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+class InterpretationBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Interpretation field error"
+        self.hints = "Interpretation must be a string of 10 to 300 chars"
+        ErsiliaError.__init__(self, self.hints)
+
+class DeploymentBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong deployment option"
+        self.hints = "Only these deployment options are allowed: {}. Deployment options must be in list format".format(
+            ", ".join(_read_default_fields("Deployment"))
+        )
         ErsiliaError.__init__(self, self.message, self.hints)
