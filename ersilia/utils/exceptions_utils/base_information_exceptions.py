@@ -348,10 +348,10 @@ class ContributorBaseInformationError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
-class ContributingDateBaseInformationError(ErsiliaError):
+class IncorporationDateBaseInformationError(ErsiliaError):
     def __init__(self):
-        self.message = "Contributing Date field error"
-        self.hints = "Contributing Date must be a valid date"
+        self.message = "Incorporation Date field error"
+        self.hints = "Incorporation Date must be a valid date"
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
