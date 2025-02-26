@@ -1358,7 +1358,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_publication_year</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PublicationYearBaseInformationError</span>
-        <span class="k">if</span> <span class="n">new_publication_year</span> <span class="o">&lt;</span> <span class="mi">1900</span> <span class="ow">or</span> <span class="n">new_publication_year</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_publication_year</span> <span class="o">&lt;</span> <span class="mi">1900</span> <span class="ow">or</span> <span class="n">new_publication_year</span> <span class="o">&gt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">PublicationBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_publication_year</span> <span class="o">=</span> <span class="n">new_publication_year</span>
 
@@ -1843,7 +1843,7 @@
 <span class="sd">        contributing_date : str</span>
 <span class="sd">            The model contributing date.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_contributing_date</span> <span class="o">!=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;-</span><span class="si">%d</span><span class="s2">-%m-%Y&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_incorporation_date</span> <span class="o">!=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">new_incorporation_date</span><span class="p">))</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">ContributingDateBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_contributing_date</span> <span class="o">=</span> <span class="n">new_contributing_date</span>
 
