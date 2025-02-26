@@ -16,7 +16,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     ComputationalPerformanceHundredBaseInformationError,
     ComputationalPerformanceOneBaseInformationError,
     ComputationalPerformanceTenBaseInformationError,
-    ContributingDateBaseInformationError,
+    IncorporationDateBaseInformationError,
     ContributorBaseInformationError,
     DeploymentBaseInformationError,
     DescriptionBaseInformationError,
@@ -28,7 +28,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     ImageSizeMbBaseInformationError,
     InputBaseInformationError,
     InputDimensionBaseInformationError,
-    InputShapeBaseInformationError,
     InterpretationBaseInformationError,
     LicenseBaseInformationError,
     ModeBaseInformationError,
@@ -36,8 +35,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     OutputBaseInformationError,
     OutputConsistencyBaseInformationError,
     OutputDimensionBaseInformationError,
-    OutputShapeBaseInformationError,
-    OutputTypeBaseInformationError,
     PackMethodBaseInformationError,
     PublicationBaseInformationError,
     PublicationTypeBaseInformationError,
@@ -90,24 +87,16 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the model’s title.
         _description : None
             Placeholder for a description of the model.
-        _mode : None
-            Placeholder for the training mode, one of 'retrained', 'pretrained', 'in-house', or 'online'.
         _task : None
             Placeholder for the primary task associated with the model, such as 'classification', or 'regression'.
         _subtask : None
             Placeholder for the subtask associated with the model, such as 'activity prediction', or 'featurization'.
         _input : None
             Placeholder for input data specifications, such as 'Compound'.
-        _input_shape : None
-            Placeholder for the shape of the input data.
         _input_dimension: None
             Placeholder for dimensional notes about the input.
         _output : None
             Placeholder for output data specifications, such as 'Probability', or 'Compound'.
-        _output_type : None
-            Placeholder for the type of output data.
-        _output_shape : None
-            Placeholder for the shape of the output data.
         _output_dimension : None
             Placeholder for dimensional notes about the output.
         _output_consistency : None
@@ -132,7 +121,7 @@ class BaseInformation(ErsiliaBase):
             Placeholder for license information.
         _contributor : None
             Placeholder for contributor information.
-        _contributing_date : None
+        _incorporation_date : None
             Placeholder for the date of contribution.
         _dockerhub : None
             Placeholder for Docker Hub repository details.
@@ -168,15 +157,11 @@ class BaseInformation(ErsiliaBase):
         self._status = None
         self._title = None
         self._description = None
-        self._mode = None
         self._task = None
         self._subtask = None
         self._input = None
-        self._input_shape = None
         self._input_dimension = None
         self._output = None
-        self._output_type = None
-        self._output_shape = None
         self._output_dimension = None
         self._output_consistency = None
         self._interpretation = None
@@ -189,7 +174,7 @@ class BaseInformation(ErsiliaBase):
         self._source_code = None
         self._license = None
         self._contributor = None
-        self._contributing_date = None
+        self._incorporation_date = None
         self._dockerhub = None
         self._docker_architecture = None
         self._s3 = None
@@ -383,37 +368,6 @@ class BaseInformation(ErsiliaBase):
         self._description = new_description
 
     @property
-    def mode(self):
-        """
-        Get the model mode.
-
-        Returns
-        -------
-        str
-            The model mode.
-        """
-        return self._mode
-
-    @mode.setter
-    def mode(self, new_mode):
-        """
-        Set the model mode.
-
-        Parameters
-        ----------
-        new_mode : str
-            The new model mode.
-
-        Raises
-        ------
-        ModeBaseInformationError
-            If the mode is not valid.
-        """
-        if new_mode not in self._read_default_fields("Mode"):
-            raise ModeBaseInformationError
-        self._mode = new_mode
-
-    @property
     def source(self):
         """
         Get the model source.
@@ -511,36 +465,6 @@ class BaseInformation(ErsiliaBase):
                 raise InputBaseInformationError
         self._input = new_input
 
-    @property
-    def input_shape(self):
-        """
-        Get the model input shape.
-
-        Returns
-        -------
-        str
-            The model input shape.
-        """
-        return self._input_shape
-
-    @input_shape.setter
-    def input_shape(self, new_input_shape):
-        """
-        Set the model input shape.
-
-        Parameters
-        ----------
-        new_input_shape : str
-            The new model input shape.
-
-        Raises
-        ------
-        InputShapeBaseInformationError
-            If the input shape is not valid.
-        """
-        if new_input_shape not in self._read_default_fields("Input Shape"):
-            raise InputShapeBaseInformationError
-        self._input_shape = new_input_shape
 
     @property
     def input_dimension(self):
@@ -753,73 +677,6 @@ class BaseInformation(ErsiliaBase):
             if no not in default_output:
                 raise OutputBaseInformationError
         self._output = new_output
-
-    @property
-    def output_type(self):
-        """
-        Get the model output type.
-
-        Returns
-        -------
-        list
-            The model output type.
-        """
-        return self._output_type
-
-    @output_type.setter
-    def output_type(self, new_output_type):
-        """
-        Set the model output type.
-
-        Parameters
-        ----------
-        new_output_type : list or str
-            The new model output type.
-
-        Raises
-        ------
-        OutputTypeBaseInformationError
-            If the output type is not valid.
-        """
-        if type(new_output_type) is str:
-            new_output_type = [new_output_type]
-        default_output_type = self._read_default_fields("Output Type")
-        for no in new_output_type:
-            if no not in default_output_type:
-                raise OutputTypeBaseInformationError
-        self._output_type = new_output_type
-
-    @property
-    def output_shape(self):
-        """
-        Get the model output shape.
-
-        Returns
-        -------
-        str
-            The model output shape.
-        """
-        return self._output_shape
-
-    @output_shape.setter
-    def output_shape(self, new_output_shape):
-        """
-        Set the model output shape.
-
-        Parameters
-        ----------
-        new_output_shape : str
-            The new model output shape.
-
-        Raises
-        ------
-        OutputShapeBaseInformationError
-            If the output shape is not valid.
-        """
-        default_output_shape = self._read_default_fields("Output Shape")
-        if new_output_shape not in default_output_shape:
-            raise OutputShapeBaseInformationError
-        self._output_shape = new_output_shape
 
     @property
     def output_dimension(self):
@@ -1042,7 +899,7 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if new_publication_year < 1900 or new_publication_year > datetime.today("Y"):
+        if new_publication_year < 1900 or new_publication_year > datetime.date.today().year:
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1506,7 +1363,7 @@ class BaseInformation(ErsiliaBase):
         self._pack_method = new_pack_method
 
     @property
-    def contributing_date(self):
+    def incorporation_date(self):
         """
         Get the model contributing date.
 
@@ -1515,21 +1372,21 @@ class BaseInformation(ErsiliaBase):
         str
             The model contributing date.
         """
-        return self._contributing_date
+        return self._incorporation_date
 
-    @contributing_date.setter
-    def contributing_date(self, new_contributing_date):
+    @incorporation_date.setter
+    def incorporation_date(self, new_incorporation_date):
         """
         Set the model contributing date.
 
         Parameters
         ----------
-        contributing_date : str
+        incorporation_date : str
             The model contributing date.
         """
-        if new_contributing_date != datetime.now().strftime("-%d-%m-%Y"):
-            raise ContributingDateBaseInformationError
-        self._contributing_date = new_contributing_date
+        if new_incorporation_date != datetime.datetime.fromisoformat(str(new_incorporation_date)).date().isoformat():
+            raise IncorporationDateBaseInformationError
+        self._incorporation_date = new_incorporation_date
 
     @property
     def contributor(self):
@@ -1605,40 +1462,37 @@ class BaseInformation(ErsiliaBase):
             "Title": self.title,
             "Description": self.description,
             "Mode": self.mode,
-            # "Source": self.source,
-            # "Source Type": self.source_type,
+            "Source": self.source,
+            "Source Type": self.source_type,
             "Input": self.input,
-            "Input Shape": self.input_shape,
-            # "Input Dimension": self.input_dimension,
+            "Input Dimension": self.input_dimension,
             "Task": self.task,
-            # "Subtask": self.subtask,
-            # "Biomedical Area": self.biomedical_area,
-            # "Target organism": self.target_organism,
+            "Subtask": self.subtask,
+            "Biomedical Area": self.biomedical_area,
+            "Target organism": self.target_organism,
             "Output": self.output,
-            "Output Type": self.output_type,
-            "Output Shape": self.output_shape,
-            # "Output Dimension": self.output_dimension,
-            # "Output Consistency": self.output_consistency,
+            "Output Dimension": self.output_dimension,
+            "Output Consistency": self.output_consistency,
             "Interpretation": self.interpretation,
             "Tag": self.tag,
             "Publication": self.publication,
-            # "Publication Type": self.publication_type,
-            # "Publication Year": self.publication_year,
+            "Publication Type": self.publication_type,
+            "Publication Year": self.publication_year,
             "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
-            "Contributing Date": self.contributing_date,
+            "Incorporation Date": self.incorporation_date,
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
-            # "Model Size": self.model_size_mb,
-            # "Environment Size": self.environment_size,
-            # "Image Size": self.image_size_mb,
-            # "Computational Performance 1": self.computational_performance_one,
-            # "Computational Performance 10": self.computational_performance_ten,
-            # "Computational Performance 100": self.computational_performance_hund,
-            # "Pack Method": self.pack_method,
-            # "Deployment": self.deployment,
+           # "Model Size": self.model_size_mb,
+            #"Environment Size": self.environment_size,
+            #"Image Size": self.image_size_mb,
+            #"Computational Performance 1": self.computational_performance_one,
+            #"Computational Performance 10": self.computational_performance_ten,
+            #"Computational Performance 100": self.computational_performance_hund,
+            #"Pack Method": self.pack_method,
+            #"Deployment": self.deployment,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1661,43 +1515,40 @@ class BaseInformation(ErsiliaBase):
         self._assign("title", "Title", data)
         self._assign("description", "Description", data)
         self._assign("mode", "Mode", data)
-        # self._assign("source", "Source", data)
-        # self._assign("source_type", "Source Type", data)
+        self._assign("source", "Source", data)
+        self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
-        self._assign("input_shape", "Input Shape", data)
-        # self._assign("input_dimension", "Input Dimension", data)
+        self._assign("input_dimension", "Input Dimension", data)
         self._assign("task", "Task", data)
-        # self._assign("subtask", "Subtask", data)
-        # self._assign("biomedical_area", "Biomedical Area", data)
-        # self._assign("target_organism", "Target Organism", data)
+        self._assign("subtask", "Subtask", data)
+        self._assign("biomedical_area", "Biomedical Area", data)
+        self._assign("target_organism", "Target Organism", data)
         self._assign("output", "Output", data)
-        self._assign("output_type", "Output Type", data)
-        self._assign("output_shape", "Output Shape", data)
-        # self._assign("output_dimension", "Output Dimension", data)
-        # self._assign("output_consistency", "Output Consistency", data)
+        self._assign("output_dimension", "Output Dimension", data)
+        self._assign("output_consistency", "Output Consistency", data)
         self._assign("interpretation", "Interpretation", data)
         self._assign("tag", "Tag", data)
         self._assign("publication", "Publication", data)
-        # self._assign("publication_type", "Publication Type", data)
-        # self._assign("publication_year", "Publication Year", data)
+        self._assign("publication_type", "Publication Type", data)
+        self._assign("publication_year", "Publication Year", data)
         self._assign("source_code", "Source Code", data)
         self._assign("license", "License", data)
         self._assign("contributor", "Contributor", data)
-        self._assign("contributing_date", "Contributing Date", data)
+        self._assign("incorporation_date", "Incorporation Date", data)
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
-        # self._assign("model_size_mb", "Model Size", data)
-        # self._assign("environment_size", "Environment Size", data)
-        # self._assign("image_size_mb", "Image Size", data)
-        # self._assign(
-        #     "computational_performance_one", "Computational Performance 1", data
-        # )
-        # self._assign(
-        #     "computational_performance_ten", "Computational Performance 10", data
-        # )
-        # self._assign(
+        #self._assign("model_size_mb", "Model Size", data)
+        #self._assign("environment_size", "Environment Size", data)
+        #self._assign("image_size_mb", "Image Size", data)
+        #self._assign(
+        #    "computational_performance_one", "Computational Performance 1", data
+        #)
+        #self._assign(
+        #    "computational_performance_ten", "Computational Performance 10", data
+        #)
+        #self._assign(
         #     "computational_performance_hund", "Computational Performance 100", data
-        # )
-        # self._assign("pack_method", "Pack Method", data)
-        # self._assign("deployment", "Deployment", data)
+        #)
+        #self._assign("pack_method", "Pack Method", data)
+        #self._assign("deployment", "Deployment", data)
