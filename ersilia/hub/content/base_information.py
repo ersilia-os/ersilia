@@ -16,7 +16,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     ComputationalPerformanceHundredBaseInformationError,
     ComputationalPerformanceOneBaseInformationError,
     ComputationalPerformanceTenBaseInformationError,
-    ContributingDateBaseInformationError,
+    IncorporationDateBaseInformationError,
     ContributorBaseInformationError,
     DeploymentBaseInformationError,
     DescriptionBaseInformationError,
@@ -132,7 +132,7 @@ class BaseInformation(ErsiliaBase):
             Placeholder for license information.
         _contributor : None
             Placeholder for contributor information.
-        _contributing_date : None
+        _incorporation_date : None
             Placeholder for the date of contribution.
         _dockerhub : None
             Placeholder for Docker Hub repository details.
@@ -189,7 +189,7 @@ class BaseInformation(ErsiliaBase):
         self._source_code = None
         self._license = None
         self._contributor = None
-        self._contributing_date = None
+        self._incorporation_date = None
         self._dockerhub = None
         self._docker_architecture = None
         self._s3 = None
@@ -1506,7 +1506,7 @@ class BaseInformation(ErsiliaBase):
         self._pack_method = new_pack_method
 
     @property
-    def contributing_date(self):
+    def incorporation_date(self):
         """
         Get the model contributing date.
 
@@ -1515,21 +1515,21 @@ class BaseInformation(ErsiliaBase):
         str
             The model contributing date.
         """
-        return self._contributing_date
+        return self._incorporation_date
 
-    @contributing_date.setter
-    def contributing_date(self, new_contributing_date):
+    @incorporation_date.setter
+    def incorporation_date(self, new_incorporation_date):
         """
         Set the model contributing date.
 
         Parameters
         ----------
-        contributing_date : str
+        incorporation_date : str
             The model contributing date.
         """
         if new_incorporation_date != datetime.datetime.fromisoformat(str(new_incorporation_date)).date().isoformat():
-            raise ContributingDateBaseInformationError
-        self._contributing_date = new_contributing_date
+            raise IncorporationDateBaseInformationError
+        self._incorporation_date = new_incorporation_date
 
     @property
     def contributor(self):
@@ -1627,7 +1627,7 @@ class BaseInformation(ErsiliaBase):
             "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
-            "Contributing Date": self.contributing_date,
+            "Incorporation Date": self.incorporation_date,
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
@@ -1683,7 +1683,7 @@ class BaseInformation(ErsiliaBase):
         self._assign("source_code", "Source Code", data)
         self._assign("license", "License", data)
         self._assign("contributor", "Contributor", data)
-        self._assign("contributing_date", "Contributing Date", data)
+        self._assign("incorporation_date", "Incorporation Date", data)
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
