@@ -1042,7 +1042,7 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if new_publication_year < 1900 or new_publication_year > datetime.today("Y"):
+        if new_publication_year < 1900 or new_publication_year > datetime.date.today().year:
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1527,7 +1527,7 @@ class BaseInformation(ErsiliaBase):
         contributing_date : str
             The model contributing date.
         """
-        if new_contributing_date != datetime.now().strftime("-%d-%m-%Y"):
+        if new_incorporation_date != datetime.datetime.fromisoformat(str(new_incorporation_date)).date().isoformat():
             raise ContributingDateBaseInformationError
         self._contributing_date = new_contributing_date
 
