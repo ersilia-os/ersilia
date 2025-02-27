@@ -330,7 +330,7 @@
     <span class="n">ComputationalPerformanceHundredBaseInformationError</span><span class="p">,</span>
     <span class="n">ComputationalPerformanceOneBaseInformationError</span><span class="p">,</span>
     <span class="n">ComputationalPerformanceTenBaseInformationError</span><span class="p">,</span>
-    <span class="n">ContributingDateBaseInformationError</span><span class="p">,</span>
+    <span class="n">IncorporationDateBaseInformationError</span><span class="p">,</span>
     <span class="n">ContributorBaseInformationError</span><span class="p">,</span>
     <span class="n">DeploymentBaseInformationError</span><span class="p">,</span>
     <span class="n">DescriptionBaseInformationError</span><span class="p">,</span>
@@ -448,7 +448,7 @@
 <span class="sd">            Placeholder for license information.</span>
 <span class="sd">        _contributor : None</span>
 <span class="sd">            Placeholder for contributor information.</span>
-<span class="sd">        _contributing_date : None</span>
+<span class="sd">        _incorporation_date : None</span>
 <span class="sd">            Placeholder for the date of contribution.</span>
 <span class="sd">        _dockerhub : None</span>
 <span class="sd">            Placeholder for Docker Hub repository details.</span>
@@ -505,7 +505,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_license</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_contributor</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contributing_date</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_incorporation_date</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1822,7 +1822,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pack_method</span> <span class="o">=</span> <span class="n">new_pack_method</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">contributing_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">incorporation_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the model contributing date.</span>
 
@@ -1831,21 +1831,21 @@
 <span class="sd">        str</span>
 <span class="sd">            The model contributing date.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contributing_date</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incorporation_date</span>
 
-    <span class="nd">@contributing_date</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">contributing_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_contributing_date</span><span class="p">):</span>
+    <span class="nd">@incorporation_date</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">incorporation_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_incorporation_date</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the model contributing date.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        contributing_date : str</span>
+<span class="sd">        incorporation_date : str</span>
 <span class="sd">            The model contributing date.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_incorporation_date</span> <span class="o">!=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">new_incorporation_date</span><span class="p">))</span><span class="o">.</span><span class="n">date</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="n">ContributingDateBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_contributing_date</span> <span class="o">=</span> <span class="n">new_contributing_date</span>
+            <span class="k">raise</span> <span class="n">IncorporationDateBaseInformationError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_incorporation_date</span> <span class="o">=</span> <span class="n">new_incorporation_date</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">contributor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1945,7 +1945,7 @@
             <span class="s2">&quot;Source Code&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_code</span><span class="p">,</span>
             <span class="s2">&quot;License&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">,</span>
             <span class="s2">&quot;Contributor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span><span class="p">,</span>
-            <span class="s2">&quot;Contributing Date&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contributing_date</span><span class="p">,</span>
+            <span class="c1"># &quot;Incorporation Date&quot;: self.incorporation_date,</span>
             <span class="s2">&quot;DockerHub&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span><span class="p">,</span>
             <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span><span class="p">,</span>
             <span class="s2">&quot;S3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="p">,</span>
@@ -2004,7 +2004,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source_code&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span> <span class="s2">&quot;License&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;contributor&quot;</span><span class="p">,</span> <span class="s2">&quot;Contributor&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;contributing_date&quot;</span><span class="p">,</span> <span class="s2">&quot;Contributing Date&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="c1"># self._assign(&quot;incorporation_date&quot;, &quot;Incorporation Date&quot;, data)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;dockerhub&quot;</span><span class="p">,</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;docker_architecture&quot;</span><span class="p">,</span> <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
