@@ -46,7 +46,8 @@ EXAMPLE_STANDARD_INPUT_CSV_FILENAME = "example_standard_input.csv"
 EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 
 PREDEFINED_EXAMPLE_INPUT_FILES = [
-    "model/framework/examples/run_input.csvmodel/framework/examples/input.csv",
+    "model/framework/examples/run_input.csv",
+    "model/framework/examples/input.csv",
     "model/framework/input.csv",
 ]
 
