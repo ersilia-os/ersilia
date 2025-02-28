@@ -4,14 +4,24 @@ ENV MODEL=$MODEL
 WORKDIR /root
 COPY ./$MODEL /root/$MODEL
 
-RUN apt-get update && \
-    ARCH=$(dpkg --print-architecture) && \
-    if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "i386" ]; then \
-        apt-get install -y libfontconfig1 libxrender1 libxtst6; \
-    else \
-        apt-get install -y libfontconfig1 libxrender1; \
-    fi && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Update package lists
+RUN apt-get update
+
+# Install libfontconfig1
+RUN apt-get install -y libfontconfig1
+
+# Install libxrender1
+RUN apt-get install -y libxrender1
+
+# Try installing libxtst6 (if available)
+RUN apt-get install -y libxtst6 || echo "Warning: libxtst6 not found, skipping."
+
+# Clean up package lists
+RUN apt-get clean
+
+# Remove unnecessary files
+RUN rm -rf /var/lib/apt/lists/*
+
 
 RUN apt-get update && \ 
     apt-get install -y git && \
