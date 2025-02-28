@@ -4,8 +4,13 @@ ENV MODEL=$MODEL
 WORKDIR /root
 COPY ./$MODEL /root/$MODEL
 
-RUN apt-get update && apt-cache search libxtst && \
-    apt-get install -y libfontconfig1 libxrender1 libxtst6 && \
+RUN apt-get update && \
+    ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "i386" ]; then \
+        apt-get install -y libfontconfig1 libxrender1 libxtst6; \
+    else \
+        apt-get install -y libfontconfig1 libxrender1; \
+    fi && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update && \ 
