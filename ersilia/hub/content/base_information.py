@@ -1600,30 +1600,6 @@ class BaseInformation(ErsiliaBase):
         self._deployment = new_deployment
 
     @property
-    def do_deployment(self):
-        """
-        Get the DigitalOcean deployment URL or value.
-
-        Returns
-        -------
-        str
-            The DO deployment value.
-        """
-        return self._do_deployment
-
-    @do_deployment.setter
-    def do_deployment(self, value):
-        """
-        Set the DigitalOcean deployment URL or value.
-
-        Parameters
-        ----------
-        value : str
-            The new DO deployment URL or value.
-        """
-        self._do_deployment = value
-
-    @property
     def biomodel_annotation(self):
         """
         Get the biomodel annotation flag.
@@ -1840,7 +1816,6 @@ class BaseInformation(ErsiliaBase):
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
-            "DO Deployment": self.do_deployment,
             "Biomodel Annotation": self.biomodel_annotation,
             "Runtime": self.runtime,
             "Secrets": self.secrets,
@@ -1917,7 +1892,6 @@ class BaseInformation(ErsiliaBase):
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
-        self._assign("do_deployment", "DO Deployment", data)
         self._assign("biomodel_annotation", "Biomodel Annotation", data)
         self._assign("runtime", "Runtime", data)
         self._assign("secrets", "Secrets", data)
