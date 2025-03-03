@@ -1,5 +1,5 @@
-import datetime
 import os
+from datetime import datetime
 
 import validators
 
@@ -16,7 +16,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     ComputationalPerformanceHundredBaseInformationError,
     ComputationalPerformanceOneBaseInformationError,
     ComputationalPerformanceTenBaseInformationError,
-    IncorporationDateBaseInformationError,
     ContributorBaseInformationError,
     DeploymentBaseInformationError,
     DescriptionBaseInformationError,
@@ -24,8 +23,10 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     DockerhubBaseInformationError,
     EnvironmentSizeMbBaseInformationError,
     GithubBaseInformationError,
+    HostUrlBaseInformationError,
     IdentifierBaseInformationError,
     ImageSizeMbBaseInformationError,
+    IncorporationDateBaseInformationError,
     InputBaseInformationError,
     InputDimensionBaseInformationError,
     InputShapeBaseInformationError,
@@ -1042,7 +1043,10 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if new_publication_year < 1900 or new_publication_year > datetime.today("Y"):
+        if (
+            new_publication_year < 1900
+            or new_publication_year > datetime.date.today().year
+        ):
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1527,7 +1531,12 @@ class BaseInformation(ErsiliaBase):
         incorporation_date : str
             The model contributing date.
         """
-        if new_incorporation_date != datetime.datetime.fromisoformat(str(new_incorporation_date)).date().isoformat():
+        if (
+            new_incorporation_date
+            != datetime.datetime.fromisoformat(str(new_incorporation_date))
+            .date()
+            .isoformat()
+        ):
             raise IncorporationDateBaseInformationError
         self._incorporation_date = new_incorporation_date
 
@@ -1589,6 +1598,205 @@ class BaseInformation(ErsiliaBase):
                 raise DeploymentBaseInformationError
         self._deployment = new_deployment
 
+    @property
+    def do_deployment(self):
+        """
+        Get the DigitalOcean deployment URL or value.
+
+        Returns
+        -------
+        str
+            The DO deployment value.
+        """
+        return self._do_deployment
+
+    @do_deployment.setter
+    def do_deployment(self, value):
+        """
+        Set the DigitalOcean deployment URL or value.
+
+        Parameters
+        ----------
+        value : str
+            The new DO deployment URL or value.
+        """
+        self._do_deployment = value
+
+    @property
+    def biomodel_annotation(self):
+        """
+        Get the biomodel annotation flag.
+
+        Returns
+        -------
+        str
+            The biomodel annotation information.
+        """
+        return self._biomodel_annotation
+
+    @biomodel_annotation.setter
+    def biomodel_annotation(self, value):
+        """
+        Set the biomodel annotation flag.
+
+        Parameters
+        ----------
+        value : str
+            The new biomodel annotation information.
+        """
+        self._biomodel_annotation = value
+
+    @property
+    def runtime(self):
+        """
+        Get the runtime information for the model.
+
+        Returns
+        -------
+        str
+            The model runtime information.
+        """
+        return self._runtime
+
+    @runtime.setter
+    def runtime(self, value):
+        """
+        Set the runtime information for the model.
+
+        Parameters
+        ----------
+        value : str
+            The new runtime information.
+        """
+        self._runtime = value
+
+    @property
+    def secrets(self):
+        """
+        Get the model secrets information.
+
+        Returns
+        -------
+        str
+            The secrets associated with the model.
+        """
+        return self._secrets
+
+    @secrets.setter
+    def secrets(self, value):
+        """
+        Set the model secrets information.
+
+        Parameters
+        ----------
+        value : str
+            The new secrets information.
+        """
+        self._secrets = value
+
+    @property
+    def incorporation_quarter(self):
+        """
+        Get the incorporation quarter of the model.
+
+        Returns
+        -------
+        str
+            The quarter in which the model was incorporated.
+        """
+        return self._incorporation_quarter
+
+    @incorporation_quarter.setter
+    def incorporation_quarter(self, value):
+        """
+        Set the incorporation quarter of the model.
+
+        Parameters
+        ----------
+        value : str
+            The new incorporation quarter.
+        """
+        self._incorporation_quarter = value
+
+    @property
+    def incorporation_year(self):
+        """
+        Get the incorporation year of the model.
+
+        Returns
+        -------
+        int
+            The year in which the model was incorporated.
+        """
+        return self._incorporation_year
+
+    @incorporation_year.setter
+    def incorporation_year(self, value):
+        """
+        Set the incorporation year of the model.
+
+        Parameters
+        ----------
+        value : int
+            The new incorporation year.
+        """
+        self._incorporation_year = value
+
+    @property
+    def image_size(self):
+        """
+        Get the image size of the model.
+
+        Returns
+        -------
+        str
+            The size of the model image.
+        """
+        return self._image_size
+
+    @image_size.setter
+    def image_size(self, value):
+        """
+        Set the image size of the model.
+
+        Parameters
+        ----------
+        value : str
+            The new image size.
+        """
+        self._image_size = value
+
+    @property
+    def host_url(self):
+        """
+        Get the model host URL.
+
+        Returns
+        -------
+        str
+            The model host URL.
+        """
+        return self.host_url
+
+    @host_url.setter
+    def host_url(self, value):
+        """
+        Set the model host URL.
+
+        Parameters
+        ----------
+        value : str
+            The new host URL.
+
+        Raises
+        ------
+        HostUrlBaseInformationError
+            If the host URL is provided and does not start with 'http'.
+        """
+        if value and not value.startswith("http"):
+            raise HostUrlBaseInformationError
+        self._host_url = value
+
     def as_dict(self):
         """
         Convert the model information to a dictionary.
@@ -1611,35 +1819,41 @@ class BaseInformation(ErsiliaBase):
             "Input Shape": self.input_shape,
             # "Input Dimension": self.input_dimension,
             "Task": self.task,
-            # "Subtask": self.subtask,
-            # "Biomedical Area": self.biomedical_area,
-            # "Target organism": self.target_organism,
+            "Subtask": self.subtask,
+            "Biomedical Area": self.biomedical_area,
+            "Target Organism": self.target_organism,
             "Output": self.output,
             "Output Type": self.output_type,
             "Output Shape": self.output_shape,
-            # "Output Dimension": self.output_dimension,
-            # "Output Consistency": self.output_consistency,
+            "Output Dimension": self.output_dimension,
+            "Output Consistency": self.output_consistency,
             "Interpretation": self.interpretation,
             "Tag": self.tag,
             "Publication": self.publication,
-            # "Publication Type": self.publication_type,
-            # "Publication Year": self.publication_year,
+            "Publication Type": self.publication_type,
+            "Publication Year": self.publication_year,
             "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
-            # "Incorporation Date": self.incorporation_date,
+            "incorporation_date": self.incorporation_date,
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
-            # "Model Size": self.model_size_mb,
-            # "Environment Size": self.environment_size,
-            # "Image Size": self.image_size_mb,
-            # "Computational Performance 1": self.computational_performance_one,
-            # "Computational Performance 10": self.computational_performance_ten,
-            # "Computational Performance 100": self.computational_performance_hund,
-            # "Pack Method": self.pack_method,
-            # "Deployment": self.deployment,
+            "DO Deployment": self.do_deployment,
+            "Biomodel Annotation": self.biomodel_annotation,
+            "Runtime": self.runtime,
+            "Secrets": self.secrets,
+            "Deployment": self.deployment,
+            "Incorporation Quarter": self.incorporation_quarter,
+            "Incorporation Year": self.incorporation_year,
+            "Environment Size": self.environment_size,
+            "Image Size": self.image_size,
+            "Computational Performance 1": self.computational_performance_one,
+            "Computational Performance 10": self.computational_performance_ten,
+            "Computational Performance 100": self.computational_performance_hund,
+            "Docker Pack Method": self.pack_method,
         }
+
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
 
@@ -1655,30 +1869,46 @@ class BaseInformation(ErsiliaBase):
         data : dict
             The model information as a dictionary.
         """
+        if "Target Organism" in data:
+            raw = data["Target Organism"]
+            if isinstance(raw, str):
+                data["Target Organism"] = [
+                    item.strip() for item in raw.split(",") if item.strip()
+                ]
+
+        if "Data Architecture" in data:
+            raw = data["Data Architecture"]
+            if isinstance(raw, str):
+                data["Data Architecture"] = [
+                    item.strip() for item in raw.split(",") if item.strip()
+                ]
+
         self._assign("identifier", "Identifier", data)
         self._assign("slug", "Slug", data)
         self._assign("status", "Status", data)
         self._assign("title", "Title", data)
         self._assign("description", "Description", data)
+        self._assign("mode", "Mode", data)
         self._assign("source", "Source", data)
         self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
         self._assign("input_shape", "Input Shape", data)
         # self._assign("input_dimension", "Input Dimension", data)
         self._assign("task", "Task", data)
-        # self._assign("subtask", "Subtask", data)
-        # self._assign("biomedical_area", "Biomedical Area", data)
-        # self._assign("target_organism", "Target Organism", data)
+        self._assign("subtask", "Subtask", data)
+        self._assign("biomedical_area", "Biomedical Area", data)
+        self._assign("target_organism", "Target Organism", data)
+        # self._assign("github", "GitHub", data)
         self._assign("output", "Output", data)
         self._assign("output_type", "Output Type", data)
         self._assign("output_shape", "Output Shape", data)
-        # self._assign("output_dimension", "Output Dimension", data)
-        # self._assign("output_consistency", "Output Consistency", data)
+        self._assign("output_dimension", "Output Dimension", data)
+        self._assign("output_consistency", "Output Consistency", data)
         self._assign("interpretation", "Interpretation", data)
         self._assign("tag", "Tag", data)
         self._assign("publication", "Publication", data)
-        # self._assign("publication_type", "Publication Type", data)
-        # self._assign("publication_year", "Publication Year", data)
+        self._assign("publication_type", "Publication Type", data)
+        self._assign("publication_year", "Publication Year", data)
         self._assign("source_code", "Source Code", data)
         self._assign("license", "License", data)
         self._assign("contributor", "Contributor", data)
@@ -1686,6 +1916,13 @@ class BaseInformation(ErsiliaBase):
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
+        self._assign("do_deployment", "DO Deployment", data)
+        self._assign("biomodel_annotation", "Biomodel Annotation", data)
+        self._assign("runtime", "Runtime", data)
+        self._assign("secrets", "Secrets", data)
+        self._assign("deployment", "Deployment", data)
+        self._assign("incorporation_quarter", "Incorporation Quarter", data)
+        self._assign("incorporation_year", "Incorporation Year", data)
         # self._assign("model_size_mb", "Model Size", data)
         # self._assign("environment_size", "Environment Size", data)
         # self._assign("image_size_mb", "Image Size", data)
@@ -1698,5 +1935,4 @@ class BaseInformation(ErsiliaBase):
         # self._assign(
         #     "computational_performance_hund", "Computational Performance 100", data
         # )
-        # self._assign("pack_method", "Pack Method", data)
-        # self._assign("deployment", "Deployment", data)
+        # self._assign("pack_method", "Docker Pack Method", data)
