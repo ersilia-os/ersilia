@@ -192,11 +192,13 @@ class BaseInformation(ErsiliaBase):
         self._license = None
         self._contributor = None
         self._incorporation_date = None
+        self._incorporation_year = None
         self._dockerhub = None
         self._docker_architecture = None
         self._s3 = None
         self._source = None
         self._source_type = None
+        self._image_size = None
         self._model_size_mb = None
         self._environment_size_mb = None
         self._image_size_mb = None
@@ -205,6 +207,7 @@ class BaseInformation(ErsiliaBase):
         self._computational_performance_hund = None
         self._pack_method = None
         self._deployment = None
+        self._biomodel_annotation = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -1624,78 +1627,6 @@ class BaseInformation(ErsiliaBase):
         self._biomodel_annotation = value
 
     @property
-    def runtime(self):
-        """
-        Get the runtime information for the model.
-
-        Returns
-        -------
-        str
-            The model runtime information.
-        """
-        return self._runtime
-
-    @runtime.setter
-    def runtime(self, value):
-        """
-        Set the runtime information for the model.
-
-        Parameters
-        ----------
-        value : str
-            The new runtime information.
-        """
-        self._runtime = value
-
-    @property
-    def secrets(self):
-        """
-        Get the model secrets information.
-
-        Returns
-        -------
-        str
-            The secrets associated with the model.
-        """
-        return self._secrets
-
-    @secrets.setter
-    def secrets(self, value):
-        """
-        Set the model secrets information.
-
-        Parameters
-        ----------
-        value : str
-            The new secrets information.
-        """
-        self._secrets = value
-
-    @property
-    def incorporation_quarter(self):
-        """
-        Get the incorporation quarter of the model.
-
-        Returns
-        -------
-        str
-            The quarter in which the model was incorporated.
-        """
-        return self._incorporation_quarter
-
-    @incorporation_quarter.setter
-    def incorporation_quarter(self, value):
-        """
-        Set the incorporation quarter of the model.
-
-        Parameters
-        ----------
-        value : str
-            The new incorporation quarter.
-        """
-        self._incorporation_quarter = value
-
-    @property
     def incorporation_year(self):
         """
         Get the incorporation year of the model.
@@ -1817,10 +1748,7 @@ class BaseInformation(ErsiliaBase):
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
             "Biomodel Annotation": self.biomodel_annotation,
-            "Runtime": self.runtime,
-            "Secrets": self.secrets,
             "Deployment": self.deployment,
-            "Incorporation Quarter": self.incorporation_quarter,
             "Incorporation Year": self.incorporation_year,
             "Environment Size": self.environment_size,
             "Image Size": self.image_size,
@@ -1893,10 +1821,7 @@ class BaseInformation(ErsiliaBase):
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
         self._assign("biomodel_annotation", "Biomodel Annotation", data)
-        self._assign("runtime", "Runtime", data)
-        self._assign("secrets", "Secrets", data)
         self._assign("deployment", "Deployment", data)
-        self._assign("incorporation_quarter", "Incorporation Quarter", data)
         self._assign("incorporation_year", "Incorporation Year", data)
         # self._assign("model_size_mb", "Model Size", data)
         # self._assign("environment_size", "Environment Size", data)
