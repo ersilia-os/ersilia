@@ -1,5 +1,6 @@
 import os
 
+# import sys
 from ...default import AIRTABLE_MODEL_HUB_VIEW_URL
 from .exceptions import ErsiliaError
 
@@ -369,3 +370,10 @@ class DeploymentBaseInformationError(ErsiliaError):
             ", ".join(_read_default_fields("Deployment"))
         )
         ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class HostUrlBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Wrong host URL"
+        self.hints = "The host URL must be a valid URL starting with 'http'."
+        ErsiliaError().__init__(self.message, self.hints)
