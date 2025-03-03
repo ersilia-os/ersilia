@@ -43,9 +43,11 @@ class SystemChecker(object):
         bool
             True if the system architecture is ARM64, False otherwise.
         """
-        if self.uname.machine == "arm64":
+        if self.uname.machine in ["arm64", "aarch64"]:
             return True
         if "arm64" in self.uname.version.lower():
+            return True
+        if "aarch64" in self.uname.version.lower():
             return True
         return False
 
