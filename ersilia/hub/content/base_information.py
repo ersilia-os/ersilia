@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 
-# from datetime import datetime
 import validators
 
 try:
@@ -193,6 +192,7 @@ class BaseInformation(ErsiliaBase):
         self._contributor = None
         self._incorporation_date = None
         self._incorporation_year = None
+        self._incorporation_quarter = None
         self._dockerhub = None
         self._docker_architecture = None
         self._s3 = None
@@ -1047,10 +1047,7 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if (
-            new_publication_year < 1900
-            or new_publication_year > datetime.date.today().year
-        ):
+        if new_publication_year < 1900 or new_publication_year > datetime.today().year:
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1535,14 +1532,12 @@ class BaseInformation(ErsiliaBase):
         incorporation_date : str
             The model contributing date.
         """
-        if (
-            new_incorporation_date
-            != datetime.datetime.fromisoformat(str(new_incorporation_date))
-            .date()
-            .isoformat()
-        ):
+        try:
+            parsed_date = datetime.strptime(new_incorporation_date, "%d/%m/%Y").date()
+            iso_date = parsed_date.isoformat()
+        except Exception:
             raise IncorporationDateBaseInformationError
-        self._incorporation_date = new_incorporation_date
+        self._incorporation_date = iso_date
 
     @property
     def contributor(self):
@@ -1651,6 +1646,30 @@ class BaseInformation(ErsiliaBase):
         self._incorporation_year = value
 
     @property
+    def incorporation_quarter(self):
+        """
+        Get the incorporation quarter of the model.
+
+        Returns
+        -------
+        int
+            The quarter in which the model was incorporated.
+        """
+        return self._incorporation_quarter
+
+    @incorporation_quarter.setter
+    def incorporation_quarter(self, value):
+        """
+        Set the incorporation quarter of the model.
+
+        Parameters
+        ----------
+        value : int
+            The new incorporation quarter.
+        """
+        self._incorporation_quarter = value
+
+    @property
     def image_size(self):
         """
         Get the image size of the model.
@@ -1723,33 +1742,48 @@ class BaseInformation(ErsiliaBase):
             "Mode": self.mode,
             "Source": self.source,
             "Source Type": self.source_type,
-            "Input": self.input,
+            "Input": ", ".join(self.input)
+            if isinstance(self.input, list)
+            else self.input,
             "Input Shape": self.input_shape,
             # "Input Dimension": self.input_dimension,
-            "Task": self.task,
-            "Subtask": self.subtask,
-            "Biomedical Area": self.biomedical_area,
-            "Target Organism": self.target_organism,
+            "Task": ", ".join(self.task) if isinstance(self.task, list) else self.task,
+            "Subtask": ", ".join(self.subtask)
+            if isinstance(self.subtask, list)
+            else self.subtask,
+            "Biomedical Area": ", ".join(self.biomedical_area)
+            if isinstance(self.biomedical_area, list)
+            else self.biomedical_area,
+            "Target Organism": ", ".join(self.target_organism)
+            if isinstance(self.target_organism, list)
+            else self.target_organism,
             "Output": self.output,
-            "Output Type": self.output_type,
+            "Output Type": ", ".join(self.output_type)
+            if isinstance(self.output_type, list)
+            else self.output_type,
             "Output Shape": self.output_shape,
             "Output Dimension": self.output_dimension,
             "Output Consistency": self.output_consistency,
             "Interpretation": self.interpretation,
-            "Tag": self.tag,
+            "Tag": ", ".join(self.tag) if isinstance(self.tag, list) else self.tag,
             "Publication": self.publication,
             "Publication Type": self.publication_type,
             "Publication Year": self.publication_year,
             "Source Code": self.source_code,
             "License": self.license,
             "Contributor": self.contributor,
-            "incorporation_date": self.incorporation_date,
+            "Incorporation Date": self.incorporation_date,
             "DockerHub": self.dockerhub,
-            "Docker Architecture": self.docker_architecture,
+            "Docker Architecture": ", ".join(self.docker_architecture)
+            if isinstance(self.docker_architecture, list)
+            else self.docker_architecture,
             "S3": self.s3,
             "Biomodel Annotation": self.biomodel_annotation,
-            "Deployment": self.deployment,
+            "Deployment": ", ".join(self.deployment)
+            if isinstance(self.deployment, list)
+            else self.deployment,
             "Incorporation Year": self.incorporation_year,
+            "Incorporation Quarter": self.incorporation_quarter,
             "Environment Size": self.environment_size,
             "Image Size": self.image_size,
             "Computational Performance 1": self.computational_performance_one,
@@ -1816,13 +1850,14 @@ class BaseInformation(ErsiliaBase):
         self._assign("source_code", "Source Code", data)
         self._assign("license", "License", data)
         self._assign("contributor", "Contributor", data)
-        # self._assign("incorporation_date", "Incorporation Date", data)
+        self._assign("incorporation_date", "Incorporation Date", data)
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
         self._assign("biomodel_annotation", "Biomodel Annotation", data)
         self._assign("deployment", "Deployment", data)
         self._assign("incorporation_year", "Incorporation Year", data)
+        self._assign("incorporation_quarter", "Incorporation Quarter", data)
         # self._assign("model_size_mb", "Model Size", data)
         # self._assign("environment_size", "Environment Size", data)
         # self._assign("image_size_mb", "Image Size", data)

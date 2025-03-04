@@ -320,6 +320,8 @@ class ReadmeMetadata:
             text += "- **Deployment:** {0}\n".format(d.get("Deployment"))
         if d.get("Incorporation Quarter"):
             text += "- **Incorporation Quarter:** {0}\n".format(d.get("Incorporation Quarter"))
+        if d.get("Incorporation Date"):
+            text += "- **Incorporation Date:** {0}\n".format(d.get("Incorporation Date"))    
         if d.get("Incorporation Year"):
             text += "- **Incorporation Year:** {0}\n".format(d.get("Incorporation Year"))
         text += "\n"
