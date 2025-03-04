@@ -242,9 +242,9 @@ class MetadataFileUpdater(FileUpdater):
     
     def _update_metadata_file(self, metadata_path):
         am = AirtableMetadata(model_id=self.model_id, api_key=self.api_key, mode="rw") #TODO this key could be read only
-        bi = am.read_information()
+        data = am.read_information()
         rm = RepoMetadataFile(model_id=self.model_id, config_json=None)
-        rm.write_information(data=bi, json_or_yaml_path=metadata_path)
+        rm.write_information(data=data, json_or_yaml_path=metadata_path)
 
     def _select_correct_metadata_file(self):
         if self.repo_path is None:

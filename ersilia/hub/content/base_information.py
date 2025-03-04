@@ -16,6 +16,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     ComputationalPerformanceHundredBaseInformationError,
     ComputationalPerformanceOneBaseInformationError,
     ComputationalPerformanceTenBaseInformationError,
+    IncorporationDateBaseInformationError,
     ContributorBaseInformationError,
     DeploymentBaseInformationError,
     DescriptionBaseInformationError,
@@ -25,15 +26,18 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     GithubBaseInformationError,
     IdentifierBaseInformationError,
     ImageSizeMbBaseInformationError,
-    IncorporationDateBaseInformationError,
     InputBaseInformationError,
     InputDimensionBaseInformationError,
+    InputShapeBaseInformationError,
     InterpretationBaseInformationError,
     LicenseBaseInformationError,
+    ModeBaseInformationError,
     ModelSizeMbBaseInformationError,
     OutputBaseInformationError,
     OutputConsistencyBaseInformationError,
     OutputDimensionBaseInformationError,
+    OutputShapeBaseInformationError,
+    OutputTypeBaseInformationError,
     PackMethodBaseInformationError,
     PublicationBaseInformationError,
     PublicationTypeBaseInformationError,
@@ -86,16 +90,24 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the model’s title.
         _description : None
             Placeholder for a description of the model.
+        _mode : None
+            Placeholder for the training mode, one of 'retrained', 'pretrained', 'in-house', or 'online'.
         _task : None
             Placeholder for the primary task associated with the model, such as 'classification', or 'regression'.
         _subtask : None
             Placeholder for the subtask associated with the model, such as 'activity prediction', or 'featurization'.
         _input : None
             Placeholder for input data specifications, such as 'Compound'.
+        _input_shape : None
+            Placeholder for the shape of the input data.
         _input_dimension: None
             Placeholder for dimensional notes about the input.
         _output : None
             Placeholder for output data specifications, such as 'Probability', or 'Compound'.
+        _output_type : None
+            Placeholder for the type of output data.
+        _output_shape : None
+            Placeholder for the shape of the output data.
         _output_dimension : None
             Placeholder for dimensional notes about the output.
         _output_consistency : None
@@ -132,11 +144,11 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the source of the model, one of 'Local', or 'Online'
         _source_type: None
             Placeholder for the type of source of the model, one of 'Internal', 'External', or 'Replicated'.
-        _model_size_mb: None
+        _model_size: None
             Placeholder for the size of the model (code and checkpoints) in megabytes.
-        _environment_size_mb : None
+        _environment_size : None
             Placeholder for environment size in megabytes.
-        _image_size_mb : None
+        _image_size : None
             Placeholder for Docker image size in megabytes.
         _computational_performance_one : None
             Placeholder for single-run computational performance.
@@ -156,11 +168,15 @@ class BaseInformation(ErsiliaBase):
         self._status = None
         self._title = None
         self._description = None
+        self._mode = None
         self._task = None
         self._subtask = None
         self._input = None
+        self._input_shape = None
         self._input_dimension = None
         self._output = None
+        self._output_type = None
+        self._output_shape = None
         self._output_dimension = None
         self._output_consistency = None
         self._interpretation = None
@@ -179,9 +195,9 @@ class BaseInformation(ErsiliaBase):
         self._s3 = None
         self._source = None
         self._source_type = None
-        self._model_size_mb = None
-        self._environment_size_mb = None
-        self._image_size_mb = None
+        self._model_size = None
+        self._environment_size = None
+        self._image_size = None
         self._computational_performance_one = None
         self._computational_performance_ten = None
         self._computational_performance_hund = None
@@ -367,6 +383,39 @@ class BaseInformation(ErsiliaBase):
         self._description = new_description
 
     @property
+    def mode(self):
+        """
+        Get the model mode.
+
+        Returns
+        -------
+        str
+            The model mode.
+        """
+        return self._mode
+
+    @mode.setter
+    def mode(self, new_mode):
+        """
+        Set the model mode.
+
+        Parameters
+        ----------
+        new_mode : str
+            The new model mode.
+
+        Raises
+        ------
+        ModeBaseInformationError
+            If the mode is not valid.
+        """
+        if new_mode is None:
+            new_mode = "Pretrained"
+        if new_mode not in self._read_default_fields("Mode"):
+            raise ModeBaseInformationError
+        self._mode = new_mode
+
+    @property
     def source(self):
         """
         Get the model source.
@@ -464,6 +513,38 @@ class BaseInformation(ErsiliaBase):
                 raise InputBaseInformationError
         self._input = new_input
 
+    @property
+    def input_shape(self):
+        """
+        Get the model input shape.
+
+        Returns
+        -------
+        str
+            The model input shape.
+        """
+        return self._input_shape
+
+    @input_shape.setter
+    def input_shape(self, new_input_shape):
+        """
+        Set the model input shape.
+
+        Parameters
+        ----------
+        new_input_shape : str
+            The new model input shape.
+
+        Raises
+        ------
+        InputShapeBaseInformationError
+            If the input shape is not valid.
+        """
+        if new_input_shape is None:
+            new_input_shape = "Single"
+        if new_input_shape not in self._read_default_fields("Input Shape"):
+            raise InputShapeBaseInformationError
+        self._input_shape = new_input_shape
 
     @property
     def input_dimension(self):
@@ -676,6 +757,77 @@ class BaseInformation(ErsiliaBase):
             if no not in default_output:
                 raise OutputBaseInformationError
         self._output = new_output
+
+    @property
+    def output_type(self):
+        """
+        Get the model output type.
+
+        Returns
+        -------
+        list
+            The model output type.
+        """
+        return self._output_type
+
+    @output_type.setter
+    def output_type(self, new_output_type):
+        """
+        Set the model output type.
+
+        Parameters
+        ----------
+        new_output_type : list or str
+            The new model output type.
+
+        Raises
+        ------
+        OutputTypeBaseInformationError
+            If the output type is not valid.
+        """
+        if type(new_output_type) is str:
+            new_output_type = [new_output_type]
+        default_output_type = self._read_default_fields("Output Type")
+        if new_output_type is None:
+            new_output_type = ["Float"] #TODO chaneg for column information
+        for no in new_output_type:
+            if no not in default_output_type:
+                raise OutputTypeBaseInformationError
+        self._output_type = new_output_type
+
+    @property
+    def output_shape(self):
+        """
+        Get the model output shape.
+
+        Returns
+        -------
+        str
+            The model output shape.
+        """
+        return self._output_shape
+
+    @output_shape.setter
+    def output_shape(self, new_output_shape):
+        """
+        Set the model output shape.
+
+        Parameters
+        ----------
+        new_output_shape : str
+            The new model output shape.
+
+        Raises
+        ------
+        OutputShapeBaseInformationError
+            If the output shape is not valid.
+        """
+        default_output_shape = self._read_default_fields("Output Shape")
+        if new_output_shape is None:
+            new_output_shape = "List"
+        if new_output_shape not in default_output_shape:
+            raise OutputShapeBaseInformationError
+        self._output_shape = new_output_shape
 
     @property
     def output_dimension(self):
@@ -1163,7 +1315,7 @@ class BaseInformation(ErsiliaBase):
         int
             The model size in Mb.
         """
-        return self._model_size_mb
+        return self._model_size
 
     @model_size.setter
     def model_size(self, new_model_size):
@@ -1180,9 +1332,12 @@ class BaseInformation(ErsiliaBase):
         ModelSizeMbBaseInformationError
             If the model size value is not valid.
         """
-        if not isinstance(new_model_size, (int, float)):
+        if new_model_size is None:
+            self._model_size=None
+        elif not isinstance(new_model_size, (int, float)):
             raise ModelSizeMbBaseInformationError
-        self._model_size_mb = new_model_size
+        else:
+            self._model_size = new_model_size
 
     @property
     def environment_size(self):
@@ -1194,7 +1349,7 @@ class BaseInformation(ErsiliaBase):
         int
             The model evironment Size in Mb.
         """
-        return self._environment_size_mb
+        return self._environment_size
 
     @environment_size.setter
     def environment_size(self, new_environment_size):
@@ -1211,12 +1366,15 @@ class BaseInformation(ErsiliaBase):
         EnvironmentSizeMbBaseInformationError
             If the environment size value is not valid.
         """
-        if not isinstance(new_environment_size, (int, float)):
+        if new_environment_size is None:
+            self._environment_size = None
+        elif not isinstance(new_environment_size, (int, float)):
             raise EnvironmentSizeMbBaseInformationError
-        self._environment_size_mb = new_environment_size
+        else:
+            self._environment_size = new_environment_size
 
     @property
-    def image_size_mb(self):
+    def image_size(self):
         """Get the image size in megabytes.
 
         Returns
@@ -1224,25 +1382,28 @@ class BaseInformation(ErsiliaBase):
         int
             The size of the image in MB.
         """
-        return self._image_size_mb
+        return self._image_size
 
-    @image_size_mb.setter
-    def image_size_mb(self, new_image_size_mb):
+    @image_size.setter
+    def image_size(self, new_image_size):
         """Set the image size in megabytes.
 
         Parameters
         ----------
-        new_image_size_mb : int
+        new_image_size : int
             The new image size in MB.
 
         Raises
         ------
         ImageSizeMbBaseInformationError
-            If `new_image_size_mb` is not an integer.
+            If `new_image_size` is not an integer.
         """
-        if not isinstance(new_image_size_mb, (int, float)):
+        if new_image_size is None:
+            self._image_size == None
+        elif not isinstance(new_image_size, (int, float)):
             raise ImageSizeMbBaseInformationError
-        self._image_size_mb = new_image_size_mb
+        else:
+            self._image_size = new_image_size
 
     @property
     def computational_performance_one(self):
@@ -1269,9 +1430,12 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceOneBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not isinstance(new_value, (int, float)):
+        if new_value is None:
+            self._computational_performance_one = None
+        elif not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceOneBaseInformationError
-        self._computational_performance_one = new_value
+        else:
+            self._computational_performance_one = new_value
 
     @property
     def computational_performance_ten(self):
@@ -1298,9 +1462,12 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceTenBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not isinstance(new_value, (int, float)):
+        if new_value is None:
+            self._computational_performance_ten = None
+        elif not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceTenBaseInformationError
-        self._computational_performance_ten = new_value
+        else:
+            self._computational_performance_ten = new_value
 
     @property
     def computational_performance_hund(self):
@@ -1327,9 +1494,12 @@ class BaseInformation(ErsiliaBase):
         ComputationalPerformanceHundredBaseInformationError
             If `new_value` is not an int or float.
         """
-        if not isinstance(new_value, (int, float)):
+        if new_value is None:
+            self._computational_performance_hund = None
+        elif not isinstance(new_value, (int, float)):
             raise ComputationalPerformanceHundredBaseInformationError
-        self._computational_performance_hund = new_value
+        else:
+            self._computational_performance_hund = new_value
 
     @property
     def pack_method(self):
@@ -1357,9 +1527,12 @@ class BaseInformation(ErsiliaBase):
         PackMethodBaseInformationError
             If the pack method is not valid.
         """
-        if new_pack_method not in self._read_default_fields("Pack Method"):
+        if new_pack_method is None:
+            self._pack_method = None
+        elif new_pack_method not in self._read_default_fields("Pack Method"):
             raise PackMethodBaseInformationError
-        self._pack_method = new_pack_method
+        else:
+            self._pack_method = new_pack_method
 
     @property
     def incorporation_date(self):
@@ -1464,12 +1637,15 @@ class BaseInformation(ErsiliaBase):
             "Source": self.source,
             "Source Type": self.source_type,
             "Input": self.input,
+            "Input Shape": self.input_shape,
             "Input Dimension": self.input_dimension,
             "Task": self.task,
             "Subtask": self.subtask,
             "Biomedical Area": self.biomedical_area,
             "Target organism": self.target_organism,
             "Output": self.output,
+            "Output Type": self.output_type,
+            "Output Shape": self.output_shape,
             "Output Dimension": self.output_dimension,
             "Output Consistency": self.output_consistency,
             "Interpretation": self.interpretation,
@@ -1484,14 +1660,14 @@ class BaseInformation(ErsiliaBase):
             "DockerHub": self.dockerhub,
             "Docker Architecture": self.docker_architecture,
             "S3": self.s3,
-           # "Model Size": self.model_size_mb,
-            #"Environment Size": self.environment_size,
-            #"Image Size": self.image_size_mb,
-            #"Computational Performance 1": self.computational_performance_one,
-            #"Computational Performance 10": self.computational_performance_ten,
-            #"Computational Performance 100": self.computational_performance_hund,
-            #"Pack Method": self.pack_method,
-            #"Deployment": self.deployment,
+            "Model Size": self.model_size,
+            "Environment Size": self.environment_size,
+            "Image Size": self.image_size,
+            "Computational Performance 1": self.computational_performance_one,
+            "Computational Performance 10": self.computational_performance_ten,
+            "Computational Performance 100": self.computational_performance_hund,
+            "Pack Method": self.pack_method,
+            "Deployment": self.deployment,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1517,12 +1693,15 @@ class BaseInformation(ErsiliaBase):
         self._assign("source", "Source", data)
         self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
+        self._assign("input_shape", "Input Shape", data)
         self._assign("input_dimension", "Input Dimension", data)
         self._assign("task", "Task", data)
         self._assign("subtask", "Subtask", data)
         self._assign("biomedical_area", "Biomedical Area", data)
         self._assign("target_organism", "Target Organism", data)
         self._assign("output", "Output", data)
+        self._assign("output_type", "Output Type", data)
+        self._assign("output_shape", "Output Shape", data)
         self._assign("output_dimension", "Output Dimension", data)
         self._assign("output_consistency", "Output Consistency", data)
         self._assign("interpretation", "Interpretation", data)
@@ -1537,17 +1716,17 @@ class BaseInformation(ErsiliaBase):
         self._assign("dockerhub", "DockerHub", data)
         self._assign("docker_architecture", "Docker Architecture", data)
         self._assign("s3", "S3", data)
-        #self._assign("model_size_mb", "Model Size", data)
-        #self._assign("environment_size", "Environment Size", data)
-        #self._assign("image_size_mb", "Image Size", data)
-        #self._assign(
-        #    "computational_performance_one", "Computational Performance 1", data
-        #)
-        #self._assign(
-        #    "computational_performance_ten", "Computational Performance 10", data
-        #)
-        #self._assign(
-        #     "computational_performance_hund", "Computational Performance 100", data
-        #)
-        #self._assign("pack_method", "Pack Method", data)
-        #self._assign("deployment", "Deployment", data)
+        self._assign("model_size", "Model Size", data)
+        self._assign("environment_size", "Environment Size", data)
+        self._assign("image_size", "Image Size", data)
+        self._assign(
+             "computational_performance_one", "Computational Performance 1", data
+         )
+        self._assign(
+             "computational_performance_ten", "Computational Performance 10", data
+         )
+        self._assign(
+             "computational_performance_hund", "Computational Performance 100", data
+         )
+        self._assign("pack_method", "Pack Method", data)
+        self._assign("deployment", "Deployment", data)
