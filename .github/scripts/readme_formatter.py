@@ -3,7 +3,7 @@ import requests
 
 
 class ReadmeFormatter():
-    def __init__():
+    def __init__(self):
         pass
     
     def write_information_0(self, d):
