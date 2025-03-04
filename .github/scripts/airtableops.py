@@ -9,6 +9,8 @@ from ersilia.hub.content.card import BaseInformation, RepoMetadataFile
 from ersilia.utils.logging import make_temp_dir
 from ersilia.utils.terminal import run_command
 
+from readme_formatter import ReadmeFormatter
+
 GITHUB_ORG = "ersilia-os"
 AIRTABLE_MODEL_HUB_BASE_ID = "appR6ZwgLgG8RTdoU" #TODO THIS IS THE REANNOTATION ID
 AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
@@ -130,46 +132,11 @@ class ReadmeMetadata:
 
     def write_information(self, data: BaseInformation, readme_path=None):
         d = data.as_dict()
-        text = "# {0}\n\n".format(d["Title"])
-        text += "{0}\n\n".format(d["Description"].rstrip("\n"))
-        text += "## Identifiers\n\n"
-        text += "* EOS model ID: `{0}`\n".format(d["Identifier"])
-        text += "* Slug: `{0}`\n\n".format(d["Slug"])
-        text += "## Characteristics\n\n"
-        text += "* Input: `{0}`\n".format(", ".join(d["Input"]))
-        text += "* Input Shape: `{0}`\n".format(d["Input Shape"])
-        text += "* Task: `{0}`\n".format(", ".join(d["Task"]))
-        text += "* Output: `{0}`\n".format(", ".join(d["Output"]))
-        text += "* Output Type: `{0}`\n".format(", ".join(d["Output Type"]))
-        text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
-        text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
-        text += "## References\n\n"
-        text += "* [Publication]({0})\n".format(d["Publication"])
-        text += "* [Source Code]({0})\n".format(d["Source Code"])
-        text += "* Ersilia contributor: [{0}](https://github.com/{0})\n\n".format(
-            d["Contributor"]
-        )
-        text += "## Ersilia model URLs\n"
-        text += "* [GitHub]({0})\n".format(data.github)
-        if "S3" in d:
-            text += "* [AWS S3]({0})\n".format(d["S3"])
-        if "DockerHub" in d:
-            text += "* [DockerHub]({0}) ({1})\n".format(
-                d["DockerHub"], ", ".join(d["Docker Architecture"])
-            )
-        text += "\n"
-        text += "## Citation\n\n"
-        text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).\n\n".format(
-            d["Publication"]
-        )
-        text += "## License\n\n"
-        text += "This package is licensed under a GPL-3.0 license. The model contained within this package is licensed under a {0} license.\n\n".format(
-            d["License"]
-        )
-        text += "Notice: Ersilia grants access to these models 'as is' provided by the original authors, please refer to the original code repository and/or publication if you use the model in your research.\n\n"
-        text += "## About Us\n\n"
-        text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.\n\n"
-        text += "[Help us](https://www.ersilia.io/donate) achieve our mission!"
+        d["GitHub"] = data.github
+        if "Source" in d.keys() and d["Source"] != None:
+            text = ReadmeFormatter().write_information_1()
+        else:
+            text = ReadmeFormatter().write_information_0()
         if readme_path is None:
             return text
         else:

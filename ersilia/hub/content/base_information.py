@@ -410,10 +410,11 @@ class BaseInformation(ErsiliaBase):
             If the mode is not valid.
         """
         if new_mode is None:
-            new_mode = "Pretrained"
-        if new_mode not in self._read_default_fields("Mode"):
+            self._mode = None
+        elif new_mode not in self._read_default_fields("Mode"):
             raise ModeBaseInformationError
-        self._mode = new_mode
+        else:
+            self._mode = new_mode
 
     @property
     def source(self):
@@ -785,15 +786,16 @@ class BaseInformation(ErsiliaBase):
         OutputTypeBaseInformationError
             If the output type is not valid.
         """
-        if type(new_output_type) is str:
-            new_output_type = [new_output_type]
-        default_output_type = self._read_default_fields("Output Type")
         if new_output_type is None:
-            new_output_type = ["Float"] #TODO chaneg for column information
-        for no in new_output_type:
-            if no not in default_output_type:
-                raise OutputTypeBaseInformationError
-        self._output_type = new_output_type
+            self._output_type = None #TODO change for column information
+        elif type(new_output_type) is str:
+            new_output_type = [new_output_type]
+            default_output_type = self._read_default_fields("Output Type")
+            for no in new_output_type:
+                if no not in default_output_type:
+                    raise OutputTypeBaseInformationError
+        else:
+            self._output_type = new_output_type
 
     @property
     def output_shape(self):
@@ -824,10 +826,11 @@ class BaseInformation(ErsiliaBase):
         """
         default_output_shape = self._read_default_fields("Output Shape")
         if new_output_shape is None:
-            new_output_shape = "List"
-        if new_output_shape not in default_output_shape:
+            self._output_shape = None
+        elif new_output_shape not in default_output_shape:
             raise OutputShapeBaseInformationError
-        self._output_shape = new_output_shape
+        else:
+            self._output_shape = new_output_shape
 
     @property
     def output_dimension(self):
