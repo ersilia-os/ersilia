@@ -134,9 +134,9 @@ class ReadmeMetadata:
         d = data.as_dict()
         d["GitHub"] = data.github
         if "Source" in d.keys() and d["Source"] != None:
-            text = ReadmeFormatter().write_information_1()
+            text = ReadmeFormatter().write_information_1(d)
         else:
-            text = ReadmeFormatter().write_information_0()
+            text = ReadmeFormatter().write_information_0(d)
         if readme_path is None:
             return text
         else:
