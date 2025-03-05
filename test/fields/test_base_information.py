@@ -44,7 +44,7 @@ def test_write_information(readme_metadata, valid_data):
     assert "## Input" in generated_text #This field is only present in new metadata
     assert "- **[Publication]" in generated_text
     assert "- **[Source Code]" in generated_text
-    assert "## Citation" in generated_text
+    assert "## References" in generated_text
 
 def test_write_information_to_file(readme_metadata, valid_data):
     test_file_path = "test_readme.md"
