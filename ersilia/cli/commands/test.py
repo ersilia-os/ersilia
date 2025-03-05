@@ -1,7 +1,7 @@
 import click
 
 from ...cli import echo
-from ...publish.test import ModelTester
+from ...publish.test.test import ModelTester
 from . import ersilia_cli
 
 
@@ -37,15 +37,6 @@ def test_cmd():
         """,
     )
     @click.argument("model", type=click.STRING)
-    @click.option(
-        "-l",
-        "--level",
-        "level",
-        help="Level of testing, None: for default, deep: for deep testing, shallow: for shallow testing",
-        required=False,
-        default=None,
-        type=click.STRING,
-    )
     @click.option(
         "--from_dir",
         default=None,
@@ -86,10 +77,10 @@ def test_cmd():
         help="This flag is used to check deep checks (such as computational performance checks)",
     )
     @click.option(
-        "--as-json",
-        is_flag=True,
-        default=False,
-        help="This flag is used to save the report as json file)",
+        "--report_path",
+        default=None,
+        type=click.STRING,
+        help="This flag is used to specify a path for report json file.)",
     )
     @click.option(
         "--clean",
@@ -99,7 +90,6 @@ def test_cmd():
     )
     def test(
         model,
-        level,
         from_dir,
         from_github,
         from_dockerhub,
@@ -107,12 +97,11 @@ def test_cmd():
         version,
         shallow,
         deep,
-        as_json,
+        report_path,
         clean,
     ):
         mt = ModelTester(
             model,
-            level,
             from_dir,
             from_github,
             from_dockerhub,
@@ -120,7 +109,7 @@ def test_cmd():
             version,
             shallow,
             deep,
-            as_json,
+            report_path,
             clean,
         )
         echo(f"Model testing started for: {model}")

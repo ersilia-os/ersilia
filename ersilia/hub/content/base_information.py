@@ -16,7 +16,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     ComputationalPerformanceHundredBaseInformationError,
     ComputationalPerformanceOneBaseInformationError,
     ComputationalPerformanceTenBaseInformationError,
-    IncorporationDateBaseInformationError,
     ContributorBaseInformationError,
     DeploymentBaseInformationError,
     DescriptionBaseInformationError,
@@ -26,6 +25,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     GithubBaseInformationError,
     IdentifierBaseInformationError,
     ImageSizeMbBaseInformationError,
+    IncorporationDateBaseInformationError,
     InputBaseInformationError,
     InputDimensionBaseInformationError,
     InputShapeBaseInformationError,
@@ -1042,7 +1042,10 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if new_publication_year < 1900 or new_publication_year > datetime.date.today().year:
+        if (
+            new_publication_year < 1900
+            or new_publication_year > datetime.date.today().year
+        ):
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1527,7 +1530,12 @@ class BaseInformation(ErsiliaBase):
         incorporation_date : str
             The model contributing date.
         """
-        if new_incorporation_date != datetime.datetime.fromisoformat(str(new_incorporation_date)).date().isoformat():
+        if (
+            new_incorporation_date
+            != datetime.datetime.fromisoformat(str(new_incorporation_date))
+            .date()
+            .isoformat()
+        ):
             raise IncorporationDateBaseInformationError
         self._incorporation_date = new_incorporation_date
 
