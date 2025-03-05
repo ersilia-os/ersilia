@@ -1,5 +1,3 @@
-import json
-import os
 import types
 
 import click
@@ -69,10 +67,26 @@ def run_cmd():
         )
         try:
             # Early validation: if input is not a file, assume it's a SMILES string.
-            if not os.path.isfile(input):
-                io_instance = IO(InputShapeSingle())
-                if not io_instance.is_input(input):
-                    raise UnprocessableInputError()
+            import json
+
+            try:
+                # Attempt to parse the input as JSON.
+                smiles_data = json.loads(input)
+            except json.JSONDecodeError:
+                # If parsing fails, assume it's a single SMILES string.
+                smiles_data = input
+
+            io_instance = IO(InputShapeSingle())
+
+            # If the parsed data is a list, validate each SMILES string.
+            if isinstance(smiles_data, list):
+                for s in smiles_data:
+                    if not io_instance.is_input(s):
+                        raise UnprocessableInputError
+            else:
+                # Otherwise, treat it as a single SMILES string.
+                if not io_instance.is_input(smiles_data):
+                    raise UnprocessableInputError
         except ValueError as ve:
             raise UnprocessableInputError(str(ve))
 

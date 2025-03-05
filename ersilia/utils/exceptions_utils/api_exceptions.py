@@ -19,15 +19,25 @@ class InputFileNotFoundError(ErsiliaError):
 
 
 class UnprocessableInputError(ErsiliaError):
-    def __init__(self):
-        self.message = "Input data is invalid and cannot be processed"
+    def __init__(self, message=None):
+        if message is None:
+            message = "Input data is invalid and cannot be processed"
+        self.message = message
         self.hints = (
             "No output file will be created.\n"
             "- Check your input data format and content\n"
             "- Ensure chemical structures/identifiers are valid\n"
-            "- Verify input matches the model's requirements(valid SMILES)"
+            "- Verify input matches the model's requirements (valid SMILES)"
         )
         super().__init__(self.message, self.hints)
+
+
+class HeaderNotFoundError(ErsiliaError):
+    def __init__(
+        self, message="Could not determine header: no valid header file found."
+    ):
+        self.message = message
+        super().__init__(self.message)
 
 
 class ApiSpecifiedOutputError(ErsiliaError):

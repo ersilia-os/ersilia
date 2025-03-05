@@ -18,7 +18,10 @@ from ..default import (
 )
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
-from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
+from ..utils.exceptions_utils.api_exceptions import (
+    HeaderNotFoundError,
+    UnprocessableInputError,
+)
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -225,7 +228,7 @@ class StandardCSVRunApi(ErsiliaBase):
         if file is None:
             msg = "Could not determine header: no valid header file found."
             self.logger.error(msg)
-            raise UnprocessableInputError(msg)
+            raise HeaderNotFoundError(msg)
 
         try:
             with open(file, "r") as f:
@@ -237,12 +240,12 @@ class StandardCSVRunApi(ErsiliaBase):
             if any(col is None for col in header):
                 msg = f"Invalid header: {header}"
                 self.logger.error(msg)
-                raise UnprocessableInputError(msg)
+                raise HeaderNotFoundError(msg)
             return header
         except (FileNotFoundError, StopIteration) as e:
             msg = f"Could not determine header from file {file}"
             self.logger.error(msg)
-            raise UnprocessableInputError(msg) from e
+            raise HeaderNotFoundError(msg) from e
 
     def parse_smiles_list(self, input_data):
         """
