@@ -192,7 +192,7 @@ class ReadmeUpdater(FileUpdater):
 
     def update_local(self):
         readme_file = os.path.join(self.repo_path, self.readme_file)
-        self.update_readme(readme_file)
+        self._update_readme(readme_file)
 
     def update(self):
         if self.repo_path is None:
