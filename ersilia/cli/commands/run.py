@@ -73,39 +73,34 @@ def run_cmd():
                 io_instance = IO(InputShapeSingle())
                 if not io_instance.is_input(input):
                     raise UnprocessableInputError()
+        except ValueError as ve:
+            raise UnprocessableInputError(str(ve))
 
-            result = mdl.run(
-                input=input,
-                output=output,
-                batch_size=batch_size,
-                track_run=track_runs,
-            )
-            iter_values = []
-            if isinstance(result, types.GeneratorType):
-                for result in mdl.run(
-                    input=input, output=output, batch_size=batch_size
-                ):
-                    if result is not None:
-                        iter_values.append(result)
-                if as_table:
-                    print_result_table(iter_values)
-                else:
-                    echo(json.dumps(iter_values, indent=4))
+        result = mdl.run(
+            input=input,
+            output=output,
+            batch_size=batch_size,
+            track_run=track_runs,
+        )
+        iter_values = []
+        if isinstance(result, types.GeneratorType):
+            for r in result:
+                if r is not None:
+                    iter_values.append(r)
+            if as_table:
+                print_result_table(iter_values)
             else:
-                if as_table:
-                    print_result_table(result)
-                else:
-                    try:
-                        echo(result)
-                    except Exception:
-                        echo(
-                            f"Error: Could not print the result for output given path: {result}."
-                        )
-        except UnprocessableInputError as e:
-            echo(f"❌ Error: {e.message}", fg="red")
-            echo(f"💡 {e.hints}", fg="yellow")
-            if output and os.path.exists(output):
-                os.remove(output)
-            return
-
+                echo(json.dumps(iter_values, indent=4))
+        else:
+            if as_table:
+                print_result_table(result)
+            else:
+                try:
+                    echo(result)
+                except Exception:
+                    echo(
+                        f"Error: Could not print the result for output given path: {result}."
+                    )
         return
+
+    return run

@@ -205,34 +205,44 @@ class StandardCSVRunApi(ErsiliaBase):
            Returns the header which is a list of column names, or None if the header could not be determined.
         """
         file = None
+        # Look for header file in predefined output files
         for pf in PREDEFINED_EXAMPLE_OUTPUT_FILES:
-            if os.path.exists(os.path.join(self.path, pf)):
-                file = os.path.join(self.path, pf)
+            candidate = os.path.join(self.path, pf)
+            if os.path.exists(candidate):
+                file = candidate
                 self.logger.debug(
                     f"Determining header from predefined example output file: {pf}"
                 )
                 break
-        if not file and os.path.exists(self.standard_output_csv):
+        # Fallback to standard output CSV
+        if file is None and os.path.exists(self.standard_output_csv):
             file = self.standard_output_csv
             self.logger.debug(
                 f"Determining header from standard output file: {self.standard_output_csv}"
             )
 
+        # If no file was found, raise an exception immediately.
+        if file is None:
+            msg = "Could not determine header: no valid header file found."
+            self.logger.error(msg)
+            raise UnprocessableInputError(msg)
+
         try:
             with open(file, "r") as f:
                 reader = csv.reader(f)
                 header = next(reader)
-                if (
-                    header[0:2]
-                    != [
-                        "key",
-                        "input",
-                    ]
-                ):  # Slicing doesn't raise an error even if the list does not have 2 elements
+                # Ensure header starts with ["key", "input"]
+                if header[0:2] != ["key", "input"]:
                     header = ["key", "input"] + header
+            if any(col is None for col in header):
+                msg = f"Invalid header: {header}"
+                self.logger.error(msg)
+                raise UnprocessableInputError(msg)
             return header
-        except (FileNotFoundError, StopIteration):
-            self.logger.error(f"Could not determine header from file {file}")
+        except (FileNotFoundError, StopIteration) as e:
+            msg = f"Could not determine header from file {file}"
+            self.logger.error(msg)
+            raise UnprocessableInputError(msg) from e
 
     def parse_smiles_list(self, input_data):
         """
@@ -544,5 +554,11 @@ class StandardCSVRunApi(ErsiliaBase):
             result = response.json()
             output_data = self.serialize_to_csv(input_data, result, output)
             return output_data
+        elif response.status_code == 422:
+            raise UnprocessableInputError(
+                "Received status code 422: Unprocessable input."
+            )
         else:
-            return None
+            raise UnprocessableInputError(
+                f"API returned unexpected status code: {response.status_code}"
+            )
