@@ -340,14 +340,13 @@
 
 <div class="viewcode-block" id="resolve_pack_method_docker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.resolve_pack_method_docker">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span> <span class="c1">#TODO read from metadata</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
     <span class="n">bundle_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">EOS</span><span class="si">}</span><span class="s2">/dest/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">docker_tag</span> <span class="o">=</span> <span class="n">model_image_version_reader</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">)</span>
     <span class="n">model_image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">docker_tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">image_history</span> <span class="o">=</span> <span class="n">model_image</span><span class="o">.</span><span class="n">history</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">hist</span> <span class="ow">in</span> <span class="n">image_history</span><span class="p">:</span>
-        <span class="c1"># Very hacky, but works bec we don&#39;t have nginx in ersilia-pack images</span>
         <span class="k">if</span> <span class="s2">&quot;nginx&quot;</span> <span class="ow">in</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;CreatedBy&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
     <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span></div>

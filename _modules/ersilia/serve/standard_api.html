@@ -424,6 +424,9 @@
             <span class="k">return</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">][</span><span class="n">field</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Neither &#39;metadata&#39; nor &#39;card&#39; contains &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39; key.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="o">==</span> <span class="s2">&quot;Input Shape&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Assuming input shape is Single&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">&quot;Single&quot;</span>
 
 <div class="viewcode-block" id="StandardCSVRunApi.get_identifier_object_by_input_type">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.get_identifier_object_by_input_type">[docs]</a>

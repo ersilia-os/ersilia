@@ -330,7 +330,6 @@
     <span class="n">ComputationalPerformanceHundredBaseInformationError</span><span class="p">,</span>
     <span class="n">ComputationalPerformanceOneBaseInformationError</span><span class="p">,</span>
     <span class="n">ComputationalPerformanceTenBaseInformationError</span><span class="p">,</span>
-    <span class="n">IncorporationDateBaseInformationError</span><span class="p">,</span>
     <span class="n">ContributorBaseInformationError</span><span class="p">,</span>
     <span class="n">DeploymentBaseInformationError</span><span class="p">,</span>
     <span class="n">DescriptionBaseInformationError</span><span class="p">,</span>
@@ -340,6 +339,7 @@
     <span class="n">GithubBaseInformationError</span><span class="p">,</span>
     <span class="n">IdentifierBaseInformationError</span><span class="p">,</span>
     <span class="n">ImageSizeMbBaseInformationError</span><span class="p">,</span>
+    <span class="n">IncorporationDateBaseInformationError</span><span class="p">,</span>
     <span class="n">InputBaseInformationError</span><span class="p">,</span>
     <span class="n">InputDimensionBaseInformationError</span><span class="p">,</span>
     <span class="n">InputShapeBaseInformationError</span><span class="p">,</span>
@@ -460,11 +460,11 @@
 <span class="sd">            Placeholder for the source of the model, one of &#39;Local&#39;, or &#39;Online&#39;</span>
 <span class="sd">        _source_type: None</span>
 <span class="sd">            Placeholder for the type of source of the model, one of &#39;Internal&#39;, &#39;External&#39;, or &#39;Replicated&#39;.</span>
-<span class="sd">        _model_size_mb: None</span>
+<span class="sd">        _model_size: None</span>
 <span class="sd">            Placeholder for the size of the model (code and checkpoints) in megabytes.</span>
-<span class="sd">        _environment_size_mb : None</span>
+<span class="sd">        _environment_size : None</span>
 <span class="sd">            Placeholder for environment size in megabytes.</span>
-<span class="sd">        _image_size_mb : None</span>
+<span class="sd">        _image_size : None</span>
 <span class="sd">            Placeholder for Docker image size in megabytes.</span>
 <span class="sd">        _computational_performance_one : None</span>
 <span class="sd">            Placeholder for single-run computational performance.</span>
@@ -511,9 +511,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_source_type</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model_size_mb</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size_mb</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_image_size_mb</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_size</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="kc">None</span>
@@ -725,9 +725,12 @@
 <span class="sd">        ModeBaseInformationError</span>
 <span class="sd">            If the mode is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Mode&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">new_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Mode&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">ModeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">new_mode</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">new_mode</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -854,6 +857,8 @@
 <span class="sd">        InputShapeBaseInformationError</span>
 <span class="sd">            If the input shape is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">new_input_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_input_shape</span> <span class="o">=</span> <span class="s2">&quot;Single&quot;</span>
         <span class="k">if</span> <span class="n">new_input_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">InputShapeBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_input_shape</span> <span class="o">=</span> <span class="n">new_input_shape</span>
@@ -1097,13 +1102,16 @@
 <span class="sd">        OutputTypeBaseInformationError</span>
 <span class="sd">            If the output type is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">new_output_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#TODO change for column information</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_output_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_output_type</span><span class="p">]</span>
-        <span class="n">default_output_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">no</span> <span class="ow">in</span> <span class="n">new_output_type</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_type</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">OutputTypeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="n">new_output_type</span>
+            <span class="n">default_output_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">no</span> <span class="ow">in</span> <span class="n">new_output_type</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_type</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">OutputTypeBaseInformationError</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="n">new_output_type</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">output_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1133,9 +1141,12 @@
 <span class="sd">            If the output shape is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">default_output_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">new_output_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_shape</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">new_output_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">new_output_shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_shape</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">OutputShapeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="n">new_output_shape</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_shape</span> <span class="o">=</span> <span class="n">new_output_shape</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">output_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1623,7 +1634,7 @@
 <span class="sd">        int</span>
 <span class="sd">            The model size in Mb.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_size_mb</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span>
 
     <span class="nd">@model_size</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">model_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_model_size</span><span class="p">):</span>
@@ -1640,9 +1651,12 @@
 <span class="sd">        ModelSizeMbBaseInformationError</span>
 <span class="sd">            If the model size value is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_model_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">new_model_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span><span class="o">=</span><span class="kc">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_model_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ModelSizeMbBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model_size_mb</span> <span class="o">=</span> <span class="n">new_model_size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span> <span class="o">=</span> <span class="n">new_model_size</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">environment_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1654,7 +1668,7 @@
 <span class="sd">        int</span>
 <span class="sd">            The model evironment Size in Mb.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size_mb</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size</span>
 
     <span class="nd">@environment_size</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">environment_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_environment_size</span><span class="p">):</span>
@@ -1671,12 +1685,15 @@
 <span class="sd">        EnvironmentSizeMbBaseInformationError</span>
 <span class="sd">            If the environment size value is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_environment_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">new_environment_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_environment_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">EnvironmentSizeMbBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size_mb</span> <span class="o">=</span> <span class="n">new_environment_size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size</span> <span class="o">=</span> <span class="n">new_environment_size</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">image_size_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the image size in megabytes.</span>
 
 <span class="sd">        Returns</span>
@@ -1684,25 +1701,28 @@
 <span class="sd">        int</span>
 <span class="sd">            The size of the image in MB.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_size_mb</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_size</span>
 
-    <span class="nd">@image_size_mb</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">image_size_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_image_size_mb</span><span class="p">):</span>
+    <span class="nd">@image_size</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">image_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_image_size</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the image size in megabytes.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        new_image_size_mb : int</span>
+<span class="sd">        new_image_size : int</span>
 <span class="sd">            The new image size in MB.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        ImageSizeMbBaseInformationError</span>
-<span class="sd">            If `new_image_size_mb` is not an integer.</span>
+<span class="sd">            If `new_image_size` is not an integer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_image_size_mb</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">new_image_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_size</span> <span class="o">==</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_image_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ImageSizeMbBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_image_size_mb</span> <span class="o">=</span> <span class="n">new_image_size_mb</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_size</span> <span class="o">=</span> <span class="n">new_image_size</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1729,9 +1749,12 @@
 <span class="sd">        ComputationalPerformanceOneBaseInformationError</span>
 <span class="sd">            If `new_value` is not an int or float.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceOneBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="n">new_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="n">new_value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_ten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1758,9 +1781,12 @@
 <span class="sd">        ComputationalPerformanceTenBaseInformationError</span>
 <span class="sd">            If `new_value` is not an int or float.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceTenBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="n">new_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="n">new_value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_hund</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1787,9 +1813,12 @@
 <span class="sd">        ComputationalPerformanceHundredBaseInformationError</span>
 <span class="sd">            If `new_value` is not an int or float.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceHundredBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="n">new_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="n">new_value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1817,9 +1846,12 @@
 <span class="sd">        PackMethodBaseInformationError</span>
 <span class="sd">            If the pack method is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_pack_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Pack Method&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_pack_method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pack_method</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">new_pack_method</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Pack Method&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">PackMethodBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pack_method</span> <span class="o">=</span> <span class="n">new_pack_method</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pack_method</span> <span class="o">=</span> <span class="n">new_pack_method</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">incorporation_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1923,25 +1955,25 @@
             <span class="s2">&quot;Title&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
             <span class="s2">&quot;Description&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span>
             <span class="s2">&quot;Mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-            <span class="c1"># &quot;Source&quot;: self.source,</span>
-            <span class="c1"># &quot;Source Type&quot;: self.source_type,</span>
+            <span class="s2">&quot;Source&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+            <span class="s2">&quot;Source Type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_type</span><span class="p">,</span>
             <span class="s2">&quot;Input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">,</span>
             <span class="s2">&quot;Input Shape&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">,</span>
-            <span class="c1"># &quot;Input Dimension&quot;: self.input_dimension,</span>
+            <span class="s2">&quot;Input Dimension&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dimension</span><span class="p">,</span>
             <span class="s2">&quot;Task&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">,</span>
-            <span class="c1"># &quot;Subtask&quot;: self.subtask,</span>
-            <span class="c1"># &quot;Biomedical Area&quot;: self.biomedical_area,</span>
-            <span class="c1"># &quot;Target organism&quot;: self.target_organism,</span>
+            <span class="s2">&quot;Subtask&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">subtask</span><span class="p">,</span>
+            <span class="s2">&quot;Biomedical Area&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">biomedical_area</span><span class="p">,</span>
+            <span class="s2">&quot;Target organism&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_organism</span><span class="p">,</span>
             <span class="s2">&quot;Output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
             <span class="s2">&quot;Output Type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_type</span><span class="p">,</span>
             <span class="s2">&quot;Output Shape&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_shape</span><span class="p">,</span>
-            <span class="c1"># &quot;Output Dimension&quot;: self.output_dimension,</span>
-            <span class="c1"># &quot;Output Consistency&quot;: self.output_consistency,</span>
+            <span class="s2">&quot;Output Dimension&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dimension</span><span class="p">,</span>
+            <span class="s2">&quot;Output Consistency&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_consistency</span><span class="p">,</span>
             <span class="s2">&quot;Interpretation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpretation</span><span class="p">,</span>
             <span class="s2">&quot;Tag&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
             <span class="s2">&quot;Publication&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">publication</span><span class="p">,</span>
-            <span class="c1"># &quot;Publication Type&quot;: self.publication_type,</span>
-            <span class="c1"># &quot;Publication Year&quot;: self.publication_year,</span>
+            <span class="s2">&quot;Publication Type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">publication_type</span><span class="p">,</span>
+            <span class="s2">&quot;Publication Year&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">publication_year</span><span class="p">,</span>
             <span class="s2">&quot;Source Code&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_code</span><span class="p">,</span>
             <span class="s2">&quot;License&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">license</span><span class="p">,</span>
             <span class="s2">&quot;Contributor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">contributor</span><span class="p">,</span>
@@ -1949,14 +1981,14 @@
             <span class="s2">&quot;DockerHub&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dockerhub</span><span class="p">,</span>
             <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_architecture</span><span class="p">,</span>
             <span class="s2">&quot;S3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3</span><span class="p">,</span>
-            <span class="c1"># &quot;Model Size&quot;: self.model_size_mb,</span>
-            <span class="c1"># &quot;Environment Size&quot;: self.environment_size,</span>
-            <span class="c1"># &quot;Image Size&quot;: self.image_size_mb,</span>
-            <span class="c1"># &quot;Computational Performance 1&quot;: self.computational_performance_one,</span>
-            <span class="c1"># &quot;Computational Performance 10&quot;: self.computational_performance_ten,</span>
-            <span class="c1"># &quot;Computational Performance 100&quot;: self.computational_performance_hund,</span>
-            <span class="c1"># &quot;Pack Method&quot;: self.pack_method,</span>
-            <span class="c1"># &quot;Deployment&quot;: self.deployment,</span>
+            <span class="s2">&quot;Model Size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_size</span><span class="p">,</span>
+            <span class="s2">&quot;Environment Size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment_size</span><span class="p">,</span>
+            <span class="s2">&quot;Image Size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span><span class="p">,</span>
+            <span class="s2">&quot;Computational Performance 1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_one</span><span class="p">,</span>
+            <span class="s2">&quot;Computational Performance 10&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_ten</span><span class="p">,</span>
+            <span class="s2">&quot;Computational Performance 100&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_hund</span><span class="p">,</span>
+            <span class="s2">&quot;Pack Method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span><span class="p">,</span>
+            <span class="s2">&quot;Deployment&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">deployment</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span></div>
@@ -1982,48 +2014,48 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="s2">&quot;Mode&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="c1"># self._assign(&quot;source&quot;, &quot;Source&quot;, data)</span>
-        <span class="c1"># self._assign(&quot;source_type&quot;, &quot;Source Type&quot;, data)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;Source&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;Input&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;input_shape&quot;</span><span class="p">,</span> <span class="s2">&quot;Input Shape&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="c1"># self._assign(&quot;input_dimension&quot;, &quot;Input Dimension&quot;, data)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;input_dimension&quot;</span><span class="p">,</span> <span class="s2">&quot;Input Dimension&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="c1"># self._assign(&quot;subtask&quot;, &quot;Subtask&quot;, data)</span>
-        <span class="c1"># self._assign(&quot;biomedical_area&quot;, &quot;Biomedical Area&quot;, data)</span>
-        <span class="c1"># self._assign(&quot;target_organism&quot;, &quot;Target Organism&quot;, data)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;subtask&quot;</span><span class="p">,</span> <span class="s2">&quot;Subtask&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;biomedical_area&quot;</span><span class="p">,</span> <span class="s2">&quot;Biomedical Area&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;target_organism&quot;</span><span class="p">,</span> <span class="s2">&quot;Target Organism&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="s2">&quot;Output&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output_type&quot;</span><span class="p">,</span> <span class="s2">&quot;Output Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output_shape&quot;</span><span class="p">,</span> <span class="s2">&quot;Output Shape&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="c1"># self._assign(&quot;output_dimension&quot;, &quot;Output Dimension&quot;, data)</span>
-        <span class="c1"># self._assign(&quot;output_consistency&quot;, &quot;Output Consistency&quot;, data)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output_dimension&quot;</span><span class="p">,</span> <span class="s2">&quot;Output Dimension&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;output_consistency&quot;</span><span class="p">,</span> <span class="s2">&quot;Output Consistency&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;interpretation&quot;</span><span class="p">,</span> <span class="s2">&quot;Interpretation&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="s2">&quot;Tag&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;publication&quot;</span><span class="p">,</span> <span class="s2">&quot;Publication&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="c1"># self._assign(&quot;publication_type&quot;, &quot;Publication Type&quot;, data)</span>
-        <span class="c1"># self._assign(&quot;publication_year&quot;, &quot;Publication Year&quot;, data)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;publication_type&quot;</span><span class="p">,</span> <span class="s2">&quot;Publication Type&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;publication_year&quot;</span><span class="p">,</span> <span class="s2">&quot;Publication Year&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;source_code&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;license&quot;</span><span class="p">,</span> <span class="s2">&quot;License&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;contributor&quot;</span><span class="p">,</span> <span class="s2">&quot;Contributor&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="c1"># self._assign(&quot;incorporation_date&quot;, &quot;Incorporation Date&quot;, data)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;dockerhub&quot;</span><span class="p">,</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;docker_architecture&quot;</span><span class="p">,</span> <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;s3&quot;</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;model_size&quot;</span><span class="p">,</span> <span class="s2">&quot;Model Size&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;environment_size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;image_size&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
+             <span class="s2">&quot;computational_performance_one&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 1&quot;</span><span class="p">,</span> <span class="n">data</span>
+         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
+             <span class="s2">&quot;computational_performance_ten&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 10&quot;</span><span class="p">,</span> <span class="n">data</span>
+         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
+             <span class="s2">&quot;computational_performance_hund&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 100&quot;</span><span class="p">,</span> <span class="n">data</span>
+         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;pack_method&quot;</span><span class="p">,</span> <span class="s2">&quot;Pack Method&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;deployment&quot;</span><span class="p">,</span> <span class="s2">&quot;Deployment&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 </div>
 
-        <span class="c1"># self._assign(&quot;model_size_mb&quot;, &quot;Model Size&quot;, data)</span>
-        <span class="c1"># self._assign(&quot;environment_size&quot;, &quot;Environment Size&quot;, data)</span>
-        <span class="c1"># self._assign(&quot;image_size_mb&quot;, &quot;Image Size&quot;, data)</span>
-        <span class="c1"># self._assign(</span>
-        <span class="c1">#     &quot;computational_performance_one&quot;, &quot;Computational Performance 1&quot;, data</span>
-        <span class="c1"># )</span>
-        <span class="c1"># self._assign(</span>
-        <span class="c1">#     &quot;computational_performance_ten&quot;, &quot;Computational Performance 10&quot;, data</span>
-        <span class="c1"># )</span>
-        <span class="c1"># self._assign(</span>
-        <span class="c1">#     &quot;computational_performance_hund&quot;, &quot;Computational Performance 100&quot;, data</span>
-        <span class="c1"># )</span>
-        <span class="c1"># self._assign(&quot;pack_method&quot;, &quot;Pack Method&quot;, data)</span>
-        <span class="c1"># self._assign(&quot;deployment&quot;, &quot;Deployment&quot;, data)</span>
 </pre></div>
         </article>
       </div>
