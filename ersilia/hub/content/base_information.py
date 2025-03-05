@@ -607,12 +607,9 @@ class BaseInformation(ErsiliaBase):
         TaskBaseInformationError
             If the task is not valid.
         """
-        if type(new_task) is str:
-            new_task = [new_task]
-        if type(new_task) is not list:
+        if type(new_task) is not str:
             raise TaskBaseInformationError
-        for nt in new_task:
-            if nt not in self._read_default_fields("Task"):
+        if new_task not in self._read_default_fields("Task"):
                 raise TaskBaseInformationError
         self._task = new_task
 
@@ -643,12 +640,9 @@ class BaseInformation(ErsiliaBase):
         SubtaskBaseInformationError
             If the subtask is not valid.
         """
-        if type(new_subtask) is str:
-            new_subtask = [new_subtask]
-        if type(new_subtask) is not list:
+        if type(new_subtask) is not str:
             raise SubtaskBaseInformationError
-        for nt in new_subtask:
-            if nt not in self._read_default_fields("Subtask"):
+        if new_subtask not in self._read_default_fields("Subtask"):
                 raise SubtaskBaseInformationError
         self._subtask = new_subtask
 
@@ -1532,7 +1526,7 @@ class BaseInformation(ErsiliaBase):
         """
         if new_pack_method is None:
             self._pack_method = None
-        elif new_pack_method not in self._read_default_fields("Pack Method"):
+        elif new_pack_method not in self._read_default_fields("Docker Pack Method"):
             raise PackMethodBaseInformationError
         else:
             self._pack_method = new_pack_method
@@ -1669,7 +1663,7 @@ class BaseInformation(ErsiliaBase):
             "Computational Performance 1": self.computational_performance_one,
             "Computational Performance 10": self.computational_performance_ten,
             "Computational Performance 100": self.computational_performance_hund,
-            "Pack Method": self.pack_method,
+            "Docker Pack Method": self.pack_method,
             "Deployment": self.deployment,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
@@ -1731,5 +1725,5 @@ class BaseInformation(ErsiliaBase):
         self._assign(
              "computational_performance_hund", "Computational Performance 100", data
          )
-        self._assign("pack_method", "Pack Method", data)
+        self._assign("docker_pack_method", "Docker Pack Method", data)
         self._assign("deployment", "Deployment", data)

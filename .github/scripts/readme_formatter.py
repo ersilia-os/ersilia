@@ -84,9 +84,9 @@ class ReadmeFormatter():
 
         # Domain
         text += "## Domain:\n"
-        text += "- **Task:** {0}\n".format(", ".join(d.get("Task", "")))
+        text += "- **Task:** {0}\n".format(d.get("Task", ""))
         if d.get("Subtask"):
-            text += "- **Subtask:** {0}\n".format(", ".join(d.get("Subtask")))
+            text += "- **Subtask:** {0}\n".format(d.get("Subtask"))
         if d.get("Biomedical Area"):
             text += "- **Biomedical Area:** {0}\n".format(", ".join(d.get("Biomedical Area")))
         if d.get("Target Organism"):
