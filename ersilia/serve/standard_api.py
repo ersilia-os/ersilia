@@ -224,12 +224,6 @@ class StandardCSVRunApi(ErsiliaBase):
                 f"Determining header from standard output file: {self.standard_output_csv}"
             )
 
-        # If no file was found, raise an exception immediately.
-        if file is None:
-            msg = "Could not determine header: no valid header file found."
-            self.logger.error(msg)
-            raise HeaderNotFoundError(msg)
-
         try:
             with open(file, "r") as f:
                 reader = csv.reader(f)
