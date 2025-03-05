@@ -1645,7 +1645,7 @@ class BaseInformation(ErsiliaBase):
             "Task": self.task,
             "Subtask": self.subtask,
             "Biomedical Area": self.biomedical_area,
-            "Target organism": self.target_organism,
+            "Target Organism": self.target_organism,
             "Output": self.output,
             "Output Type": self.output_type,
             "Output Shape": self.output_shape,
