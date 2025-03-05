@@ -6,23 +6,22 @@ from ersilia.hub.content.base_information import BaseInformation
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.github/scripts")))
 
-from airtableops import ReadmeMetadata, AirtableMetadata
+from airtableops import ReadmeMetadata
 
 @pytest.fixture
-def valid_data():
+def valid_data(): #This is an example of NEW Metadata
     data = BaseInformation()
     data.title = "Molecular weight calculator"
     data.description = "The model is simply an implementation of the function Descriptors.MolWt of the chemoinformatics package RDKIT. \
     It takes as input a small molecule (SMILES) and calculates its molecular weight in g/mol."
     data.identifier = "eos3b5e"
-    data.slug = "molecular-wight"
+    data.slug = "molecular-weight"
+    data.biomedical_area = "Any"
     data.input = ["Compound"]
     data.input_shape = "Single"
     data.task = "Regression"
-    data.source = "Online"
     data.output = "Other value"
     data.output_type = ["Float"]
-    data.output_shape = "Single"
     data.interpretation = "This is a regression model."
     data.computational_performance_one = 10.11
     data.computational_performance_ten = 14.12
@@ -34,14 +33,15 @@ def valid_data():
     return data
 
 @pytest.fixture
-def readme_metadata(valid_data):
+def readme_metadata():
     return ReadmeMetadata(model_id="eos3b5e")
 
 def test_write_information(readme_metadata, valid_data):
     generated_text = readme_metadata.write_information(valid_data, readme_path=None) 
+    print(generated_text)
     
     assert "## Identifiers" in generated_text
-    assert "## Characteristics" in generated_text
+    assert "## Input" in generated_text #This field is only present in new metadata
     assert "* [Publication]" in generated_text
     assert "* [Source Code]" in generated_text
     assert "## Citation" in generated_text

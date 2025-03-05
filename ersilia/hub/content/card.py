@@ -250,10 +250,6 @@ class ReadmeCard(ErsiliaBase):
         text = "\n".join(lines)
         return text.split("# ")[1].split("\n")[1].split("#")[0].strip()
 
-    def _mode(self, lines):
-        text = "\n".join(lines)
-        return text.split("# ")[1].split("\n")[1].split("#")[0].strip()
-
     def _model_github_url(self, model_id):
         return "https://github.com/ersilia-os/{0}".format(model_id)
 
@@ -286,7 +282,6 @@ class ReadmeCard(ErsiliaBase):
             "model_id": model_id,
             "title": self._title(lines),
             "description": self._description(lines),
-            "mode": self._mode(lines),
             "github_url": self._model_github_url(model_id),
         }
         return results

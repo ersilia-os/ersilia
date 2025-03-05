@@ -127,13 +127,12 @@ class ReadmeMetadata:
         print("Cannot read directly from README file. Using AirTable instead")
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
-        print(bi.as_dict())
         return bi
 
     def write_information(self, data: BaseInformation, readme_path=None):
         d = data.as_dict()
         d["GitHub"] = data.github
-        if "Source" in d.keys() and d["Source"] != None:
+        if "Biomedical Area" in d.keys() and d["Biomedical Area"] != None:
             text = ReadmeFormatter().write_information_1(d)
         else:
             text = ReadmeFormatter().write_information_0(d)
@@ -208,7 +207,7 @@ class MetadataFileUpdater(FileUpdater):
         self.api_key = api_key
     
     def _update_metadata_file(self, metadata_path):
-        am = AirtableMetadata(model_id=self.model_id, api_key=self.api_key, mode="rw") #TODO this key could be read only
+        am = AirtableMetadata(model_id=self.model_id, api_key=self.api_key, mode="ro") 
         data = am.read_information()
         rm = RepoMetadataFile(model_id=self.model_id, config_json=None)
         rm.write_information(data=data, json_or_yaml_path=metadata_path)

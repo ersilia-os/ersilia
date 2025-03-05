@@ -70,65 +70,68 @@ class ReadmeFormatter():
         text = "# {0}\n\n".format(d.get("Title", "Model Title"))
         
         # Description and incorporation date
-        text += "**Description**  \n"
+        text += "**Description:**  \n"
         text += "{0}\n\n".format(d.get("Description", "No description provided").rstrip("\n"))
         if "Incorporation Date" in d:
-            text += "**Model Incorporation Date:** {0}\n\n".format(d["Incorporation Date"])
-        text += "---\n\n"
+            text += "This model was incorporated on {0}.\n".format(d.get("Incorporation Date"))
+        text += "\n"
 
         # Identifiers
-        text += "## Identifiers\n"
-        text += "- **Ersilia Identifier:** {0}\n".format(d.get("Identifier", ""))
-        text += "- **Slug:** {0}\n\n".format(d.get("Slug", ""))
+        text += "## Identifiers:\n"
+        text += "- **Ersilia Identifier:** `{0}`\n".format(d.get("Identifier", ""))
+        text += "- **Slug:** `{0}`\n".format(d.get("Slug", ""))
+        text += "\n"
 
         # Domain
-        text += "## Domain\n"
-        text += "- **Task:** {0}\n".format(d.get("Task", ""))
+        text += "## Domain:\n"
+        text += "- **Task:** {0}\n".format(", ".join(d.get("Task", "")))
         if d.get("Subtask"):
-            text += "- **Subtask:** {0}\n".format(d.get("Subtask"))
+            text += "- **Subtask:** {0}\n".format(", ".join(d.get("Subtask")))
         if d.get("Biomedical Area"):
-            text += "- **Biomedical Area:** {0}\n".format(d.get("Biomedical Area"))
+            text += "- **Biomedical Area:** {0}\n".format(", ".join(d.get("Biomedical Area")))
         if d.get("Target Organism"):
-            text += "- **Target Organism:** {0}\n".format(d.get("Target Organism"))
+            text += "- **Target Organism:** {0}\n".format(", ".join(d.get("Target Organism")))
         if d.get("Tag"):
-            text += "- **Tags:** {0}\n\n".format(d.get("Tag"))
+            text += "- **Tags:** {0}\n".format(", ".join(d.get("Tag")))
+        text += "\n"
         
         # Input
-        text += "## Input\n"
-        text += "- **Input Type:** {0}\n".format(d.get("Input", ""))
-        text += "- **Input Shape:** {0}\n\n".format(d.get("Input Shape", ""))
+        text += "## Input:\n"
+        text += "- **Input:** {0}\n".format(", ".join(d.get("Input", "")))
+        text += "- **Input Dimension:** {0}\n".format(d.get("Input Dimension", ""))
+        text += "\n"
 
         # Output
-        text += "## Output\n"
-        text += "- **Output Type:** {0}\n".format(d.get("Output Type", ""))
+        text += "## Output:\n"
+        text += "- **Output:** {0}\n".format(d.get("Output Type", ""))
         if d.get("Output Dimension"):
             text += "- **Output Dimension:** {0}\n".format(d.get("Output Dimension"))
         if d.get("Output Consistency"):
             text += "- **Output Consistency:** {0}\n".format(d.get("Output Consistency"))
         text += "- **Interpretation:** {0}\n\n".format(d.get("Interpretation", ""))
-        # Attempt to read output columns if not present in metadata
-        if not d.get("Output Columns"):
-            repo_name = d.get("Identifier")
-            if repo_name:
-                # Construct the raw URL to the CSV file
-                url = f"https://raw.githubusercontent.com/ersilia-os/{repo_name}/main/model/framework/columns/run_columns.csv"
-                print("Fetching output columns from:", url)
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        reader = csv.DictReader(response.text.splitlines())
-                        output_columns = [row for i, row in enumerate(reader) if i < 10]
-                        d["Output Columns"] = output_columns
-                    else:
-                        d["Output Columns"] = []
-                except Exception as e:
+
+        repo_name = d.get("Identifier")
+        if repo_name:
+            # Construct the raw URL to the CSV file
+            url = f"https://raw.githubusercontent.com/ersilia-os/{repo_name}/main/model/framework/columns/run_columns.csv"
+            print("Fetching output columns from:", url)
+            try:
+                response = requests.get(url)
+                if response.status_code == 200:
+                    reader = csv.DictReader(response.text.splitlines())
+                    output_columns = [row for i,row in enumerate(reader)]
+                    output_columns_short = output_columns[:10]
+                    d["Output Columns"] = output_columns_short
+                else:
                     d["Output Columns"] = []
-            else:
+            except Exception as e:
                 d["Output Columns"] = []
+        else:
+            d["Output Columns"] = []
 
         # Generate the output columns table if available
         if d.get("Output Columns"):
-            text += "**Output Columns (up to 10):**\n\n"
+            text += "- **Output Columns** (up to 10):\n\n"
             text += "| Name | Type | Direction | Description |\n"
             text += "|------|------|-----------|-------------|\n"
             for col in d.get("Output Columns", []):
@@ -139,34 +142,37 @@ class ReadmeFormatter():
                     col.get("description", "")
                 )
             text += "\n"
+            if len(output_columns)>10:
+                text += f"_Total columns: {len(output_columns)}_"
+            text += "\n"
 
         # Source and Deployment
-        text += "## Source and Deployment\n"
+        text += "## Source and Deployment:\n"
         if d.get("Source"):
             text += "- **Source:** {0}\n".format(d.get("Source"))
         if d.get("Source Type"):
             text += "- **Source Type:** {0}\n".format(d.get("Source Type"))
         if d.get("DockerHub"):
-            text += "- **DockerHub:** {0}\n".format(self.format_link("DockerHub", d["DockerHub"]))
+            text += "- **[DockerHub]({0})**\n".format(d.get("DockerHub"))
         if d.get("Docker Architecture"):
-            text += "- **Docker Architecture:** {0}\n".format(d.get("DDocker Architecture"))
+            text += "- **Docker Architecture:** {0}\n".format(", ".join(d.get("Docker Architecture")))
         if d.get("S3"):
-            # In the Source and Deployment section:
-            text += "- **S3:** {0}\n".format(self.format_link("S3", d.get("S3", "")))
+            text += "- **[S3 Storage]({0})**\n".format(d.get("S3"))
         if d.get("Host URL"):
-            text += "- **Host URL:** {0}\n".format(self.format_link("Host URL", d["Host URL"]))
+            text += "- **[Host URL]({0})**\n".format(d.get("Host URL"))
         text += "\n"
 
         # Resource Consumption
-        text += "## Resource Consumption\n"
-        if d.get("Model Size"):
+        if d.get("Model Size"): #assuming Model Size will be the first field filled here
+            text += "## Resource Consumption:\n"
             text += "- **Model Size:** {0}\n".format(d.get("Model Size"))
         if d.get("Environment Size"):
             text += "- **Environment Size:** {0}\n".format(d.get("Environment Size"))
         if d.get("Image Size"):
             text += "- **Image Size:** {0}\n".format(d.get("Image Size"))
         text += "\n"
-        text += "**Computational Performance:**\n"
+        if d.get("Computational Performance 1"):
+            text += "**Computational Performance:**\n"
         if d.get("Computational Performance 1"):
             text += "- **1 input:** {0}\n".format(d.get("Computational Performance 1"))
         if d.get("Computational Performance 10"):
@@ -176,19 +182,21 @@ class ReadmeFormatter():
         text += "\n"
 
         # References
-        text += "## References\n"
-        text += "- **Source Code:** {0}\n".format(self.format_link("Source Code", d.get("Source Code", "")))
-        text += "- **Publication:** {0}\n".format(self.format_link("Publication", d.get("Publication", "")))
+        text += "## References:\n"
+        text += "- **[Source Code]({0})**\n".format(d.get("Source Code"))
+        text += "- **[Publication]({0})**\n".format(d.get("Publication"))
         if "Publication Type" in d:
-            text += "  - **Publication Type:** {0}\n".format(d["Publication Type"])
+            text += "  - **Publication Type:** {0}\n".format(d.get("Publication Type"))
         if "Publication Year" in d:
-            text += "  - **Publication Year:** {0}\n".format(d["Publication Year"])
+            text += "  - **Publication Year:** {0}\n".format(d.get("Publication Year"))
+        if d.get("Contributor"):
+            text += "- **Ersilia Contributor:** [{0}](https://github.com/{0})\n".format(
+            d["Contributor"]
+        )   
         text += "\n"
-        if d.get("Incorporation Date"):
-            text += "- **Incorporation Date:** {0}\n".format(d.get("Incorporation Date"))    
 
         # License
-        text += "## License\n"
+        text += "## License:\n"
         license_value = d.get("License", "").strip()
         if license_value:
             license_text = (f"This package is licensed under a GPL-3.0 license. "
@@ -196,11 +204,12 @@ class ReadmeFormatter():
         else:
             license_text = ("This package is licensed under a GPL-3.0 license.")
         text += license_text + "\n\n"
-        text += ("Notice: Ersilia grants access to these models 'as is' provided by the original authors, "
-                "please refer to the original code repository and/or publication if you use the model in your research.\n\n")
+        text += ("**Notice**: Ersilia grants access to these models 'as is' provided by the original authors, "
+                "please refer to the original code repository and/or publication if you use the model in your research.\n")
+        text += "\n"
 
         # About Ersilia
-        text += "## About Ersilia\n"
+        text += "## About Ersilia:\n"
         text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a non-profit organization fueling sustainable research in the Global South.\n\n"
         text += "[Help us](https://www.ersilia.io/donate) achieve our mission!"
         return text
