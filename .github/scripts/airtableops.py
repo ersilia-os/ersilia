@@ -173,8 +173,8 @@ class FileUpdater():
                 )
             )
 
-class ReadmeUpdater:
-    def __init__(self, model_id=None, repo_path=None, commit=True):
+class ReadmeUpdater(FileUpdater):
+    def __init__(self, model_id=None, repo_path=None, commit=False):
         super().__init__(model_id, repo_path, commit)
         self.readme_file = "README.md"
 
