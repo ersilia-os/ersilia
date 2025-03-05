@@ -1,6 +1,5 @@
 import os
 
-import pyairtable
 from pyairtable import Api
 import requests
 import yaml
@@ -42,7 +41,7 @@ class AirtableInterface:
     def _get_ro_airtable_api_key():
         r = requests.get(ROK_URL)
         data = r.json()
-        return data["AIRTABLE_READONLY_API_KEY"] #TODO This key seems not working
+        return data["AIRTABLE_READONLY_API_KEY"]
 
     def _get_rw_table(self, api_key):
         return self._create_table(api_key=api_key)
