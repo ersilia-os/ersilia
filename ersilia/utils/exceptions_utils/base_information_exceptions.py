@@ -96,7 +96,7 @@ class TaskBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model task"
         self.hints = (
-            "Only these tasks are allowed: {}. Tasks must be in list format".format(
+            "Only one of these tasks is allowed: {}.".format(
                 ", ".join(_read_default_fields("Task"))
             )
         )
@@ -106,7 +106,7 @@ class TaskBaseInformationError(ErsiliaError):
 class SubtaskBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model subtask"
-        self.hints = "Only these subtasks are allowed: {}. Subtasks must be in list format".format(
+        self.hints = "Only one of these subtasks is allowed: {}".format(
             ", ".join(_read_default_fields("Subtask"))
         )
         ErsiliaError.__init__(self, self.message, self.hints)
