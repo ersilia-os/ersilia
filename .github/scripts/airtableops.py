@@ -201,7 +201,7 @@ class ReadmeUpdater:
             self.update_local()
 
 class MetadataFileUpdater(FileUpdater):
-    def __init__(self, model_id, repo_path=None, api_key=None, commit=True):
+    def __init__(self, model_id, repo_path=None, api_key=None, commit=False):
         super().__init__(model_id, repo_path, commit)
         self.api_key = api_key
     
@@ -280,7 +280,7 @@ def update_metadata_to_airtable(user, repo, branch, api_key):
     am = AirtableMetadata(model_id=repo, api_key=api_key, mode="rw")
     am.write_information(data)
 
-def update_metadata_from_airtable(repo, path, api_key, commit=False):
+def update_metadata_from_airtable(repo, path=None, api_key=None, commit=False):
     # Works with metadata-update option
     rm = MetadataFileUpdater(model_id=repo, repo_path=path, api_key=api_key, commit=commit)
     rm.update()
@@ -329,7 +329,8 @@ if __name__ == "__main__":
 
     # Options for metadata-update
     metadata_update.add_argument("--repo", type=str, required=True)
-    metadata_update.add_argument("--path", type=str, required=True)
+    metadata_update.add_argument("--path", type=str, required=False)
+    metadata_update.add_argument("--commit",  action="store_true")
     metadata_update.add_argument("--api-key", type=str, required=True)
 
     args = parser.parse_args()
@@ -348,7 +349,7 @@ if __name__ == "__main__":
     
     elif args.command == "metadata-update":
         print("Updating metadata file from AirTable")
-        update_metadata_from_airtable(args.repo, args.path, args.api_key)
+        update_metadata_from_airtable(args.repo, args.path, args.commit, args.api_key)
 
     else:
         print("Invalid command")
