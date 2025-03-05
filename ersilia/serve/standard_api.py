@@ -108,6 +108,9 @@ class StandardCSVRunApi(ErsiliaBase):
             return meta["card"][field]
         else:
             self.logger.error(f"Neither 'metadata' nor 'card' contains '{field}' key.")
+            if field == "Input Shape":
+                self.logger.debug("Assuming input shape is Single")
+                return "Single"
 
     def get_identifier_object_by_input_type(self):
         """
