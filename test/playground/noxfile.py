@@ -131,6 +131,7 @@ def setup(session):
     session.log(f"Installing ersilia from source: {NOX_PWD}")
     session.install("-e", str(NOX_PWD))
     session.install(*test_packages)
+    session.run("conda", "install", "-c", "conda-forge", "rdkit", external=True)
     session.env["TEST_ENV"] = "true"
 
 def run(session):
