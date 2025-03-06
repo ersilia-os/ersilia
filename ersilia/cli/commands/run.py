@@ -1,4 +1,3 @@
-import json
 import os
 import types
 
@@ -6,6 +5,8 @@ import click
 
 from ... import ErsiliaModel
 from ...core.session import Session
+from ...io.shape import InputShapeSingle
+from ...io.types.compound import IO
 from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ...utils.terminal import print_result_table
 from .. import echo
@@ -66,38 +67,55 @@ def run_cmd():
             track_runs=track_runs,
         )
         try:
-            result = mdl.run(
-                input=input,
-                output=output,
-                batch_size=batch_size,
-                track_run=track_runs,
-            )
-            iter_values = []
-            if isinstance(result, types.GeneratorType):
-                for result in mdl.run(
-                    input=input, output=output, batch_size=batch_size
-                ):
-                    if result is not None:
-                        iter_values.append(result)
-                if as_table:
-                    print_result_table(iter_values)
+            # Early validation: if input is not a file, assume it's a SMILES string.
+            if not os.path.isfile(input) and not input.lower().endswith(".csv"):
+                import json
+
+                try:
+                    # Try to parse the input as JSON.
+                    smiles_data = json.loads(input)
+                except json.JSONDecodeError:
+                    # If parsing fails, assume it's a single SMILES string.
+                    smiles_data = input
+
+                io_instance = IO(InputShapeSingle())
+                if isinstance(smiles_data, list):
+                    for s in smiles_data:
+                        if not io_instance.is_input(s):
+                            raise UnprocessableInputError(
+                                f"Invalid SMILES string in list: {s}"
+                            )
                 else:
-                    echo(json.dumps(iter_values, indent=4))
+                    if not io_instance.is_input(smiles_data):
+                        raise UnprocessableInputError("Input data is invalid")
+        except ValueError as ve:
+            raise UnprocessableInputError(str(ve))
+
+        result = mdl.run(
+            input=input,
+            output=output,
+            batch_size=batch_size,
+            track_run=track_runs,
+        )
+        iter_values = []
+        if isinstance(result, types.GeneratorType):
+            for r in result:
+                if r is not None:
+                    iter_values.append(r)
+            if as_table:
+                print_result_table(iter_values)
             else:
-                if as_table:
-                    print_result_table(result)
-                else:
-                    try:
-                        echo(result)
-                    except Exception:
-                        echo(
-                            f"Error: Could not print the result for output given path: {result}."
-                        )
-        except UnprocessableInputError as e:
-            echo(f"❌ Error: {e.message}", fg="red")
-            echo(f"💡 {e.hints}")
-            if output and os.path.exists(output):
-                os.remove(output)
-            return
+                echo(json.dumps(iter_values, indent=4))
+        else:
+            if as_table:
+                print_result_table(result)
+            else:
+                try:
+                    echo(result)
+                except Exception:
+                    echo(
+                        f"Error: Could not print the result for output given path: {result}."
+                    )
+        return
 
     return run
