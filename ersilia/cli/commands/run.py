@@ -1,10 +1,12 @@
 import json
+import os
 import types
 
 import click
 
 from ... import ErsiliaModel
 from ...core.session import Session
+from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ...utils.terminal import print_result_table
 from .. import echo
 from . import ersilia_cli
@@ -41,7 +43,7 @@ def run_cmd():
     @click.option(
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
-    @click.option("--as-table/-t", is_flag=True, default=False)
+    @click.option("--as_table/-t", is_flag=True, default=False)
     def run(input, output, batch_size, as_table):
         session = Session(config_json=None)
         model_id = session.current_model_id()
@@ -63,29 +65,39 @@ def run_cmd():
             config_json=None,
             track_runs=track_runs,
         )
-        result = mdl.run(
-            input=input,
-            output=output,
-            batch_size=batch_size,
-            track_run=track_runs,
-        )
-        if isinstance(result, types.GeneratorType):
-            for result in mdl.run(input=input, output=output, batch_size=batch_size):
-                if result is not None:
-                    formatted = json.dumps(result, indent=4)
-                    if as_table:
-                        print_result_table(formatted)
-                    else:
-                        echo(formatted)
+        try:
+            result = mdl.run(
+                input=input,
+                output=output,
+                batch_size=batch_size,
+                track_run=track_runs,
+            )
+            iter_values = []
+            if isinstance(result, types.GeneratorType):
+                for result in mdl.run(
+                    input=input, output=output, batch_size=batch_size
+                ):
+                    if result is not None:
+                        iter_values.append(result)
+                if as_table:
+                    print_result_table(iter_values)
                 else:
-                    echo("Something went wrong", fg="red")
-        else:
-            if as_table:
-                print_result_table(result)
+                    echo(json.dumps(iter_values, indent=4))
             else:
-                try:
-                    echo(result)
-                except:
+                if as_table:
                     print_result_table(result)
+                else:
+                    try:
+                        echo(result)
+                    except Exception:
+                        echo(
+                            f"Error: Could not print the result for output given path: {result}."
+                        )
+        except UnprocessableInputError as e:
+            echo(f"❌ Error: {e.message}", fg="red")
+            echo(f"💡 {e.hints}")
+            if output and os.path.exists(output):
+                os.remove(output)
+            return
 
     return run

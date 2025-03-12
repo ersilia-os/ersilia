@@ -4,9 +4,24 @@ ENV MODEL=$MODEL
 WORKDIR /root
 COPY ./$MODEL /root/$MODEL
 
-RUN apt-get update && apt-cache search libxtst && \
-    apt-get install -y libfontconfig1 libxrender1 libxtst6 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# Update package lists
+RUN apt-get update
+
+# Install libfontconfig1
+RUN apt-get install -y libfontconfig1
+
+# Install libxrender1
+RUN apt-get install -y libxrender1
+
+# Try installing libxtst6 (if available)
+RUN apt-get install -y libxtst6 || echo "Warning: libxtst6 not found, skipping."
+
+# Clean up package lists
+RUN apt-get clean
+
+# Remove unnecessary files
+RUN rm -rf /var/lib/apt/lists/*
+
 
 RUN apt-get update && \ 
     apt-get install -y git && \
@@ -17,5 +32,13 @@ RUN apt-get update && \
     cp /root/bundles/$MODEL/*/api_schema.json /root/api_schema.json && \
     cp /root/bundles/$MODEL/*/status.json /root/status.json && \
     mkdir -p /root/model/framework/examples && \
-    cp /root/bundles/$MODEL/*/model/framework/examples/output.csv /root/model/framework/examples/output.csv && \
-    cp /root/bundles/$MODEL/*/model/framework/examples/input.csv /root/model/framework/examples/input.csv
+    if [ -f /root/bundles/$MODEL/*/model/framework/examples/output.csv ]; then \
+        cp /root/bundles/$MODEL/*/model/framework/examples/output.csv /root/model/framework/examples/output.csv; \
+    elif [ -f /root/bundles/$MODEL/*/model/framework/examples/run_output.csv ]; then \
+        cp /root/bundles/$MODEL/*/model/framework/examples/run_output.csv /root/model/framework/examples/run_output.csv; \
+    fi && \
+    if [ -f /root/bundles/$MODEL/*/model/framework/examples/input.csv ]; then \
+        cp /root/bundles/$MODEL/*/model/framework/examples/input.csv /root/model/framework/examples/input.csv; \
+    elif [ -f /root/bundles/$MODEL/*/model/framework/examples/run_input.csv ]; then \
+        cp /root/bundles/$MODEL/*/model/framework/examples/run_input.csv /root/model/framework/examples/run_input.csv; \
+    fi

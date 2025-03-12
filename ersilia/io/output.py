@@ -1,5 +1,4 @@
 import collections
-import csv
 import json
 import os
 import random
@@ -10,6 +9,7 @@ from .. import ErsiliaBase
 from ..db.hubdata.interfaces import JsonModelsInterface
 from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
 from ..serve.schema import ApiSchema
+from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..utils.logging import make_temp_dir
 from ..utils.paths import resolve_pack_method
@@ -52,6 +52,13 @@ class DataFrame(object):
         """
         self.data = data
         self.columns = columns
+
+    def _is_unprocessable_input(self) -> bool:
+        """Check if the data contains a single row with UNPROCESSABLE_INPUT."""
+        if len(self.data) != 1:
+            return False
+        row = self.data[0]
+        return row[0] == "UNPROCESSABLE_INPUT" and row[1] == "UNPROCESSABLE_INPUT"
 
     @staticmethod
     def _is_h5(file_name: str) -> bool:
@@ -139,13 +146,16 @@ class DataFrame(object):
         delimiter : str, optional
             The delimiter to use in the text file (default is None).
         """
+        if delimiter is None:
+            delimiter = self._get_delimiter(file_name)
+        none_str = "None"
         with open(file_name, "w", newline="") as f:
-            if delimiter is None:
-                delimiter = self._get_delimiter(file_name)
-            writer = csv.writer(f, delimiter=delimiter)
-            writer.writerow(self.columns)
-            for i, row in enumerate(self.data):
-                writer.writerow(row)
+            f.write(delimiter.join(self.columns) + "\n")
+            for row in self.data:
+                row_str = delimiter.join(
+                    none_str if val is None else str(val) for val in row
+                )
+                f.write(row_str + "\n")
 
     def write(self, file_name: str, delimiter: str = None):
         """
@@ -158,6 +168,8 @@ class DataFrame(object):
         delimiter : str, optional
             The delimiter to use in the text file (default is None).
         """
+        if self._is_unprocessable_input():
+            raise UnprocessableInputError()
         if self._is_h5(file_name):
             self.write_hdf5(file_name)
         else:
@@ -475,9 +487,17 @@ class GenericOutputAdapter(ResponseRefactor):
         """
         v = []
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
-            self.logger.debug(v_)
-            self.logger.debug(t_)
-            self.logger.debug(k_)
+            if isinstance(v_, list) or hasattr(v_, "__len__"):
+                self.logger.debug(
+                    "Values: {0}... (and {1} more elements)".format(
+                        v_[:10], len(v_) - 10 if len(v_) > 10 else 0
+                    )
+                )
+            else:
+                self.logger.debug(f"Values: {v_}")
+
+            self.logger.debug(f"Type: {t_}")
+            self.logger.debug(f"Key: {k_}")
             if t_ in self._array_types:
                 if v_ is None:
                     v_ = [None] * self.__array_shape(k_)
@@ -572,6 +592,9 @@ class GenericOutputAdapter(ResponseRefactor):
                     ]
                 else:
                     self.logger.debug("No merge key")
+                    # Log a truncated version of the array for better clarity
+                    # Check if v is a large array and truncate its output
+
                     output_keys_expanded += ["{0}".format(m_) for m_ in m]
             else:
                 output_keys_expanded += [ok]
@@ -662,7 +685,11 @@ class GenericOutputAdapter(ResponseRefactor):
                     if dtype:
                         are_dtypes_informative = True
                 if output_keys_expanded is None:
+                    self.logger.warning(
+                        f"Output key not expanded: val {vals} and {output_keys}"
+                    )
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
+                    self.logger.info(f"Expanded output keys: {output_keys_expanded}")
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
@@ -767,6 +794,7 @@ class GenericOutputAdapter(ResponseRefactor):
         if self._has_extension(output, "h5"):
             df = self._to_dataframe(result, model_id)
             df.write(output)
+        self.logger.debug("Returning result")
         return result
 
     def _adapt_when_fastapi_was_used(
@@ -792,12 +820,16 @@ class GenericOutputAdapter(ResponseRefactor):
             The adapted result.
         """
         if api_name != "run":
+            self.logger.debug("Api was not run")
             return None
         if model_id is None:
+            self.logger.debug("Model ID is None")
             return None
         if output is None:
+            self.logger.debug("Output is None")
             return None
         if not self.was_fast_api:
+            self.logger.debug("Was not FastAPI")
             return None
         if self._has_extension(output, "csv"):
             extension = "csv"
@@ -809,18 +841,11 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = "json"
         else:
             extension = None
+        self.logger.debug(f"Extension: {extension}")
+        self.logger.debug(f"Result: {result}")
+        df = self._to_dataframe(result, model_id)
         delimiters = {"csv": ",", "tsv": "\t", "h5": None}
-        if extension in ["csv", "tsv", "h5"]:
-            R = []
-
-            # Flatten the JSON object
-            for r in json.loads(result):
-                inp = r["input"]
-                out = r["output"]
-                vals = [out[k] for k in out.keys()]
-                R += [[inp["key"], inp["input"]] + vals]
-
-            df = DataFrame(data=R, columns=["key", "input"] + [k for k in out.keys()])
+        if extension in ["tsv", "h5", "csv"]:
             df.write(output, delimiter=delimiters[extension])
         elif extension == "json":
             data = json.loads(result)
@@ -855,9 +880,12 @@ class GenericOutputAdapter(ResponseRefactor):
         adapted_result = self._adapt_when_fastapi_was_used(
             result, output, model_id, api_name
         )
+        self.logger.debug("Adapted result: {0}".format(adapted_result))
         if adapted_result is None:
+            self.logger.debug("Adapting generic")
             return self._adapt_generic(result, output, model_id, api_name)
         else:
+            self.logger.debug("Adapting non-generic")
             return adapted_result
 
 

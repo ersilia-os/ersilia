@@ -6,7 +6,7 @@ import yaml
 try:
     from github import Github
     from github.GithubException import UnknownObjectException
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     Github = None
     UnknownObjectException = None
 

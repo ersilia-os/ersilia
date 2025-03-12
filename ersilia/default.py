@@ -7,8 +7,10 @@ from pathlib import Path
 
 # EOS environmental variables
 EOS = os.path.join(str(Path.home()), "eos")
+EOS_TMP = os.path.join(EOS, "temp")
 if not os.path.exists(EOS):
     os.makedirs(EOS)
+EOS_PLAYGROUND = os.path.join(EOS, "playground")
 ROOT = os.path.dirname(os.path.realpath(__file__))
 BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
 CHECKSUM_NCHAR = 8
@@ -20,7 +22,7 @@ GITHUB_ERSILIA_REPO = "ersilia"
 ERSILIA_MODEL_HUB_S3_BUCKET = "ersilia-model-hub"
 ERSILIA_MODELS_S3_BUCKET = "ersilia-models"
 ERSILIA_MODELS_ZIP_S3_BUCKET = "ersilia-models-zipped"
-MODELS_JSON = "models.json"
+MODELS_JSON = "models_reannotated.json"
 CONFIG_JSON = "config.json"
 CREDENTIALS_JSON = "credentials.json"
 INSTALL_STATUS_FILE = ".install.status"
@@ -42,13 +44,23 @@ FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"
 EXAMPLE_STANDARD_INPUT_CSV_FILENAME = "example_standard_input.csv"
 EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
-PREDEFINED_EXAMPLE_FILES = [
+
+PREDEFINED_EXAMPLE_INPUT_FILES = [
+    "model/framework/examples/run_input.csv",
     "model/framework/examples/input.csv",
-    "model/framework/examples/output.csv",
     "model/framework/input.csv",
-    "model/framework/example.csv",
-    "example.csv",
 ]
+
+PREDEFINED_EXAMPLE_OUTPUT_FILES = [
+    "model/framework/examples/output.csv",
+    "model/framework/output.csv",
+    "example.csv",
+    "model/framework/examples/run_output.csv",
+]
+
+PREDEFINED_EXAMPLE_FILES = (
+    PREDEFINED_EXAMPLE_INPUT_FILES + PREDEFINED_EXAMPLE_OUTPUT_FILES
+)
 DEFAULT_ERSILIA_ERROR_EXIT_CODE = 1
 METADATA_JSON_FILE = "metadata.json"
 METADATA_YAML_FILE = "metadata.yml"
@@ -58,6 +70,7 @@ MODEL_SOURCE_FILE = "model_source.txt"
 APIS_LIST_FILE = "apis_list.txt"
 INFORMATION_FILE = "information.json"
 DOCKER_INFO_FILE = "from_dockerhub.json"
+STATUS_JOSN = "status.json"
 IS_FETCHED_FROM_HOSTED_FILE = "from_hosted.json"
 DEFAULT_UDOCKER_USERNAME = "udockerusername"
 DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
@@ -65,6 +78,21 @@ DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
 PACK_METHOD_FASTAPI = "fastapi"
 PACK_METHOD_BENTOML = "bentoml"
+BENTOML_APPROVED_PYTHON_VERSIONS = [
+    "py36",
+    "py37",
+    "py38",
+    "py39",
+    "py310",
+    "py311",
+]
+FASTAPI_APPROVED_PYTHON_VERSIONS = [
+    "py38",
+    "py39",
+    "py310",
+    "py311",
+    "py312",
+]
 # Session and logging
 SESSIONS_DIR = os.path.join(EOS, "sessions")
 if not os.path.exists(SESSIONS_DIR):
@@ -202,3 +230,20 @@ def bashrc_cli_snippet(overwrite=True):
         f.write(text)
     with open(fn, "a+") as f:
         f.write(snippet)
+
+
+OUTPUT_DATASTRUCTURE = {
+    "Single": lambda x: isinstance(x, list) and len(x) == 1,
+    "List": lambda x: isinstance(x, list)
+    and len(x) > 1
+    and all(isinstance(item, (str, int, float)) for item in x),
+    "Flexible List": lambda x: isinstance(x, list)
+    and all(isinstance(item, (str, int, float)) for item in x),
+    "Matrix": lambda x: isinstance(x, list)
+    and all(
+        isinstance(row, list)
+        and all(isinstance(item, (str, int, float)) for item in row)
+        for row in x
+    ),
+    "Serializable Object": lambda x: isinstance(x, dict),
+}

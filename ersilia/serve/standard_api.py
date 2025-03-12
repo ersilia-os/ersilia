@@ -14,7 +14,7 @@ from ..default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
     INFORMATION_FILE,
-    PREDEFINED_EXAMPLE_FILES,
+    PREDEFINED_EXAMPLE_OUTPUT_FILES,
 )
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
@@ -110,6 +110,9 @@ class StandardCSVRunApi(ErsiliaBase):
             return meta["card"][field]
         else:
             self.logger.error(f"Neither 'metadata' nor 'card' contains '{field}' key.")
+            if field == "Input Shape":
+                self.logger.debug("Assuming input shape is Single")
+                return "Single"
 
     def get_identifier_object_by_input_type(self):
         """
@@ -203,11 +206,11 @@ class StandardCSVRunApi(ErsiliaBase):
            Returns the header which is a list of column names, or None if the header could not be determined.
         """
         file = None
-        for pf in PREDEFINED_EXAMPLE_FILES:
+        for pf in PREDEFINED_EXAMPLE_OUTPUT_FILES:
             if os.path.exists(os.path.join(self.path, pf)):
                 file = os.path.join(self.path, pf)
                 self.logger.debug(
-                    f"Determining header from predefined example file: {pf}"
+                    f"Determining header from predefined example output file: {pf}"
                 )
                 break
         if not file and os.path.exists(self.standard_output_csv):
@@ -385,11 +388,7 @@ class StandardCSVRunApi(ErsiliaBase):
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
                 smiles = row.get(key)
-                if (
-                    smiles
-                    and smiles not in smiles_list
-                    and self.validate_smiles(smiles)
-                ):
+                if self.validate_smiles(smiles):
                     smiles_list.append(smiles)
         return smiles_list
 
@@ -436,7 +435,7 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def is_amenable(self, output_data):
         """
-        Check if the output data is amenable for a standard run.
+        Check if the input and output data are amenable for a standard run.
 
         Parameters
         ----------
@@ -446,7 +445,7 @@ class StandardCSVRunApi(ErsiliaBase):
         Returns
         -------
         bool
-            True if the output data is amenable for a standard run, False otherwise.
+            True if the request is amenable for a standard run, False otherwise.
         """
         if not self.header:
             self.logger.debug("Not amenable for standard run: header not found")
@@ -500,12 +499,17 @@ class StandardCSVRunApi(ErsiliaBase):
             writer = csv.writer(f)
             writer.writerow(self.header)
             for i_d, r_d in zip(input_data, result):
+                # Prepare the row to be written
                 r = [i_d["key"], i_d["input"]]
-                for k in self.header[2:]:
+                # Iterate over the header and extract values from the row-wise result
+                for i, k in enumerate(self.header[2:]):
                     if isinstance(r_d, dict):
                         v = r_d[k]
+                    elif isinstance(r_d, list):
+                        v = r_d[i]
                     else:
                         v = r_d
+
                     if isinstance(v, list):
                         r += v
                     else:

@@ -189,3 +189,54 @@ class NotInstallableWithFastAPI(NotInstallableError):
 class NotInstallableWithBentoML(NotInstallableError):
     def __init__(self, model_id):
         super.__init__(model_id, "BentoML")
+
+
+class SniffFastApiColumnsDontMatch(ErsiliaError):
+    def __init__(self, model_id):
+        self.model_id = model_id
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = "Column names in columns file and example output files are not the same! Please revise the model."
+        return text
+
+    def _get_hints(self):
+        text = "Check the model repository and inspect the files to make sure they are properly constructed."
+        return text
+
+
+class SniffFastApiColumnTypesIncompatibility(ErsiliaError):
+    def __init__(self, model_id):
+        self.model_id = model_id
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = "Column types are not purely string or purely numeric. In Ersilia Pack (FastAPI) deployments, they need to be pure."
+        return text
+
+    def _get_hints(self):
+        text = "Check the model repository and make sure that the type column is purely numeric or string."
+        return text
+
+
+class WithToolFetchingNotWorking(ErsiliaError):
+    def __init__(self, tool):
+        assert tool in ["bentoml", "fastapi"]
+        self.tool = tool
+        self.message = self._get_message()
+        self.hints = self._get_hints()
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+    def _get_message(self):
+        text = "Fetching with {0} did not work".format(self.tool)
+        return text
+
+    def _get_hints(self):
+        text = "Check the model repository structure and make sure that all files and Python versions are correct to fetch with {0}".format(
+            self.tool
+        )
+        return text

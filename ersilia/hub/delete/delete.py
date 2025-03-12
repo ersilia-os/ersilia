@@ -9,6 +9,7 @@ from ...db.environments.localdb import EnvironmentDb
 from ...db.environments.managers import DockerManager
 from ...db.hubdata.localslugs import SlugDb
 from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
+from ...setup.requirements.bentoml_requirement import BentoMLRequirement
 from ...utils.conda import SimpleConda
 from ...utils.environment import Environment
 from ...utils.session import (
@@ -273,22 +274,30 @@ class ModelBentoDeleter(ErsiliaBase):
         run_command(cmd)
 
     def _delete(self, model_id, keep_latest=True):
-        ml = ModelCatalog()
-        try:
-            catalog = ml.bentoml()
-        except:
-            self.logger.debug("No BentoML Catalog available")
-            catalog = None
-        if catalog is None:
-            return
-        if len(catalog.data) == 0:
-            return
-        services = [r[1] for r in catalog.data if r[0] == model_id]
-        if keep_latest and len(services) > 1:
-            services = services[1:]
-        for service in services:
-            self.logger.info("Removing BentoML service {0}".format(service))
-            self._delete_service(service)
+        bentomlreq = BentoMLRequirement()
+        if bentomlreq.is_installed():
+            ml = ModelCatalog()
+            try:
+                self.logger.debug("Looking for BentoML catalog")
+                catalog = ml.bentoml()
+                self.logger.debug("Catalog found")
+            except:
+                self.logger.debug("No BentoML Catalog available")
+                catalog = None
+            if catalog is None:
+                return
+            if len(catalog.data) == 0:
+                return
+            services = [r[1] for r in catalog.data if r[0] == model_id]
+            if keep_latest and len(services) > 1:
+                services = services[1:]
+            for service in services:
+                self.logger.info("Removing BentoML service {0}".format(service))
+                self._delete_service(service)
+        else:
+            self.logger.debug(
+                "BentoML is not installed, no need for deleting using BentoML"
+            )
 
     def delete(self, model_id: str):
         """
