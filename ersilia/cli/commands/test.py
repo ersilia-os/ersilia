@@ -77,6 +77,18 @@ def test_cmd():
         help="This flag is used to check deep checks (such as computational performance checks)",
     )
     @click.option(
+        "--surface",
+        is_flag=True,
+        default=False,
+        help="This flag is used to check deep checks (such as computational performance checks)",
+    )
+    @click.option(
+        "--inspect",
+        is_flag=True,
+        default=False,
+        help="This flag is used to check deep checks (such as computational performance checks)",
+    )
+    @click.option(
         "--report_path",
         default=None,
         type=click.STRING,
@@ -97,6 +109,8 @@ def test_cmd():
         version,
         shallow,
         deep,
+        surface,
+        inspect,
         report_path,
         clean,
     ):
@@ -109,6 +123,8 @@ def test_cmd():
             version,
             shallow,
             deep,
+            surface,
+            inspect,
             report_path,
             clean,
         )
