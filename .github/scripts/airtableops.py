@@ -1,6 +1,6 @@
 import os
 
-import pyairtable
+from pyairtable import Api
 import requests
 import yaml
 
@@ -8,8 +8,10 @@ from ersilia.hub.content.card import BaseInformation, RepoMetadataFile
 from ersilia.utils.logging import make_temp_dir
 from ersilia.utils.terminal import run_command
 
+from readme_formatter import ReadmeFormatter
+
 GITHUB_ORG = "ersilia-os"
-AIRTABLE_MODEL_HUB_BASE_ID = "appgxpCzCDNyGjWc8"
+AIRTABLE_MODEL_HUB_BASE_ID = "appR6ZwgLgG8RTdoU" #TODO THIS IS THE REANNOTATION ID
 AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 AIRTABLE_MAX_ROWS = 100000
 AIRTABLE_PAGE_SIZE = 100
@@ -32,7 +34,8 @@ class AirtableInterface:
             raise ValueError("Mode must be either 'ro' or 'rw'")
 
     def _create_table(self, api_key):
-        return pyairtable.Table(api_key, self.base_id, self.table_name)
+        api = Api(api_key)
+        return api.table(self.base_id, self.table_name)
 
     @staticmethod
     def _get_ro_airtable_api_key():
@@ -123,59 +126,22 @@ class ReadmeMetadata:
         print("Cannot read directly from README file. Using AirTable instead")
         am = AirtableMetadata(model_id=self.model_id)
         bi = am.read_information()
-        print(bi.as_dict())
         return bi
 
     def write_information(self, data: BaseInformation, readme_path=None):
         d = data.as_dict()
-        text = "# {0}\n\n".format(d["Title"])
-        text += "{0}\n\n".format(d["Description"].rstrip("\n"))
-        text += "## Identifiers\n\n"
-        text += "* EOS model ID: `{0}`\n".format(d["Identifier"])
-        text += "* Slug: `{0}`\n\n".format(d["Slug"])
-        text += "## Characteristics\n\n"
-        text += "* Input: `{0}`\n".format(", ".join(d["Input"]))
-        text += "* Input Shape: `{0}`\n".format(d["Input Shape"])
-        text += "* Task: `{0}`\n".format(", ".join(d["Task"]))
-        text += "* Output: `{0}`\n".format(", ".join(d["Output"]))
-        text += "* Output Type: `{0}`\n".format(", ".join(d["Output Type"]))
-        text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
-        text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
-        text += "## References\n\n"
-        text += "* [Publication]({0})\n".format(d["Publication"])
-        text += "* [Source Code]({0})\n".format(d["Source Code"])
-        text += "* Ersilia contributor: [{0}](https://github.com/{0})\n\n".format(
-            d["Contributor"]
-        )
-        text += "## Ersilia model URLs\n"
-        text += "* [GitHub]({0})\n".format(data.github)
-        if "S3" in d:
-            text += "* [AWS S3]({0})\n".format(d["S3"])
-        if "DockerHub" in d:
-            text += "* [DockerHub]({0}) ({1})\n".format(
-                d["DockerHub"], ", ".join(d["Docker Architecture"])
-            )
-        text += "\n"
-        text += "## Citation\n\n"
-        text += "If you use this model, please cite the [original authors]({0}) of the model and the [Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff).\n\n".format(
-            d["Publication"]
-        )
-        text += "## License\n\n"
-        text += "This package is licensed under a GPL-3.0 license. The model contained within this package is licensed under a {0} license.\n\n".format(
-            d["License"]
-        )
-        text += "Notice: Ersilia grants access to these models 'as is' provided by the original authors, please refer to the original code repository and/or publication if you use the model in your research.\n\n"
-        text += "## About Us\n\n"
-        text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization ([1192266](https://register-of-charities.charitycommission.gov.uk/charity-search/-/charity-details/5170657/full-print)) with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.\n\n"
-        text += "[Help us](https://www.ersilia.io/donate) achieve our mission!"
+        d["GitHub"] = data.github
+        if "Biomedical Area" in d.keys() and d["Biomedical Area"] != None:
+            text = ReadmeFormatter().write_information_1(d)
+        else:
+            text = ReadmeFormatter().write_information_0(d)
         if readme_path is None:
             return text
         else:
             with open(readme_path, "w") as f:
                 f.write(text)
 
-
-class ReadmeUpdater:
+class FileUpdater():
     def __init__(self, model_id=None, repo_path=None, commit=True):
         self.model_id = model_id
         if repo_path is not None:
@@ -183,9 +149,9 @@ class ReadmeUpdater:
         else:
             self.repo_path = None
         self.commit = commit
-        self.tmp_folder = make_temp_dir(prefix="ersilia-os")
+        self.tmp_folder = make_temp_dir(prefix="ersilia-")
         self.cwd = os.getcwd()
-
+    
     def _git_clone(self):
         run_command(
             "cd {0}; GIT_LFS_SKIP_SMUDGE=1 git clone https://github.com/{1}/{2}; cd {3}".format(
@@ -196,33 +162,37 @@ class ReadmeUpdater:
     def _git_push(self):
         if self.repo_path is None:
             run_command(
-                'cd {0}/{1}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {2}'.format(
+                'cd {0}/{1}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating file from AirTable [skip ci]"; git push; cd {2}'.format(
                     self.tmp_folder, self.model_id, self.cwd
                 )
             )
         else:
             run_command(
-                'cd {0}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating README file from AirTable [skip ci]"; git push; cd {1}'.format(
+                'cd {0}; GIT_LFS_SKIP_SMUDGE=1 git add .; git commit -m "Updating file from AirTable [skip ci]"; git push; cd {1}'.format(
                     self.repo_path, self.cwd
                 )
             )
 
-    def update_remote(self):
-        self._git_clone()
+class ReadmeUpdater(FileUpdater):
+    def __init__(self, model_id=None, repo_path=None, commit=False):
+        super().__init__(model_id, repo_path, commit)
+        self.readme_file = "README.md"
+
+    def _update_readme(self, readme_path):
         rm = ReadmeMetadata(model_id=self.model_id)
         bi = rm.read_information()
-        tmp_file = os.path.join(self.tmp_folder, self.model_id, "README.md")
-        rm.write_information(data=bi, readme_path=tmp_file)
+        rm.write_information(data=bi, readme_path=readme_path)
+
+    def update_remote(self):
+        self._git_clone()
+        tmp_file = os.path.join(self.tmp_folder, self.model_id, self.readme_file)
+        self._update_readme(tmp_file)
         if self.commit:
             self._git_push()
 
     def update_local(self):
-        rm = ReadmeMetadata(model_id=self.model_id)
-        bi = rm.read_information()
-        readme_file = os.path.join(self.repo_path, "README.md")
-        rm.write_information(data=bi, readme_path=readme_file)
-        if self.commit:
-            self._git_push()
+        readme_file = os.path.join(self.repo_path, self.readme_file)
+        self._update_readme(readme_file)
 
     def update(self):
         if self.repo_path is None:
@@ -230,6 +200,49 @@ class ReadmeUpdater:
         else:
             self.update_local()
 
+class MetadataFileUpdater(FileUpdater):
+    def __init__(self, model_id, repo_path=None, api_key=None, commit=False):
+        super().__init__(model_id, repo_path, commit)
+        self.api_key = api_key
+    
+    def _update_metadata_file(self, metadata_path):
+        am = AirtableMetadata(model_id=self.model_id, api_key=self.api_key, mode="ro") 
+        data = am.read_information()
+        rm = RepoMetadataFile(model_id=self.model_id, config_json=None)
+        rm.write_information(data=data, json_or_yaml_path=metadata_path)
+
+    def _select_correct_metadata_file(self):
+        if self.repo_path is None:
+            if os.path.exists(os.path.join(self.tmp_folder, self.model_id, "metadata.json")):
+                return os.path.join(self.tmp_folder, self.model_id, "metadata.json")
+            elif os.path.exists(os.path.join(self.tmp_folder, self.model_id, "metadata.yaml")):
+                return os.path.join(self.tmp_folder, self.model_id, "metadata.yml")
+            else:
+                print("Metadata file not found")
+        else:
+            if os.path.exists(os.path.join(self.repo_path, "metadata.json")):
+                return os.path.join(self.repo_path, "metadata.json")
+            elif os.path.exists(os.path.join(self.repo_path, "metadata.yaml")):
+                return os.path.join(self.repo_path, "metadata.yml")
+            else:
+                print("Metadata file not found")
+    
+    def update_remote_from_airtable(self):
+        self._git_clone()
+        metadata_file = self._select_correct_metadata_file()
+        self._update_metadata_file(metadata_file)
+        if self.commit:
+            self._git_push()
+
+    def update_local_from_airtable(self):
+        metadata_file = self._select_correct_metadata_file()
+        self._update_metadata_file(metadata_file)
+
+    def update(self):
+        if self.repo_path is None:
+            self.update_remote_from_airtable()
+        else:
+            self.update_local_from_airtable()
 
 def insert_metadata_to_airtable(model, contributor, api_key):
     # Works with airtable-insert option
@@ -267,6 +280,10 @@ def update_metadata_to_airtable(user, repo, branch, api_key):
     am = AirtableMetadata(model_id=repo, api_key=api_key, mode="rw")
     am.write_information(data)
 
+def update_metadata_from_airtable(repo, path=None, api_key=None, commit=False):
+    # Works with metadata-update option
+    rm = MetadataFileUpdater(model_id=repo, repo_path=path, api_key=api_key, commit=commit)
+    rm.update()
 
 def update_readme_from_airtable(repo, path):
     # Works with readme-update option
@@ -291,6 +308,9 @@ if __name__ == "__main__":
     readme_update = subparsers.add_parser(
         "readme-update", help="Update README from AirTable"
     )
+    metadata_update = subparsers.add_parser(
+        "metadata-update", help="Update metadata file from AirTable"
+    )
 
     # Options for airtable-insert
     airtable_insert.add_argument("--model", type=str, required=True)
@@ -307,6 +327,12 @@ if __name__ == "__main__":
     readme_update.add_argument("--repo", type=str, required=True)
     readme_update.add_argument("--path", type=str, required=True)
 
+    # Options for metadata-update
+    metadata_update.add_argument("--repo", type=str, required=True)
+    metadata_update.add_argument("--path", type=str, required=False)
+    metadata_update.add_argument("--commit",  action="store_true")
+    metadata_update.add_argument("--api-key", type=str, required=True)
+
     args = parser.parse_args()
 
     if args.command == "airtable-insert":
@@ -320,6 +346,10 @@ if __name__ == "__main__":
     elif args.command == "readme-update":
         print("Updating README from AirTable")
         update_readme_from_airtable(args.repo, args.path)
+    
+    elif args.command == "metadata-update":
+        print("Updating metadata file from AirTable")
+        update_metadata_from_airtable(args.repo, args.path, args.commit, args.api_key)
 
     else:
         print("Invalid command")

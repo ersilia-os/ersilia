@@ -24,14 +24,13 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 
-def resolve_pack_method_docker(model_id):
+def resolve_pack_method_docker(model_id): #TODO read from metadata
     client = docker.from_env()
     bundle_path = f"{EOS}/dest/{model_id}"
     docker_tag = model_image_version_reader(bundle_path)
     model_image = client.images.get(f"{DOCKERHUB_ORG}/{model_id}:{docker_tag}")
     image_history = model_image.history()
     for hist in image_history:
-        # Very hacky, but works bec we don't have nginx in ersilia-pack images
         if "nginx" in hist["CreatedBy"]:
             return PACK_METHOD_BENTOML
     return PACK_METHOD_FASTAPI
