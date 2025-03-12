@@ -116,7 +116,6 @@ class RunnerService:
         self.deep = deep
         self.report_path = Path(report_path) if report_path else Path().cwd()
         self.report_file = self.report_path / f"{self.model_id}-test.json"
-        self.output_consistency = self.ios_service.get_output_consistency()
         self.inspector = inspector
         self.example = ExampleGenerator(model_id=self.model_id)
         self.run_using_bash = False
@@ -586,7 +585,7 @@ class RunnerService:
         results.append(
             self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)
         )
-        if "Fixed" in self.output_consistency:
+        if "Fixed" in self.ios_service.get_output_consistency():
             _validations.extend(self._run_single_and_example_input_checks())
 
         _validations.extend(
