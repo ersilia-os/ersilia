@@ -18,7 +18,15 @@ from ....default import (
 )
 from .io import IOService
 from .constants import STATUS_CONFIGS
-from .constants import BASE_URL, RAW_CONTENT_URL, REPO_API_URL, USER_AGENT, COMMON_FILES, BENTOML_FILES, ERSILIAPACK_FILES
+from .constants import (
+    BASE_URL,
+    RAW_CONTENT_URL,
+    REPO_API_URL,
+    USER_AGENT,
+    COMMON_FILES,
+    BENTOML_FILES,
+    ERSILIAPACK_FILES,
+)
 from .... import ErsiliaBase
 from ....hub.content.card import RepoMetadataFile
 from ....hub.fetch.actions.template_resolver import TemplateResolver
@@ -51,7 +59,6 @@ class ModelInspector:
         result = inspector.check_complete_metadata()
     """
 
-
     BENTOML_FILES = COMMON_FILES + BENTOML_FILES
     ERSILIAPACK_FILES = COMMON_FILES + ERSILIAPACK_FILES
 
@@ -64,7 +71,6 @@ class ModelInspector:
         self.content_url = RAW_CONTENT_URL.format(model=model)
         self.config_json = config_json
         self.pack_type = IOService.get_model_type(self.model, self.dir)
-
 
     def check_repo_exists(self):
         """
@@ -155,14 +161,19 @@ class ModelInspector:
                 return Result(False, " ".join(errors))
             return Result(True, f"{DOCKERFILE_FILE} dependencies are valid.")
 
-        else: 
-            dockerfile_content, dockerfile_error = self._get_file_content(DOCKERFILE_FILE)
+        else:
+            dockerfile_content, dockerfile_error = self._get_file_content(
+                DOCKERFILE_FILE
+            )
             yml_content, yml_error = self._get_file_content(INSTALL_YAML_FILE)
 
             if dockerfile_content is None and yml_content is None:
-                return Result(False, f"Neither {DOCKERFILE_FILE} nor {INSTALL_YAML_FILE} found. "
-                                    f"Dockerfile error: {dockerfile_error} | "
-                                    f"install.yml error: {yml_error}")
+                return Result(
+                    False,
+                    f"Neither {DOCKERFILE_FILE} nor {INSTALL_YAML_FILE} found. "
+                    f"Dockerfile error: {dockerfile_error} | "
+                    f"install.yml error: {yml_error}",
+                )
 
             errors = []
 
@@ -626,10 +637,9 @@ class InspectService(ErsiliaBase):
     def _get_checks(self, inspector: ModelInspector) -> dict:
         def create_check(check_fn, key, details):
             return lambda: CheckStrategy(check_fn, key, details)
+
         docker_file_exists = os.path.isfile(os.path.join(self.dir, DOCKERFILE_FILE))
-        dependency_check = (
-            "Dockerfile" if docker_file_exists else "Install_YAML"
-        )
+        dependency_check = "Dockerfile" if docker_file_exists else "Install_YAML"
         checks = {
             "is_github_url_available": create_check(
                 inspector.check_repo_exists if self.remote else lambda: None,

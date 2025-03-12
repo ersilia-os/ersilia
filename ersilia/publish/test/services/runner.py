@@ -1,4 +1,3 @@
-
 import csv
 import os
 import subprocess
@@ -23,7 +22,7 @@ from .... import throw_ersilia_exception
 from ....default import (
     RUN_FILE,
 )
-from .constants import STATUS_CONFIGS,  TABLE_CONFIGS, Checks, TableType
+from .constants import STATUS_CONFIGS, TABLE_CONFIGS, Checks, TableType
 from .setup import SetupService
 from .inspect import InspectService
 from .io import IOService
@@ -98,7 +97,7 @@ class RunnerService:
         deep: bool,
         report_path: str,
         inspector: InspectService,
-        surface: bool
+        surface: bool,
     ):
         self.model_id = model_id
         self.logger = logger
@@ -142,7 +141,7 @@ class RunnerService:
         str
             The output of the command.
         """
-            
+
         cmd = f"ersilia serve {self.model_id} && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
         out = run_command(cmd)
         return out
@@ -164,7 +163,8 @@ class RunnerService:
             run_command(["ersilia", "-v", "fetch", model_id, *loc], quiet=True)
 
         if os.path.exists(self.model_path):
-            run_command(
+            (
+                run_command(
                     [
                         "ersilia",
                         "-v",
@@ -172,6 +172,7 @@ class RunnerService:
                         self.model_id,
                     ]
                 ),
+            )
         _fetch(self.model_id, self.logger)
 
     def run_example(
@@ -509,8 +510,7 @@ class RunnerService:
 
             self.ios_service.collect_and_save_json(results, self.report_file)
             echo("Model tests and checks completed.", fg="green", bold=True)
-        
-        
+
         except Exception as error:
             tb = traceback.format_exc()
             exp = {
@@ -551,16 +551,25 @@ class RunnerService:
         results = []
         if self.from_github or self.from_s3 or self.from_dir:
             env_result = self._log_env_sizes()
-            results.append(self._generate_table_from_check(TableType.MODEL_SIZES, env_result))
+            results.append(
+                self._generate_table_from_check(TableType.MODEL_SIZES, env_result)
+            )
 
         if self.from_dockerhub:
             docker_size, message = self.ios_service.calculate_image_size(
                 tag=self.version if self.version else "latest"
             )
-            results.append(self._generate_table_from_check(TableType.MODEL_SIZES, [(Checks.IMAGE_SIZE.value, message, docker_size)]))
+            results.append(
+                self._generate_table_from_check(
+                    TableType.MODEL_SIZES,
+                    [(Checks.IMAGE_SIZE.value, message, docker_size)],
+                )
+            )
 
         result = self.checkup_service.check_simple_model_output(self.run_model)
-        results.append(self._generate_table_from_check(TableType.MODEL_RUN_CHECK, result))
+        results.append(
+            self._generate_table_from_check(TableType.MODEL_RUN_CHECK, result)
+        )
 
         return results
 
@@ -600,15 +609,17 @@ class RunnerService:
         )
 
     def _docker_yml_column_name_check(self):
-        column_file_path = os.path.join(self.dir, PREDEFINED_COLUMN_FILE) 
+        column_file_path = os.path.join(self.dir, PREDEFINED_COLUMN_FILE)
         example_output_file_path = IOService._get_output_file_path(self.dir)
-        data = self.checkup_service.compare_csv_columns(column_csv=column_file_path, csv_file=example_output_file_path)
-        docker_check_data = self.inspector.run(["docker_check"]).pop(0)
-        docker_check_data = [(docker_check_data[0], Checks.DEPENDENCY_PINNED.value, docker_check_data[1])]
-        data.extend(docker_check_data)
-        return self._generate_table_from_check(
-            TableType.DEPENDECY_COLUMN_CHECK, data
+        data = self.checkup_service.compare_csv_columns(
+            column_csv=column_file_path, csv_file=example_output_file_path
         )
+        docker_check_data = self.inspector.run(["docker_check"]).pop(0)
+        docker_check_data = [
+            (docker_check_data[0], Checks.DEPENDENCY_PINNED.value, docker_check_data[1])
+        ]
+        data.extend(docker_check_data)
+        return self._generate_table_from_check(TableType.DEPENDECY_COLUMN_CHECK, data)
 
     def _log_env_sizes(self):
         env_size = self.ios_service.get_env_sizes()
@@ -617,8 +628,8 @@ class RunnerService:
     def _log_directory_sizes(self):
         directory_size = self.ios_service.get_directories_sizes()
         return self._generate_table_from_check(
-            TableType.MODEL_DIRECTORY_SIZES, 
-            [(Checks.DIR_SIZE.value, Checks.TOTAL_DIR_SIZE.value, directory_size)]
+            TableType.MODEL_DIRECTORY_SIZES,
+            [(Checks.DIR_SIZE.value, Checks.TOTAL_DIR_SIZE.value, directory_size)],
         )
 
     def _run_single_and_example_input_checks(self):

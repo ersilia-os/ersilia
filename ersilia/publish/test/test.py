@@ -30,6 +30,7 @@ from .services.runner import RunnerService
 from ...core.modelbase import ModelBase
 from ...cli import echo
 
+
 class ModelTester(ErsiliaBase):
     """
     Class to handle model testing. Initializes the model tester services and runs the tests.
@@ -129,7 +130,7 @@ class ModelTester(ErsiliaBase):
             self.deep,
             self.report_path,
             self.inspector,
-            self.surface
+            self.surface,
         )
 
     def _check_pedendency(self):

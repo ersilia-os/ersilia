@@ -28,9 +28,16 @@ from ....default import (
     EOS_TMP,
     DOCKERHUB_ORG,
     PREDEFINED_EXAMPLE_OUTPUT_FILES,
-    PREDEFINED_EXAMPLE_INPUT_FILES
+    PREDEFINED_EXAMPLE_INPUT_FILES,
 )
-from .constants import Checks, STATUS_CONFIGS, ERSILIAPACK_BACK_FILES, ERSILIAPACK_FILES, BENTOML_FILES, ReportValidationException
+from .constants import (
+    Checks,
+    STATUS_CONFIGS,
+    ERSILIAPACK_BACK_FILES,
+    ERSILIAPACK_FILES,
+    BENTOML_FILES,
+    ReportValidationException,
+)
 from .setup import SetupService
 from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.exceptions_utils import test_exceptions as texc
@@ -73,7 +80,7 @@ class IOService:
         self.console = Console()
         self.check_results = []
         self.simple_docker = SimpleDocker()
-    
+
     @staticmethod
     def get_model_type(model_id: str, repo_path: str) -> str:
         """
@@ -98,26 +105,26 @@ class IOService:
             return PACK_METHOD_FASTAPI
         else:
             return None
-    
+
     @staticmethod
     def read_csv_values(file_path):
         """
         Reads a CSV file and returns its values excluding the header row.
-        
+
         Args:
             file_path (str): The path to the CSV file.
-            
+
         Returns:
             list: A list of rows (each row is a list of values) from the CSV file without the header.
         """
         try:
-            with open(file_path, 'r', newline='') as csvfile:
+            with open(file_path, "r", newline="") as csvfile:
                 reader = csv.reader(csvfile)
                 next(reader, None)
                 return [row for row in reader]
         except Exception as e:
             return []
-    
+
     @staticmethod
     def _get_output_file_path(dir):
         for filename in PREDEFINED_EXAMPLE_OUTPUT_FILES:
@@ -125,7 +132,7 @@ class IOService:
             if os.path.exists(output_path):
                 return output_path
         return None
-    
+
     @staticmethod
     def _get_input_file_path(dir):
         for filename in PREDEFINED_EXAMPLE_INPUT_FILES:
@@ -141,7 +148,7 @@ class IOService:
             inputs = IOService.read_csv_values(input_path)
             inputs = [input[0] for input in inputs]
             return inputs
-    
+
     @staticmethod
     def validate_report(data):
         errors = []
@@ -153,21 +160,24 @@ class IOService:
                     recursive_check(value, current_path)
                 else:
                     if value is False or (isinstance(value, str)):
-                        errors.append(f"Validation failed at '{current_path}' with value: {value}")
+                        errors.append(
+                            f"Validation failed at '{current_path}' with value: {value}"
+                        )
 
         recursive_check(data)
-        
+
         if errors:
             error_message = "Data validation error(s):\n" + "\n".join(errors)
             raise ReportValidationException(error_message)
-        
+
         return True
+
     def get_output_consistency(self):
         data = self._read_metadata()
         if "Output Consistency" in data:
             return data["Output Consistency"]
         return "Fixed"
-        
+
     def get_file_requirements(self) -> List[str]:
         """
         Get the list of required files for the model.
@@ -193,35 +203,52 @@ class IOService:
                 return ERSILIAPACK_FILES
         else:
             raise ValueError(f"Unsupported model type: {type}")
-        
-    def _run_check(self, check_function, data, check_name: str, additional_info=None) -> bool:
+
+    def _run_check(
+        self, check_function, data, check_name: str, additional_info=None
+    ) -> bool:
         try:
             if additional_info is not None:
                 check_function(additional_info)
             else:
                 check_function(data)
-            details = f"Field {check_name} has correct entry." if data else "File exists"
+            details = (
+                f"Field {check_name} has correct entry." if data else "File exists"
+            )
             self.check_results.append((check_name, details, str(STATUS_CONFIGS.PASSED)))
             return True
 
         except texc.EmptyField as ef:
             self.logger.error(f"EmptyField exception caught for key '{ef}'")
-            details = f"Field {check_name} has invalid value" if data else f"File {check_name} does not exist"
+            details = (
+                f"Field {check_name} has invalid value"
+                if data
+                else f"File {check_name} does not exist"
+            )
             self.check_results.append((check_name, details, str(STATUS_CONFIGS.FAILED)))
             return False
 
         except texc.EmptyKey as ek:
             self.logger.error(f"EmptyKey exception caught for key '{ek}'")
-            details = f"Key {check_name} not present in the metadata file" if data else f"File {check_name} does not exist"
-            self.check_results.append((check_name, details, str(STATUS_CONFIGS.NOT_PRESENT)))
+            details = (
+                f"Key {check_name} not present in the metadata file"
+                if data
+                else f"File {check_name} does not exist"
+            )
+            self.check_results.append(
+                (check_name, details, str(STATUS_CONFIGS.NOT_PRESENT))
+            )
             return False
 
         except Exception as e:
             self.logger.error(f"An unexpected exception occurred: {e}")
-            details = f"Field {check_name} has invalid value" if data else f"File {check_name} does not exist"
+            details = (
+                f"Field {check_name} has invalid value"
+                if data
+                else f"File {check_name} does not exist"
+            )
             self.check_results.append((check_name, details, str(STATUS_CONFIGS.FAILED)))
             return False
-            
 
     def _get_metadata_file(self):
         if METADATA_JSON_FILE in self.get_file_requirements():

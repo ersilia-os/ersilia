@@ -13,7 +13,6 @@ from ....default import (
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
     EOS_TMP,
-    PREDEFINED_EXAMPLE_FILES,
     PREDEFINED_EXAMPLE_INPUT_FILES,
     PREDEFINED_EXAMPLE_OUTPUT_FILES,
     PREDEFINED_COLUMN_FILE,
@@ -91,7 +90,6 @@ class Checks(Enum):
     COLUMN_CHECK_FAILURE = "Columns not coincide with run_columns"
     SIMPLE_MODEL_RUN = "Simple Model Run"
     DEPENDENCY_PINNED = "Dependency pinned"
-
 
 
 class TableType(Enum):
@@ -193,9 +191,12 @@ class STATUS_CONFIGS(Enum):
     def __str__(self):
         return f"[{self.color}]{self.icon} {self.label}[/{self.color}]"
 
+
 class ReportValidationException(Exception):
     """Custom exception for data validation errors."""
+
     pass
+
 
 RUN_FILE = f"model/framework/{RUN_FILE}"
 
@@ -245,11 +246,7 @@ BENTOML_FOLDERS = ["model", "src", ".github"]
 
 ERSILIAPACK_FOLDERS = ["model", ".github"]
 
-GIT_AND_DOCKER_IGNORE = [
-    ".dockerignore",
-    ".gitignore",
-    ".gitattributes"
-]
+GIT_AND_DOCKER_IGNORE = [".dockerignore", ".gitignore", ".gitattributes"]
 
 # Base URL for the Ersilia OS Github
 BASE_URL = "https://github.com/ersilia-os/"

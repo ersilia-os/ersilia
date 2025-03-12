@@ -27,7 +27,8 @@ from ....utils.hdf5 import Hdf5DataLoader
 from ....utils.exceptions_utils.base_information_exceptions import _read_default_fields
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
-    
+
+
 class CheckService:
     """
     Service for performing various checks on the model.
@@ -83,7 +84,7 @@ class CheckService:
         self.console = ios.console
         self.original_smiles_list = []
         self.check_results = ios.check_results
-        self.output_consistency = "Fixed"#ios.get_output_consistency()
+        self.output_consistency = "Fixed"  # ios.get_output_consistency()
         self.logger.info(f"Model dir from check service: {self.dir}")
         self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
         # Field defaults
@@ -255,7 +256,9 @@ class CheckService:
         if not model_input:
             raise texc.InvalidEntry("Output")
 
-        invalid_inputs = [input for input in model_input if input not in self.valid_model_inputs]
+        invalid_inputs = [
+            input for input in model_input if input not in self.valid_model_inputs
+        ]
         if invalid_inputs:
             raise texc.InvalidEntry("Input")
 
@@ -299,19 +302,19 @@ class CheckService:
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
-        
+
     def _check_model_target_organism(self, data):
         key = "Target Organism"
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
-        
+
     def _check_model_biomedical_area(self, data):
         key = "Biomedical Area"
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
-        
+
     def _check_model_output_dim(self, data):
         key = "Output Dimension"
         self.logger.debug(f"Checking {key}  field..")
@@ -359,7 +362,7 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
     def _check_model_model_size(self, data):
         key = "Model size"
         self.logger.debug(f"Checking {key}  field..")
@@ -387,7 +390,6 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
 
-
     def _check_model_computztional_performance_one(self, data):
         key = "Computational Performance #100"
         self.logger.debug(f"Checking {key}  field..")
@@ -396,7 +398,6 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
 
     @throw_ersilia_exception()
     def check_information(self):
@@ -429,21 +430,39 @@ class CheckService:
         self._run_check(self._check_model_arch, data, "Model Docker Architecture")
         # New added fields
         self._run_check(self._check_model_biomedical_area, data, "Model Biomodel Area")
-        self._run_check(self._check_model_target_organism, data, "Model Target Organism")
+        self._run_check(
+            self._check_model_target_organism, data, "Model Target Organism"
+        )
         self._run_check(self._check_model_source, data, "Model Source")
         self._run_check(self._check_model_source_type, data, "Model Source Type")
         self._run_check(self._check_model_sub_tasks, data, "Model Sub Tasks")
         self._run_check(self._check_model_input_dim, data, "Model Input Dimensions")
         self._run_check(self._check_model_output_dim, data, "Model Output Dimension")
-        self._run_check(self._check_model_output_consistency, data, "Model Output Consistency")
-        self._run_check(self._check_model_contribution_date, data, "Model Contribution Date")
+        self._run_check(
+            self._check_model_output_consistency, data, "Model Output Consistency"
+        )
+        self._run_check(
+            self._check_model_contribution_date, data, "Model Contribution Date"
+        )
         self._run_check(self._check_model_pack_method, data, "Model Pack Method")
         self._run_check(self._check_model_image_size, data, "Model Image Size")
         self._run_check(self._check_model_env_size, data, "Model Environment Size")
         self._run_check(self._check_model_model_size, data, "Model Directory Size")
-        self._run_check(self._check_model_computztional_performance_one, data, "Model Computational Performance for 1 input")
-        self._run_check(self._check_model_computztional_performance_one, data, "Model Computational Performance for 10 input")
-        self._run_check(self._check_model_computztional_performance_one, data, "Model Computational Performance for 100 input")
+        self._run_check(
+            self._check_model_computztional_performance_one,
+            data,
+            "Model Computational Performance for 1 input",
+        )
+        self._run_check(
+            self._check_model_computztional_performance_one,
+            data,
+            "Model Computational Performance for 10 input",
+        )
+        self._run_check(
+            self._check_model_computztional_performance_one,
+            data,
+            "Model Computational Performance for 100 input",
+        )
 
     def _duplicate(self, csv_file):
         with open(csv_file, mode="r", newline="", encoding="utf-8") as file:
@@ -457,8 +476,6 @@ class CheckService:
             writer = csv.DictWriter(file, fieldnames=reader[0].keys())
             writer.writerows(duplicates)
 
-
-
     def get_inputs(self, types):
         samples = IOService._get_input_from_example_file(self.dir)
         if types == "str":
@@ -467,7 +484,7 @@ class CheckService:
             return json.dumps(samples)
         if types == "csv":
             return IOService._get_input_file_path(self.dir)
-        
+
     def _is_invalid_value(self, value):
         try:
             if value is None:
@@ -531,14 +548,25 @@ class CheckService:
                         "Null output percentage exceeds 25% for variable output consistency."
                     )
                 non_null_output = [s for s in output_smiles if s is not None]
-                non_null_expected = [s for s in self.original_smiles_list if s is not None]
+                non_null_expected = [
+                    s for s in self.original_smiles_list if s is not None
+                ]
                 if non_null_output != non_null_expected:
-                    error_details.append("Non-null input SMILES mismatch or order incorrect in CSV.")
+                    error_details.append(
+                        "Non-null input SMILES mismatch or order incorrect in CSV."
+                    )
             else:
                 if null_count > 0:
-                    error_details.append("Missing 'input' column in CSV for fixed output consistency.")
-                elif self.original_smiles_list and output_smiles != self.original_smiles_list:
-                    error_details.append("Input SMILES mismatch or order incorrect in CSV.")
+                    error_details.append(
+                        "Missing 'input' column in CSV for fixed output consistency."
+                    )
+                elif (
+                    self.original_smiles_list
+                    and output_smiles != self.original_smiles_list
+                ):
+                    error_details.append(
+                        "Input SMILES mismatch or order incorrect in CSV."
+                    )
 
             if error_details:
                 return (
@@ -557,7 +585,6 @@ class CheckService:
                 f"Validation error: {str(e)}",
                 str(STATUS_CONFIGS.FAILED),
             )
-
 
     def _get_original_smiles_list(self, inp_type, inp_data):
         if inp_type == "str":
@@ -598,7 +625,9 @@ class CheckService:
         """
 
         def check_json():
-            self.logger.debug(f"Checking JSON file: {file_path} for input: {input_type}")
+            self.logger.debug(
+                f"Checking JSON file: {file_path} for input: {input_type}"
+            )
             error_details = []
             try:
                 with open(file_path, "r") as f:
@@ -623,7 +652,9 @@ class CheckService:
                         if "input" in item and isinstance(item["input"], dict):
                             output_smiles.append(item["input"].get("input", None))
                         else:
-                            error_details.append("Missing 'input' structure in JSON item")
+                            error_details.append(
+                                "Missing 'input' structure in JSON item"
+                            )
                             break
 
                     self.logger.info(
@@ -632,21 +663,33 @@ class CheckService:
 
                     total_outputs = len(output_smiles)
                     null_count = sum(1 for smile in output_smiles if smile is None)
-                    null_percentage = (null_count / total_outputs) if total_outputs > 0 else 0
+                    null_percentage = (
+                        (null_count / total_outputs) if total_outputs > 0 else 0
+                    )
 
                     if self.output_consistency != "Fixed":
                         if null_percentage > 0.25:
-                            error_details.append("Null output percentage exceeds 25% for variable output consistency.")
+                            error_details.append(
+                                "Null output percentage exceeds 25% for variable output consistency."
+                            )
 
                         non_null_output = [s for s in output_smiles if s is not None]
-                        non_null_expected = [s for s in self.original_smiles_list if s is not None]
+                        non_null_expected = [
+                            s for s in self.original_smiles_list if s is not None
+                        ]
                         if non_null_output != non_null_expected:
-                            error_details.append("Non-null input SMILES mismatch or order incorrect in JSON.")
+                            error_details.append(
+                                "Non-null input SMILES mismatch or order incorrect in JSON."
+                            )
                     else:
                         if null_count > 0:
-                            error_details.append("Null outputs found in fixed output consistency.")
+                            error_details.append(
+                                "Null outputs found in fixed output consistency."
+                            )
                         elif output_smiles != self.original_smiles_list:
-                            error_details.append("Input SMILES mismatch or order incorrect in JSON.")
+                            error_details.append(
+                                "Input SMILES mismatch or order incorrect in JSON."
+                            )
                 except Exception as e:
                     error_details.append(f"Error checking SMILES in JSON: {str(e)}")
 
@@ -667,7 +710,6 @@ class CheckService:
                     f"Validation error: {str(e)}",
                     str(STATUS_CONFIGS.FAILED),
                 )
-
 
         def check_h5():
             self.logger.debug(f"Checking HDF5 file: {file_path}")
@@ -691,7 +733,9 @@ class CheckService:
                     None,
                 )
 
-                output_smiles = ([s for s in loader.inputs] if loader.inputs is not None else [])
+                output_smiles = (
+                    [s for s in loader.inputs] if loader.inputs is not None else []
+                )
 
                 if content is None or (hasattr(content, "size") and content.size == 0):
                     error_details.append("Empty content")
@@ -719,7 +763,9 @@ class CheckService:
 
                 total_outputs = len(output_smiles)
                 null_count = sum(1 for s in output_smiles if s is None)
-                null_percentage = (null_count / total_outputs) if total_outputs > 0 else 0
+                null_percentage = (
+                    (null_count / total_outputs) if total_outputs > 0 else 0
+                )
 
                 if self.output_consistency != "Fixed":
                     if null_percentage > 0.25:
@@ -727,12 +773,18 @@ class CheckService:
                             "Null output percentage exceeds 25% for variable output consistency."
                         )
                     non_null_output = [s for s in output_smiles if s is not None]
-                    non_null_expected = [s for s in self.original_smiles_list if s is not None]
+                    non_null_expected = [
+                        s for s in self.original_smiles_list if s is not None
+                    ]
                     if non_null_output != non_null_expected:
-                        error_details.append("Non-null SMILES mismatch or order incorrect in HDF5.")
+                        error_details.append(
+                            "Non-null SMILES mismatch or order incorrect in HDF5."
+                        )
                 else:
                     if null_count > 0:
-                        error_details.append("Null outputs found in fixed output consistency.")
+                        error_details.append(
+                            "Null outputs found in fixed output consistency."
+                        )
                     elif output_smiles != self.original_smiles_list:
                         error_details.append(
                             f"SMILES mismatch. Expected {len(self.original_smiles_list)} items, got {len(output_smiles)}"
@@ -740,8 +792,14 @@ class CheckService:
 
                 return (
                     f"{input_type}-HDF5",
-                    "Valid content and Input Match" if not error_details else f"Errors: {', '.join(error_details)}",
-                    str(STATUS_CONFIGS.PASSED if not error_details else STATUS_CONFIGS.FAILED),
+                    "Valid content and Input Match"
+                    if not error_details
+                    else f"Errors: {', '.join(error_details)}",
+                    str(
+                        STATUS_CONFIGS.PASSED
+                        if not error_details
+                        else STATUS_CONFIGS.FAILED
+                    ),
                 )
 
             except Exception as e:
@@ -750,7 +808,6 @@ class CheckService:
                     f"Validation error: {str(e)}",
                     str(STATUS_CONFIGS.FAILED),
                 )
-
 
         if not Path(file_path).exists():
             raise FileNotFoundError(f"File {file_path} not found.")
@@ -765,37 +822,59 @@ class CheckService:
         else:
             raise ValueError(f"Unsupported file type: {file_ext}")
 
-    def _read_column_header(self, reader): return [row[0] for row in reader if row][1:]
+    def _read_column_header(self, reader):
+        return [row[0] for row in reader if row][1:]
 
     def compare_csv_columns(self, column_csv, csv_file):
         try:
-            with open(column_csv, 'r', newline='') as f1, \
-                open(csv_file, 'r', newline='') as f2:
-                
+            with (
+                open(column_csv, "r", newline="") as f1,
+                open(csv_file, "r", newline="") as f2,
+            ):
                 reader1 = csv.reader(f1)
                 reader2 = csv.reader(f2)
-                
+
                 first_column_values = self._read_column_header(reader1)
                 header2 = next(reader2, None)
                 header2 = header2 if "framework/examples" in csv_file else header2[2:]
-            
+
                 if not first_column_values or header2 is None:
-                    return [(Checks.COLUMN_NAME_VALIDITY.value, Checks.COLUMN_CHECK_FAILURE.value, str(STATUS_CONFIGS.FAILED))]
-                
+                    return [
+                        (
+                            Checks.COLUMN_NAME_VALIDITY.value,
+                            Checks.COLUMN_CHECK_FAILURE.value,
+                            str(STATUS_CONFIGS.FAILED),
+                        )
+                    ]
+
                 if first_column_values == header2:
-                    return [(Checks.COLUMN_NAME_VALIDITY.value, Checks.COLUMN_CHECK_SUCCESS.value, str(STATUS_CONFIGS.PASSED))]
+                    return [
+                        (
+                            Checks.COLUMN_NAME_VALIDITY.value,
+                            Checks.COLUMN_CHECK_SUCCESS.value,
+                            str(STATUS_CONFIGS.PASSED),
+                        )
+                    ]
                 else:
-                    return [(Checks.COLUMN_NAME_VALIDITY.value, Checks.COLUMN_CHECK_FAILURE.value, str(STATUS_CONFIGS.FAILED))]
-                    
+                    return [
+                        (
+                            Checks.COLUMN_NAME_VALIDITY.value,
+                            Checks.COLUMN_CHECK_FAILURE.value,
+                            str(STATUS_CONFIGS.FAILED),
+                        )
+                    ]
+
         except Exception as e:
             print(f"An error occurred: {e}")
             return [(Checks.COLUMN_NAME_VALIDITY.value, str(STATUS_CONFIGS.FAILED))]
-        
+
     def check_simple_model_output(self, run_model):
         input_path = IOService._get_input_file_path(self.dir)
         run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
         check_status_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
-        check_status_two = self.compare_csv_columns(os.path.join(self.dir, PREDEFINED_COLUMN_FILE), Options.OUTPUT_CSV.value)
+        check_status_two = self.compare_csv_columns(
+            os.path.join(self.dir, PREDEFINED_COLUMN_FILE), Options.OUTPUT_CSV.value
+        )
         _completed_status = []
         if check_status_one[-1] == str(STATUS_CONFIGS.FAILED):
             self.logger.error("Model output has content problem")
@@ -808,15 +887,15 @@ class CheckService:
             )
             return _completed_status
         _completed_status.append(
-                (
-                    Checks.SIMPLE_MODEL_RUN.value,
-                    check_status_one[1],
-                    str(STATUS_CONFIGS.PASSED),
-                )
+            (
+                Checks.SIMPLE_MODEL_RUN.value,
+                check_status_one[1],
+                str(STATUS_CONFIGS.PASSED),
+            )
         )
         _completed_status.extend(check_status_two)
-        return _completed_status 
-    
+        return _completed_status
+
     @throw_ersilia_exception()
     def check_consistent_output(self, run_example, run_model):
         """
