@@ -306,7 +306,7 @@ class IOService:
             check_status = row[-1]
 
             if check_name == "computational_performance_tracking_details":
-                json_data[check_name] = parse_performance(clean_string(check_status))
+                json_data[check_name] = parse_performance(check_status)
             else:
                 json_data[check_name] = parse_status(clean_string(check_status))
 
@@ -454,37 +454,3 @@ class IOService:
         env_size = self.get_conda_env_size()
         env_size = f"{env_size:.2f}"
         return env_size
-
-    def _extract_size(self, data, key="validation_and_size_check_results"):
-        sizes, keys = {}, ("environment_size_mb", "image_size_mb")
-        validation_results = next((item.get(key) for item in data if key in item), None)
-        if validation_results:
-            if keys[0] in validation_results:
-                env_size = validation_results[keys[0]]
-                self.logger.info(f"Environment Size: {env_size}")
-                sizes["Environment Size"] = float(env_size)
-            if keys[1] in validation_results:
-                self.logger.info(
-                    f"Image Key: {keys[1]} and validation result {validation_results}"
-                )
-                img_size = validation_results[keys[1]]
-                self.logger.info(f"Image Size: {img_size}")
-                sizes["Image Size"] = float(img_size)
-        return sizes
-
-    def _extract_execution_times(self, data, key="computational_performance_summary"):
-        self.logger.info("Performance Extraction is started")
-        performance = {
-            "Computational Performance 1": None,
-            "Computational Performance 10": None,
-            "Computational Performance 100": None,
-        }
-
-        summary = next((item.get(key) for item in data if key in item), None)
-        if summary:
-            preds = summary.get("computational_performance_tracking_details")
-            performance["Computational Performance 1"] = float(preds.get("pred_1"))
-            performance["Computational Performance 10"] = float(preds.get("pred_10"))
-            performance["Computational Performance 100"] = float(preds.get("pred_100"))
-
-        return performance

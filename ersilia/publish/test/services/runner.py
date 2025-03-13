@@ -569,7 +569,6 @@ class RunnerService:
 
     @show_loader(text="Performing shallow checks", color="cyan")
     def _perform_shallow_checks(self):
-        self.fetch()
         results = []
 
         model_output = self.checkup_service.check_model_output_content(
