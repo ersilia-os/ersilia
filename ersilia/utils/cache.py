@@ -1,4 +1,5 @@
 import json
+import shutil
 import subprocess
 import threading
 
@@ -273,7 +274,9 @@ class SetupRedis:
         logger.info("Checking Redis server status...")
 
         try:
-            self._check_docker_installed()
+            if not self._check_docker_installed():
+                logger.error("Docke is not installed or running")
+                return
 
             if self._is_image_available():
                 container_status = self._get_container_status()
@@ -307,7 +310,13 @@ class SetupRedis:
             logger.info(f"Docker network has been created: {self.network.name}")
 
     def _check_docker_installed(self):
+        if shutil.which("docker") is None:
+            logger.warning(
+                "Docker is not installed on this runner. Skipping Docker operations."
+            )
+            return False
         subprocess.run(["docker", "--version"], check=True, stdout=subprocess.DEVNULL)
+        return True
 
     def _is_image_available(self):
         image_check = subprocess.run(
