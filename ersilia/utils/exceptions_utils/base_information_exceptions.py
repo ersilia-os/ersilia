@@ -95,10 +95,8 @@ class SourceTypeBaseInformationError(ErsiliaError):
 class TaskBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model task"
-        self.hints = (
-            "Only one of these tasks is allowed: {}.".format(
-                ", ".join(_read_default_fields("Task"))
-            )
+        self.hints = "Only one of these tasks is allowed: {}.".format(
+            ", ".join(_read_default_fields("Task"))
         )
         ErsiliaError.__init__(self, self.message, self.hints)
 

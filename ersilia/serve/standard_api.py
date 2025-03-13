@@ -18,7 +18,6 @@ from ..default import (
 )
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
-from ..utils.cache import RedisClient
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -69,7 +68,6 @@ class StandardCSVRunApi(ErsiliaBase):
         self.standard_output_csv = os.path.join(
             self.path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME
         )
-        self.redis_client = RedisClient()
         metadata = self._read_information_file()
         self.input_type = self._read_field_from_metadata(metadata, "Input")
         self.input_shape = self._read_field_from_metadata(metadata, "Input Shape")
@@ -539,30 +537,12 @@ class StandardCSVRunApi(ErsiliaBase):
         if OutputSource.is_cloud(output_source):
             store = InferenceStoreApi(model_id=self.model_id)
             return store.get_precalculations(input_data)
-
-        result = asyncio.run(self._get_precomputed(input_data))
-
-        output_data = self.serialize_to_csv(input_data, result, output)
-        return output_data
-
-    async def _get_precomputed(self, input_data):
-        try:
-            await self.redis_client.check_redis_server()
-        except ConnectionError as e:
-            self.logger.error(e)
-            return
-        self.redis_client.set_model_id(self.model_id)
-
-        computed_results = await self.redis_client.get_computed_result(
-            input_data, self._post
-        )
-        await self.redis_client.close()
-        return computed_results
-
-    def _post(self, input_data):
         url = "{0}/{1}".format(self.url, self.api_name)
+        self.logger.info(f"Input data: {input_data}")
         response = requests.post(url, json=input_data)
         if response.status_code == 200:
-            return response.json()
+            result = response.json()
+            output_data = self.serialize_to_csv(input_data, result, output)
+            return output_data
         else:
             return None

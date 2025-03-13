@@ -610,7 +610,7 @@ class BaseInformation(ErsiliaBase):
         if type(new_task) is not str:
             raise TaskBaseInformationError
         if new_task not in self._read_default_fields("Task"):
-                raise TaskBaseInformationError
+            raise TaskBaseInformationError
         self._task = new_task
 
     @property
@@ -643,7 +643,7 @@ class BaseInformation(ErsiliaBase):
         if type(new_subtask) is not str:
             raise SubtaskBaseInformationError
         if new_subtask not in self._read_default_fields("Subtask"):
-                raise SubtaskBaseInformationError
+            raise SubtaskBaseInformationError
         self._subtask = new_subtask
 
     @property
@@ -781,7 +781,7 @@ class BaseInformation(ErsiliaBase):
             If the output type is not valid.
         """
         if new_output_type is None:
-            self._output_type = None #TODO change for column information
+            self._output_type = None  # TODO change for column information
         elif type(new_output_type) is str:
             new_output_type = [new_output_type]
             default_output_type = self._read_default_fields("Output Type")
@@ -1047,7 +1047,10 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_publication_year) is not int:
             raise PublicationYearBaseInformationError
-        if new_publication_year < 1900 or new_publication_year > datetime.date.today().year:
+        if (
+            new_publication_year < 1900
+            or new_publication_year > datetime.date.today().year
+        ):
             raise PublicationBaseInformationError
         self._publication_year = new_publication_year
 
@@ -1330,7 +1333,7 @@ class BaseInformation(ErsiliaBase):
             If the model size value is not valid.
         """
         if new_model_size is None:
-            self._model_size=None
+            self._model_size = None
         elif not isinstance(new_model_size, (int, float)):
             raise ModelSizeMbBaseInformationError
         else:
@@ -1553,7 +1556,12 @@ class BaseInformation(ErsiliaBase):
         incorporation_date : str
             The model contributing date.
         """
-        if new_incorporation_date != datetime.datetime.fromisoformat(str(new_incorporation_date)).date().isoformat():
+        if (
+            new_incorporation_date
+            != datetime.datetime.fromisoformat(str(new_incorporation_date))
+            .date()
+            .isoformat()
+        ):
             raise IncorporationDateBaseInformationError
         self._incorporation_date = new_incorporation_date
 
@@ -1717,13 +1725,13 @@ class BaseInformation(ErsiliaBase):
         self._assign("environment_size", "Environment Size", data)
         self._assign("image_size", "Image Size", data)
         self._assign(
-             "computational_performance_one", "Computational Performance 1", data
-         )
+            "computational_performance_one", "Computational Performance 1", data
+        )
         self._assign(
-             "computational_performance_ten", "Computational Performance 10", data
-         )
+            "computational_performance_ten", "Computational Performance 10", data
+        )
         self._assign(
-             "computational_performance_hund", "Computational Performance 100", data
-         )
+            "computational_performance_hund", "Computational Performance 100", data
+        )
         self._assign("docker_pack_method", "Docker Pack Method", data)
         self._assign("deployment", "Deployment", data)

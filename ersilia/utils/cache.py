@@ -4,7 +4,13 @@ import threading
 
 import redis.asyncio as redis
 
-from ..default import REDIS_CONTAINER_NAME, REDIS_IMAGE, REDIS_PORT, REDIS_SERVER
+from ..default import (
+    DEFAULT_DOCKER_NETWORK_NAME,
+    REDIS_CONTAINER_NAME,
+    REDIS_IMAGE,
+    REDIS_PORT,
+    REDIS_SERVER,
+)
 from ..utils.logging import logger
 
 
@@ -327,6 +333,8 @@ class SetupRedis:
                 REDIS_CONTAINER_NAME,
                 "-p",
                 f"{REDIS_PORT}:{REDIS_PORT}",
+                "--network",
+                DEFAULT_DOCKER_NETWORK_NAME,
                 "--rm",
                 REDIS_IMAGE,
             ],

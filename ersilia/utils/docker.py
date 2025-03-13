@@ -24,7 +24,7 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 
-def resolve_pack_method_docker(model_id): #TODO read from metadata
+def resolve_pack_method_docker(model_id):  # TODO read from metadata
     client = docker.from_env()
     bundle_path = f"{EOS}/dest/{model_id}"
     docker_tag = model_image_version_reader(bundle_path)
