@@ -124,7 +124,7 @@ class TableType(Enum):
     FINAL_RUN_SUMMARY = "Test Run Summary"
     DEPENDECY_COLUMN_CHECK = "Dependency and Column Value Checks"
     COMPUTATIONAL_PERFORMANCE = "Computational Performance Check"
-    SHALLOW_CHECK_SUMMARY = "Model Run Check"
+    SHALLOW_CHECK_SUMMARY = "Model Output Consistency Check"
     CONSISTENCY_BASH = "Consistency Summary Between Ersilia and Bash Execution Outputs"
     MODEL_OUTPUT = "Input Output Check"
 
@@ -166,7 +166,7 @@ TABLE_CONFIGS = {
         title="\nComputational Performance Summary", headers=["Check", "Status"]
     ),
     TableType.SHALLOW_CHECK_SUMMARY: TableConfig(
-        title="\nModel Run Check",
+        title="\nModel Output Consistency Check",
         headers=["Check", "Details", "Status"],
     ),
     TableType.MODEL_OUTPUT: TableConfig(
