@@ -91,6 +91,12 @@ def get_session_dir():
 def set_write_permissions(directory):
     current_uid = os.getuid()
     for root, dirs, files in os.walk(directory):
+        if os.path.basename(root) == "_logs":
+            dirs[:] = []
+            continue
+
+        dirs[:] = [d for d in dirs if d != "_logs"]
+
         for d in dirs:
             dir_path = os.path.join(root, d)
             try:
@@ -98,6 +104,7 @@ def set_write_permissions(directory):
                     os.chmod(dir_path, stat.S_IRWXU)
             except (FileNotFoundError, PermissionError):
                 continue
+
         for f in files:
             file_path = os.path.join(root, f)
             try:
@@ -111,7 +118,17 @@ def remove_session_dir(session_name):
     session_dir = os.path.join(SESSIONS_DIR, session_name)
     if os.path.exists(session_dir):
         set_write_permissions(session_dir)
-        shutil.rmtree(session_dir)
+        for item in os.listdir(session_dir):
+            item_path = os.path.join(session_dir, item)
+            if os.path.basename(item_path) == "_logs":
+                continue
+            try:
+                if os.path.isfile(item_path) or os.path.islink(item_path):
+                    os.unlink(item_path)
+                elif os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+            except Exception as e:
+                raise ValueError(f"Error deleting {item_path}: {e}")
 
 
 def determine_orphaned_session():
