@@ -362,6 +362,11 @@ class SetupRedis:
         logger.info(f"Container {REDIS_CONTAINER_NAME} started successfully.")
 
     def _pull_and_start_container(self):
-        logger.info(f"Pulling image {REDIS_IMAGE}...")
-        subprocess.run(["docker", "pull", REDIS_IMAGE], check=True)
-        self._start_new_container()
+        try:
+            logger.info(f"Pulling image {REDIS_IMAGE}...")
+            subprocess.run(["docker", "pull", REDIS_IMAGE], check=True)
+            self._start_new_container()
+        except FileNotFoundError:
+            logger.warning(
+                "Docker command not found. Skipping container pull and start."
+            )
