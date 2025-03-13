@@ -170,7 +170,7 @@ TABLE_CONFIGS = {
         headers=["Check", "Details", "Status"],
     ),
     TableType.MODEL_OUTPUT: TableConfig(
-        title="\nModel Output Content Validation Summary",
+        title="\nInput Output Check",
         headers=["Check", "Detail", "Status"],
     ),
     TableType.MODEL_SIZES: TableConfig(
