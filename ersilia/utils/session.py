@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import stat
 
 import psutil
 
@@ -12,6 +13,8 @@ from ..default import (
     SESSION_JSON,
     SESSIONS_DIR,
 )
+
+os.umask(0)
 
 
 def get_current_pid():
@@ -55,17 +58,11 @@ def get_session_uuid():
 
 
 def create_session_files(session_name):
-    """
-    Create session directory and necessary files.
-
-    Parameters
-    ----------
-    session_name : str
-        The name of the session.
-    """
     session_dir = os.path.join(SESSIONS_DIR, session_name)
-    os.makedirs(os.path.join(session_dir, LOGS_DIR), exist_ok=True)
-    os.makedirs(os.path.join(session_dir, CONTAINER_LOGS_TMP_DIR), exist_ok=True)
+    logs_dir = os.path.join(session_dir, LOGS_DIR)
+    container_logs_dir = os.path.join(session_dir, CONTAINER_LOGS_TMP_DIR)
+    os.makedirs(logs_dir, mode=0o755, exist_ok=True)
+    os.makedirs(container_logs_dir, mode=0o755, exist_ok=True)
 
 
 def create_session_dir():
@@ -75,7 +72,7 @@ def create_session_dir():
     remove_orphaned_sessions()
     session_name = f"session_{get_parent_pid()}"
     session_dir = os.path.join(SESSIONS_DIR, session_name)
-    os.makedirs(session_dir, exist_ok=True)
+    os.makedirs(session_dir, mode=0o755, exist_ok=True)
     create_session_files(session_name)
 
 
@@ -91,17 +88,29 @@ def get_session_dir():
     return os.path.join(SESSIONS_DIR, get_session_id())
 
 
-def remove_session_dir(session_name):
-    """
-    Remove a session directory.
+def set_write_permissions(directory):
+    current_uid = os.getuid()
+    for root, dirs, files in os.walk(directory):
+        for d in dirs:
+            dir_path = os.path.join(root, d)
+            try:
+                if os.stat(dir_path).st_uid == current_uid:
+                    os.chmod(dir_path, stat.S_IRWXU)
+            except (FileNotFoundError, PermissionError):
+                continue
+        for f in files:
+            file_path = os.path.join(root, f)
+            try:
+                if os.stat(file_path).st_uid == current_uid:
+                    os.chmod(file_path, stat.S_IRWXU)
+            except (FileNotFoundError, PermissionError):
+                continue
 
-    Parameters
-    ----------
-    session_name : str
-        The name of the session.
-    """
+
+def remove_session_dir(session_name):
     session_dir = os.path.join(SESSIONS_DIR, session_name)
     if os.path.exists(session_dir):
+        set_write_permissions(session_dir)
         shutil.rmtree(session_dir)
 
 

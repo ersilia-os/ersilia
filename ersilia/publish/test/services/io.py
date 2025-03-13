@@ -36,15 +36,12 @@ from .constants import (
     ERSILIAPACK_BACK_FILES,
     ERSILIAPACK_FILES,
     BENTOML_FILES,
-    ReportValidationException,
 )
 from .setup import SetupService
 from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.docker import SimpleDocker
 from ....cli import echo
-
-warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
 
 
 class IOService:
@@ -149,29 +146,6 @@ class IOService:
             inputs = [input[0] for input in inputs]
             return inputs
 
-    @staticmethod
-    def validate_report(data):
-        errors = []
-
-        def recursive_check(d, path=""):
-            for key, value in d.items():
-                current_path = f"{path}.{key}" if path else key
-                if isinstance(value, dict):
-                    recursive_check(value, current_path)
-                else:
-                    if value is False or (isinstance(value, str)):
-                        errors.append(
-                            f"Validation failed at '{current_path}' with value: {value}"
-                        )
-
-        recursive_check(data)
-
-        if errors:
-            error_message = "Data validation error(s):\n" + "\n".join(errors)
-            raise ReportValidationException(error_message)
-
-        return True
-
     def get_output_consistency(self):
         data = self._read_metadata()
         if "Output Consistency" in data:
@@ -270,18 +244,34 @@ class IOService:
                 raise ValueError(f"Unsupported file format: {path}")
         return data
 
+    def _combine_dir_size(self, data):
+        keys = ("directory_size_mb", "model_size_check", "directory_size_check")
+        if keys[1] in data:
+            data[keys[1]][keys[0]] = data[keys[2]][keys[0]]
+            del data[keys[2]]
+            return data
+        return data
+
     def collect_and_save_json(self, results, output_file):
         """
         Helper function to collect JSON results and save them to a file.
         """
         aggregated_json = {}
         for result in results:
+            self.logger.info(f"Json result\n: {result}")
             aggregated_json.update(result)
+        aggregated_json = self._combine_dir_size(aggregated_json)
 
         with open(output_file, "w") as f:
             json.dump(aggregated_json, f, indent=4)
 
     def _create_json_data(self, rows, key):
+        def clean_string(s):
+            s = s.replace("\n", "")
+            s = re.sub(r"\\u[0-9a-fA-F]{4}", "", s)
+            s = s.strip()
+            return s
+
         def sanitize_name(name):
             return re.sub(r"[ \-./]", "_", str(name).lower())
 
@@ -294,6 +284,8 @@ class IOService:
                     return True
                 elif "[red]✘" in status:
                     return False
+                elif "[yellow]✘" in status:
+                    return "not present"
                 else:
                     return re.sub(r"\[.*?\]", "", status).strip()
             return status
@@ -306,7 +298,7 @@ class IOService:
                 )
             }
 
-        key = re.sub(r" ", "_", key.lower())
+        key = clean_string(sanitize_name(key))
         json_data = {}
 
         for row in rows:
@@ -314,9 +306,9 @@ class IOService:
             check_status = row[-1]
 
             if check_name == "computational_performance_tracking_details":
-                json_data[check_name] = parse_performance(check_status)
+                json_data[check_name] = parse_performance(clean_string(check_status))
             else:
-                json_data[check_name] = parse_status(check_status)
+                json_data[check_name] = parse_status(clean_string(check_status))
 
         return {key: json_data}
 
@@ -496,45 +488,3 @@ class IOService:
             performance["Computational Performance 100"] = float(preds.get("pred_100"))
 
         return performance
-
-    @throw_ersilia_exception()
-    def update_metadata(self, json_data):
-        """
-        Processes JSON/YAML metadata to extract size and performance info and then updates them.
-
-        Parameters
-        ----------
-        json_data : dict
-            Report data from the command output.
-
-        Returns
-        -------
-        dict
-            Updated metadata containing computed performance and size information.
-        """
-        sizes = self._extract_size(json_data)
-        exec_times = self._extract_execution_times(json_data)
-        metadata = self._read_metadata()
-        metadata.update(sizes)
-        metadata.update(exec_times)
-
-        self._save_file(
-            metadata,
-        )
-
-    def _save_file(self, metadata):
-        path = self._get_metadata_file()
-        path = os.path.join(self.dir, path)
-        with open(path, "w") as file:
-            if path.endswith(".json"):
-                json.dump(metadata, file, indent=4, ensure_ascii=False)
-            elif path.endswith((".yml", ".yaml")):
-                yaml.dump(
-                    metadata,
-                    file,
-                    default_flow_style=False,
-                    sort_keys=False,
-                    allow_unicode=True,
-                )
-            else:
-                raise ValueError(f"Unsupported file format: {path}")

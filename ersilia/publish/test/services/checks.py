@@ -3,12 +3,8 @@ import json
 import numpy as np
 import os
 import random
-import warnings
 from pathlib import Path
 from typing import Any
-import warnings
-
-warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 
 # ruff: noqa
 MISSING_PACKAGES = False
@@ -25,8 +21,6 @@ from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.hdf5 import Hdf5DataLoader
 from ....utils.exceptions_utils.base_information_exceptions import _read_default_fields
-
-warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
 
 
 class CheckService:
@@ -77,15 +71,14 @@ class CheckService:
         self.dir = dir
         self.from_github = from_github
         self.from_dockerhub = from_dockerhub
-        self._run_check = ios._run_check
-        self._read_metadata = ios._read_metadata
-        self._generate_table = ios._generate_table
-        self.get_file_requirements = ios.get_file_requirements
+        self.ios = ios
+        self._run_check = self.ios._run_check
+        self._read_metadata = self.ios._read_metadata
+        self._generate_table = self.ios._generate_table
+        self.get_file_requirements = self.ios.get_file_requirements
         self.console = ios.console
         self.original_smiles_list = []
         self.check_results = ios.check_results
-        self.output_consistency = "Fixed"  # ios.get_output_consistency()
-        self.logger.info(f"Model dir from check service: {self.dir}")
         self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
         # Field defaults
         self.valid_tasks = set(_read_default_fields("Task"))
@@ -542,7 +535,7 @@ class CheckService:
             null_count = sum(1 for s in output_smiles if s is None)
             null_percentage = (null_count / total_outputs) if total_outputs > 0 else 0
 
-            if self.output_consistency != "Fixed":
+            if self.ios.get_output_consistency() != "Fixed":
                 if null_percentage > 0.25:
                     error_details.append(
                         "Null output percentage exceeds 25% for variable output consistency."
@@ -667,7 +660,7 @@ class CheckService:
                         (null_count / total_outputs) if total_outputs > 0 else 0
                     )
 
-                    if self.output_consistency != "Fixed":
+                    if self.ios.get_output_consistency() != "Fixed":
                         if null_percentage > 0.25:
                             error_details.append(
                                 "Null output percentage exceeds 25% for variable output consistency."
@@ -767,7 +760,7 @@ class CheckService:
                     (null_count / total_outputs) if total_outputs > 0 else 0
                 )
 
-                if self.output_consistency != "Fixed":
+                if self.ios.get_output_consistency() != "Fixed":
                     if null_percentage > 0.25:
                         error_details.append(
                             "Null output percentage exceeds 25% for variable output consistency."
@@ -791,7 +784,7 @@ class CheckService:
                         )
 
                 return (
-                    f"{input_type}-HDF5",
+                    f"{input_type.upper()}-HDF5",
                     "Valid content and Input Match"
                     if not error_details
                     else f"Errors: {', '.join(error_details)}",
@@ -804,7 +797,7 @@ class CheckService:
 
             except Exception as e:
                 return (
-                    f"{input_type}-HDF5",
+                    f"{input_type.uppper()}-HDF5",
                     f"Validation error: {str(e)}",
                     str(STATUS_CONFIGS.FAILED),
                 )
@@ -827,7 +820,10 @@ class CheckService:
 
     def compare_csv_columns(self, column_csv, csv_file):
         try:
-            with open(column_csv, "r", newline="") as f1, open(csv_file, "r", newline="") as f2:
+            with (
+                open(column_csv, "r", newline="") as f1,
+                open(csv_file, "r", newline="") as f2,
+            ):
                 reader1 = csv.reader(f1)
                 reader2 = csv.reader(f2)
 
@@ -862,23 +858,28 @@ class CheckService:
                     ]
 
         except Exception as e:
-            print(f"An error occurred: {e}")
-            return [(Checks.COLUMN_NAME_VALIDITY.value, str(STATUS_CONFIGS.FAILED))]
+            return [
+                (
+                    Checks.COLUMN_NAME_VALIDITY.value,
+                    f"An error occurred: {e}",
+                    str(STATUS_CONFIGS.FAILED),
+                )
+            ]
 
     def check_simple_model_output(self, run_model):
         input_path = IOService._get_input_file_path(self.dir)
         run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
-        check_status_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
-        check_status_two = self.compare_csv_columns(
+        res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
+        res_two = self.compare_csv_columns(
             os.path.join(self.dir, PREDEFINED_COLUMN_FILE), Options.OUTPUT_CSV.value
         )
         _completed_status = []
-        if check_status_one[-1] == str(STATUS_CONFIGS.FAILED):
+        if res_one[-1] == str(STATUS_CONFIGS.FAILED):
             self.logger.error("Model output has content problem")
             _completed_status.append(
                 (
                     Checks.SIMPLE_MODEL_RUN.value,
-                    check_status_one[1],
+                    res_one[1],
                     str(STATUS_CONFIGS.FAILED),
                 )
             )
@@ -886,11 +887,17 @@ class CheckService:
         _completed_status.append(
             (
                 Checks.SIMPLE_MODEL_RUN.value,
-                check_status_one[1],
+                res_one[1],
                 str(STATUS_CONFIGS.PASSED),
             )
         )
-        _completed_status.extend(check_status_two)
+        first_item = res_two[0]
+        self.logger.info(f"first item: {first_item}")
+        _res_two = (Checks.SIMPLE_MODEL_RUN_COLUMNS.value,) + first_item[1:]
+        self.logger.info(f"_res_two: {_res_two}")
+        res_two[0] = _res_two
+        self.logger.info(f"Res two: {res_two}")
+        _completed_status.extend(res_two)
         return _completed_status
 
     @throw_ersilia_exception()

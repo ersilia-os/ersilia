@@ -5,7 +5,6 @@ from enum import Enum
 from typing import List
 import warnings
 
-warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 from ....default import (
     EOS_TMP,
     DOCKERFILE_FILE,
@@ -18,8 +17,6 @@ from ....default import (
     PREDEFINED_COLUMN_FILE,
     RUN_FILE,
 )
-
-warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
 
 
 class Options(Enum):
@@ -67,6 +64,27 @@ class Options(Enum):
         return value
 
 
+class STATUS_CONFIGS(Enum):
+    """
+    Enum for status configurations.
+    """
+
+    PASSED = ("PASSED", "green", "✔")
+    NOT_PRESENT = ("NOT PRESENT", "yellow", "✘")
+    FAILED = ("FAILED", "red", "✘")
+    WARNING = ("WARNING", "yellow", "⚠")
+    SUCCESS = ("SUCCESS", "green", "★")
+    NA = ("N/A", "dim", "~")
+
+    def __init__(self, label, color, icon):
+        self.label = label
+        self.color = color
+        self.icon = icon
+
+    def __str__(self):
+        return f"[{self.color}]{self.icon} {self.label}[/{self.color}]"
+
+
 class Checks(Enum):
     """
     Enum for different check types.
@@ -85,10 +103,11 @@ class Checks(Enum):
     CONSISTENCY = "Model Output Was Consistent"
     RUN_BASH = "RMSE-MEAN"
     TOTAL_DIR_SIZE = "Total directory size"
-    COLUMN_NAME_VALIDITY = "Simple Model Run Columns"
-    COLUMN_CHECK_SUCCESS = "Columns coincide with run_columns"
+    COLUMN_NAME_VALIDITY = "Columns"
+    COLUMN_CHECK_SUCCESS = "Columns coincides with run_columns"
     COLUMN_CHECK_FAILURE = "Columns not coincide with run_columns"
     SIMPLE_MODEL_RUN = "Simple Model Run"
+    SIMPLE_MODEL_RUN_COLUMNS = "Simple Model Run Columns"
     DEPENDENCY_PINNED = "Dependency pinned"
 
 
@@ -105,7 +124,7 @@ class TableType(Enum):
     FINAL_RUN_SUMMARY = "Test Run Summary"
     DEPENDECY_COLUMN_CHECK = "Dependency and Column Value Checks"
     COMPUTATIONAL_PERFORMANCE = "Computational Performance Check"
-    SHALLOW_CHECK_SUMMARY = "Model Size Check"
+    SHALLOW_CHECK_SUMMARY = "Model Run Check"
     CONSISTENCY_BASH = "Consistency Summary Between Ersilia and Bash Execution Outputs"
     MODEL_OUTPUT = "Input Output Check"
 
@@ -147,7 +166,7 @@ TABLE_CONFIGS = {
         title="\nComputational Performance Summary", headers=["Check", "Status"]
     ),
     TableType.SHALLOW_CHECK_SUMMARY: TableConfig(
-        title="\nValidation and Size Check Results",
+        title="\nModel Run Check",
         headers=["Check", "Details", "Status"],
     ),
     TableType.MODEL_OUTPUT: TableConfig(
@@ -169,33 +188,6 @@ TABLE_CONFIGS = {
         title="\nModel Run Check", headers=["Check", "Details", "Status"]
     ),
 }
-
-
-class STATUS_CONFIGS(Enum):
-    """
-    Enum for status configurations.
-    """
-
-    PASSED = ("PASSED", "green", "✔")
-    NOT_PRESENT = ("NOT PRESENT", "yellow", "✘")
-    FAILED = ("FAILED", "red", "✘")
-    WARNING = ("WARNING", "yellow", "⚠")
-    SUCCESS = ("SUCCESS", "green", "★")
-    NA = ("N/A", "dim", "~")
-
-    def __init__(self, label, color, icon):
-        self.label = label
-        self.color = color
-        self.icon = icon
-
-    def __str__(self):
-        return f"[{self.color}]{self.icon} {self.label}[/{self.color}]"
-
-
-class ReportValidationException(Exception):
-    """Custom exception for data validation errors."""
-
-    pass
 
 
 RUN_FILE = f"model/framework/{RUN_FILE}"

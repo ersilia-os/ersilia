@@ -482,43 +482,40 @@ class RunnerService:
         """
         results = []
         try:
-            if self.from_dockerhub:
-                self.setup_service.from_github = True
-
+            self._configure_environment()
             self.setup_service.get_model()
+
             basic_results = self._perform_basic_checks()
             self.logger.info(basic_results)
             results.extend(basic_results)
+
             if self.surface:
-                surface_result = self._perform_surface_check()
-                self.logger.info(f"Surface check data: {surface_result}")
-                results.extend(surface_result)
+                surface_results = self._perform_surface_check()
+                results.extend(surface_results)
+
             if self.shallow:
-                surface_result = self._perform_surface_check()
-                results.extend(surface_result)
-                shallow_results = self._perform_shallow_checks()
-                results.extend(shallow_results)
+                results.extend(self._perform_surface_check())
+                results.extend(self._perform_shallow_checks())
 
             if self.deep:
-                surface_result = self._perform_surface_check()
-                results.extend(surface_result)
-                shallow_results = self._perform_shallow_checks()
-                deep_results = self._perform_deep_checks()
-                results.extend(shallow_results)
-                results.append(deep_results)
+                results.extend(self._perform_surface_check())
+                results.extend(self._perform_shallow_checks())
+                deep_result = self._perform_deep_checks()
+                results.append(deep_result)
 
             self.ios_service.collect_and_save_json(results, self.report_file)
             echo("Model tests and checks completed.", fg="green", bold=True)
 
         except Exception as error:
             tb = traceback.format_exc()
-            exp = {
-                "exception": str(error),
-                "traceback": tb,
-            }
-            results.append(exp)
+            error_info = {"exception": str(error), "traceback": tb}
+            results.append(error_info)
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             self.ios_service.collect_and_save_json(results, self.report_file)
+
+    def _configure_environment(self):
+        if self.from_dockerhub:
+            self.setup_service.from_github = True
 
     def _perform_basic_checks(self):
         results = []
@@ -529,7 +526,6 @@ class RunnerService:
                 TableType.MODEL_INFORMATION_CHECKS, self.ios_service.check_results
             )
         )
-
         self.ios_service.check_results.clear()
 
         self.checkup_service.check_files()
@@ -539,15 +535,15 @@ class RunnerService:
             )
         )
 
-        results.append(self._log_directory_sizes())
         results.append(self._docker_yml_column_name_check())
-
+        results.append(self._log_directory_sizes())
         return results
 
-    @show_loader(text="Performing Surface checks", color="cyan")
+    @show_loader(text="Performing surface checks", color="cyan")
     def _perform_surface_check(self):
         self.fetch()
         results = []
+
         if self.from_github or self.from_s3 or self.from_dir:
             env_result = self._log_env_sizes()
             results.append(
@@ -555,9 +551,8 @@ class RunnerService:
             )
 
         if self.from_dockerhub:
-            docker_size, message = self.ios_service.calculate_image_size(
-                tag=self.version if self.version else "latest"
-            )
+            tag = self.version if self.version else "latest"
+            docker_size, message = self.ios_service.calculate_image_size(tag=tag)
             results.append(
                 self._generate_table_from_check(
                     TableType.MODEL_SIZES,
@@ -565,9 +560,9 @@ class RunnerService:
                 )
             )
 
-        result = self.checkup_service.check_simple_model_output(self.run_model)
+        simple_output = self.checkup_service.check_simple_model_output(self.run_model)
         results.append(
-            self._generate_table_from_check(TableType.MODEL_RUN_CHECK, result)
+            self._generate_table_from_check(TableType.MODEL_RUN_CHECK, simple_output)
         )
 
         return results
@@ -575,29 +570,30 @@ class RunnerService:
     @show_loader(text="Performing shallow checks", color="cyan")
     def _perform_shallow_checks(self):
         self.fetch()
-
-        results, _validations = [], []
+        results = []
 
         model_output = self.checkup_service.check_model_output_content(
             self.run_example, self.run_model
         )
-
         results.append(
             self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)
         )
+        validations = []
         if "Fixed" in self.ios_service.get_output_consistency():
-            _validations.extend(self._run_single_and_example_input_checks())
+            res = self._run_single_and_example_input_checks()
 
-        _validations.extend(
-            self._generate_table_from_check(
-                TableType.SHALLOW_CHECK_SUMMARY, _validations
+            validations.append(
+                self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY, res)
             )
-        )
+
+        self.logger.info(f"Model consistency dict: {validations}")
+
         bash_results = self.run_bash()
-        _validations.extend(
+        validations.append(
             self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
         )
-
+        self.logger.info(f"Model bash dict: {validations}")
+        results.extend(validations)
         return results
 
     @show_loader(text="Performing deep checks", color="cyan")
