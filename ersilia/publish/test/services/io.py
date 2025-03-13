@@ -148,13 +148,13 @@ class IOService:
 
     def get_output_consistency(self):
         data = self._read_metadata()
-        if not data:
+        if data is None:
             return "Fixed"
         if "Output Consistency" in data:
             return data["Output Consistency"]
         return "Fixed"
 
-    def get_file_requirements(self) -> List[str]:
+    def get_file_requirements(self):
         """
         Get the list of required files for the model.
 
@@ -169,10 +169,11 @@ class IOService:
             If the model type is unsupported.
         """
         self.logger.info(f"Model dir: {self.dir}")
-        type = IOService.get_model_type(model_id=self.model_id, repo_path=self.dir)
-        if type == PACK_METHOD_BENTOML:
+        model_type = IOService.get_model_type(model_id=self.model_id, repo_path=self.dir)
+        self.logger.error(f"Model type: {model_type}")
+        if model_type == PACK_METHOD_BENTOML:
             return BENTOML_FILES
-        elif type == PACK_METHOD_FASTAPI:
+        elif model_type == PACK_METHOD_FASTAPI:
             if os.path.exists(os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE)):
                 return ERSILIAPACK_BACK_FILES
             else:
@@ -237,7 +238,7 @@ class IOService:
 
     def _read_metadata(self):
         path = self._get_metadata_file()
-        if path:
+        if path is not None:
             with open(path, "r") as file:
                 if path.endswith(".json"):
                     data = json.load(file)

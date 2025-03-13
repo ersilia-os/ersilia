@@ -85,6 +85,13 @@ class CheckService:
         self.valid_model_outputs = set(_read_default_fields("Output"))
         self.valid_model_inputs = set(_read_default_fields("Input"))
 
+    def _get_output_consistency(self):
+        if self.dir is not None:
+            output_consistency =self.ios.get_output_consistency()
+        else:
+            output_consistency = "Fixed"
+        return output_consistency
+
     def _check_file_existence(self, path):
         if not os.path.exists(os.path.join(self.dir, path)):
             raise FileNotFoundError(f"File '{path}' does not exist.")
@@ -535,7 +542,7 @@ class CheckService:
             null_count = sum(1 for s in output_smiles if s is None)
             null_percentage = (null_count / total_outputs) if total_outputs > 0 else 0
 
-            if self.ios.get_output_consistency() != "Fixed":
+            if self._get_output_consistency() != "Fixed":
                 if null_percentage > 0.25:
                     error_details.append(
                         "Null output percentage exceeds 25% for variable output consistency."
@@ -660,7 +667,7 @@ class CheckService:
                         (null_count / total_outputs) if total_outputs > 0 else 0
                     )
 
-                    if self.ios.get_output_consistency() != "Fixed":
+                    if self._get_output_consistency() != "Fixed":
                         if null_percentage > 0.25:
                             error_details.append(
                                 "Null output percentage exceeds 25% for variable output consistency."
@@ -751,7 +758,7 @@ class CheckService:
                     )
 
                 self.logger.info(
-                    f"Matching the input SMILES in HDF5 file: {output_smiles} and original smiles: {self.original_smiles_list}"
+                    f"Matching the input SMILES in HDF5 file: {output_smiles} and original smiles: {self.original_smiles_list} | {self.ios.get_output_consistency()}"
                 )
 
                 total_outputs = len(output_smiles)
@@ -759,8 +766,8 @@ class CheckService:
                 null_percentage = (
                     (null_count / total_outputs) if total_outputs > 0 else 0
                 )
-
-                if self.ios.get_output_consistency() != "Fixed":
+                
+                if self._get_output_consistency() != "Fixed":
                     if null_percentage > 0.25:
                         error_details.append(
                             "Null output percentage exceeds 25% for variable output consistency."
