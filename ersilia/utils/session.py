@@ -61,8 +61,8 @@ def create_session_files(session_name):
     session_dir = os.path.join(SESSIONS_DIR, session_name)
     logs_dir = os.path.join(session_dir, LOGS_DIR)
     container_logs_dir = os.path.join(session_dir, CONTAINER_LOGS_TMP_DIR)
-    os.makedirs(logs_dir, mode=0o755, exist_ok=True)
-    os.makedirs(container_logs_dir, mode=0o755, exist_ok=True)
+    os.makedirs(logs_dir, mode=0o777, exist_ok=True)
+    os.makedirs(container_logs_dir, mode=0o777, exist_ok=True)
 
 
 def create_session_dir():
@@ -72,7 +72,7 @@ def create_session_dir():
     remove_orphaned_sessions()
     session_name = f"session_{get_parent_pid()}"
     session_dir = os.path.join(SESSIONS_DIR, session_name)
-    os.makedirs(session_dir, mode=0o755, exist_ok=True)
+    os.makedirs(session_dir, mode=0o777, exist_ok=True)
     create_session_files(session_name)
 
 
