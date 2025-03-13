@@ -820,10 +820,7 @@ class CheckService:
 
     def compare_csv_columns(self, column_csv, csv_file):
         try:
-            with (
-                open(column_csv, "r", newline="") as f1,
-                open(csv_file, "r", newline="") as f2,
-            ):
+            with open(column_csv, "r", newline="") as f1, open(csv_file, "r", newline="") as f2: # ruff: noqa: E501
                 reader1 = csv.reader(f1)
                 reader2 = csv.reader(f2)
 
