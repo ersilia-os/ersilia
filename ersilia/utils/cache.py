@@ -2,9 +2,11 @@ import json
 import subprocess
 import threading
 
+import docker
 import redis.asyncio as redis
 
 from ..default import (
+    DEFAULT_DOCKER_NETWORK_BRIDGE,
     DEFAULT_DOCKER_NETWORK_NAME,
     REDIS_CONTAINER_NAME,
     REDIS_IMAGE,
@@ -288,6 +290,22 @@ class SetupRedis:
                 "Failed to setup Redis container. Ensure Docker is installed and running."
             ) from e
 
+    def _create_docker_network(self):
+        client = docker.from_env()
+        existing_networks = client.networks.list(
+            filters={"name": DEFAULT_DOCKER_NETWORK_NAME}
+        )
+        if existing_networks:
+            self.network = existing_networks[0]
+            logger.info(f"Docker network already exists: {self.network.name}")
+        else:
+            self.network = client.networks.create(
+                name=DEFAULT_DOCKER_NETWORK_NAME,
+                driver=DEFAULT_DOCKER_NETWORK_BRIDGE,
+                attachable=True,
+            )
+            logger.info(f"Docker network has been created: {self.network.name}")
+
     def _check_docker_installed(self):
         subprocess.run(["docker", "--version"], check=True, stdout=subprocess.DEVNULL)
 
@@ -323,6 +341,7 @@ class SetupRedis:
         logger.info(f"Container {REDIS_CONTAINER_NAME} restarted successfully.")
 
     def _start_new_container(self):
+        self._create_docker_network()
         logger.info(f"Starting a new container: {REDIS_CONTAINER_NAME}")
         subprocess.run(
             [
