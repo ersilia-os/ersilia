@@ -359,9 +359,6 @@ class RunRule(CommandRule):
             fg="yellow",
             bold=True,
         )
-        dir = os.path.join(EOS, "dest", config["models"]["single"])
-        self.ios.dir = dir
-        self.check_service.dir = dir
         self.check_service.original_smiles_list = (
             self.check_service._get_original_smiles_list(inp_type, input_data)
         )

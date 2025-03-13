@@ -148,6 +148,8 @@ class IOService:
 
     def get_output_consistency(self):
         data = self._read_metadata()
+        if not data:
+            return "Fixed"
         if "Output Consistency" in data:
             return data["Output Consistency"]
         return "Fixed"
@@ -176,7 +178,7 @@ class IOService:
             else:
                 return ERSILIAPACK_FILES
         else:
-            raise ValueError(f"Unsupported model type: {type}")
+            raise None
 
     def _run_check(
         self, check_function, data, check_name: str, additional_info=None
@@ -230,19 +232,21 @@ class IOService:
         elif METADATA_YAML_FILE in self.get_file_requirements():
             path = os.path.join(self.dir, METADATA_YAML_FILE)
         else:
-            raise ValueError("Metadata file not found.")
+            return None
         return path
 
     def _read_metadata(self):
         path = self._get_metadata_file()
-        with open(path, "r") as file:
-            if path.endswith(".json"):
-                data = json.load(file)
-            elif path.endswith((".yml", ".yaml")):
-                data = yaml.safe_load(file)
-            else:
-                raise ValueError(f"Unsupported file format: {path}")
-        return data
+        if path:
+            with open(path, "r") as file:
+                if path.endswith(".json"):
+                    data = json.load(file)
+                elif path.endswith((".yml", ".yaml")):
+                    data = yaml.safe_load(file)
+                else:
+                    raise ValueError(f"Unsupported file format: {path}")
+            return data
+        return None
 
     def _combine_dir_size(self, data):
         keys = ("directory_size_mb", "model_size_check", "directory_size_check")
