@@ -758,7 +758,7 @@ class CheckService:
                     )
 
                 self.logger.info(
-                    f"Matching the input SMILES in HDF5 file: {output_smiles} and original smiles: {self.original_smiles_list} | {self.ios.get_output_consistency()}"
+                    f"Matching the input SMILES in HDF5 file: {output_smiles} and original smiles: {self.original_smiles_list}"
                 )
 
                 total_outputs = len(output_smiles)
