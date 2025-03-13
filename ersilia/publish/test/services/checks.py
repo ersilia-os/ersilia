@@ -797,7 +797,7 @@ class CheckService:
 
             except Exception as e:
                 return (
-                    f"{input_type.uppper()}-HDF5",
+                    f"{input_type.upper()}-HDF5",
                     f"Validation error: {str(e)}",
                     str(STATUS_CONFIGS.FAILED),
                 )
