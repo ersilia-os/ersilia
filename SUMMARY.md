@@ -44,6 +44,7 @@
 * [Communication channels](contributors/communication.md)
 * [Tech stack](contributors/tech-stack.md)
 * [Internships](contributors/internships/README.md)
+  * [Outreachy Summer 2025](contributors/internships/outreachy-summer-2025.md)
   * [Outreachy Winter 2024](contributors/internships/outreachy-winter-2024.md)
   * [Outreachy Summer 2024](contributors/internships/outreachy-summer-2024.md)
   * [Outreachy Winter 2023](contributors/internships/outreachy-winter-2023.md)
