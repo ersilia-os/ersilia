@@ -1,7 +1,7 @@
 ---
 description: >-
   Please find here the guidelines for the Outreachy contribution period running
-  from 17th March to the 17th April 2025
+  from 17th March to the 15th April 2025
 ---
 
 # Outreachy Summer 2025
@@ -30,7 +30,7 @@ Ersilia can only accept interns that have been approved by Outreachy and that co
 
 ## Contribution Period
 
-The contribution period runs from <mark style="color:blue;">October 1st</mark> to <mark style="color:blue;">October 29th</mark>. During this time, interested applicants are welcome to contribute to Ersilia's project following the guidelines in this document.
+The contribution period runs from March 17th to <mark style="color:blue;">April 15th</mark>. During this time, interested applicants are welcome to contribute to Ersilia's project following the guidelines in this document.
 
 The contribution period is organised in 4 weeks. Each week has a set of specific goals defined, with the objective that mentors can evaluate the intern's experience, interest in the community and team-building work. Once the week's objectives have been met, please focus on:
 
@@ -47,9 +47,9 @@ The first week is focused on getting to know the Ersilia community, our mission 
 
 **Slack:** we use Slack as our main communication platform, both for the contribution period and afterwards to work with the selected interns. If you have never used this tool, don't worry, is quite intuitive!
 
-1. [Sign up](https://join.slack.com/t/ersilia-outreachy-s24/shared_invite/zt-2e1h1cjs5-lGyrZPprqlpL~qEWgeoCWw) using your preferred email and name.
-2. Introduce yourself in the #introductions channel. The general channel is for announcements,  interactions with other fellow contributors, writing tips and suggestions.
-3. Use the dedicated channels for questions about specific topics.
+1. [Sign up](https://join.slack.com/t/ersilia-outreachy-s25/shared_invite/zt-31u0vtk78-dS7VGCrdkOmY52k6drsD1Q) using your preferred email and name. It is helpful to add your GitHub user name in brackets if it does not match your name, for example: John Doe (jdgithub)
+2. Introduce yourself in the #intros channel.
+3. Use the dedicated channels for questions about specific topics. If you feel more channels are needed, feel free to ask for them to the mentors
 4. Contribute to your peers' questions, this is about helping each other and we really value interns who work with the community.
 
 {% hint style="info" %}
@@ -60,7 +60,7 @@ We try to work as openly as possible, we encourage all contributors to post in t
 Please use a Slack name that is easy to identify with your GitHub handle to make it easy for mentors to review contributions and tag people.
 {% endhint %}
 
-**GitHub**: we will be working on the Ersilia Model Hub main repository, which is hosted on [GitHub](https://github.com/ersilia-os/ersilia). You can start by:
+**GitHub**: we will be working based on the Ersilia Model Hub main repository, which is hosted on [GitHub](https://github.com/ersilia-os/ersilia). You can start by:
 
 * 📖 Getting familiar with the repository structure
 * 🐛 Checking the issues to see what has the community been working on
@@ -68,14 +68,14 @@ Please use a Slack name that is easy to identify with your GitHub handle to make
 * ⭐ Starring the repository if you like the work Ersilia is doing!
 
 {% hint style="danger" %}
-Ersilia is an Open Source community with active contributing members. Please respect the work of others and specially if an issue is assigned to someone else, give them the time and space to work on it.
+Ersilia is an Open Source community with active contributing members. Please respect the work of others.
 {% endhint %}
 
 {% hint style="info" %}
 We will be using GitHub issues a lot, so if you have never worked with GitHub before, make sure you understand how issues work!
 {% endhint %}
 
-**Community call:** we will hold a community call on **October 7th 14:00 am CET** to go over the contribution period tasks and answer any questions you might have! The link will be shared via Slack. Attendance is not compulsory, we have tried to find a time that is acceptable for most time zones, we apologize in advance if it means an early start or late end of your day.
+**Community call:** we will hold a community call on **March 20th  17:00pm CET** to go over the contribution period tasks and answer any questions you might have! The link will be shared via Slack. Attendance is not compulsory, we have tried to find a time that is acceptable for most time zones, we apologize in advance if it means an early start or late end of your day.
 
 **Code of Conduct:** Ersilia is adhered to the [Contributor Covenant Code of Conduct](../../about-us/code-of-conduct.md). Any breaches of the code of conduct, specially harassment or lack of respect for fellow contributors, will mean disqualification as an applicant.
 
@@ -102,7 +102,7 @@ ersilia --help #this should output the command options for ersilia
 ```
 ersilia -v fetch eos3b5e
 ersilia serve eos3b5e
-ersilia -v api run -i "CCCC"
+ersilia -v run -i "CCCC"
 ```
 
 This is calculating the molecular weight of the molecules, the output should be printed in your CLI and look like:
@@ -124,8 +124,6 @@ This is calculating the molecular weight of the molecules, the output should be 
 These tests do not work, what now?! Write down the challenges you are facing in your GitHub issue, and ask for support to your peers through the Slack channel.
 {% endhint %}
 
-
-
 Ersilia models are supported to be fetched from a whole host of places, namely, S3 buckets, GitHub, DockerHub, and even from a local repository of the model!
 
 To ensure model dependencies are self contained, Ersilia models are "dockerized", and Ersilia fetches them through DockerHub by default, if you have Docker installed. To complete this task, make sure you have Docker installed or install it from [here.](https://www.docker.com/get-started/)
@@ -140,7 +138,7 @@ docker pull ersiliaos/eos4wt0:latest
 
 ```
 ersilia serve eos4wt0 # Notice that you don't have to fetch it through ersilia here.
-ersilia -v api run -i "CCCC"
+ersilia -v run -i "CCCC"
 ```
 
 This generates the Morgan Fingerprints for a molecule and the output should be printed in your shell like this:
@@ -168,36 +166,101 @@ This generates the Morgan Fingerprints for a molecule and the output should be p
 
 Write, in a thread in your issue, your motivation for joining Outreachy and, in particular, why are you interested in working at Ersilia. A good motivation letter will explain your current skills that are relevant to Ersilia, your reasons to work in Ersilia's project, how this would advance your career and what are your plans during and after the internship.
 
-This needs to be sent to Dhanshree via a private message on Slack
-
 #### Task 4: Obtain approval of the introductory tasks to continue contributing.
 
-If what you have seen and learnt in this first week is appealing and you want to continue working with us, please send a private message to Dhanshree (not any of the other mentors) on Slack. In it:
+If what you have seen and learnt in this first week is appealing and you want to continue working with us, please open an issue on the outreachy-contributions repository and:
 
 * Detail which operating system are you using
-* Describe your tests of Ersilia and Docker - Demonstrate that you are able to run models and get predictions.&#x20;
+* Describe your tests of Ersilia and Docker - Demonstrate that you are able to run models and get predictions. Examples of thorough testing include understanding the different output formats available for Ersilia Models, the types of model available, etc..
 * Send the motivation statement to work at Ersilia
 
 {% hint style="warning" %}
 We will not be assigning issues or reviewing code contributions of those applicants who have not received the OK to continue working on their application after completing the first week's assignments
 {% endhint %}
 
-### 📆 WEEKS 2 and 3: Contribute to a good-first-issue
+### 📆 WEEKS 2 and 3: Apply Ersilia Models to a modelling task
 
-Once you have successfully completed all the entry-level tasks and received the OK from your mentors to continue contributing, go ahead to  the main repository for the Ersilia Model Hub and have a look at issues labeled as good-first-issue. Please pick an issue where you feel your skills will be best applied. If an issue already has an assigne, you may request to work on it, but only on occasion and depending on the issue we will assign more than one person to the same issue.
+Once you have successfully completed all the entry-level tasks and received the OK from your mentors to continue contributing, go ahead to the [outreachy-contributions](https://github.com/ersilia-os/outreachy-contributions) repository to start working! Please make sure to follow this documentation step by step to succeed in this modelling exercise. We have tried to indicate what are we looking for in each step:
 
-<mark style="color:red;">Essential guidelines to work on open issues:</mark>
+#### 1. Download a dataset of interest
 
-* Respect the mentors assigning of issues. We will not merge or review any code made by an applicant who was not first assigned to the issue.&#x20;
-* Work on your own fork and open a PR when the code is complete and ready for submission.
-* Take time to implement the mentors feedback. We might not end up merging the contribution if the quality is not enough.
-* Document all the code you write. No documentation will mean no merging of the contribution.
+There are plenty of datasets for drug discovery exercises. Here, we suggest using a dataset from the [Therapeutics Data Commons](https://tdcommons.ai/), which are already pre-prepared for ML modelling. When choosing your dataset, consider:
 
-We also recommend looking at other repositories associated to the Ersilia Model Hub for open good issues, such as [ersilia-pack](https://github.com/ersilia-os/ersilia-pack) or [ersilia-self-service](https://github.com/ersilia-os/ersilia-self-service).
+* Classifiers are more easily modelled than regressors. We strongly suggest selecting a classifier problem
+* Understanding the background data. Could I follow the original data collection protocol? Do I understand what the endpoint is, and could I explain it in my own words?
+* My computational capacity. Large datasets will occupy more space once data is featurised.
+
+Once you are sure of which dataset you will model, download it using the python package. Keep all code in notebooks or scripts and save the data in the /data folder.&#x20;
+
+At this point, you should start preparing the documentation for your project. How do I install and run it? Which notebooks/scripts do I need to run, and in which order? What will I find in the folders? Use the README file for documentation.
+
+**Evaluated tasks:**
+
+* Basic comprehension of drug discovery tasks
+* Installing and running a third party Python package
+* Documentation
+* Working with GitHub: forks, issues and more
+
+#### 2. Featurise the data
+
+The first step in ML modelling is to featurise the data (i.e convert the molecules to comprehensive vectorial representations). There are several ways of doing so. In this project, we ask you to browse the Ersilia Model Hub and select a featuriser from the models available in the Hub:
+
+* Look at the "Representation" labelled models in [Ersilia](https://ersilia.io/model-hub)
+* Select one featuriser and explain why
+
+Again, this section should also be reproducible by following the instructions on the README file and the code available.
+
+**Evaluated tasks:**
+
+* Basic comprehension of molecular featurisation
+* Installing and running the Ersilia Model Hub
+* Documentation
+
+#### 3. Build an ML model
+
+Using the selected datasets and the featuriser, build a simple ML model. We suggest using one of the following packages:
+
+* XGBoost
+* FLAML
+* Sci-kit Learn
+
+Again, use scripts or python notebooks and make sure all steps are reproducible. Train-test splits should be applied and model validations need to be completed and discussed. For the latest, please use matplotlib to create easy to interpret graphs. Document everything on the README file.
+
+**Evaluated tasks:**
+
+* Basic comprehension of ML frameworks
+* Evaluation of ML models
+* Plotting with python libraries
+* Documentation
+
+#### 4. Prepare your code for review
+
+Once you are happy with your modelling exercise, it is time to evaluate it critically:
+
+1. Is my documentation thorough? (think as if someone was seeing this code for the first time, could they be able to reproduce it?
+2. Is the evaluation of my model good enough? Could I do something to improve it?
+
+If all the above checks, update your issue to ask for review and feedback!
+
+**Evaluated tasks:**
+
+* Constancy and thoroughness
+
+#### 5. Stretch tasks
+
+There are always ways to improve our work. In this particular project, you might want to:
+
+* Explore other featurisers
+* Try different ML architectures
+* Try the model on public data (for example from ChEMBL)
 
 ### 📆 WEEK 4: Submit your Final Application
 
 Focus the last week <mark style="color:red;">ONLY</mark> in writing your final application to Outreachy. Mentors will not revise any contribution for the last week, only final applications, to ensure we can provide feedback on them.
+
+The Outreachy internship project will differ from the Contribution period. The contribution period allows mentors to evaluate the interns skills and select those more likely to succeed during the internship period. Please look at the original project description on the Outreachy webpage to understand what you will work on during the internship.
+
+Week 4 is the time to go to the main Ersilia Model Hub repository and look at the work we are doing! This will give you  better hint of the type of tasks you will complete. In the final application, we want to understand what are your learning goals and how do you think you can achieve them. You can include things like how and when will you report on tasks, what aspects of the Ersilia Model Hub backend development motivate you more, where do you think your skills are better suited etc
 
 {% hint style="warning" %}
 Final applications must be submitted through the Outreachy website on time. We will not be able to provide help or support for last minute internet connection problems, late submissions and other issues. Please make sure you fill it in with time.
