@@ -1,12 +1,15 @@
 from ersilia.default import UNPROCESSABLE_INPUT
 import pytest
 from ersilia.utils.identifiers.compound import CompoundIdentifier
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch, MagicMock
+import aiohttp
+import requests
 
 
 @pytest.fixture
 def compound_identifier():
-    return CompoundIdentifier()
+    return CompoundIdentifier(local=False) 
+
 
 class TestCompoundIdentifier:
 
@@ -78,49 +81,85 @@ class TestCompoundIdentifier:
         """Ensure guess_type correctly identifies valid InChIKeys or SMILES strings."""
         assert compound_identifier.guess_type(input) == expected
 
-    @patch("requests.get")
+    @pytest.mark.asyncio
+    @patch("aiohttp.ClientSession.get")
     async def test_nci_smiles_to_inchikey_positive(self, mock_get, compound_identifier):
-        """Test _nci_smiles_to_inchikey with a mocked positive response."""
-        mock_response = mock_get.return_value
-        mock_response.status_code = 200
-        mock_response.text = "InChIKey=BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+        """Test NCI with correct mock"""
+        mock_response = MagicMock()
+        mock_response.status = 200
+        mock_response.text = AsyncMock(return_value="BSYNRYMUTXBXSQ-UHFFFAOYSA-N")
+        mock_get.return_value.__aenter__.return_value = mock_response
 
-        inchikey = await compound_identifier._nci_smiles_to_inchikey(
-            session=None, smiles="CCO"
-        )
+        async with aiohttp.ClientSession() as session:
+            inchikey = await compound_identifier._nci_smiles_to_inchikey(session, "CCO")
         assert inchikey == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
 
+    @pytest.mark.asyncio
     @patch("requests.get")
     async def test_nci_smiles_to_inchikey_negative(self, mock_get, compound_identifier):
         """Test _nci_smiles_to_inchikey with a mocked negative response."""
-        mock_response = mock_get.return_value
+        mock_response = MagicMock()
         mock_response.status_code = 404
+        mock_get.return_value = mock_response
 
         inchikey = await compound_identifier._nci_smiles_to_inchikey(
             session=None, smiles="invalid_smiles"
         )
         assert inchikey is None
 
-    @patch("requests.get")
+    @pytest.mark.asyncio
+    @patch("aiohttp.ClientSession.get")
     async def test_pubchem_smiles_to_inchikey_positive(self, mock_get, compound_identifier):
-        """Test _pubchem_smiles_to_inchikey with a mocked positive response."""
-        mock_response = mock_get.return_value
-        mock_response.status_code = 200
-        mock_response.text = "InChIKey=BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+        """Test PubChem with correct mock"""
+        mock_response = MagicMock()
+        mock_response.status = 200
+        mock_response.json = AsyncMock(return_value={
+            "PropertyTable": {
+                "Properties": [{"InChIKey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"}]
+            }
+        })
+        mock_get.return_value.__aenter__.return_value = mock_response
 
-        inchikey = await compound_identifier._pubchem_smiles_to_inchikey(
-            session=None, smiles="CCO"
-        )
+        async with aiohttp.ClientSession() as session:
+            inchikey = await compound_identifier._pubchem_smiles_to_inchikey(session, "CCO")
         assert inchikey == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
 
+
+    @pytest.mark.asyncio
     @patch("requests.get")
     async def test_pubchem_smiles_to_inchikey_negative(self, mock_get, compound_identifier):
         """Test _pubchem_smiles_to_inchikey with a mocked positive response."""
-        mock_response = mock_get.return_value
+        mock_response = MagicMock()
         mock_response.status_code = 200
-        mock_response.text = "InChIKey=BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+        mock_response.json.return_value = {"InChIKey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"}
+        mock_get.return_value = mock_response
 
         inchikey = await compound_identifier._pubchem_smiles_to_inchikey(
             session=None, smiles="invalid_smiles"
         )
         assert inchikey is None
+
+    @patch("requests.get")
+    def test_chemical_identifier_resolver_valid(self, mock_get, compound_identifier):
+        """Test chemical_identifier_resolver with valid input"""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.text = "CC(=O)Oc1ccccc1C(O)=O"
+        mock_get.return_value = mock_response
+
+        smiles = compound_identifier.chemical_identifier_resolver("aspirin")
+        assert smiles == "CC(=O)Oc1ccccc1C(O)=O"
+
+    @patch("requests.get")
+    def test_chemical_identifier_resolver_invalid(self, mock_get, compound_identifier):
+        """Test chemical_identifier_resolver with incorrect input (mocked 404 response)"""
+        mock_response = MagicMock()
+        mock_response.status_code = 404
+        mock_get.return_value = mock_response
+
+        result = compound_identifier.chemical_identifier_resolver("someincorrectinput")
+        
+        assert result is None
+
+    
+

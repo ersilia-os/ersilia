@@ -61,12 +61,8 @@ class CompoundIdentifier(object):
         self.concurrency_limit = concurrency_limit
         self.cache_maxsize = cache_maxsize
         # defining the cache to be dynamic
-        self._pubchem_smiles_to_inchikey = lru_cache(maxsize=self.cache_maxsize)(
-            self._pubchem_smiles_to_inchikey
-        )
-        self._nci_smiles_to_inchikey = lru_cache(maxsize=self.cache_maxsize)(
-            self._nci_smiles_to_inchikey
-        )
+        self._pubchem_smiles_to_inchikey = self._pubchem_smiles_to_inchikey
+        self._nci_smiles_to_inchikey = self._nci_smiles_to_inchikey
         self.chemical_identifier_resolver = lru_cache(maxsize=self.cache_maxsize)(
             self.chemical_identifier_resolver
         )
@@ -254,19 +250,16 @@ class CompoundIdentifier(object):
             The InChIKey of the compound, or None if conversion fails.
         """
         identifier = urllib.parse.quote(smiles)
-        url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/{0}/property/InChIKey/json".format(
-            identifier
-        )
+        url = f"https://cactus.nci.nih.gov/chemical/structure/{identifier}/stdinchikey"
         try:
             async with session.get(url) as response:
                 if response.status != 200:
                     return None
                 text = await response.text()
-                return text.split("=")[1]
+                return text.strip()  
         except Exception as e:
             logger.info(f"Failed to fetch InChIKey from NCI for {smiles}: {e}")
             return None
-
     def convert_smiles_to_inchikey_with_rdkit(self, smiles):
         """
         Converts a SMILES string to an InChIKey using RDKit.
