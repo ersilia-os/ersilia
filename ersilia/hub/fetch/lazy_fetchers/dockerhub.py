@@ -15,7 +15,7 @@ from ....default import (
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
 from ....utils.docker import SimpleDocker
-from ....utils.paths import resolve_pack_method
+from ....utils.resolvers import PackMethodResolver
 from ...pull.pull import ModelPuller
 from .. import STATUS_FILE
 from ..register.register import ModelRegisterer
@@ -187,7 +187,8 @@ class ModelDockerHubFetcher(ErsiliaBase):
         """
         if not self.pack_method:
             self.logger.debug("Resolving pack method")
-            self.pack_method = resolve_pack_method(model_id)
+            pmr = PackMethodResolver(model_id=model_id)
+            self.pack_method = pmr.resolve_pack_method()
             self.logger.debug(f"Resolved pack method: {self.pack_method}")
 
         if self.pack_method == PACK_METHOD_BENTOML:
