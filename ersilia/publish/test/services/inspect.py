@@ -17,7 +17,7 @@ from ....default import (
     DOCKERFILE_FILE,
 )
 from .io import IOService
-from .constants import STATUS_CONFIGS
+from .constants import STATUS_CONFIGS, Options
 from .constants import (
     BASE_URL,
     RAW_CONTENT_URL,
@@ -484,8 +484,8 @@ class ModelInspector:
     def _run_performance_check(self, n):
         cmd = (
             f"ersilia serve {self.model}&& "
-            f"ersilia example -n {n} -c -f my_input.csv && "
-            "ersilia run -i my_input.csv && ersilia close"
+            f"ersilia example -n {n} -c -f {Options.DEEP_INPUT.value} && "
+            f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
         )
         start_time = time.time()
         process = subprocess.run(

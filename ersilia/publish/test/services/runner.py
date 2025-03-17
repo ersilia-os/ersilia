@@ -144,6 +144,23 @@ class RunnerService:
         cmd = f"ersilia serve {self.model_id} && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
         out = run_command(cmd)
         return out
+    
+    @throw_ersilia_exception()
+    def delete(self):
+        """
+        Delete model if existed
+        """
+        if os.path.exists(self.model_path):
+            (
+                run_command(
+                    [
+                        "ersilia",
+                        "-v",
+                        "delete",
+                        self.model_id,
+                    ]
+                ),
+            )
 
     @throw_ersilia_exception()
     def fetch(self):
@@ -161,17 +178,7 @@ class RunnerService:
             self.logger.info(f"Fetching the model from: {loc}")
             run_command(["ersilia", "-v", "fetch", model_id, *loc], quiet=True)
 
-        if os.path.exists(self.model_path):
-            (
-                run_command(
-                    [
-                        "ersilia",
-                        "-v",
-                        "delete",
-                        self.model_id,
-                    ]
-                ),
-            )
+        self.delete()
         _fetch(self.model_id, self.logger)
 
     def run_example(
@@ -505,12 +512,20 @@ class RunnerService:
 
             self.ios_service.collect_and_save_json(results, self.report_file)
             echo("Model tests and checks completed.", fg="green", bold=True)
+            
+            echo("Deleting model...", fg="yellow", bold=True)
+            self.delete()
+            echo("Model successfully deleted", fg="green", bold=True)
 
         except Exception as error:
             tb = traceback.format_exc()
             error_info = {"exception": str(error), "traceback": tb}
             results.append(error_info)
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
+            echo("Deleting model...", fg="yellow", bold=True)
+            self.delete()
+            echo("Model successfully deleted", fg="green", bold=True)
+
             self.ios_service.collect_and_save_json(results, self.report_file)
 
     def _configure_environment(self):

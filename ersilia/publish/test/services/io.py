@@ -312,6 +312,8 @@ class IOService:
 
             if check_name == "computational_performance_tracking_details":
                 json_data[check_name] = parse_performance(check_status)
+            elif check_name in ("environment_size_mb", "directory_size_mb", "image_size_mb"):
+                json_data[check_name] = float(check_status)
             else:
                 json_data[check_name] = parse_status(clean_string(check_status))
 
