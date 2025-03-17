@@ -39,6 +39,10 @@
 * [Sampling the chemical space](chemistry-tools/sampling-the-chemical-space.md)
 * [Encryption of AI/ML models](privacy-preserving-ai/page-2.md)
 
+***
+
+* [AMR chemical collections](amr-chemical-collections.md)
+
 ## 🙌 Contributors
 
 * [Communication channels](contributors/communication.md)
