@@ -686,10 +686,10 @@ class GenericOutputAdapter(ResponseRefactor):
                         are_dtypes_informative = True
                 if output_keys_expanded is None:
                     self.logger.warning(
-                        f"Output key not expanded: val {vals} and {output_keys}"
+                        f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
                     )
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
-                    self.logger.info(f"Expanded output keys: {output_keys_expanded}")
+                    self.logger.info(f"Expanded output keys: {str(output_keys_expanded)[:10]}")
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
@@ -842,7 +842,6 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             extension = None
         self.logger.debug(f"Extension: {extension}")
-        self.logger.debug(f"Result: {result}")
         df = self._to_dataframe(result, model_id)
         delimiters = {"csv": ",", "tsv": "\t", "h5": None}
         if extension in ["tsv", "h5", "csv"]:
@@ -880,7 +879,6 @@ class GenericOutputAdapter(ResponseRefactor):
         adapted_result = self._adapt_when_fastapi_was_used(
             result, output, model_id, api_name
         )
-        self.logger.debug("Adapted result: {0}".format(adapted_result))
         if adapted_result is None:
             self.logger.debug("Adapting generic")
             return self._adapt_generic(result, output, model_id, api_name)

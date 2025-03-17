@@ -19,6 +19,7 @@ from enum import Enum
 from typing import Callable
 from typing import List, Any
 import warnings
+from ..utils.docker import set_docker_host
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 
@@ -963,6 +964,7 @@ class IOService:
             The size of the Docker image.
         """
         image_name = f"{DOCKERHUB_ORG}/{self.model_id}:{tag}"
+        set_docker_host()
         client = docker.from_env()
         try:
             image = client.images.get(image_name)

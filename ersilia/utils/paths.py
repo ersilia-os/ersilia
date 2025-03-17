@@ -1,4 +1,5 @@
 import json
+import requests
 import os
 import re
 from dataclasses import asdict, dataclass
@@ -15,7 +16,6 @@ from ..default import (
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
 )
-from .docker import resolve_pack_method_docker
 
 MODELS_DEVEL_DIRNAME = "models"
 
@@ -241,6 +241,38 @@ ErsiliaMetadataLoader.add_constructor(
     yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, metadata_constructor
 )
 
+def resolve_pack_method_from_github_metadata(model_id):
+    """
+    Resolve the packaging method based on metadata available from GitHub
+
+    Parameters
+    ----------
+    model_id : str
+        The model identifier
+
+    Returns
+    -------
+    The packaging methods (fastapi or bentoml)
+    """
+    data = None
+    root_github_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/".format(model_id)
+    extensions = ["json", "yml"]
+    for ext in extensions:
+        url = f"{root_github_url}/metadata.{ext}"
+        try:
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                if ext == "json":
+                    data = json.loads(response.text)  
+                elif ext == "yml":
+                    data = yaml.safe_load(response.text)  
+        except requests.RequestException:
+            pass  
+    if data is None:
+        return PACK_METHOD_FASTAPI
+    else:
+        return data["Docker Pack Method"].lower()
+
 
 def resolve_pack_method_source(model_path):
     """
@@ -278,11 +310,15 @@ def resolve_pack_method(model_path):
     str
         The packaging method.
     """
-    with open(os.path.join(model_path, "service_class.txt"), "r") as f:
-        service_class = f.read().strip()
+    service_class_file = os.path.join(model_path, "service_class.txt")
+    if not os.path.exists(service_class_file):
+        service_class = "pulled_docker"
+    else:
+        with open(os.path.join(model_path, "service_class.txt"), "r") as f:
+            service_class = f.read().strip()
     if service_class == "pulled_docker":
         model_id = Paths().model_id_from_path(model_path)
-        return resolve_pack_method_docker(model_id)
+        return resolve_pack_method_from_github_metadata(model_id)
     else:
         return resolve_pack_method_source(model_path)
 

@@ -9,14 +9,13 @@ from ....default import (
     DOCKERHUB_ORG,
     INFORMATION_FILE,
     PREDEFINED_EXAMPLE_FILES,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI
 )
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
-from ....utils.docker import (
-    PACK_METHOD_BENTOML,
-    SimpleDocker,
-    resolve_pack_method_docker,
-)
+from ....utils.docker import SimpleDocker
+from ....utils.paths import resolve_pack_method
 from ...pull.pull import ModelPuller
 from .. import STATUS_FILE
 from ..register.register import ModelRegisterer
@@ -188,13 +187,15 @@ class ModelDockerHubFetcher(ErsiliaBase):
         """
         if not self.pack_method:
             self.logger.debug("Resolving pack method")
-            self.pack_method = resolve_pack_method_docker(model_id)
+            self.pack_method = resolve_pack_method(model_id)
             self.logger.debug(f"Resolved pack method: {self.pack_method}")
 
         if self.pack_method == PACK_METHOD_BENTOML:
             await self._copy_from_bentoml_image(model_id, file)
-        else:
+        elif self.pack_method == PACK_METHOD_FASTAPI:
             await self._copy_from_ersiliapack_image(model_id, file)
+        else:
+            raise Exception(f"Unresolved method, should be either {PACK_METHOD_FASTAPI} or {PACK_METHOD_BENTOML}")
 
     async def copy_information(self, model_id: str):
         """

@@ -28,7 +28,7 @@ from ..setup.requirements.conda import CondaRequirement
 from ..setup.requirements.docker import DockerRequirement
 from ..tools.bentoml.exceptions import BentoMLException
 from ..utils.conda import SimpleConda, StandaloneConda
-from ..utils.docker import SimpleDocker, model_image_version_reader
+from ..utils.docker import SimpleDocker, model_image_version_reader, set_docker_host
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
@@ -1143,6 +1143,7 @@ class PulledDockerImageService(BaseServing):
             config_json=config_json,
             preferred_port=preferred_port,
         )
+        set_docker_host()
         self.client = docker.from_env()
         if preferred_port is None:
             self.port = find_free_port()
@@ -1252,6 +1253,7 @@ class PulledDockerImageService(BaseServing):
         )
         containers = self.client.containers.list(all=True)
         for container in containers:
+            self.logger.debug(f"Checking container {container.name}")
             if container.name.startswith(self.model_id):
                 self.logger.debug(
                     "Stopping and removing container {0}".format(container.name)
@@ -1386,6 +1388,7 @@ class PulledDockerImageService(BaseServing):
         :return: None
         """
         # Create a Docker client from environment variables
+        set_docker_host()
         client = docker.from_env()
         container = client.containers.get(container_id)
 
