@@ -12,7 +12,6 @@ from ..serve.schema import ApiSchema
 from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..utils.logging import make_temp_dir
-from ..utils.paths import resolve_pack_method
 from .dataframe import Dataframe
 from .pure import PureDataTyper
 from .readers.file import FileTyper
@@ -352,7 +351,7 @@ class GenericOutputAdapter(ResponseRefactor):
         )
         self.model_id = model_id
         self.was_fast_api = (
-            resolve_pack_method(self._get_bundle_location(self.model_id))
+            self._resolve_pack_method_source(self.model_id)
             == PACK_METHOD_FASTAPI
         )
 

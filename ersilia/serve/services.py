@@ -34,7 +34,6 @@ from ..utils.exceptions_utils.serve_exceptions import (
     DockerNotActiveError,
 )
 from ..utils.logging import make_temp_dir
-from ..utils.paths import resolve_pack_method
 from ..utils.ports import find_free_port
 from ..utils.session import get_session_dir
 from ..utils.terminal import run_command
@@ -142,9 +141,7 @@ class BaseServing(ErsiliaBase):
     def _get_apis_from_where_available(self):
         apis_list = self._get_apis_from_apis_list()
         if apis_list is None:
-            pack_method = resolve_pack_method(
-                model_path=self._get_bundle_location(self.model_id)
-            )
+            pack_method = self._resolve_pack_method_source(self.model_id)
             if pack_method == PACK_METHOD_FASTAPI:
                 self.logger.debug("Getting APIs from FastAPI")
                 apis_list = self._get_apis_from_fastapi()
@@ -417,9 +414,7 @@ class _LocalService(ErsiliaBase):
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json)
-        pack_method = resolve_pack_method(
-            model_path=self._get_bundle_location(model_id)
-        )
+        pack_method = self._resolve_pack_method_source(self.model_id)
         self.logger.debug("Pack method is: {0}".format(pack_method))
         if pack_method == PACK_METHOD_FASTAPI:
             self.server = _FastApiService(

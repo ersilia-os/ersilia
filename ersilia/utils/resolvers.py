@@ -6,8 +6,7 @@ import requests
 import yaml
 
 from .. import ErsiliaBase
-from ..default import PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI, PACKMETHOD_FILE
-from .paths import Paths
+from ..default import PACK_METHOD_FASTAPI, PACKMETHOD_FILE
 
 
 class PackMethodResolver(ErsiliaBase):
@@ -28,13 +27,12 @@ class PackMethodResolver(ErsiliaBase):
         -------
         The packaging method (fastapi or bentoml)
         """
-        path = self._get_model_path(model_id=self.model_id)
+        path = self._get_bundle_location(model_id=self.model_id)
         pack_method_file = os.path.join(path, PACKMETHOD_FILE)
         if not os.path.exists(pack_method_file):
             return None
-
-
-        pass
+        with open(pack_method_file, "r") as f:
+            return f.read().strip()
 
     def resolve_pack_method_from_github_metadata(self):
         """
@@ -81,13 +79,7 @@ class PackMethodResolver(ErsiliaBase):
         str or None
             The packaging method if found, otherwise None.
         """
-        model_path = self.model_path
-        if os.path.exists(os.path.join(model_path, "installs", "install.sh")):
-            return PACK_METHOD_FASTAPI
-        elif os.path.exists(os.path.join(model_path, "bentoml.yml")):
-            return PACK_METHOD_BENTOML
-        self.logger.warning("Could not resolve pack method")
-        return None
+        return self._resolve_pack_method_source(model_id=self.model_id)
 
     def resolve_pack_method(self):
         """
@@ -103,7 +95,8 @@ class PackMethodResolver(ErsiliaBase):
         str
             The packaging method.
         """
-        model_path = self.model_path
+        model_id = self.model_id
+        model_path = self._get_bundle_location(model_id)
         service_class_file = os.path.join(model_path, "service_class.txt")
         if not os.path.exists(service_class_file):
             service_class = "pulled_docker"
@@ -111,7 +104,6 @@ class PackMethodResolver(ErsiliaBase):
             with open(os.path.join(model_path, "service_class.txt"), "r") as f:
                 service_class = f.read().strip()
         if service_class == "pulled_docker":
-            model_id = Paths().model_id_from_path(model_path)
-            return self.resolve_pack_method_from_github_metadata(model_id)
+            return self.resolve_pack_method_from_github_metadata()
         else:
-            return self.resolve_pack_method_source(model_path)
+            return self.resolve_pack_method_source()

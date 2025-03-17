@@ -56,9 +56,9 @@ class ModelPacker(BaseAction):
         runner.run()
 
     def _register_pack_method(self):
-        path = self._model_path(self.model_id)
+        path = self._get_bundle_location(self.model_id)
         with open(os.path.join(path, PACKMETHOD_FILE), "w") as f:
-            self.logger.debug("Writing pack method {0} to file {0}".format(PACK_METHOD_FASTAPI, ))
+            self.logger.debug("Writing pack method {0} to file {1}".format(PACK_METHOD_FASTAPI, PACKMETHOD_FILE))
             f.write(PACK_METHOD_FASTAPI)
 
     def pack(self):
