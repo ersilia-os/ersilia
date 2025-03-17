@@ -8,9 +8,9 @@ from ....default import (
     DOCKERHUB_LATEST_TAG,
     DOCKERHUB_ORG,
     INFORMATION_FILE,
-    PREDEFINED_EXAMPLE_FILES,
     PACK_METHOD_BENTOML,
-    PACK_METHOD_FASTAPI
+    PACK_METHOD_FASTAPI,
+    PREDEFINED_EXAMPLE_FILES,
 )
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement

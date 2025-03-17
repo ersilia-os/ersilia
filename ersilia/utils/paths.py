@@ -1,11 +1,11 @@
 import json
-import requests
 import os
 import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import List, Optional
 
+import requests
 import yaml
 
 from ersilia import logger
@@ -263,15 +263,18 @@ def resolve_pack_method_from_github_metadata(model_id):
             response = requests.get(url, timeout=10)
             if response.status_code == 200:
                 if ext == "json":
-                    data = json.loads(response.text)  
+                    data = json.loads(response.text)
                 elif ext == "yml":
-                    data = yaml.safe_load(response.text)  
+                    data = yaml.safe_load(response.text)
         except requests.RequestException:
-            pass  
+            pass
     if data is None:
         return PACK_METHOD_FASTAPI
     else:
-        return data["Docker Pack Method"].lower()
+        if "Docker Pack Method" in data.keys():
+            return data["Docker Pack Method"].lower()
+        else:
+            return PACK_METHOD_FASTAPI
 
 
 def resolve_pack_method_source(model_path):
