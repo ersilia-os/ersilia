@@ -26,6 +26,8 @@ class SetupRedis:
 
     def __init__(self):
         try:
+            if not self._check_docker_installed():
+                return
             self.client = docker.from_env()
             self.client.ping()
             logger.info("Docker is available and running.")
