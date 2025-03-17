@@ -538,11 +538,12 @@ class StandardCSVRunApi(ErsiliaBase):
             store = InferenceStoreApi(model_id=self.model_id)
             return store.get_precalculations(input_data)
         url = "{0}/{1}".format(self.url, self.api_name)
-        self.logger.info(f"Input data: {input_data}")
         response = requests.post(url, json=input_data)
+        self.logger.info("Response gets returned from the server")
         if response.status_code == 200:
             result = response.json()
             output_data = self.serialize_to_csv(input_data, result, output)
+            self.logger.info("Output is being generated")
             return output_data
         else:
             return None

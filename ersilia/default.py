@@ -37,6 +37,7 @@ PACKMODE_FILE = "pack_mode.txt"
 CARD_FILE = "card.json"
 UNPROCESSABLE_INPUT = "UNPROCESSABLE_INPUT"
 DOTENV_FILE = ".env"
+REDIS_DATA_VOLUME = "redis_data_volume"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
