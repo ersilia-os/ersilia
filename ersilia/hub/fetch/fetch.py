@@ -9,7 +9,6 @@ from ...default import (
     MODEL_SOURCE_FILE,
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
-    PACKMETHOD_FILE,
 )
 from ...hub.delete.delete import ModelFullDeleter
 from ...hub.fetch.actions.template_resolver import TemplateResolver
@@ -196,12 +195,6 @@ class ModelFetcher(ErsiliaBase):
         else:
             raise NotInstallableWithBentoML(model_id=self.model_id)
 
-    def _register_packmethod(self, model_id: str, pack_method: str):
-        path = self._get_bundle_location(model_id=model_id)
-        pack_method_file = os.path.join(path, PACKMETHOD_FILE)
-        with open(pack_method_file, "w") as f:
-            f.write(pack_method)
-
     @throw_ersilia_exception()
     def _fetch_not_from_dockerhub(self, model_id: str):
         self.model_id = model_id
@@ -225,10 +218,8 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
             fetcher_type = self._decide_fetcher(model_id)
             if fetcher_type == PACK_METHOD_FASTAPI:
-                self._register_packmethod(model_id, PACK_METHOD_FASTAPI)
                 self._fetch_from_fastapi()
             if fetcher_type == PACK_METHOD_BENTOML:
-                self._register_packmethod(model_id, PACK_METHOD_BENTOML)
                 self._fetch_from_bentoml()
 
         self.logger.debug("Model already exists in your local, skipping fetching")
