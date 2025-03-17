@@ -7,27 +7,32 @@ from collections import namedtuple
 import requests
 import yaml
 
-from ..default import (
+from ....default import (
     DOCKERFILE_FILE,
     INSTALL_YAML_FILE,
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
-    PREDEFINED_EXAMPLE_FILES,
-    RUN_FILE,
+    DOCKERFILE_FILE,
 )
-from ..hub.content.card import RepoMetadataFile
-from ..hub.fetch.actions.template_resolver import TemplateResolver
-from ..utils.logging import logger
+from .io import IOService
+from .constants import STATUS_CONFIGS, Options
+from .constants import (
+    BASE_URL,
+    RAW_CONTENT_URL,
+    REPO_API_URL,
+    USER_AGENT,
+    COMMON_FILES,
+    BENTOML_FILES,
+    ERSILIAPACK_FILES,
+)
+from .... import ErsiliaBase
+from ....hub.content.card import RepoMetadataFile
+from ....hub.fetch.actions.template_resolver import TemplateResolver
+from ....utils.logging import logger
 
 Result = namedtuple("Result", ["success", "details"])
-
-# Base URL for the Ersilia OS Github
-BASE_URL = "https://github.com/ersilia-os/"
-RAW_CONTENT_URL = "https://raw.githubusercontent.com/ersilia-os/{model}/main/"
-REPO_API_URL = "https://api.github.com/repos/ersilia-os/{model}/contents"
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 
 
 class ModelInspector:
@@ -54,35 +59,6 @@ class ModelInspector:
         result = inspector.check_complete_metadata()
     """
 
-    RUN_FILE = f"model/framework/{RUN_FILE}"
-
-    COMMON_FILES = [
-        RUN_FILE,
-        "README.md",
-        "LICENSE",
-    ]
-    BENTOML_FOLDERS = ["model", "src", ".github"]
-    BENTOML_FILES = [
-        DOCKERFILE_FILE,
-        METADATA_JSON_FILE,
-        "src/service.py",
-        "pack.py",
-        ".gitignore",
-        "input.csv",
-    ]
-
-    ERSILIAPACK_FOLDERS = ["model", ".github"]
-
-    ERSILIAPACK_FILES = [
-        INSTALL_YAML_FILE,
-        METADATA_YAML_FILE,
-        PREDEFINED_EXAMPLE_FILES[0],
-        PREDEFINED_EXAMPLE_FILES[1],
-        ".dockerignore",
-        ".gitignore",
-        ".gitattributes",
-    ]
-
     BENTOML_FILES = COMMON_FILES + BENTOML_FILES
     ERSILIAPACK_FILES = COMMON_FILES + ERSILIAPACK_FILES
 
@@ -94,24 +70,7 @@ class ModelInspector:
         self.repo_url = f"{BASE_URL}{model}"
         self.content_url = RAW_CONTENT_URL.format(model=model)
         self.config_json = config_json
-        self.pack_type = self.get_pack_type()
-
-    def get_pack_type(self):
-        """
-        Determine the packaging method of the model.
-
-        Returns
-        -------
-        str
-            The packaging method, either 'bentoml' or 'fastapi'.
-        """
-        resolver = TemplateResolver(model_id=self.model, repo_path=self.dir)
-        if resolver.is_bentoml():
-            return PACK_METHOD_BENTOML
-        elif resolver.is_fastapi():
-            return PACK_METHOD_FASTAPI
-        else:
-            return None
+        self.pack_type = IOService.get_model_type(self.model, self.dir)
 
     def check_repo_exists(self):
         """
@@ -181,6 +140,10 @@ class ModelInspector:
         """
         Check if the dependencies in the Dockerfile or install.yml are valid.
 
+        For PACK_METHOD_BENTOML, the Dockerfile is validated.
+        For PACK_METHOD_FASTAPI, either file is acceptable. If one exists, it is validated;
+        if both exist, both are validated. If neither is present, an error is returned.
+
         Returns
         -------
         Result
@@ -189,26 +152,51 @@ class ModelInspector:
         if self.pack_type not in [PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI]:
             return Result(False, f"Unsupported pack type: {self.pack_type}")
 
-        file = (
-            DOCKERFILE_FILE
-            if self.pack_type == PACK_METHOD_BENTOML
-            else INSTALL_YAML_FILE
-        )
-        method = (
-            self._validate_dockerfile
-            if self.pack_type == PACK_METHOD_BENTOML
-            else self._validate_yml
-        )
+        if self.pack_type == PACK_METHOD_BENTOML:
+            content, error = self._get_file_content(DOCKERFILE_FILE)
+            if content is None:
+                return Result(False, error)
+            errors = self._validate_dockerfile(content)
+            if errors:
+                return Result(False, " ".join(errors))
+            return Result(True, f"{DOCKERFILE_FILE} dependencies are valid.")
 
-        content, error = self._get_file_content(file)
-        if content is None:
-            return Result(False, error)
+        else:
+            dockerfile_content, dockerfile_error = self._get_file_content(
+                DOCKERFILE_FILE
+            )
+            yml_content, yml_error = self._get_file_content(INSTALL_YAML_FILE)
 
-        errors = method(content)
-        if errors:
-            return Result(False, " ".join(errors))
+            if dockerfile_content is None and yml_content is None:
+                return Result(
+                    False,
+                    f"Neither {DOCKERFILE_FILE} nor {INSTALL_YAML_FILE} found. "
+                    f"Dockerfile error: {dockerfile_error} | "
+                    f"install.yml error: {yml_error}",
+                )
 
-        return Result(True, f"{file} dependencies are valid.")
+            errors = []
+
+            if dockerfile_content is not None:
+                dockerfile_errors = self._validate_dockerfile(dockerfile_content)
+                if dockerfile_errors:
+                    errors.extend(dockerfile_errors)
+
+            if yml_content is not None:
+                yml_errors = self._validate_yml(yml_content)
+                if yml_errors:
+                    errors.extend(yml_errors)
+
+            if errors:
+                return Result(False, " ".join(errors))
+
+            valid_files = []
+            if dockerfile_content is not None:
+                valid_files.append(DOCKERFILE_FILE)
+            if yml_content is not None:
+                valid_files.append(INSTALL_YAML_FILE)
+
+            return Result(True, f"{', '.join(valid_files)} dependencies are valid.")
 
     def _get_file_content(self, file):
         if self.dir is not None:
@@ -496,8 +484,8 @@ class ModelInspector:
     def _run_performance_check(self, n):
         cmd = (
             f"ersilia serve {self.model}&& "
-            f"ersilia example -n {n} -c -f my_input.csv && "
-            "ersilia run -i my_input.csv && ersilia close"
+            f"ersilia example -n {n} -c -f {Options.DEEP_INPUT.value} && "
+            f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
         )
         start_time = time.time()
         process = subprocess.run(
@@ -509,3 +497,196 @@ class ModelInspector:
         return Result(
             True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
         )
+
+
+class CheckStrategy:
+    """
+    Execuetd a strategy for checking inspect commands.
+
+    Parameters
+    ----------
+    check_function : callable
+        The function to check.
+    success_key : str
+        The key for success.
+    details_key : str
+        The key for details.
+    """
+
+    def __init__(self, check_function, success_key, details_key):
+        self.check_function = check_function
+        self.success_key = success_key
+        self.details_key = details_key
+
+    def execute(self):
+        """
+        Execute the check strategy.
+
+        Returns
+        -------
+        dict
+            The results of the check.
+        """
+        if self.check_function is None:
+            return {}
+        result = self.check_function()
+        if result is None:
+            return {}
+        return {
+            self.success_key: result.success,
+            self.details_key: result.details,
+        }
+
+
+class InspectService(ErsiliaBase):
+    """
+    Service for inspecting models and their configurations.
+
+    Parameters
+    ----------
+    dir : str, optional
+        Directory where the model is located.
+    model : str, optional
+        Model identifier.
+    remote : bool, optional
+        Flag indicating whether the model is remote.
+    config_json : str, optional
+        Path to the configuration JSON file.
+    credentials_json : str, optional
+        Path to the credentials JSON file.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        inspector = InspectService(
+            dir="/path/to/model", model="model_id"
+        )
+        results = inspector.run()
+    """
+
+    def __init__(
+        self,
+        dir: str,
+        model: str,
+        remote: bool = False,
+        config_json: str = None,
+        credentials_json: str = None,
+    ):
+        super().__init__(config_json, credentials_json)
+        self.dir = dir
+
+        self.model = model
+        self.remote = remote
+        self.resolver = TemplateResolver(model_id=model, repo_path=self.dir)
+
+    def run(self, check_keys: list = None) -> dict:
+        """
+        Run the inspection checks on the specified model.
+
+        Parameters
+        ----------
+        check_keys : list, optional
+            A list of check keys to execute. If None, all checks will be executed.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the results of the inspection checks.
+
+        Raises
+        ------
+        ValueError
+            If the model is not specified.
+        KeyError
+            If any of the specified keys do not exist.
+        """
+
+        def _transform_key(value):
+            if value is True:
+                return str(STATUS_CONFIGS.PASSED)
+            elif value is False:
+                return str(STATUS_CONFIGS.FAILED)
+            return value
+
+        inspector = ModelInspector(self.model, self.dir)
+        checks = self._get_checks(inspector)
+
+        output = {}
+
+        if check_keys:
+            for key in check_keys:
+                try:
+                    strategy = checks.get(key)
+                    if strategy.check_function:
+                        output.update(strategy.execute())
+                except KeyError:
+                    raise KeyError(f"Check '{key}' does not exist.")
+        else:
+            for key, strategy in checks.all():
+                if strategy.check_function:
+                    output.update(strategy.execute())
+        output = {
+            " ".join(word.capitalize() for word in k.split("_")): _transform_key(v)
+            for k, v in output.items()
+        }
+
+        output = [(key, value) for key, value in output.items()]
+        return output
+
+    def _get_checks(self, inspector: ModelInspector) -> dict:
+        def create_check(check_fn, key, details):
+            return lambda: CheckStrategy(check_fn, key, details)
+
+        docker_file_exists = os.path.isfile(os.path.join(self.dir, DOCKERFILE_FILE))
+        dependency_check = "Dockerfile" if docker_file_exists else "Install_YAML"
+        checks = {
+            "is_github_url_available": create_check(
+                inspector.check_repo_exists if self.remote else lambda: None,
+                "is_github_url_available",
+                "is_github_url_available_details",
+            ),
+            "complete_metadata": create_check(
+                inspector.check_complete_metadata if self.remote else lambda: None,
+                "complete_metadata",
+                "complete_metadata_details",
+            ),
+            "complete_folder_structure": create_check(
+                inspector.check_complete_folder_structure,
+                "complete_folder_structure",
+                "complete_folder_structure_details",
+            ),
+            "docker_check": create_check(
+                inspector.check_dependencies_are_valid,
+                f"{dependency_check}_check",
+                "check_details",
+            ),
+            "computational_performance_tracking": create_check(
+                inspector.check_computational_performance,
+                "computational_performance_tracking",
+                "computational_performance_tracking_details",
+            ),
+            "extra_files_check": create_check(
+                inspector.check_no_extra_files if self.remote else lambda: None,
+                "extra_files_check",
+                "extra_files_check_details",
+            ),
+        }
+
+        class LazyChecks:
+            def __init__(self, checks):
+                self._checks = checks
+                self._loaded = {}
+
+            def get(self, key):
+                if key not in self._loaded:
+                    if key not in self._checks:
+                        raise KeyError(f"Check '{key}' does not exist.")
+                    self._loaded[key] = self._checks[key]()
+                return self._loaded[key]
+
+            def all(self):
+                for key in self._checks.keys():
+                    yield key, self.get(key)
+
+        return LazyChecks(checks)
