@@ -95,6 +95,9 @@ class PackMethodResolver(ErsiliaBase):
         str
             The packaging method.
         """
+        pack_method = self.resolve_pack_method_tracked_at_fetch()
+        if pack_method is not None:
+            return pack_method
         model_id = self.model_id
         model_path = self._get_bundle_location(model_id)
         service_class_file = os.path.join(model_path, "service_class.txt")
@@ -104,6 +107,8 @@ class PackMethodResolver(ErsiliaBase):
             with open(os.path.join(model_path, "service_class.txt"), "r") as f:
                 service_class = f.read().strip()
         if service_class == "pulled_docker":
+            self.logger.debug("Service class is pulled_docker, resolving pack method from GitHub metadata...")
             return self.resolve_pack_method_from_github_metadata()
         else:
+            self.logger.debug("Service class is not pulled_docker, resolving pack method from source...")
             return self.resolve_pack_method_source()

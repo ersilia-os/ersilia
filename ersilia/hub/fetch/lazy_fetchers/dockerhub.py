@@ -15,9 +15,9 @@ from ....default import (
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
 from ....utils.docker import SimpleDocker
-from ....utils.resolvers import PackMethodResolver
 from ...pull.pull import ModelPuller
 from .. import STATUS_FILE
+from ..actions.template_resolver import TemplateResolver
 from ..register.register import ModelRegisterer
 
 
@@ -64,6 +64,18 @@ class ModelDockerHubFetcher(ErsiliaBase):
         self.overwrite = overwrite
         self.img_tag = img_tag or DOCKERHUB_LATEST_TAG
         self.pack_method = None
+
+    async def _resolve_pack_method(self, model_id):
+        self.logger.debug("Resolving pack method with TemplateResolver...")
+        tr = TemplateResolver(model_id=model_id)
+        if tr.is_fastapi():
+            pack_method = PACK_METHOD_FASTAPI
+        elif tr.is_bentoml():
+            pack_method = PACK_METHOD_BENTOML
+        else:
+            raise Exception("Pack method could not be resolved")
+        self.logger.debug(f"Pack method resolved: {pack_method}")
+        self.pack_method = pack_method
 
     def is_docker_installed(self) -> bool:
         """
@@ -186,11 +198,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
             Name of the file to copy.
         """
         if not self.pack_method:
-            self.logger.debug("Resolving pack method")
-            pmr = PackMethodResolver(model_id=model_id)
-            self.pack_method = pmr.resolve_pack_method()
-            self.logger.debug(f"Resolved pack method: {self.pack_method}")
-
+            raise Exception("Pack method not resolved")
         if self.pack_method == PACK_METHOD_BENTOML:
             await self._copy_from_bentoml_image(model_id, file)
         elif self.pack_method == PACK_METHOD_FASTAPI:
@@ -281,6 +289,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         model_id : str
             ID of the model.
         """
+        await self._resolve_pack_method(model_id)
         mp = ModelPuller(
             model_id=model_id, config_json=self.config_json, docker_tag=self.img_tag
         )
