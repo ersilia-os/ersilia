@@ -22,7 +22,9 @@ from ersilia.default import (
     INFORMATION_FILE,
 )
 from ersilia.utils.session import get_session_dir
-from ersilia.publish.test import CheckService, IOService, STATUS_CONFIGS
+from ersilia.publish.test.services.checks import CheckService
+from ersilia.publish.test.services.io import IOService
+from ersilia.publish.test.services.constants import STATUS_CONFIGS
 
 
 class ResponseName(Enum):
