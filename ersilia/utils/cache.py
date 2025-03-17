@@ -1,3 +1,6 @@
+import shutil
+import subprocess
+
 import docker
 
 from ..default import (
@@ -24,7 +27,6 @@ class SetupRedis:
     def __init__(self):
         try:
             self.client = docker.from_env()
-            # Test connectivity
             self.client.ping()
             logger.info("Docker is available and running.")
         except Exception as e:
@@ -46,11 +48,13 @@ class SetupRedis:
             RuntimeError: If the container fails to start.
         """
         logger.info("Checking Redis server status...")
+        if not self._check_docker_installed():
+            return
 
         if self._is_image_available():
             container = self._get_container()
             if container:
-                container.reload()  # Update container status
+                container.reload()
                 if container.status == "exited" or container.status != "running":
                     self._restart_container(container)
                 else:
@@ -61,6 +65,15 @@ class SetupRedis:
             self._pull_and_start_container()
 
         logger.info("Redis server setup completed.")
+
+    def _check_docker_installed(self):
+        if shutil.which("docker") is None:
+            logger.warning(
+                "Docker is not installed on this runner. Skipping Docker operations."
+            )
+            return False
+        subprocess.run(["docker", "--version"], check=True, stdout=subprocess.DEVNULL)
+        return True
 
     def _is_image_available(self):
         images = self.client.images.list(name=REDIS_IMAGE)
