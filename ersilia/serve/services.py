@@ -1165,8 +1165,13 @@ class PulledDockerImageService(BaseServing):
                 self.container_tmp_logs
             )
         )
-        if not os.path.exists(self.container_tmp_logs):
-            os.makedirs(self.container_tmp_logs)
+        old_umask = os.umask(0)
+        try:
+            if not os.path.exists(self.container_tmp_logs):
+                os.makedirs(self.container_tmp_logs, mode=0o777)
+        finally:
+            os.umask(old_umask)
+
         self.simple_docker = SimpleDocker()
         self.pid = -1
         self._mem_gb = self._get_memory()

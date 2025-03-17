@@ -59,6 +59,8 @@ PREDEFINED_EXAMPLE_OUTPUT_FILES = [
     "model/framework/examples/run_output.csv",
 ]
 
+PREDEFINED_COLUMN_FILE = "model/framework/columns/run_columns.csv"
+
 PREDEFINED_EXAMPLE_FILES = (
     PREDEFINED_EXAMPLE_INPUT_FILES + PREDEFINED_EXAMPLE_OUTPUT_FILES
 )
