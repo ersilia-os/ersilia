@@ -6,7 +6,6 @@ import stat
 import psutil
 
 from ..default import (
-    CONTAINER_LOGS_TMP_DIR,
     EOS,
     LOGS_DIR,
     MODELS_JSON,
@@ -60,9 +59,7 @@ def get_session_uuid():
 def create_session_files(session_name):
     session_dir = os.path.join(SESSIONS_DIR, session_name)
     logs_dir = os.path.join(session_dir, LOGS_DIR)
-    container_logs_dir = os.path.join(session_dir, CONTAINER_LOGS_TMP_DIR)
     os.makedirs(logs_dir, mode=0o777, exist_ok=True)
-    os.makedirs(container_logs_dir, mode=0o777, exist_ok=True)
 
 
 def create_session_dir():

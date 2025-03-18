@@ -266,63 +266,10 @@ class ServeRule(CommandRule):
     def __init__(self):
         self.session_dir = SESSIONS_DIR
         self.checkups = []
-        self.current_session_dir = get_session_dir()
 
     def check(self, command, config, std_out):
-        runner = config["runtime"]["runner"]
-        resp_one = self.get_latest_folder_and_check_files(command, runner)
-        if resp_one:
-            self.checkups.append(resp_one)
-        resp_two = self.check_service_class(runner)
-        if resp_two:
-            self.checkups.append(resp_two)
         self.checkups.append(self.extract_url(std_out))
         return self.checkups
-
-    def get_latest_folder_and_check_files(self, command, runner):
-        if runner != "multiple":
-            model = get_configs(command)[1]
-            self.required_files.add(f"{model}.pid")
-            existing_files = set(os.listdir(self.current_session_dir))
-            required_files_exists = self.required_files.issubset(existing_files)
-            if required_files_exists:
-                return create_response(
-                    name=ResponseName.SESSION_REQUIRED_FILES_EXIST,
-                    status=True,
-                )
-            return create_response(
-                name=ResponseName.SESSION_REQUIRED_FILES_EXIST,
-                status=False,
-                detail=f"Session required files do not exist at: {self.current_session_dir}",
-            )
-
-    def check_service_class(self, runner):
-        if runner != "multiple":
-            service_class = ("pulled_docker", "conda")
-            session_file_path = os.path.join(self.current_session_dir, SESSION_JSON)
-
-            if not os.path.exists(session_file_path):
-                return create_response(
-                    name=ResponseName.SESSION_FILE_EXISTS,
-                    status=False,
-                    detail=f"Session file does not exist at: {session_file_path}",
-                )
-
-            try:
-                with open(session_file_path, "r") as file:
-                    data = json.load(file)
-                    correct_srv_class = data.get("service_class") in service_class
-                    return create_response(
-                        name=ResponseName.SESSION_SERVICE_CLASS_CORRECT,
-                        status=correct_srv_class,
-                        detail=f"Service class: {data.get('service_class')}",
-                    )
-            except (json.JSONDecodeError, KeyError):
-                return create_response(
-                    name=ResponseName.SESSION_SERVICE_CLASS_CORRECT,
-                    status=False,
-                    detail=f"Session file is not valid at: {session_file_path}",
-                )
 
     def extract_url(self, text):
         pattern = r"http://[a-zA-Z0-9.-]+:\d+"

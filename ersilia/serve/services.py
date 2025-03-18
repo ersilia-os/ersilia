@@ -12,7 +12,6 @@ from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
 from ..default import (
     APIS_LIST_FILE,
-    CONTAINER_LOGS_TMP_DIR,
     DEFAULT_VENV,
     DOCKERHUB_ORG,
     INFORMATION_FILE,
@@ -36,7 +35,6 @@ from ..utils.exceptions_utils.serve_exceptions import (
 from ..utils.logging import make_temp_dir
 from ..utils.paths import resolve_pack_method
 from ..utils.ports import find_free_port
-from ..utils.session import get_session_dir
 from ..utils.terminal import run_command
 from ..utils.venv import SimpleVenv
 
@@ -1155,20 +1153,6 @@ class PulledDockerImageService(BaseServing):
             DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         self.logger.debug("Starting Docker Daemon service")
-        self.container_tmp_logs = os.path.join(
-            get_session_dir(), CONTAINER_LOGS_TMP_DIR
-        )
-        self.logger.debug(
-            "Creating container tmp logs folder {0} and mounting as volume in container".format(
-                self.container_tmp_logs
-            )
-        )
-        old_umask = os.umask(0)
-        try:
-            if not os.path.exists(self.container_tmp_logs):
-                os.makedirs(self.container_tmp_logs, mode=0o777)
-        finally:
-            os.umask(old_umask)
 
         self.simple_docker = SimpleDocker()
         self.pid = -1
@@ -1337,7 +1321,6 @@ class PulledDockerImageService(BaseServing):
         """
         self._stop_all_containers_of_image()
         self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
-        self.volumes = {self.container_tmp_logs: {"bind": "/tmp", "mode": "rw"}}
         self.logger.debug("Trying to run container")
         if self._mem_gb is None:
             self.container = self.client.containers.run(
@@ -1345,7 +1328,6 @@ class PulledDockerImageService(BaseServing):
                 name=self.container_name,
                 detach=True,
                 ports={"80/tcp": self.port},
-                volumes=self.volumes,
             )
         else:
             self.container = self.client.containers.run(
@@ -1353,7 +1335,6 @@ class PulledDockerImageService(BaseServing):
                 name=self.container_name,
                 detach=True,
                 ports={"80/tcp": self.port},
-                volumes=self.volumes,
                 mem_limit="{0}g".format(self._mem_gb),
             )
         self.logger.debug("Serving container {0}".format(self.container_name))
