@@ -124,5 +124,5 @@ class ErsiliaBase(object):
             return PACK_METHOD_FASTAPI
         elif os.path.exists(os.path.join(bundle_path, "bentoml.yml")):
             return PACK_METHOD_BENTOML
-        self.logger.warning("Could not resolve pack method")
+        self.logger.warning("Could not resolve pack method by simply looking at the bundle path")
         return None
