@@ -3,6 +3,7 @@ import csv
 import importlib
 import json
 import os
+import time
 
 import nest_asyncio
 import requests
@@ -538,12 +539,15 @@ class StandardCSVRunApi(ErsiliaBase):
             store = InferenceStoreApi(model_id=self.model_id)
             return store.get_precalculations(input_data)
         url = "{0}/{1}".format(self.url, self.api_name)
+        st = time.perf_counter()
         response = requests.post(url, json=input_data)
-        self.logger.info("Response gets returned from the server")
+        et = time.perf_counter()
+        self.logger.info(f"Response fetched within: {et-st:.4} second")
         if response.status_code == 200:
             result = response.json()
             output_data = self.serialize_to_csv(input_data, result, output)
-            self.logger.info("Output is being generated")
+            ft = time.perf_counter()
+            self.logger.info(f"Output is being generated within: {ft-st:.5} seconds")
             return output_data
         else:
             return None
