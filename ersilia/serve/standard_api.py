@@ -473,8 +473,8 @@ class StandardCSVRunApi(ErsiliaBase):
         ----------
         input_data : list
             List of dictionaries containing input data.
-        result : list
-            List of dictionaries containing result data.
+        result : list or dict
+            List (or nested dict) of dictionaries containing result data.
         output_data : str
             Path to the output CSV file.
 
@@ -483,37 +483,42 @@ class StandardCSVRunApi(ErsiliaBase):
         str
             Path to the output CSV file.
         """
-        if isinstance(result, dict) and not list(result.keys()) == self.header:
-            result = result[list(result.keys())[0]]
-            if (
-                isinstance(result[0], dict)
-                and not list(result[0].keys()) == self.header
-            ):
-                for idx, item in enumerate(result):
-                    result[idx] = item[list(item.keys())[0]]
+        if isinstance(result, dict):
+            if list(result.keys()) != self.header:
+                result = result[next(iter(result))]
+                if (
+                    isinstance(result[0], dict)
+                    and list(result[0].keys()) != self.header
+                ):
+                    result = [next(iter(item.values())) for item in result]
 
         assert len(input_data) == len(result)
 
-        with open(output_data, "w") as f:
+        header_sub = self.header[2:]
+        rows = []
+
+        for i_d, r_d in zip(input_data, result):
+            row = [i_d["key"], i_d["input"]]
+            if isinstance(r_d, dict):
+                get_val = lambda i, k: r_d[k]
+            elif isinstance(r_d, list):
+                get_val = lambda i, k: r_d[i]
+            else:
+                get_val = lambda i, k: r_d
+
+            for i, k in enumerate(header_sub):
+                v = get_val(i, k)
+                if isinstance(v, list):
+                    row.extend(v)
+                else:
+                    row.append(v)
+            rows.append(row)
+
+        with open(output_data, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(self.header)
-            for i_d, r_d in zip(input_data, result):
-                # Prepare the row to be written
-                r = [i_d["key"], i_d["input"]]
-                # Iterate over the header and extract values from the row-wise result
-                for i, k in enumerate(self.header[2:]):
-                    if isinstance(r_d, dict):
-                        v = r_d[k]
-                    elif isinstance(r_d, list):
-                        v = r_d[i]
-                    else:
-                        v = r_d
+            writer.writerows(rows)
 
-                    if isinstance(v, list):
-                        r += v
-                    else:
-                        r += [v]
-                writer.writerow(r)
         return output_data
 
     def post(self, input, output, output_source=OutputSource.LOCAL_ONLY):
