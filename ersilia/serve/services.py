@@ -13,6 +13,8 @@ from ..db.environments.managers import DockerManager
 from ..default import (
     APIS_LIST_FILE,
     CONTAINER_LOGS_TMP_DIR,
+    DEFAULT_DOCKER_NETWORK_BRIDGE,
+    DEFAULT_DOCKER_NETWORK_NAME,
     DEFAULT_VENV,
     DOCKERHUB_ORG,
     INFORMATION_FILE,
@@ -1328,35 +1330,48 @@ class PulledDockerImageService(BaseServing):
                 self.logger.debug("Container in {0} is not ready yet".format(self.url))
             time.sleep(1)
 
+    def _create_docker_network(self):
+        existing_networks = self.client.networks.list(
+            filters={"name": DEFAULT_DOCKER_NETWORK_NAME}
+        )
+        if existing_networks:
+            self.network = existing_networks[0]
+            self.logger.info(f"Docker network already exists: {self.network.name}")
+        else:
+            self.network = self.client.networks.create(
+                name=DEFAULT_DOCKER_NETWORK_NAME,
+                driver=DEFAULT_DOCKER_NETWORK_BRIDGE,
+                attachable=True,
+            )
+            self.logger.info(f"Docker network has been created: {self.network.name}")
+
     def serve(self):
         """
         Serve the model using the Docker image service.
         """
+        self._create_docker_network()
+
         self._stop_all_containers_of_image()
-        self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
+        self.container_name = f"{self.model_id}_{str(uuid.uuid4())[:4]}"
         self.volumes = {self.container_tmp_logs: {"bind": "/tmp", "mode": "rw"}}
         self.logger.debug("Trying to run container")
-        if self._mem_gb is None:
-            self.container = self.client.containers.run(
-                self.image_name,
-                name=self.container_name,
-                detach=True,
-                ports={"80/tcp": self.port},
-                volumes=self.volumes,
-            )
-        else:
-            self.container = self.client.containers.run(
-                self.image_name,
-                name=self.container_name,
-                detach=True,
-                ports={"80/tcp": self.port},
-                volumes=self.volumes,
-                mem_limit="{0}g".format(self._mem_gb),
-            )
-        self.logger.debug("Serving container {0}".format(self.container_name))
+
+        run_params = {
+            "name": self.container_name,
+            "detach": True,
+            "ports": {"80/tcp": self.port},
+            "volumes": self.volumes,
+            "network": self.network.name,
+        }
+
+        if self._mem_gb is not None:
+            run_params["mem_limit"] = f"{self._mem_gb}g"
+
+        self.container = self.client.containers.run(self.image_name, **run_params)
+        self.logger.debug(f"Serving container {self.container_name}")
         self.container_id = self.container.id
-        self.logger.debug("Running container {0}".format(self.container_id))
-        self.url = "http://0.0.0.0:{0}".format(self.port)
+        self.logger.debug(f"Running container {self.container_id}")
+        self.url = f"http://0.0.0.0:{self.port}"
         self._wait_until_container_is_running()
         self._apis_list = self._get_apis()
         self.logger.debug(self._apis_list)
