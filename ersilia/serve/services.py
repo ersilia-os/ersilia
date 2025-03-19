@@ -11,6 +11,7 @@ from .. import ErsiliaBase, throw_ersilia_exception
 from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
 from ..default import (
+    ALLOWED_API_NAMES,
     APIS_LIST_FILE,
     CONTAINER_LOGS_TMP_DIR,
     DEFAULT_DOCKER_NETWORK_BRIDGE,
@@ -1279,19 +1280,45 @@ class PulledDockerImageService(BaseServing):
                     apis_list += [l.rstrip()]
             if len(apis_list) > 0:
                 return apis_list
-        self.logger.debug("Getting them using info endpoint")
-        url = "{0}/info".format(self.url)
-        self.logger.debug("Using URL: {0}".format(url))
-        data = "{}"
-        response = requests.post(url, data=data)
-        self.logger.debug("Status code: {0}".format(response.status_code))
-        if response.status_code == 502:
-            raise BadGatewayError(url)
-        elif response.status_code == 405:  # We try the GET endpoint here
-            response = requests.get(url)
+
+        def _url_exists(url):
+            try:
+                response = requests.head(url, allow_redirects=True)
+                if response.status_code in [200, 301, 302]:
+                    self.logger.debug(f"The URL {url} exists.")
+                    return True
+                else:
+                    self.logger.debug(f"The URL {url} does not exist. Status code: {response.status_code}")
+                    return False
+
+            except requests.exceptions.RequestException as e:
+                self.logger.debug(f"An error occurred: {e}")
+                return False
+
+        self.logger.debug("Trying to get them using info endpoint")
+        if _url_exists(f"{self.url}/info"):
+            url = "{0}/info".format(self.url)
+            self.logger.debug("Using URL: {0}".format(url))
+            data = "{}"
+            response = requests.post(url, data=data)
+            self.logger.debug("Status code: {0}".format(response.status_code))
+            if response.status_code == 502:
+                raise BadGatewayError(url)
+            elif response.status_code == 405:
+                response = requests.get(url)
+            else:
+                response.raise_for_status()
+            apis_list = json.loads(response.text)["apis_list"]
         else:
-            response.raise_for_status()
-        apis_list = json.loads(response.text)["apis_list"]
+            apis_list = []
+            for api in ALLOWED_API_NAMES:
+                github_base_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/model/framework".format(self.model_id)
+                github_url = "{0}/{1}.sh".format(github_base_url, api)
+                self.logger.debug("Checking URL: {0}".format(github_url))
+                response = requests.head(github_url)
+                if response.status_code == 200:
+                    apis_list.append(api)
+
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
             for api in apis_list:
@@ -1557,11 +1584,45 @@ class HostedService(BaseServing):
                     apis_list += [l.rstrip()]
             if len(apis_list) > 0:
                 return apis_list
-        self.logger.debug("Getting them using info endpoint")
-        url = "{0}/info".format(self.url)
-        self.logger.debug("Using URL: {0}".format(url))
-        data = "{}"
-        apis_list = json.loads(requests.post(url, data=data).text)["apis_list"]
+
+        def _url_exists(url):
+            try:
+                response = requests.head(url, allow_redirects=True)
+                if response.status_code in [200, 301, 302]:
+                    self.logger.debug(f"The URL {url} exists.")
+                    return True
+                else:
+                    self.logger.debug(f"The URL {url} does not exist. Status code: {response.status_code}")
+                    return False
+
+            except requests.exceptions.RequestException as e:
+                self.logger.debug(f"An error occurred: {e}")
+                return False
+
+        self.logger.debug("Trying to get them using info endpoint")
+        if _url_exists(f"{self.url}/info"):
+            url = "{0}/info".format(self.url)
+            self.logger.debug("Using URL: {0}".format(url))
+            data = "{}"
+            response = requests.post(url, data=data)
+            self.logger.debug("Status code: {0}".format(response.status_code))
+            if response.status_code == 502:
+                raise BadGatewayError(url)
+            elif response.status_code == 405:
+                response = requests.get(url)
+            else:
+                response.raise_for_status()
+            apis_list = json.loads(response.text)["apis_list"]
+        else:
+            apis_list = []
+            for api in ALLOWED_API_NAMES:
+                github_base_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/model/framework".format(self.model_id)
+                github_url = "{0}/{1}.sh".format(github_base_url, api)
+                self.logger.debug("Checking URL: {0}".format(github_url))
+                response = requests.head(github_url)
+                if response.status_code == 200:
+                    apis_list.append(api)
+
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
             for api in apis_list:
