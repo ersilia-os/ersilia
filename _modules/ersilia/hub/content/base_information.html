@@ -932,7 +932,7 @@
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_task</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">TaskBaseInformationError</span>
         <span class="k">if</span> <span class="n">new_task</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Task&quot;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">TaskBaseInformationError</span>
+            <span class="k">raise</span> <span class="n">TaskBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="n">new_task</span>
 
     <span class="nd">@property</span>
@@ -965,7 +965,7 @@
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_subtask</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">SubtaskBaseInformationError</span>
         <span class="k">if</span> <span class="n">new_subtask</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Subtask&quot;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">SubtaskBaseInformationError</span>
+            <span class="k">raise</span> <span class="n">SubtaskBaseInformationError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subtask</span> <span class="o">=</span> <span class="n">new_subtask</span>
 
     <span class="nd">@property</span>
@@ -1103,7 +1103,7 @@
 <span class="sd">            If the output type is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_output_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#TODO change for column information</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># TODO change for column information</span>
         <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">new_output_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_output_type</span><span class="p">]</span>
             <span class="n">default_output_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">)</span>
@@ -1655,7 +1655,7 @@
 <span class="sd">            If the model size value is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_model_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span><span class="o">=</span><span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_model_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="n">ModelSizeMbBaseInformationError</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2052,14 +2052,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;environment_size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;image_size&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
-             <span class="s2">&quot;computational_performance_one&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 1&quot;</span><span class="p">,</span> <span class="n">data</span>
-         <span class="p">)</span>
+            <span class="s2">&quot;computational_performance_one&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 1&quot;</span><span class="p">,</span> <span class="n">data</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
-             <span class="s2">&quot;computational_performance_ten&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 10&quot;</span><span class="p">,</span> <span class="n">data</span>
-         <span class="p">)</span>
+            <span class="s2">&quot;computational_performance_ten&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 10&quot;</span><span class="p">,</span> <span class="n">data</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span>
-             <span class="s2">&quot;computational_performance_hund&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 100&quot;</span><span class="p">,</span> <span class="n">data</span>
-         <span class="p">)</span>
+            <span class="s2">&quot;computational_performance_hund&quot;</span><span class="p">,</span> <span class="s2">&quot;Computational Performance 100&quot;</span><span class="p">,</span> <span class="n">data</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;docker_pack_method&quot;</span><span class="p">,</span> <span class="s2">&quot;Docker Pack Method&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assign</span><span class="p">(</span><span class="s2">&quot;deployment&quot;</span><span class="p">,</span> <span class="s2">&quot;Deployment&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
 </div>
