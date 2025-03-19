@@ -13,6 +13,7 @@ from ..default import (
     SERVICE_CLASS_FILE,
 )
 from ..utils import tmp_pid_file
+from ..utils.cache import SetupRedis
 from .api import Api
 from .services import (
     CondaEnvironmentService,
@@ -72,6 +73,7 @@ class AutoService(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Setting BentoML AutoService for {0}".format(model_id))
         self.config_json = config_json
+        self.setup_redis = SetupRedis()
         self.model_id = model_id
         self._meta = None
         self._preferred_port = preferred_port
@@ -414,6 +416,9 @@ class AutoService(ErsiliaBase):
         tmp_file = tmp_pid_file(self.model_id)
         with open(tmp_file, "a+") as f:
             f.write("{0} {1}{2}".format(self.service.pid, self.service.url, os.linesep))
+        # setting up the Redis container
+        self.logger.info("Setting up Redis")
+        self.setup_redis.ensure_redis_running()
 
     def close(self):
         """
