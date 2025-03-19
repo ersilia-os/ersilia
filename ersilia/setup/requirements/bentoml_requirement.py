@@ -35,8 +35,20 @@ class BentoMLRequirement(object):
         version_file = os.path.join(EOS, "bentomlversion.txt")
 
         if not os.path.exists(version_file):
-            cmd = "bentoml --version > {0}".format(version_file)
-            run_command(cmd)
+            try:
+                self.logger.debug("Importing BentoML module to resolve the version...")
+                bentoml = importlib.import_module("bentoml")
+                version = bentoml.__version__
+                with open(version_file, "w") as f:
+                    f.write("bentoml, version {0}".format(version))
+                print(f"BentoML version: {version}")
+            except:
+                self.logger.warning("BentoML Python module could not be imported")
+                version = None
+
+            if version is None:
+                cmd = "bentoml --version > {0}".format(version_file)
+                run_command(cmd)
 
         with open(version_file, "r") as f:
             version_str = f.read().strip()

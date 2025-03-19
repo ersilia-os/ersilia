@@ -20,6 +20,7 @@ from ..utils.system import SystemChecker
 from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
+
 def set_docker_host():
     try:
         # Get the current Docker context
