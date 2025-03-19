@@ -32,7 +32,7 @@ class SetupRedis:
             self.client.ping()
             logger.info("Docker is available and running.")
         except Exception as e:
-            logger.error("Docker is not installed or running.", exc_info=True)
+            logger.error("Docker is not installed or running.")
             raise RuntimeError("Docker is not installed or running.") from e
 
         self.network = None
@@ -101,7 +101,7 @@ class SetupRedis:
                 f"Container {REDIS_CONTAINER_NAME} restarted successfully. Status: {container.status}"
             )
         except docker.errors.APIError as e:
-            logger.error("Failed to restart container.", exc_info=True)
+            logger.error("Failed to restart container.")
             raise RuntimeError("Failed to restart Redis container.") from e
 
     def _create_docker_network(self):
@@ -145,7 +145,7 @@ class SetupRedis:
                 f"Container {REDIS_CONTAINER_NAME} started successfully. ID: {container.id}"
             )
         except docker.errors.APIError as e:
-            logger.error("Failed to start new container.", exc_info=True)
+            logger.error("Failed to start new container.")
             raise RuntimeError("Failed to start new Redis container.") from e
 
     def _pull_and_start_container(self):
@@ -154,5 +154,5 @@ class SetupRedis:
             self.client.images.pull(REDIS_IMAGE)
             self._start_new_container()
         except docker.errors.APIError as e:
-            logger.error("Failed to pull image and start container.", exc_info=True)
+            logger.error("Failed to pull image and start container.")
             raise RuntimeError("Failed to pull and start Redis container.") from e
