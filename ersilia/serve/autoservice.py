@@ -71,7 +71,7 @@ class AutoService(ErsiliaBase):
         url=None,
     ):
         ErsiliaBase.__init__(self, config_json=config_json)
-        self.logger.debug("Setting BentoML AutoService for {0}".format(model_id))
+        self.logger.debug("Setting autoservice for {0}".format(model_id))
         self.config_json = config_json
         self.setup_redis = SetupRedis()
         self.model_id = model_id

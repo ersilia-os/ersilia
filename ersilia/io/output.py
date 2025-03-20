@@ -12,7 +12,6 @@ from ..serve.schema import ApiSchema
 from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..utils.logging import make_temp_dir
-from ..utils.paths import resolve_pack_method
 from .dataframe import Dataframe
 from .pure import PureDataTyper
 from .readers.file import FileTyper
@@ -352,7 +351,7 @@ class GenericOutputAdapter(ResponseRefactor):
         )
         self.model_id = model_id
         self.was_fast_api = (
-            resolve_pack_method(self._get_bundle_location(self.model_id))
+            self._resolve_pack_method_source(self.model_id)
             == PACK_METHOD_FASTAPI
         )
 
@@ -685,8 +684,11 @@ class GenericOutputAdapter(ResponseRefactor):
                     if dtype:
                         are_dtypes_informative = True
                 if output_keys_expanded is None:
-                    self.logger.warning("Output key not expanded")
+                    self.logger.warning(
+                        f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
+                    )
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
+                    self.logger.info(f"Expanded output keys: {str(output_keys_expanded)[:10]}")
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
@@ -838,6 +840,7 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = "json"
         else:
             extension = None
+        self.logger.debug(f"Extension: {extension}")
         df = self._to_dataframe(result, model_id)
         delimiters = {"csv": ",", "tsv": "\t", "h5": None}
         if extension in ["tsv", "h5", "csv"]:
