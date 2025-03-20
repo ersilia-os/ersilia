@@ -11,6 +11,7 @@ from ..default import (
     REDIS_IMAGE,
     REDIS_PORT,
 )
+from ..utils.docker import set_docker_host
 from ..utils.logging import logger
 
 
@@ -28,6 +29,7 @@ class SetupRedis:
         try:
             if not self._check_docker_installed():
                 return
+            set_docker_host()
             self.client = docker.from_env()
             self.client.ping()
             logger.info("Docker is available and running.")
