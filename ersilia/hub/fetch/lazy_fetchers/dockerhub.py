@@ -15,6 +15,7 @@ from ....default import (
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
 from ....utils.docker import SimpleDocker
+from ....utils.resolvers import PackMethodResolver
 from ...pull.pull import ModelPuller
 from .. import STATUS_FILE
 from ..actions.template_resolver import TemplateResolver
@@ -58,22 +59,33 @@ class ModelDockerHubFetcher(ErsiliaBase):
         Fetch the model from DockerHub.
     """
 
-    def __init__(self, overwrite=None, config_json=None, img_tag=None):
+    def __init__(self, overwrite=None, config_json=None, img_tag=None, force_with_bentoml=False, force_with_fastapi=False):
         super().__init__(config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.overwrite = overwrite
         self.img_tag = img_tag or DOCKERHUB_LATEST_TAG
         self.pack_method = None
+        self.force_with_bentoml = force_with_bentoml
+        self.force_with_fastapi = force_with_fastapi
 
     async def _resolve_pack_method(self, model_id):
-        self.logger.debug("Resolving pack method with TemplateResolver...")
-        tr = TemplateResolver(model_id=model_id)
-        if tr.is_fastapi():
+        if self.force_with_fastapi:
             pack_method = PACK_METHOD_FASTAPI
-        elif tr.is_bentoml():
+        elif self.force_with_bentoml:
             pack_method = PACK_METHOD_BENTOML
         else:
-            raise Exception("Pack method could not be resolved")
+            self.logger.debug("Resolving pack method from GitHub repository...")
+            pmr = PackMethodResolver(model_id=model_id)
+            pack_method = pmr.resolve_pack_method_from_github_metadata()
+            if not pack_method:
+                self.logger.debug("Resolving pack method with TemplateResolver...")
+                tr = TemplateResolver(model_id=model_id)
+                if tr.is_fastapi():
+                    pack_method = PACK_METHOD_FASTAPI
+                elif tr.is_bentoml():
+                    pack_method = PACK_METHOD_BENTOML
+                else:
+                    raise Exception("Pack method could not be resolved")
         self.logger.debug(f"Pack method resolved: {pack_method}")
         self.pack_method = pack_method
 
