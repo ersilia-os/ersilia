@@ -334,9 +334,6 @@
     <span class="n">DOCKER_INFO_FILE</span><span class="p">,</span>
     <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
     <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
-    <span class="n">EOS</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.system</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemChecker</span>
@@ -344,18 +341,34 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
 
 
-<div class="viewcode-block" id="resolve_pack_method_docker">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.resolve_pack_method_docker">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>  <span class="c1"># TODO read from metadata</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
-    <span class="n">bundle_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">EOS</span><span class="si">}</span><span class="s2">/dest/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">docker_tag</span> <span class="o">=</span> <span class="n">model_image_version_reader</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">)</span>
-    <span class="n">model_image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">docker_tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">image_history</span> <span class="o">=</span> <span class="n">model_image</span><span class="o">.</span><span class="n">history</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">hist</span> <span class="ow">in</span> <span class="n">image_history</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;nginx&quot;</span> <span class="ow">in</span> <span class="n">hist</span><span class="p">[</span><span class="s2">&quot;CreatedBy&quot;</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
-    <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span></div>
+<div class="viewcode-block" id="set_docker_host">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.docker.set_docker_host">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_docker_host</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Get the current Docker context</span>
+        <span class="n">context_result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;show&quot;</span><span class="p">],</span>
+            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">context_name</span> <span class="o">=</span> <span class="n">context_result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c1"># Get the Docker host for the current context</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;inspect&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="s2">&quot;{{.Endpoints.docker.Host}}&quot;</span><span class="p">],</span>
+            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="n">base_url</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">base_url</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DOCKER_HOST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_url</span>  <span class="c1"># Set the variable for this process</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span></div>
+
 
 
 
@@ -742,6 +755,9 @@
 <span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">local_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
+        <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dirname</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">),</span> <span class="s2">&quot;tmp.txt&quot;</span><span class="p">)</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker cp </span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> &amp;&gt; </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">img_path</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">tmp_file</span><span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
@@ -840,6 +856,7 @@
 <span class="sd">            The peak memory usage in MB, or None if the container is not found or an error occurs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">set_docker_host</span><span class="p">()</span>
             <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">ctr</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">list</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">ctr</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
@@ -997,6 +1014,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">sampling_interval</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="n">set_docker_host</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">container</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_container_for_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -1023,6 +1041,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">model_id</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model ID is required&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="n">set_docker_host</span><span class="p">()</span>
             <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
             <span class="n">containers</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
 

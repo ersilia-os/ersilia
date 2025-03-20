@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2024.08.06 -->
-        <title>ersilia.utils.cache - Ersilia documentation</title>
+        <title>ersilia.utils.resolvers - Ersilia documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
@@ -317,172 +317,135 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>Source code for ersilia.utils.cache</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+          <h1>Source code for ersilia.utils.resolvers</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">docker</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DEFAULT_DOCKER_NETWORK_BRIDGE</span><span class="p">,</span>
-    <span class="n">DEFAULT_DOCKER_NETWORK_NAME</span><span class="p">,</span>
-    <span class="n">REDIS_CONTAINER_NAME</span><span class="p">,</span>
-    <span class="n">REDIS_DATA_VOLUME</span><span class="p">,</span>
-    <span class="n">REDIS_IMAGE</span><span class="p">,</span>
-    <span class="n">REDIS_PORT</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_docker_host</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span> <span class="n">PACKMETHOD_FILE</span>
 
 
-<div class="viewcode-block" id="SetupRedis">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cache.SetupRedis">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SetupRedis</span><span class="p">:</span>
+<div class="viewcode-block" id="PackMethodResolver">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PackMethodResolver</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A utility class to ensure a Redis server is running using Docker.</span>
-
-<span class="sd">    This class uses the Docker SDK for Python to manage the Redis container.</span>
-<span class="sd">    It checks for the availability of the Redis image, handles container lifecycle</span>
-<span class="sd">    operations (restart, create) and ensures that a Docker volume is mounted for</span>
-<span class="sd">    data persistence.</span>
+<span class="sd">    This class resolves the pack method for a given model after the fetch resolution.</span>
+<span class="sd">    Note that this class is different from the TemplateResolver, which resolves the pack method</span>
+<span class="sd">    before the fetch procedure.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_docker_installed</span><span class="p">():</span>
-                <span class="k">return</span>
-            <span class="n">set_docker_host</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Docker is available and running.&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Docker is not installed or running.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Docker is not installed or running.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="kc">None</span>
-
-<div class="viewcode-block" id="SetupRedis.ensure_redis_running">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cache.SetupRedis.ensure_redis_running">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">ensure_redis_running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PackMethodResolver.resolve_pack_method_tracked_at_fetch">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver.resolve_pack_method_tracked_at_fetch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_tracked_at_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Ensure that a Redis server is running by managing the Docker container.</span>
+<span class="sd">        Read the pack method from available from the fetch procedure (i.e. as resolved by the TemplateResolver)</span>
 
-<span class="sd">        This method checks if the Redis image exists, whether a container with the</span>
-<span class="sd">        specified name is available and running, and starts or restarts the container</span>
-<span class="sd">        as needed.</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            RuntimeError: If the container fails to start.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The packaging method (fastapi or bentoml)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Checking Redis server status...&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_docker_installed</span><span class="p">():</span>
-            <span class="k">return</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">pack_method_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">PACKMETHOD_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pack_method_file</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pack_method_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_image_available</span><span class="p">():</span>
-            <span class="n">container</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_container</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">container</span><span class="p">:</span>
-                <span class="n">container</span><span class="o">.</span><span class="n">reload</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">container</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;exited&quot;</span> <span class="ow">or</span> <span class="n">container</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="s2">&quot;running&quot;</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_restart_container</span><span class="p">(</span><span class="n">container</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Redis container is already running.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PackMethodResolver.resolve_pack_method_from_github_metadata">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver.resolve_pack_method_from_github_metadata">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_from_github_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve the packaging method based on metadata available from GitHub</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The packaging method (fastapi or bentoml)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">root_github_url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/refs/heads/main/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;yml&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">root_github_url</span><span class="si">}</span><span class="s2">/metadata.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;yml&quot;</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;Docker Pack Method&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Docker Pack Method&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_start_new_container</span><span class="p">()</span>
+                <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PackMethodResolver.resolve_pack_method_source">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver.resolve_pack_method_source">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve the packaging method for a model based on its source files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_path : str</span>
+<span class="sd">            The path to the model directory.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The packaging method if found, otherwise None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_pack_method_source</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PackMethodResolver.resolve_pack_method">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver.resolve_pack_method">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resolve the packaging method for a model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_path : str</span>
+<span class="sd">            The path to the model directory.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The packaging method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pack_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_pack_method_tracked_at_fetch</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">pack_method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pack_method</span>
+        <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+        <span class="n">model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">service_class_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;service_class.txt&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">service_class_file</span><span class="p">):</span>
+            <span class="n">service_class</span> <span class="o">=</span> <span class="s2">&quot;pulled_docker&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pull_and_start_container</span><span class="p">()</span>
-
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Redis server setup completed.&quot;</span><span class="p">)</span></div>
-
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_check_docker_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;docker&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Docker is not installed on this runner. Skipping Docker operations.&quot;</span>
-            <span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_is_image_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">images</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">REDIS_IMAGE</span><span class="p">)</span>
-        <span class="n">available</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image </span><span class="si">{</span><span class="n">REDIS_IMAGE</span><span class="si">}</span><span class="s2"> available: </span><span class="si">{</span><span class="n">available</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">available</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">containers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
-            <span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">REDIS_CONTAINER_NAME</span><span class="p">}</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">containers</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found existing container: </span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">containers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_restart_container</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Restarting container: </span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">container</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-            <span class="n">container</span><span class="o">.</span><span class="n">reload</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Container </span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2"> restarted successfully. Status: </span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to restart container.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to restart Redis container.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_create_docker_network</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">networks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">networks</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">DEFAULT_DOCKER_NETWORK_NAME</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">networks</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="n">networks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Docker network already exists: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;service_class.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">service_class</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">service_class</span> <span class="o">==</span> <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class is pulled_docker, resolving pack method from GitHub metadata...&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_pack_method_from_github_metadata</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">networks</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">DEFAULT_DOCKER_NETWORK_NAME</span><span class="p">,</span>
-                <span class="n">driver</span><span class="o">=</span><span class="n">DEFAULT_DOCKER_NETWORK_BRIDGE</span><span class="p">,</span>
-                <span class="n">attachable</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Docker network created: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">network</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_create_data_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">volumes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">volumes</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">REDIS_DATA_VOLUME</span><span class="p">})</span>
-        <span class="k">if</span> <span class="n">volumes</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">volumes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume already exists: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">volumes</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">REDIS_DATA_VOLUME</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume created: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_start_new_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_docker_network</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_data_volume</span><span class="p">()</span>
-
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting a new container: </span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">container</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                <span class="n">image</span><span class="o">=</span><span class="n">REDIS_IMAGE</span><span class="p">,</span>
-                <span class="n">name</span><span class="o">=</span><span class="n">REDIS_CONTAINER_NAME</span><span class="p">,</span>
-                <span class="n">detach</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">ports</span><span class="o">=</span><span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">REDIS_PORT</span><span class="si">}</span><span class="s2">/tcp&quot;</span><span class="p">:</span> <span class="n">REDIS_PORT</span><span class="p">},</span>
-                <span class="n">network</span><span class="o">=</span><span class="n">DEFAULT_DOCKER_NETWORK_NAME</span><span class="p">,</span>
-                <span class="n">volumes</span><span class="o">=</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="s2">&quot;/data&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;rw&quot;</span><span class="p">}},</span>
-                <span class="n">auto_remove</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Container will be removed on stop, but volume persists.</span>
-            <span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Container </span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2"> started successfully. ID: </span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to start new container.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to start new Redis container.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_pull_and_start_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pulling image </span><span class="si">{</span><span class="n">REDIS_IMAGE</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">REDIS_IMAGE</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_start_new_container</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to pull image and start container.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to pull and start Redis container.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class is not pulled_docker, resolving pack method from source...&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_pack_method_source</span><span class="p">()</span></div>
+</div>
 
 </pre></div>
         </article>

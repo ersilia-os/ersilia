@@ -327,15 +327,10 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">ersilia</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
     <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_pack_method_docker</span>
 
 <span class="n">MODELS_DEVEL_DIRNAME</span> <span class="o">=</span> <span class="s2">&quot;models&quot;</span>
 
@@ -587,57 +582,6 @@
 <span class="n">ErsiliaMetadataLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span>
     <span class="n">yaml</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">BaseResolver</span><span class="o">.</span><span class="n">DEFAULT_MAPPING_TAG</span><span class="p">,</span> <span class="n">metadata_constructor</span>
 <span class="p">)</span>
-
-
-<div class="viewcode-block" id="resolve_pack_method_source">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.resolve_pack_method_source">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_source</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Resolve the packaging method for a model based on its source files.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    model_path : str</span>
-<span class="sd">        The path to the model directory.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    str or None</span>
-<span class="sd">        The packaging method if found, otherwise None.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;installs&quot;</span><span class="p">,</span> <span class="s2">&quot;install.sh&quot;</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
-    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;bentoml.yml&quot;</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not resolve pack method&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="kc">None</span></div>
-
-
-
-<div class="viewcode-block" id="resolve_pack_method">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.paths.resolve_pack_method">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Resolve the packaging method for a model.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    model_path : str</span>
-<span class="sd">        The path to the model directory.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    str</span>
-<span class="sd">        The packaging method.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;service_class.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">service_class</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">service_class</span> <span class="o">==</span> <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">Paths</span><span class="p">()</span><span class="o">.</span><span class="n">model_id_from_path</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">resolve_pack_method_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">resolve_pack_method_source</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="get_metadata_from_base_dir">

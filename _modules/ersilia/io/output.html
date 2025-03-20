@@ -332,7 +332,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.api_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnprocessableInputError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.hdf5</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5Data</span><span class="p">,</span> <span class="n">Hdf5DataStacker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_pack_method</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.dataframe</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataframe</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.pure</span><span class="w"> </span><span class="kn">import</span> <span class="n">PureDataTyper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.readers.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileTyper</span>
@@ -695,7 +694,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">was_fast_api</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">resolve_pack_method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_pack_method_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
             <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span>
         <span class="p">)</span>
 
@@ -1028,8 +1027,11 @@
                     <span class="k">if</span> <span class="n">dtype</span><span class="p">:</span>
                         <span class="n">are_dtypes_informative</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">if</span> <span class="n">output_keys_expanded</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Output key not expanded&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Output key not expanded: val </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">vals</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">output_keys</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
                     <span class="n">output_keys_expanded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__expand_output_keys</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">output_keys</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expanded output keys: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">output_keys_expanded</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">are_dtypes_informative</span><span class="p">:</span>
                     <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_guess_pure_dtype_if_absent</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -1187,6 +1189,7 @@
             <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">extension</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extension: </span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dataframe</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="n">delimiters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;csv&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;tsv&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;tsv&quot;</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">]:</span>

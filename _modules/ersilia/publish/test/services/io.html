@@ -360,7 +360,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.setup</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupService</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....hub.fetch.actions.template_resolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateResolver</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.exceptions_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">test_exceptions</span> <span class="k">as</span> <span class="n">texc</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">set_docker_host</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 
 
@@ -768,6 +768,7 @@
 <span class="sd">            The size of the Docker image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">image_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">set_docker_host</span><span class="p">()</span>
         <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>

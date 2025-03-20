@@ -320,7 +320,7 @@
           <h1>Source code for ersilia.hub.fetch.actions.pack_fastapi</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PACKMODE_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span> <span class="n">PACKMETHOD_FILE</span><span class="p">,</span> <span class="n">PACKMODE_FILE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..pack.fastapi_pack.mode</span><span class="w"> </span><span class="kn">import</span> <span class="n">AVAILABLE_MODES</span><span class="p">,</span> <span class="n">PackModeDecision</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..pack.fastapi_pack.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_runner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAction</span>
@@ -377,6 +377,12 @@
         <span class="p">)</span>
         <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">PACKMETHOD_FILE</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing pack method </span><span class="si">{0}</span><span class="s2"> to file </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span> <span class="n">PACKMETHOD_FILE</span><span class="p">))</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">PACK_METHOD_FASTAPI</span><span class="p">)</span>
+
 <div class="viewcode-block" id="ModelPacker.pack">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.pack_fastapi.ModelPacker.pack">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -385,7 +391,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_decide_pack_mode</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_pack_method</span><span class="p">()</span></div>
 </div>
 
 </pre></div>

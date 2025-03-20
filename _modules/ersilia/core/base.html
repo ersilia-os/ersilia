@@ -322,10 +322,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span> <span class="n">PACK_METHOD_FASTAPI</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..tools.bentoml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">Credentials</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_pack_method</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
 
 <span class="n">home</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">())</span>
@@ -412,8 +411,7 @@
             <span class="k">return</span> <span class="n">path</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_bento_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-        <span class="n">bundle_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">resolve_pack_method</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_pack_method_source</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bentoml&quot;</span><span class="p">,</span> <span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:latest&quot;</span><span class="p">,</span> <span class="s2">&quot;--print-location&quot;</span><span class="p">,</span> <span class="s2">&quot;--quiet&quot;</span><span class="p">]</span>
@@ -440,7 +438,16 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cred</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No credentials found.&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_pack_method_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
+        <span class="n">bundle_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">,</span> <span class="s2">&quot;installs&quot;</span><span class="p">,</span> <span class="s2">&quot;install.sh&quot;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">,</span> <span class="s2">&quot;bentoml.yml&quot;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not resolve pack method by simply looking at the bundle path&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 </pre></div>
         </article>
