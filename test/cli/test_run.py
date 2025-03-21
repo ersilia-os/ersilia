@@ -99,7 +99,7 @@ def compound_csv():
 
 @pytest.fixture
 def mock_std_api_post():
-    def mock_post_side_effect(input, output, output_source):
+    def mock_post_side_effect(input, output, batch_size, output_source):
         api_instance = StandardCSVRunApi(model_id=MODEL_ID, url=URL)
         logger.info(f"Input: {input}")
         input_data = api_instance.serialize_to_json(input)
