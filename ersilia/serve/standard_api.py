@@ -19,6 +19,10 @@ from ..default import (
 )
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
+from ..utils.exceptions_utils.api_exceptions import (
+    HeaderNotFoundError,
+    UnprocessableInputError,
+)
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -205,14 +209,17 @@ class StandardCSVRunApi(ErsiliaBase):
            Returns the header which is a list of column names, or None if the header could not be determined.
         """
         file = None
+        # Look for header file in predefined output files
         for pf in PREDEFINED_EXAMPLE_OUTPUT_FILES:
-            if os.path.exists(os.path.join(self.path, pf)):
-                file = os.path.join(self.path, pf)
+            candidate = os.path.join(self.path, pf)
+            if os.path.exists(candidate):
+                file = candidate
                 self.logger.debug(
                     f"Determining header from predefined example output file: {pf}"
                 )
                 break
-        if not file and os.path.exists(self.standard_output_csv):
+        # Fallback to standard output CSV
+        if file is None and os.path.exists(self.standard_output_csv):
             file = self.standard_output_csv
             self.logger.debug(
                 f"Determining header from standard output file: {self.standard_output_csv}"
@@ -222,17 +229,18 @@ class StandardCSVRunApi(ErsiliaBase):
             with open(file, "r") as f:
                 reader = csv.reader(f)
                 header = next(reader)
-                if (
-                    header[0:2]
-                    != [
-                        "key",
-                        "input",
-                    ]
-                ):  # Slicing doesn't raise an error even if the list does not have 2 elements
+                # Ensure header starts with ["key", "input"]
+                if header[0:2] != ["key", "input"]:
                     header = ["key", "input"] + header
+            if any(col is None for col in header):
+                msg = f"Invalid header: {header}"
+                self.logger.error(msg)
+                raise HeaderNotFoundError(msg)
             return header
-        except (FileNotFoundError, StopIteration):
-            self.logger.error(f"Could not determine header from file {file}")
+        except (FileNotFoundError, StopIteration) as e:
+            msg = f"Could not determine header from file {file}"
+            self.logger.error(msg)
+            raise HeaderNotFoundError(msg) from e
 
     def parse_smiles_list(self, input_data):
         """
@@ -249,7 +257,7 @@ class StandardCSVRunApi(ErsiliaBase):
             List of dictionaries containing encoded SMILES strings.
         """
         if not input_data or all(not s.strip() for s in input_data):
-            raise ValueError(
+            raise UnprocessableInputError(
                 "The list of SMILES strings is empty or contains only empty strings."
             )
         return [
@@ -273,7 +281,7 @@ class StandardCSVRunApi(ErsiliaBase):
             List containing a dictionary with the encoded SMILES string.
         """
         if not self.validate_smiles(input):
-            raise ValueError("The SMILES string is invalid.")
+            raise UnprocessableInputError("The SMILES string is invalid.")
         key = self.encoder.encode(input)
         return [{"key": key, "input": input, "text": input}]
 
@@ -428,7 +436,7 @@ class StandardCSVRunApi(ErsiliaBase):
         elif isinstance(input_data, list):
             return self.parse_smiles_list(input_data)
         else:
-            raise ValueError(
+            raise UnprocessableInputError(
                 "Input must be either a file path (string), a SMILES string, or a list of SMILES strings."
             )
 
@@ -554,5 +562,11 @@ class StandardCSVRunApi(ErsiliaBase):
             ft = time.perf_counter()
             self.logger.info(f"Output is being generated within: {ft-st:.5} seconds")
             return output_data
+        elif response.status_code == 422:
+            raise UnprocessableInputError(
+                "Received status code 422: Unprocessable input."
+            )
         else:
-            return None
+            raise UnprocessableInputError(
+                f"API returned unexpected status code: {response.status_code}"
+            )
