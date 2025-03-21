@@ -586,7 +586,8 @@ class StandardCSVRunApi(ErsiliaBase):
                 return None
         combined_results = []
         for inp, out in zip(input_data, overall_results):
-            _output = {"outcome": [v] for k, v in out.items()}
+            v = list(out.values())
+            _output = {"outcome": v}
             combined_results.append({"input": inp, "output": _output})
 
         et = time.perf_counter()
