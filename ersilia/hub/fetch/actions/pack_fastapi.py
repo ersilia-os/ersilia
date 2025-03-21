@@ -1,6 +1,6 @@
 import os
 
-from ....default import PACKMODE_FILE
+from ....default import PACK_METHOD_FASTAPI, PACKMETHOD_FILE, PACKMODE_FILE
 from ..pack.fastapi_pack.mode import AVAILABLE_MODES, PackModeDecision
 from ..pack.fastapi_pack.runners import get_runner
 from . import BaseAction
@@ -55,6 +55,12 @@ class ModelPacker(BaseAction):
         )
         runner.run()
 
+    def _register_pack_method(self):
+        path = self._get_bundle_location(self.model_id)
+        with open(os.path.join(path, PACKMETHOD_FILE), "w") as f:
+            self.logger.debug("Writing pack method {0} to file {1}".format(PACK_METHOD_FASTAPI, PACKMETHOD_FILE))
+            f.write(PACK_METHOD_FASTAPI)
+
     def pack(self):
         """
         Packs the model using FastAPI.
@@ -62,3 +68,4 @@ class ModelPacker(BaseAction):
         self._setup()
         self._decide_pack_mode()
         self._run()
+        self._register_pack_method()

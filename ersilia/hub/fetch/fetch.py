@@ -5,7 +5,11 @@ from collections import namedtuple
 
 from ... import ErsiliaBase
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...default import MODEL_SOURCE_FILE, PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
+from ...default import (
+    MODEL_SOURCE_FILE,
+    PACK_METHOD_BENTOML,
+    PACK_METHOD_FASTAPI,
+)
 from ...hub.delete.delete import ModelFullDeleter
 from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...setup.requirements import check_bentoml
@@ -106,7 +110,8 @@ class ModelFetcher(ErsiliaBase):
             dockerize = True
         self.do_docker = dockerize
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
-            overwrite=self.overwrite, config_json=self.config_json, img_tag=img_version
+            overwrite=self.overwrite, config_json=self.config_json, img_tag=img_version,
+            force_with_bentoml=force_with_bentoml, force_with_fastapi=force_with_fastapi
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
         self.is_docker_active = self.model_dockerhub_fetcher.is_docker_active()

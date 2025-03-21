@@ -2,7 +2,6 @@ import json
 import os
 
 from ....default import INFORMATION_FILE
-from ....utils.paths import resolve_pack_method
 from ...bundle.repo import ServiceFile
 from ...content.information import Information
 from . import BaseAction
@@ -46,5 +45,5 @@ class ModelInformer(BaseAction):
         Write information to a JSON file and add API info for bentoml models.
         """
         self._write_information_json()
-        if resolve_pack_method(self._get_bundle_location(self.model_id)) == "bentoml":
+        if self._resolve_pack_method_source(self.model_id) == "bentoml":
             self._add_info_api()
