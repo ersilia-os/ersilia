@@ -32,3 +32,9 @@ def test_as_list_of_dicts(catalog_samples):
     catalog_table_empty = CatalogTable(data=[], columns=columns)
     result_empty = catalog_table_empty.as_list_of_dicts()
     assert result_empty == [], "The result should be an empty list for empty input data"
+
+def test_generate_separator_line():
+    catalog = CatalogTable([], [])
+    separator = catalog.generate_separator_line("+", "-", "+", "=", [5, 10])
+    assert separator == "+=======+============+"
+
