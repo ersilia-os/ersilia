@@ -692,6 +692,7 @@ class GenericOutputAdapter(ResponseRefactor):
                     if len(output_keys) == 1:
                         self.dtypes = [t]
                 vals = self.__cast_values(vals, self.dtypes, output_keys)
+                self.logger.warning(f"Input: {inp}")
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)
@@ -838,10 +839,14 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = "json"
         else:
             extension = None
+        self.logger.info("Adapting fastapi")
         df = self._to_dataframe(result, model_id)
-        delimiters = {"csv": ",", "tsv": "\t", "h5": None}
-        if extension in ["tsv", "h5", "csv"]:
+        self.logger.info("After df")
+        delimiters = {"csv": ",", "tsv": "\t"}
+        if extension in ["tsv", "csv"]:
             df.write(output, delimiter=delimiters[extension])
+        elif extension in ["h5"]:
+            df.write(output)
         elif extension == "json":
             data = json.loads(result)
             with open(output, "w") as f:

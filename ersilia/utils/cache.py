@@ -101,7 +101,7 @@ class SetupRedis:
                 f"Container {REDIS_CONTAINER_NAME} restarted successfully. Status: {container.status}"
             )
         except docker.errors.APIError as e:
-            logger.error("Failed to restart container.", exc_info=True)
+            logger.error("Failed to restart container.")
             raise RuntimeError("Failed to restart Redis container.") from e
 
     def _create_docker_network(self):

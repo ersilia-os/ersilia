@@ -17,6 +17,7 @@ from ..default import (
     INFORMATION_FILE,
     PREDEFINED_EXAMPLE_OUTPUT_FILES,
 )
+from ..io.output import GenericOutputAdapter
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 
@@ -82,6 +83,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.debug(
             "This is the expected header (max 10): {0}".format(self.header[:10])
         )
+        self.generic_adapter = GenericOutputAdapter(model_id=self.model_id)
 
     def _read_information_file(self):
         try:
@@ -459,9 +461,9 @@ class StandardCSVRunApi(ErsiliaBase):
                 "Not amenable for standard run: output type not standardizable"
             )
             return False
-        if not self.is_output_csv_file(output_data):
-            self.logger.debug("Not amenable for standard run: output data not CSV file")
-            return False
+        # if not self.is_output_csv_file(output_data):
+        #     self.logger.debug("Not amenable for standard run: output data not CSV file")
+        #     return False
         self.logger.debug("It seems amenable for standard run")
         return True
 
@@ -521,9 +523,13 @@ class StandardCSVRunApi(ErsiliaBase):
 
         return output_data
 
-    def post(self, input, output, output_source=OutputSource.LOCAL_ONLY):
+    def _serialize_output(self, result, output, model_id, api_name):
+        self.generic_adapter._adapt_generic(result, output, model_id, api_name)
+
+    def post(self, input, output, batch_size, output_source):
         """
-        Post input data to the API and get the output data. And store the output data if needed.
+        Post input data to the API in batches and get the output data.
+        Finally, create a CSV file with the combined results.
 
         Parameters
         ----------
@@ -531,6 +537,8 @@ class StandardCSVRunApi(ErsiliaBase):
             Input data which can be a file path, a SMILES string, or a list of SMILES strings.
         output : str
             Path to the output CSV file.
+        batch_size : int
+            Number of items per batch.
         output_source : OutputSource, optional
             Source of the output data. Default is OutputSource.LOCAL_ONLY.
 
@@ -540,19 +548,53 @@ class StandardCSVRunApi(ErsiliaBase):
             Path to the output CSV file if successful, None otherwise.
         """
         input_data = self.serialize_to_json(input)
+
         if OutputSource.is_cloud(output_source):
             store = InferenceStoreApi(model_id=self.model_id)
             return store.get_precalculations(input_data)
-        url = "{0}/{1}".format(self.url, self.api_name)
+
+        url = f"{self.url}/{self.api_name}"
+
+        if not isinstance(input_data, list):
+            input_data = [input_data]
+
+        overall_results = []
         st = time.perf_counter()
-        response = requests.post(url, json=input_data)
+
+        total = len(input_data)
+        self.logger.info("waiting for the server...")
+        for i in range(0, total, batch_size):
+            batch = input_data[i : i + batch_size]
+            batch_st = time.perf_counter()
+            response = requests.post(url, json=batch)
+            batch_et = time.perf_counter()
+            self.logger.info(
+                f"Batch {i//batch_size + 1} response fetched within: {batch_et - batch_st:.4f} seconds"
+            )
+
+            if response.status_code == 200:
+                batch_result = response.json()
+                if "result" in batch_result:
+                    batch_result = batch_result["result"]
+                    if "meta" in batch_result:
+                        del batch_result["meta"]
+                overall_results.extend(batch_result)
+            else:
+                self.logger.error(
+                    f"Batch {i//batch_size + 1} request failed with status: {response.status_code}"
+                )
+                return None
+        combined_results = []
+        for inp, out in zip(input_data, overall_results):
+            _output = {"outcome": [v] for k, v in out.items()}
+            combined_results.append({"input": inp, "output": _output})
+
         et = time.perf_counter()
-        self.logger.info(f"Response fetched within: {et-st:.4} second")
-        if response.status_code == 200:
-            result = response.json()
-            output_data = self.serialize_to_csv(input_data, result, output)
-            ft = time.perf_counter()
-            self.logger.info(f"Output is being generated within: {ft-st:.5} seconds")
-            return output_data
-        else:
-            return None
+        self.logger.info(f"All batches processed in {et - st:.4f} seconds")
+
+        self._serialize_output(
+            json.dumps(combined_results), output, self.model_id, self.api_name
+        )
+        ft = time.perf_counter()
+        self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")
+        return output
