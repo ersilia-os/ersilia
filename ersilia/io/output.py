@@ -351,8 +351,7 @@ class GenericOutputAdapter(ResponseRefactor):
         )
         self.model_id = model_id
         self.was_fast_api = (
-            self._resolve_pack_method_source(self.model_id)
-            == PACK_METHOD_FASTAPI
+            self._resolve_pack_method_source(self.model_id) == PACK_METHOD_FASTAPI
         )
 
     @staticmethod
@@ -688,13 +687,14 @@ class GenericOutputAdapter(ResponseRefactor):
                         f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
                     )
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
-                    self.logger.info(f"Expanded output keys: {str(output_keys_expanded)[:10]}")
+                    self.logger.info(
+                        f"Expanded output keys: {str(output_keys_expanded)[:10]}"
+                    )
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
                         self.dtypes = [t]
                 vals = self.__cast_values(vals, self.dtypes, output_keys)
-                self.logger.warning(f"Input: {inp}")
             R += [[inp["key"], inp["input"]] + vals]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)
