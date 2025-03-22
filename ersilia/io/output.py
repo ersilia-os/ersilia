@@ -351,8 +351,7 @@ class GenericOutputAdapter(ResponseRefactor):
         )
         self.model_id = model_id
         self.was_fast_api = (
-            self._resolve_pack_method_source(self.model_id)
-            == PACK_METHOD_FASTAPI
+            self._resolve_pack_method_source(self.model_id) == PACK_METHOD_FASTAPI
         )
 
     @staticmethod
@@ -688,7 +687,9 @@ class GenericOutputAdapter(ResponseRefactor):
                         f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
                     )
                     output_keys_expanded = self.__expand_output_keys(vals, output_keys)
-                    self.logger.info(f"Expanded output keys: {str(output_keys_expanded)[:10]}")
+                    self.logger.info(
+                        f"Expanded output keys: {str(output_keys_expanded)[:10]}"
+                    )
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
@@ -842,9 +843,12 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = None
         self.logger.debug(f"Extension: {extension}")
         df = self._to_dataframe(result, model_id)
-        delimiters = {"csv": ",", "tsv": "\t", "h5": None}
-        if extension in ["tsv", "h5", "csv"]:
+        self.logger.info("After df")
+        delimiters = {"csv": ",", "tsv": "\t"}
+        if extension in ["tsv", "csv"]:
             df.write(output, delimiter=delimiters[extension])
+        elif extension in ["h5"]:
+            df.write(output)
         elif extension == "json":
             data = json.loads(result)
             with open(output, "w") as f:
