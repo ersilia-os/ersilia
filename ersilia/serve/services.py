@@ -22,6 +22,7 @@ from ..default import (
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     PACKMODE_FILE,
+    DEFAULT_API_NAME
 )
 from ..setup.requirements.bentoml_requirement import BentoMLRequirement
 
@@ -135,7 +136,9 @@ class BaseServing(ErsiliaBase):
     def _get_apis_from_fastapi(self):
         bundle_path = self._model_path(self.model_id)
         apis_list = []
-        for fn in os.listdir(os.path.join(bundle_path, "model", "framework")):
+        if not os.path.exists(os.path.join(bundle_path, "model", "framework")):
+            return None
+        for fn in os.listdir():
             if fn.endswith(".sh"):
                 api_name = fn.split(".")[0]
                 apis_list += [api_name]
@@ -1282,6 +1285,7 @@ class PulledDockerImageService(BaseServing):
                     apis_list += [l.rstrip()]
             if len(apis_list) > 0:
                 return apis_list
+        apis_list = None
         self.logger.debug("Getting them using info endpoint")
         url = "{0}/info".format(self.url)
         self.logger.debug("Using URL: {0}".format(url))
@@ -1290,11 +1294,13 @@ class PulledDockerImageService(BaseServing):
         self.logger.debug("Status code: {0}".format(response.status_code))
         if response.status_code == 502:
             raise BadGatewayError(url)
-        elif response.status_code == 405:  # We try the GET endpoint here
+        elif response.status_code == 405:  
             response = requests.get(url)
+            apis_list = json.loads(response.text)["apis_list"]
         else:
-            response.raise_for_status()
-        apis_list = json.loads(response.text)["apis_list"]
+            # I added here a final fall back
+            apis_list = [DEFAULT_API_NAME]
+
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
             for api in apis_list:
