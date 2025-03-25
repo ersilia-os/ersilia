@@ -23,7 +23,7 @@ from ..default import (
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     PACKMODE_FILE,
-    DEFAULT_API_NAME
+    DEFAULT_API_NAME,
 )
 from ..setup.requirements.bentoml_requirement import BentoMLRequirement
 
@@ -1326,7 +1326,7 @@ class PulledDockerImageService(BaseServing):
                 response = requests.head(github_url)
                 if response.status_code == 200:
                     apis_list.append(api)
-                    
+
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
             for api in apis_list:

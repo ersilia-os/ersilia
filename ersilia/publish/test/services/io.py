@@ -562,8 +562,3 @@ class PackageInstaller:
         self.logger.info(
             f"Installation complete in the conda environment: {self.model_id}"
         )
-
-
-def is_arm_arch():
-    machine = platform.machine().lower()
-    return "arm" in machine or "aarch64" in machine

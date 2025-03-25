@@ -1,6 +1,5 @@
 import csv
 import os
-import subprocess
 import warnings
 import tempfile
 import traceback
@@ -25,7 +24,6 @@ from ....default import (
 from .constants import STATUS_CONFIGS, TABLE_CONFIGS, Checks, TableType
 from .setup import SetupService
 from .inspect import InspectService
-from .io import IOService, PackageInstaller, is_arm_arch
 from .checks import CheckService
 from ....default import PREDEFINED_COLUMN_FILE
 from ....io.input import ExampleGenerator
