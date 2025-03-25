@@ -231,6 +231,7 @@ class ReadmeFormatter():
         text += f"ersilia example -n 3 -f my_input.csv\n"
         text += "# run the model\n"
         text += f"ersilia run -i my_input.csv -o my_output.csv\n"
+        text += "# close the model\n"
         text += f"ersilia close\n"
         text += "```\n\n"
         
