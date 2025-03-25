@@ -3,10 +3,6 @@ import os
 import random
 
 from ... import logger
-from ...setup.requirements.compound import (
-    ChemblWebResourceClientRequirement,
-    RdkitRequirement,
-)
 from ...utils.identifiers.arbitrary import ArbitraryIdentifier
 from ...utils.identifiers.compound import CompoundIdentifier
 from ..shape import InputShapeList, InputShapePairOfLists, InputShapeSingle
@@ -75,10 +71,9 @@ class IO(object):
         None
         """
         self.logger.debug(
-            "Checking RDKIT and other requirements necessary for compound inputs"
+            "Making sure that the necessary requirements are met"
         )
-        RdkitRequirement()
-        ChemblWebResourceClientRequirement()
+        pass
 
     def example(self, n_samples):
         """
@@ -156,7 +151,7 @@ class IO(object):
         bool
             True if the text is a valid key, False otherwise.
         """
-        return self.identifier._is_inchikey(text)
+        return self.identifier._is_key(text)
 
     def string_delimiter(self):
         """
@@ -258,11 +253,8 @@ class IO(object):
         key = None
         if text_type == "smiles":
             inp = text
-        elif text_type == "inchikey":
-            inp = self.identifier.unichem_resolver(text)
-            key = text
         else:
-            inp = self.identifier.chemical_identifier_resolver(text)
+            inp = None
         if key is None:
             key = self.identifier.encode(inp)
         result = {"key": key, "input": inp, "text": text}
