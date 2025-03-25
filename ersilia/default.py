@@ -34,6 +34,7 @@ DEFAULT_MODEL_ID = "eos0zzz"
 DEFAULT_VENV = "env"
 DEFAULT_API_NAME = "run"
 PACKMODE_FILE = "pack_mode.txt"
+PACKMETHOD_FILE = "pack_method.txt"
 CARD_FILE = "card.json"
 UNPROCESSABLE_INPUT = "UNPROCESSABLE_INPUT"
 DOTENV_FILE = ".env"
@@ -49,13 +50,10 @@ EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 PREDEFINED_EXAMPLE_INPUT_FILES = [
     "model/framework/examples/run_input.csv",
     "model/framework/examples/input.csv",
-    "model/framework/input.csv",
 ]
 
 PREDEFINED_EXAMPLE_OUTPUT_FILES = [
     "model/framework/examples/output.csv",
-    "model/framework/output.csv",
-    "example.csv",
     "model/framework/examples/run_output.csv",
 ]
 

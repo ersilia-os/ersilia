@@ -40,7 +40,7 @@ from .constants import (
 from .setup import SetupService
 from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.exceptions_utils import test_exceptions as texc
-from ....utils.docker import SimpleDocker
+from ....utils.docker import SimpleDocker, set_docker_host
 from ....cli import echo
 
 
@@ -421,6 +421,7 @@ class IOService:
             The size of the Docker image.
         """
         image_name = f"{DOCKERHUB_ORG}/{self.model_id}:{tag}"
+        set_docker_host()
         client = docker.from_env()
         try:
             image = client.images.get(image_name)

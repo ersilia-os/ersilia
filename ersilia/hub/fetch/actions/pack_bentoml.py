@@ -1,7 +1,7 @@
 import os
 import sys
 
-from ....default import PACKMODE_FILE
+from ....default import PACK_METHOD_BENTOML, PACKMETHOD_FILE, PACKMODE_FILE
 from ...bundle.repo import DockerfileFile, ServiceFile
 from ..pack.bentoml_pack.mode import AVAILABLE_MODES, PackModeDecision
 from ..pack.bentoml_pack.runners import get_runner
@@ -69,6 +69,12 @@ class ModelPacker(BaseAction):
         mm = ModelModifier(model_id=self.model_id, config_json=self.config_json)
         mm.modify()
 
+    def _register_pack_method(self):
+        path = self._get_bundle_location(self.model_id)
+        with open(os.path.join(path, PACKMETHOD_FILE), "w") as f:
+            self.logger.debug("Writing pack method {0} to file {1}".format(PACK_METHOD_BENTOML, PACKMETHOD_FILE))
+            f.write(PACK_METHOD_BENTOML)
+
     def _run(self):
         runner = get_runner(self.pack_mode)(
             model_id=self.model_id, config_json=self.config_json
@@ -84,3 +90,4 @@ class ModelPacker(BaseAction):
         self._run()
         self._reset()
         self._modify()
+        self._register_pack_method()
