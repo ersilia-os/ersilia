@@ -390,7 +390,6 @@ class RunnerService:
                     bold=True,
                 )
             bsh_data, _ = read_csv(bash_output_path)
-            self.logger.warning(f"Bash data: {bsh_data}")
             self.logger.debug("Running model for bash data consistency checking")
             cmd = f"ersilia serve {self.model_id} && ersilia -v run -i '{input_file_path}' -o {output_path}"
             out = run_command(cmd)
