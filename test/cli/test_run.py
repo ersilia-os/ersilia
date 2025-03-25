@@ -9,10 +9,6 @@ from ersilia.cli.commands.run import run_cmd
 from ersilia.core.model import ErsiliaModel
 from ersilia.core.session import Session
 from ersilia.serve.standard_api import StandardCSVRunApi
-from ersilia.setup.requirements.compound import (
-    ChemblWebResourceClientRequirement,
-    RdkitRequirement,
-)
 from ersilia.utils.logging import logger
 
 from .utils import create_compound_input_csv
@@ -29,10 +25,6 @@ MIN_WEIGHT = 40.0
 MAX_WEIGHT = 60.0
 HEADER = ["key", "input", "value"]
 
-@pytest.fixture
-def setup():
-    RdkitRequirement()
-    ChemblWebResourceClientRequirement()
 
 @pytest.fixture
 def mock_fetcher():

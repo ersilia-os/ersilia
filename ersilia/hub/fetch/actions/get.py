@@ -147,7 +147,7 @@ class DockerfileCreator(ErsiliaBase):
                 sanitized.append(line)
         if sanitized[run_section_end_line + 2].startswith("RUN"):
             raise BaseException(
-                "There are more instalation than the standard 'RUN pip install rdkit'"
+                "There are more installation than the frequent 'RUN pip install rdkit'"
             )
 
         if run_section_end_line != -1:
