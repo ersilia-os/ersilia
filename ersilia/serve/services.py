@@ -23,6 +23,7 @@ from ..default import (
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     PACKMODE_FILE,
+    DEFAULT_API_NAME
 )
 from ..setup.requirements.bentoml_requirement import BentoMLRequirement
 
@@ -135,7 +136,9 @@ class BaseServing(ErsiliaBase):
     def _get_apis_from_fastapi(self):
         bundle_path = self._model_path(self.model_id)
         apis_list = []
-        for fn in os.listdir(os.path.join(bundle_path, "model", "framework")):
+        if not os.path.exists(os.path.join(bundle_path, "model", "framework")):
+            return None
+        for fn in os.listdir():
             if fn.endswith(".sh"):
                 api_name = fn.split(".")[0]
                 apis_list += [api_name]
@@ -1318,7 +1321,7 @@ class PulledDockerImageService(BaseServing):
                 response = requests.head(github_url)
                 if response.status_code == 200:
                     apis_list.append(api)
-
+                    
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
             for api in apis_list:
