@@ -2,6 +2,7 @@ import csv
 import docker
 import json
 import os
+import platform
 import re
 import warnings
 import yaml
@@ -29,6 +30,8 @@ from ....default import (
     DOCKERHUB_ORG,
     PREDEFINED_EXAMPLE_OUTPUT_FILES,
     PREDEFINED_EXAMPLE_INPUT_FILES,
+    INSTALL_YAML_FILE,
+    DOCKERFILE_FILE,
 )
 from .constants import (
     Checks,
@@ -39,7 +42,10 @@ from .constants import (
 )
 from .setup import SetupService
 from ....hub.fetch.actions.template_resolver import TemplateResolver
+from ....utils.conda import SimpleConda
 from ....utils.exceptions_utils import test_exceptions as texc
+from ....utils.terminal import run_command
+from ....utils.logging import logger
 from ....utils.docker import SimpleDocker, set_docker_host
 from ....cli import echo
 
@@ -77,6 +83,7 @@ class IOService:
         self.console = Console()
         self.check_results = []
         self.simple_docker = SimpleDocker()
+        self.conda = SimpleConda()
 
     @staticmethod
     def get_model_type(model_id: str, repo_path: str) -> str:
@@ -168,7 +175,9 @@ class IOService:
         ValueError
             If the model type is unsupported.
         """
-        model_type = IOService.get_model_type(model_id=self.model_id, repo_path=self.dir)
+        model_type = IOService.get_model_type(
+            model_id=self.model_id, repo_path=self.dir
+        )
         if model_type == PACK_METHOD_BENTOML:
             return BENTOML_FILES
         elif model_type == PACK_METHOD_FASTAPI:
@@ -310,7 +319,11 @@ class IOService:
 
             if check_name == "computational_performance_tracking_details":
                 json_data[check_name] = parse_performance(check_status)
-            elif check_name in ("environment_size_mb", "directory_size_mb", "image_size_mb"):
+            elif check_name in (
+                "environment_size_mb",
+                "directory_size_mb",
+                "image_size_mb",
+            ):
                 json_data[check_name] = float(check_status)
             else:
                 json_data[check_name] = parse_status(clean_string(check_status))
@@ -460,3 +473,97 @@ class IOService:
         env_size = self.get_conda_env_size()
         env_size = f"{env_size:.2f}"
         return env_size
+
+
+class PackageInstaller:
+    def __init__(self, dir, model_id):
+        self.dir = dir
+        self.model_id = model_id
+        self.conda = SimpleConda()
+        self.logger = logger
+
+    def _get_python_version_from_line(self, line: str):
+        m = re.search(r"-py(\d+)", line)
+        if m:
+            ver_str = m.group(1)
+            return f"{ver_str[0]}.{ver_str[1:]}"
+        return None
+
+    def _parse_install_yaml(self, path: str):
+        with open(path, "r") as f:
+            data = yaml.safe_load(f)
+        python_version = data.get("python")
+        pip_packages = []
+        conda_packages = []
+        commands = data.get("commands", [])
+        for cmd in commands:
+            if cmd[0].lower() == "pip":
+                pkg_spec = f"{cmd[1]}=={cmd[2]}" if len(cmd) >= 3 else cmd[1]
+                pip_packages.append(pkg_spec)
+            elif cmd[0].lower() == "conda":
+                pkg_spec = f"{cmd[1]}={cmd[2]}" if len(cmd) >= 3 else cmd[1]
+                conda_packages.append(pkg_spec)
+        return python_version, pip_packages, conda_packages
+
+    def _parse_dockerfile(self, path: str):
+        pip_packages = []
+        conda_packages = []
+        python_version = None
+        with open(path, "r") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                if line.startswith("FROM"):
+                    python_version = self._get_python_version_from_line(line)
+                if line.startswith("RUN pip install"):
+                    cmd = line.split("#")[0]
+                    parts = cmd.split()
+                    if len(parts) >= 4:
+                        pkg_spec = parts[3]
+                        pip_packages.append(pkg_spec)
+                if line.startswith("RUN conda install"):
+                    cmd = line.split("#")[0]
+                    parts = cmd.split()
+                    if parts:
+                        pkg_spec = parts[-1]
+                        conda_packages.append(pkg_spec)
+        return python_version, pip_packages, conda_packages
+
+    def _install_packages_from_dir(self):
+        install_yml_path = os.path.join(self.dir, INSTALL_YAML_FILE)
+        dockerfile_path = os.path.join(self.dir, DOCKERFILE_FILE)
+
+        if os.path.exists(install_yml_path):
+            python_version, pip_packages, conda_packages = self._parse_install_yaml(
+                install_yml_path
+            )
+        elif os.path.exists(dockerfile_path):
+            python_version, pip_packages, conda_packages = self._parse_dockerfile(
+                dockerfile_path
+            )
+        else:
+            self.logger.info(
+                "Neither 'install.yml' nor 'Dockerfile' was found in the specified directory."
+            )
+            return
+        
+        if self.conda.exists(self.model_id):
+            return
+        
+        if not self.conda.exists(self.model_id):
+            self.conda.create(self.model_id, python_version)
+        for pkg in pip_packages:
+            self.logger.info(f"Installing pip package: {pkg}")
+            run_command(["conda", "run", "-n", self.model_id, "pip", "install", pkg])
+        for pkg in conda_packages:
+            self.logger.info(f"Installing conda package: {pkg}")
+            run_command(["conda", "install", "-n", self.model_id, "-y", pkg])
+        self.logger.info(
+            f"Installation complete in the conda environment: {self.model_id}"
+        )
+
+
+def is_arm_arch():
+    machine = platform.machine().lower()
+    return "arm" in machine or "aarch64" in machine

@@ -25,7 +25,7 @@ from ....default import (
 from .constants import STATUS_CONFIGS, TABLE_CONFIGS, Checks, TableType
 from .setup import SetupService
 from .inspect import InspectService
-from .io import IOService
+from .io import IOService, PackageInstaller, is_arm_arch
 from .checks import CheckService
 from ....default import PREDEFINED_COLUMN_FILE
 from ....io.input import ExampleGenerator
@@ -120,6 +120,7 @@ class RunnerService:
         self.example = ExampleGenerator(model_id=self.model_id)
         self.run_using_bash = False
         self.surface = surface
+        self.installer = PackageInstaller(self.dir, self.model_id)
 
     @throw_ersilia_exception()
     def run_model(self, inputs: list, output: str, batch: int):
@@ -346,40 +347,6 @@ class RunnerService:
                     writer = csv.writer(outfile)
                     writer.writerows(rows)
 
-        def run_subprocess(command, env_vars=None):
-            env = os.environ.copy()
-            if env_vars:
-                env.update(env_vars)
-
-            try:
-                process = subprocess.Popen(
-                    command,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    env=env,
-                )
-                stdout, stderr = process.communicate()
-                return_code = process.returncode
-
-                if return_code != 0:
-                    raise RuntimeError(
-                        f"Subprocess failed with return code {return_code}: {stderr.strip()}"
-                    )
-
-                return stdout.strip(), stderr.strip(), return_code
-
-            except FileNotFoundError as e:
-                raise FileNotFoundError(f"Command not found: {command[0]}") from e
-
-            except PermissionError as e:
-                raise PermissionError(f"Permission denied: {command}") from e
-
-            except Exception as e:
-                raise RuntimeError(
-                    f"Unexpected error while running subprocess: {str(e)}"
-                ) from e
-
         with tempfile.TemporaryDirectory() as temp_dir:
             model_path = os.path.join(self.dir)
             output_path = os.path.join(temp_dir, "ersilia_output.csv")
@@ -398,6 +365,9 @@ class RunnerService:
                     f"{RUN_FILE} not found at {run_sh_path}. Skipping bash run."
                 )
                 return
+            
+            self.installer._install_packages_from_dir()
+
             bash_script = f"""
                 source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
                 conda activate {self.model_id}
@@ -410,7 +380,7 @@ class RunnerService:
                 script_file.write(bash_script)
 
             self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
-            out = run_subprocess(["bash", temp_script_path])
+            out = run_command(["bash", temp_script_path])
             self.logger.info(f"Bash script subprocess output: {out}")
             logs = read_logs(error_log_path)
             formatted_error = "".join(logs)
@@ -421,6 +391,7 @@ class RunnerService:
                     bold=True,
                 )
             bsh_data, _ = read_csv(bash_output_path)
+            self.logger.warning(f"Bash data: {bsh_data}")
             self.logger.debug("Running model for bash data consistency checking")
             cmd = f"ersilia serve {self.model_id} && ersilia -v run -i '{input_file_path}' -o {output_path}"
             out = run_command(cmd)
