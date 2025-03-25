@@ -108,7 +108,9 @@ class ReadmeFormatter():
         # Output
         text += "### Output\n"
         if d.get("Output"):
-            text += "- **Output:** `{0}`\n".format(d.get("Output Type", ""))
+            output_type = d.get("Output Type", "")
+            if output_type:
+                text += "- **Output:** `{0}`\n".format(d.get("Output Type", ""))
         if d.get("Output Dimension"):
             text += "- **Output Dimension:** `{0}`\n".format(d.get("Output Dimension"))
         if d.get("Output Consistency"):
@@ -234,7 +236,7 @@ class ReadmeFormatter():
         
         # About Ersilia
         text += "## About Ersilia\n"
-        text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a non-profit organization fueling sustainable research in the Global South.\n"
-        text += "Please [cite the Ersilia Model Hub](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you've found this model useful. Always [let us know](https://github.com/ersilia-os/ersilia/issues) you experience any issues while trying to run it.\n"
-        text += "If feel[help us](https://www.ersilia.io/donate) achieve our mission!"
+        text += "The [Ersilia Open Source Initiative](https://ersilia.io) is a tech non-profit organization fueling sustainable research in the Global South.\n"
+        text += "Please [cite](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) the Ersilia Model Hub if you've found this model to be useful. Always [let us know](https://github.com/ersilia-os/ersilia/issues) if you experience any issues while trying to run it.\n"
+        text += "If you want to contribute to our mission, consider [donating](https://www.ersilia.io/donate) to Ersilia!\n"
         return text
