@@ -13,7 +13,6 @@ from ..db.environments.managers import DockerManager
 from ..default import (
     ALLOWED_API_NAMES,
     APIS_LIST_FILE,
-    CONTAINER_LOGS_TMP_DIR,
     DEFAULT_DOCKER_NETWORK_BRIDGE,
     DEFAULT_DOCKER_NETWORK_NAME,
     DEFAULT_VENV,
