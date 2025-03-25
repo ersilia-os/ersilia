@@ -23,7 +23,6 @@ from ..default import (
     PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     PACKMODE_FILE,
-    DEFAULT_API_NAME,
 )
 from ..setup.requirements.bentoml_requirement import BentoMLRequirement
 
