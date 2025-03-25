@@ -723,7 +723,6 @@
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">RUN_FILE</span><span class="si">}</span><span class="s2"> not found at </span><span class="si">{</span><span class="n">run_sh_path</span><span class="si">}</span><span class="s2">. Skipping bash run.&quot;</span>
                 <span class="p">)</span>
                 <span class="k">return</span>
-
             <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                source </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">/etc/profile.d/conda.sh</span>
 <span class="s2">                conda activate </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span>
@@ -747,19 +746,9 @@
                     <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="n">bsh_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Serving the model after run.sh&quot;</span><span class="p">)</span>
-            <span class="n">run_subprocess</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="s2">&quot;ersilia&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;serve&quot;</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
-                <span class="p">]</span>
-            <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running model for bash data consistency checking&quot;</span><span class="p">)</span>
-            <span class="n">run_subprocess</span><span class="p">(</span>
-                <span class="p">[</span><span class="s2">&quot;ersilia&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="n">output_path</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> &amp;&amp; ersilia -v run -i &#39;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&#39; -o </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
             <span class="n">ers_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">_get_original_smiles_list</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">)</span>
@@ -820,7 +809,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">setup_service</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
 
             <span class="n">basic_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">basic_results</span><span class="p">)</span>
             <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">basic_results</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">:</span>
@@ -928,13 +916,10 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">SHALLOW_CHECK_SUMMARY</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model consistency dict: </span><span class="si">{</span><span class="n">validations</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
         <span class="n">bash_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bash</span><span class="p">()</span>
         <span class="n">validations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">CONSISTENCY_BASH</span><span class="p">,</span> <span class="n">bash_results</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model bash dict: </span><span class="si">{</span><span class="n">validations</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">validations</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">results</span>
 
