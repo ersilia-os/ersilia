@@ -14,9 +14,6 @@ from ..default import (
     DOCKER_INFO_FILE,
     DOCKERHUB_LATEST_TAG,
     DOCKERHUB_ORG,
-    EOS,
-    PACK_METHOD_BENTOML,
-    PACK_METHOD_FASTAPI,
 )
 from ..utils.logging import make_temp_dir
 from ..utils.system import SystemChecker
@@ -24,16 +21,32 @@ from .identifiers.long import LongIdentifier
 from .terminal import run_command, run_command_check_output
 
 
-def resolve_pack_method_docker(model_id): #TODO read from metadata
-    client = docker.from_env()
-    bundle_path = f"{EOS}/dest/{model_id}"
-    docker_tag = model_image_version_reader(bundle_path)
-    model_image = client.images.get(f"{DOCKERHUB_ORG}/{model_id}:{docker_tag}")
-    image_history = model_image.history()
-    for hist in image_history:
-        if "nginx" in hist["CreatedBy"]:
-            return PACK_METHOD_BENTOML
-    return PACK_METHOD_FASTAPI
+def set_docker_host():
+    try:
+        # Get the current Docker context
+        context_result = subprocess.run(
+            ["docker", "context", "show"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        context_name = context_result.stdout.strip()
+
+        # Get the Docker host for the current context
+        result = subprocess.run(
+            ["docker", "context", "inspect", context_name, "--format", "{{.Endpoints.docker.Host}}"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        base_url = result.stdout.strip()
+
+        if base_url:
+            os.environ["DOCKER_HOST"] = base_url  # Set the variable for this process
+    except:
+        return
+
 
 
 def resolve_platform():
@@ -379,6 +392,9 @@ class SimpleDocker(object):
         None
         """
         local_path = os.path.abspath(local_path)
+        dirname = os.path.dirname(local_path)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
         tmp_file = os.path.join(make_temp_dir(prefix="ersilia-"), "tmp.txt")
         cmd = "docker cp %s:%s %s &> %s" % (name, img_path, local_path, tmp_file)
         run_command(cmd)
@@ -465,6 +481,7 @@ class SimpleDocker(object):
             The peak memory usage in MB, or None if the container is not found or an error occurs.
         """
         try:
+            set_docker_host()
             client = docker.from_env()
             for ctr in client.containers.list():
                 if model_id in ctr.name:
@@ -606,6 +623,7 @@ class ContainerMetricsSampler:
     """
 
     def __init__(self, model_id, sampling_interval=0.01):
+        set_docker_host()
         self.client = docker.from_env()
         self.logger = logger
         self.container = self._get_container_for_model(model_id)
@@ -632,6 +650,7 @@ class ContainerMetricsSampler:
         if not model_id:
             raise ValueError("Model ID is required")
         try:
+            set_docker_host()
             client = docker.from_env()
             containers = client.containers.list()
 

@@ -11,7 +11,11 @@ from .. import ErsiliaBase, throw_ersilia_exception
 from ..db.environments.localdb import EnvironmentDb
 from ..db.environments.managers import DockerManager
 from ..default import (
+    ALLOWED_API_NAMES,
     APIS_LIST_FILE,
+    CONTAINER_LOGS_TMP_DIR,
+    DEFAULT_DOCKER_NETWORK_BRIDGE,
+    DEFAULT_DOCKER_NETWORK_NAME,
     DEFAULT_VENV,
     DOCKERHUB_ORG,
     INFORMATION_FILE,
@@ -27,13 +31,12 @@ from ..setup.requirements.conda import CondaRequirement
 from ..setup.requirements.docker import DockerRequirement
 from ..tools.bentoml.exceptions import BentoMLException
 from ..utils.conda import SimpleConda, StandaloneConda
-from ..utils.docker import SimpleDocker, model_image_version_reader
+from ..utils.docker import SimpleDocker, model_image_version_reader, set_docker_host
 from ..utils.exceptions_utils.serve_exceptions import (
     BadGatewayError,
     DockerNotActiveError,
 )
 from ..utils.logging import make_temp_dir
-from ..utils.paths import resolve_pack_method
 from ..utils.ports import find_free_port
 from ..utils.terminal import run_command
 from ..utils.venv import SimpleVenv
@@ -140,9 +143,7 @@ class BaseServing(ErsiliaBase):
     def _get_apis_from_where_available(self):
         apis_list = self._get_apis_from_apis_list()
         if apis_list is None:
-            pack_method = resolve_pack_method(
-                model_path=self._get_bundle_location(self.model_id)
-            )
+            pack_method = self._resolve_pack_method_source(self.model_id)
             if pack_method == PACK_METHOD_FASTAPI:
                 self.logger.debug("Getting APIs from FastAPI")
                 apis_list = self._get_apis_from_fastapi()
@@ -415,9 +416,7 @@ class _LocalService(ErsiliaBase):
     def __init__(self, model_id, config_json=None, preferred_port=None, url=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json)
-        pack_method = resolve_pack_method(
-            model_path=self._get_bundle_location(model_id)
-        )
+        pack_method = self._resolve_pack_method_source(self.model_id)
         self.logger.debug("Pack method is: {0}".format(pack_method))
         if pack_method == PACK_METHOD_FASTAPI:
             self.server = _FastApiService(
@@ -1141,6 +1140,7 @@ class PulledDockerImageService(BaseServing):
             config_json=config_json,
             preferred_port=preferred_port,
         )
+        set_docker_host()
         self.client = docker.from_env()
         if preferred_port is None:
             self.port = find_free_port()
@@ -1241,6 +1241,7 @@ class PulledDockerImageService(BaseServing):
         )
         containers = self.client.containers.list(all=True)
         for container in containers:
+            self.logger.debug(f"Checking container {container.name}")
             if container.name.startswith(self.model_id):
                 self.logger.debug(
                     "Stopping and removing container {0}".format(container.name)
@@ -1264,19 +1265,45 @@ class PulledDockerImageService(BaseServing):
                     apis_list += [l.rstrip()]
             if len(apis_list) > 0:
                 return apis_list
-        self.logger.debug("Getting them using info endpoint")
-        url = "{0}/info".format(self.url)
-        self.logger.debug("Using URL: {0}".format(url))
-        data = "{}"
-        response = requests.post(url, data=data)
-        self.logger.debug("Status code: {0}".format(response.status_code))
-        if response.status_code == 502:
-            raise BadGatewayError(url)
-        elif response.status_code == 405:  # We try the GET endpoint here
-            response = requests.get(url)
+
+        def _url_exists(url):
+            try:
+                response = requests.head(url, allow_redirects=True)
+                if response.status_code in [200, 301, 302]:
+                    self.logger.debug(f"The URL {url} exists.")
+                    return True
+                else:
+                    self.logger.debug(f"The URL {url} does not exist. Status code: {response.status_code}")
+                    return False
+
+            except requests.exceptions.RequestException as e:
+                self.logger.debug(f"An error occurred: {e}")
+                return False
+
+        self.logger.debug("Trying to get them using info endpoint")
+        if _url_exists(f"{self.url}/info"):
+            url = "{0}/info".format(self.url)
+            self.logger.debug("Using URL: {0}".format(url))
+            data = "{}"
+            response = requests.post(url, data=data)
+            self.logger.debug("Status code: {0}".format(response.status_code))
+            if response.status_code == 502:
+                raise BadGatewayError(url)
+            elif response.status_code == 405:
+                response = requests.get(url)
+            else:
+                response.raise_for_status()
+            apis_list = json.loads(response.text)["apis_list"]
         else:
-            response.raise_for_status()
-        apis_list = json.loads(response.text)["apis_list"]
+            apis_list = []
+            for api in ALLOWED_API_NAMES:
+                github_base_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/model/framework".format(self.model_id)
+                github_url = "{0}/{1}.sh".format(github_base_url, api)
+                self.logger.debug("Checking URL: {0}".format(github_url))
+                response = requests.head(github_url)
+                if response.status_code == 200:
+                    apis_list.append(api)
+
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
             for api in apis_list:
@@ -1315,10 +1342,27 @@ class PulledDockerImageService(BaseServing):
                 self.logger.debug("Container in {0} is not ready yet".format(self.url))
             time.sleep(1)
 
+    def _create_docker_network(self):
+        existing_networks = self.client.networks.list(
+            filters={"name": DEFAULT_DOCKER_NETWORK_NAME}
+        )
+        if existing_networks:
+            self.network = existing_networks[0]
+            self.logger.info(f"Docker network already exists: {self.network.name}")
+        else:
+            self.network = self.client.networks.create(
+                name=DEFAULT_DOCKER_NETWORK_NAME,
+                driver=DEFAULT_DOCKER_NETWORK_BRIDGE,
+                attachable=True,
+            )
+            self.logger.info(f"Docker network has been created: {self.network.name}")
+
     def serve(self):
         """
         Serve the model using the Docker image service.
         """
+        self._create_docker_network()
+
         self._stop_all_containers_of_image()
         self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
         self.logger.debug("Trying to run container")
@@ -1338,9 +1382,10 @@ class PulledDockerImageService(BaseServing):
                 mem_limit="{0}g".format(self._mem_gb),
             )
         self.logger.debug("Serving container {0}".format(self.container_name))
+
         self.container_id = self.container.id
-        self.logger.debug("Running container {0}".format(self.container_id))
-        self.url = "http://0.0.0.0:{0}".format(self.port)
+        self.logger.debug(f"Running container {self.container_id}")
+        self.url = f"http://0.0.0.0:{self.port}"
         self._wait_until_container_is_running()
         self._apis_list = self._get_apis()
         self.logger.debug(self._apis_list)
@@ -1372,6 +1417,7 @@ class PulledDockerImageService(BaseServing):
         :return: None
         """
         # Create a Docker client from environment variables
+        set_docker_host()
         client = docker.from_env()
         container = client.containers.get(container_id)
 
@@ -1525,11 +1571,45 @@ class HostedService(BaseServing):
                     apis_list += [l.rstrip()]
             if len(apis_list) > 0:
                 return apis_list
-        self.logger.debug("Getting them using info endpoint")
-        url = "{0}/info".format(self.url)
-        self.logger.debug("Using URL: {0}".format(url))
-        data = "{}"
-        apis_list = json.loads(requests.post(url, data=data).text)["apis_list"]
+
+        def _url_exists(url):
+            try:
+                response = requests.head(url, allow_redirects=True)
+                if response.status_code in [200, 301, 302]:
+                    self.logger.debug(f"The URL {url} exists.")
+                    return True
+                else:
+                    self.logger.debug(f"The URL {url} does not exist. Status code: {response.status_code}")
+                    return False
+
+            except requests.exceptions.RequestException as e:
+                self.logger.debug(f"An error occurred: {e}")
+                return False
+
+        self.logger.debug("Trying to get them using info endpoint")
+        if _url_exists(f"{self.url}/info"):
+            url = "{0}/info".format(self.url)
+            self.logger.debug("Using URL: {0}".format(url))
+            data = "{}"
+            response = requests.post(url, data=data)
+            self.logger.debug("Status code: {0}".format(response.status_code))
+            if response.status_code == 502:
+                raise BadGatewayError(url)
+            elif response.status_code == 405:
+                response = requests.get(url)
+            else:
+                response.raise_for_status()
+            apis_list = json.loads(response.text)["apis_list"]
+        else:
+            apis_list = []
+            for api in ALLOWED_API_NAMES:
+                github_base_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/model/framework".format(self.model_id)
+                github_url = "{0}/{1}.sh".format(github_base_url, api)
+                self.logger.debug("Checking URL: {0}".format(github_url))
+                response = requests.head(github_url)
+                if response.status_code == 200:
+                    apis_list.append(api)
+
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
             for api in apis_list:

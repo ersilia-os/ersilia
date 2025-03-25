@@ -2,10 +2,9 @@ import os
 from pathlib import Path
 
 from .. import logger
-from ..default import EOS
+from ..default import EOS, PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI
 from ..tools.bentoml.exceptions import BentoMLException
 from ..utils.config import Config, Credentials
-from ..utils.paths import resolve_pack_method
 from ..utils.terminal import run_command
 
 home = str(Path.home())
@@ -90,8 +89,7 @@ class ErsiliaBase(object):
             return path
 
     def _get_bento_location(self, model_id):
-        bundle_path = self._get_bundle_location(model_id)
-        if resolve_pack_method(bundle_path) != "bentoml":
+        if self._resolve_pack_method_source(model_id) != "bentoml":
             return None
 
         cmd = ["bentoml", "get", f"{model_id}:latest", "--print-location", "--quiet"]
@@ -119,3 +117,12 @@ class ErsiliaBase(object):
             self.logger.warning("No credentials found.")
             return False
         return True
+
+    def _resolve_pack_method_source(self, model_id):
+        bundle_path = self._get_bundle_location(model_id)
+        if os.path.exists(os.path.join(bundle_path, "installs", "install.sh")):
+            return PACK_METHOD_FASTAPI
+        elif os.path.exists(os.path.join(bundle_path, "bentoml.yml")):
+            return PACK_METHOD_BENTOML
+        self.logger.warning("Could not resolve pack method by simply looking at the bundle path")
+        return None

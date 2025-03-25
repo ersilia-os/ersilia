@@ -34,9 +34,11 @@ DEFAULT_MODEL_ID = "eos0zzz"
 DEFAULT_VENV = "env"
 DEFAULT_API_NAME = "run"
 PACKMODE_FILE = "pack_mode.txt"
+PACKMETHOD_FILE = "pack_method.txt"
 CARD_FILE = "card.json"
 UNPROCESSABLE_INPUT = "UNPROCESSABLE_INPUT"
 DOTENV_FILE = ".env"
+REDIS_DATA_VOLUME = "redis_data_volume"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
@@ -48,13 +50,10 @@ EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 PREDEFINED_EXAMPLE_INPUT_FILES = [
     "model/framework/examples/run_input.csv",
     "model/framework/examples/input.csv",
-    "model/framework/input.csv",
 ]
 
 PREDEFINED_EXAMPLE_OUTPUT_FILES = [
     "model/framework/examples/output.csv",
-    "model/framework/output.csv",
-    "example.csv",
     "model/framework/examples/run_output.csv",
 ]
 
@@ -76,6 +75,8 @@ STATUS_JOSN = "status.json"
 IS_FETCHED_FROM_HOSTED_FILE = "from_hosted.json"
 DEFAULT_UDOCKER_USERNAME = "udockerusername"
 DEFAULT_UDOCKER_PASSWORD = "udockerpassword"
+DEFAULT_DOCKER_NETWORK_NAME = "ersilia_network"
+DEFAULT_DOCKER_NETWORK_BRIDGE = "bridge"
 # ERSILIA_RUNS_FOLDER = "ersilia_runs"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
 PACK_METHOD_FASTAPI = "fastapi"
@@ -122,6 +123,10 @@ REDIS_SERVER = "redis://127.0.0.1:6379"
 FEATURE_MERGE_PATTERN = "---"
 
 # URLS
+REDIS_PORT = 6379
+REDIS_SERVER = "redis://localhost:%s" % REDIS_PORT
+REDIS_CONTAINER_NAME = "redis-server"
+REDIS_IMAGE = "redis:latest"
 ERSILIA_WEB_URL = "https://ersilia.io"
 ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
 AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/shrNc3sTtTA3QeEZu"

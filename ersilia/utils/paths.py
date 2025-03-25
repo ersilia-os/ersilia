@@ -7,15 +7,10 @@ from typing import List, Optional
 
 import yaml
 
-from ersilia import logger
-
 from ..default import (
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
-    PACK_METHOD_BENTOML,
-    PACK_METHOD_FASTAPI,
 )
-from .docker import resolve_pack_method_docker
 
 MODELS_DEVEL_DIRNAME = "models"
 
@@ -240,51 +235,6 @@ def metadata_constructor(loader, node):
 ErsiliaMetadataLoader.add_constructor(
     yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, metadata_constructor
 )
-
-
-def resolve_pack_method_source(model_path):
-    """
-    Resolve the packaging method for a model based on its source files.
-
-    Parameters
-    ----------
-    model_path : str
-        The path to the model directory.
-
-    Returns
-    -------
-    str or None
-        The packaging method if found, otherwise None.
-    """
-    if os.path.exists(os.path.join(model_path, "installs", "install.sh")):
-        return PACK_METHOD_FASTAPI
-    elif os.path.exists(os.path.join(model_path, "bentoml.yml")):
-        return PACK_METHOD_BENTOML
-    logger.warning("Could not resolve pack method")
-    return None
-
-
-def resolve_pack_method(model_path):
-    """
-    Resolve the packaging method for a model.
-
-    Parameters
-    ----------
-    model_path : str
-        The path to the model directory.
-
-    Returns
-    -------
-    str
-        The packaging method.
-    """
-    with open(os.path.join(model_path, "service_class.txt"), "r") as f:
-        service_class = f.read().strip()
-    if service_class == "pulled_docker":
-        model_id = Paths().model_id_from_path(model_path)
-        return resolve_pack_method_docker(model_id)
-    else:
-        return resolve_pack_method_source(model_path)
 
 
 def get_metadata_from_base_dir(path):
