@@ -398,7 +398,6 @@ class RunnerService:
                     f"{RUN_FILE} not found at {run_sh_path}. Skipping bash run."
                 )
                 return
-
             bash_script = f"""
                 source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
                 conda activate {self.model_id}
@@ -422,19 +421,9 @@ class RunnerService:
                     bold=True,
                 )
             bsh_data, _ = read_csv(bash_output_path)
-            self.logger.debug("Serving the model after run.sh")
-            run_subprocess(
-                [
-                    "ersilia",
-                    "-v",
-                    "serve",
-                    self.model_id,
-                ]
-            )
             self.logger.debug("Running model for bash data consistency checking")
-            run_subprocess(
-                ["ersilia", "-v", "run", "-i", input_file_path, "-o", output_path]
-            )
+            cmd = f"ersilia serve {self.model_id} && ersilia -v run -i '{input_file_path}' -o {output_path}"
+            out = run_command(cmd)
             ers_data, _ = read_csv(output_path, flag=True)
             self.checkup_service.original_smiles_list = (
                 self.checkup_service._get_original_smiles_list("csv", input_file_path)
@@ -493,7 +482,6 @@ class RunnerService:
             self.setup_service.get_model()
 
             basic_results = self._perform_basic_checks()
-            self.logger.info(basic_results)
             results.extend(basic_results)
 
             if self.surface:
@@ -600,13 +588,10 @@ class RunnerService:
                 self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY, res)
             )
 
-        self.logger.info(f"Model consistency dict: {validations}")
-
         bash_results = self.run_bash()
         validations.append(
             self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
         )
-        self.logger.info(f"Model bash dict: {validations}")
         results.extend(validations)
         return results
 

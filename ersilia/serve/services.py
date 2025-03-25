@@ -133,7 +133,9 @@ class BaseServing(ErsiliaBase):
     def _get_apis_from_fastapi(self):
         bundle_path = self._model_path(self.model_id)
         apis_list = []
-        for fn in os.listdir(os.path.join(bundle_path, "model", "framework")):
+        if not os.path.exists(os.path.join(bundle_path, "model", "framework")):
+            return None
+        for fn in os.listdir():
             if fn.endswith(".sh"):
                 api_name = fn.split(".")[0]
                 apis_list += [api_name]

@@ -168,9 +168,7 @@ class IOService:
         ValueError
             If the model type is unsupported.
         """
-        self.logger.info(f"Model dir: {self.dir}")
         model_type = IOService.get_model_type(model_id=self.model_id, repo_path=self.dir)
-        self.logger.error(f"Model type: {model_type}")
         if model_type == PACK_METHOD_BENTOML:
             return BENTOML_FILES
         elif model_type == PACK_METHOD_FASTAPI:
