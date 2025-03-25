@@ -24,6 +24,7 @@ from ....default import (
 from .constants import STATUS_CONFIGS, TABLE_CONFIGS, Checks, TableType
 from .setup import SetupService
 from .inspect import InspectService
+from .io import IOService, PackageInstaller
 from .checks import CheckService
 from ....default import PREDEFINED_COLUMN_FILE
 from ....io.input import ExampleGenerator
