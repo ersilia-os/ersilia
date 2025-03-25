@@ -14,6 +14,7 @@ from ...hub.delete.delete import ModelFullDeleter
 from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...setup.requirements import check_bentoml
 from ...tools.bentoml.exceptions import BentoMLException
+from ...utils.cache import SetupRedis
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithBentoML,
     NotInstallableWithFastAPI,
@@ -110,8 +111,11 @@ class ModelFetcher(ErsiliaBase):
             dockerize = True
         self.do_docker = dockerize
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
-            overwrite=self.overwrite, config_json=self.config_json, img_tag=img_version,
-            force_with_bentoml=force_with_bentoml, force_with_fastapi=force_with_fastapi
+            overwrite=self.overwrite,
+            config_json=self.config_json,
+            img_tag=img_version,
+            force_with_bentoml=force_with_bentoml,
+            force_with_fastapi=force_with_fastapi,
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
         self.is_docker_active = self.model_dockerhub_fetcher.is_docker_active()
@@ -394,5 +398,6 @@ class ModelFetcher(ErsiliaBase):
             reason = (
                 str(err) if str(err) else "An unknown error occurred during fetching."
             )
+            SetupRedis(cache=False, maxmemory=None).remove_redis_image_if_exists()
             return FetchResult(fetch_success=False, reason=reason)
         return fr
