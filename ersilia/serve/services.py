@@ -1299,7 +1299,7 @@ class PulledDockerImageService(BaseServing):
             apis_list = json.loads(response.text)["apis_list"]
         else:
             # I added here a final fall back
-            apis_list = [DEFAULT_API_NAME]
+            apis_list = [DEFAULT_API_NAME] # TODO: needs more general fallback
 
         self.logger.debug("Writing file {0}".format(file_name))
         with open(file_name, "w") as f:
