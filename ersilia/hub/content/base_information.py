@@ -4,10 +4,9 @@ import os
 import validators
 
 try:
-    from validators import ValidationFailure
+    from validators import ValidationFailure  # ruff: noqa: I001
 except ImportError:
-    from validators import ValidationError as ValidationFailure
-
+    from validators import ValidationError as ValidationFailure  # ruff: noqa: I001
 
 from ... import ErsiliaBase
 from ...utils.exceptions_utils.base_information_exceptions import (
