@@ -135,7 +135,10 @@ class BaseServing(ErsiliaBase):
     def _get_apis_from_fastapi(self):
         bundle_path = self._model_path(self.model_id)
         apis_list = []
-        for fn in os.listdir(os.path.join(bundle_path, "model", "framework")):
+        framework_path = os.path.join(bundle_path, "model", "framework")
+        if not os.path.exists(framework_path):
+            return None
+        for fn in os.listdir(framework_path):
             if fn.endswith(".sh"):
                 api_name = fn.split(".")[0]
                 apis_list += [api_name]
@@ -1288,7 +1291,9 @@ class PulledDockerImageService(BaseServing):
                     self.logger.debug(f"The URL {url} exists.")
                     return True
                 else:
-                    self.logger.debug(f"The URL {url} does not exist. Status code: {response.status_code}")
+                    self.logger.debug(
+                        f"The URL {url} does not exist. Status code: {response.status_code}"
+                    )
                     return False
 
             except requests.exceptions.RequestException as e:
@@ -1312,7 +1317,9 @@ class PulledDockerImageService(BaseServing):
         else:
             apis_list = []
             for api in ALLOWED_API_NAMES:
-                github_base_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/model/framework".format(self.model_id)
+                github_base_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/model/framework".format(
+                    self.model_id
+                )
                 github_url = "{0}/{1}.sh".format(github_base_url, api)
                 self.logger.debug("Checking URL: {0}".format(github_url))
                 response = requests.head(github_url)
@@ -1592,7 +1599,9 @@ class HostedService(BaseServing):
                     self.logger.debug(f"The URL {url} exists.")
                     return True
                 else:
-                    self.logger.debug(f"The URL {url} does not exist. Status code: {response.status_code}")
+                    self.logger.debug(
+                        f"The URL {url} does not exist. Status code: {response.status_code}"
+                    )
                     return False
 
             except requests.exceptions.RequestException as e:
@@ -1616,7 +1625,9 @@ class HostedService(BaseServing):
         else:
             apis_list = []
             for api in ALLOWED_API_NAMES:
-                github_base_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/model/framework".format(self.model_id)
+                github_base_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/model/framework".format(
+                    self.model_id
+                )
                 github_url = "{0}/{1}.sh".format(github_base_url, api)
                 self.logger.debug("Checking URL: {0}".format(github_url))
                 response = requests.head(github_url)
