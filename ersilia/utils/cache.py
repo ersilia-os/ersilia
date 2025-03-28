@@ -42,7 +42,7 @@ class SetupRedis:
         self.cache = cache
         self.maxmemory = maxmemory
         try:
-            if not self._is_amenable():
+            if not self._is_amenable()[0]:
                 return
             set_docker_host()
             self.client = docker.from_env()
@@ -78,7 +78,7 @@ class SetupRedis:
             RuntimeError: If the container fails to start.
         """
         logger.info("Checking Redis server status...")
-        if not self._is_amenable():
+        if not self._is_amenable()[0]:
             return
 
         if self._is_image_available():
@@ -102,22 +102,22 @@ class SetupRedis:
             logger.warning(
                 "Docker is not installed in your system. Model result will not be cached!"
             )
-            return False
+            return (False, "Docker is not installed!")
 
         if not self._is_docker_active():
             logger.warning("Docker is not active. Model result will not be cached!")
-            return False
+            return (False, "Docker is not active!")
 
         if not self.cache:
             logger.warning("Caching is disabled. Model result will not be cached!")
             self._remove_container_if_exists()
-            return True
+            return (False, "Caching is disabled using flag!")
 
         if self.cache:
             logger.info("Caching is amenable")
-            return True
+            return (True, "Caching enabled!")
         logger.info("Caching is amenable")
-        return True
+        return (True, "Caching enabled!")
 
     def _is_docker_active(self):
         try:

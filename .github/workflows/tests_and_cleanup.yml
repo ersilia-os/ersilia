@@ -48,7 +48,7 @@ jobs:
           ersilia --version
       - name: Fetch molecular weight model from DockerHub
         run: |
-          ersilia -v fetch molecular-weight --from_dockerhub
+          ersilia -v fetch molecular-weight --from_dockerhub --no-cache
 
   test-os:
     strategy:

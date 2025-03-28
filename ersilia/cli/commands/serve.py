@@ -2,6 +2,7 @@ import click
 
 from ... import ErsiliaModel
 from ...store.utils import ModelNotInStore, OutputSource, store_has_model
+from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from .. import echo
 from ..messages import ModelNotFound
@@ -77,6 +78,7 @@ def serve_cmd():
             cache=cache,
             maxmemory=maxmemory,
         )
+        redis_setup = SetupRedis(cache, maxmemory)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
 
@@ -107,5 +109,10 @@ def serve_cmd():
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
+        echo("")
+        echo(":backhand_index_pointing_right: Caching:", fg="blue")
+        echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
+            f"   - Disabled: {redis_setup._is_amenable()[1]}", fg="red"
+        )
 
     return serve

@@ -141,7 +141,7 @@ class RunnerService:
             The output of the command.
         """
 
-        cmd = f"ersilia serve {self.model_id} && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
+        cmd = f"ersilia serve {self.model_id} --no-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
         out = run_command(cmd)
         return out
     
