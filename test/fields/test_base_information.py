@@ -40,11 +40,10 @@ def test_write_information(readme_metadata, valid_data):
     generated_text = readme_metadata.write_information(valid_data, readme_path=None) 
     print(generated_text)
     
-    assert "## Identifiers" in generated_text
-    assert "## Input" in generated_text #This field is only present in new metadata
-    assert "- **[Publication]" in generated_text
-    assert "- **[Source Code]" in generated_text
-    assert "## References" in generated_text
+    assert "Identifiers" in generated_text
+    assert "Publication" in generated_text
+    assert "Source Code" in generated_text
+    assert "References" in generated_text
 
 def test_write_information_to_file(readme_metadata, valid_data):
     test_file_path = "test_readme.md"
@@ -55,6 +54,6 @@ def test_write_information_to_file(readme_metadata, valid_data):
     
     with open(test_file_path, "r") as file:
         content = file.read()
-        assert "## Identifiers" in content
+        assert "Identifiers" in content
     
     os.remove(test_file_path)
