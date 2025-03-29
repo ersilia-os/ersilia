@@ -391,7 +391,7 @@ class RunnerService:
                 )
             bsh_data, _ = read_csv(bash_output_path)
             self.logger.debug("Running model for bash data consistency checking")
-            cmd = f"ersilia serve {self.model_id} && ersilia -v run -i '{input_file_path}' -o {output_path}"
+            cmd = f"ersilia serve {self.model_id} --no-cache && ersilia -v run -i '{input_file_path}' -o {output_path}"
             out = run_command(cmd)
             ers_data, _ = read_csv(output_path, flag=True)
             self.checkup_service.original_smiles_list = (
