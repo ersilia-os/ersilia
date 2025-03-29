@@ -1,13 +1,23 @@
 import collections
+import csv
 import json
 import os
 import random
+import time
+from collections import Counter
+from io import StringIO
 
 import numpy as np
+import requests
 
 from .. import ErsiliaBase
 from ..db.hubdata.interfaces import JsonModelsInterface
-from ..default import FEATURE_MERGE_PATTERN, PACK_METHOD_FASTAPI
+from ..default import (
+    FEATURE_MERGE_PATTERN,
+    GITHUB_CONTENT_URL,
+    PACK_METHOD_FASTAPI,
+    PREDEFINED_COLUMN_FILE,
+)
 from ..serve.schema import ApiSchema
 from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
@@ -335,14 +345,6 @@ class GenericOutputAdapter(ResponseRefactor):
     """
 
     def __init__(self, model_id: str = None, config_json: dict = None):
-        """
-        Parameters
-        ----------
-        model_id : str, optional
-            The model identifier (default is None).
-        config_json : dict, optional
-            Configuration settings in JSON format (default is None).
-        """
         ResponseRefactor.__init__(self, config_json=config_json)
         self.api_schema = None
         self._schema = None
@@ -356,19 +358,6 @@ class GenericOutputAdapter(ResponseRefactor):
 
     @staticmethod
     def _is_string(output: any) -> bool:
-        """
-        Checks if the output is a string.
-
-        Parameters
-        ----------
-        output : any
-            The output to check.
-
-        Returns
-        -------
-        bool
-            True if the output is a string, False otherwise.
-        """
         if type(output) is str:
             return True
         else:
@@ -376,37 +365,9 @@ class GenericOutputAdapter(ResponseRefactor):
 
     @staticmethod
     def _extension(filename: str) -> str:
-        """
-        Gets the file extension.
-
-        Parameters
-        ----------
-        filename : str
-            The name of the file.
-
-        Returns
-        -------
-        str
-            The file extension.
-        """
         return filename.split(".")[-1]
 
     def _has_extension(self, output: any, extension: str) -> bool:
-        """
-        Checks if the output has the specified extension.
-
-        Parameters
-        ----------
-        output : any
-            The output to check.
-        extension : str
-            The extension to check for.
-
-        Returns
-        -------
-        bool
-            True if the output has the specified extension, False otherwise.
-        """
         if not self._is_string(output):
             return False
         ext = output.split(".")[-1]
@@ -416,73 +377,17 @@ class GenericOutputAdapter(ResponseRefactor):
             return False
 
     def __pure_dtype(self, k: str) -> str:
-        """
-        Gets the pure data type for the specified key.
-
-        Parameters
-        ----------
-        k : str
-            The key to get the pure data type for.
-
-        Returns
-        -------
-        str
-            The pure data type.
-        """
         t = self._schema[k]["type"]
         return t
 
     def __array_shape(self, k: str) -> int:
-        """
-        Gets the array shape for the specified key.
-
-        Parameters
-        ----------
-        k : str
-            The key to get the array shape for.
-
-        Returns
-        -------
-        int
-            The array shape.
-        """
         s = self._schema[k]["shape"]
         return s[0]  # TODO work with tensors
 
     def __meta_by_key(self, k: str) -> dict:
-        """
-        Gets the meta information for the specified key.
-
-        Parameters
-        ----------
-        k : str
-            The key to get the meta information for.
-
-        Returns
-        -------
-        dict
-            The meta information.
-        """
         return self._schema[k]["meta"]
 
     def __cast_values(self, vals: list, dtypes: list, output_keys: list) -> list:
-        """
-        Casts the values to the specified data types.
-
-        Parameters
-        ----------
-        vals : list
-            The values to cast.
-        dtypes : list
-            The data types to cast to.
-        output_keys : list
-            The output keys.
-
-        Returns
-        -------
-        list
-            The casted values.
-        """
         v = []
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
             if isinstance(v_, list) or hasattr(v_, "__len__"):
@@ -505,19 +410,6 @@ class GenericOutputAdapter(ResponseRefactor):
         return v
 
     def _guess_pure_dtype_if_absent(self, vals: list) -> str:
-        """
-        Guesses the pure data type if it is absent.
-
-        Parameters
-        ----------
-        vals : list
-            The values to guess the data type for.
-
-        Returns
-        -------
-        str
-            The guessed pure data type.
-        """
         pdt = PureDataTyper(vals, model_id=self.model_id)
         dtype = pdt.get_type()
         self.logger.debug("Guessed pure datatype: {0}".format(dtype))
@@ -526,23 +418,62 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             return dtype["type"]
 
+    def _convert_dimension_to_shape(self, shape):
+        return "Single" if shape == 1 else "List"
+
+    def _fetch_schema_from_github(self):
+        st = time.perf_counter()
+        try:
+            response = requests.get(
+                f"{GITHUB_CONTENT_URL}/{self.model_id}/main/{PREDEFINED_COLUMN_FILE}"
+            )
+        except requests.RequestException:
+            self.logger.warning("Couldn't fetch column name from github!")
+            return None
+
+        csv_data = StringIO(response.text)
+        reader = csv.DictReader(csv_data)
+
+        if "name" not in reader.fieldnames:
+            self.logger.warning(
+                "Couldn't fetch column name from github. Column name not found."
+            )
+            return None
+
+        if "type" not in reader.fieldnames:
+            self.logger.warning(
+                "Couldn't fetch data type from github. Column name not found."
+            )
+            return None
+
+        rows = list(reader)
+        col_name = [row["name"] for row in rows if row["name"]]
+        col_dtype = [row["type"] for row in rows if row["type"]]
+        shape = len(col_dtype)
+        et = time.perf_counter()
+        self.logger.info(f"Column metadata fetched in {et-st:.2} seconds!")
+        return col_name, col_dtype, shape
+
+    def _get_dtype(self, type_str):
+        type_map = {
+            "integer": int,
+            "float": float,
+            "string": str,
+        }
+        return type_map.get(type_str)
+
+    def _get_dtype_obj(self, dtypes):
+        return self._get_dtype(Counter(dtypes).most_common(1)[0][0])
+
+    def _sinlge_cast(self, val, dtype):
+        return [dtype(v) if val is not None else val for v in val]
+
+    def _cast_values_from_github_metadata(self, values, dtype):
+        return [self._sinlge_cast(val, dtype) for val in values]
+
     def __expand_output_keys(self, vals: list, output_keys: list) -> list:
-        """
-        Expands the output keys.
-
-        Parameters
-        ----------
-        vals : list
-            The values to expand the output keys for.
-        output_keys : list
-            The output keys to expand.
-
-        Returns
-        -------
-        list
-            The expanded output keys.
-        """
         output_keys_expanded = []
+
         if len(output_keys) == 1:
             merge_key = False
         else:
@@ -599,19 +530,6 @@ class GenericOutputAdapter(ResponseRefactor):
         return output_keys_expanded
 
     def _get_outputshape_from_s3_models_json(self, model_id: str) -> str:
-        """
-        Gets the output shape from the S3 models JSON.
-
-        Parameters
-        ----------
-        model_id : str
-            The model identifier.
-
-        Returns
-        -------
-        str
-            The output shape.
-        """
         s3_models_interface = JsonModelsInterface(config_json=self.config_json)
         output_shape = None
         for mdl in s3_models_interface.items():
@@ -624,19 +542,6 @@ class GenericOutputAdapter(ResponseRefactor):
         return output_shape
 
     def _get_outputshape(self, model_id: str) -> str:
-        """
-        Gets the output shape.
-
-        Parameters
-        ----------
-        model_id : str
-            The model identifier.
-
-        Returns
-        -------
-        str
-            The output shape.
-        """
         output_shape = self._get_outputshape_from_s3_models_json(model_id)
         if output_shape is None:
             self.logger.warning("Output shape not found")
@@ -644,24 +549,16 @@ class GenericOutputAdapter(ResponseRefactor):
         return output_shape
 
     def _to_dataframe(self, result: dict, model_id: str) -> DataFrame:
-        """
-        Converts the result to a DataFrame.
+        _output_keys, dtypes, output_shape = self._fetch_schema_from_github()
+        if output_shape is None:
+            output_shape = self._get_outputshape(model_id)
+        else:
+            output_shape = self._convert_dimension_to_shape(output_shape)
 
-        Parameters
-        ----------
-        result : dict
-            The result to convert.
-        model_id : str
-            The model identifier.
-
-        Returns
-        -------
-        DataFrame
-            The converted DataFrame.
-        """
-        output_shape = self._get_outputshape(model_id)
         result = json.loads(result)
         R = []
+        # if dtypes is not None:
+        _dtype = self._get_dtype_obj(dtypes)
         output_keys = None
         output_keys_expanded = None
         self.dtypes = None
@@ -686,16 +583,27 @@ class GenericOutputAdapter(ResponseRefactor):
                     self.logger.warning(
                         f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
                     )
-                    output_keys_expanded = self.__expand_output_keys(vals, output_keys)
+
+                    if _output_keys is not None:
+                        output_keys_expanded = _output_keys
+                    else:
+                        output_keys_expanded = self.__expand_output_keys(
+                            vals, output_keys
+                        )
                     self.logger.info(
                         f"Expanded output keys: {str(output_keys_expanded)[:10]}"
                     )
+
                 if not are_dtypes_informative:
                     t = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
                         self.dtypes = [t]
-                vals = self.__cast_values(vals, self.dtypes, output_keys)
-            R += [[inp["key"], inp["input"]] + vals]
+
+                if _dtype is not None:
+                    vals = self._cast_values_from_github_metadata(vals, _dtype)
+                else:
+                    vals = self.__cast_values(vals, self.dtypes, output_keys)
+            R += [[inp["key"], inp["input"]] + vals[0]]
         columns = ["key", "input"] + output_keys_expanded
         df = DataFrame(data=R, columns=columns)
         return df
@@ -753,25 +661,6 @@ class GenericOutputAdapter(ResponseRefactor):
     def _adapt_generic(
         self, result: dict, output: str, model_id: str = None, api_name: str = None
     ) -> dict:
-        """
-        Adapts the output based on the result and model.
-
-        Parameters
-        ----------
-        result : dict
-            The result to adapt.
-        output : str
-            The output file name.
-        model_id : str, optional
-            The model identifier (default is None).
-        api_name : str, optional
-            The API name (default is None).
-
-        Returns
-        -------
-        dict
-            The adapted result.
-        """
         if model_id is not None and api_name is not None and self.api_schema is None:
             self.api_schema = ApiSchema(model_id=model_id, config_json=self.config_json)
         if self.api_schema is not None:
@@ -800,25 +689,6 @@ class GenericOutputAdapter(ResponseRefactor):
     def _adapt_when_fastapi_was_used(
         self, result: str, output: str, model_id: str = None, api_name: str = None
     ) -> dict:
-        """
-        Adapts the output when FastAPI was used.
-
-        Parameters
-        ----------
-        result : str
-            The result to adapt, stringyfied JSON.
-        output : str
-            The output file name.
-        model_id : str, optional
-            The model identifier (default is None).
-        api_name : str, optional
-            The API name (default is None).
-
-        Returns
-        -------
-        dict
-            The adapted result.
-        """
         if api_name != "run":
             self.logger.debug("Api was not run")
             return None
