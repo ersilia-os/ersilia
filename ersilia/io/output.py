@@ -466,7 +466,7 @@ class GenericOutputAdapter(ResponseRefactor):
         return self._get_dtype(Counter(dtypes).most_common(1)[0][0])
 
     def _sinlge_cast(self, val, dtype):
-        return [dtype(v) if val is not None else val for v in val]
+        return [dtype(v) if v is not None else v for v in val]
 
     def _cast_values_from_github_metadata(self, values, dtype):
         return [self._sinlge_cast(val, dtype) for val in values]
