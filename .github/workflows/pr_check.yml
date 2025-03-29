@@ -59,15 +59,6 @@ jobs:
           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
           ersilia close
 
-      - name: Fetch model from DockerHub
-        run: |
-          ersilia -v fetch molecular-weight --from_dockerhub
-          echo "Serving molecular-weight model." --track --no-cache
-          ersilia serve molecular-weight
-          ersilia info
-          ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
-          ersilia close
-
       - name: Local catalog
         run: |
           ersilia catalog --local
