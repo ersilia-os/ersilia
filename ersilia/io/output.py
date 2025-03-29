@@ -548,65 +548,72 @@ class GenericOutputAdapter(ResponseRefactor):
             output_shape = " "
         return output_shape
 
-    def _to_dataframe(self, result: dict, model_id: str) -> DataFrame:
-        _output_keys, dtypes, output_shape = self._fetch_schema_from_github()
-        if output_shape is None:
-            output_shape = self._get_outputshape(model_id)
-        else:
+    def _resolve_schema_metadata(self, model_id: str):
+        metadata = self._fetch_schema_from_github()
+        if metadata:
+            schema_keys, schema_dtypes, output_shape = metadata
             output_shape = self._convert_dimension_to_shape(output_shape)
+        else:
+            schema_keys, schema_dtypes = None, None
+            output_shape = self._get_outputshape(model_id)
 
-        result = json.loads(result)
-        R = []
-        # if dtypes is not None:
-        _dtype = self._get_dtype_obj(dtypes)
+        dtype_obj = (
+            self._get_dtype_obj(schema_dtypes) if schema_dtypes is not None else None
+        )
+        return schema_keys, output_shape, dtype_obj
+
+    def _to_dataframe(self, result: dict, model_id: str) -> DataFrame:
+        schema_keys, output_shape, dtype_obj = self._resolve_schema_metadata(model_id)
+
+        result_list = json.loads(result) if isinstance(result, str) else result
+
+        rows = []
         output_keys = None
-        output_keys_expanded = None
+        expanded_keys = None
         self.dtypes = None
-        for r in result:
+
+        for r in result_list:
             inp = r["input"]
             out = r["output"]
+
             if output_shape == "Flexible List":
                 vals = [json.dumps(out)]
-                output_keys_expanded = ["outcome"]
+                expanded_keys = ["outcome"]
             else:
                 if output_keys is None:
-                    output_keys = [k for k in out.keys()]
+                    output_keys = list(out.keys())
                 vals = [out[k] for k in output_keys]
-                # if dtypes has been resolved previously, then it is not necessary to resolve it again
+
                 if self.dtypes is None:
                     self.dtypes = [self.__pure_dtype(k) for k in output_keys]
-                are_dtypes_informative = False
-                for dtype in self.dtypes:
-                    if dtype:
-                        are_dtypes_informative = True
-                if output_keys_expanded is None:
+
+                if expanded_keys is None:
                     self.logger.warning(
                         f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
                     )
-
-                    if _output_keys is not None:
-                        output_keys_expanded = _output_keys
-                    else:
-                        output_keys_expanded = self.__expand_output_keys(
-                            vals, output_keys
-                        )
-                    self.logger.info(
-                        f"Expanded output keys: {str(output_keys_expanded)[:10]}"
+                    expanded_keys = schema_keys or self.__expand_output_keys(
+                        vals, output_keys
                     )
+                    self.logger.info(f"Expanded output keys: {str(expanded_keys)[:10]}")
 
-                if not are_dtypes_informative:
-                    t = self._guess_pure_dtype_if_absent(vals)
+                if not any(self.dtypes):
+                    guessed_dtype = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
-                        self.dtypes = [t]
+                        self.dtypes = [guessed_dtype]
+                # Build and collect the row; include all values from vals.
 
-                if _dtype is not None:
-                    vals = self._cast_values_from_github_metadata(vals, _dtype)
+                if dtype_obj is not None:
+                    vals = self._cast_values_from_github_metadata(vals, dtype_obj)
                 else:
                     vals = self.__cast_values(vals, self.dtypes, output_keys)
-            R += [[inp["key"], inp["input"]] + vals[0]]
-        columns = ["key", "input"] + output_keys_expanded
-        df = DataFrame(data=R, columns=columns)
-        return df
+
+            row = [inp["key"], inp["input"]] + vals
+            rows.append(row)
+
+        columns = ["key", "input"] + (
+            expanded_keys if expanded_keys is not None else output_keys
+        )
+        return DataFrame(data=rows, columns=columns)
 
     def meta(self) -> dict:
         """
