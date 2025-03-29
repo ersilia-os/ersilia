@@ -51,7 +51,10 @@ class AutoService(ErsiliaBase):
         The preferred port for the service.
     url : str, optional
         The URL of the service.
-
+    cache: bool
+        Whether to use redis cache or not
+    maxmemory: float
+        Fraction of memory used by redis
     Examples
     --------
     .. code-block:: python
@@ -69,11 +72,13 @@ class AutoService(ErsiliaBase):
         config_json=None,
         preferred_port=None,
         url=None,
+        cache=True,
+        maxmemory=None,
     ):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Setting autoservice for {0}".format(model_id))
         self.config_json = config_json
-        self.setup_redis = SetupRedis()
+        self.setup_redis = SetupRedis(cache=cache, maxmemory=maxmemory)
         self.model_id = model_id
         self._meta = None
         self._preferred_port = preferred_port
