@@ -596,8 +596,8 @@ class GenericOutputAdapter(ResponseRefactor):
                     vals = self._cast_values_from_github_metadata(vals, dtype_obj)
                 else:
                     vals = self.__cast_values(vals, self.dtypes, output_keys)
-
-            row = [inp["key"], inp["input"]] + vals[0]
+            vals = vals[0] if isinstance(vals[0], list) else vals
+            row = [inp["key"], inp["input"]] + vals
             rows.append(row)
 
         columns = ["key", "input"] + (
