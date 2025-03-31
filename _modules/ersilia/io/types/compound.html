@@ -323,10 +323,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements.compound</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ChemblWebResourceClientRequirement</span><span class="p">,</span>
-    <span class="n">RdkitRequirement</span><span class="p">,</span>
-<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.arbitrary</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArbitraryIdentifier</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.compound</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompoundIdentifier</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
@@ -399,10 +395,9 @@
 <span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Checking RDKIT and other requirements necessary for compound inputs&quot;</span>
+            <span class="s2">&quot;Making sure that the necessary requirements are met&quot;</span>
         <span class="p">)</span>
-        <span class="n">RdkitRequirement</span><span class="p">()</span>
-        <span class="n">ChemblWebResourceClientRequirement</span><span class="p">()</span></div>
+        <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="IO.example">
@@ -495,7 +490,7 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the text is a valid key, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">_is_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">_is_key</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IO.string_delimiter">
@@ -604,11 +599,8 @@
         <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">text_type</span> <span class="o">==</span> <span class="s2">&quot;smiles&quot;</span><span class="p">:</span>
             <span class="n">inp</span> <span class="o">=</span> <span class="n">text</span>
-        <span class="k">elif</span> <span class="n">text_type</span> <span class="o">==</span> <span class="s2">&quot;inchikey&quot;</span><span class="p">:</span>
-            <span class="n">inp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">unichem_resolver</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">text</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">inp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">chemical_identifier_resolver</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">inp</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">inp</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">}</span>

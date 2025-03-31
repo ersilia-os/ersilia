@@ -319,25 +319,10 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.utils.identifiers.compound</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.parse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">aiohttp</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">nest_asyncio</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">..logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">chembl_webresource_client.unichem</span><span class="w"> </span><span class="kn">import</span> <span class="n">unichem_client</span> <span class="k">as</span> <span class="n">unichem</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">unichem</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">rdkit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chem</span><span class="p">,</span> <span class="n">RDLogger</span>
-
-    <span class="n">RDLogger</span><span class="o">.</span><span class="n">DisableLog</span><span class="p">(</span><span class="s2">&quot;rdApp.*&quot;</span><span class="p">)</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">Chem</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNPROCESSABLE_INPUT</span>
 
@@ -352,12 +337,8 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    local : bool, optional</span>
-<span class="sd">        If True, use local RDKit for SMILES to InChIKey conversion. Default is True.</span>
 <span class="sd">    concurrency_limit : int, optional</span>
 <span class="sd">        The maximum number of concurrent API requests. Default is 10.</span>
-<span class="sd">    cache_maxsize : int, optional</span>
-<span class="sd">        The maximum size of the LRU cache for storing API results. Default is 128.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -365,36 +346,16 @@
 
 <span class="sd">        identifier = CompoundIdentifier()</span>
 <span class="sd">        smiles = &quot;CCO&quot;</span>
-<span class="sd">        inchikey = identifier.encode(smiles)</span>
-<span class="sd">        print(inchikey)</span>
+<span class="sd">        key = identifier.encode(smiles)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">concurrency_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">cache_maxsize</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="o">=</span> <span class="n">Chem</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">unichem</span> <span class="o">=</span> <span class="n">unichem</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concurrency_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_type</span> <span class="o">=</span> <span class="s2">&quot;smiles&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;smiles&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;inchikey&quot;</span><span class="p">,</span> <span class="s2">&quot;key&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;key&quot;</span><span class="p">])</span>
         <span class="c1"># The APIs have the worst rate limitation so its better not to increase more than 10</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">concurrency_limit</span> <span class="o">=</span> <span class="n">concurrency_limit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cache_maxsize</span> <span class="o">=</span> <span class="n">cache_maxsize</span>
-        <span class="c1"># defining the cache to be dynamic</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span> <span class="o">=</span> <span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_maxsize</span><span class="p">)(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nci_smiles_to_inchikey</span> <span class="o">=</span> <span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_maxsize</span><span class="p">)(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_nci_smiles_to_inchikey</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chemical_identifier_resolver</span> <span class="o">=</span> <span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_maxsize</span><span class="p">)(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">chemical_identifier_resolver</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">convert_smiles_to_inchikey_with_rdkit</span> <span class="o">=</span> <span class="n">lru_cache</span><span class="p">(</span>
-            <span class="n">maxsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_maxsize</span>
-        <span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_smiles_to_inchikey_with_rdkit</span><span class="p">)</span>
 
 <div class="viewcode-block" id="CompoundIdentifier.is_input_header">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header">[docs]</a>
@@ -437,36 +398,44 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_pubchem_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">mol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="c1"># Rough SMILES pattern, allows space for CXSMILES</span>
+        <span class="n">SMILES_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;^[A-Za-z0-9@+\-\[\]\(\)=#$:.</span><span class="se">\\</span><span class="s2">/%,*]+(?:\s[A-Za-z0-9@+\-\[\]\(\)=#$:.</span><span class="se">\\</span><span class="s2">/%,*]+)*$&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">SMILES_REGEX</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
 
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_process_pubchem_inchikey</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-            <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">KEY_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z0-9]</span><span class="si">{32}</span><span class="s2">$&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">KEY_REGEX</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_is_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">27</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">comp</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">14</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">10</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">comp</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">comp</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
-                    <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="kc">True</span>
+<div class="viewcode-block" id="CompoundIdentifier.convert_smiles_to_checksum">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_checksum">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_smiles_to_checksum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a SMILES string to a checksum.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        smiles : str</span>
+<span class="sd">            The SMILES string to convert.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The converted checksum.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">smiles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">smiles</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
 
 <div class="viewcode-block" id="CompoundIdentifier.guess_type">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Guess the type of the given text (either &#39;smiles&#39; or &#39;inchikey&#39;).</span>
+<span class="sd">        Guess the type of the given text (either &#39;smiles&#39;).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -476,169 +445,18 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            The guessed type (&#39;smiles&#39;, &#39;inchikey&#39;, or &#39;UNPROCESSABLE_INPUT&#39;).</span>
+<span class="sd">            The guessed type (&#39;smiles&#39;, &#39;UNPROCESSABLE_INPUT&#39;).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">text</span> <span class="o">==</span> <span class="n">UNPROCESSABLE_INPUT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_inchikey</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s2">&quot;inchikey&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_smiles</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
             <span class="k">return</span> <span class="s2">&quot;smiles&quot;</span>
         <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span></div>
 
 
-<div class="viewcode-block" id="CompoundIdentifier.unichem_resolver">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">unichem_resolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inchikey</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Resolve an InChIKey to a SMILES string using UniChem.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        inchikey : str</span>
-<span class="sd">            The InChIKey to resolve.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The resolved SMILES string, or None if resolution fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">unichem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unichem</span><span class="o">.</span><span class="n">inchiFromKey</span><span class="p">(</span><span class="n">inchikey</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">inchi</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;standardinchi&quot;</span><span class="p">]</span>
-        <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">inchi</span><span class="o">.</span><span class="n">MolFromInchi</span><span class="p">(</span><span class="n">inchi</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolToSmiles</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="CompoundIdentifier.chemical_identifier_resolver">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">[docs]</a>
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">chemical_identifier_resolver</span><span class="p">(</span><span class="n">identifier</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Resolve a chemical identifier to a SMILES string using the NCI tool.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        identifier : str</span>
-<span class="sd">            The chemical identifier to resolve.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The resolved SMILES string, or &#39;UNPROCESSABLE_INPUT&#39; if resolution fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">identifier</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">identifier</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
-        <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://cactus.nci.nih.gov/chemical/structure/</span><span class="si">{0}</span><span class="s2">/smiles&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">identifier</span>
-        <span class="p">)</span>
-        <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span></div>
-
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fetch InChIKey for a single SMILES using PubChem API asynchronously.</span>
-<span class="sd">        The cache is used to store the results of the requests for unique SMILES.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        session : aiohttp.ClientSession</span>
-<span class="sd">            The aiohttp session to use for the request.</span>
-<span class="sd">        smiles : str</span>
-<span class="sd">            The SMILES string to convert.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The InChIKey of the compound, or None if conversion fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">/property/InChIKey/json&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="kc">None</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;PropertyTable&quot;</span><span class="p">][</span><span class="s2">&quot;Properties&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;InChIKey&quot;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fetch InChIKey for a single SMILES using NCI asynchronously.</span>
-<span class="sd">        The cache is used to store the results of the requests for unique SMILES.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        session : aiohttp.ClientSession</span>
-<span class="sd">            The aiohttp session to use for the request.</span>
-<span class="sd">        smiles : str</span>
-<span class="sd">            The SMILES string to convert.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The InChIKey of the compound, or None if conversion fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">identifier</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/</span><span class="si">{0}</span><span class="s2">/property/InChIKey/json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">identifier</span>
-        <span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="kc">None</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
-                <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to fetch InChIKey from NCI for </span><span class="si">{</span><span class="n">smiles</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-<div class="viewcode-block" id="CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">convert_smiles_to_inchikey_with_rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Converts a SMILES string to an InChIKey using RDKit.</span>
-<span class="sd">        The results are cached to improve performance.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        smiles : str</span>
-<span class="sd">            The SMILES string to convert.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The InChIKey of the compound, or None if conversion fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid SMILES string: </span><span class="si">{</span><span class="n">smiles</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">inchi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">rdinchi</span><span class="o">.</span><span class="n">MolToInchi</span><span class="p">(</span><span class="n">mol</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">rdinchi</span><span class="o">.</span><span class="n">InchiToInchiKey</span><span class="p">(</span><span class="n">inchi</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">inchikey</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RDKit failed to convert SMILES </span><span class="si">{</span><span class="n">smiles</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span></div>
-
-
 <div class="viewcode-block" id="CompoundIdentifier.process_smiles">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles">[docs]</a>
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">result_list</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">result_list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process a SMILES string asynchronously.</span>
 
@@ -654,22 +472,8 @@
 <span class="sd">            The list to store results.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">semaphore</span><span class="p">:</span>  <span class="c1"># high performance resource manager</span>
-            <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_smiles_to_inchikey_with_rdkit</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">inchikey</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">inchikey</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">inchikey</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Inchikey converted using PUBCHEM&quot;</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">inchikey</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">inchikey</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Inchikey converted using NCI&quot;</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">inchikey</span><span class="p">:</span>
-                <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">inchikey</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">smiles</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">smiles</span><span class="p">})</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No InChIKey found for SMILES </span><span class="si">{</span><span class="n">smiles</span><span class="si">}</span><span class="s2">. Skipping.&quot;</span><span class="p">)</span></div>
+            <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_smiles_to_checksum</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+            <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">smiles</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">smiles</span><span class="p">})</span></div>
 
 
 <div class="viewcode-block" id="CompoundIdentifier.encode_batch">
@@ -690,15 +494,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">semaphore</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">concurrency_limit</span><span class="p">)</span>
-        <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-            <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">smiles</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">):</span>
-                <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">process_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">result_list</span><span class="p">)</span>
-                <span class="p">)</span>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">smiles</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">):</span>
+            <span class="n">tasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">result_list</span><span class="p">))</span>
 
-            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
-
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="n">tasks</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result_list</span></div>
 
 
@@ -706,7 +506,7 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the InChIKey of a compound based on its SMILES string.</span>
+<span class="sd">        Get the key of a compound based on its SMILES string.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -716,7 +516,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            The InChIKey of the compound, or &#39;UNPROCESSABLE_INPUT&#39; if conversion fails.</span>
+<span class="sd">            The key of the compound, or &#39;UNPROCESSABLE_INPUT&#39; if conversion fails.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -725,29 +525,8 @@
         <span class="p">):</span>
             <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-
-            <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_inchikeys</span><span class="p">():</span>
-                <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-                    <span class="n">inchikey</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pubchem_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">inchikey</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="n">inchikey</span>
-                    <span class="n">inchikey</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nci_smiles_to_inchikey</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">smiles</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="n">inchikey</span>
-
-            <span class="n">inchikey</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">fetch_inchikeys</span><span class="p">())</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">mol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
-                <span class="n">inchi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">rdinchi</span><span class="o">.</span><span class="n">MolToInchi</span><span class="p">(</span><span class="n">mol</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">inchi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
-                <span class="n">inchikey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Chem</span><span class="o">.</span><span class="n">rdinchi</span><span class="o">.</span><span class="n">InchiToInchiKey</span><span class="p">(</span><span class="n">inchi</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">inchikey</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="n">inchikey</span> <span class="k">if</span> <span class="n">inchikey</span> <span class="k">else</span> <span class="n">UNPROCESSABLE_INPUT</span></div>
+        <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_smiles_to_checksum</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">key</span> <span class="k">if</span> <span class="n">key</span> <span class="k">else</span> <span class="n">UNPROCESSABLE_INPUT</span></div>
 
 
 <div class="viewcode-block" id="CompoundIdentifier.validate_smiles">
@@ -766,7 +545,7 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the SMILES string is valid, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">smiles</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">Chem</span><span class="o">.</span><span class="n">MolFromSmiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span></div>
 </div>
 
 

@@ -348,10 +348,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.autoservice</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoService</span><span class="p">,</span> <span class="n">PulledDockerImageService</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.standard_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardCSVRunApi</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..setup.requirements.compound</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ChemblWebResourceClientRequirement</span><span class="p">,</span>
-    <span class="n">RdkitRequirement</span><span class="p">,</span>
-<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..store.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceStoreApi</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputSource</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
@@ -1017,8 +1013,7 @@
 
 <span class="sd">        This method ensures that the required dependencies and resources for the model are available.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">RdkitRequirement</span><span class="p">()</span>
-        <span class="n">ChemblWebResourceClientRequirement</span><span class="p">()</span></div>
+        <span class="k">pass</span> <span class="c1"># TODO Implement whenever this is necessary</span></div>
 
 
 <div class="viewcode-block" id="ErsiliaModel.serve">
@@ -1031,7 +1026,6 @@
 <span class="sd">        It registers the service class and output source, updates the model&#39;s URL and process ID (PID),</span>
 <span class="sd">        and tracks resource usage if tracking is enabled.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking rdkit and other requirements&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">track_runs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">)</span>
@@ -1045,7 +1039,6 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">memory_usage_serve</span><span class="p">,</span> <span class="n">cpu_time_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_memory_info</span><span class="p">()</span>
             <span class="n">peak_memory_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
-
             <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="n">session</span><span class="o">.</span><span class="n">update_peak_memory</span><span class="p">(</span><span class="n">peak_memory_serve</span><span class="p">)</span>
             <span class="n">session</span><span class="o">.</span><span class="n">update_total_memory</span><span class="p">(</span><span class="n">memory_usage_serve</span><span class="p">)</span>

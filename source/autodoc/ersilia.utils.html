@@ -506,15 +506,13 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.identifiers.html#module-ersilia.utils.identifiers.compound">ersilia.utils.identifiers.compound module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.chemical_identifier_resolver()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_checksum"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.convert_smiles_to_checksum()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.encode()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.encode_batch()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.guess_type()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.is_input_header()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.is_key_header()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.process_smiles()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.unichem_resolver()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.validate_smiles()</span></code></a></li>
 </ul>
 </li>
@@ -2106,12 +2104,6 @@ as needed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.rdkit">
-<span class="sig-name descname"><span class="pre">rdkit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.rdkit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.rdkit" title="Link to this definition">¶</a></dt>
-<dd><p>Install RDKit from Conda if not already installed.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.installers.Installer.server_docker">
 <span class="sig-name descname"><span class="pre">server_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.server_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.server_docker" title="Link to this definition">¶</a></dt>
 <dd><p>Build the Docker server image.</p>
@@ -2143,12 +2135,6 @@ as needed.</p>
 <dt class="sig sig-object py" id="ersilia.utils.installers.Uninstaller.base_conda">
 <span class="sig-name descname"><span class="pre">base_conda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Uninstaller.base_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Uninstaller.base_conda" title="Link to this definition">¶</a></dt>
 <dd><p>Delete the base Conda environment.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Uninstaller.rdkit">
-<span class="sig-name descname"><span class="pre">rdkit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Uninstaller.rdkit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Uninstaller.rdkit" title="Link to this definition">¶</a></dt>
-<dd><p>Uninstall RDKit.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -3980,14 +3966,12 @@ Supports formatted JSON strings.</p>
 <li><a class="reference internal" href="#ersilia.utils.installers.Installer.config"><code class="docutils literal notranslate"><span class="pre">Installer.config()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.installers.Installer.git"><code class="docutils literal notranslate"><span class="pre">Installer.git()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.installers.Installer.profile"><code class="docutils literal notranslate"><span class="pre">Installer.profile()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.rdkit"><code class="docutils literal notranslate"><span class="pre">Installer.rdkit()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.installers.Installer.server_docker"><code class="docutils literal notranslate"><span class="pre">Installer.server_docker()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.installers.Installer.server_docker_slim"><code class="docutils literal notranslate"><span class="pre">Installer.server_docker_slim()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.utils.installers.Uninstaller"><code class="docutils literal notranslate"><span class="pre">Uninstaller</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.utils.installers.Uninstaller.base_conda"><code class="docutils literal notranslate"><span class="pre">Uninstaller.base_conda()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Uninstaller.rdkit"><code class="docutils literal notranslate"><span class="pre">Uninstaller.rdkit()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.installers.Uninstaller.server_docker"><code class="docutils literal notranslate"><span class="pre">Uninstaller.server_docker()</span></code></a></li>
 </ul>
 </li>

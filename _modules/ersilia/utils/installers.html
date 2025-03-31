@@ -524,27 +524,6 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Installer.rdkit">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.rdkit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Install RDKit from Conda if not already installed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_done</span><span class="p">(</span><span class="s2">&quot;rdkit&quot;</span><span class="p">):</span>
-            <span class="k">return</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
-
-            <span class="k">if</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;rdkit&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">exists</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-            <span class="n">exists</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">exists</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&gt;&gt; Installing RDKit from Conda&quot;</span><span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;conda install -c conda-forge -y -q rdkit&quot;</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="Installer.config">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Installer.config">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -724,16 +703,6 @@
             <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span><span class="p">,</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Uninstaller.rdkit">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.rdkit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rdkit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Uninstall RDKit.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">remove_from_log</span><span class="p">(</span><span class="s2">&quot;rdkit&quot;</span><span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;conda uninstall </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;rdkit&quot;</span><span class="p">))</span></div>
-
-
 <div class="viewcode-block" id="Uninstaller.base_conda">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.installers.Uninstaller.base_conda">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">base_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -783,7 +752,6 @@
     <span class="n">status</span> <span class="o">=</span> <span class="n">check_install_status</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ignore_status</span><span class="p">:</span>
         <span class="n">ins</span> <span class="o">=</span> <span class="n">Installer</span><span class="p">(</span><span class="n">check_install_log</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">ins</span><span class="o">.</span><span class="n">rdkit</span><span class="p">()</span>
         <span class="n">ins</span><span class="o">.</span><span class="n">config</span><span class="p">()</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">status</span><span class="p">[</span><span class="s2">&quot;install_status_file&quot;</span><span class="p">],</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;base&quot;</span><span class="p">)</span></div>
@@ -807,7 +775,6 @@
         <span class="n">ins</span><span class="o">.</span><span class="n">profile</span><span class="p">()</span>
         <span class="n">ins</span><span class="o">.</span><span class="n">conda</span><span class="p">()</span>
         <span class="n">ins</span><span class="o">.</span><span class="n">git</span><span class="p">()</span>
-        <span class="n">ins</span><span class="o">.</span><span class="n">rdkit</span><span class="p">()</span>
         <span class="n">ins</span><span class="o">.</span><span class="n">config</span><span class="p">()</span>
         <span class="n">ins</span><span class="o">.</span><span class="n">base_conda</span><span class="p">()</span>
         <span class="n">ins</span><span class="o">.</span><span class="n">server_docker</span><span class="p">()</span>

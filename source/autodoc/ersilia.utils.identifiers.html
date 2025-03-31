@@ -366,53 +366,30 @@
 <span id="ersilia-utils-identifiers-compound-module"></span><h2>ersilia.utils.identifiers.compound module<a class="headerlink" href="#module-ersilia.utils.identifiers.compound" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.compound.</span></span><span class="sig-name descname"><span class="pre">CompoundIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concurrency_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_maxsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.compound.</span></span><span class="sig-name descname"><span class="pre">CompoundIdentifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">concurrency_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A class to handle compound identification and conversion between different chemical identifiers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>local</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use local RDKit for SMILES to InChIKey conversion. Default is True.</p></li>
-<li><p><strong>concurrency_limit</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of concurrent API requests. Default is 10.</p></li>
-<li><p><strong>cache_maxsize</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum size of the LRU cache for storing API results. Default is 128.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>concurrency_limit</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum number of concurrent API requests. Default is 10.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">identifier</span> <span class="o">=</span> <span class="n">CompoundIdentifier</span><span class="p">()</span>
 <span class="n">smiles</span> <span class="o">=</span> <span class="s2">&quot;CCO&quot;</span>
-<span class="n">inchikey</span> <span class="o">=</span> <span class="n">identifier</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">inchikey</span><span class="p">)</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">identifier</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chemical_identifier_resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.chemical_identifier_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver" title="Link to this definition">¶</a></dt>
-<dd><p>Resolve a chemical identifier to a SMILES string using the NCI tool.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>identifier</strong> (<em>str</em>) – The chemical identifier to resolve.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The resolved SMILES string, or ‘UNPROCESSABLE_INPUT’ if resolution fails.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit">
-<span class="sig-name descname"><span class="pre">convert_smiles_to_inchikey_with_rdkit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit" title="Link to this definition">¶</a></dt>
-<dd><p>Converts a SMILES string to an InChIKey using RDKit.
-The results are cached to improve performance.</p>
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_checksum">
+<span class="sig-name descname"><span class="pre">convert_smiles_to_checksum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.convert_smiles_to_checksum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_checksum" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a SMILES string to a checksum.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES string to convert.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The InChIKey of the compound, or None if conversion fails.</p>
+<dd class="field-even"><p>The converted checksum.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -423,13 +400,13 @@ The results are cached to improve performance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.encode" title="Link to this definition">¶</a></dt>
-<dd><p>Get the InChIKey of a compound based on its SMILES string.</p>
+<dd><p>Get the key of a compound based on its SMILES string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>smiles</strong> (<em>str</em>) – The SMILES string of the compound.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The InChIKey of the compound, or ‘UNPROCESSABLE_INPUT’ if conversion fails.</p>
+<dd class="field-even"><p>The key of the compound, or ‘UNPROCESSABLE_INPUT’ if conversion fails.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -457,13 +434,13 @@ The results are cached to improve performance.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">
 <span class="sig-name descname"><span class="pre">guess_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.guess_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type" title="Link to this definition">¶</a></dt>
-<dd><p>Guess the type of the given text (either ‘smiles’ or ‘inchikey’).</p>
+<dd><p>Guess the type of the given text (either ‘smiles’).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The text to guess the type of.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The guessed type (‘smiles’, ‘inchikey’, or ‘UNPROCESSABLE_INPUT’).</p>
+<dd class="field-even"><p>The guessed type (‘smiles’, ‘UNPROCESSABLE_INPUT’).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -507,7 +484,7 @@ The results are cached to improve performance.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles">
-<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_smiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semaphore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.process_smiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_smiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">smiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semaphore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.process_smiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles" title="Link to this definition">¶</a></dt>
 <dd><p>Process a SMILES string asynchronously.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -517,23 +494,6 @@ The results are cached to improve performance.</p>
 <li><p><strong>session</strong> (<em>aiohttp.ClientSession</em>) – The HTTP session for making requests.</p></li>
 <li><p><strong>result_list</strong> (<em>list</em>) – The list to store results.</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver">
-<span class="sig-name descname"><span class="pre">unichem_resolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inchikey</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/compound.html#CompoundIdentifier.unichem_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver" title="Link to this definition">¶</a></dt>
-<dd><p>Resolve an InChIKey to a SMILES string using UniChem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>inchikey</strong> (<em>str</em>) – The InChIKey to resolve.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The resolved SMILES string, or None if resolution fails.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -925,15 +885,13 @@ The checksum is prefixed with “key” to distinguish it from other strings.</p
 </li>
 <li><a class="reference internal" href="#module-ersilia.utils.identifiers.compound">ersilia.utils.identifiers.compound module</a><ul>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.chemical_identifier_resolver"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.chemical_identifier_resolver()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.convert_smiles_to_inchikey_with_rdkit()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_checksum"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.convert_smiles_to_checksum()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.encode"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.encode()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.encode_batch()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.guess_type()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.is_input_header()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.is_key_header()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.process_smiles()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.unichem_resolver"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.unichem_resolver()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles"><code class="docutils literal notranslate"><span class="pre">CompoundIdentifier.validate_smiles()</span></code></a></li>
 </ul>
 </li>
