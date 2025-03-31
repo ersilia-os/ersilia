@@ -120,7 +120,7 @@ def mock_std_api_post():
 
 
 @pytest.fixture
-def mock_session(setup, compound_csv):
+def mock_session(compound_csv):
     with (
         patch.object(Session, "current_model_id", return_value=MODEL_ID),
         patch.object(Session, "current_service_class", return_value="pulled_docker"),

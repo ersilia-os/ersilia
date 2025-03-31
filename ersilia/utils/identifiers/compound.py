@@ -2,7 +2,6 @@ import asyncio
 import hashlib
 import re
 
-import aiohttp
 import nest_asyncio
 
 from ...default import UNPROCESSABLE_INPUT
@@ -72,7 +71,9 @@ class CompoundIdentifier(object):
         if not isinstance(text, str) or not text.strip():
             return False
         # Rough SMILES pattern, allows space for CXSMILES
-        SMILES_REGEX = re.compile(r"^[A-Za-z0-9@+\-\[\]\(\)=#$:.\\/%,*]+ ?[^\s]*$")
+        SMILES_REGEX = re.compile(
+            r"^[A-Za-z0-9@+\-\[\]\(\)=#$:.\\/%,*]+(?:\s[A-Za-z0-9@+\-\[\]\(\)=#$:.\\/%,*]+)*$"
+        )
         return bool(SMILES_REGEX.fullmatch(text.strip()))
 
     def _is_key(self, text):
@@ -119,7 +120,7 @@ class CompoundIdentifier(object):
             return "smiles"
         return UNPROCESSABLE_INPUT
 
-    async def process_smiles(self, smiles, semaphore, session, result_list):
+    async def process_smiles(self, smiles, semaphore, result_list):
         """
         Process a SMILES string asynchronously.
 
@@ -136,7 +137,7 @@ class CompoundIdentifier(object):
         """
         async with semaphore:  # high performance resource manager
             key = self.convert_smiles_to_checksum(smiles)
-            key
+            result_list.append({"key": key, "input": smiles, "text": smiles})
 
     async def encode_batch(self, smiles_list):
         """
@@ -154,15 +155,11 @@ class CompoundIdentifier(object):
         """
         result_list = []
         semaphore = asyncio.Semaphore(self.concurrency_limit)
-        async with aiohttp.ClientSession() as session:
-            tasks = []
-            for _, smiles in enumerate(smiles_list):
-                tasks.append(
-                    self.process_smiles(smiles, semaphore, session, result_list)
-                )
+        tasks = []
+        for _, smiles in enumerate(smiles_list):
+            tasks.append(self.process_smiles(smiles, semaphore, result_list))
 
-            await asyncio.gather(*tasks)
-
+        await asyncio.gather(*tasks)
         return result_list
 
     def encode(self, smiles):
