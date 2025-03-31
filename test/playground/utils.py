@@ -147,7 +147,7 @@ def get_commands_all(model_id, config):
         "fetch": build_command(
             fetch_cmd, flag_key="fetch", model_id=model_id
         ),
-        "serve": build_command(serve_cmd, model_id=model_id),
+        "serve": build_command(serve_cmd, flag_key="serve", model_id=model_id),
         "run": build_command(run_cmd, flag_key="run"),
         "catalog": build_command(catalog_cmd, flag_key="catalog"),
         "example": build_command(example_cmd, flag_key="example"),

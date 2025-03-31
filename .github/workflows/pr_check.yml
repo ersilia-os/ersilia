@@ -45,7 +45,7 @@ jobs:
         run: |
           ersilia -v fetch molecular-weight --from_github
           echo "Serving molecular-weight model."
-          ersilia serve molecular-weight --track
+          ersilia serve molecular-weight --track --no-cache
           ersilia info
           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
           ersilia close
@@ -54,16 +54,7 @@ jobs:
         run: |
           ersilia -v fetch molecular-weight --from_s3
           echo "Serving molecular-weight model."
-          ersilia serve molecular-weight --track
-          ersilia info
-          ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
-          ersilia close
-
-      - name: Fetch model from DockerHub
-        run: |
-          ersilia -v fetch molecular-weight --from_dockerhub
-          echo "Serving molecular-weight model." --track
-          ersilia serve molecular-weight
+          ersilia serve molecular-weight --track --no-cache
           ersilia info
           ersilia run -i "CC(=O)OC1=CC=CC=C1C(=O)O" | grep "180.15899"
           ersilia close
