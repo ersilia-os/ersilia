@@ -334,6 +334,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.fetch.actions.template_resolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateResolver</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_bentoml</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...tools.bentoml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupRedis</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.fetch_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">NotInstallableWithBentoML</span><span class="p">,</span>
     <span class="n">NotInstallableWithFastAPI</span><span class="p">,</span>
@@ -432,8 +433,11 @@
             <span class="n">dockerize</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do_docker</span> <span class="o">=</span> <span class="n">dockerize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span> <span class="o">=</span> <span class="n">ModelDockerHubFetcher</span><span class="p">(</span>
-            <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">img_tag</span><span class="o">=</span><span class="n">img_version</span><span class="p">,</span>
-            <span class="n">force_with_bentoml</span><span class="o">=</span><span class="n">force_with_bentoml</span><span class="p">,</span> <span class="n">force_with_fastapi</span><span class="o">=</span><span class="n">force_with_fastapi</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
+            <span class="n">img_tag</span><span class="o">=</span><span class="n">img_version</span><span class="p">,</span>
+            <span class="n">force_with_bentoml</span><span class="o">=</span><span class="n">force_with_bentoml</span><span class="p">,</span>
+            <span class="n">force_with_fastapi</span><span class="o">=</span><span class="n">force_with_fastapi</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_installed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span><span class="o">.</span><span class="n">is_docker_installed</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_active</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span><span class="o">.</span><span class="n">is_docker_active</span><span class="p">()</span>
@@ -721,6 +725,7 @@
             <span class="n">reason</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;An unknown error occurred during fetching.&quot;</span>
             <span class="p">)</span>
+            <span class="n">SetupRedis</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maxmemory</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">remove_redis_image_if_exists</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span><span class="n">fetch_success</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">reason</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fr</span></div>
 </div>

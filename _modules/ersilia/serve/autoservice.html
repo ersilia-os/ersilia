@@ -373,7 +373,10 @@
 <span class="sd">        The preferred port for the service.</span>
 <span class="sd">    url : str, optional</span>
 <span class="sd">        The URL of the service.</span>
-
+<span class="sd">    cache: bool</span>
+<span class="sd">        Whether to use redis cache or not</span>
+<span class="sd">    maxmemory: float</span>
+<span class="sd">        Fraction of memory used by redis</span>
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: python</span>
@@ -391,11 +394,13 @@
         <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">maxmemory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Setting autoservice for </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setup_redis</span> <span class="o">=</span> <span class="n">SetupRedis</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_redis</span> <span class="o">=</span> <span class="n">SetupRedis</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">maxmemory</span><span class="o">=</span><span class="n">maxmemory</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_preferred_port</span> <span class="o">=</span> <span class="n">preferred_port</span>

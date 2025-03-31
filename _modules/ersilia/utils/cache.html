@@ -322,12 +322,17 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">docker</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">docker.errors</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_DOCKER_NETWORK_BRIDGE</span><span class="p">,</span>
     <span class="n">DEFAULT_DOCKER_NETWORK_NAME</span><span class="p">,</span>
+    <span class="n">DEFAULT_REDIS_MEMORY_USAGE_FRACTION</span><span class="p">,</span>
     <span class="n">REDIS_CONTAINER_NAME</span><span class="p">,</span>
     <span class="n">REDIS_DATA_VOLUME</span><span class="p">,</span>
+    <span class="n">REDIS_HOST</span><span class="p">,</span>
     <span class="n">REDIS_IMAGE</span><span class="p">,</span>
     <span class="n">REDIS_PORT</span><span class="p">,</span>
 <span class="p">)</span>
@@ -345,22 +350,43 @@
 <span class="sd">    It checks for the availability of the Redis image, handles container lifecycle</span>
 <span class="sd">    operations (restart, create) and ensures that a Docker volume is mounted for</span>
 <span class="sd">    data persistence.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cache: bool</span>
+<span class="sd">        Whether to use redis cache or not</span>
+<span class="sd">    maxmemory: float</span>
+<span class="sd">        Fraction of memory used by redis</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">maxmemory</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxmemory</span> <span class="o">=</span> <span class="n">maxmemory</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_docker_installed</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_amenable</span><span class="p">()[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="k">return</span>
             <span class="n">set_docker_host</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Docker is available and running.&quot;</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Docker is not installed or running.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Docker is not installed or running.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">network</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_max_memory_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">virtual_memory</span><span class="p">()</span><span class="o">.</span><span class="n">total</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxmemory</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">total</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxmemory</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">DEFAULT_REDIS_MEMORY_USAGE_FRACTION</span> <span class="o">*</span> <span class="n">total</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure_redis_memory_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">REDIS_HOST</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">REDIS_PORT</span><span class="p">)</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">config_set</span><span class="p">(</span><span class="s2">&quot;maxmemory&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_max_memory_limit</span><span class="p">())</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">config_set</span><span class="p">(</span><span class="s2">&quot;maxmemory-policy&quot;</span><span class="p">,</span> <span class="s2">&quot;allkeys-lru&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SetupRedis.ensure_redis_running">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cache.SetupRedis.ensure_redis_running">[docs]</a>
@@ -376,7 +402,7 @@
 <span class="sd">            RuntimeError: If the container fails to start.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Checking Redis server status...&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_docker_installed</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_amenable</span><span class="p">()[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_image_available</span><span class="p">():</span>
@@ -391,9 +417,46 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_start_new_container</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pull_and_start_container</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure_redis_memory_policy</span><span class="p">()</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Redis server setup completed.&quot;</span><span class="p">)</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_amenable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_docker_installed</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Docker is not installed in your system. Model result will not be cached!&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Docker is not installed!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_docker_active</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Docker is not active. Model result will not be cached!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Docker is not active!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Caching is disabled. Model result will not be cached!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_container_if_exists</span><span class="p">()</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Caching is disabled using flag!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Caching is amenable&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Caching enabled!&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Caching is amenable&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Caching enabled!&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">],</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_docker_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;docker&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -401,7 +464,6 @@
                 <span class="s2">&quot;Docker is not installed on this runner. Skipping Docker operations.&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_image_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -424,12 +486,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">container</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
             <span class="n">container</span><span class="o">.</span><span class="n">reload</span><span class="p">()</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Container </span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2"> restarted successfully. Status: </span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Container </span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2"> restarted successfully. &quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to restart container.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to restart Redis container.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_create_docker_network</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">networks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">networks</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">DEFAULT_DOCKER_NETWORK_NAME</span><span class="p">])</span>
@@ -453,6 +512,59 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">volumes</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">REDIS_DATA_VOLUME</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Volume created: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+<div class="viewcode-block" id="SetupRedis.remove_redis_image_if_exists">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cache.SetupRedis.remove_redis_image_if_exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_redis_image_if_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the specified Docker image exists. If it does, remove it forcefully.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">REDIS_IMAGE</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">ImageNotFound</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image &#39;</span><span class="si">{</span><span class="n">REDIS_IMAGE</span><span class="si">}</span><span class="s2">&#39; does not exist.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">api_err</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error accessing Docker API: </span><span class="si">{</span><span class="n">api_err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An unexpected error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image &#39;</span><span class="si">{</span><span class="n">REDIS_IMAGE</span><span class="si">}</span><span class="s2">&#39; has been removed.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">api_err</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to remove image &#39;</span><span class="si">{</span><span class="n">REDIS_IMAGE</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">api_err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An unexpected error occurred while removing the image: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remove_container_if_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">REDIS_CONTAINER_NAME</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">NotFound</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Container &#39;</span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2">&#39; does not exist.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">api_err</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error accessing Docker API: </span><span class="si">{</span><span class="n">api_err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An unexpected error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Container &#39;</span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2">&#39; has been removed.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">api_err</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to remove container &#39;</span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">api_err</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;An unexpected error occurred while removing the container: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_start_new_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_docker_network</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_data_volume</span><span class="p">()</span>
@@ -466,23 +578,21 @@
                 <span class="n">ports</span><span class="o">=</span><span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">REDIS_PORT</span><span class="si">}</span><span class="s2">/tcp&quot;</span><span class="p">:</span> <span class="n">REDIS_PORT</span><span class="p">},</span>
                 <span class="n">network</span><span class="o">=</span><span class="n">DEFAULT_DOCKER_NETWORK_NAME</span><span class="p">,</span>
                 <span class="n">volumes</span><span class="o">=</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bind&quot;</span><span class="p">:</span> <span class="s2">&quot;/data&quot;</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;rw&quot;</span><span class="p">}},</span>
-                <span class="n">auto_remove</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Container will be removed on stop, but volume persists.</span>
+                <span class="n">auto_remove</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Container </span><span class="si">{</span><span class="n">REDIS_CONTAINER_NAME</span><span class="si">}</span><span class="s2"> started successfully. ID: </span><span class="si">{</span><span class="n">container</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to start new container.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to start new Redis container.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_pull_and_start_container</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pulling image </span><span class="si">{</span><span class="n">REDIS_IMAGE</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">pull</span><span class="p">(</span><span class="n">REDIS_IMAGE</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start_new_container</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to pull image and start container.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to pull and start Redis container.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
+        <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">APIError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to pull image and start container.&quot;</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

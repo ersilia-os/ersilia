@@ -598,13 +598,21 @@
 <span id="ersilia-utils-cache-module"></span><h2>ersilia.utils.cache module<a class="headerlink" href="#module-ersilia.utils.cache" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.utils.cache.SetupRedis">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.cache.</span></span><span class="sig-name descname"><span class="pre">SetupRedis</span></span><a class="reference internal" href="../../_modules/ersilia/utils/cache.html#SetupRedis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.cache.SetupRedis" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.cache.</span></span><span class="sig-name descname"><span class="pre">SetupRedis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cache</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxmemory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/cache.html#SetupRedis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.cache.SetupRedis" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A utility class to ensure a Redis server is running using Docker.</p>
 <p>This class uses the Docker SDK for Python to manage the Redis container.
 It checks for the availability of the Redis image, handles container lifecycle
 operations (restart, create) and ensures that a Docker volume is mounted for
 data persistence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cache</strong> (<em>bool</em>) – Whether to use redis cache or not</p></li>
+<li><p><strong>maxmemory</strong> (<em>float</em>) – Fraction of memory used by redis</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.cache.SetupRedis.ensure_redis_running">
 <span class="sig-name descname"><span class="pre">ensure_redis_running</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/cache.html#SetupRedis.ensure_redis_running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.cache.SetupRedis.ensure_redis_running" title="Link to this definition">¶</a></dt>
@@ -617,6 +625,12 @@ as needed.</p>
 <dd class="field-odd"><p><strong>RuntimeError</strong> – If the container fails to start.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.cache.SetupRedis.remove_redis_image_if_exists">
+<span class="sig-name descname"><span class="pre">remove_redis_image_if_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/cache.html#SetupRedis.remove_redis_image_if_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.cache.SetupRedis.remove_redis_image_if_exists" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the specified Docker image exists. If it does, remove it forcefully.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3763,6 +3777,7 @@ Supports formatted JSON strings.</p>
 <li><a class="reference internal" href="#module-ersilia.utils.cache">ersilia.utils.cache module</a><ul>
 <li><a class="reference internal" href="#ersilia.utils.cache.SetupRedis"><code class="docutils literal notranslate"><span class="pre">SetupRedis</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.utils.cache.SetupRedis.ensure_redis_running"><code class="docutils literal notranslate"><span class="pre">SetupRedis.ensure_redis_running()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.cache.SetupRedis.remove_redis_image_if_exists"><code class="docutils literal notranslate"><span class="pre">SetupRedis.remove_redis_image_if_exists()</span></code></a></li>
 </ul>
 </li>
 </ul>
