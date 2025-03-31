@@ -558,48 +558,70 @@ class StandardCSVRunApi(ErsiliaBase):
         if not isinstance(input_data, list):
             input_data = [input_data]
 
-        overall_results = []
         st = time.perf_counter()
 
-        total = len(input_data)
-        self.logger.info("waiting for the server...")
-        for i in range(0, total, batch_size):
-            batch = input_data[i : i + batch_size]
-            batch_st = time.perf_counter()
-            response = requests.post(url, json=batch)
-            batch_et = time.perf_counter()
-            self.logger.info(
-                f"Batch {i//batch_size + 1} response fetched within: {batch_et - batch_st:.4f} seconds"
-            )
-
-            if response.status_code == 200:
-                batch_result = response.json()
-                if "result" in batch_result:
-                    batch_result = batch_result["result"]
-                    if "meta" in batch_result:
-                        del batch_result["meta"]
-                overall_results.extend(batch_result)
-            else:
-                self.logger.error(
-                    f"Batch {i//batch_size + 1} request failed with status: {response.status_code}"
-                )
-                return None
-        combined_results = []
-        for inp, out in zip(input_data, overall_results):
-            _v = list(out.values())
-            _output = (
-                {k: v for k, v in out.items()}
-                if output.endswith(".json")
-                else {"outcome": _v}
-            )
-            combined_results.append({"input": inp, "output": _output})
+        self.logger.info("waiting for the server to respond...")
+        results, meta = self._fetch_result(input_data, url, batch_size)
+        self.logger.info("Standardizing output...")
+        results = self._standardize_output(input_data, results, output, meta)
 
         et = time.perf_counter()
         self.logger.info(f"All batches processed in {et - st:.4f} seconds")
 
         self._serialize_output(
-            json.dumps(combined_results), output, self.model_id, self.api_name
+            json.dumps(results), output, self.model_id, self.api_name
         )
         ft = time.perf_counter()
         self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")
         return output
+
+    def _fetch_result(self, input_data, url, batch_size):
+        total, overall_results, meta = len(input_data), [], None
+
+        for i in range(0, total, batch_size):
+            batch = input_data[i : i + batch_size]
+            st = time.perf_counter()
+            response = requests.post(url, json=batch)
+            et = time.perf_counter()
+            self.logger.info(
+                f"Batch {i//batch_size + 1} response fetched within: {et - st:.4f} seconds"
+            )
+
+            if response.status_code == 200:
+                response = response.json()
+                if "result" in response:
+                    self.logger.warning("Result is in batch")
+                    batch_result = response["result"]
+                    meta = response["meta"] if "meta" in response else meta
+                    overall_results.extend(batch_result)
+                else:
+                    overall_results.extend(response)
+
+                if "meta" in response:
+                    self.logger.info("Deleting meta")
+                    del response["meta"]
+            else:
+                self.logger.error(
+                    f"Batch {i//batch_size + 1} request failed with status: {response.status_code}"
+                )
+                return None
+        return overall_results, meta
+
+    def _standardize_output(self, input_data, results, output, meta):
+        _results = []
+        key = "outcome" if meta is None else meta["outcome"][0]
+        keys = (
+            [key] * len(input_data)
+            if "outcome" in key or (meta is not None and len(meta["outcome"]) == 1)
+            else meta["outcome"]
+        )
+        for inp, out in zip(input_data, results):
+            _v = list(out.values())
+            _k = list(out.keys()) if "outcome" not in out.keys() else keys
+            _output = (
+                {k: v for k, v in zip(_k, _v)}
+                if output.endswith(".json")
+                else {"outcome": _v}
+            )
+            _results.append({"input": inp, "output": _output})
+        return _results

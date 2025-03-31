@@ -390,17 +390,6 @@ class GenericOutputAdapter(ResponseRefactor):
     def __cast_values(self, vals: list, dtypes: list, output_keys: list) -> list:
         v = []
         for v_, t_, k_ in zip(vals, dtypes, output_keys):
-            if isinstance(v_, list) or hasattr(v_, "__len__"):
-                self.logger.debug(
-                    "Values: {0}... (and {1} more elements)".format(
-                        v_[:10], len(v_) - 10 if len(v_) > 10 else 0
-                    )
-                )
-            else:
-                self.logger.debug(f"Values: {v_}")
-
-            self.logger.debug(f"Type: {t_}")
-            self.logger.debug(f"Key: {k_}")
             if t_ in self._array_types:
                 if v_ is None:
                     v_ = [None] * self.__array_shape(k_)
@@ -577,6 +566,7 @@ class GenericOutputAdapter(ResponseRefactor):
             out = r["output"]
 
             if output_shape == "Flexible List":
+                self.logger.warning("Flexible List found")
                 vals = [json.dumps(out)]
                 expanded_keys = ["outcome"]
             else:
@@ -607,7 +597,7 @@ class GenericOutputAdapter(ResponseRefactor):
                 else:
                     vals = self.__cast_values(vals, self.dtypes, output_keys)
 
-            row = [inp["key"], inp["input"]] + vals
+            row = [inp["key"], inp["input"]] + vals[0]
             rows.append(row)
 
         columns = ["key", "input"] + (
