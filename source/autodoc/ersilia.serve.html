@@ -1609,13 +1609,15 @@ for HDF5 serializability, and generate empty representations of the input and ou
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.post">
-<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local-only'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.post" title="Link to this definition">¶</a></dt>
-<dd><p>Post input data to the API and get the output data. And store the output data if needed.</p>
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.post"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.post" title="Link to this definition">¶</a></dt>
+<dd><p>Post input data to the API in batches and get the output data.
+Finally, create a CSV file with the combined results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input</strong> (<em>str</em><em> | </em><em>list</em>) – Input data which can be a file path, a SMILES string, or a list of SMILES strings.</p></li>
 <li><p><strong>output</strong> (<em>str</em>) – Path to the output CSV file.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Number of items per batch.</p></li>
 <li><p><strong>output_source</strong> (<a class="reference internal" href="ersilia.store.html#ersilia.store.utils.OutputSource" title="ersilia.store.utils.OutputSource"><em>OutputSource</em></a><em>, </em><em>optional</em>) – Source of the output data. Default is OutputSource.LOCAL_ONLY.</p></li>
 </ul>
 </dd>
