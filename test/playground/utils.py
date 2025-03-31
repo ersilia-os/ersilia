@@ -10,10 +10,6 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 from ersilia.default import EOS_PLAYGROUND
-from ersilia.setup.requirements.compound import (
-    ChemblWebResourceClientRequirement,
-    RdkitRequirement,
-)
 from ersilia.cli.commands.example import example_cmd
 from ersilia.cli.commands.catalog import catalog_cmd
 from ersilia.cli.commands.fetch import fetch_cmd
@@ -24,16 +20,6 @@ from ersilia.cli.commands.test import test_cmd
 from ersilia.cli.commands.delete import delete_cmd
 from ersilia.cli import echo
 from .rules import get_rule
-
-try:
-    from rdkit import Chem
-except ImportError:
-    ChemblWebResourceClientRequirement()
-    RdkitRequirement()
-    try:
-        from rdkit import Chem
-    except ImportError as e:
-        raise ImportError("Failed to import 'rdkit' even after attempting to install dependencies.") from e
 
 
 file_path = Path(EOS_PLAYGROUND) / "files"
@@ -117,10 +103,7 @@ def get_random_samples(config, filename="inp-000.csv"):
     smiles_list = [row[1] for row in data if len(row) > 1]
     smiles_list = smiles_list[500:]
     
-    def is_valid_smile(smile):
-        return Chem.MolFromSmiles(smile) is not None
-
-    valid_smiles = [smile for smile in smiles_list if is_valid_smile(smile)]
+    valid_smiles = [smile for smile in smiles_list]
     sampled = valid_smiles[:num_samples]
 
     with open(input_file, "w", encoding="utf-8") as f:

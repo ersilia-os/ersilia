@@ -123,6 +123,7 @@ ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
 REDIS_SERVER = "redis://127.0.0.1:6379"
 # Other
 FEATURE_MERGE_PATTERN = "---"
+HEADER_INDICATORS = ["key", "input", "smiles", "compound"] # TODO This list can be expanded. It is simply to detect headers easily.
 
 # URLS
 REDIS_PORT = 6379

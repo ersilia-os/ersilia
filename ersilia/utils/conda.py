@@ -760,7 +760,7 @@ class StandaloneConda(object):
 
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
-        logger.debug("Activating environment")
+        logger.info(f"Activating environment: {environment}")
         logger.debug("Current working directory: {0}".format(os.getcwd()))
         bash_script = """
         source /{0}/bin/activate

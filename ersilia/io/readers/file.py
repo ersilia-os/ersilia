@@ -3,9 +3,8 @@ import csv
 import json
 import os
 
-import numpy as np
-
 from ... import logger
+from ...default import HEADER_INDICATORS
 from ...utils.logging import make_temp_dir
 from ..shape import InputShape, InputShapeList, InputShapePairOfLists, InputShapeSingle
 
@@ -260,6 +259,7 @@ class BaseTabularFile(object):
         self._column_delimiter = self.get_delimiter()
         self.logger.debug("Expected number: {0}".format(self.expected_number))
         self.logger.debug("Entity is list: {0}".format(self.entity_is_list))
+        self.header_indicators = set(HEADER_INDICATORS)
 
     def _get_delimiter_by_extension(self):
         if self.path.endswith(".csv"):
@@ -384,6 +384,8 @@ class BaseTabularFile(object):
                             self.matching
                         )
                     )
+                if len(r) > 2:
+                    raise Exception("Too many columns in the input file. Maximum number of columns is 2 (input and key).")
                 if i > self.sniff_line_limit:
                     self.logger.debug("Stopping sniffer for resolving column types")
                     break
@@ -466,35 +468,15 @@ class BaseTabularFile(object):
         if self._has_header is not None:
             self.logger.debug("Has header is not None")
             return self._has_header
-        self.logger.debug("Resolving columns")
         self.resolve_columns()
         with open(self.path, "r") as f:
             reader = csv.reader(f, delimiter=self._column_delimiter)
             candidate_header = next(reader)
             self.logger.debug("Candidate header is {0}".format(candidate_header))
-        input = self.matching["input"]
-        self.logger.debug("Matching for input is {0}".format(input))
-        if input is not None:
-            hi = []
-            for i in input:
-                v = candidate_header[i]
-                hi += [self.is_input(v)]
-            hi = np.any(hi)
-        else:
-            hi = False
-        key = self.matching["key"]
-        if key is not None:
-            hk = []
-            for k in key:
-                v = candidate_header[k]
-                hk += [self.is_key(v)]
-            hk = np.any(hk)
-        else:
-            hk = False
-        if hi or hk:
-            self._has_header = False
-        else:
-            self._has_header = True
+        self._has_header = False
+        for c in candidate_header:
+            if c.lower() in self.header_indicators:
+                self._has_header = True
         return self._has_header
 
     def read_input_columns(self):

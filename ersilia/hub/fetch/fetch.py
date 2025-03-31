@@ -14,7 +14,6 @@ from ...hub.delete.delete import ModelFullDeleter
 from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...setup.requirements import check_bentoml
 from ...tools.bentoml.exceptions import BentoMLException
-from ...utils.cache import SetupRedis
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithBentoML,
     NotInstallableWithFastAPI,
@@ -398,6 +397,4 @@ class ModelFetcher(ErsiliaBase):
             reason = (
                 str(err) if str(err) else "An unknown error occurred during fetching."
             )
-            SetupRedis(cache=False, maxmemory=None).remove_redis_image_if_exists()
             return FetchResult(fetch_success=False, reason=reason)
-        return fr
