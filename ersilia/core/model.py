@@ -81,6 +81,10 @@ class ErsiliaModel(ErsiliaBase):
         Preferred port for serving the model, by default None.
     track_runs : bool, optional
         Whether to track runs, by default False.
+    cache: bool
+        Whether to use redis cache or not
+    maxmemory: float
+        Fraction of memory used by redis
 
     Examples
     --------
@@ -128,6 +132,8 @@ class ErsiliaModel(ErsiliaBase):
         fetch_if_not_available: bool = True,
         preferred_port: int = None,
         track_runs: bool = False,
+        cache: bool = True,
+        maxmemory: float = None,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -200,6 +206,8 @@ class ErsiliaModel(ErsiliaBase):
             service_class=self.service_class,
             config_json=self.config_json,
             preferred_port=preferred_port,
+            cache=cache,
+            maxmemory=maxmemory,
         )
         self._set_apis()
         self.session = Session(config_json=self.config_json)
