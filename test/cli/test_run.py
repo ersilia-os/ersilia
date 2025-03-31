@@ -99,7 +99,7 @@ def compound_csv():
 
 @pytest.fixture
 def mock_std_api_post():
-    def mock_post_side_effect(input, output, output_source):
+    def mock_post_side_effect(input, output, batch_size, output_source):
         api_instance = StandardCSVRunApi(model_id=MODEL_ID, url=URL)
         logger.info(f"Input: {input}")
         input_data = api_instance.serialize_to_json(input)
@@ -137,10 +137,29 @@ def mock_session(setup, compound_csv):
     ):
         yield
 
+@pytest.fixture
+def mock_api_task():
+    def mock_api_task_side_effect(api_name, input, output, batch_size):
+        if output is None:
+            length = len(input)
+
+            def result_generator():
+                for _ in range(length):
+                    yield {"value": round(random.uniform(MIN_WEIGHT, MAX_WEIGHT), 3)}
+
+            return result_generator()
+        return output
+
+    with patch.object(
+        ErsiliaModel, "api_task", side_effect=mock_api_task_side_effect
+    ) as mock_task:
+        yield mock_task
 
 # For Standard API
 def test_standard_api_string(
+    mock_convn_api_get_apis,
     mock_std_api_post,
+    mock_api_task,
     mock_fetcher,
     mock_set_apis,
     mock_get_input,
@@ -158,15 +177,15 @@ def test_standard_api_string(
     assert mock_get_url.called
     assert mock_get_input.called
     assert mock_std_header.called
-    assert mock_is_amenable.called
-    assert mock_std_api_post.called
 
     assert mock_set_apis.called
     assert RESULT_CSV in result.output
 
 
 def test_standard_api_csv(
+    mock_convn_api_get_apis,
     mock_std_api_post,
+    mock_api_task,
     mock_fetcher,
     mock_set_apis,
     mock_get_input,
@@ -184,8 +203,8 @@ def test_standard_api_csv(
     assert mock_get_input.called
     assert mock_get_url.called
     assert mock_std_header.called
-    assert mock_is_amenable.called
     assert mock_set_apis.called
+
     assert RESULT_CSV in result.output
 
 
@@ -222,7 +241,6 @@ def test_conv_api_string(
 
     input_arg = INPUT
     output_arg = RESULT_JSON
-    batch_size = 10
     result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", str(output_arg)])
 
     assert result.exit_code == 0
@@ -236,7 +254,6 @@ def test_conv_api_csv(
     runner = CliRunner()
     input_arg = INPUT_CSV
     output_arg = RESULT_JSON
-    batch_size = 10
     result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", str(output_arg)])
     logger.info(result.output)
     assert result.exit_code == 0

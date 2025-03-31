@@ -461,7 +461,7 @@ class ErsiliaModel(ErsiliaBase):
         else:
             return self._api_runner_return
 
-    def _standard_api_runner(self, input, output):
+    def _standard_api_runner(self, input, output, batch_size):
         scra = StandardCSVRunApi(model_id=self.model_id, url=self._get_url())
         if not scra.is_amenable(output):
             self.logger.debug(
@@ -469,7 +469,12 @@ class ErsiliaModel(ErsiliaBase):
             )
             return None
         self.logger.debug("Starting standard runner")
-        result = scra.post(input=input, output=output, output_source=self.output_source)
+        result = scra.post(
+            input=input,
+            output=output,
+            batch_size=batch_size,
+            output_source=self.output_source,
+        )
         return result
 
     @staticmethod
@@ -736,11 +741,13 @@ class ErsiliaModel(ErsiliaBase):
 
         return result
 
-    def _standard_run(self, input=None, output=None):
+    def _standard_run(self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
         t0 = time.time()
         t1 = None
         status_ok = False
-        result = self._standard_api_runner(input=input, output=output)
+        result = self._standard_api_runner(
+            input=input, output=output, batch_size=batch_size
+        )
         if type(output) is str:  # TODO Redundant, should be removed
             if os.path.exists(output):
                 t1 = os.path.getctime(output)
@@ -792,7 +799,9 @@ class ErsiliaModel(ErsiliaBase):
         standard_status_ok = False
         self.logger.debug("Trying standard API")
         try:
-            result, standard_status_ok = self._standard_run(input=input, output=output)
+            result, standard_status_ok = self._standard_run(
+                input=input, output=output, batch_size=batch_size
+            )
         except Exception as e:
             self.logger.warning(
                 "Standard run did not work with exception {0}".format(e)
