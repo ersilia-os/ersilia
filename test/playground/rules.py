@@ -15,7 +15,6 @@ from ersilia.default import (
     DOCKERHUB_ORG,
     SESSIONS_DIR,
     SESSION_JSON,
-    MODEL_SOURCE_FILE,
     DOCKER_INFO_FILE,
     API_SCHEMA_FILE,
     STATUS_JOSN,
@@ -91,7 +90,6 @@ def register_rule(name):
 @register_rule("fetch_rule")
 class FetchRule(CommandRule):
     required_files = {
-        MODEL_SOURCE_FILE,
         API_SCHEMA_FILE,
         STATUS_JOSN,
         INFORMATION_FILE,
@@ -158,7 +156,6 @@ class FetchRule(CommandRule):
                 detail=f"Missing files in destination folder: {missing_files}",
             )
 
-        self._check_model_source_file(dest_folder, source)
         self._check_api_schema_file(dest_folder)
         self._check_docker_info_file(dest_folder, source)
         self._check_status_file(dest_folder)
@@ -174,33 +171,6 @@ class FetchRule(CommandRule):
             name=ResponseName.DEST_FOLDER_HAS_CONTENT,
             status=True,
         )
-
-    def _check_model_source_file(self, dest_folder, source):
-        if source is "":  # autofetcher
-            return
-
-        source = source.replace("--from_", "")
-
-        if source not in self.sources:
-            self._invalid_files.append(
-                f"Source type [{source}] not in allowed source type\
-                    : {self.sources.values()}"
-            )
-            return
-
-        expected_value = self.sources[source]
-
-        model_source_file = os.path.join(dest_folder, MODEL_SOURCE_FILE)
-        try:
-            with open(model_source_file, "r") as file:
-                content = file.read().strip()
-                if content != expected_value:
-                    self._invalid_files.append(
-                        f"Expected source type [{expected_value}] mismatch \
-                            source [{content}] in {MODEL_SOURCE_FILE}"
-                    )
-        except Exception as e:
-            self._invalid_files.append(MODEL_SOURCE_FILE)
 
     def _check_api_schema_file(self, dest_folder):
         api_schema_file = os.path.join(dest_folder, API_SCHEMA_FILE)

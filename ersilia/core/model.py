@@ -28,10 +28,6 @@ from ..serve.api import Api
 from ..serve.autoservice import AutoService, PulledDockerImageService
 from ..serve.schema import ApiSchema
 from ..serve.standard_api import StandardCSVRunApi
-from ..setup.requirements.compound import (
-    ChemblWebResourceClientRequirement,
-    RdkitRequirement,
-)
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
@@ -678,8 +674,7 @@ class ErsiliaModel(ErsiliaBase):
 
         This method ensures that the required dependencies and resources for the model are available.
         """
-        RdkitRequirement()
-        ChemblWebResourceClientRequirement()
+        pass # TODO Implement whenever this is necessary
 
     def serve(self):
         """
@@ -689,7 +684,6 @@ class ErsiliaModel(ErsiliaBase):
         It registers the service class and output source, updates the model's URL and process ID (PID),
         and tracks resource usage if tracking is enabled.
         """
-        self.logger.debug("Checking rdkit and other requirements")
         self.setup()
         self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track)
@@ -703,7 +697,6 @@ class ErsiliaModel(ErsiliaBase):
         if self._run_tracker is not None:
             memory_usage_serve, cpu_time_serve = self._run_tracker.get_memory_info()
             peak_memory_serve = self._run_tracker.get_peak_memory()
-
             session = Session(config_json=None)
             session.update_peak_memory(peak_memory_serve)
             session.update_total_memory(memory_usage_serve)

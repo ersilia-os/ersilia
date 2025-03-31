@@ -175,24 +175,6 @@ class Installer(BaseInstaller):
         click.echo("Git needs to be installed")
         sys.exit(1)
 
-    def rdkit(self):
-        """
-        Install RDKit from Conda if not already installed.
-        """
-        if self._is_done("rdkit"):
-            return
-        try:
-            import importlib.util
-
-            if importlib.util.find_spec("rdkit") is not None:
-                exists = True
-        except ModuleNotFoundError:
-            exists = False
-        if exists:
-            return
-        click.echo(">> Installing RDKit from Conda")
-        run_command("conda install -c conda-forge -y -q rdkit")
-
     def config(self):
         """
         Set up the configuration file.
@@ -354,13 +336,6 @@ class Uninstaller(BaseInstaller):
             credentials_json=credentials_json,
         )
 
-    def rdkit(self):
-        """
-        Uninstall RDKit.
-        """
-        self.remove_from_log("rdkit")
-        run_command("conda uninstall {0}".format("rdkit"))
-
     def base_conda(self):
         """
         Delete the base Conda environment.
@@ -401,7 +376,6 @@ def base_installer(ignore_status=False):
     status = check_install_status()
     if status["status"] is None or ignore_status:
         ins = Installer(check_install_log=False)
-        ins.rdkit()
         ins.config()
         with open(status["install_status_file"], "w") as f:
             f.write("base")
@@ -422,7 +396,6 @@ def full_installer(ignore_status=False):
         ins.profile()
         ins.conda()
         ins.git()
-        ins.rdkit()
         ins.config()
         ins.base_conda()
         ins.server_docker()
