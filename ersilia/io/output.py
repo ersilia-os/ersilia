@@ -4,7 +4,6 @@ import json
 import os
 import random
 import time
-from collections import Counter
 from io import StringIO
 
 import numpy as np
@@ -452,7 +451,11 @@ class GenericOutputAdapter(ResponseRefactor):
         return type_map.get(type_str)
 
     def _get_dtype_obj(self, dtypes):
-        return self._get_dtype(Counter(dtypes).most_common(1)[0][0])
+        unique_dtypes = list(set(dtypes))
+        self.logger.info(f"Unique dtypes: {unique_dtypes}")
+        dtype = "float" if "float" in unique_dtypes else unique_dtypes[0]
+        self.logger.info(f"Selected dtype: {dtype}")
+        return self._get_dtype(dtype)
 
     def _sinlge_cast(self, val, dtype):
         return [dtype(v) if v is not None else v for v in val]
