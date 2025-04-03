@@ -80,9 +80,12 @@ class StandardCSVRunApi(ErsiliaBase):
             self.get_identifier_object_by_input_type().validate_smiles
         )  # TODO this can just be self.encoder.validate_smiles
         self.header = self.get_expected_output_header()
-        self.logger.debug(
-            "This is the expected header (max 10): {0}".format(self.header[:10])
-        )
+        if self.header is not None:
+            self.logger.debug(
+                "This is the expected header (max 10): {0}".format(self.header[:10])
+            )
+        else:
+            self.logger.debug("Expected header could not be determined from file")
         self.generic_adapter = GenericOutputAdapter(model_id=self.model_id)
 
     def _read_information_file(self):
@@ -214,6 +217,10 @@ class StandardCSVRunApi(ErsiliaBase):
                     f"Determining header from predefined example output file: {pf}"
                 )
                 break
+
+        if file is None:
+            return None
+
         if not file and os.path.exists(self.standard_output_csv):
             file = self.standard_output_csv
             self.logger.debug(
@@ -235,6 +242,7 @@ class StandardCSVRunApi(ErsiliaBase):
             return header
         except (FileNotFoundError, StopIteration):
             self.logger.error(f"Could not determine header from file {file}")
+            return None
 
     def parse_smiles_list(self, input_data):
         """
@@ -434,7 +442,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 "Input must be either a file path (string), a SMILES string, or a list of SMILES strings."
             )
 
-    def is_amenable(self, output_data):
+    def is_amenable(self, output):
         """
         Check if the input and output data are amenable for a standard run.
 
@@ -448,9 +456,6 @@ class StandardCSVRunApi(ErsiliaBase):
         bool
             True if the request is amenable for a standard run, False otherwise.
         """
-        if not self.header:
-            self.logger.debug("Not amenable for standard run: header not found")
-            return False
         if not self.is_input_type_standardizable():
             self.logger.debug(
                 "Not amenable for standard run: input type not standardizable"
@@ -461,9 +466,6 @@ class StandardCSVRunApi(ErsiliaBase):
                 "Not amenable for standard run: output type not standardizable"
             )
             return False
-        # if not self.is_output_csv_file(output_data):
-        #     self.logger.debug("Not amenable for standard run: output data not CSV file")
-        #     return False
         self.logger.debug("It seems amenable for standard run")
         return True
 
