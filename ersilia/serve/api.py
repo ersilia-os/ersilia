@@ -308,8 +308,8 @@ class Api(ErsiliaBase):
             The result of the API call.
         """
         schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
-        if not schema.isfile() or not schema.is_h5_serializable(api_name=self.api_name):
-            self.logger.debug("Not amenable to HDF5 serialization")
+        self.logger.debug(" Post unique input data to the API")
+        if schema.isfile():
             for res in self.post_only_calculations(input, output, batch_size):
                 yield res
 
