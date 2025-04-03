@@ -10,7 +10,6 @@ from .. import ErsiliaBase, logger
 from ..default import API_SCHEMA_FILE, DEFAULT_API_NAME
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
-from ..lake.interface import IsauraInterface
 from ..utils.exceptions_utils.api_exceptions import InputFileNotFoundError
 from ..utils.logging import make_temp_dir
 from .schema import ApiSchema
@@ -28,8 +27,6 @@ class Api(ErsiliaBase):
         The URL of the API.
     api_name : str
         The name of the API.
-    save_to_lake : bool
-        Whether to save results to the data lake.
     config_json : dict
         Configuration in JSON format.
 
@@ -51,7 +48,7 @@ class Api(ErsiliaBase):
         )
     """
 
-    def __init__(self, model_id, url, api_name, save_to_lake, config_json):
+    def __init__(self, model_id, url, api_name, config_json):
         ErsiliaBase.__init__(self, config_json=None)
         self.config_json = config_json
         self.model_id = model_id
@@ -61,10 +58,6 @@ class Api(ErsiliaBase):
         self.output_adapter = GenericOutputAdapter(
             model_id=self.model_id, config_json=config_json
         )
-        self.lake = IsauraInterface(
-            model_id=model_id, api_name=api_name, config_json=config_json
-        )
-        self.save_to_lake = save_to_lake
         if url[-1] == "/":
             self.url = url[:-1]
         else:

@@ -7,22 +7,16 @@ import yaml
 from ... import ErsiliaBase
 from ...auth.auth import Auth
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...utils.logging import make_temp_dir
-from ...utils.terminal import run_command
-from .base_information import BaseInformation
-
-try:
-    from isaura.core.hdf5 import Hdf5Explorer
-except:
-    Hdf5Explorer = None
-
 from ...default import (
     CARD_FILE,
     INFORMATION_FILE,
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
 )
+from ...utils.logging import make_temp_dir
 from ...utils.paths import get_metadata_from_base_dir
+from ...utils.terminal import run_command
+from .base_information import BaseInformation
 
 
 class RepoMetadataFile(ErsiliaBase):
@@ -359,59 +353,6 @@ class LocalCard(ErsiliaBase):
         if model_id:
             card = self._load_data(model_id)
             return card
-        else:
-            return
-
-
-class LakeCard(ErsiliaBase):
-    """
-    Class to handle the lake card of a model.
-
-    The lake in ersilia refers to a result storage platform powered by isaura package to
-    store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to
-    explore and retrieve information from HDF5 files.
-
-    Parameters
-    ----------
-    config_json : dict, optional
-        Configuration settings in JSON format.
-    """
-
-    def __init__(self, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json)
-
-    def get(
-        self,
-        model_id: str = None,
-        slug: str = None,
-        as_json: bool = False,
-    ) -> dict:
-        """
-        Get the lake card of a model from the HDF5 explorer.
-
-        Parameters
-        ----------
-        model_id : str, optional
-            The ID of the model.
-        slug : str, optional
-            The slug of the model.
-        as_json : bool, optional
-            Whether to return the lake card in JSON format.
-
-        Returns
-        -------
-        dict
-            The lake card of the model.
-        """
-        if model_id is not None:
-            if Hdf5Explorer is None:
-                self.logger.debug("No lake found")
-                return None
-            card = Hdf5Explorer(model_id=model_id).info()
-            if as_json:
-                return json.dumps(card, indent=4)
-            else:
-                return card
         else:
             return
 

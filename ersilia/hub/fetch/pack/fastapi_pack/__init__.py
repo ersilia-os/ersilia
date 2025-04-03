@@ -2,7 +2,6 @@ import os
 import shutil
 
 from ..... import ErsiliaBase
-from .....default import H5_DATA_FILE, H5_EXTENSION, ISAURA_FILE_TAG
 
 
 class _Symlinker(ErsiliaBase):
@@ -23,24 +22,8 @@ class _Symlinker(ErsiliaBase):
         self.logger.debug("Creating symlink to {0}".format(model_path))
         os.symlink(src, model_path, target_is_directory=True)
 
-    def _dest_lake_symlink(self):
-        src = os.path.join(self._model_path(self.model_id), H5_DATA_FILE)
-        dst = os.path.join(
-            self._lake_dir,
-            "{0}{1}{2}".format(self.model_id, ISAURA_FILE_TAG, H5_EXTENSION),
-        )
-        if os.path.exists(src) and os.path.exists(os.path.dirname(dst)):
-            self.logger.debug("Symbolic link from {0}".format(src))
-            self.logger.debug("Symbolic link to {0}".format(dst))
-            os.symlink(src, dst, target_is_directory=False)
-        else:
-            self.logger.info(
-                "Could not create symbolic link from {0} to {1}".format(src, dst)
-            )
-
     def _symlinks(self):
         self._dest_bundle_symlink()
-        self._dest_lake_symlink()
 
 
 class BasePack(_Symlinker):
