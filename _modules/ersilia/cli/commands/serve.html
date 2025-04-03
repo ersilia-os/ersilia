@@ -247,7 +247,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -364,7 +363,6 @@
         <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Get outputs from locally hosted model only (</span><span class="si">{</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="si">}</span><span class="s2">), </span><span class="se">\</span>
 <span class="s2">            from cloud precalculation store only (</span><span class="si">{</span><span class="n">OutputSource</span><span class="o">.</span><span class="n">CLOUD_ONLY</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--lake/--no-lake&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
         <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
@@ -385,7 +383,7 @@
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--max-cache-memory-frac&quot;</span><span class="p">,</span> <span class="s2">&quot;maxmemory&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">output_source</span><span class="p">,</span> <span class="n">lake</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">track</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">maxmemory</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">output_source</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">track</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">maxmemory</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">is_cloud</span><span class="p">(</span><span class="n">output_source</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">store_has_model</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model</span><span class="p">):</span>
                 <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> found in inference store.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
@@ -394,7 +392,6 @@
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span>
             <span class="n">output_source</span><span class="o">=</span><span class="n">output_source</span><span class="p">,</span>
-            <span class="n">save_to_lake</span><span class="o">=</span><span class="n">lake</span><span class="p">,</span>
             <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
             <span class="n">track_runs</span><span class="o">=</span><span class="n">track</span><span class="p">,</span>
             <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>

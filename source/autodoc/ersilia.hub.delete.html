@@ -248,7 +248,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -578,80 +577,6 @@
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="ersilia.hub.delete.delete.ModelLakeDeleter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.delete.delete.</span></span><span class="sig-name descname"><span class="pre">ModelLakeDeleter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelLakeDeleter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.ModelLakeDeleter" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
-<p>Deletes model data from the Lake storage.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings for the deleter.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.delete.delete.ModelLakeDeleter.delete">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelLakeDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.ModelLakeDeleter.delete" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes the model data from the Lake storage.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.delete.delete.ModelLakeDeleter.delete_local">
-<span class="sig-name descname"><span class="pre">delete_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelLakeDeleter.delete_local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.ModelLakeDeleter.delete_local" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes the local model data from the Lake storage.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.delete.delete.ModelLakeDeleter.delete_public">
-<span class="sig-name descname"><span class="pre">delete_public</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelLakeDeleter.delete_public"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.ModelLakeDeleter.delete_public" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes the public model data from the Lake storage.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="id8">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelLakeDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes the model data from the Lake storage.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to be deleted.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.delete.delete.ModelLakeDeleter.delete_if_exists">
-<span class="sig-name descname"><span class="pre">delete_if_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelLakeDeleter.delete_if_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.ModelLakeDeleter.delete_if_exists" title="Link to this definition">¶</a></dt>
-<dd><p>Delete the file or symbolic link at the given path if it exists.
-:param path: The path to the file or symbolic link to be deleted.
-:type path: str</p>
-<p class="rubric">Notes</p>
-<p>This function checks if the given path is a file or a symbolic link.
-If it is, the file or symbolic link is removed.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="id9">
-<span class="sig-name descname"><span class="pre">delete_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelLakeDeleter.delete_local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes the local model data from the Lake storage.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to be deleted.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="id10">
-<span class="sig-name descname"><span class="pre">delete_public</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelLakeDeleter.delete_public"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes the public model data from the Lake storage.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to be deleted.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.delete.delete.ModelPipDeleter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.delete.delete.</span></span><span class="sig-name descname"><span class="pre">ModelPipDeleter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelPipDeleter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.ModelPipDeleter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
@@ -668,8 +593,8 @@ If it is, the file or symbolic link is removed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id11">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelPipDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelPipDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Link to this definition">¶</a></dt>
 <dd><p>Uninstalls the pip package related to the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -705,8 +630,8 @@ If it is, the file or symbolic link is removed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id12">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelSlugDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelSlugDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Link to this definition">¶</a></dt>
 <dd><p>Deletes the model slug from the database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -734,8 +659,8 @@ If it is, the file or symbolic link is removed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id13">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelTmpDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id13" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelTmpDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id10" title="Link to this definition">¶</a></dt>
 <dd><p>Deletes the temporary model data from the EOS directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -763,8 +688,8 @@ If it is, the file or symbolic link is removed.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id14">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#TmpCleaner.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#TmpCleaner.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Link to this definition">¶</a></dt>
 <dd><p>Deletes the temporary directory.</p>
 </dd></dl>
 
@@ -884,35 +809,25 @@ If it is, the file or symbolic link is removed.</p>
 <li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">ModelFullDeleter.delete()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelLakeDeleter"><code class="docutils literal notranslate"><span class="pre">ModelLakeDeleter</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelLakeDeleter.delete"><code class="docutils literal notranslate"><span class="pre">ModelLakeDeleter.delete()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelLakeDeleter.delete_local"><code class="docutils literal notranslate"><span class="pre">ModelLakeDeleter.delete_local()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelLakeDeleter.delete_public"><code class="docutils literal notranslate"><span class="pre">ModelLakeDeleter.delete_public()</span></code></a></li>
-<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">ModelLakeDeleter.delete()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelLakeDeleter.delete_if_exists"><code class="docutils literal notranslate"><span class="pre">ModelLakeDeleter.delete_if_exists()</span></code></a></li>
-<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">ModelLakeDeleter.delete_local()</span></code></a></li>
-<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">ModelLakeDeleter.delete_public()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelPipDeleter"><code class="docutils literal notranslate"><span class="pre">ModelPipDeleter</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelPipDeleter.delete"><code class="docutils literal notranslate"><span class="pre">ModelPipDeleter.delete()</span></code></a></li>
-<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">ModelPipDeleter.delete()</span></code></a></li>
+<li><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">ModelPipDeleter.delete()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelPipDeleter.pip_uninstall"><code class="docutils literal notranslate"><span class="pre">ModelPipDeleter.pip_uninstall()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelSlugDeleter"><code class="docutils literal notranslate"><span class="pre">ModelSlugDeleter</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelSlugDeleter.delete"><code class="docutils literal notranslate"><span class="pre">ModelSlugDeleter.delete()</span></code></a></li>
-<li><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">ModelSlugDeleter.delete()</span></code></a></li>
+<li><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">ModelSlugDeleter.delete()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelTmpDeleter"><code class="docutils literal notranslate"><span class="pre">ModelTmpDeleter</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelTmpDeleter.delete"><code class="docutils literal notranslate"><span class="pre">ModelTmpDeleter.delete()</span></code></a></li>
-<li><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">ModelTmpDeleter.delete()</span></code></a></li>
+<li><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">ModelTmpDeleter.delete()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.TmpCleaner"><code class="docutils literal notranslate"><span class="pre">TmpCleaner</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.TmpCleaner.delete"><code class="docutils literal notranslate"><span class="pre">TmpCleaner.delete()</span></code></a></li>
-<li><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">TmpCleaner.delete()</span></code></a></li>
+<li><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">TmpCleaner.delete()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.rmtree"><code class="docutils literal notranslate"><span class="pre">rmtree()</span></code></a></li>

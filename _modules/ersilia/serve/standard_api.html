@@ -247,7 +247,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -402,9 +401,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">get_identifier_object_by_input_type</span><span class="p">()</span><span class="o">.</span><span class="n">validate_smiles</span>
         <span class="p">)</span>  <span class="c1"># TODO this can just be self.encoder.validate_smiles</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_expected_output_header</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;This is the expected header (max 10): </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;This is the expected header (max 10): </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Expected header could not be determined from file&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generic_adapter</span> <span class="o">=</span> <span class="n">GenericOutputAdapter</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_information_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -550,6 +552,10 @@
                     <span class="sa">f</span><span class="s2">&quot;Determining header from predefined example output file: </span><span class="si">{</span><span class="n">pf</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
                 <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">file</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">standard_output_csv</span><span class="p">):</span>
             <span class="n">file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">standard_output_csv</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
@@ -570,7 +576,8 @@
                     <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">header</span>
             <span class="k">return</span> <span class="n">header</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">StopIteration</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not determine header from file </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not determine header from file </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="StandardCSVRunApi.parse_smiles_list">
@@ -797,7 +804,7 @@
 
 <div class="viewcode-block" id="StandardCSVRunApi.is_amenable">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.is_amenable">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_amenable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_amenable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the input and output data are amenable for a standard run.</span>
 
@@ -811,9 +818,6 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the request is amenable for a standard run, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Not amenable for standard run: header not found&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_input_type_standardizable</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Not amenable for standard run: input type not standardizable&quot;</span>
@@ -824,9 +828,6 @@
                 <span class="s2">&quot;Not amenable for standard run: output type not standardizable&quot;</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="c1"># if not self.is_output_csv_file(output_data):</span>
-        <span class="c1">#     self.logger.debug(&quot;Not amenable for standard run: output data not CSV file&quot;)</span>
-        <span class="c1">#     return False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;It seems amenable for standard run&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 

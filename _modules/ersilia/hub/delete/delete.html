@@ -247,7 +247,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -328,7 +327,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.environments.localdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvironmentDb</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.environments.managers</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.hubdata.localslugs</span><span class="w"> </span><span class="kn">import</span> <span class="n">SlugDb</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">ISAURA_FILE_TAG</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG_LOCAL</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements.bentoml_requirement</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLRequirement</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Environment</span>
@@ -406,105 +404,6 @@
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing EOS folder </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder</span><span class="p">))</span>
         <span class="n">rmtree</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="ModelLakeDeleter">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelLakeDeleter">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ModelLakeDeleter</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Deletes model data from the Lake storage.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    config_json : dict, optional</span>
-<span class="sd">        Configuration settings for the deleter.</span>
-
-<span class="sd">    Methods</span>
-<span class="sd">    -------</span>
-<span class="sd">    delete(model_id)</span>
-<span class="sd">        Deletes the model data from the Lake storage.</span>
-<span class="sd">    delete_local(model_id)</span>
-<span class="sd">        Deletes the local model data from the Lake storage.</span>
-<span class="sd">    delete_public(model_id)</span>
-<span class="sd">        Deletes the public model data from the Lake storage.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lake_dir</span>
-
-<div class="viewcode-block" id="ModelLakeDeleter.delete_if_exists">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelLakeDeleter.delete_if_exists">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">delete_if_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete the file or symbolic link at the given path if it exists.</span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        path : str</span>
-<span class="sd">            The path to the file or symbolic link to be deleted.</span>
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        This function checks if the given path is a file or a symbolic link.</span>
-<span class="sd">        If it is, the file or symbolic link is removed.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ModelLakeDeleter.delete_local">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelLakeDeleter.delete_local">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">delete_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deletes the local model data from the Lake storage.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model_id : str</span>
-<span class="sd">            Identifier of the model to be deleted.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}{1}</span><span class="s2">.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG_LOCAL</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Deleting </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delete_if_exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ModelLakeDeleter.delete_public">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelLakeDeleter.delete_public">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">delete_public</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deletes the public model data from the Lake storage.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model_id : str</span>
-<span class="sd">            Identifier of the model to be deleted.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}{1}</span><span class="s2">.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Deleting </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delete_if_exists</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ModelLakeDeleter.delete">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.delete.html#ersilia.hub.delete.delete.ModelLakeDeleter.delete">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deletes the model data from the Lake storage.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model_id : str</span>
-<span class="sd">            Identifier of the model to be deleted.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting lake delete (local)&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delete_local</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting lake delete (public)&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delete_public</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 </div>
 
 
@@ -1057,7 +956,6 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">:</span>
             <span class="n">ModelCondaDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">ModelTmpDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">ModelLakeDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">ModelPipDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">ModelDockerDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">ModelFetchedEntryDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>

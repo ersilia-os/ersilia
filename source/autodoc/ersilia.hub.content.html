@@ -248,7 +248,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -979,42 +978,6 @@
 </section>
 <section id="module-ersilia.hub.content.card">
 <span id="ersilia-hub-content-card-module"></span><h2>ersilia.hub.content.card module<a class="headerlink" href="#module-ersilia.hub.content.card" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.hub.content.card.LakeCard">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">LakeCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LakeCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LakeCard" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
-<p>Class to handle the lake card of a model.</p>
-<p>The lake in ersilia refers to a result storage platform powered by isaura package to
-store repeated result as a cache and allows user to reuse them. It uses HDF5 explorer to
-explore and retrieve information from HDF5 files.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format.</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.hub.content.card.LakeCard.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LakeCard.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LakeCard.get" title="Link to this definition">¶</a></dt>
-<dd><p>Get the lake card of a model from the HDF5 explorer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – The ID of the model.</p></li>
-<li><p><strong>slug</strong> (<em>str</em><em>, </em><em>optional</em>) – The slug of the model.</p></li>
-<li><p><strong>as_json</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return the lake card in JSON format.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The lake card of the model.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.content.card.LocalCard">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.content.card.</span></span><span class="sig-name descname"><span class="pre">LocalCard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/content/card.html#LocalCard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.content.card.LocalCard" title="Link to this definition">¶</a></dt>
@@ -1832,10 +1795,6 @@ and vice versa, using local and remote sources.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.hub.content.card">ersilia.hub.content.card module</a><ul>
-<li><a class="reference internal" href="#ersilia.hub.content.card.LakeCard"><code class="docutils literal notranslate"><span class="pre">LakeCard</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.hub.content.card.LakeCard.get"><code class="docutils literal notranslate"><span class="pre">LakeCard.get()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#ersilia.hub.content.card.LocalCard"><code class="docutils literal notranslate"><span class="pre">LocalCard</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.hub.content.card.LocalCard.get"><code class="docutils literal notranslate"><span class="pre">LocalCard.get()</span></code></a></li>
 </ul>

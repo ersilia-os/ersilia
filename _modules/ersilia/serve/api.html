@@ -247,7 +247,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -330,7 +329,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">API_SCHEMA_FILE</span><span class="p">,</span> <span class="n">DEFAULT_API_NAME</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericInputAdapter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.output</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericOutputAdapter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..lake.interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">IsauraInterface</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.api_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputFileNotFoundError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiSchema</span>
@@ -350,8 +348,6 @@
 <span class="sd">        The URL of the API.</span>
 <span class="sd">    api_name : str</span>
 <span class="sd">        The name of the API.</span>
-<span class="sd">    save_to_lake : bool</span>
-<span class="sd">        Whether to save results to the data lake.</span>
 <span class="sd">    config_json : dict</span>
 <span class="sd">        Configuration in JSON format.</span>
 
@@ -363,7 +359,6 @@
 <span class="sd">            model_id=&quot;eosxxxx&quot;,</span>
 <span class="sd">            url=&quot;http://0.0.0.0:25512/&quot;,</span>
 <span class="sd">            api_name=&quot;run&quot;,</span>
-<span class="sd">            save_to_lake=True,</span>
 <span class="sd">            config_json={},</span>
 <span class="sd">        )</span>
 <span class="sd">        result = api.post(</span>
@@ -373,7 +368,7 @@
 <span class="sd">        )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="n">save_to_lake</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -383,10 +378,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output_adapter</span> <span class="o">=</span> <span class="n">GenericOutputAdapter</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lake</span> <span class="o">=</span> <span class="n">IsauraInterface</span><span class="p">(</span>
-            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span> <span class="o">=</span> <span class="n">save_to_lake</span>
         <span class="k">if</span> <span class="n">url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -631,85 +622,6 @@
                     <span class="k">yield</span> <span class="n">r</span></div>
 
 
-<div class="viewcode-block" id="Api.post_amenable_to_h5">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.api.Api.post_amenable_to_h5">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">post_amenable_to_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Post input data to the API and get the result, handling HDF5 serialization.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        input : str</span>
-<span class="sd">            The input data file or data.</span>
-<span class="sd">        output : str</span>
-<span class="sd">            The output data file.</span>
-<span class="sd">        batch_size : int</span>
-<span class="sd">            The batch size for processing.</span>
-
-<span class="sd">        Yields</span>
-<span class="sd">        ------</span>
-<span class="sd">        dict</span>
-<span class="sd">            The result of the API call.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Checking for already available calculations in the data lake&quot;</span>
-        <span class="p">)</span>
-        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
-        <span class="n">done_input</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;done_input.csv&quot;</span><span class="p">)</span>
-        <span class="n">todo_input</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;todo_input.csv&quot;</span><span class="p">)</span>
-        <span class="n">cur_idx</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_adapter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Inspecting </span><span class="si">{0}</span><span class="s2">...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cur_idx</span><span class="p">))</span>
-            <span class="n">done</span><span class="p">,</span> <span class="n">todo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lake</span><span class="o">.</span><span class="n">done_todo</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_write_done_todo_file</span><span class="p">(</span><span class="n">cur_idx</span><span class="p">,</span> <span class="n">done_input</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_write_done_todo_file</span><span class="p">(</span><span class="n">cur_idx</span><span class="p">,</span> <span class="n">todo_input</span><span class="p">,</span> <span class="n">todo</span><span class="p">)</span>
-            <span class="n">cur_idx</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">done</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">todo</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__is_empty_file</span><span class="p">(</span><span class="n">done_input</span><span class="p">):</span>
-            <span class="n">done_output</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">done_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;done_output.json&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__is_empty_file</span><span class="p">(</span><span class="n">todo_input</span><span class="p">):</span>
-            <span class="n">todo_output</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">todo_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;todo_output.json&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">done_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading from data well of </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_only_reads</span><span class="p">(</span>
-                <span class="nb">input</span><span class="o">=</span><span class="n">done_input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">done_output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
-            <span class="p">):</span>
-                <span class="k">continue</span>
-        <span class="k">if</span> <span class="n">todo_output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Calculating using model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving in </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">todo_output</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_only_calculations</span><span class="p">(</span>
-                <span class="nb">input</span><span class="o">=</span><span class="n">todo_input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">todo_output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
-            <span class="p">):</span>
-                <span class="k">continue</span>
-
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">todo_output</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Saving calculations in the lake&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">lake</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Rearranging and returning&quot;</span><span class="p">)</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_done_todo_results</span><span class="p">(</span>
-            <span class="n">done_input</span><span class="p">,</span> <span class="n">todo_input</span><span class="p">,</span> <span class="n">done_output</span><span class="p">,</span> <span class="n">todo_output</span>
-        <span class="p">):</span>
-            <span class="n">results</span> <span class="o">+=</span> <span class="p">[</span><span class="n">result</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output_adapter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span>
-                <span class="n">results</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_name</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="p">[</span><span class="n">output</span><span class="p">]:</span>
-                <span class="k">yield</span> <span class="n">o</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">result</span></div>
-
-
 <div class="viewcode-block" id="Api.post_unique_input">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.api.Api.post_unique_input">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">post_unique_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
@@ -731,17 +643,9 @@
 <span class="sd">            The result of the API call.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">schema</span> <span class="o">=</span> <span class="n">ApiSchema</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="n">schema</span><span class="o">.</span><span class="n">isfile</span><span class="p">()</span>
-            <span class="ow">or</span> <span class="ow">not</span> <span class="n">schema</span><span class="o">.</span><span class="n">is_h5_serializable</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">api_name</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">lake</span><span class="o">.</span><span class="n">is_available</span>
-        <span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Not amenable to HDF5 serialization&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; Post unique input data to the API&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">isfile</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_only_calculations</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">res</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Amenable to HDF5 serialization&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_amenable_to_h5</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">res</span></div>
 
 

@@ -247,7 +247,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -562,9 +561,6 @@
 
         <span class="c1"># Upload run output to S3</span>
         <span class="n">sid</span> <span class="o">=</span> <span class="n">get_session_uuid</span><span class="p">()</span>
-        <span class="n">output_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;lake&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
-        <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">output_file_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output/output_</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
-
         <span class="c1"># Upload session info to S3</span>
         <span class="n">session_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SESSION_JSON</span><span class="p">)</span>
         <span class="n">session_csv_path</span> <span class="o">=</span> <span class="n">session_json_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>

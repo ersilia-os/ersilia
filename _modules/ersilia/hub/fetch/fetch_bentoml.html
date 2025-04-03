@@ -247,7 +247,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -331,7 +330,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.actions.content</span><span class="w"> </span><span class="kn">import</span> <span class="n">CardGetter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.actions.get</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelGetter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.actions.inform</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelInformer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.actions.lake</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeGetter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.actions.pack_bentoml</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelPacker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.actions.prepare</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelPreparer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.actions.setup</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupChecker</span>
@@ -425,10 +423,6 @@
             <span class="n">force_from_s3</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_s3</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">mg</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_lake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">ml</span> <span class="o">=</span> <span class="n">LakeGetter</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">ml</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_pack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPacker</span><span class="p">(</span>

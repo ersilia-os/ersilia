@@ -247,7 +247,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../../source/autodoc/ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../source/autodoc/ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../source/autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../../../source/autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -322,7 +321,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.....</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">BENTOML_PATH</span><span class="p">,</span> <span class="n">H5_DATA_FILE</span><span class="p">,</span> <span class="n">H5_EXTENSION</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">BENTOML_PATH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....bundle.repo</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileFile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....delete.delete</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBentoDeleter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span>
@@ -398,25 +397,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Building symlinks between </span><span class="si">{0}</span><span class="s2"> and </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">src</span><span class="p">))</span>
         <span class="n">os</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">target_is_directory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_dest_lake_symlink</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">src</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">H5_DATA_FILE</span><span class="p">)</span>
-        <span class="n">dst</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_lake_dir</span><span class="p">,</span>
-            <span class="s2">&quot;</span><span class="si">{0}{1}{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">ISAURA_FILE_TAG</span><span class="p">,</span> <span class="n">H5_EXTENSION</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">src</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dst</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Symbolic link from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">src</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Symbolic link to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dst</span><span class="p">))</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">,</span> <span class="n">target_is_directory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Could not create symbolic link from </span><span class="si">{0}</span><span class="s2"> to </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span>
-            <span class="p">)</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_symlinks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_bundle_symlink</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dest_bundle_symlink</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dest_lake_symlink</span><span class="p">()</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_Writer</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>

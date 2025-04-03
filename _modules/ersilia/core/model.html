@@ -247,7 +247,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.lake.html">ersilia.lake package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l5"><a class="reference internal" href="../../../source/autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
@@ -343,7 +342,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseIOGetter</span><span class="p">,</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.output</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularOutputStacker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.readers.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..lake.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">LakeBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Api</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.autoservice</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoService</span><span class="p">,</span> <span class="n">PulledDockerImageService</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiSchema</span>
@@ -383,8 +381,6 @@
 <span class="sd">        The identifier of the model.</span>
 <span class="sd">    output_source : OutputSource, optional</span>
 <span class="sd">        The source of the output, by default OutputSource.LOCAL_ONLY.</span>
-<span class="sd">    save_to_lake : bool, optional</span>
-<span class="sd">        Whether to save to lake, by default True.</span>
 <span class="sd">    service_class : str, optional</span>
 <span class="sd">        The service class, by default None.</span>
 <span class="sd">    config_json : dict, optional</span>
@@ -442,7 +438,6 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output_source</span><span class="p">:</span> <span class="n">OutputSource</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">,</span>
-        <span class="n">save_to_lake</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">service_class</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">credentials_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -465,14 +460,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span> <span class="o">=</span> <span class="n">save_to_lake</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span><span class="p">:</span>
-            <span class="n">lake</span> <span class="o">=</span> <span class="n">LakeBase</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">lake</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;Isaura is not installed! Calculations will be done without storing and reading from the lake, unfortunately.&quot;</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="k">assert</span> <span class="n">service_class</span> <span class="ow">in</span> <span class="p">[</span>
             <span class="kc">None</span><span class="p">,</span>
             <span class="s2">&quot;system&quot;</span><span class="p">,</span>
@@ -664,7 +652,6 @@
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
             <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span>
-            <span class="n">save_to_lake</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">save_to_lake</span><span class="p">,</span>
             <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">api</span>
@@ -1013,7 +1000,7 @@
 
 <span class="sd">        This method ensures that the required dependencies and resources for the model are available.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span> <span class="c1"># TODO Implement whenever this is necessary</span></div>
+        <span class="k">pass</span>  <span class="c1"># TODO Implement whenever this is necessary</span></div>
 
 
 <div class="viewcode-block" id="ErsiliaModel.serve">
