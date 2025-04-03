@@ -325,7 +325,6 @@ class ErsiliaModel(ErsiliaBase):
             model_id=self.model_id,
             url=url,
             api_name=api_name,
-            save_to_lake=self.save_to_lake,
             config_json=self.config_json,
         )
         return api

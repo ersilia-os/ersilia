@@ -228,9 +228,6 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
 
         # Upload run output to S3
         sid = get_session_uuid()
-        output_file_path = os.path.join(get_session_dir(), "lake", f"output_{sid}.csv")
-        s3_client.upload_file(output_file_path, bucket, f"output/output_{sid}.csv")
-
         # Upload session info to S3
         session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
         session_csv_path = session_json_path.split(".json")[0] + ".csv"
