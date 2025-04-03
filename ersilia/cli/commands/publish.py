@@ -1,7 +1,6 @@
 import click
 
 from ... import ModelBase
-from ...publish.lake import LakeStorer
 from ...publish.publish import ModelPublisher
 from .. import echo
 from . import ersilia_cli
@@ -41,15 +40,12 @@ def publish_cmd():
     def publish(step, model):
         model_id = ModelBase(model).model_id
         mp = ModelPublisher(model_id, config_json=None, credentials_json=None)
-        ls = LakeStorer(model_id, config_json=None, credentials_json=None)
         if step == "create":
             mp.create()
         elif step == "rebase":
             mp.rebase()
         elif step == "push":
             mp.push()
-        elif step == "store":
-            ls.store()
         elif step == "test":
             mp.test()
         else:

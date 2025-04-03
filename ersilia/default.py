@@ -112,18 +112,17 @@ CURRENT_LOGGING_FILE = "current.log"
 SILENCE_FILE = ".silence.json"
 VERBOSE_FILE = ".verbose.json"
 
-# Isaura data lake
 H5_EXTENSION = ".h5"
 H5_DATA_FILE = "data.h5"
-ISAURA_FILE_TAG = "_public"
-ISAURA_FILE_TAG_LOCAL = "_local"
-ISAURA_GDRIVE = "1LSCMHrCuXUDNH3WRbrLMW2FoiwMCxF2n"
-ISAURA_TEAM_GDRIVE = "0AG4WDDaU_00XUk9PVA"
-ISAURA_DIR = os.path.join(EOS, "isaura", "lake")
 REDIS_SERVER = "redis://127.0.0.1:6379"
 # Other
 FEATURE_MERGE_PATTERN = "---"
-HEADER_INDICATORS = ["key", "input", "smiles", "compound"] # TODO This list can be expanded. It is simply to detect headers easily.
+HEADER_INDICATORS = [
+    "key",
+    "input",
+    "smiles",
+    "compound",
+]  # TODO This list can be expanded. It is simply to detect headers easily.
 
 # URLS
 REDIS_PORT = 6379

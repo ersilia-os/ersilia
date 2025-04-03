@@ -75,7 +75,6 @@ Folders found in the `$HOME` directory includes:
 
 **Folders**
 - dest/: stores output generated when running a model.
-- isaura/: cache model prediction which stores them in the local computer
 - repository/: main directory to cache models files and datasets. This prevent redundant download by storing previously fetched model
 - sessions/: Tracks user session
 - tmp/: stores temporary file during model execution.

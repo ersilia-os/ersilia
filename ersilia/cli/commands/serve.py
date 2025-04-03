@@ -42,7 +42,6 @@ def serve_cmd():
         help=f"Get outputs from locally hosted model only ({OutputSource.LOCAL_ONLY}), \
             from cloud precalculation store only ({OutputSource.CLOUD_ONLY})",
     )
-    @click.option("--lake/--no-lake", is_flag=True, default=True)
     @click.option(
         "--port",
         "-p",
@@ -63,7 +62,7 @@ def serve_cmd():
     @click.option(
         "--max-cache-memory-frac", "maxmemory", type=click.FLOAT, default=None
     )
-    def serve(model, output_source, lake, port, track, cache, maxmemory):
+    def serve(model, output_source, port, track, cache, maxmemory):
         if OutputSource.is_cloud(output_source):
             if store_has_model(model_id=model):
                 echo("Model {0} found in inference store.".format(model))
@@ -72,7 +71,6 @@ def serve_cmd():
         mdl = ErsiliaModel(
             model,
             output_source=output_source,
-            save_to_lake=lake,
             preferred_port=port,
             track_runs=track,
             cache=cache,

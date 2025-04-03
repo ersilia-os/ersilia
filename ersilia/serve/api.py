@@ -10,7 +10,6 @@ from .. import ErsiliaBase, logger
 from ..default import API_SCHEMA_FILE, DEFAULT_API_NAME
 from ..io.input import GenericInputAdapter
 from ..io.output import GenericOutputAdapter
-from ..lake.interface import IsauraInterface
 from ..utils.exceptions_utils.api_exceptions import InputFileNotFoundError
 from ..utils.logging import make_temp_dir
 from .schema import ApiSchema
@@ -28,8 +27,6 @@ class Api(ErsiliaBase):
         The URL of the API.
     api_name : str
         The name of the API.
-    save_to_lake : bool
-        Whether to save results to the data lake.
     config_json : dict
         Configuration in JSON format.
 
@@ -41,7 +38,6 @@ class Api(ErsiliaBase):
             model_id="eosxxxx",
             url="http://0.0.0.0:25512/",
             api_name="run",
-            save_to_lake=True,
             config_json={},
         )
         result = api.post(
@@ -51,7 +47,7 @@ class Api(ErsiliaBase):
         )
     """
 
-    def __init__(self, model_id, url, api_name, save_to_lake, config_json):
+    def __init__(self, model_id, url, api_name, config_json):
         ErsiliaBase.__init__(self, config_json=None)
         self.config_json = config_json
         self.model_id = model_id
@@ -61,10 +57,6 @@ class Api(ErsiliaBase):
         self.output_adapter = GenericOutputAdapter(
             model_id=self.model_id, config_json=config_json
         )
-        self.lake = IsauraInterface(
-            model_id=model_id, api_name=api_name, config_json=config_json
-        )
-        self.save_to_lake = save_to_lake
         if url[-1] == "/":
             self.url = url[:-1]
         else:
@@ -297,82 +289,6 @@ class Api(ErsiliaBase):
                 for r in result:
                     yield r
 
-    def post_amenable_to_h5(self, input, output, batch_size):
-        """
-        Post input data to the API and get the result, handling HDF5 serialization.
-
-        Parameters
-        ----------
-        input : str
-            The input data file or data.
-        output : str
-            The output data file.
-        batch_size : int
-            The batch size for processing.
-
-        Yields
-        ------
-        dict
-            The result of the API call.
-        """
-        self.logger.debug(
-            "Checking for already available calculations in the data lake"
-        )
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        done_input = os.path.join(tmp_folder, "done_input.csv")
-        todo_input = os.path.join(tmp_folder, "todo_input.csv")
-        cur_idx = 0
-        for input in self.input_adapter.adapt(input, batch_size=batch_size):
-            self.logger.debug("Inspecting {0}...".format(cur_idx))
-            done, todo = self.lake.done_todo(input)
-            self._write_done_todo_file(cur_idx, done_input, done)
-            self._write_done_todo_file(cur_idx, todo_input, todo)
-            cur_idx += len(done) + len(todo)
-        if self.__is_empty_file(done_input):
-            done_output = None
-        else:
-            done_output = os.path.join(tmp_folder, "done_output.json")
-        if self.__is_empty_file(todo_input):
-            todo_output = None
-        else:
-            todo_output = os.path.join(tmp_folder, "todo_output.json")
-        if done_output is not None:
-            self.logger.debug("Reading from data well of {0}".format(self.model_id))
-            for _ in self.post_only_reads(
-                input=done_input, output=done_output, batch_size=batch_size
-            ):
-                continue
-        if todo_output is not None:
-            self.logger.debug("Calculating using model {0}".format(self.model_id))
-            self.logger.debug("Saving in {0}".format(todo_output))
-            for _ in self.post_only_calculations(
-                input=todo_input, output=todo_output, batch_size=batch_size
-            ):
-                continue
-
-            with open(todo_output, "r") as f:
-                results = json.load(f)
-            if self.save_to_lake:
-                self.logger.debug("Saving calculations in the lake")
-                self.lake.write(results)
-
-        self.logger.debug("Rearranging and returning")
-        results = []
-        for result in self._process_done_todo_results(
-            done_input, todo_input, done_output, todo_output
-        ):
-            results += [result]
-        if output is not None:
-            results = json.dumps(results)
-            self.output_adapter.adapt(
-                results, output, model_id=self.model_id, api_name=self.api_name
-            )
-            for o in [output]:
-                yield o
-        else:
-            for result in results:
-                yield result
-
     def post_unique_input(self, input, output, batch_size):
         """
         Post unique input data to the API and get the result.
@@ -392,17 +308,9 @@ class Api(ErsiliaBase):
             The result of the API call.
         """
         schema = ApiSchema(model_id=self.model_id, config_json=self.config_json)
-        if (
-            not schema.isfile()
-            or not schema.is_h5_serializable(api_name=self.api_name)
-            or not self.lake.is_available
-        ):
-            self.logger.debug("Not amenable to HDF5 serialization")
+        self.logger.debug(" Post unique input data to the API")
+        if schema.isfile():
             for res in self.post_only_calculations(input, output, batch_size):
-                yield res
-        else:
-            self.logger.debug("Amenable to HDF5 serialization")
-            for res in self.post_amenable_to_h5(input, output, batch_size):
                 yield res
 
     def _is_input_file(self, input):

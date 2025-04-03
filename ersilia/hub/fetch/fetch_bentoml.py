@@ -11,7 +11,6 @@ from .actions.check import ModelChecker
 from .actions.content import CardGetter
 from .actions.get import ModelGetter
 from .actions.inform import ModelInformer
-from .actions.lake import LakeGetter
 from .actions.pack_bentoml import ModelPacker
 from .actions.prepare import ModelPreparer
 from .actions.setup import SetupChecker
@@ -103,10 +102,6 @@ class ModelFetcherFromBentoML(ErsiliaBase):
             force_from_s3=self.force_from_s3,
         )
         mg.get()
-
-    def _lake(self):
-        ml = LakeGetter(model_id=self.model_id, config_json=self.config_json)
-        ml.get()
 
     def _pack(self):
         mp = ModelPacker(

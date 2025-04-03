@@ -23,7 +23,6 @@ from ..hub.fetch.fetch import ModelFetcher
 from ..io.input import BaseIOGetter, ExampleGenerator
 from ..io.output import TabularOutputStacker
 from ..io.readers.file import FileTyper, TabularFileReader
-from ..lake.base import LakeBase
 from ..serve.api import Api
 from ..serve.autoservice import AutoService, PulledDockerImageService
 from ..serve.schema import ApiSchema
@@ -61,8 +60,6 @@ class ErsiliaModel(ErsiliaBase):
         The identifier of the model.
     output_source : OutputSource, optional
         The source of the output, by default OutputSource.LOCAL_ONLY.
-    save_to_lake : bool, optional
-        Whether to save to lake, by default True.
     service_class : str, optional
         The service class, by default None.
     config_json : dict, optional
@@ -120,7 +117,6 @@ class ErsiliaModel(ErsiliaBase):
         self,
         model: str,
         output_source: OutputSource = OutputSource.LOCAL_ONLY,
-        save_to_lake: bool = True,
         service_class: str = None,
         config_json: dict = None,
         credentials_json: dict = None,
@@ -143,14 +139,7 @@ class ErsiliaModel(ErsiliaBase):
         else:
             if hasattr(sys, "ps1"):
                 self.logger.set_verbosity(0)
-        self.save_to_lake = save_to_lake
-        if self.save_to_lake:
-            lake = LakeBase(config_json=self.config_json)
-            if not lake.is_installed():
-                self.logger.error(
-                    "Isaura is not installed! Calculations will be done without storing and reading from the lake, unfortunately."
-                )
-                self.save_to_lake = False
+
         assert service_class in [
             None,
             "system",
@@ -336,7 +325,6 @@ class ErsiliaModel(ErsiliaBase):
             model_id=self.model_id,
             url=url,
             api_name=api_name,
-            save_to_lake=self.save_to_lake,
             config_json=self.config_json,
         )
         return api
@@ -674,7 +662,7 @@ class ErsiliaModel(ErsiliaBase):
 
         This method ensures that the required dependencies and resources for the model are available.
         """
-        pass # TODO Implement whenever this is necessary
+        pass  # TODO Implement whenever this is necessary
 
     def serve(self):
         """

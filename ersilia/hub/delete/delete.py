@@ -8,7 +8,6 @@ from ...db.disk.fetched import FetchedModelsManager
 from ...db.environments.localdb import EnvironmentDb
 from ...db.environments.managers import DockerManager
 from ...db.hubdata.localslugs import SlugDb
-from ...default import ISAURA_FILE_TAG, ISAURA_FILE_TAG_LOCAL
 from ...setup.requirements.bentoml_requirement import BentoMLRequirement
 from ...utils.conda import SimpleConda
 from ...utils.environment import Environment
@@ -79,90 +78,6 @@ class ModelEosDeleter(ErsiliaBase):
             return
         self.logger.info("Removing EOS folder {0}".format(folder))
         rmtree(folder)
-
-
-class ModelLakeDeleter(ErsiliaBase):
-    """
-    Deletes model data from the Lake storage.
-
-    Parameters
-    ----------
-    config_json : dict, optional
-        Configuration settings for the deleter.
-
-    Methods
-    -------
-    delete(model_id)
-        Deletes the model data from the Lake storage.
-    delete_local(model_id)
-        Deletes the local model data from the Lake storage.
-    delete_public(model_id)
-        Deletes the public model data from the Lake storage.
-    """
-
-    def __init__(self, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json)
-        self.path = self._lake_dir
-
-    def delete_if_exists(self, path):
-        """
-        Delete the file or symbolic link at the given path if it exists.
-        Parameters
-        ----------
-        path : str
-            The path to the file or symbolic link to be deleted.
-        Notes
-        -----
-        This function checks if the given path is a file or a symbolic link.
-        If it is, the file or symbolic link is removed.
-        """
-
-        if os.path.isfile(path):
-            os.remove(path)
-        if os.path.islink(path):
-            os.remove(path)
-
-    def delete_local(self, model_id: str):
-        """
-        Deletes the local model data from the Lake storage.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model to be deleted.
-        """
-        path = os.path.join(
-            self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG_LOCAL)
-        )
-        self.logger.debug("Deleting {0}".format(path))
-        self.delete_if_exists(path)
-
-    def delete_public(self, model_id: str):
-        """
-        Deletes the public model data from the Lake storage.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model to be deleted.
-        """
-        path = os.path.join(self.path, "{0}{1}.h5".format(model_id, ISAURA_FILE_TAG))
-        self.logger.debug("Deleting {0}".format(path))
-        self.delete_if_exists(path)
-
-    def delete(self, model_id: str):
-        """
-        Deletes the model data from the Lake storage.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model to be deleted.
-        """
-        self.logger.debug("Attempting lake delete (local)")
-        self.delete_local(model_id)
-        self.logger.debug("Attempting lake delete (public)")
-        self.delete_public(model_id)
 
 
 class ModelTmpDeleter(ErsiliaBase):
@@ -646,7 +561,6 @@ class ModelFullDeleter(ErsiliaBase):
         if self.overwrite:
             ModelCondaDeleter(self.config_json).delete(model_id)
         ModelTmpDeleter(self.config_json).delete(model_id)
-        ModelLakeDeleter(self.config_json).delete(model_id)
         ModelPipDeleter(self.config_json).delete(model_id)
         ModelDockerDeleter(self.config_json).delete(model_id)
         ModelFetchedEntryDeleter(self.config_json).delete(model_id)

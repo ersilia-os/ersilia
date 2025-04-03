@@ -1,5 +1,6 @@
 import shutil
 import subprocess
+import time
 
 import docker
 import docker.errors
@@ -94,6 +95,8 @@ class SetupRedis:
                 self._start_new_container()
         else:
             self._pull_and_start_container()
+
+        time.sleep(0.5)
         self._configure_redis_memory_policy()
 
         logger.info("Redis server setup completed.")
