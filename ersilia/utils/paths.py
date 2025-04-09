@@ -260,11 +260,12 @@ def get_metadata_from_base_dir(path):
         with open(os.path.join(path, METADATA_JSON_FILE), "r") as f:
             metadata = json.load(f)
     elif os.path.exists(os.path.join(path, METADATA_YAML_FILE)):
-        with open(os.path.join(path, METADATA_YAML_FILE), "r") as f:
-            try:
+        try:
+            with open(os.path.join(path, METADATA_YAML_FILE), "r") as f:
                 metadata = asdict(yaml.load(f, Loader=ErsiliaMetadataLoader))
-            except TypeError:
-                return
+        except TypeError:
+            with open(os.path.join(path, METADATA_YAML_FILE), "r") as f:
+                metadata = yaml.safe_load(f)
     else:
         raise FileNotFoundError("Metadata file not found")
     return metadata

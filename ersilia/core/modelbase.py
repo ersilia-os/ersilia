@@ -47,20 +47,24 @@ class ModelBase(ErsiliaBase):
 
         if repo_path is not None:
             self.logger.debug(f"Repo path specified: {repo_path}")
-            abspath = os.path.abspath(repo_path)
+            expanded_path = os.path.expanduser(repo_path)
+            abspath = os.path.abspath(expanded_path)
             self.logger.debug(f"Absolute path: {abspath}")
             # Check if path actually exists
             if not os.path.exists(abspath):
                 raise FileNotFoundError(
                     "Model directory does not exist at the provided path. Please check the path and try again."
                 )
+            self.logger.debug(f"Path exists: {abspath}")
             self.text = self._get_model_id_from_path(repo_path)
+            self.logger.debug(f"Model ID from path: {self.text}")
             self.model_id = self.text
             slug = self._get_slug_if_available(repo_path)
             if slug is None:
                 self.slug = "my-model"
             else:
                 self.slug = slug
+            self.logger.debug(f"Slug from path: {self.slug}")
 
     def _get_model_id_from_path(self, repo_path):
         return os.path.basename(os.path.abspath(repo_path)).rstrip("/")
