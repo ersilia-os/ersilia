@@ -1,6 +1,7 @@
+import json
+
 import h5py
 import numpy as np
-import json
 
 
 class Hdf5Data(object):
@@ -21,17 +22,17 @@ class Hdf5Data(object):
 
     def __init__(self, values, keys, inputs, features):
         self.values = self._convert_values(values)
-        self.keys = np.array(keys, dtype=h5py.string_dtype(encoding='utf-8'))
-        self.inputs = np.array(inputs, dtype=h5py.string_dtype(encoding='utf-8'))
-        self.features = np.array(features, dtype=h5py.string_dtype(encoding='utf-8'))
+        self.keys = np.array(keys, dtype=h5py.string_dtype(encoding="utf-8"))
+        self.inputs = np.array(inputs, dtype=h5py.string_dtype(encoding="utf-8"))
+        self.features = np.array(features, dtype=h5py.string_dtype(encoding="utf-8"))
 
     def _convert_values(self, values):
         if not values:
             return np.array(values, dtype=np.float32)
-        
+
         if all(isinstance(v, (list, tuple)) for v in values):
             converted_inner = [self._convert_values_1d(inner) for inner in values]
-            
+
             first_dtype = converted_inner[0].dtype
             if all(arr.dtype == first_dtype for arr in converted_inner):
                 try:
@@ -40,24 +41,26 @@ class Hdf5Data(object):
                     return np.array(converted_inner, dtype=first_dtype)
             else:
                 converted_inner = [
-                    arr.astype(h5py.string_dtype(encoding='utf-8'))
+                    arr.astype(h5py.string_dtype(encoding="utf-8"))
                     for arr in converted_inner
                 ]
-                return np.array(converted_inner, dtype=h5py.string_dtype(encoding='utf-8'))
+                return np.array(
+                    converted_inner, dtype=h5py.string_dtype(encoding="utf-8")
+                )
         else:
             return self._convert_values_1d(values)
-        
+
     def _convert_values_1d(self, values):
         if not values:
             return np.array(values, dtype=np.float32)
-        
+
         if all(v is None for v in values):
             values = [np.nan for _ in values]
             return np.array(values, dtype=np.float32)
-        
+
         if all(isinstance(v, str) and v == "" for v in values):
-            return np.array(values, dtype=h5py.string_dtype(encoding='utf-8'))
-        
+            return np.array(values, dtype=h5py.string_dtype(encoding="utf-8"))
+
         if all(isinstance(v, (float, int)) or v is None for v in values):
             values = [np.nan if v is None else v for v in values]
             if all(isinstance(v, int) for v in values if not np.isnan(v)):
@@ -65,18 +68,19 @@ class Hdf5Data(object):
                     return np.array(values, dtype=np.float32)
                 return np.array(values, dtype=np.int32)
             return np.array(values, dtype=np.float32)
-        
+
         if all(isinstance(v, str) or v is None for v in values):
             values = ["" if v is None else v for v in values]
-            return np.array(values, dtype=h5py.string_dtype(encoding='utf-8'))
-        
+            return np.array(values, dtype=h5py.string_dtype(encoding="utf-8"))
+
         try:
             values = [json.dumps(v) for v in values]
-            return np.array(values, dtype=h5py.string_dtype(encoding='utf-8'))
+            return np.array(values, dtype=h5py.string_dtype(encoding="utf-8"))
         except Exception:
-            raise ValueError("Unsupported data types in 'values'. Expected all int, all float, or all str.")
-            
-    
+            raise ValueError(
+                "Unsupported data types in 'values'. Expected all int, all float, or all str."
+            )
+
     def save(self, filename):
         """
         Save the data to an HDF5 file.
