@@ -1449,7 +1449,7 @@ class BaseInformation(ErsiliaBase):
         """
         if new_value is None:
             self._computational_performance_one = None
-        elif self._is_numeric(new_value):
+        elif not self._is_numeric(new_value):
             raise ComputationalPerformanceOneBaseInformationError
         else:
             self._computational_performance_one = self._serialize_to_numeric(new_value)
