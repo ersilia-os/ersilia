@@ -708,8 +708,7 @@ class BaseInformation(ErsiliaBase):
         BiomedicalAreaBaseInformationError
             If the biomedical area is not valid.
         """
-        if type(new_biomedical_area) is str:
-            new_biomedical_area = [new_biomedical_area]
+        new_biomedical_area = self._serialize_to_list_if_necessary(new_biomedical_area)
         if type(new_biomedical_area) is not list:
             raise BiomedicalAreaBaseInformationError
         for nt in new_biomedical_area:
@@ -744,8 +743,7 @@ class BaseInformation(ErsiliaBase):
         TargetOrganismBaseInformationError
             If the target organism is not valid.
         """
-        if type(new_target_organism) is str:
-            new_target_organism = [new_target_organism]
+        new_target_organism = self._serialize_to_list_if_necessary(new_target_organism)
         if type(new_target_organism) is not list:
             raise TargetOrganismBaseInformationError
         for nt in new_target_organism:
