@@ -1484,7 +1484,7 @@ class BaseInformation(ErsiliaBase):
         elif not self._is_numeric(new_value):
             raise ComputationalPerformanceTenBaseInformationError
         else:
-            self._computational_performance_ten = self._serialiaze_to_numeric(new_value)
+            self._computational_performance_ten = self._serialize_to_numeric(new_value)
 
     @property
     def computational_performance_hund(self):
