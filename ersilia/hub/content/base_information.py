@@ -235,6 +235,25 @@ class BaseInformation(ErsiliaBase):
         else:
             return int(float(x))
 
+    @staticmethod
+    def _serialize_to_list_if_necessary(x):
+        if type(x) is list:
+            return x
+        if type(x) is tuple:
+            return list(x)
+        x = str(x)
+        x = x.replace("'", "")
+        x = x.replace('"', "")
+        if x.startswith("[") and x.endswith("]"):
+            pass
+        elif x.startswith("(") and x.endswith(")"):
+            pass
+        else:
+            return [x]
+        x = x[1:-1]
+        x = [x_.strip(" ") for x_ in x.split(", ")]
+        return x
+
     @property
     def identifier(self):
         """
@@ -522,11 +541,7 @@ class BaseInformation(ErsiliaBase):
         InputBaseInformationError
             If the input is not valid.
         """
-        if type(new_input) is str:
-            new_input = [new_input]
-        print("HERE")
-        print(new_input)
-        print("THERE")
+        new_input = self._serialize_to_list_if_necessary(new_input)
         if type(new_input) is not list:
             raise InputBaseInformationError
         for inp in new_input:
@@ -765,8 +780,7 @@ class BaseInformation(ErsiliaBase):
         OutputBaseInformationError
             If the output is not valid.
         """
-        if type(new_output) is str:
-            new_output = [new_output]
+        new_output = self._serialize_to_list_if_necessary(new_output)
         default_output = self._read_default_fields("Output")
         for no in new_output:
             if no not in default_output:
@@ -803,7 +817,7 @@ class BaseInformation(ErsiliaBase):
         if new_output_type is None:
             self._output_type = None  # TODO change for column information
         elif type(new_output_type) is str:
-            new_output_type = [new_output_type]
+            new_output_type = self._serialize_to_list_if_necessary(new_output_type)
             default_output_type = self._read_default_fields("Output Type")
             for no in new_output_type:
                 if no not in default_output_type:
@@ -966,8 +980,7 @@ class BaseInformation(ErsiliaBase):
         TagBaseInformationError
             If the tags are not valid.
         """
-        if type(new_tag) is str:
-            new_tag = [new_tag]
+        new_tag = self._serialize_to_list_if_necessary(new_tag)
         if type(new_tag) is not list:
             raise TagBaseInformationError
         default_tags = self._read_default_fields("Tag")
@@ -1263,8 +1276,9 @@ class BaseInformation(ErsiliaBase):
         DockerArchitectureBaseInformationError
             If the Docker architecture is not valid.
         """
-        if type(new_docker_architecture) is str:
-            new_docker_architecture = [new_docker_architecture]
+        new_docker_architecture = self._serialize_to_list_if_necessary(
+            new_docker_architecture
+        )
         for d in new_docker_architecture:
             if d not in self._read_default_fields("Docker Architecture"):
                 raise DockerArchitectureBaseInformationError
@@ -1640,8 +1654,7 @@ class BaseInformation(ErsiliaBase):
         deployment : str
             The model deployment.
         """
-        if type(new_deployment) is str:
-            new_deployment = [new_deployment]
+        new_deployment = self._serialize_to_list_if_necessary(new_deployment)
         if type(new_deployment) is not list:
             raise DeploymentBaseInformationError
         for nt in new_deployment:
