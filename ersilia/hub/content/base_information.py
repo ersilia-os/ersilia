@@ -1559,9 +1559,12 @@ class BaseInformation(ErsiliaBase):
         if new_incorporation_date is None:
             self._incorporation_date = None
         else:
+            new_incorporation_date = str(new_incorporation_date)
+            new_incorporation_date = new_incorporation_date.replace("'", "")
+            new_incorporation_date = new_incorporation_date.replace('"', "")
             if (
                 new_incorporation_date
-                != datetime.datetime.fromisoformat(str(new_incorporation_date))
+                != datetime.datetime.fromisoformat(new_incorporation_date)
                 .date()
                 .isoformat()
             ):
