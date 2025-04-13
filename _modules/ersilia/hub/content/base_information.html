@@ -539,6 +539,23 @@
             <span class="n">valid_field</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">valid_field</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_serialize_to_numeric</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1655,10 +1672,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_model_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_model_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_model_size</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">ModelSizeMbBaseInformationError</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span> <span class="o">=</span> <span class="n">new_model_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_model_size</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">environment_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1689,10 +1706,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_environment_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_environment_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_environment_size</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">EnvironmentSizeMbBaseInformationError</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size</span> <span class="o">=</span> <span class="n">new_environment_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_environment_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_environment_size</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">image_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1721,10 +1738,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_image_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_size</span> <span class="o">==</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_image_size</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_image_size</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">ImageSizeMbBaseInformationError</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_image_size</span> <span class="o">=</span> <span class="n">new_image_size</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_image_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_image_size</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1753,10 +1770,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceOneBaseInformationError</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="n">new_value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_ten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1785,10 +1802,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceTenBaseInformationError</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="n">new_value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_ten</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialiaze_to_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_hund</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1817,10 +1834,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">new_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">ComputationalPerformanceHundredBaseInformationError</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="n">new_value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_hund</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
