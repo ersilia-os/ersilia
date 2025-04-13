@@ -218,6 +218,23 @@ class BaseInformation(ErsiliaBase):
             valid_field = f.read().split("\n")
         return valid_field
 
+    @staticmethod
+    def _is_numeric(x):
+        x = str(x)
+        try:
+            float(x)
+            return True
+        except:
+            return False
+
+    @staticmethod
+    def _serialize_to_numeric(x):
+        x = str(x)
+        if "." in x:
+            return float(x)
+        else:
+            return int(float(x))
+
     @property
     def identifier(self):
         """
@@ -1334,10 +1351,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_model_size is None:
             self._model_size = None
-        elif not isinstance(new_model_size, (int, float)):
+        elif not self._is_numeric(new_model_size):
             raise ModelSizeMbBaseInformationError
         else:
-            self._model_size = new_model_size
+            self._model_size = self._serialize_to_numeric(new_model_size)
 
     @property
     def environment_size(self):
@@ -1368,10 +1385,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_environment_size is None:
             self._environment_size = None
-        elif not isinstance(new_environment_size, (int, float)):
+        elif not self._is_numeric(new_environment_size):
             raise EnvironmentSizeMbBaseInformationError
         else:
-            self._environment_size = new_environment_size
+            self._environment_size = self._serialize_to_numeric(new_environment_size)
 
     @property
     def image_size(self):
@@ -1400,10 +1417,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_image_size is None:
             self._image_size == None
-        elif not isinstance(new_image_size, (int, float)):
+        elif not self._is_numeric(new_image_size):
             raise ImageSizeMbBaseInformationError
         else:
-            self._image_size = new_image_size
+            self._image_size = self._serialize_to_numeric(new_image_size)
 
     @property
     def computational_performance_one(self):
@@ -1432,10 +1449,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_value is None:
             self._computational_performance_one = None
-        elif not isinstance(new_value, (int, float)):
+        elif self._is_numeric(new_value):
             raise ComputationalPerformanceOneBaseInformationError
         else:
-            self._computational_performance_one = new_value
+            self._computational_performance_one = self._serialize_to_numeric(new_value)
 
     @property
     def computational_performance_ten(self):
@@ -1464,10 +1481,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_value is None:
             self._computational_performance_ten = None
-        elif not isinstance(new_value, (int, float)):
+        elif not self._is_numeric(new_value):
             raise ComputationalPerformanceTenBaseInformationError
         else:
-            self._computational_performance_ten = new_value
+            self._computational_performance_ten = self._serialiaze_to_numeric(new_value)
 
     @property
     def computational_performance_hund(self):
@@ -1496,10 +1513,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_value is None:
             self._computational_performance_hund = None
-        elif not isinstance(new_value, (int, float)):
+        elif not self._is_numeric(new_value):
             raise ComputationalPerformanceHundredBaseInformationError
         else:
-            self._computational_performance_hund = new_value
+            self._computational_performance_hund = self._serialize_to_numeric(new_value)
 
     @property
     def pack_method(self):
