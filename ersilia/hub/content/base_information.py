@@ -524,6 +524,9 @@ class BaseInformation(ErsiliaBase):
         """
         if type(new_input) is str:
             new_input = [new_input]
+        print("HERE")
+        print(new_input)
+        print("THERE")
         if type(new_input) is not list:
             raise InputBaseInformationError
         for inp in new_input:
