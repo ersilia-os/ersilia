@@ -556,6 +556,25 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_serialize_to_list_if_necessary</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x_</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">x</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -843,11 +862,7 @@
 <span class="sd">        InputBaseInformationError</span>
 <span class="sd">            If the input is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_input</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_input</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_input</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;HERE&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">new_input</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;THERE&quot;</span><span class="p">)</span>
+        <span class="n">new_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span><span class="n">new_input</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_input</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InputBaseInformationError</span>
         <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">new_input</span><span class="p">:</span>
@@ -1086,8 +1101,7 @@
 <span class="sd">        OutputBaseInformationError</span>
 <span class="sd">            If the output is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_output</span><span class="p">]</span>
+        <span class="n">new_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span><span class="n">new_output</span><span class="p">)</span>
         <span class="n">default_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">no</span> <span class="ow">in</span> <span class="n">new_output</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output</span><span class="p">:</span>
@@ -1124,7 +1138,7 @@
         <span class="k">if</span> <span class="n">new_output_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_output_type</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># TODO change for column information</span>
         <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_output_type</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_output_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_output_type</span><span class="p">]</span>
+            <span class="n">new_output_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span><span class="n">new_output_type</span><span class="p">)</span>
             <span class="n">default_output_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">no</span> <span class="ow">in</span> <span class="n">new_output_type</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">no</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_output_type</span><span class="p">:</span>
@@ -1287,8 +1301,7 @@
 <span class="sd">        TagBaseInformationError</span>
 <span class="sd">            If the tags are not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_tag</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_tag</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_tag</span><span class="p">]</span>
+        <span class="n">new_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span><span class="n">new_tag</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_tag</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">TagBaseInformationError</span>
         <span class="n">default_tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Tag&quot;</span><span class="p">)</span>
@@ -1584,8 +1597,9 @@
 <span class="sd">        DockerArchitectureBaseInformationError</span>
 <span class="sd">            If the Docker architecture is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_docker_architecture</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_docker_architecture</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_docker_architecture</span><span class="p">]</span>
+        <span class="n">new_docker_architecture</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span>
+            <span class="n">new_docker_architecture</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">new_docker_architecture</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">DockerArchitectureBaseInformationError</span>
@@ -1961,8 +1975,7 @@
 <span class="sd">        deployment : str</span>
 <span class="sd">            The model deployment.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">new_deployment</span> <span class="o">=</span> <span class="p">[</span><span class="n">new_deployment</span><span class="p">]</span>
+        <span class="n">new_deployment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DeploymentBaseInformationError</span>
         <span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="n">new_deployment</span><span class="p">:</span>
