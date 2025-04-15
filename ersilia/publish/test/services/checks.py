@@ -373,7 +373,7 @@ class CheckService:
             raise texc.EmptyKey(key)
 
     def _check_model_computztional_performance_one(self, data):
-        key = "Computational Performance #1"
+        key = "Computational Performance #4"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -381,8 +381,8 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
 
-    def _check_model_computztional_performance_one(self, data):
-        key = "Computational Performance #10"
+    def _check_model_computztional_performance_two(self, data):
+        key = "Computational Performance #7"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -390,7 +390,43 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
 
-    def _check_model_computztional_performance_one(self, data):
+    def _check_model_computztional_performance_three(self, data):
+        key = "Computational Performance #12"
+        self.logger.debug(f"Checking {key}  field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
+    def _check_model_computztional_performance_four(self, data):
+        key = "Computational Performance #20"
+        self.logger.debug(f"Checking {key}  field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
+        
+    def _check_model_computztional_performance_five(self, data):
+        key = "Computational Performance #34"
+        self.logger.debug(f"Checking {key}  field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
+
+    def _check_model_computztional_performance_six(self, data):
+        key = "Computational Performance #58"
+        self.logger.debug(f"Checking {key}  field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
+
+
+    def _check_model_computztional_performance_seven(self, data):
         key = "Computational Performance #100"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -398,6 +434,7 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+
 
     @throw_ersilia_exception()
     def check_information(self):
@@ -451,15 +488,35 @@ class CheckService:
         self._run_check(
             self._check_model_computztional_performance_one,
             data,
-            "Model Computational Performance for 1 input",
+            "Model Computational Performance for 4 input",
         )
         self._run_check(
-            self._check_model_computztional_performance_one,
+            self._check_model_computztional_performance_two,
             data,
-            "Model Computational Performance for 10 input",
+            "Model Computational Performance for 7 input",
         )
         self._run_check(
-            self._check_model_computztional_performance_one,
+            self._check_model_computztional_performance_three,
+            data,
+            "Model Computational Performance for 12 input",
+        )
+        self._run_check(
+            self._check_model_computztional_performance_four,
+            data,
+            "Model Computational Performance for 20 input",
+        )
+        self._run_check(
+            self._check_model_computztional_performance_five,
+            data,
+            "Model Computational Performance for 34 input",
+        )
+        self._run_check(
+            self._check_model_computztional_performance_six,
+            data,
+            "Model Computational Performance for 58 input",
+        )
+        self._run_check(
+            self._check_model_computztional_performance_seven,
             data,
             "Model Computational Performance for 100 input",
         )

@@ -50,21 +50,12 @@ class DataFrame(object):
     """
 
     def __init__(self, data: list, columns: list, dtype: any, dim: int):
-        """
-        Parameters
-        ----------
-        data : list
-            The data of the DataFrame.
-        columns : list
-            The column names of the DataFrame.
-        """
         self.data = data
         self.dim = dim
         self.dtype = dtype
         self.columns = columns
 
     def _is_unprocessable_input(self) -> bool:
-        """Check if the data contains a single row with UNPROCESSABLE_INPUT."""
         if len(self.data) != 1:
             return False
         row = self.data[0]
@@ -457,9 +448,7 @@ class GenericOutputAdapter(ResponseRefactor):
 
     def _get_dtype_obj(self, dtypes):
         unique_dtypes = list(set(dtypes))
-        self.logger.info(f"Unique dtypes: {unique_dtypes}")
         dtype = "float" if "float" in unique_dtypes else unique_dtypes[0]
-        self.logger.info(f"Selected dtype: {dtype}")
         return self._get_dtype(dtype)
 
     def _sinlge_cast(self, val, dtype):
@@ -545,13 +534,19 @@ class GenericOutputAdapter(ResponseRefactor):
             output_shape = " "
         return output_shape
 
+    def _convert_pure_dtype_to_obj(self, dtypes):
+        if "numeric_array" in dtypes or "numeric" in dtypes:
+            return self._get_dtype_obj(["float"])
+        if "numeric_string" in dtypes or "string" in dtypes:
+            return self._get_dtype_obj(["string"])
+
     def _resolve_schema_metadata(self, model_id: str):
         metadata = self._fetch_schema_from_github()
         if metadata:
             schema_keys, schema_dtypes, output_dim = metadata
             output_shape = self._convert_dimension_to_shape(output_dim)
         else:
-            schema_keys, schema_dtypes = None, None
+            schema_keys, schema_dtypes, output_dim = None, None, None
             output_shape = self._get_outputshape(model_id)
 
         dtype_obj = (
@@ -602,9 +597,14 @@ class GenericOutputAdapter(ResponseRefactor):
                         self.dtypes = [guessed_dtype]
 
                 if dtype_obj is not None:
+                    dt_obj = dtype_obj
+                    dim = output_dim
                     vals = self._cast_values_from_github_metadata(vals, dtype_obj)
                 else:
+                    dim = len(self.dtypes)
+                    dt_obj = self._convert_pure_dtype_to_obj(self.dtypes)
                     vals = self.__cast_values(vals, self.dtypes, output_keys)
+
             vals = vals[0] if isinstance(vals[0], list) else vals
             row = [inp["key"], inp["input"]] + vals
             rows.append(row)
@@ -612,7 +612,7 @@ class GenericOutputAdapter(ResponseRefactor):
         columns = ["key", "input"] + (
             expanded_keys if expanded_keys is not None else output_keys
         )
-        return DataFrame(data=rows, columns=columns, dtype=dtype_obj, dim=output_dim)
+        return DataFrame(data=rows, columns=columns, dtype=dt_obj, dim=dim)
 
     def meta(self) -> dict:
         """
