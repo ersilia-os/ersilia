@@ -23,9 +23,13 @@ def valid_data(): #This is an example of NEW Metadata
     data.output = "Other value"
     data.output_type = ["Float"]
     data.interpretation = "This is a regression model."
-    data.computational_performance_one = 10.11
-    data.computational_performance_ten = 14.12
-    data.computational_performance_hund = 50.45
+    data.computational_performance_four = 10.11
+    data.computational_performance_seven = 14.12
+    data.computational_performance_twelve = 50.45
+    data.computational_performance_twenty = 50.45
+    data.computational_performance_thirtyfour = 50.45
+    data.computational_performance_fiftyeight = 50.45
+    data.computational_performance_hundred = 50.45
     data.publication = "https://publication.url"
     data.source_code = "https://source.code"
     data.contributor = "sample-contributor"
