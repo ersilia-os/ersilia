@@ -241,7 +241,7 @@ class ModelInspector:
             A namedtuple containing the success status and details of the check.
         """
         details = []
-        for n in (1, 10, 100):
+        for n in (4, 7, 12, 20, 34, 58, 100):
             result = self._run_performance_check(n)
             if not result.success:
                 return result
@@ -483,8 +483,8 @@ class ModelInspector:
 
     def _run_performance_check(self, n):
         cmd = (
-            f"ersilia serve {self.model}&& "
-            f"ersilia example -n {n} -c -f {Options.DEEP_INPUT.value} && "
+            f"ersilia serve {self.model} --no-cache &&"
+            f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} &&"
             f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
         )
         start_time = time.time()
