@@ -576,7 +576,7 @@
 <span class="sd">            A namedtuple containing the success status and details of the check.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">details</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">58</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_performance_check</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">result</span>
@@ -825,8 +825,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_performance_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">&amp;&amp; &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;ersilia example -n </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> -c -f </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_INPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> &amp;&amp; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> --no-cache &amp;&amp;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ersilia example -n </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> --simple -f </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_INPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> &amp;&amp;&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;ersilia run -i </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_INPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> &amp;&amp; ersilia close&quot;</span>
         <span class="p">)</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
