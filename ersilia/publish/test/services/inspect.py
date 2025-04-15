@@ -241,7 +241,7 @@ class ModelInspector:
             A namedtuple containing the success status and details of the check.
         """
         details = []
-        for n in (1, 10, 100):
+        for n in (4, 7, 12, 20, 34, 58, 100):
             result = self._run_performance_check(n)
             if not result.success:
                 return result
