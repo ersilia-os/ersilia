@@ -796,13 +796,21 @@ class CheckService:
 
                 if content is None or (hasattr(content, "size") and content.size == 0):
                     error_details.append("Empty content")
-
+                
                 content_array = np.array(content)
-                if np.isnan(content_array).any():
-                    nan_indices = np.argwhere(np.isnan(content_array))
-                    error = "H5 content invalid value at index: "
-                    for index in nan_indices:
-                        error += f"{index}, "
+
+                if np.issubdtype(content_array.dtype, np.float32):
+                    invalid_mask = np.isnan(content_array)
+                elif content_array.dtype.kind in ['S', 'U']:
+                    invalid_mask = (content_array == '')
+                elif np.issubdtype(content_array.dtype, np.int32):
+                    invalid_mask = np.full(content_array.shape, False)
+                else:
+                    invalid_mask = np.full(content_array.shape, False)
+
+                if invalid_mask.any():
+                    invalid_indices = np.argwhere(invalid_mask)
+                    error = "H5 content invalid value at index: " + ", ".join(str(index) for index in invalid_indices)
                     error = self.trim_string(error)
                     self.logger.error(error)
                     error_details.append(error)
