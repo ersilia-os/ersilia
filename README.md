@@ -18,7 +18,7 @@
 4. [License and citation](https://github.com/ersilia-os/ersilia#license-and-citation)
 5. [About us](https://github.com/ersilia-os/ersilia#about-us)
 
-## Project Description
+## Project Description [`⇧`](#table-of-contents)
 
 The [Ersilia Model Hub](https://ersilia.io) is a unified platform of pre-trained AI/ML models for 🦠 infectious and neglected disease research. Our mission is to offer an open-source, 🛠 low-code solution that provides seamless access to AI/ML models for 💊 drug discovery. Models housed in our hub come from two sources:
 
@@ -27,7 +27,7 @@ The [Ersilia Model Hub](https://ersilia.io) is a unified platform of pre-trained
 
 You can read more about the project in the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/) and browse available models in the [Ersilia Model Hub](https://ersilia.io/model-hub/).
 
-## Quick Start Guide
+## Quick Start Guide [`⇧`](#table-of-contents)
 
 Please check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). The following steps are a quick start guide to using Ersilia.
 
@@ -101,7 +101,7 @@ For Python versions 3.12, Ersilia explicitly installs the setuptools library dur
 
 Note: If you are using Python 3.12, you don’t need to take any manual action. The Ersilia CLI automatically handles this by installing setuptools as part of the setup process.
 
-## Contribute
+## Contribute [`⇧`](#table-of-contents)
 
 The Ersilia Model Hub is a Free, Open Source Software and we highly value new contributors. There are several ways in which you can contribute to the project:
 
@@ -152,7 +152,7 @@ If you want to incorporate a new model in the platform, open a new issue using t
 
 After submitting your model request via an issue (suggested), an Ersilia maintainer will review your request. If they approve your request, a new model respository will be created for you to fork and use! There is a [demo repository](https://github.com/ersilia-os/eos-demo) explaining the steps one-by-one.
 
-## License and Citation
+## License and Citation [`⇧`](#table-of-contents)
 
 This repository is open-sourced under the [GPL-3 License](https://github.com/ersilia-os/ersilia/blob/master/LICENSE).
 Please [cite us](https://github.com/ersilia-os/ersilia/blob/master/CITATION.cff) if you use it!
@@ -170,7 +170,7 @@ The Ersilia Model Hub is used in a number of scientific projects. Read more abou
 - [Offensperger et al, Science, 2024](https://www.science.org/doi/10.1126/science.adk5864)
 - [Turon et al, ACS Med Chem Lett, 2024](https://doi.org/10.1021/acsmedchemlett.4c00131)
 
-## About Us
+## About Us [`⇧`](#table-of-contents)
 
 The [Ersilia Open Source Initiative](https://ersilia.io) is a Non Profit Organization with the mission is to equip labs, universities and clinics in LMIC with AI/ML tools for infectious disease research.
 [Help us](https://www.ersilia.io/donate) achieve our mission!
