@@ -25,8 +25,8 @@ class ReadmeFormatter():
         text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
         text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
         text += "## Baseline Performance\n\n"
-        text += "* Computational Performance For One Input: `{0}`\n".format(d["Computational Performance 1"])
-        text += "* Computational Performance For Ten Input: `{0}`\n".format(d["Computational Performance 10"])
+        text += "* Computational Performance For Four Input: `{0}`\n".format(d["Computational Performance 4"])
+        text += "* Computational Performance For Twenty Input: `{0}`\n".format(d["Computational Performance 20"])
         text += "* Computational Performance For Hundred Input: `{0}`\n".format(d["Computational Performance 100"])
         text += "## References\n\n"
         text += "* [Publication]({0})\n".format(d["Publication"])
@@ -178,12 +178,12 @@ class ReadmeFormatter():
         if d.get("Image Size"):
             text += "- **Image Size (Mb):** `{0}`\n".format(d.get("Image Size"))
         text += "\n"
-        if d.get("Computational Performance 1"):
+        if d.get("Computational Performance 4"):
             text += "**Computational Performance (seconds):**\n"
-        if d.get("Computational Performance 1"):
-            text += "- One input: `{0}`\n".format(d.get("Computational Performance 1"))
-        if d.get("Computational Performance 10"):
-            text += "- Ten inputs: `{0}`\n".format(d.get("Computational Performance 10"))
+        if d.get("Computational Performance 4"):
+            text += "- One input: `{0}`\n".format(d.get("Computational Performance 4"))
+        if d.get("Computational Performance 20"):
+            text += "- Ten inputs: `{0}`\n".format(d.get("Computational Performance 20"))
         if d.get("Computational Performance 100"):
             text += "- Hundred inputs: `{0}`\n".format(d.get("Computational Performance 100"))
         text += "\n"
