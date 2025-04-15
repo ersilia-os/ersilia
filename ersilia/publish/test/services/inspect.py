@@ -483,8 +483,8 @@ class ModelInspector:
 
     def _run_performance_check(self, n):
         cmd = (
-            f"ersilia serve {self.model}&& "
-            f"ersilia example -n {n} -c -f {Options.DEEP_INPUT.value} && "
+            f"ersilia serve {self.model} --no-cache &&"
+            f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} &&"
             f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
         )
         start_time = time.time()

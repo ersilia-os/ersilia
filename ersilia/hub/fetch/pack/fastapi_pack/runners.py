@@ -111,7 +111,7 @@ class CondaPack(BasePack):
             self.conda.create(environment=env, python_version=python_version)
             self.logger.debug("Creating base conda environment")
             commandlines = [
-                "python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git"
+                "python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git@fix/removing-prometheus"
             ]
             self.conda.run_commandlines(environment=env, commandlines=commandlines)
             self.logger.debug(

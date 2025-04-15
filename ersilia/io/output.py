@@ -49,7 +49,7 @@ class DataFrame(object):
         Writes the DataFrame to a file, determining the format based on the file extension.
     """
 
-    def __init__(self, data: list, columns: list):
+    def __init__(self, data: list, columns: list, dtype: any):
         """
         Parameters
         ----------
@@ -59,6 +59,7 @@ class DataFrame(object):
             The column names of the DataFrame.
         """
         self.data = data
+        self.dtype = dtype
         self.columns = columns
 
     def _is_unprocessable_input(self) -> bool:
@@ -140,6 +141,7 @@ class DataFrame(object):
             keys=res["keys"],
             inputs=res["inputs"],
             features=res["features"],
+            dtype=self.dtype,
         )
         hdf5.save(file_name)
 
@@ -552,10 +554,12 @@ class GenericOutputAdapter(ResponseRefactor):
         dtype_obj = (
             self._get_dtype_obj(schema_dtypes) if schema_dtypes is not None else None
         )
-        return schema_keys, output_shape, dtype_obj
+        return schema_keys, output_shape, dtype_obj, schema_dtypes
 
     def _to_dataframe(self, result: dict, model_id: str) -> DataFrame:
-        schema_keys, output_shape, dtype_obj = self._resolve_schema_metadata(model_id)
+        schema_keys, output_shape, dtype_obj, _ = self._resolve_schema_metadata(
+            model_id
+        )
 
         result_list = json.loads(result) if isinstance(result, str) else result
 
@@ -593,7 +597,6 @@ class GenericOutputAdapter(ResponseRefactor):
                     guessed_dtype = self._guess_pure_dtype_if_absent(vals)
                     if len(output_keys) == 1:
                         self.dtypes = [guessed_dtype]
-                # Build and collect the row; include all values from vals.
 
                 if dtype_obj is not None:
                     vals = self._cast_values_from_github_metadata(vals, dtype_obj)
@@ -606,7 +609,7 @@ class GenericOutputAdapter(ResponseRefactor):
         columns = ["key", "input"] + (
             expanded_keys if expanded_keys is not None else output_keys
         )
-        return DataFrame(data=rows, columns=columns)
+        return DataFrame(data=rows, columns=columns, dtype=dtype_obj)
 
     def meta(self) -> dict:
         """
