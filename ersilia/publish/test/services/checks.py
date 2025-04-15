@@ -796,15 +796,26 @@ class CheckService:
 
                 if content is None or (hasattr(content, "size") and content.size == 0):
                     error_details.append("Empty content")
-                
+
                 content_array = np.array(content)
 
-                if np.issubdtype(content_array.dtype, np.float32):
+                if np.issubdtype(content_array.dtype, np.floating):
                     invalid_mask = np.isnan(content_array)
+                elif np.issubdtype(content_array.dtype, np.integer):
+                    invalid_mask = np.full(content_array.shape, False)
                 elif content_array.dtype.kind in ['S', 'U']:
                     invalid_mask = (content_array == '')
-                elif np.issubdtype(content_array.dtype, np.int32):
-                    invalid_mask = np.full(content_array.shape, False)
+                elif content_array.dtype.kind == 'O':
+                    def is_empty(x):
+                        if isinstance(x, bytes):
+                            return x == b''
+                        elif isinstance(x, str):
+                            return x == ''
+                        else:
+                            return False
+
+                    vector_is_empty = np.vectorize(is_empty)
+                    invalid_mask = vector_is_empty(content_array)
                 else:
                     invalid_mask = np.full(content_array.shape, False)
 
