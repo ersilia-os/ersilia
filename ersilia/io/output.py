@@ -49,7 +49,7 @@ class DataFrame(object):
         Writes the DataFrame to a file, determining the format based on the file extension.
     """
 
-    def __init__(self, data: list, columns: list, dtype: any):
+    def __init__(self, data: list, columns: list, dtype: any, dim: int):
         """
         Parameters
         ----------
@@ -59,6 +59,7 @@ class DataFrame(object):
             The column names of the DataFrame.
         """
         self.data = data
+        self.dim = dim
         self.dtype = dtype
         self.columns = columns
 
@@ -142,7 +143,9 @@ class DataFrame(object):
             inputs=res["inputs"],
             features=res["features"],
             dtype=self.dtype,
+            dim=self.dim,
         )
+
         hdf5.save(file_name)
 
     def write_text(self, file_name: str, delimiter: str = None):
@@ -545,8 +548,8 @@ class GenericOutputAdapter(ResponseRefactor):
     def _resolve_schema_metadata(self, model_id: str):
         metadata = self._fetch_schema_from_github()
         if metadata:
-            schema_keys, schema_dtypes, output_shape = metadata
-            output_shape = self._convert_dimension_to_shape(output_shape)
+            schema_keys, schema_dtypes, output_dim = metadata
+            output_shape = self._convert_dimension_to_shape(output_dim)
         else:
             schema_keys, schema_dtypes = None, None
             output_shape = self._get_outputshape(model_id)
@@ -554,11 +557,11 @@ class GenericOutputAdapter(ResponseRefactor):
         dtype_obj = (
             self._get_dtype_obj(schema_dtypes) if schema_dtypes is not None else None
         )
-        return schema_keys, output_shape, dtype_obj, schema_dtypes
+        return schema_keys, output_shape, dtype_obj, schema_dtypes, output_dim
 
     def _to_dataframe(self, result: dict, model_id: str) -> DataFrame:
-        schema_keys, output_shape, dtype_obj, _ = self._resolve_schema_metadata(
-            model_id
+        schema_keys, output_shape, dtype_obj, _, output_dim = (
+            self._resolve_schema_metadata(model_id)
         )
 
         result_list = json.loads(result) if isinstance(result, str) else result
@@ -609,7 +612,7 @@ class GenericOutputAdapter(ResponseRefactor):
         columns = ["key", "input"] + (
             expanded_keys if expanded_keys is not None else output_keys
         )
-        return DataFrame(data=rows, columns=columns, dtype=dtype_obj)
+        return DataFrame(data=rows, columns=columns, dtype=dtype_obj, dim=output_dim)
 
     def meta(self) -> dict:
         """
