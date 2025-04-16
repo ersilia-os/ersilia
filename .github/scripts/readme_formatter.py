@@ -25,9 +25,9 @@ class ReadmeFormatter():
         text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
         text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
         text += "## Baseline Performance\n\n"
-        text += "* Computational Performance For Four Input: `{0}`\n".format(d["Computational Performance 4"])
-        text += "* Computational Performance For Twenty Input: `{0}`\n".format(d["Computational Performance 20"])
-        text += "* Computational Performance For Hundred Input: `{0}`\n".format(d["Computational Performance 100"])
+        text += "* Computational Performance For Four Inputs: `{0}`\n".format(d["Computational Performance 4"])
+        text += "* Computational Performance For Twenty Inputs: `{0}`\n".format(d["Computational Performance 20"])
+        text += "* Computational Performance For Hundred Inputs: `{0}`\n".format(d["Computational Performance 100"])
         text += "## References\n\n"
         text += "* [Publication]({0})\n".format(d["Publication"])
         text += "* [Source Code]({0})\n".format(d["Source Code"])

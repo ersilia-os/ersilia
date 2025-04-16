@@ -486,7 +486,7 @@ class CheckService:
         self._run_check(self._check_model_env_size, data, "Model Environment Size")
         self._run_check(self._check_model_model_size, data, "Model Directory Size")
         self._run_check(
-            self._check_model_computztional_performance_one,
+            self._check_model_computational_performance_four,
             data,
             "Model Computational Performance for 4 input",
         )
@@ -518,7 +518,7 @@ class CheckService:
         self._run_check(
             self._check_model_computztional_performance_seven,
             data,
-            "Model Computational Performance for 100 input",
+            "Model Computational Performance for 100 inputs",
         )
 
     def _duplicate(self, csv_file):
