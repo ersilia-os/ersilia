@@ -398,7 +398,7 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-    def _check_model_computzational_performance_four(self, data):
+    def _check_model_computational_performance_four(self, data):
         key = "Computational Performance #20"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
