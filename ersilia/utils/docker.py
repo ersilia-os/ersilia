@@ -25,19 +25,23 @@ def set_docker_host():
     try:
         # Get the current Docker context
         context_result = subprocess.run(
-            ["docker", "context", "show"],
-            capture_output=True,
-            text=True,
-            check=True
+            ["docker", "context", "show"], capture_output=True, text=True, check=True
         )
         context_name = context_result.stdout.strip()
 
         # Get the Docker host for the current context
         result = subprocess.run(
-            ["docker", "context", "inspect", context_name, "--format", "{{.Endpoints.docker.Host}}"],
+            [
+                "docker",
+                "context",
+                "inspect",
+                context_name,
+                "--format",
+                "{{.Endpoints.docker.Host}}",
+            ],
             capture_output=True,
             text=True,
-            check=True
+            check=True,
         )
 
         base_url = result.stdout.strip()
@@ -46,7 +50,6 @@ def set_docker_host():
             os.environ["DOCKER_HOST"] = base_url  # Set the variable for this process
     except:
         return
-
 
 
 def resolve_platform():

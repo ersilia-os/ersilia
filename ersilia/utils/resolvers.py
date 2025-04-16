@@ -1,4 +1,3 @@
-
 import json
 import os
 
@@ -15,6 +14,7 @@ class PackMethodResolver(ErsiliaBase):
     Note that this class is different from the TemplateResolver, which resolves the pack method
     before the fetch procedure.
     """
+
     def __init__(self, model_id=None, config_json=None):
         self.model_id = model_id
         ErsiliaBase.__init__(self, config_json=config_json)
@@ -44,7 +44,11 @@ class PackMethodResolver(ErsiliaBase):
         """
         model_id = self.model_id
         data = None
-        root_github_url = "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/".format(model_id)
+        root_github_url = (
+            "https://raw.githubusercontent.com/ersilia-os/{0}/refs/heads/main/".format(
+                model_id
+            )
+        )
         extensions = ["json", "yml"]
         for ext in extensions:
             url = f"{root_github_url}/metadata.{ext}"
@@ -107,8 +111,12 @@ class PackMethodResolver(ErsiliaBase):
             with open(os.path.join(model_path, "service_class.txt"), "r") as f:
                 service_class = f.read().strip()
         if service_class == "pulled_docker":
-            self.logger.debug("Service class is pulled_docker, resolving pack method from GitHub metadata...")
+            self.logger.debug(
+                "Service class is pulled_docker, resolving pack method from GitHub metadata..."
+            )
             return self.resolve_pack_method_from_github_metadata()
         else:
-            self.logger.debug("Service class is not pulled_docker, resolving pack method from source...")
+            self.logger.debug(
+                "Service class is not pulled_docker, resolving pack method from source..."
+            )
             return self.resolve_pack_method_source()

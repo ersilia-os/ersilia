@@ -435,7 +435,7 @@ class GenericOutputAdapter(ResponseRefactor):
         col_dtype = [row["type"] for row in rows if row["type"]]
         shape = len(col_dtype)
         et = time.perf_counter()
-        self.logger.info(f"Column metadata fetched in {et-st:.2} seconds!")
+        self.logger.info(f"Column metadata fetched in {et - st:.2} seconds!")
         return col_name, col_dtype, shape
 
     def _get_dtype(self, type_str):

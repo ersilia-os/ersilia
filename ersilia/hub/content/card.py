@@ -117,7 +117,9 @@ class RepoMetadataFile(ErsiliaBase):
             with open(json_or_yaml_path, "r") as f:
                 if json_or_yaml_path.endswith(".json"):
                     data = json.load(f)
-                elif json_or_yaml_path.endswith(".yaml") or json_or_yaml_path.endswith(".yml"):
+                elif json_or_yaml_path.endswith(".yaml") or json_or_yaml_path.endswith(
+                    ".yml"
+                ):
                     data = yaml.safe_load(f)
                 else:
                     raise ValueError("File format not supported")

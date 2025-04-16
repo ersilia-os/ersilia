@@ -70,9 +70,7 @@ class IO(object):
         -------
         None
         """
-        self.logger.debug(
-            "Making sure that the necessary requirements are met"
-        )
+        self.logger.debug("Making sure that the necessary requirements are met")
         pass
 
     def example(self, n_samples):

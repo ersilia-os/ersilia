@@ -59,7 +59,14 @@ class ModelDockerHubFetcher(ErsiliaBase):
         Fetch the model from DockerHub.
     """
 
-    def __init__(self, overwrite=None, config_json=None, img_tag=None, force_with_bentoml=False, force_with_fastapi=False):
+    def __init__(
+        self,
+        overwrite=None,
+        config_json=None,
+        img_tag=None,
+        force_with_bentoml=False,
+        force_with_fastapi=False,
+    ):
         super().__init__(config_json=config_json, credentials_json=None)
         self.simple_docker = SimpleDocker()
         self.overwrite = overwrite
@@ -216,7 +223,9 @@ class ModelDockerHubFetcher(ErsiliaBase):
         elif self.pack_method == PACK_METHOD_FASTAPI:
             await self._copy_from_ersiliapack_image(model_id, file)
         else:
-            raise Exception(f"Unresolved method, should be either {PACK_METHOD_FASTAPI} or {PACK_METHOD_BENTOML}")
+            raise Exception(
+                f"Unresolved method, should be either {PACK_METHOD_FASTAPI} or {PACK_METHOD_BENTOML}"
+            )
 
     async def copy_information(self, model_id: str):
         """
