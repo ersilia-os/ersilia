@@ -47,7 +47,7 @@ The first week is focused on getting to know the Ersilia community, our mission 
 
 **Slack:** we use Slack as our main communication platform, both for the contribution period and afterwards to work with the selected interns. If you have never used this tool, don't worry, is quite intuitive!
 
-1. [Sign up](https://join.slack.com/t/ersilia-outreachy-s24/shared\_invite/zt-2e1h1cjs5-lGyrZPprqlpL\~qEWgeoCWw) using your preferred email and name.
+1. [Sign up](https://join.slack.com/t/ersilia-outreachy-s24/shared_invite/zt-2e1h1cjs5-lGyrZPprqlpL~qEWgeoCWw) using your preferred email and name.
 2. Introduce yourself in the #introductions channel. The general channel is for announcements,  interactions with other fellow contributors, writing tips and suggestions.
 3. Use the dedicated channels for questions about specific topics.
 4. Contribute to your peers' questions, this is about helping each other and we really value interns who work with the community.
@@ -81,7 +81,7 @@ We will be using GitHub issues a lot, so if you have never worked with GitHub be
 
 #### Task 2: Install the Ersilia Model Hub
 
-We will be using the Ersilia Model Hub throughout the internship. Please follow the installation [instructions](../../ersilia-model-hub/installation.md). If you have a UNIX machine (Linux or MacOS) you can install Ersilia directly. If you are using a windows machine you will need a Virtual Machine or a Windows Subsystem Linux (WSL).
+We will be using the Ersilia Model Hub throughout the internship. Please follow the installation [instructions](broken-reference). If you have a UNIX machine (Linux or MacOS) you can install Ersilia directly. If you are using a windows machine you will need a Virtual Machine or a Windows Subsystem Linux (WSL).
 
 {% hint style="info" %}
 For Windows users, we recommend using a WSL with Visual Studio Code to access it.

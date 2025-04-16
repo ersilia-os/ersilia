@@ -37,7 +37,7 @@ The contribution period is organised in 4 weeks. Each week has a set of specific
 * Improving your contribution (there is always more publications to read, better bug reports to be written etc)
 * Helping out other contributors (we really value group work)
 
-We will be using GitHub issues to track the work of each contributor. Please open a new issue on our Ersilia [repository](https://github.com/ersilia-os/ersilia), choosing the Outreachy Summer 2024 [template](https://github.com/ersilia-os/ersilia/issues/new?assignees=\&labels=internship\&projects=\&template=outreachy\_s24.yml\&title=%E2%9C%8D%EF%B8%8F+Contribution+period%3A+%3Cyour\_name%3E+). You can check the tasks while you complete them.
+We will be using GitHub issues to track the work of each contributor. Please open a new issue on our Ersilia [repository](https://github.com/ersilia-os/ersilia), choosing the Outreachy Summer 2024 [template](https://github.com/ersilia-os/ersilia/issues/new?assignees=\&labels=internship\&projects=\&template=outreachy_s24.yml\&title=%E2%9C%8D%EF%B8%8F+Contribution+period%3A+%3Cyour_name%3E+). You can check the tasks while you complete them.
 
 {% hint style="info" %}
 Link this issue to your Outreachy application to submit the first contribution.
@@ -51,7 +51,7 @@ The first week is focused on getting to know the Ersilia community, our mission 
 
 **Slack:** we use Slack as our main communication platform, both for the contribution period and afterwards to work with the selected interns. If you have never used this tool, don't worry, is quite intuitive!
 
-1. [Sign up](https://join.slack.com/t/ersilia-outreachy-s24/shared\_invite/zt-2e1h1cjs5-lGyrZPprqlpL\~qEWgeoCWw) using your preferred email and name.
+1. [Sign up](https://join.slack.com/t/ersilia-outreachy-s24/shared_invite/zt-2e1h1cjs5-lGyrZPprqlpL~qEWgeoCWw) using your preferred email and name.
 2. Introduce yourself in the #general channel. The general channel is for introductions, announcements, random questions, interactions with other fellow contributors, writing tips and suggestions.
 3. Use the dedicated channels for questions about specific topics.
 4. Contribute to your peers' questions, this is about helping each other and we really value interns who work with the community.
@@ -85,7 +85,7 @@ We will be using GitHub issues a lot, so if you have never worked with GitHub be
 
 #### Task 2: Open an issue
 
-Each intern will have to open an issue on the Ersilia Model Hub repository using the Outreachy Summer 24 issue [template](https://github.com/ersilia-os/ersilia/issues/new?assignees=\&labels=internship\&projects=\&template=outreachy\_s24.yml\&title=%E2%9C%8D%EF%B8%8F+Contribution+period%3A+%3Cyour\_name%3E+). Use this issue as your personal thread of the contribution period. Everything you want the mentors to review, comment or take into account for the contribution period should be in that issue. You can also tag people to ask for help, debug together...
+Each intern will have to open an issue on the Ersilia Model Hub repository using the Outreachy Summer 24 issue [template](https://github.com/ersilia-os/ersilia/issues/new?assignees=\&labels=internship\&projects=\&template=outreachy_s24.yml\&title=%E2%9C%8D%EF%B8%8F+Contribution+period%3A+%3Cyour_name%3E+). Use this issue as your personal thread of the contribution period. Everything you want the mentors to review, comment or take into account for the contribution period should be in that issue. You can also tag people to ask for help, debug together...
 
 The issue has a set of tasks, mark them as complete as you go!
 
@@ -93,7 +93,7 @@ The issue has a set of tasks, mark them as complete as you go!
 
 We will be using the Ersilia Model Hub throughout the internship. The software is in beta testing and therefore you might encounter errors while running it, don't worry this is why we are here!
 
-Please follow the installation [instructions](../../ersilia-model-hub/installation.md). If you have a UNIX machine (Linux or MacOS) you can install Ersilia directly. If you are using a windows machine you will need a Virtual Machine or a Windows Subsystem Linux (WSL).
+Please follow the installation [instructions](broken-reference). If you have a UNIX machine (Linux or MacOS) you can install Ersilia directly. If you are using a windows machine you will need a Virtual Machine or a Windows Subsystem Linux (WSL).
 
 {% hint style="info" %}
 For Windows users, we recommend using a WSL with Visual Studio Code to access it.
@@ -248,7 +248,7 @@ Once the dataset is curated and cleaned, we can run predictions and create perfo
 
 Focus the last week ONLY in writing your final application to Outreachy. Mentors will not revise any contribution for the last week, only final applications, to ensure we can provide feedback on them.
 
-We provide [this template](https://docs.google.com/document/d/1-ubLY\_LlSApClrjYzmoaR0M-3LTykRi71xBEi4wvO8Q/edit) of a former 8-week internship at Ersilia as an example. Use it and adapt it to your internship plans (reminder: Outreachy lasts 12 weeks).
+We provide [this template](https://docs.google.com/document/d/1-ubLY_LlSApClrjYzmoaR0M-3LTykRi71xBEi4wvO8Q/edit) of a former 8-week internship at Ersilia as an example. Use it and adapt it to your internship plans (reminder: Outreachy lasts 12 weeks).
 
 {% hint style="warning" %}
 Final applications must be submitted through the Outreachy website on time. We will not be able to provide help or support for last minute internet connection problems, late submissions and other issues. Please make sure you fill it in with time.

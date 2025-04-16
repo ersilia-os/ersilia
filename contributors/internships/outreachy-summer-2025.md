@@ -81,7 +81,7 @@ We will be using GitHub issues a lot, so if you have never worked with GitHub be
 
 #### Task 2: Install the Ersilia Model Hub
 
-We will be using the Ersilia Model Hub throughout the internship. Please follow the installation [instructions](../../ersilia-model-hub/installation.md). If you have a UNIX machine (Linux or MacOS) you can install Ersilia directly. If you are using a windows machine you will need a Virtual Machine or a Windows Subsystem Linux (WSL).
+We will be using the Ersilia Model Hub throughout the internship. Please follow the installation [instructions](broken-reference). If you have a UNIX machine (Linux or MacOS) you can install Ersilia directly. If you are using a windows machine you will need a Virtual Machine or a Windows Subsystem Linux (WSL).
 
 {% hint style="info" %}
 For Windows users, we recommend using a WSL with Visual Studio Code to access it.

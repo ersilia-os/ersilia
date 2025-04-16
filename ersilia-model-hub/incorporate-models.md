@@ -5,7 +5,7 @@ hidden: true
 
 # Contribute models
 
-This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](introduction.md), models can be of three types, namely:
+This page serves as a guideline to develop a selected model to add to the Ersilia Model Hub. As [described earlier](broken-reference), models can be of three types, namely:
 
 1. Models developed by third parties.
 2. Models developed by Ersilia based on publicly available data.

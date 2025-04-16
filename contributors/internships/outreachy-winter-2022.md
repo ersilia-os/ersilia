@@ -38,7 +38,7 @@ We will be having tons of interactions during the contribution period, so the be
 
 We use Slack as our main communication platform, both for the contribution period and afterwards to work with the selected interns. If you have never used this tool, don't worry, is quite intuitive!
 
-1. [Sign up](https://join.slack.com/t/ersilia-outreachy/shared\_invite/zt-1h2u8vbxh-fkyxlOJE20Bx538hQvpC\~A) using your preferred email and name.
+1. [Sign up](https://join.slack.com/t/ersilia-outreachy/shared_invite/zt-1h2u8vbxh-fkyxlOJE20Bx538hQvpC~A) using your preferred email and name.
 2. Introduce yourself in the #general channel. The general channel is for random questions, interactions with other fellow contributors, writing tips and suggestions...
 3. Use the dedicated channels for questions about specific topics. For example, the #colab channel will be used to discuss about Google Colaboratory issues.&#x20;
 4. Contribute to your peers questions, this is about helping each other and we really value interns who work with the community.
@@ -84,7 +84,7 @@ Ersilia is adhered to the [Contributor Covenant Code of Conduct](../../about-us/
 
 We will be using the Ersilia Model Hub throughout the internship. The software is in beta testing and therefore you might encounter errors while running it, don't worry this is why we are here!
 
-Please follow the installation [instructions](../../ersilia-model-hub/installation.md). If you have a UNIX machine (Linux or MacOS) you can install Ersilia directly. If you are using a windows machine you will need a Virtual Machine or a Windows Subsystem Linux (WSL).
+Please follow the installation [instructions](broken-reference). If you have a UNIX machine (Linux or MacOS) you can install Ersilia directly. If you are using a windows machine you will need a Virtual Machine or a Windows Subsystem Linux (WSL).
 
 {% hint style="info" %}
 For Windows users, we recommend using a WSL with Visual Studio Code to access it.
@@ -167,7 +167,7 @@ To keep track of the models we have tested, please add your information to the [
        ```
    4. Let's work on debugging this issue together before moving on!
 
-We have provided an already prepared list of [test molecules](https://drive.google.com/file/d/14bZ1mcCv0jD-Wc-\_qwz-uxMGrJaenaup/view?usp=sharing) in .csv format. Download it and use it for model testing. Store the output of the model in a .csv file that must contain in the name the <mark style="color:orange;">model identifier</mark> and the <mark style="color:orange;">date</mark> when the prediction was done. Upload the output .csv file in the [shared folder.](https://drive.google.com/drive/folders/1h43ndbpPWkz2rIHHrb0H-5rgG8cpu803?usp=sharing)
+We have provided an already prepared list of [test molecules](https://drive.google.com/file/d/14bZ1mcCv0jD-Wc-_qwz-uxMGrJaenaup/view?usp=sharing) in .csv format. Download it and use it for model testing. Store the output of the model in a .csv file that must contain in the name the <mark style="color:orange;">model identifier</mark> and the <mark style="color:orange;">date</mark> when the prediction was done. Upload the output .csv file in the [shared folder.](https://drive.google.com/drive/folders/1h43ndbpPWkz2rIHHrb0H-5rgG8cpu803?usp=sharing)
 
 {% hint style="warning" %}
 Do not overwrite your fellow's additions to the excel file
