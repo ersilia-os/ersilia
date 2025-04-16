@@ -1931,16 +1931,16 @@ class BaseInformation(ErsiliaBase):
             "computational_performance_twelve", "Computational Performance 12", data
         )
         self._assign(
-            "computational_performance_twelve", "Computational Performance 20", data
+            "computational_performance_twenty", "Computational Performance 20", data
         )
         self._assign(
-            "computational_performance_twelve", "Computational Performance 34", data
+            "computational_performance_thirtyfour", "Computational Performance 34", data
         )
         self._assign(
-            "computational_performance_twelve", "Computational Performance 58", data
+            "computational_performance_fiftyeight", "Computational Performance 58", data
         )
         self._assign(
-            "computational_performance_twelve", "Computational Performance 100", data
+            "computational_performance_hundred", "Computational Performance 100", data
         )
         self._assign("docker_pack_method", "Docker Pack Method", data)
         self._assign("deployment", "Deployment", data)
