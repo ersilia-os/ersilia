@@ -12,7 +12,7 @@ Ersilia is only maintained for Linux and Mac Operating Systems. If you work in W
 
 #### Prerequisites
 
-* Python: we maintain Ersilia for Python 3.8 and above. Please make sure you have the right Python installation on your computer. Visit the [official Python site](https://www.python.org) to learn more.
+* Python: we maintain Ersilia for Python 3.8 and above. Please make sure you have a compatible Python version installed on your computer. Visit the [official Python site](https://www.python.org) to learn more.
 * Conda: ensure either [Anaconda](https://docs.anaconda.com/anaconda/install/index.html) or [Miniconda](https://docs.anaconda.com/miniconda/) are available in your system. This is the command to install it in **Ubuntu** (the command may be different if you do not use Ubuntu):
 
 ```
@@ -29,7 +29,7 @@ rm -rf ~/miniconda3/miniconda.sh
 #### Install from PyPi
 
 ```bash
-# install ersilia in an independent conda environment
+# install ersilia from PyPi in an independent conda environment
 conda create -n ersilia python=3.12
 conda activate ersilia
 pip install ersilia
@@ -38,10 +38,10 @@ pip install ersilia
 #### Install from CondaForge
 
 ```bash
-# install ersilia in an independent conda environment
+# install ersilia from CondaForge in an independent conda environment
 conda create -n ersilia python=3.12
 conda activate ersilia
-conda install ersilia
+conda install -c conda-forge ersilia
 ```
 
 Once the Ersilia Model Hub is installed, test that it works by running the --help command:
@@ -56,7 +56,7 @@ You can explore the available models through [our website](https://ersilia.io/mo
 
 ```bash
 # display ready to use models with its eos identifier and title
-ersilia catalog --more
+ersilia catalog --hub --more
 ```
 
 Each model is identified by:
@@ -65,7 +65,9 @@ Each model is identified by:
 * Slug: 1-3 word reference for the model
 * Title: brief description of the model
 
-Throughout this documentation, we will use the model eos2r5a (retrosynthetic-accessibility) as an example. This model has been incorporated from the paper _Retrosynthetic accessibility score (RAscore) – rapid machine learned synthesizability classification from AI driven retrosynthetic planning_ by [Thakkar et al, 2021](http://dx.doi.org/10.1039/D0SC05401A). The RA score is particularly useful to pre-screen large libraries of compounds, for example those produced by generative models.
+Additionally, each model is assiciated a "Task" and "Output" labels (e.g. Regression and Score, respectively) as well as "Input" and "Output" shapes (e.g. Single and Single, respectively).&#x20;
+
+Throughout this documentation, we will use the model eos2r5a (retrosynthetic-accessibility) as an example. This model has been incorporated from the paper _Retrosynthetic accessibility score (RAscore) – rapid machine learned synthesizability classification from AI driven retrosynthetic planning_ by [Thakkar et al, 2021](http://dx.doi.org/10.1039/D0SC05401A). The RA score is particularly useful to pre-screen large libraries of compounds, for example those produced by generative models. RA scores lie in the \[0,1] range; higher values indicate greater confidence that a compound is synthetically accessible.
 
 To use a model, there are a few basic commands:
 
@@ -76,10 +78,10 @@ ersilia run -i input.csv -o output.csv
 ersilia close
 ```
 
-The fetch command will download the model from DockerHub. Please make sure to have Docker active in your system before fetching a model. The serve command will bring it alive anytime you want to use it, and with the run command you can pass the desired input and output files. Finally, close the model.
+The fetch command will download the model from DockerHub. Please make sure to have Docker active in your system before fetching a model. The serve command will bring the model alive anytime you want to use it. With the run command, you can make predictions by specifying the input and output files. Finally, close the model.
 
 {% hint style="info" %}
-If you serve a model that is not available locally, Ersilia will try to fetch it automatically, from DockerHub first and then defaulting to S3 if Docker is not active.
+If you serve a model that is not available locally, Ersilia will try to fetch it automatically, from DockerHub first and then defaulting to S3 if Docker is not active. Alternatively, models can be fetched from Github as well.&#x20;
 {% endhint %}
 
 ### Input and output
