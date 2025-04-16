@@ -30,7 +30,7 @@ This command serves a specified model as an API.
 
 <table><thead><tr><th width="237">Option / Argument</th><th width="96">Type</th><th width="113">Default Value</th><th>Description</th></tr></thead><tbody><tr><td><code>model</code> (argument)</td><td>String</td><td><em>Required</em></td><td>The model ID to be served.</td></tr><tr><td><code>--port</code> / <code>-p</code></td><td>Integer</td><td><code>None</code></td><td>The port to use when creating a model server. If unspecified, Ersilia looks for empty ports to use on the user's system.</td></tr><tr><td><code>--track</code> / <code>-t</code></td><td>Flag</td><td><code>False</code></td><td>Whether the model's runs should be tracked to monitor for model and system performance. This telemetry data can be uploaded to S3 if the appropriate credentials are provided. Currently only Ersilia developers and other Ersilia tools have that privilege</td></tr><tr><td><code>--cache/--no-cache</code></td><td>Flag</td><td><code>True</code></td><td>Toggle Redis based local caching on or off. If it enabled the results from model APIs will be cached for 7 days.</td></tr><tr><td><code>--max-cache-memory-frac</code></td><td>Float</td><td><code>None</code></td><td>Sets the maximum fraction of memory to use by Redis for caching. Recommened value <code>0.2-0.7.</code></td></tr></tbody></table>
 
-**Serve Example:**
+**Examples:**
 
 ```bash
 $ ersilia serve eosxxxx --no-cache --port 12450
@@ -44,13 +44,13 @@ $ ersilia serve eosxxxx --max-cache-memory-frac 0.5
 
 ### 3. Run Command
 
-This command runs a specified model with given inputs.
+This command runs a specified model with given inputs and outputs in the shell where the model gets served.
 
 <table><thead><tr><th width="189">Option / Argument</th><th width="97">Type</th><th width="118">Default Value</th><th>Description</th></tr></thead><tbody><tr><td><code>-i, --input</code></td><td>String</td><td><em>Required</em></td><td>Specify the input file, which must be a CSV. Alternatively a single SMILES input can be specified. The input file should ideally have a header. This is a required flag to run a model with an input.</td></tr><tr><td><code>-o, --output</code></td><td>String</td><td><code>None</code></td><td>Specify the file to save the model predictions. This can be a CSV, TSV, or JSON file. If flag is optional and if not specified, output is printed on the user's terminal in JSON format.</td></tr><tr><td><code>-b, --batch_size</code></td><td>Integer</td><td><code>100</code></td><td>Specify the batch size for generating model predictions. By default, Ersilia works with batch size of 100 inputs.</td></tr><tr><td><code>--as_table</code> / <code>-t</code></td><td>Flag</td><td><code>False</code></td><td>Print the model predictions in an ASCII table on the terminal, optionally as required.</td></tr></tbody></table>
 
 ***
 
-**Run Example:**
+**Example:**
 
 ```bash
 $ ersilia run -i input.csv -o output.csv --batch_size 1000 --as_table
@@ -65,7 +65,7 @@ This command can sample inputs for a given model. By default, the command expect
 **Example:**
 
 ```bash
-$ ersilia example eosxxxx -n 10 --file_name examples.csv --complete --random
+$ ersilia example -n 10 --file_name examples.csv
 ```
 
 ***
@@ -76,9 +76,17 @@ List the catalog of Ersilia models. By default, this command only shows the cata
 
 <table><thead><tr><th width="244">Option / Argument</th><th width="78">Type</th><th width="135">Default Value</th><th>Description</th></tr></thead><tbody><tr><td><code>--hub/--local</code></td><td>Flag</td><td><code>False</code></td><td>Toggle between showing models available in the model hub or locally.</td></tr><tr><td><code>--file_name</code>, <code>-f</code></td><td>String</td><td><code>None</code></td><td>Write the requested catalog to a given file.</td></tr><tr><td><code>--more</code> / <code>--less</code></td><td>Flag</td><td><code>False</code></td><td><p>Print more or less information about the catalog. When less information is requested, only the <em>identifier</em> and <em>slug</em> are displayed. Otherwise, the following fields are displayed: <em>identifier, slug, title, task, input shape, output, output shape,</em> and <em>model source</em>.  </p><p>These flags work with both local and hub context.</p></td></tr><tr><td><code>--card</code></td><td>Flag</td><td><code>False</code></td><td>Displays the card for the specified model identifier. The requested model does not need to be available locally. Presently, only a single model can be requested.</td></tr><tr><td><code>--as-json /--as-table</code></td><td>Flag</td><td><code>False</code></td><td>Displays the catalog in JSON format on the user's terminal. This may be helpful for downstream processing task. The default behavior to display the catalog in a tabular format. These flags can be used both in the local and hub context.</td></tr><tr><td><code>model</code> (argument)</td><td>String</td><td><em>Optional</em></td><td>Model ID for which to display the model card when using the <code>--card</code> flag.</td></tr></tbody></table>
 
-**Example:**
+**Examples:**
 
 ```bash
+$ ersilia catalog
+```
+
+```
+$ ersilia catalog --more --hub
+```
+
+```
 $ ersilia catalog --card eosxxxx --as-json
 ```
 
@@ -90,16 +98,13 @@ This command deletes a specified model from the local storage. You can delete a 
 
 **Examples:**
 
-*   **Delete a specific model:**
+```bash
+$ ersilia delete eosxxxx
+```
 
-    ```bash
-    $ ersilia delete eosxxxx
-    ```
-*   **Delete all models:**
-
-    ```bash
-    $ ersilia delete --all
-    ```
+```bash
+$ ersilia delete --all
+```
 
 ***
 
