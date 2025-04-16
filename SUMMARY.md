@@ -25,6 +25,7 @@
   * [Inputs](ersilia-model-hub/developer-docs/inputs.md)
   * [Dockerization of Ersilia Models](ersilia-model-hub/developer-docs/dockerization-of-ersilia-models.md)
   * [Codebase quality and consistency](ersilia-model-hub/developer-docs/developer-guide-for-codebase-quality-and-consistency.md)
+  * [Command line interface](ersilia-model-hub/developer-docs/command-line-interface-1.md)
 * [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
 * [Contribute models](ersilia-model-hub/incorporate-models.md)
 
