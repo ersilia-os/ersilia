@@ -86,7 +86,7 @@ If you serve a model that is not available locally, Ersilia will try to fetch it
 
 ### Input and output
 
-The Ersilia Model Hub takes **chemical structures** as input, which should be specified as SMILES strings. To obtain the SMILES string of your compounds, you can use resources like [PubChem](https://pubchem.ncbi.nlm.nih.gov/). Ersilia also accepts InChIKey as molecular identifiers instead of SMILES.
+The Ersilia Model Hub takes **chemical structures** as input, which should be specified as SMILES strings. To obtain the SMILES string of your compounds, you can use resources like [PubChem](https://pubchem.ncbi.nlm.nih.gov/).
 
 The SMILES can be passed directly to the CLI:
 
@@ -128,9 +128,7 @@ ersilia run -i input.csv -o output.csv
 You can also get more information through the model card:
 
 ```bash
-# display model card using slug...
-ersilia catalog --card retrosynthetic-accessibility
-# ... or using ersilia identifier
+# display model card using ersilia identifier
 ersilia catalog --card eos2r5a
 ```
 
@@ -172,7 +170,7 @@ input = [
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 ]
 # predict
-mdl.run(input)
+mdl.run(input, output='./output.csv')
 ```
 
 To **close** the model:
@@ -189,5 +187,5 @@ A more concise way to run prediction would be to use the `with` clause:
 ```python
 # use with statement
 with ErsiliaModel("retrosynthetic-accessibility") as mdl:
-    mdl.run(input)
+    mdl.run(input, output='./output.csv')
 ```
