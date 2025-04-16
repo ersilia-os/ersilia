@@ -142,8 +142,32 @@ jobs:
         run: |
           nox -f test/playground/noxfile.py -s execute -p 3.12
 
+  run-cli-test-multiple:
+    needs: run-default-cli-test
+    defaults:
+      run:
+        shell: bash -el {0}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-update-conda: true
+          python-version: "3.10.10"
+
+      - name: Install dependencies
+        run: |
+          conda install git-lfs -c conda-forge
+          git-lfs install
+          conda install gh -c conda-forge
+          python -m pip install -e .[test]
+
+      - name: Run CLI Test Multiple
+        run: |          
+          nox -f test/playground/noxfile.py -s execute -p 3.12 -- --cli serve --fetch from_dockerhub --runner multiple --silent false
+
   generate-nox-parl-jobs:
-      needs: test-matrix
+      needs: run-cli-test-multiple
       outputs:
         session: ${{ steps.set-matrix.outputs.session }}
       defaults:
@@ -200,30 +224,6 @@ jobs:
 
       - run: |
           nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli fetch serve run --fetch ${{ matrix.fetch_source }} --host gh
-
-  run-cli-test-multiple:
-    needs: test-matrix
-    defaults:
-      run:
-        shell: bash -el {0}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          python-version: "3.10.10"
-
-      - name: Install dependencies
-        run: |
-          conda install git-lfs -c conda-forge
-          git-lfs install
-          conda install gh -c conda-forge
-          python -m pip install -e .[test]
-
-      - name: Run CLI Test Multiple
-        run: |          
-          nox -f test/playground/noxfile.py -s execute -p 3.12 -- --cli serve --fetch from_dockerhub --runner multiple --silent false
 
   test-colab-notebook:
     needs: run-pytest
