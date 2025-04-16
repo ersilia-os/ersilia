@@ -15,6 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install Ruff
+        run: pip install ruff
+
       - name: Run Ruff
         run: ruff check --output-format=github .
 
@@ -46,6 +53,7 @@ jobs:
 
   # 3. Install ersilia in ubuntu and macos and test basic model in several python versions
   test-matrix:
+    needs: run-pytest
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
