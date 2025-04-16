@@ -1,6 +1,8 @@
-# Ten principles
+---
+description: Ersilia’s 10 Principles guide our decision-making and roadmap
+---
 
-Ersilia’s 10 Principles guide our decision-making and roadmap:
+# Ten principles
 
 1. **Science is a driver of socioeconomic development**. It must be done everywhere, including in the poorest regions.
 2. **Modern science is rooted in colonialist practices**. This should be acknowledged and reversed.
