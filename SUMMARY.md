@@ -18,6 +18,7 @@
   * [BioModels annotation](ersilia-model-hub/model-contribution/biomodels-annotation.md)
 * [For developers](ersilia-model-hub/developer-docs/README.md)
   * [Command line interface](ersilia-model-hub/developer-docs/command-line-interface.md)
+  * [Command line interface](ersilia-model-hub/developer-docs/command-line-interface-1.md)
   * [CI/CD workflows](ersilia-model-hub/developer-docs/ci-cd-workflows.md)
   * [Model tester](ersilia-model-hub/developer-docs/model-tester.md)
   * [Testing playground](ersilia-model-hub/developer-docs/testing-playground.md)
@@ -25,7 +26,6 @@
   * [Inputs](ersilia-model-hub/developer-docs/inputs.md)
   * [Dockerization of Ersilia Models](ersilia-model-hub/developer-docs/dockerization-of-ersilia-models.md)
   * [Codebase quality and consistency](ersilia-model-hub/developer-docs/developer-guide-for-codebase-quality-and-consistency.md)
-  * [Command line interface](ersilia-model-hub/developer-docs/command-line-interface-1.md)
 * [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
 * [Contribute models](ersilia-model-hub/incorporate-models.md)
 

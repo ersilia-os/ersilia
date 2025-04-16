@@ -1,5 +1,6 @@
 ---
 description: Command Line Interface to interact with the Ersilia Model Hub
+hidden: true
 ---
 
 # Command line interface
