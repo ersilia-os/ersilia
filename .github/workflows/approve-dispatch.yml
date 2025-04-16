@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
+        uses: actions/checkout@v3.5.3
 
       # construct the url to this workflow run
       - name: workflow url
@@ -36,9 +36,9 @@ jobs:
 
       # setup python
       - name: setup python
-        uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # pin@v5.2.0
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.12"
           # cache: 'pip' # caching pip dependencies
 
       # setup conda
@@ -88,7 +88,7 @@ jobs:
 
       # upload git-lfs object
       - name: checkout persist credentials
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pin@v3.5.3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
@@ -98,7 +98,7 @@ jobs:
           rm -rf *
 
       - name: clone the repository
-        uses: GuillaumeFalourd/clone-github-repo-action@62795acaa4a02f89824de75c7025459a9cabaa45 # pin@v3
+        uses: GuillaumeFalourd/clone-github-repo-action@v3
         with:
           owner: 'ersilia-os'
           repository: ${{ steps.create-model-repo.outputs.repo_name }}
@@ -117,7 +117,7 @@ jobs:
           git lfs ls-files
 
       - name: commit and push changes
-        uses: actions-js/push@5a7cbd780d82c0c937b5977586e641b2fd94acc5 # pin@v1.5
+        uses: actions-js/push@v1.5
         with:
           author_name: "ersilia-bot"
           author_email: "ersilia-bot@users.noreply.github.com"
@@ -172,7 +172,7 @@ jobs:
 
       # comment on the issue comment with further instructions for the user
       - name: comment
-        uses: GrantBirki/comment@f524ee31407667c05061bad41e1758b40298bd82 # pin@v2.1.0
+        uses: GrantBirki/comment@v2.1.0
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/new-model.md
@@ -183,7 +183,7 @@ jobs:
       # steps to run if the workflow fails for any reason
       - name: comment on failure
         if: failure()
-        uses: GrantBirki/comment@f524ee31407667c05061bad41e1758b40298bd82 # pin@v2.1.0
+        uses: GrantBirki/comment@v2.1.0
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/approve-workflow-failed.md
