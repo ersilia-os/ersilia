@@ -1,15 +1,15 @@
 ---
 description: >-
-  Ersilia relies heavily on GitHub Actions for CI/CD. Here is a high-level
-  summary of workflows involved in maintaining the Ersilia CLI and code-bases
-  from all  the Ersilia maintained models.
+  Ersilia relies on GitHub Actions for CI/CD. Here is a high-level summary of
+  workflows involved in maintaining the Ersilia CLI and code-bases from all the
+  models available via the Hub.
 ---
 
 # CI/CD workflows
 
-## Ersilia repository
+## Ersilia CLI
 
-These workflows ensure that we push quality code to Ersilia, incorporating testing by individual components as well as end-to-end.&#x20;
+These workflows ensure that we push quality code to [Ersilia](https://github.com/ersilia-os/ersilia), incorporating testing by individual components as well as end-to-end.&#x20;
 
 ### Testing
 
@@ -18,9 +18,9 @@ These workflows ensure that we push quality code to Ersilia, incorporating testi
 * Objective: Ensure Ersilia continues to work with any new code merging from contributors and maintainers to the master branch
 * Workflow name: Deploy and test ersilia on PR
 * Workflow file: [pr\_check.yml](https://github.com/ersilia-os/ersilia/blob/master/.github/workflows/pr_check.yml)
+* Runs on: automatically when a PR is open on the Ersilia master branch.
 * Jobs:&#x20;
-  * `Build`: creates a conda environment (py3.10 currently) and installs Ersilia from the open PR. Then it tests the following functions: catalog and model running (fetch, serve, info and run) from GitHub, S3 and DockerHub. A single molecule is passed as input, and the output is analysed.
-* Run: automatically when a PR is open on the Ersilia master branch.
+  * `Build`: creates a conda environment (py3.10 currently) and installs the Ersilia codebase from the open PR. Then it tests the following functions: catalog and model running (fetch, serve, info and run) from GitHub, S3 and DockerHub. A single molecule is passed as input, and the output is analysed.
 
 #### Testing and cleaning up
 
@@ -62,7 +62,7 @@ These workflows ensure that we push quality code to Ersilia, incorporating testi
   *   `Conda-Forge Release`
 
       Ersilia is released on conda-forge using by way of updating its [feedstock](https://github.com/conda-forge/ersilia-feedstock) maintained within the conda-forge organization on GitHub. Upon the creation of a new GitHub release, an automated pull request is created in this feedstock repository which is then manually reviewed and merged by an Ersilia maintainer.
-* Run: At the beginning of each month, a release [workflow](https://github.com/ersilia-os/ersilia/blob/master/.github/workflows/publish.yaml) is executed at 3:00 AM UTC publishing a new release for Ersilia using the code present on the `master` branch.&#x20;
+* Run on: At the beginning of each month, a release [workflow](https://github.com/ersilia-os/ersilia/blob/master/.github/workflows/publish.yaml) is executed at 3:00 AM UTC publishing a new release for Ersilia using the code present on the `master` branch.&#x20;
 
 ### Community
 
