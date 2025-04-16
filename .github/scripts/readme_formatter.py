@@ -181,11 +181,11 @@ class ReadmeFormatter():
         if d.get("Computational Performance 4"):
             text += "**Computational Performance (seconds):**\n"
         if d.get("Computational Performance 4"):
-            text += "- One input: `{0}`\n".format(d.get("Computational Performance 4"))
+            text += "- 4 inputs: `{0}`\n".format(d.get("Computational Performance 4"))
         if d.get("Computational Performance 20"):
-            text += "- Ten inputs: `{0}`\n".format(d.get("Computational Performance 20"))
+            text += "- 20 inputs: `{0}`\n".format(d.get("Computational Performance 20"))
         if d.get("Computational Performance 100"):
-            text += "- Hundred inputs: `{0}`\n".format(d.get("Computational Performance 100"))
+            text += "- 100 inputs: `{0}`\n".format(d.get("Computational Performance 100"))
         text += "\n"
 
         # References
