@@ -49,7 +49,7 @@ Ersilia relies heavily on GitHub Actions workflows for automation and testing. V
 
 ## Model packaging
 
-An important part of the Ersilia infrastructure is the packaging of models with [Ersilia Pack](https://github.com/ersilia-os/ersilia-pack). Please see the Ersilia Pack documentation for more information.
+An important part of the Ersilia infrastructure is the packaging of models with [Ersilia Pack](https://github.com/ersilia-os/ersilia-pack). Please see the [Ersilia Pack documentation ](./#model-packaging)for more information.
 
 {% hint style="warning" %}
 The legacy method for packaging models was strongly based on [BentoML](https://github.com/bentoml/). This is progressively being deprecated in favor our Ersilia Pack, which is built on top of [FastAPI](https://fastapi.tiangolo.com/).

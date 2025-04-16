@@ -21,6 +21,7 @@
   * [CI/CD workflows](ersilia-model-hub/developer-docs/ci-cd-workflows.md)
   * [Model tester](ersilia-model-hub/developer-docs/model-tester.md)
   * [Testing playground](ersilia-model-hub/developer-docs/testing-playground.md)
+  * [Model packaging](ersilia-model-hub/developer-docs/model-packaging.md)
   * [Inputs](ersilia-model-hub/developer-docs/inputs.md)
   * [Dockerization of Ersilia Models](ersilia-model-hub/developer-docs/dockerization-of-ersilia-models.md)
   * [Codebase quality and consistency](ersilia-model-hub/developer-docs/developer-guide-for-codebase-quality-and-consistency.md)
