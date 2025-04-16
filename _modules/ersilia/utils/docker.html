@@ -346,19 +346,23 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="c1"># Get the current Docker context</span>
         <span class="n">context_result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-            <span class="p">[</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;show&quot;</span><span class="p">],</span>
-            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">[</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;show&quot;</span><span class="p">],</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
         <span class="n">context_name</span> <span class="o">=</span> <span class="n">context_result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
         <span class="c1"># Get the Docker host for the current context</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-            <span class="p">[</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;context&quot;</span><span class="p">,</span> <span class="s2">&quot;inspect&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="s2">&quot;{{.Endpoints.docker.Host}}&quot;</span><span class="p">],</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;docker&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;context&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;inspect&quot;</span><span class="p">,</span>
+                <span class="n">context_name</span><span class="p">,</span>
+                <span class="s2">&quot;--format&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;{{.Endpoints.docker.Host}}&quot;</span><span class="p">,</span>
+            <span class="p">],</span>
             <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">check</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">base_url</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -367,7 +371,6 @@
             <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;DOCKER_HOST&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_url</span>  <span class="c1"># Set the variable for this process</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">return</span></div>
-
 
 
 

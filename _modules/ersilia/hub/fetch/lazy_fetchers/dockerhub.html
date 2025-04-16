@@ -380,7 +380,14 @@
 <span class="sd">        Fetch the model from DockerHub.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">img_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force_with_bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">force_with_fastapi</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">img_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">force_with_bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">force_with_fastapi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
@@ -549,7 +556,9 @@
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_ersiliapack_image</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unresolved method, should be either </span><span class="si">{</span><span class="n">PACK_METHOD_FASTAPI</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">PACK_METHOD_BENTOML</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unresolved method, should be either </span><span class="si">{</span><span class="n">PACK_METHOD_FASTAPI</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">PACK_METHOD_BENTOML</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.copy_information">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_information">[docs]</a>

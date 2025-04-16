@@ -762,7 +762,9 @@
                         <span class="p">)</span>
                     <span class="p">)</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Too many columns in the input file. Maximum number of columns is 2 (input and key).&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="s2">&quot;Too many columns in the input file. Maximum number of columns is 2 (input and key).&quot;</span>
+                    <span class="p">)</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">sniff_line_limit</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping sniffer for resolving column types&quot;</span><span class="p">)</span>
                     <span class="k">break</span>
