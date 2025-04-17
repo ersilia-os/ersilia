@@ -16,7 +16,7 @@ layout:
     visible: true
 ---
 
-# Testing Playground
+# Testing playground
 
 The **Testing Playground** provides a flexible and robust framework for validating and profiling CLI commands that are being used for managing Ersilia models from various sources, such as GitHub, DockerHub, and local directories.
 
@@ -73,7 +73,7 @@ Below we describe the flags you can use to combine all these custom-made tests.
 
 ## Ersilia playground flags
 
-If no flag is specified, the command `nox -s execute` will run its default test: it will try to fetch, serve and run the model `eos3b5e` (molecular weight) in all python environments from 3.8 to the latest maintained by Ersilia. The model will be fetched from github by default and a shallow test will also be performed (see [model test](model-tester.md) section). More granularity can be specified using the built-in flags (for python versions and environments) as well as the flags specific to the Ersilia CLI:
+If no flag is specified, the command `nox -s execute` will run its default test: it will try to fetch, serve and run the model `eos3b5e` (molecular weight) in all python environments from 3.8 to the latest maintained by Ersilia. The model will be fetched from github by default and a shallow test will also be performed (see [model test](test-command.md) section). More granularity can be specified using the built-in flags (for python versions and environments) as well as the flags specific to the Ersilia CLI:
 
 <table><thead><tr><th width="133">Flag</th><th width="147">Default</th><th width="238">Description</th><th>Example</th></tr></thead><tbody><tr><td>--cli</td><td>all</td><td>Specifies ersilia commands to run in order (fetch, serve, run, catalog, example, test, close, delete). Default is all, which executes commands in this order: "fetch", "serve", "run", "close", "catalog", "example", "delete", "test".</td><td><code>nox -s execute -- --cli fetch serve run</code><br><code>nox -s execute -- --cli run</code> </td></tr><tr><td>--fetch</td><td>--from_github</td><td>Fetches models from sources (from_github, from_dockerhub, from_s3, version)</td><td><p><code>nox -s execute -- --fetch from_s3</code></p><p><code>nox -s execute -- --fetch from_dockerhub version dev</code></p></td></tr><tr><td>--run</td><td>None</td><td>Run a model. It will try to fetch it from_dockerhub as this is Ersilia's default (depends on the activate_docker flag, see below). Best combined with the input and output flags (see below)</td><td>nox <code>-s execute -- --run</code></td></tr><tr><td>--example</td><td>["-n", 10, "--random"]</td><td>Generates example input for a model (-n, --random, -f). If we specify a </td><td><code>nox -s execute -- --example -n 10 random/predefined -c -f example.csv</code></td></tr><tr><td>--catalog</td><td>["--more", "--local", "--as-json"]</td><td>Retrieves model catalog from local or hub.</td><td><code>nox -s execute -- --catalog hub</code></td></tr><tr><td>--test</td><td>["--shallow", "--from_github"]</td><td>Tests models at different levels (shallow and deep) and from_github, from_dockerhub or from_s3.</td><td><code>nox -s execute -- --test deep from_dockerhub/from_s3/from_github</code></td></tr><tr><td>--delete</td><td>None</td><td>Used to delete models. It has only one flag: all</td><td><p></p><p><code>nox -s execute -- --delete all</code><br></p></td></tr></tbody></table>
 

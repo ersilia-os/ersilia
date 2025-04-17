@@ -43,7 +43,7 @@ Working with models from source is often recommendable to quickly explore potent
 Ersilia relies heavily on GitHub Actions workflows for automation and testing. Visit the corresponding sections to learn more about:
 
 * [Basic concepts of CI/CD at Ersilia](./#ci-cd-workflows-and-testing)
-* [The model testing command](model-tester.md)
+* [The model testing command](test-command.md)
 * [A fully-featured testing playground for the Ersilia CLI](testing-playground.md)
 * [Styling and guidelines to ensure code quality in an automater manner](developer-guide-for-codebase-quality-and-consistency.md)
 

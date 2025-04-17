@@ -20,7 +20,7 @@
   * [Command line interface](ersilia-model-hub/developer-docs/command-line-interface.md)
   * [Command line interface](ersilia-model-hub/developer-docs/command-line-interface-1.md)
   * [CI/CD workflows](ersilia-model-hub/developer-docs/ci-cd-workflows.md)
-  * [Model tester](ersilia-model-hub/developer-docs/model-tester.md)
+  * [Test command](ersilia-model-hub/developer-docs/test-command.md)
   * [Testing playground](ersilia-model-hub/developer-docs/testing-playground.md)
   * [Model packaging](ersilia-model-hub/developer-docs/model-packaging.md)
   * [Inputs](ersilia-model-hub/developer-docs/inputs.md)
