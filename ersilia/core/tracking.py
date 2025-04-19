@@ -1,3 +1,4 @@
+import configparser
 import copy
 import csv
 import json
@@ -7,11 +8,9 @@ import resource
 import sys
 import tempfile
 import types
-from datetime import datetime
 
 import boto3
 import psutil
-import requests
 from botocore.exceptions import ClientError, NoCredentialsError
 from loguru import logger as logging
 
@@ -28,10 +27,40 @@ from ..utils.tracking import (
 from .base import ErsiliaBase
 from .session import Session
 
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.environ.get("AWS_REGIOIN", "eu-central-1")
-TRACKING_BUCKET = os.environ.get("TRACKING_BUCKET", "ersilia-models-runs")
+TRACKING_BUCKET = "ersilia-model-runs"
+
+
+def get_aws_credentials():
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", None)
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", None)
+    AWS_REGION = os.environ.get("AWS_REGION", None)
+    if not AWS_ACCESS_KEY_ID:
+        aws_config_path = os.path.expanduser("~/.aws/credentials")
+        config = configparser.ConfigParser()
+        config.read(aws_config_path)
+        AWS_ACCESS_KEY_ID = config.get(
+            "default", "aws_access_key_id", fallback=None
+        ) or config.get("profile default", "aws_access_key_id", fallback=None)
+    if not AWS_SECRET_ACCESS_KEY:
+        aws_config_path = os.path.expanduser("~/.aws/credentials")
+        config = configparser.ConfigParser()
+        config.read(aws_config_path)
+        AWS_SECRET_ACCESS_KEY = config.get(
+            "default", "aws_secret_access_key", fallback=None
+        ) or config.get("profile default", "aws_secret_access_key", fallback=None)
+    if not AWS_REGION:
+        aws_config_path = os.path.expanduser("~/.aws/config")
+        config = configparser.ConfigParser()
+        config.read(aws_config_path)
+        AWS_REGION = config.get("default", "region", fallback=None) or config.get(
+            "profile default", "region", fallback=None
+        )
+    data = {
+        "aws_access_key_id": AWS_ACCESS_KEY_ID,
+        "aws_secret_key_access": AWS_SECRET_ACCESS_KEY,
+        "aws_region": AWS_REGION,
+    }
+    return data
 
 
 def flatten_dict(data):
@@ -191,7 +220,9 @@ def serialize_tracking_json_to_csv(json_file, csv_file):
             writer.writerow(row)
 
 
-def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
+def upload_to_s3(
+    model_id, metadata, bucket, aws_access_key_id, aws_secret_access_key, region_name
+):
     """
     Upload a file to an S3 bucket.
 
@@ -212,9 +243,9 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
 
     s3_client = boto3.client(
         "s3",
-        aws_access_key_id=AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-        region_name=AWS_REGION,
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        region_name=region_name,
     )
     try:
         # Upload metadata to S3 by first writing to a temporary file
@@ -251,73 +282,6 @@ def upload_to_s3(model_id, metadata, bucket=TRACKING_BUCKET):
         logging.error(e)
         return False
     return True
-
-
-def upload_to_cddvault(output_df, api_key):
-    """
-    Upload the output dataframe from the model run to CDD Vault.
-
-    Parameters
-    ----------
-    output_df : pd.DataFrame
-        The output dataframe from the model run.
-    api_key : str
-        The API key for CDD Vault's API.
-
-    Returns
-    -------
-    bool
-        True if the API call was successful, False otherwise.
-    """
-    # We use the slurps API path to be able to bulk upload data
-    url = "https://app.collaborativedrug.com/api/v1/vaults/<vault_id>/slurps"
-    headers = {"CDD-Token": api_key}
-    # TODO: Update project and header_mappings ids, as well as adding mappings for other
-    # output columns if those are to be tracked as well.
-    data = {
-        "project": "",
-        "autoreject": "true",
-        "mapping_template": {
-            "registration_type": "CHEMICAL_STRUCTURE",
-            "header_mappings": [
-                {
-                    "header": {"name": "input", "position": 0},
-                    "definition": {
-                        "id": -1,
-                        "type": "InternalFieldDefinition::MoleculeStructure",
-                    },
-                },
-                {
-                    "header": {"name": "time", "position": 1},
-                    "definition": {
-                        "id": -1,
-                        "type": "InternalFieldDefinition::BatchFieldDefinition",
-                    },
-                },
-            ],
-        },
-    }
-
-    # Save output_df to a CSV of the correct format
-    new_df = output_df[["input"]].copy()
-    current_time = datetime.now().isoformat()
-
-    new_df["time"] = current_time
-    csv_file = tempfile.NamedTemporaryFile(mode="w", suffix=".csv")
-    new_df.to_csv(csv_file.name, index=False)
-
-    files = {"file": open(csv_file.name, "rb")}
-
-    # Create and make API call
-    response = requests.post(
-        url, headers=headers, data={"json": json.dumps(data)}, files=files
-    )
-
-    if response.status_code == 200:
-        return True
-    else:
-        logging.warning("API call to CDD Vault was Unsuccessful")
-        return False
 
 
 def get_nan_counts(data_list):
@@ -368,17 +332,41 @@ class RunTracker(ErsiliaBase):
 
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+
+        self.validate_aws_access()
+
         self.time_start = None
         self.memory_usage_start = 0
         self.model_id = model_id
 
-        # Initialize folders
         self.session_folder = get_session_dir()
+        self.logger.debug(
+            "Run tracker folder of the session: {0}".format(self.session_folder)
+        )
 
         self.lake_folder = os.path.join(self.session_folder, "lake")
         os.makedirs(self.lake_folder, exist_ok=True)
+        self.logger.debug(
+            "Run tracker folder of the lake: {0}".format(self.lake_folder)
+        )
 
         self.tabular_result_logger = TabularResultLogger()
+
+    @throw_ersilia_exception()
+    def validate_aws_access(self):
+        """
+        Validate access to AWS.
+
+        Returns
+        -------
+        bool
+            True if AWS_ACCESS_KEY_ID and AWS_SECRET_KEY are available in the system
+        """
+        credentials = get_aws_credentials()
+        if credentials["aws_access_key_id"] and credentials["aws_secret_key"]:
+            return True
+        else:
+            return False
 
     def get_file_sizes(self, input_file, output_file):
         """
@@ -504,7 +492,6 @@ class RunTracker(ErsiliaBase):
                     cpu_times.system,
                     cpu_times.children_user,
                     cpu_times.children_system,
-                    # cpu_times.iowait,  # Is not platform agnostic
                 )
             )
 
@@ -645,5 +632,5 @@ class RunTracker(ErsiliaBase):
         session.update_cpu_time(cpu_time)
         self.log_result(result)
 
-        if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+        if self.validate_aws_access():
             upload_to_s3(model_id=self.model_id, metadata=meta)
