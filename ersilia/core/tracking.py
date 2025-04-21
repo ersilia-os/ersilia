@@ -7,17 +7,16 @@ import re
 import resource
 import sys
 import tempfile
-import types
 
 import boto3
 import psutil
 from botocore.exceptions import ClientError, NoCredentialsError
-from loguru import logger as logging
 
 from ..default import SESSION_JSON
 from ..io.output_logger import TabularResultLogger
 from ..utils.csvfile import CsvDataLoader
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from ..utils.exceptions_utils.tracking_exceptions import NoAWSCredentialsError
 from ..utils.session import get_session_dir, get_session_uuid
 from ..utils.tracking import (
     RUN_DATA_STUB,
@@ -30,290 +29,97 @@ from .session import Session
 TRACKING_BUCKET = "ersilia-model-runs"
 
 
-def get_aws_credentials():
-    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", None)
-    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", None)
-    AWS_REGION = os.environ.get("AWS_REGION", None)
-    if not AWS_ACCESS_KEY_ID:
-        aws_config_path = os.path.expanduser("~/.aws/credentials")
-        config = configparser.ConfigParser()
-        config.read(aws_config_path)
-        AWS_ACCESS_KEY_ID = config.get(
-            "default", "aws_access_key_id", fallback=None
-        ) or config.get("profile default", "aws_access_key_id", fallback=None)
-    if not AWS_SECRET_ACCESS_KEY:
-        aws_config_path = os.path.expanduser("~/.aws/credentials")
-        config = configparser.ConfigParser()
-        config.read(aws_config_path)
-        AWS_SECRET_ACCESS_KEY = config.get(
-            "default", "aws_secret_access_key", fallback=None
-        ) or config.get("profile default", "aws_secret_access_key", fallback=None)
-    if not AWS_REGION:
-        aws_config_path = os.path.expanduser("~/.aws/config")
-        config = configparser.ConfigParser()
-        config.read(aws_config_path)
-        AWS_REGION = config.get("default", "region", fallback=None) or config.get(
-            "profile default", "region", fallback=None
+class AwsConfig(ErsiliaBase):
+    """
+    This class is responsible for retrieving AWS credentials from the environment variables or the AWS config file.
+    It checks for the presence of AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION in the environment variables.
+    If not found, it looks for them in the AWS config file located at ~/.aws/credentials and ~/.aws/config.
+    If the credentials are found, they are returned as a dictionary.
+    """
+
+    def __init__(self):
+        ErsiliaBase.__init__(self, config_json=None, credentials_json=None)
+
+    def get(self):
+        """
+        Get the AWS credentials from the environment variables or the AWS config file.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the AWS credentials.
+        """
+        self.logger.debug(
+            "Getting AWS credentials from environment variables or config and credentials files."
         )
-    data = {
-        "aws_access_key_id": AWS_ACCESS_KEY_ID,
-        "aws_secret_key_access": AWS_SECRET_ACCESS_KEY,
-        "aws_region": AWS_REGION,
-    }
-    return data
+        AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", None)
+        AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", None)
+        AWS_REGION = os.environ.get("AWS_REGION", None)
+        if not AWS_ACCESS_KEY_ID:
+            aws_config_path = os.path.expanduser("~/.aws/credentials")
+            config = configparser.ConfigParser()
+            config.read(aws_config_path)
+            AWS_ACCESS_KEY_ID = config.get(
+                "default", "aws_access_key_id", fallback=None
+            ) or config.get("profile default", "aws_access_key_id", fallback=None)
+        if not AWS_SECRET_ACCESS_KEY:
+            aws_config_path = os.path.expanduser("~/.aws/credentials")
+            config = configparser.ConfigParser()
+            config.read(aws_config_path)
+            AWS_SECRET_ACCESS_KEY = config.get(
+                "default", "aws_secret_access_key", fallback=None
+            ) or config.get("profile default", "aws_secret_access_key", fallback=None)
+        if not AWS_REGION:
+            aws_config_path = os.path.expanduser("~/.aws/config")
+            config = configparser.ConfigParser()
+            config.read(aws_config_path)
+            AWS_REGION = config.get("default", "region", fallback=None) or config.get(
+                "profile default", "region", fallback=None
+            )
+        data = {
+            "aws_access_key_id": AWS_ACCESS_KEY_ID,
+            "aws_secret_key_access": AWS_SECRET_ACCESS_KEY,
+            "aws_region": AWS_REGION,
+        }
+        if data["aws_access_key_id"] is None:
+            self.logger.warning(
+                "AWS_ACCESS_KEY_ID not found in environment variables or config file."
+            )
+        else:
+            self.logger.info("AWS_ACCESS_KEY_ID: ***")
+        if data["aws_secret_key_access"] is None:
+            self.logger.warning(
+                "AWS_SECRET_ACCESS_KEY not found in environment variables or config file."
+            )
+        else:
+            self.logger.info("AWS_SECRET_ACCESS_KEY: ***")
+        if data["aws_region"] is None:
+            self.logger.warning(
+                "AWS_REGION not found in environment variables or config file."
+            )
+        else:
+            self.logger.info("AWS_REGION: ***")
+        return data
 
+    def is_valid(self):
+        """
+        Validate access to AWS.
 
-def flatten_dict(data):
-    """
-    Flatten the nested dictionaries from the generator into a single-level dictionary.
-
-    Parameters
-    ----------
-    data : dict
-        The nested dictionary to flatten.
-
-    Returns
-    -------
-    dict
-        The flattened dictionary.
-    """
-    flat_dict = {}
-    for outer_key, inner_dict in data.items():
-        for inner_key, value in inner_dict.items():
-            flat_dict[inner_key] = value
-    return flat_dict
-
-
-def log_files_metrics(file_log):
-    """
-    Log the number of errors and warnings in the log files.
-
-    Parameters
-    ----------
-    file_log : str
-        The log file to be read.
-
-    Returns
-    -------
-    dict
-        A dictionary containing the error count and warning count.
-    """
-
-    error_count = 0
-    warning_count = 0
-
-    ersilia_error_flag = False
-    misc_error_flag = False
-    error_name = ""
-    errors = {}
-
-    try:
-        with open(file_log, "r") as file:
-            line = None
-            for line in file:
-                if not re.match(r"^\d{2}.\d{2}.\d{2} \| ", line):
-                    if ersilia_error_flag:
-                        error_name = line.rstrip()
-                        if error_name in errors:
-                            errors[error_name] += 1
-                        else:
-                            errors[error_name] = 1
-                        ersilia_error_flag = False
-                        continue
-                    elif misc_error_flag:
-                        error_name += line.rstrip()
-                        if len(error_name) > 100:
-                            error_name = error_name[:97] + "..."
-                            misc_error_flag = False
-                else:
-                    # encountering new logs
-                    # make sure error flags are closed
-                    if ersilia_error_flag:
-                        errors["Unknown Ersilia exception class"] = (
-                            errors.get("Unknown Ersilia exception class", 0) + 1
-                        )
-                        ersilia_error_flag = False
-                    if misc_error_flag:
-                        errors[error_name] = errors.get(error_name, 0) + 1
-                        misc_error_flag = False
-                    if "| ERROR" in line:
-                        error_count += 1
-                        # checking which type of errors
-                        if "Ersilia exception class:" in line:
-                            # combine this with the next line, usually EmptyOutputError or SourceCodeBaseInformationError
-                            # the detailed message is long
-                            ersilia_error_flag = True
-                        else:
-                            # other errors are pretty self-descriptive and short. Will cap by character
-                            misc_error_flag = True
-                            error_name = line.split("| ERROR    | ")[1].rstrip()
-                    elif "| WARNING" in line:
-                        warning_count += 1
-            if line is not None:
-                # in case last log is error
-                # make sure error flags are closed
-                if ersilia_error_flag:
-                    errors["Unknown Ersilia exception class"] += 1
-                if misc_error_flag:
-                    errors[error_name] = 1 + errors.get(error_name, 0)
-
-        res_dict = {}
-        res_dict["error_count"] = error_count
-
-        if len(errors) > 0:  # TODO We are not consuming this right now
-            res_dict["error_details"] = {}
-            for err in errors:
-                res_dict["error_details"][err] = errors[err]
-        res_dict["warning_count"] = warning_count
-        return res_dict
-    except (IsADirectoryError, FileNotFoundError):
-        logging.warning("Unable to calculate metrics for log file: log file not found")
-
-
-def serialize_session_json_to_csv(json_file, csv_file):
-    """
-    Serialize session JSON data to a CSV file.
-
-    Parameters
-    ----------
-    json_file : str
-        The path to the JSON file.
-    csv_file : str
-        The path to the CSV file.
-    """
-    with open(json_file, "r") as f:
-        data = json.load(f)
-        header = []
-        values = []
-        for k, v in data.items():
-            header += [k]
-            values += [v]
-    with open(csv_file, "w") as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerow(values)
-
-
-def serialize_tracking_json_to_csv(json_file, csv_file):
-    """
-    Serialize tracking JSON data to a CSV file.
-
-    Parameters
-    ----------
-    json_file : str
-        The path to the JSON file.
-    csv_file : str
-        The path to the CSV file.
-    """
-    with open(json_file, "r") as f:
-        data = json.load(f)
-        header = ["model_id"] + list(data.keys())[2:]  # Ignore model_id and runs
-        num_rows = data["runs"]
-        rows = []
-        for i in range(num_rows):
-            row = [data["model_id"]] + [data[k][i] for k in header[1:]]
-            rows.append(row)
-    with open(csv_file, "w") as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        for row in rows:
-            writer.writerow(row)
-
-
-def upload_to_s3(
-    model_id, metadata, bucket, aws_access_key_id, aws_secret_access_key, region_name
-):
-    """
-    Upload a file to an S3 bucket.
-
-    Parameters
-    ----------
-    model_id : str
-        The identifier of the model.
-    metadata : dict
-        The metadata to upload.
-    bucket : str, optional
-        The S3 bucket to upload to, by default TRACKING_BUCKET.
-
-    Returns
-    -------
-    bool
-        True if the file was uploaded successfully, False otherwise.
-    """
-
-    s3_client = boto3.client(
-        "s3",
-        aws_access_key_id=aws_access_key_id,
-        aws_secret_access_key=aws_secret_access_key,
-        region_name=region_name,
-    )
-    try:
-        # Upload metadata to S3 by first writing to a temporary file
-        tmp_metadata_file = tempfile.NamedTemporaryFile(mode="w", suffix=".json")
-        with open(tmp_metadata_file.name, "w") as f:
-            f.write(json.dumps(metadata, indent=4))
-
-        s3_client.upload_file(
-            tmp_metadata_file.name, bucket, f"metadata/{model_id}_metadata.json"
-        )
-
-        # Upload run output to S3
-        sid = get_session_uuid()
-        # Upload session info to S3
-        session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
-        session_csv_path = session_json_path.split(".json")[0] + ".csv"
-        serialize_session_json_to_csv(session_json_path, session_csv_path)
-        s3_client.upload_file(session_csv_path, bucket, f"summary/session_{sid}.csv")
-        os.remove(session_csv_path)
-
-        # Upload tracking summary to S3
-        tracking_json_path = os.path.join(
-            get_session_dir(), f"{get_session_uuid()}.json"
-        )
-        s3_client.upload_file(tracking_json_path, bucket, f"tracking_raw/{sid}.json")
-        tracking_csv_path = tracking_json_path.split(".json")[0] + ".csv"
-        serialize_tracking_json_to_csv(tracking_json_path, tracking_csv_path)
-        s3_client.upload_file(tracking_csv_path, bucket, f"tracking/{sid}.csv")
-        os.remove(tracking_csv_path)
-
-    except NoCredentialsError:
-        logging.error("Unable to upload tracking data to AWS: Credentials not found")
-    except ClientError as e:
-        logging.error(e)
-        return False
-    return True
-
-
-def get_nan_counts(data_list):
-    """
-    Calculate the number of NAN values in each key of a list of dictionaries.
-
-    Parameters
-    ----------
-    data_list : list
-        List of dictionaries containing the data.
-
-    Returns
-    -------
-    int
-        The count of NAN values for each key.
-    """
-    nan_count = {}
-
-    # Collect all keys from data_list
-    all_keys = set(key for item in data_list for key in item.keys())
-
-    # Initialize nan_count with all keys
-    for key in all_keys:
-        nan_count[key] = 0
-
-    # Count None values for each key
-    for item in data_list:
-        for key, value in item.items():
-            if value is None:
-                nan_count[key] += 1
-    nan_count_agg = sum(nan_count.values())
-    return nan_count_agg
+        Returns
+        -------
+        bool
+            True if the configured access in the system is valid, False otherwise.
+        """
+        sts = boto3.client("sts")
+        try:
+            sts.get_caller_identity()
+            self.logger.debug("AWS Account ID: ***")
+            self.logger.debug("User ARN: ***")
+            self.logger.debug("User ID: ***")
+            return True
+        except ClientError:
+            self.logger.warning("Invalid AWS credentials.")
+            return False
 
 
 class RunTracker(ErsiliaBase):
@@ -332,9 +138,7 @@ class RunTracker(ErsiliaBase):
 
     def __init__(self, model_id, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-
-        self.validate_aws_access()
-
+        self.aws_config = AwsConfig()
         self.time_start = None
         self.memory_usage_start = 0
         self.model_id = model_id
@@ -362,11 +166,197 @@ class RunTracker(ErsiliaBase):
         bool
             True if AWS_ACCESS_KEY_ID and AWS_SECRET_KEY are available in the system
         """
-        credentials = get_aws_credentials()
-        if credentials["aws_access_key_id"] and credentials["aws_secret_key"]:
-            return True
+        if self.aws_config.is_valid():
+            self.logger.debug("AWS credentials are valid.")
         else:
-            return False
+            self.logger.warning("Invalid AWS credentials.")
+            raise NoAWSCredentialsError()
+
+    def flatten_dict(self, data):
+        """
+        Flatten the nested dictionaries from the generator into a single-level dictionary.
+
+        Parameters
+        ----------
+        data : dict
+            The nested dictionary to flatten.
+
+        Returns
+        -------
+        dict
+            The flattened dictionary.
+        """
+        flat_dict = {}
+        for outer_key, inner_dict in data.items():
+            for inner_key, value in inner_dict.items():
+                flat_dict[inner_key] = value
+        return flat_dict
+
+    def log_files_metrics(self, file_log):
+        """
+        Log the number of errors and warnings in the log files.
+
+        Parameters
+        ----------
+        file_log : str
+            The log file to be read.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the error count and warning count.
+        """
+
+        error_count = 0
+        warning_count = 0
+
+        ersilia_error_flag = False
+        misc_error_flag = False
+        error_name = ""
+        errors = {}
+
+        try:
+            with open(file_log, "r") as file:
+                line = None
+                for line in file:
+                    if not re.match(r"^\d{2}.\d{2}.\d{2} \| ", line):
+                        if ersilia_error_flag:
+                            error_name = line.rstrip()
+                            if error_name in errors:
+                                errors[error_name] += 1
+                            else:
+                                errors[error_name] = 1
+                            ersilia_error_flag = False
+                            continue
+                        elif misc_error_flag:
+                            error_name += line.rstrip()
+                            if len(error_name) > 100:
+                                error_name = error_name[:97] + "..."
+                                misc_error_flag = False
+                    else:
+                        # encountering new logs
+                        # make sure error flags are closed
+                        if ersilia_error_flag:
+                            errors["Unknown Ersilia exception class"] = (
+                                errors.get("Unknown Ersilia exception class", 0) + 1
+                            )
+                            ersilia_error_flag = False
+                        if misc_error_flag:
+                            errors[error_name] = errors.get(error_name, 0) + 1
+                            misc_error_flag = False
+                        if "| ERROR" in line:
+                            error_count += 1
+                            # checking which type of errors
+                            if "Ersilia exception class:" in line:
+                                # combine this with the next line, usually EmptyOutputError or SourceCodeBaseInformationError
+                                # the detailed message is long
+                                ersilia_error_flag = True
+                            else:
+                                # other errors are pretty self-descriptive and short. Will cap by character
+                                misc_error_flag = True
+                                error_name = line.split("| ERROR    | ")[1].rstrip()
+                        elif "| WARNING" in line:
+                            warning_count += 1
+                if line is not None:
+                    # in case last log is error
+                    # make sure error flags are closed
+                    if ersilia_error_flag:
+                        errors["Unknown Ersilia exception class"] += 1
+                    if misc_error_flag:
+                        errors[error_name] = 1 + errors.get(error_name, 0)
+
+            res_dict = {}
+            res_dict["error_count"] = error_count
+
+            if len(errors) > 0:  # TODO We are not consuming this right now
+                res_dict["error_details"] = {}
+                for err in errors:
+                    res_dict["error_details"][err] = errors[err]
+            res_dict["warning_count"] = warning_count
+            return res_dict
+        except (IsADirectoryError, FileNotFoundError):
+            self.logger.warning(
+                "Unable to calculate metrics for log file: log file not found"
+            )
+
+    def serialize_session_json_to_csv(self, json_file, csv_file):
+        """
+        Serialize session JSON data to a CSV file.
+
+        Parameters
+        ----------
+        json_file : str
+            The path to the JSON file.
+        csv_file : str
+            The path to the CSV file.
+        """
+        with open(json_file, "r") as f:
+            data = json.load(f)
+            header = []
+            values = []
+            for k, v in data.items():
+                header += [k]
+                values += [v]
+        with open(csv_file, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(header)
+            writer.writerow(values)
+
+    def serialize_tracking_json_to_csv(self, json_file, csv_file):
+        """
+        Serialize tracking JSON data to a CSV file.
+
+        Parameters
+        ----------
+        json_file : str
+            The path to the JSON file.
+        csv_file : str
+            The path to the CSV file.
+        """
+        with open(json_file, "r") as f:
+            data = json.load(f)
+            header = ["model_id"] + list(data.keys())[2:]  # Ignore model_id and runs
+            num_rows = data["runs"]
+            rows = []
+            for i in range(num_rows):
+                row = [data["model_id"]] + [data[k][i] for k in header[1:]]
+                rows.append(row)
+        with open(csv_file, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(header)
+            for row in rows:
+                writer.writerow(row)
+
+    def get_nan_counts(self, data_list):
+        """
+        Calculate the number of NAN values in each key of a list of dictionaries.
+
+        Parameters
+        ----------
+        data_list : list
+            List of dictionaries containing the data.
+
+        Returns
+        -------
+        int
+            The count of NAN values for each key.
+        """
+        nan_count = {}
+
+        # Collect all keys from data_list
+        all_keys = set(key for item in data_list for key in item.keys())
+
+        # Initialize nan_count with all keys
+        for key in all_keys:
+            nan_count[key] = 0
+
+        # Count None values for each key
+        for item in data_list:
+            for key, value in item.items():
+                if value is None:
+                    nan_count[key] += 1
+        nan_count_agg = sum(nan_count.values())
+        return nan_count_agg
 
     def get_file_sizes(self, input_file, output_file):
         """
@@ -446,13 +436,13 @@ class RunTracker(ErsiliaBase):
         # Check if the shape is correct
         correct_shape = True
         if len(dtypes_list) > 1 and metadata["Output Shape"] != "List":
-            logging.warning("Not right shape. Expected List but got Single")
+            self.logger.warning("Not right shape. Expected List but got Single")
             correct_shape = False
         elif len(dtypes_list) == 1 and metadata["Output Shape"] != "Single":
-            logging.warning("Not right shape. Expected Single but got List")
+            self.logger.warning("Not right shape. Expected Single but got List")
             correct_shape = False
 
-        logging.info(f"Output has {mismatched_types} mismatched types")
+        self.logger.info(f"Output has {mismatched_types} mismatched types")
 
         return {"mismatched_types": mismatched_types, "correct_shape": correct_shape}
 
@@ -498,7 +488,7 @@ class RunTracker(ErsiliaBase):
             return uss_mb, total_cpu_time
 
         except psutil.NoSuchProcess:
-            logging.error("No such process found.")
+            self.logger.error("No such process found.")
             return "No such process found."
         except Exception as e:
             return str(e)
@@ -526,8 +516,77 @@ class RunTracker(ErsiliaBase):
             for r in tabular_result:
                 writer.writerow(r)
 
+    def upload_to_s3(self, metadata):
+        """
+        Upload a file to an S3 bucket.
+
+        Parameters
+        ----------
+        metadata : dict
+            The metadata to upload.
+
+        Returns
+        -------
+        bool
+            True if the file was uploaded successfully, False otherwise.
+        """
+        bucket = TRACKING_BUCKET
+        self.logger.debug(
+            "Uploading tracking data to AWS S3 bucket: {0}".format(bucket)
+        )
+        aws_config = self.aws_config.get()
+        aws_access_key_id = aws_config["aws_access_key_id"]
+        aws_secret_access_key = aws_config["aws_secret_key_access"]
+        region_name = aws_config["aws_region"]
+
+        s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+            region_name=region_name,
+        )
+        try:
+            self.logger.debug(
+                "Uploading tracking data to AWS S3 bucket: {0}".format(bucket)
+            )
+            tmp_metadata_file = tempfile.NamedTemporaryFile(mode="w", suffix=".json")
+            with open(tmp_metadata_file.name, "w") as f:
+                f.write(json.dumps(metadata, indent=4))
+
+            s3_client.upload_file(
+                tmp_metadata_file.name,
+                bucket,
+                f"metadata/{self.model_id}_metadata.json",
+            )
+            sid = get_session_uuid()
+            session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
+            session_csv_path = session_json_path.split(".json")[0] + ".csv"
+            self.serialize_session_json_to_csv(session_json_path, session_csv_path)
+            s3_client.upload_file(
+                session_csv_path, bucket, f"summary/session_{sid}.csv"
+            )
+            os.remove(session_csv_path)
+            tracking_json_path = os.path.join(
+                get_session_dir(), f"{get_session_uuid()}.json"
+            )
+            s3_client.upload_file(
+                tracking_json_path, bucket, f"tracking_raw/{sid}.json"
+            )
+            tracking_csv_path = tracking_json_path.split(".json")[0] + ".csv"
+            self.serialize_tracking_json_to_csv(tracking_json_path, tracking_csv_path)
+            s3_client.upload_file(tracking_csv_path, bucket, f"tracking/{sid}.csv")
+            os.remove(tracking_csv_path)
+        except NoCredentialsError:
+            self.logger.error(
+                "Unable to upload tracking data to AWS: Credentials not found"
+            )
+        except ClientError as e:
+            self.logger.error(e)
+            return False
+        return True
+
     @throw_ersilia_exception()
-    def track(self, input, result, meta, container_metrics):
+    def track(self, input, output, meta, container_metrics):
         """
         Track the results of a model run.
 
@@ -538,15 +597,13 @@ class RunTracker(ErsiliaBase):
         ----------
         input : str
             The input data used in the model run.
-        result : str or Generator
-            The output data in the form of a CSV file path or Generator from the model run.
+        output : str
+            The output data in the form of a CSV file path.
         meta : dict
             The metadata of the model.
         container_metrics : dict
             The container metrics data.
         """
-        # Set up requirements for tracking the run
-        # self.docker_client = SimpleDocker()
         self.data = CsvDataLoader()
         run_data = copy.deepcopy(RUN_DATA_STUB)
         session = Session(config_json=self.config_json)
@@ -558,40 +615,21 @@ class RunTracker(ErsiliaBase):
         else:
             input_data = [{"input": input}]
 
-        # Create a temporary file to store the result if it is a generator
-        if isinstance(result, types.GeneratorType):
-            tmp_dir = os.path.join(get_session_dir(), "tmp")
-            os.makedirs(tmp_dir, exist_ok=True)
-
-            # Create a temporary file to store the generator output
-            temp_output_file = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".csv", dir=tmp_dir
-            )
-
-            flat_data_list = [flatten_dict(row) for row in result]
-            if flat_data_list:
-                header = list(flat_data_list[0].keys())
-            temp_output_path = temp_output_file.name
-            with open(temp_output_path, "w", newline="") as csvfile:
-                csvWriter = csv.DictWriter(csvfile, fieldnames=header)
-                csvWriter.writeheader()
-                for flat_data in flat_data_list:
-                    csvWriter.writerow(flat_data)
-            result_data = self.data.read(temp_output_path)
-            os.remove(temp_output_path)
-        else:
-            result_data = self.data.read(result)
+        result_data = self.data.read(output)
 
         # Collect relevant data for the run
-        nan_count = get_nan_counts(result_data)
+        nan_count = self.get_nan_counts(result_data)
         type_and_shape_info = self.check_types(result_data, meta)
         size_info = self.get_file_sizes(input_data, result_data)
 
-        # peak_memory = self.docker_client.container_peak(self.model_id)
         current_log_file_path = os.path.join(get_session_dir(), "current.log")
         console_log_file_path = os.path.join(get_session_dir(), "console.log")
-        error_and_warning_info_current_log = log_files_metrics(current_log_file_path)
-        error_and_warning_info_console_log = log_files_metrics(console_log_file_path)
+        error_and_warning_info_current_log = self.log_files_metrics(
+            current_log_file_path
+        )
+        error_and_warning_info_console_log = self.log_files_metrics(
+            console_log_file_path
+        )
         run_data["input_size"] = (
             size_info["input_size"] if size_info["input_size"] else -1
         )
@@ -630,7 +668,6 @@ class RunTracker(ErsiliaBase):
         session.update_peak_memory(peak_memory)
         session.update_total_memory(total_memory)
         session.update_cpu_time(cpu_time)
-        self.log_result(result)
+        self.log_result(output)
 
-        if self.validate_aws_access():
-            upload_to_s3(model_id=self.model_id, metadata=meta)
+        self.upload_to_s3(metadata=meta)
