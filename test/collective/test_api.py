@@ -36,11 +36,10 @@ def compound_csv():
 
 def test_api(compound_csv):
     is_fetched = fetch()
-    print(is_fetched)
-    model = ErsiliaModel(model=MODEL_ID, verbose=True, service_class="conda")
+    model = ErsiliaModel(model=MODEL_ID, verbose=True)
     model.serve()
     model.run(input=INPUT_CSV, output=OUTPUT_CSV)
     has_contents = simple_csv_content_check(OUTPUT_CSV)
-    
+
     assert is_fetched.fetch_success is True or MODEL_EXIST_MESSAGE in is_fetched.reason
     assert has_contents is True
