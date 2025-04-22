@@ -1,10 +1,21 @@
-import pytest
+import pytest, asyncio
 from ersilia.core.model import ErsiliaModel
-from .cli.utils import create_compound_input_csv
+from ersilia.hub.fetch.fetch import ModelFetcher
+
+from ..cli.utils import create_compound_input_csv
 import csv
 
 INPUT_CSV = "input.csv"
 OUTPUT_CSV = "output.csv"
+MODEL_ID = "eos3b5e"
+
+def fetch():
+    mf = ModelFetcher(
+            overwrite=True,
+            force_from_github=True,
+        )
+    res = asyncio.run(mf.fetch(MODEL_ID))
+    return res
 
 def simple_csv_content_check(output):
     checks = []
@@ -17,16 +28,15 @@ def simple_csv_content_check(output):
     return checks
 
 
-
 @pytest.fixture
 def compound_csv():
     create_compound_input_csv(INPUT_CSV)
     yield INPUT_CSV
 
-
 def test_api(compound_csv):
-    model = ErsiliaModel(model="eos3b5e", verbose=True, service_class="conda")
-    model.fetch()
+    is_fetched = fetch()
+    assert is_fetched is True
+    model = ErsiliaModel(model=MODEL_ID, verbose=True, service_class="conda")
     model.serve()
     model.run(input=INPUT_CSV, output=OUTPUT_CSV)
     has_contents = simple_csv_content_check(OUTPUT_CSV)
