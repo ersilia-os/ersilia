@@ -42,7 +42,7 @@ class Spinner:
             "cyan": "\033[36m",
             "white": "\033[37m",
         }
-        return colors.get(color.lower(), "\033[37m")
+        return "\033[1m" + colors.get(color.lower(), "\033[37m")
 
     def _start(self):
         self.running = True
