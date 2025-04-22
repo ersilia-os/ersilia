@@ -99,7 +99,7 @@ jobs:
           nox -f test/playground/noxfile.py -s execute -p 3.12 -- --cli serve --fetch from_dockerhub --runner multiple --silent false
 
   generate-nox-parl-jobs:
-      needs: run-cli-test-multiple
+      needs: run-pytest
       outputs:
         session: ${{ steps.set-matrix.outputs.session }}
       defaults:
