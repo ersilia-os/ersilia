@@ -5,8 +5,8 @@ from ersilia.hub.fetch.fetch import ModelFetcher
 from ..cli.utils import create_compound_input_csv
 import csv
 
-INPUT_CSV = "input.csv"
-OUTPUT_CSV = "output.csv"
+INPUT_CSV = "inputs.csv"
+OUTPUT_CSV = "outputs.csv"
 MODEL_ID = "eos3b5e"
 MODEL_EXIST_MESSAGE = "Model already exists on your system. If you want to fetch it again, please delete the existing model first."
 
