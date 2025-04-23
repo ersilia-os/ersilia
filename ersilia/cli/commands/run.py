@@ -6,7 +6,6 @@ import click
 
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...store.utils import OutputSource
 from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ...utils.terminal import print_result_table
 from .. import echo
@@ -45,16 +44,13 @@ def run_cmd():
         "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT
     )
     @click.option("--as_table/-t", is_flag=True, default=False)
-    @click.option(
-        "-c", "--cache", "cache", required=False, default=None, type=click.STRING
-    )
-    def run(input, output, batch_size, as_table, cache):
+    def run(input, output, batch_size, as_table):
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         track_runs = session.tracking_status()
-
-        cache = cache if cache is not None else OutputSource.LOCAL_ONLY
+        track_runs = session.tracking_status()
+        output_source = session.current_output_source()
         if model_id is None:
             echo(
                 "No model seems to be served. Please run 'ersilia serve ...' before.",
@@ -64,7 +60,7 @@ def run_cmd():
 
         mdl = ErsiliaModel(
             model_id,
-            output_source=cache,
+            output_source=output_source,
             service_class=service_class,
             config_json=None,
             track_runs=track_runs,

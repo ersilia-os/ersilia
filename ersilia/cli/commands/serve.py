@@ -1,7 +1,7 @@
 import click
 
 from ... import ErsiliaModel
-from ...store.utils import ModelNotInStore, OutputSource, store_has_model
+from ...store.utils import OutputSource
 from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from .. import echo
@@ -35,14 +35,6 @@ def serve_cmd():
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
     @click.option(
-        "--output-source",
-        type=click.Choice(OutputSource.ALL),
-        default=OutputSource.LOCAL_ONLY,
-        required=False,
-        help=f"Get outputs from locally hosted model only ({OutputSource.LOCAL_ONLY}), \
-            from cloud precalculation store only ({OutputSource.CLOUD_ONLY})",
-    )
-    @click.option(
         "--port",
         "-p",
         default=None,
@@ -59,15 +51,33 @@ def serve_cmd():
         default=False,
     )
     @click.option("--cache/--no-cache", is_flag=True, default=True)
+    @click.option("--local-cache", is_flag=True, default=False)
+    @click.option("--local-cache-only", is_flag=True, default=False)
+    @click.option("--cloud-cache", is_flag=True, default=False)
+    @click.option("--cloud-cache-only", is_flag=True, default=False)
     @click.option(
         "--max-cache-memory-frac", "maxmemory", type=click.FLOAT, default=None
     )
-    def serve(model, output_source, port, track, cache, maxmemory):
-        if OutputSource.is_cloud(output_source):
-            if store_has_model(model_id=model):
-                echo("Model {0} found in inference store.".format(model))
-            else:
-                ModelNotInStore(model).echo()
+    def serve(
+        model,
+        port,
+        track,
+        cache,
+        local_cache,
+        local_cache_only,
+        cloud_cache,
+        cloud_cache_only,
+        maxmemory,
+    ):
+        if local_cache_only:
+            output_source = OutputSource.LOCAL_ONLY
+        if local_cache:
+            output_source = OutputSource.LOCAL
+        if cloud_cache_only:
+            output_source = OutputSource.CLOUD_ONLY
+        if cloud_cache:
+            output_source = OutputSource.CLOUD
+
         mdl = ErsiliaModel(
             model,
             output_source=output_source,

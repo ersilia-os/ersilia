@@ -29,8 +29,10 @@ class OutputSource:
     Class to define output source options.
     """
 
-    LOCAL_ONLY = "local-only"
-    CLOUD_ONLY = "cloud-only"
+    LOCAL_ONLY = "local-cache-only"
+    LOCAL = "local-cache"
+    CLOUD_ONLY = "cloud-cache-only"
+    CLOUD = "cloud-cache"
     ALL = [
         LOCAL_ONLY,
         CLOUD_ONLY,
