@@ -394,7 +394,7 @@ class ModelInspector:
             line = raw.strip()
 
             for installer, pin_re, skip_flags in [
-                (pip_install_re,   pip_pin_re,   ("--index-url", "--extra-index-url", "dgl", "-f")),
+                (pip_install_re,   pip_pin_re,   ("--index-url", "--extra-index-url", "-f")),
                 (conda_install_re, conda_pin_re, ("-c", "--channel", "-y", "--yes")),
             ]:
                 m = installer.search(line)
