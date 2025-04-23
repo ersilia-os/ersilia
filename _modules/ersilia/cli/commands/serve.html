@@ -393,7 +393,6 @@
             <span class="n">model</span><span class="p">,</span>
             <span class="n">output_source</span><span class="o">=</span><span class="n">output_source</span><span class="p">,</span>
             <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
-            <span class="n">track_runs</span><span class="o">=</span><span class="n">track</span><span class="p">,</span>
             <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
             <span class="n">maxmemory</span><span class="o">=</span><span class="n">maxmemory</span><span class="p">,</span>
         <span class="p">)</span>
@@ -401,7 +400,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
             <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
 
-        <span class="n">mdl</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+        <span class="n">mdl</span><span class="o">.</span><span class="n">serve</span><span class="p">(</span><span class="n">track_runs</span><span class="o">=</span><span class="n">track</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mdl</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No URL found. Service unsuccessful.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
             <span class="k">return</span>
@@ -412,11 +411,12 @@
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   URL: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">url</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   PID: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;-1&quot;</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   PID: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   SRV: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">scl</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   Output source: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">output_source</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   Session: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:backhand_index_pointing_right: To run model:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:backhand_index_pointing_right: Run model:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - run&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">apis</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">apis</span> <span class="o">!=</span> <span class="p">[</span><span class="s2">&quot;run&quot;</span><span class="p">]:</span>
@@ -429,10 +429,16 @@
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:person_tipping_hand: Information:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - info&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:backhand_index_pointing_right: Caching:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:floppy_disk: Local cache:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - Enabled&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">redis_setup</span><span class="o">.</span><span class="n">_is_amenable</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;   - Disabled: </span><span class="si">{</span><span class="n">redis_setup</span><span class="o">.</span><span class="n">_is_amenable</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
+            <span class="s2">&quot;   - Disabled&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
         <span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:chart_increasing: Tracking:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - Enabled&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - Disabled&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">serve</span></div>
 

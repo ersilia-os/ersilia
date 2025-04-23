@@ -326,8 +326,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">click</span><span class="w"> </span><span class="kn">import</span> <span class="n">secho</span> <span class="k">as</span> <span class="n">echo</span>  <span class="c1"># Style-aware echo</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
@@ -350,8 +348,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputSource</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.csvfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">CsvDataLoader</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContainerMetricsSampler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.api_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiSpecifiedOutputError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.tracking_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrackingNotSupportedError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.hdf5</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_input</span>
@@ -444,7 +443,6 @@
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fetch_if_not_available</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">preferred_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">track_runs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">maxmemory</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -518,23 +516,6 @@
             <span class="n">maxmemory</span><span class="o">=</span><span class="n">maxmemory</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_apis</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">track</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">track_runs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">PulledDockerImageService</span><span class="p">):</span>
-                <span class="n">echo</span><span class="p">(</span>
-                    <span class="s2">&quot;Tracking runs is currently only supported for Dockerized models.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">track</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
-                    <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span> <span class="o">=</span> <span class="n">ContainerMetricsSampler</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with initialization!&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ErsiliaModel.fetch">
@@ -822,7 +803,6 @@
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="c1"># TODO should use the throw_ersilia_exception decorator</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_api_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">use_iter</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1005,16 +985,35 @@
         <span class="k">pass</span>  <span class="c1"># TODO Implement whenever this is necessary</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaModel.serve">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.serve">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track_runs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the model by starting the necessary services.</span>
 
 <span class="sd">        This method sets up the required dependencies, opens a session, and starts the model service.</span>
 <span class="sd">        It registers the service class and output source, updates the model&#39;s URL and process ID (PID),</span>
 <span class="sd">        and tracks resource usage if tracking is enabled.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        track_runs : bool, optional</span>
+<span class="sd">            Whether to track runs, by default False.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting serve&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">track_runs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">PulledDockerImageService</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Tracking runs is currently only supported for Dockerized models&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">TrackingNotSupportedError</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">track</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
+                    <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
+                <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">track_runs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">)</span>
@@ -1024,15 +1023,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">pid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">memory_usage_serve</span><span class="p">,</span> <span class="n">cpu_time_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_memory_info</span><span class="p">()</span>
-            <span class="n">peak_memory_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
-            <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-            <span class="n">session</span><span class="o">.</span><span class="n">update_peak_memory</span><span class="p">(</span><span class="n">peak_memory_serve</span><span class="p">)</span>
-            <span class="n">session</span><span class="o">.</span><span class="n">update_total_memory</span><span class="p">(</span><span class="n">memory_usage_serve</span><span class="p">)</span>
-            <span class="n">session</span><span class="o">.</span><span class="n">update_cpu_time</span><span class="p">(</span><span class="n">cpu_time_serve</span><span class="p">)</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done with basic session registration&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">memory_usage_serve</span><span class="p">,</span> <span class="n">cpu_time_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span><span class="o">.</span><span class="n">get_memory_info</span><span class="p">()</span>
+            <span class="n">peak_memory_serve</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">update_peak_memory</span><span class="p">(</span><span class="n">peak_memory_serve</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">update_total_memory</span><span class="p">(</span><span class="n">memory_usage_serve</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">update_cpu_time</span><span class="p">(</span><span class="n">cpu_time_serve</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ErsiliaModel.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.close">[docs]</a>
@@ -1042,6 +1039,9 @@
 
 <span class="sd">        This method stops the model service and closes the session.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Closing session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping service&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -1062,9 +1062,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">track_run</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">):</span>
         <span class="n">api_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">(</span>
             <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
@@ -1090,14 +1088,12 @@
             <span class="n">status_ok</span><span class="p">,</span>
         <span class="p">)</span>  <span class="c1"># TODO This doesn&#39;t actually check whether the result exists and isn&#39;t null</span>
 
-<div class="viewcode-block" id="ErsiliaModel.run">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.run">[docs]</a>
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
-        <span class="n">track_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the model with the given input and output.</span>
@@ -1114,18 +1110,31 @@
 <span class="sd">            The output data, by default None.</span>
 <span class="sd">        batch_size : int, optional</span>
 <span class="sd">            The batch size, by default DEFAULT_BATCH_SIZE.</span>
-<span class="sd">        track_run : bool, optional</span>
-<span class="sd">            Whether to track the run, by default False.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Any</span>
 <span class="sd">            The result of the model run(such as output csv file name, json).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
-        <span class="c1"># Init the container metrics sampler</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">start_tracking</span><span class="p">()</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">track_run</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">tracking_status</span><span class="p">()</span>
+
+        <span class="c1"># Currently, tracking is only accepted for CSV files</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">track_run</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">TrackingNotSupportedError</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">TrackingNotSupportedError</span><span class="p">()</span>
+
+        <span class="c1"># Init the run tracker</span>
+        <span class="k">if</span> <span class="n">track_run</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Initializing the run trackers&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
+                <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
+            <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting runner&quot;</span><span class="p">)</span>
 
         <span class="c1"># TODO The logic should be in a try except else finally block</span>
@@ -1145,14 +1154,16 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">standard_status_ok</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying conventional run&quot;</span><span class="p">)</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span>
-                <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">track_run</span><span class="o">=</span><span class="n">track_run</span>
-            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">track_run</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;With conventional runner tracker will not be enabled. Disable tracking at serve time if you want to proceed.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">TrackingNotSupportedError</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
 
         <span class="c1"># Collect metrics sampled during run if tracking is enabled</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">stop_tracking</span><span class="p">()</span>
-            <span class="n">container_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ct_tracker</span><span class="o">.</span><span class="n">get_average_metrics</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">track_run</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Collecting metrics&quot;</span><span class="p">)</span>
             <span class="n">model_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
             <span class="k">if</span> <span class="s2">&quot;metadata&quot;</span> <span class="ow">in</span> <span class="n">model_info</span><span class="p">:</span>
                 <span class="n">metadata</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span>
@@ -1160,10 +1171,12 @@
                 <span class="n">metadata</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run_tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">container_metrics</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">result</span></div>
+            <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">time_taken</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">time_taken</span><span class="p">)</span>
 
+        <span class="k">return</span> <span class="n">result</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

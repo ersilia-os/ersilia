@@ -317,378 +317,124 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.core.tracking</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">resource</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">boto3</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">psutil</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">botocore.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClientError</span><span class="p">,</span> <span class="n">NoCredentialsError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span> <span class="k">as</span> <span class="n">logging</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">SESSION_JSON</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.output_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularResultLogger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.csvfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">CsvDataLoader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.tracking_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoAWSCredentialsError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span><span class="p">,</span> <span class="n">get_session_uuid</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.tracking</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">RUN_DATA_STUB</span><span class="p">,</span>
-    <span class="n">init_tracking_summary</span><span class="p">,</span>
-    <span class="n">update_tracking_summary</span><span class="p">,</span>
-<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 
-<span class="n">AWS_ACCESS_KEY_ID</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_ACCESS_KEY_ID&quot;</span><span class="p">)</span>
-<span class="n">AWS_SECRET_ACCESS_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_SECRET_ACCESS_KEY&quot;</span><span class="p">)</span>
-<span class="n">AWS_REGION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_REGIOIN&quot;</span><span class="p">,</span> <span class="s2">&quot;eu-central-1&quot;</span><span class="p">)</span>
-<span class="n">TRACKING_BUCKET</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TRACKING_BUCKET&quot;</span><span class="p">,</span> <span class="s2">&quot;ersilia-models-runs&quot;</span><span class="p">)</span>
+<span class="n">TRACKING_BUCKET</span> <span class="o">=</span> <span class="s2">&quot;ersilia-models-runs&quot;</span>
 
 
-<div class="viewcode-block" id="flatten_dict">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.flatten_dict">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">flatten_dict</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="AwsConfig">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.AwsConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AwsConfig</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Flatten the nested dictionaries from the generator into a single-level dictionary.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data : dict</span>
-<span class="sd">        The nested dictionary to flatten.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        The flattened dictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">flat_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">outer_key</span><span class="p">,</span> <span class="n">inner_dict</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">for</span> <span class="n">inner_key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">inner_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">flat_dict</span><span class="p">[</span><span class="n">inner_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="k">return</span> <span class="n">flat_dict</span></div>
-
-
-
-<div class="viewcode-block" id="log_files_metrics">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.log_files_metrics">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">log_files_metrics</span><span class="p">(</span><span class="n">file_log</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Log the number of errors and warnings in the log files.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    file_log : str</span>
-<span class="sd">        The log file to be read.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        A dictionary containing the error count and warning count.</span>
+<span class="sd">    This class is responsible for retrieving AWS credentials from the environment variables or the AWS config file.</span>
+<span class="sd">    It checks for the presence of AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_REGION in the environment variables.</span>
+<span class="sd">    If not found, it looks for them in the AWS config file located at ~/.aws/credentials and ~/.aws/config.</span>
+<span class="sd">    If the credentials are found, they are returned as a dictionary.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">error_count</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">warning_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">error_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="n">errors</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="viewcode-block" id="AwsConfig.get">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.AwsConfig.get">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the AWS credentials from the environment variables or the AWS config file.</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_log</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\d</span><span class="si">{2}</span><span class="s2">.\d</span><span class="si">{2}</span><span class="s2">.\d</span><span class="si">{2}</span><span class="s2"> \| &quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
-                        <span class="n">error_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                        <span class="k">if</span> <span class="n">error_name</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
-                            <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-                        <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
-                        <span class="k">continue</span>
-                    <span class="k">elif</span> <span class="n">misc_error_flag</span><span class="p">:</span>
-                        <span class="n">error_name</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">error_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
-                            <span class="n">error_name</span> <span class="o">=</span> <span class="n">error_name</span><span class="p">[:</span><span class="mi">97</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span>
-                            <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># encountering new logs</span>
-                    <span class="c1"># make sure error flags are closed</span>
-                    <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
-                        <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                            <span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-                        <span class="p">)</span>
-                        <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
-                        <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">error_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-                        <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="k">if</span> <span class="s2">&quot;| ERROR&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                        <span class="n">error_count</span> <span class="o">+=</span> <span class="mi">1</span>
-                        <span class="c1"># checking which type of errors</span>
-                        <span class="k">if</span> <span class="s2">&quot;Ersilia exception class:&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                            <span class="c1"># combine this with the next line, usually EmptyOutputError or SourceCodeBaseInformationError</span>
-                            <span class="c1"># the detailed message is long</span>
-                            <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="c1"># other errors are pretty self-descriptive and short. Will cap by character</span>
-                            <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">True</span>
-                            <span class="n">error_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;| ERROR    | &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                    <span class="k">elif</span> <span class="s2">&quot;| WARNING&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                        <span class="n">warning_count</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="c1"># in case last log is error</span>
-                <span class="c1"># make sure error flags are closed</span>
-                <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
-                    <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
-                    <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">error_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-        <span class="n">res_dict</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_count</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># TODO We are not consuming this right now</span>
-            <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;error_details&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
-                <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;error_details&quot;</span><span class="p">][</span><span class="n">err</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="p">[</span><span class="n">err</span><span class="p">]</span>
-        <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">warning_count</span>
-        <span class="k">return</span> <span class="n">res_dict</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">IsADirectoryError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Unable to calculate metrics for log file: log file not found&quot;</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="serialize_session_json_to_csv">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_session_json_to_csv">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">serialize_session_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Serialize session JSON data to a CSV file.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    json_file : str</span>
-<span class="sd">        The path to the JSON file.</span>
-<span class="sd">    csv_file : str</span>
-<span class="sd">        The path to the CSV file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">header</span> <span class="o">+=</span> <span class="p">[</span><span class="n">k</span><span class="p">]</span>
-            <span class="n">values</span> <span class="o">+=</span> <span class="p">[</span><span class="n">v</span><span class="p">]</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="serialize_tracking_json_to_csv">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.serialize_tracking_json_to_csv">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">serialize_tracking_json_to_csv</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Serialize tracking JSON data to a CSV file.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    json_file : str</span>
-<span class="sd">        The path to the JSON file.</span>
-<span class="sd">    csv_file : str</span>
-<span class="sd">        The path to the CSV file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">2</span><span class="p">:]</span>  <span class="c1"># Ignore model_id and runs</span>
-        <span class="n">num_rows</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;runs&quot;</span><span class="p">]</span>
-        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">):</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
-            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="upload_to_s3">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_s3">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="n">TRACKING_BUCKET</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Upload a file to an S3 bucket.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    model_id : str</span>
-<span class="sd">        The identifier of the model.</span>
-<span class="sd">    metadata : dict</span>
-<span class="sd">        The metadata to upload.</span>
-<span class="sd">    bucket : str, optional</span>
-<span class="sd">        The S3 bucket to upload to, by default TRACKING_BUCKET.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    bool</span>
-<span class="sd">        True if the file was uploaded successfully, False otherwise.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span>
-        <span class="s2">&quot;s3&quot;</span><span class="p">,</span>
-        <span class="n">aws_access_key_id</span><span class="o">=</span><span class="n">AWS_ACCESS_KEY_ID</span><span class="p">,</span>
-        <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="n">AWS_SECRET_ACCESS_KEY</span><span class="p">,</span>
-        <span class="n">region_name</span><span class="o">=</span><span class="n">AWS_REGION</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># Upload metadata to S3 by first writing to a temporary file</span>
-        <span class="n">tmp_metadata_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_metadata_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
-
-        <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span>
-            <span class="n">tmp_metadata_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;metadata/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">_metadata.json&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing the AWS credentials.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Getting AWS credentials from environment variables or config and credentials files.&quot;</span>
         <span class="p">)</span>
-
-        <span class="c1"># Upload run output to S3</span>
-        <span class="n">sid</span> <span class="o">=</span> <span class="n">get_session_uuid</span><span class="p">()</span>
-        <span class="c1"># Upload session info to S3</span>
-        <span class="n">session_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SESSION_JSON</span><span class="p">)</span>
-        <span class="n">session_csv_path</span> <span class="o">=</span> <span class="n">session_json_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
-        <span class="n">serialize_session_json_to_csv</span><span class="p">(</span><span class="n">session_json_path</span><span class="p">,</span> <span class="n">session_csv_path</span><span class="p">)</span>
-        <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">session_csv_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;summary/session_</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">session_csv_path</span><span class="p">)</span>
-
-        <span class="c1"># Upload tracking summary to S3</span>
-        <span class="n">tracking_json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">get_session_dir</span><span class="p">(),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">get_session_uuid</span><span class="p">()</span><span class="si">}</span><span class="s2">.json&quot;</span>
-        <span class="p">)</span>
-        <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">tracking_json_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;tracking_raw/</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
-        <span class="n">tracking_csv_path</span> <span class="o">=</span> <span class="n">tracking_json_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.csv&quot;</span>
-        <span class="n">serialize_tracking_json_to_csv</span><span class="p">(</span><span class="n">tracking_json_path</span><span class="p">,</span> <span class="n">tracking_csv_path</span><span class="p">)</span>
-        <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span><span class="n">tracking_csv_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;tracking/</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">tracking_csv_path</span><span class="p">)</span>
-
-    <span class="k">except</span> <span class="n">NoCredentialsError</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Unable to upload tracking data to AWS: Credentials not found&quot;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">ClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">return</span> <span class="kc">True</span></div>
-
-
-
-<div class="viewcode-block" id="upload_to_cddvault">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.upload_to_cddvault">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">upload_to_cddvault</span><span class="p">(</span><span class="n">output_df</span><span class="p">,</span> <span class="n">api_key</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Upload the output dataframe from the model run to CDD Vault.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    output_df : pd.DataFrame</span>
-<span class="sd">        The output dataframe from the model run.</span>
-<span class="sd">    api_key : str</span>
-<span class="sd">        The API key for CDD Vault&#39;s API.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    bool</span>
-<span class="sd">        True if the API call was successful, False otherwise.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># We use the slurps API path to be able to bulk upload data</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://app.collaborativedrug.com/api/v1/vaults/&lt;vault_id&gt;/slurps&quot;</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;CDD-Token&quot;</span><span class="p">:</span> <span class="n">api_key</span><span class="p">}</span>
-    <span class="c1"># TODO: Update project and header_mappings ids, as well as adding mappings for other</span>
-    <span class="c1"># output columns if those are to be tracked as well.</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;project&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;autoreject&quot;</span><span class="p">:</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;mapping_template&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;registration_type&quot;</span><span class="p">:</span> <span class="s2">&quot;CHEMICAL_STRUCTURE&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;header_mappings&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;header&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
-                    <span class="s2">&quot;definition&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;InternalFieldDefinition::MoleculeStructure&quot;</span><span class="p">,</span>
-                    <span class="p">},</span>
-                <span class="p">},</span>
-                <span class="p">{</span>
-                    <span class="s2">&quot;header&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;position&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-                    <span class="s2">&quot;definition&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-                        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;InternalFieldDefinition::BatchFieldDefinition&quot;</span><span class="p">,</span>
-                    <span class="p">},</span>
-                <span class="p">},</span>
-            <span class="p">],</span>
-        <span class="p">},</span>
-    <span class="p">}</span>
-
-    <span class="c1"># Save output_df to a CSV of the correct format</span>
-    <span class="n">new_df</span> <span class="o">=</span> <span class="n">output_df</span><span class="p">[[</span><span class="s2">&quot;input&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">current_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
-
-    <span class="n">new_df</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_time</span>
-    <span class="n">csv_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span>
-    <span class="n">new_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">csv_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-    <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)}</span>
-
-    <span class="c1"># Create and make API call</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-        <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;json&quot;</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)},</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span>
-    <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;API call to CDD Vault was Unsuccessful&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="n">AWS_ACCESS_KEY_ID</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_ACCESS_KEY_ID&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">AWS_SECRET_ACCESS_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_SECRET_ACCESS_KEY&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">AWS_REGION</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;AWS_REGION&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AWS_ACCESS_KEY_ID</span><span class="p">:</span>
+            <span class="n">aws_config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.aws/credentials&quot;</span><span class="p">)</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">aws_config_path</span><span class="p">)</span>
+            <span class="n">AWS_ACCESS_KEY_ID</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;aws_access_key_id&quot;</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;profile default&quot;</span><span class="p">,</span> <span class="s2">&quot;aws_access_key_id&quot;</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span>
+            <span class="n">aws_config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.aws/credentials&quot;</span><span class="p">)</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">aws_config_path</span><span class="p">)</span>
+            <span class="n">AWS_SECRET_ACCESS_KEY</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;aws_secret_access_key&quot;</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;profile default&quot;</span><span class="p">,</span> <span class="s2">&quot;aws_secret_access_key&quot;</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">AWS_REGION</span><span class="p">:</span>
+            <span class="n">aws_config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.aws/config&quot;</span><span class="p">)</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">()</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">aws_config_path</span><span class="p">)</span>
+            <span class="n">AWS_REGION</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;region&quot;</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s2">&quot;profile default&quot;</span><span class="p">,</span> <span class="s2">&quot;region&quot;</span><span class="p">,</span> <span class="n">fallback</span><span class="o">=</span><span class="kc">None</span>
+            <span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;aws_access_key_id&quot;</span><span class="p">:</span> <span class="n">AWS_ACCESS_KEY_ID</span><span class="p">,</span>
+            <span class="s2">&quot;aws_secret_key_access&quot;</span><span class="p">:</span> <span class="n">AWS_SECRET_ACCESS_KEY</span><span class="p">,</span>
+            <span class="s2">&quot;aws_region&quot;</span><span class="p">:</span> <span class="n">AWS_REGION</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;aws_access_key_id&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;AWS_ACCESS_KEY_ID not found in environment variables or config file.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;AWS_ACCESS_KEY_ID: ***&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;aws_secret_key_access&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;AWS_SECRET_ACCESS_KEY not found in environment variables or config file.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;AWS_SECRET_ACCESS_KEY: ***&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;aws_region&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;AWS_REGION not found in environment variables or config file.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;AWS_REGION: ***&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
 
+<div class="viewcode-block" id="AwsConfig.is_valid">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.AwsConfig.is_valid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate access to AWS.</span>
 
-<div class="viewcode-block" id="get_nan_counts">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.get_nan_counts">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_nan_counts</span><span class="p">(</span><span class="n">data_list</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the number of NAN values in each key of a list of dictionaries.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data_list : list</span>
-<span class="sd">        List of dictionaries containing the data.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    int</span>
-<span class="sd">        The count of NAN values for each key.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">nan_count</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="c1"># Collect all keys from data_list</span>
-    <span class="n">all_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">key</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data_list</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-    <span class="c1"># Initialize nan_count with all keys</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
-        <span class="n">nan_count</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="c1"># Count None values for each key</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">nan_count</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">nan_count_agg</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nan_count</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">nan_count_agg</span></div>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the configured access in the system is valid, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sts</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s2">&quot;sts&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sts</span><span class="o">.</span><span class="n">get_caller_identity</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;AWS Account ID: ***&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;User ARN: ***&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;User ID: ***&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">ClientError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Invalid AWS credentials.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+</div>
 
 
 
@@ -710,194 +456,234 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aws_config</span> <span class="o">=</span> <span class="n">AwsConfig</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">time_start</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">memory_usage_start</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
 
-        <span class="c1"># Initialize folders</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session_folder</span> <span class="o">=</span> <span class="n">get_session_dir</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Run tracker folder of the session: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_folder</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_folder</span><span class="p">,</span> <span class="s2">&quot;lake&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Run tracker folder of the lake: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span> <span class="o">=</span> <span class="n">TabularResultLogger</span><span class="p">()</span>
+
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_aws_access</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate access to AWS.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if AWS_ACCESS_KEY_ID and AWS_SECRET_KEY are available in the system</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">aws_config</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;AWS credentials are valid.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Invalid AWS credentials.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NoAWSCredentialsError</span><span class="p">()</span>
+
+<div class="viewcode-block" id="RunTracker.log_files_metrics">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_files_metrics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_files_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_log</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Log the number of errors and warnings in the log files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_log : str</span>
+<span class="sd">            The log file to be read.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing the error count and warning count.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">error_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">warning_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">error_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_log</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\d</span><span class="si">{2}</span><span class="s2">.\d</span><span class="si">{2}</span><span class="s2">.\d</span><span class="si">{2}</span><span class="s2"> \| &quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
+                            <span class="n">error_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="n">error_name</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
+                                <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                            <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">continue</span>
+                        <span class="k">elif</span> <span class="n">misc_error_flag</span><span class="p">:</span>
+                            <span class="n">error_name</span> <span class="o">+=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">error_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+                                <span class="n">error_name</span> <span class="o">=</span> <span class="n">error_name</span><span class="p">[:</span><span class="mi">97</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span>
+                                <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># encountering new logs</span>
+                        <span class="c1"># make sure error flags are closed</span>
+                        <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
+                            <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                            <span class="p">)</span>
+                            <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
+                            <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">error_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                            <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">if</span> <span class="s2">&quot;| ERROR&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="n">error_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="c1"># checking which type of errors</span>
+                            <span class="k">if</span> <span class="s2">&quot;Ersilia exception class:&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                                <span class="c1"># combine this with the next line, usually EmptyOutputError or SourceCodeBaseInformationError</span>
+                                <span class="c1"># the detailed message is long</span>
+                                <span class="n">ersilia_error_flag</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="c1"># other errors are pretty self-descriptive and short. Will cap by character</span>
+                                <span class="n">misc_error_flag</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="n">error_name</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;| ERROR    | &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                        <span class="k">elif</span> <span class="s2">&quot;| WARNING&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="n">warning_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># in case last log is error</span>
+                    <span class="c1"># make sure error flags are closed</span>
+                    <span class="k">if</span> <span class="n">ersilia_error_flag</span><span class="p">:</span>
+                        <span class="n">errors</span><span class="p">[</span><span class="s2">&quot;Unknown Ersilia exception class&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">misc_error_flag</span><span class="p">:</span>
+                        <span class="n">errors</span><span class="p">[</span><span class="n">error_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">error_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">res_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_count</span>
+            <span class="n">res_dict</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">warning_count</span>
+            <span class="k">return</span> <span class="n">res_dict</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">IsADirectoryError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Unable to calculate metrics for log file: log file not found&quot;</span>
+            <span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="RunTracker.get_file_sizes">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_file_sizes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_file_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate the size of the input and output dataframes, as well as the average size of each row.</span>
+<span class="sd">        Calculate the size of the input and output dataframes.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        input_file : pd.DataFrame</span>
-<span class="sd">            Pandas dataframe containing the input data.</span>
-<span class="sd">        output_file : pd.DataFrame</span>
-<span class="sd">            Pandas dataframe containing the output data.</span>
+<span class="sd">        input_file : str</span>
+<span class="sd">            File path containing the input data.</span>
+<span class="sd">        output_file : str</span>
+<span class="sd">            File path containing the output data.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
-<span class="sd">            Dictionary containing the input size, output size, average input size, and average output size.</span>
+<span class="sd">            Dictionary containing the input size, output size.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">input_size</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span>
-        <span class="n">output_size</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1024</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">input_avg_row_size</span> <span class="o">=</span> <span class="n">input_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
-            <span class="n">output_avg_row_size</span> <span class="o">=</span> <span class="n">output_size</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Encountered a ZeroDivisionError. No data in input or output file&quot;</span>
-            <span class="p">)</span>
-            <span class="n">input_avg_row_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="n">output_avg_row_size</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">input_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+        <span class="n">output_size</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;input_size&quot;</span><span class="p">:</span> <span class="n">input_size</span><span class="p">,</span>
             <span class="s2">&quot;output_size&quot;</span><span class="p">:</span> <span class="n">output_size</span><span class="p">,</span>
-            <span class="s2">&quot;avg_input_size&quot;</span><span class="p">:</span> <span class="n">input_avg_row_size</span><span class="p">,</span>
-            <span class="s2">&quot;avg_output_size&quot;</span><span class="p">:</span> <span class="n">output_avg_row_size</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="RunTracker.check_types">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.check_types">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">check_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+<div class="viewcode-block" id="RunTracker.summarize_output">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.summarize_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summarize_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check the types of the output file against the expected types.</span>
+<span class="sd">        This method summarizes the output of a model run</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_file : str</span>
+<span class="sd">            The path to the output file.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data : dict</span>
+<span class="sd">            A dictionary containing the summarized data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
 
-<span class="sd">        This method checks the shape of the output file (list vs single) and the types of each column.</span>
+
+<div class="viewcode-block" id="RunTracker.upload_to_s3">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.upload_to_s3">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">upload_to_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Upload event information into an S3 bucket</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        result : list</span>
-<span class="sd">            The output data.</span>
-<span class="sd">        metadata : dict</span>
-<span class="sd">            The metadata dictionary.</span>
+<span class="sd">        event_id : list</span>
+<span class="sd">            Event identifier.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            A dictionary containing the number of mismatched types and a boolean for whether the shape is correct.</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if uploading completed successfully, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bucket</span> <span class="o">=</span> <span class="n">TRACKING_BUCKET</span>
 
-        <span class="n">type_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="s2">&quot;int&quot;</span><span class="p">:</span> <span class="s2">&quot;Int&quot;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connecting to ersilia-models-runs AWS S3 bucket&quot;</span><span class="p">)</span>
+        <span class="n">aws_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aws_config</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">aws_access_key_id</span> <span class="o">=</span> <span class="n">aws_config</span><span class="p">[</span><span class="s2">&quot;aws_access_key_id&quot;</span><span class="p">]</span>
+        <span class="n">aws_secret_access_key</span> <span class="o">=</span> <span class="n">aws_config</span><span class="p">[</span><span class="s2">&quot;aws_secret_key_access&quot;</span><span class="p">]</span>
+        <span class="n">region_name</span> <span class="o">=</span> <span class="n">aws_config</span><span class="p">[</span><span class="s2">&quot;aws_region&quot;</span><span class="p">]</span>
 
-        <span class="c1"># Collect data types for each column, ignoring &quot;key&quot; and &quot;input&quot; columns</span>
-        <span class="n">dtypes_list</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">]:</span>
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dtypes_list</span><span class="p">:</span>
-                        <span class="n">dtypes_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-                    <span class="n">dtypes_list</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span>
+            <span class="s2">&quot;s3&quot;</span><span class="p">,</span>
+            <span class="n">aws_access_key_id</span><span class="o">=</span><span class="n">aws_access_key_id</span><span class="p">,</span>
+            <span class="n">aws_secret_access_key</span><span class="o">=</span><span class="n">aws_secret_access_key</span><span class="p">,</span>
+            <span class="n">region_name</span><span class="o">=</span><span class="n">region_name</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="n">mismatched_types</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">column</span><span class="p">,</span> <span class="n">dtype_set</span> <span class="ow">in</span> <span class="n">dtypes_list</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
-                <span class="n">type_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="o">==</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">dtype_set</span>
-            <span class="p">):</span>
-                <span class="n">mismatched_types</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Uploading event data to AWS S3 bucket: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bucket</span><span class="p">))</span>
+        <span class="n">event_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_folder</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">event_id</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
 
-        <span class="c1"># Check if the shape is correct</span>
-        <span class="n">correct_shape</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtypes_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;List&quot;</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not right shape. Expected List but got Single&quot;</span><span class="p">)</span>
-            <span class="n">correct_shape</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dtypes_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;Single&quot;</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Not right shape. Expected Single but got List&quot;</span><span class="p">)</span>
-            <span class="n">correct_shape</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Event file JSON: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event_json</span><span class="p">))</span>
 
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output has </span><span class="si">{</span><span class="n">mismatched_types</span><span class="si">}</span><span class="s2"> mismatched types&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">event_json</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;mismatched_types&quot;</span><span class="p">:</span> <span class="n">mismatched_types</span><span class="p">,</span> <span class="s2">&quot;correct_shape&quot;</span><span class="p">:</span> <span class="n">correct_shape</span><span class="p">}</span></div>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">event_json</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">json_data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="RunTracker.get_peak_memory">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_peak_memory">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate the peak memory usage of Ersilia&#39;s Python instance during the run.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        float</span>
-<span class="sd">            The peak memory usage in Megabytes.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">usage</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">getrusage</span><span class="p">(</span><span class="n">resource</span><span class="o">.</span><span class="n">RUSAGE_SELF</span><span class="p">)</span>
-        <span class="n">peak_memory_kb</span> <span class="o">=</span> <span class="n">usage</span><span class="o">.</span><span class="n">ru_maxrss</span>
-        <span class="n">peak_memory</span> <span class="o">=</span> <span class="n">peak_memory_kb</span> <span class="o">/</span> <span class="mi">1024</span>
-        <span class="k">return</span> <span class="n">peak_memory</span></div>
-
-
-<div class="viewcode-block" id="RunTracker.get_memory_info">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.get_memory_info">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_memory_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the memory information of the current process.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        tuple</span>
-<span class="sd">            A tuple containing the memory usage in MB and the total CPU time.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">current_process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">()</span>
-            <span class="n">cpu_times</span> <span class="o">=</span> <span class="n">current_process</span><span class="o">.</span><span class="n">cpu_times</span><span class="p">()</span>
-
-            <span class="n">uss_mb</span> <span class="o">=</span> <span class="n">current_process</span><span class="o">.</span><span class="n">memory_full_info</span><span class="p">()</span><span class="o">.</span><span class="n">uss</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
-            <span class="n">total_cpu_time</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-                <span class="n">cpu_time</span>
-                <span class="k">for</span> <span class="n">cpu_time</span> <span class="ow">in</span> <span class="p">(</span>
-                    <span class="n">cpu_times</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
-                    <span class="n">cpu_times</span><span class="o">.</span><span class="n">system</span><span class="p">,</span>
-                    <span class="n">cpu_times</span><span class="o">.</span><span class="n">children_user</span><span class="p">,</span>
-                    <span class="n">cpu_times</span><span class="o">.</span><span class="n">children_system</span><span class="p">,</span>
-                    <span class="c1"># cpu_times.iowait,  # Is not platform agnostic</span>
-                <span class="p">)</span>
+            <span class="n">s3_client</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span>
+                <span class="n">event_json</span><span class="p">,</span>
+                <span class="n">bucket</span><span class="p">,</span>
+                <span class="s2">&quot;events_json/</span><span class="si">{0}</span><span class="s2">.json&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event_id</span><span class="p">),</span>
             <span class="p">)</span>
 
-            <span class="k">return</span> <span class="n">uss_mb</span><span class="p">,</span> <span class="n">total_cpu_time</span>
-
-        <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
-            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No such process found.&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;No such process found.&quot;</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="RunTracker.log_result">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.log_result">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">log_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Log the result of the model run.</span>
-
-<span class="sd">        This method logs the result of the model run to a CSV file.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        result : list</span>
-<span class="sd">            The result data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">identifier</span> <span class="o">=</span> <span class="n">get_session_uuid</span><span class="p">()</span>
-        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lake_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
-        <span class="n">tabular_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_result_logger</span><span class="o">.</span><span class="n">tabulate</span><span class="p">(</span>
-            <span class="n">result</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="n">identifier</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">tabular_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">tabular_result</span><span class="p">:</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+        <span class="k">except</span> <span class="n">NoCredentialsError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Unable to upload tracking data to AWS: Credentials not found&quot;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
 
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">container_metrics</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_event_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_id</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">time_seconds</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Track the results of a model run.</span>
 
@@ -908,79 +694,31 @@
 <span class="sd">        ----------</span>
 <span class="sd">        input : str</span>
 <span class="sd">            The input data used in the model run.</span>
-<span class="sd">        result : str or Generator</span>
-<span class="sd">            The output data in the form of a CSV file path or Generator from the model run.</span>
+<span class="sd">        output : str</span>
+<span class="sd">            The output data in the form of a CSV file path.</span>
 <span class="sd">        meta : dict</span>
 <span class="sd">            The metadata of the model.</span>
 <span class="sd">        container_metrics : dict</span>
 <span class="sd">            The container metrics data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Set up requirements for tracking the run</span>
-        <span class="c1"># self.docker_client = SimpleDocker()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">CsvDataLoader</span><span class="p">()</span>
-        <span class="n">run_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">RUN_DATA_STUB</span><span class="p">)</span>
-        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span>
-        <span class="n">init_tracking_summary</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">run_data</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="nb">input</span><span class="p">):</span>
-            <span class="n">input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">input_data</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="nb">input</span><span class="p">}]</span>
+        <span class="n">size_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_sizes</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
 
-        <span class="c1"># Create a temporary file to store the result if it is a generator</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span>
-            <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;tmp&quot;</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-            <span class="c1"># Create a temporary file to store the generator output</span>
-            <span class="n">temp_output_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
-                <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="n">tmp_dir</span>
-            <span class="p">)</span>
-
-            <span class="n">flat_data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">flat_data_list</span><span class="p">:</span>
-                <span class="n">header</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">flat_data_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="n">temp_output_path</span> <span class="o">=</span> <span class="n">temp_output_file</span><span class="o">.</span><span class="n">name</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_output_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
-                <span class="n">csvWriter</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
-                <span class="n">csvWriter</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
-                <span class="k">for</span> <span class="n">flat_data</span> <span class="ow">in</span> <span class="n">flat_data_list</span><span class="p">:</span>
-                    <span class="n">csvWriter</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">flat_data</span><span class="p">)</span>
-            <span class="n">result_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">temp_output_path</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">temp_output_path</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">result_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-
-        <span class="c1"># Collect relevant data for the run</span>
-        <span class="n">nan_count</span> <span class="o">=</span> <span class="n">get_nan_counts</span><span class="p">(</span><span class="n">result_data</span><span class="p">)</span>
-        <span class="n">type_and_shape_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_types</span><span class="p">(</span><span class="n">result_data</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
-        <span class="n">size_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_file_sizes</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">result_data</span><span class="p">)</span>
-
-        <span class="c1"># peak_memory = self.docker_client.container_peak(self.model_id)</span>
         <span class="n">current_log_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;current.log&quot;</span><span class="p">)</span>
         <span class="n">console_log_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="s2">&quot;console.log&quot;</span><span class="p">)</span>
-        <span class="n">error_and_warning_info_current_log</span> <span class="o">=</span> <span class="n">log_files_metrics</span><span class="p">(</span><span class="n">current_log_file_path</span><span class="p">)</span>
-        <span class="n">error_and_warning_info_console_log</span> <span class="o">=</span> <span class="n">log_files_metrics</span><span class="p">(</span><span class="n">console_log_file_path</span><span class="p">)</span>
+        <span class="n">error_and_warning_info_current_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_files_metrics</span><span class="p">(</span>
+            <span class="n">current_log_file_path</span>
+        <span class="p">)</span>
+        <span class="n">error_and_warning_info_console_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_files_metrics</span><span class="p">(</span>
+            <span class="n">console_log_file_path</span>
+        <span class="p">)</span>
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
         <span class="p">)</span>
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
         <span class="p">)</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_input_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="p">)</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size_info</span><span class="p">[</span><span class="s2">&quot;avg_output_size&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="p">)</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;container_cpu_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">container_metrics</span><span class="p">[</span><span class="s2">&quot;container_cpu_perc&quot;</span><span class="p">]</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;peak_container_cpu_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">container_metrics</span><span class="p">[</span><span class="s2">&quot;peak_cpu_perc&quot;</span><span class="p">]</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;container_memory_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">container_metrics</span><span class="p">[</span><span class="s2">&quot;container_memory_perc&quot;</span><span class="p">]</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;peak_container_memory_perc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">container_metrics</span><span class="p">[</span><span class="s2">&quot;peak_memory&quot;</span><span class="p">]</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;nan_count_agg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nan_count</span> <span class="k">if</span> <span class="n">nan_count</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;mismatched_type_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_and_shape_info</span><span class="p">[</span><span class="s2">&quot;mismatched_types&quot;</span><span class="p">]</span>
-        <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;correct_shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_and_shape_info</span><span class="p">[</span><span class="s2">&quot;correct_shape&quot;</span><span class="p">]</span>
         <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">error_and_warning_info_current_log</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span>
             <span class="o">+</span> <span class="n">error_and_warning_info_console_log</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">]</span>
@@ -990,20 +728,80 @@
             <span class="o">+</span> <span class="n">error_and_warning_info_console_log</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">update_tracking_summary</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">run_data</span><span class="p">)</span>
+        <span class="n">result_summary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summarize_output</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
 
-        <span class="c1"># Get the memory stats of the run processs</span>
-        <span class="n">peak_memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_peak_memory</span><span class="p">()</span>
-        <span class="n">total_memory</span><span class="p">,</span> <span class="n">cpu_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_memory_info</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;session_id&quot;</span><span class="p">:</span> <span class="n">get_session_uuid</span><span class="p">(),</span>
+            <span class="s2">&quot;event_id&quot;</span><span class="p">:</span> <span class="n">event_id</span><span class="p">,</span>
+            <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="s2">&quot;slug&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;task&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Task&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;subtask&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Subtask&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;source_type&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Source Type&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;output_consistency&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Consistency&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;input_count&quot;</span><span class="p">:</span> <span class="n">result_summary</span><span class="p">[</span><span class="s2">&quot;num_inputs&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;output_dim&quot;</span><span class="p">:</span> <span class="n">result_summary</span><span class="p">[</span><span class="s2">&quot;output_dim&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;empty_cells_prop&quot;</span><span class="p">:</span> <span class="n">result_summary</span><span class="p">[</span><span class="s2">&quot;prop_empty_cells&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;empty_rows_count&quot;</span><span class="p">:</span> <span class="n">result_summary</span><span class="p">[</span><span class="s2">&quot;full_empty_rows&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;input_size_mb&quot;</span><span class="p">:</span> <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;input_size&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;output_size_mb&quot;</span><span class="p">:</span> <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;output_size&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;time_sec&quot;</span><span class="p">:</span> <span class="n">time_seconds</span><span class="p">,</span>
+            <span class="s2">&quot;log_error_count&quot;</span><span class="p">:</span> <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;error_count&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;log_warning_count&quot;</span><span class="p">:</span> <span class="n">run_data</span><span class="p">[</span><span class="s2">&quot;warning_count&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
 
-        <span class="c1"># Update the session file with the stats</span>
-        <span class="n">session</span><span class="o">.</span><span class="n">update_peak_memory</span><span class="p">(</span><span class="n">peak_memory</span><span class="p">)</span>
-        <span class="n">session</span><span class="o">.</span><span class="n">update_total_memory</span><span class="p">(</span><span class="n">total_memory</span><span class="p">)</span>
-        <span class="n">session</span><span class="o">.</span><span class="n">update_cpu_time</span><span class="p">(</span><span class="n">cpu_time</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
 
-        <span class="k">if</span> <span class="n">AWS_ACCESS_KEY_ID</span> <span class="ow">and</span> <span class="n">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span>
-            <span class="n">upload_to_s3</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span></div>
+<div class="viewcode-block" id="RunTracker.track">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.tracking.RunTracker.track">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">time_seconds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Track the model run and upload to S3 bucket.</span>
+<span class="sd">        This method collects relevant data for the run, updates the session file with the stats,</span>
+<span class="sd">        and uploads the data to AWS if credentials are available.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input : str</span>
+<span class="sd">            The input data used in the model run.</span>
+<span class="sd">        output : str</span>
+<span class="sd">            The output data in the form of a CSV file path.</span>
+<span class="sd">        metadata : dict</span>
+<span class="sd">            The metadata of the model.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">            This method does not return any value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_event_data</span><span class="p">(</span>
+            <span class="n">event_id</span><span class="o">=</span><span class="n">event_id</span><span class="p">,</span>
+            <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span>
+            <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+            <span class="n">time_seconds</span><span class="o">=</span><span class="n">time_seconds</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Event ID: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event_id</span><span class="p">))</span>
+        <span class="n">events_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_folder</span><span class="p">,</span> <span class="s2">&quot;events&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">events_folder</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">events_folder</span><span class="p">)</span>
+        <span class="n">events_folder_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">events_folder</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">events_folder_json</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">events_folder_json</span><span class="p">)</span>
+        <span class="n">event_file_json</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">events_folder_json</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">event_id</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">event_file_json</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Event data saved to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event_file_json</span><span class="p">))</span>
+        <span class="n">events_folder_csv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">events_folder</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">events_folder_csv</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">events_folder_csv</span><span class="p">)</span>
+        <span class="n">event_file_csv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">events_folder_csv</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">event_id</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">event_file_csv</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Event data saved to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event_file_csv</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upload_to_s3</span><span class="p">(</span><span class="n">event_id</span><span class="p">)</span></div>
+</div>
 
 </pre></div>
         </article>

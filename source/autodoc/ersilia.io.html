@@ -1138,22 +1138,18 @@ convert them into a standard format that can be processed in batches or one by o
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.io.output_logger.TabularResultLogger.tabulate">
-<span class="sig-name descname"><span class="pre">tabulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output_logger.html#TabularResultLogger.tabulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.output_logger.TabularResultLogger.tabulate" title="Link to this definition">¶</a></dt>
-<dd><p>Tabulate the results from a file.</p>
+<dt class="sig sig-object py" id="ersilia.io.output_logger.TabularResultLogger.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output_logger.html#TabularResultLogger.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.output_logger.TabularResultLogger.summary" title="Link to this definition">¶</a></dt>
+<dd><p>Summarize results statistics
+This class produces a summary of the results, counting inputs, output dimensions, etc.
+:param output: Path to the output file.
+:type output: str</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>result</strong> (<em>str</em>) – Path to the result file.</p></li>
-<li><p><strong>identifier</strong> (<em>str</em><em>, </em><em>optional</em>) – Identifier to include in the results.</p></li>
-<li><p><strong>model_id</strong> (<em>str</em><em>, </em><em>optional</em>) – Model ID to include in the results.</p></li>
-</ul>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – Summary of the results.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of tabulated results or None if the file is not tabular.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list or None</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1419,7 +1415,7 @@ convert them into a standard format that can be processed in batches or one by o
 </li>
 <li><a class="reference internal" href="#module-ersilia.io.output_logger">ersilia.io.output_logger module</a><ul>
 <li><a class="reference internal" href="#ersilia.io.output_logger.TabularResultLogger"><code class="docutils literal notranslate"><span class="pre">TabularResultLogger</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.io.output_logger.TabularResultLogger.tabulate"><code class="docutils literal notranslate"><span class="pre">TabularResultLogger.tabulate()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.io.output_logger.TabularResultLogger.summary"><code class="docutils literal notranslate"><span class="pre">TabularResultLogger.summary()</span></code></a></li>
 </ul>
 </li>
 </ul>
