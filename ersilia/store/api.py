@@ -15,6 +15,7 @@ from ersilia.core.base import ErsiliaBase
 from ersilia.default import API_BASE, CLOUD_CACHE_CHUNK, INFERENCE_STORE_API_URL
 from ersilia.io.input import GenericInputAdapter
 from ersilia.store.utils import (
+    OutputSource,
     delete_file_upon_upload,
 )
 
@@ -51,9 +52,17 @@ class InferenceStoreApi(ErsiliaBase):
     6. Retrieve and return the URL of the output predictions.
     """
 
-    def __init__(self, model_id: str, output: str):
+    def __init__(
+        self,
+        model_id: str,
+        output: str,
+        output_source: str = "cloud-cache-only",
+        n_samples: int = -1,
+    ):
         ErsiliaBase.__init__(self)
+        self.n_samples = n_samples
         self.model_id = model_id
+        self.output_source = output_source
         self.output_path = Path(f"{self.model_id}_cloud_cache.csv")
         self.output = output if output is not None else self.output_path
         self.request_id = None
@@ -125,7 +134,12 @@ class InferenceStoreApi(ErsiliaBase):
 
     def _submit_job(self) -> str:
         url = API_BASE + "/submit"
-        payload = {"requestid": self.request_id, "modelid": self.model_id}
+        payload = {
+            "requestid": self.request_id,
+            "modelid": self.model_id,
+            "fetchtype": "all",
+            "nsamples": self.n_samples,
+        }
 
         response = requests.post(url, json=payload, timeout=10)
         response.raise_for_status()
@@ -192,14 +206,13 @@ class InferenceStoreApi(ErsiliaBase):
 
     def _get_precalculation(self, inputs: list) -> str:
         self._generate_request_id()
-        presigned_url = self._get_presigned_url()
-        response = self._post_inputs(inputs, presigned_url)
-        if response.status_code == 204:
-            self.logger.info("File uploaded successfully")
-        else:
-            return (
-                f"Failed to upload file: {response.status_code} error ({response.text})"
-            )
+        if self.output_source == OutputSource.CLOUD:
+            presigned_url = self._get_presigned_url()
+            response = self._post_inputs(inputs, presigned_url)
+            if response.status_code == 204:
+                self.logger.info("File uploaded successfully")
+            else:
+                return f"Failed to upload file: {response.status_code} error ({response.text})"
         try:
             st = time.perf_counter()
             output_presigned_url, size = self._get_outputs()
@@ -274,11 +287,11 @@ class InferenceStoreApi(ErsiliaBase):
             self.logger.error(f"Error in synchronous wrapper: {e}")
             return ""
 
-    def _echo(self, text):
+    def _echo(self, text, fg="green"):
         click.echo(
             click.style(
                 text,
-                fg="green",
+                fg=fg,
                 bold=True,
             )
         )
@@ -288,10 +301,16 @@ class InferenceStoreApi(ErsiliaBase):
         start = time.perf_counter()
 
         temp_files = []
-        for i in range(0, len(inputs), CLOUD_CACHE_CHUNK):
-            chunk = inputs[i : i + CLOUD_CACHE_CHUNK]
-            self._echo(f"Downloading chunk #{i // CLOUD_CACHE_CHUNK + 1}")
-            path = self._fetch_csv_sync(chunk)
+        if inputs:
+            for i in range(0, len(inputs), CLOUD_CACHE_CHUNK):
+                chunk = inputs[i : i + CLOUD_CACHE_CHUNK]
+                self._echo(f"Downloading chunk #{i // CLOUD_CACHE_CHUNK + 1}")
+                path = self._fetch_csv_sync(chunk)
+                if path:
+                    temp_files.append(path)
+        else:
+            self._echo("Downloading all precalculations", fg="cyan")
+            path = self._fetch_csv_sync(None)
             if path:
                 temp_files.append(path)
 
@@ -317,7 +336,7 @@ class InferenceStoreApi(ErsiliaBase):
         self.logger.info(f"Combined CSV written to {self.output}")
         return self.output
 
-    def get_precalculations(self, inputs: list) -> str:
+    def get_precalculations(self, inputs: list = None) -> str:
         """
         To fetch precalculation
         """
