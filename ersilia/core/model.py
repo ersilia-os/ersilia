@@ -29,7 +29,6 @@ from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
-from ..utils.docker import ContainerMetricsSampler
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
@@ -664,7 +663,6 @@ class ErsiliaModel(ErsiliaBase):
         self.logger.debug("Starting serve")
         self.session = Session(config_json=self.config_json)
         self.run_tracker = None
-        self.ct_tracker = None
         self.track = False
         if track_runs:
             if not isinstance(self.autoservice.service, PulledDockerImageService):
@@ -677,7 +675,6 @@ class ErsiliaModel(ErsiliaBase):
                 self.run_tracker = RunTracker(
                     model_id=self.model_id, config_json=self.config_json
                 )
-                self.ct_tracker = ContainerMetricsSampler(model_id=self.model_id)
         self.setup()
         self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track)
@@ -774,6 +771,8 @@ class ErsiliaModel(ErsiliaBase):
         Any
             The result of the model run(such as output csv file name, json).
         """
+        t0 = time.time()
+
         session = Session(config_json=self.config_json)
         track_run = session.tracking_status()
 
@@ -785,14 +784,12 @@ class ErsiliaModel(ErsiliaBase):
             if not output.endswith(".csv") and track_run:
                 raise TrackingNotSupportedError()
 
-        # Init the container metrics sampler if necessary
+        # Init the run tracker
         if track_run:
-            self.logger.debug("Initializing container and run trackers")
+            self.logger.debug("Initializing the run trackers")
             self.run_tracker = RunTracker(
                 model_id=self.model_id, config_json=self.config_json
             )
-            self.ct_tracker = ContainerMetricsSampler(model_id=self.model_id)
-            self.ct_tracker.start_tracking()
         self.logger.info("Starting runner")
 
         # TODO The logic should be in a try except else finally block
@@ -822,8 +819,6 @@ class ErsiliaModel(ErsiliaBase):
         # Collect metrics sampled during run if tracking is enabled
         if track_run:
             self.logger.debug("Collecting metrics")
-            self.ct_tracker.stop_tracking()
-            container_metrics = self.ct_tracker.get_average_metrics()
             model_info = self.info()
             if "metadata" in model_info:
                 metadata = model_info["metadata"]
@@ -831,7 +826,10 @@ class ErsiliaModel(ErsiliaBase):
                 metadata = model_info["card"]
             else:
                 metadata = {}
-            self.run_tracker.track(input, output, metadata, container_metrics)
+
+            t1 = time.time()
+            time_taken = t1 - t0
+            self.run_tracker.track(input, output, metadata, time_taken)
 
         return result
 

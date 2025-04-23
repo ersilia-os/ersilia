@@ -1,29 +1,18 @@
 import configparser
-import copy
 import csv
 import json
 import os
 import re
-import resource
-import sys
 import uuid
 
 import boto3
-import psutil
 from botocore.exceptions import ClientError, NoCredentialsError
 
 from ..io.output_logger import TabularResultLogger
-from ..utils.csvfile import CsvDataLoader
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import NoAWSCredentialsError
 from ..utils.session import get_session_dir, get_session_uuid
-from ..utils.tracking import (
-    RUN_DATA_STUB,
-    init_tracking_summary,
-    update_tracking_summary,
-)
 from .base import ErsiliaBase
-from .session import Session
 
 TRACKING_BUCKET = "ersilia-models-runs"
 
@@ -270,60 +259,13 @@ class RunTracker(ErsiliaBase):
             Dictionary containing the input size, output size.
         """
 
-        input_size = sys.getsizeof(input_file) / 1024
-        output_size = sys.getsizeof(output_file) / 1024
+        input_size = os.path.getsize(input_file) / (1024 * 1024)
+        output_size = os.path.getsize(output_file) / (1024 * 1024)
 
         return {
             "input_size": input_size,
             "output_size": output_size,
         }
-
-    def get_peak_memory(self):
-        """
-        Calculate the peak memory usage of Ersilia's Python instance during the run.
-
-        Returns
-        -------
-        float
-            The peak memory usage in Megabytes.
-        """
-
-        usage = resource.getrusage(resource.RUSAGE_SELF)
-        peak_memory_kb = usage.ru_maxrss
-        peak_memory = peak_memory_kb / 1024
-        return peak_memory
-
-    def get_memory_info(self):
-        """
-        Retrieve the memory information of the current process.
-
-        Returns
-        -------
-        tuple
-            A tuple containing the memory usage in MB and the total CPU time.
-        """
-        try:
-            current_process = psutil.Process()
-            cpu_times = current_process.cpu_times()
-
-            uss_mb = current_process.memory_full_info().uss / (1024 * 1024)
-            total_cpu_time = sum(
-                cpu_time
-                for cpu_time in (
-                    cpu_times.user,
-                    cpu_times.system,
-                    cpu_times.children_user,
-                    cpu_times.children_system,
-                )
-            )
-
-            return uss_mb, total_cpu_time
-
-        except psutil.NoSuchProcess:
-            self.logger.error("No such process found.")
-            return "No such process found."
-        except Exception as e:
-            return str(e)
 
     def summarize_output(self, output_file):
         """
@@ -373,23 +315,20 @@ class RunTracker(ErsiliaBase):
         event_json = os.path.abspath(
             os.path.join(self.session_folder, "events", "json", f"{event_id}.json")
         )
-        event_csv = os.path.abspath(
-            os.path.join(self.session_folder, "events", "csv", f"{event_id}.csv")
-        )
+
         self.logger.debug("Event file JSON: {0}".format(event_json))
-        self.logger.debug("Event file CSV: {0}".format(event_csv))
+
+        with open(event_json, "r") as f:
+            json_data = json.load(f)
+
+        with open(event_json, "w") as f:
+            json.dump(json_data, f)
 
         try:
             s3_client.upload_file(
                 event_json,
                 bucket,
                 "events_json/{0}.json".format(event_id),
-            )
-
-            s3_client.upload_file(
-                event_csv,
-                bucket,
-                "events_csv/{0}.csv".format(event_id),
             )
 
         except NoCredentialsError:
@@ -402,7 +341,7 @@ class RunTracker(ErsiliaBase):
         return True
 
     @throw_ersilia_exception()
-    def create_event_data(self, input, output, meta, container_metrics):
+    def create_event_data(self, event_id, input, output, metadata, time_seconds):
         """
         Track the results of a model run.
 
@@ -420,21 +359,9 @@ class RunTracker(ErsiliaBase):
         container_metrics : dict
             The container metrics data.
         """
-        self.data = CsvDataLoader()
-        run_data = copy.deepcopy(RUN_DATA_STUB)
-        session = Session(config_json=self.config_json)
-        model_id = meta["Identifier"]
-        init_tracking_summary(model_id)
+        run_data = {}
 
-        if os.path.isfile(input):
-            input_data = self.data.read(input)
-        else:
-            input_data = [{"input": input}]
-
-        result_data = self.data.read(output)
-
-        # Collect relevant data for the run
-        size_info = self.get_file_sizes(input_data, result_data)
+        size_info = self.get_file_sizes(input, output)
 
         current_log_file_path = os.path.join(get_session_dir(), "current.log")
         console_log_file_path = os.path.join(get_session_dir(), "console.log")
@@ -450,10 +377,6 @@ class RunTracker(ErsiliaBase):
         run_data["output_size"] = (
             size_info["output_size"] if size_info["output_size"] else -1
         )
-        run_data["container_cpu_perc"] = container_metrics["container_cpu_perc"]
-        run_data["peak_container_cpu_perc"] = container_metrics["peak_cpu_perc"]
-        run_data["container_memory_perc"] = container_metrics["container_memory_perc"]
-        run_data["peak_container_memory_perc"] = container_metrics["peak_memory"]
         run_data["error_count"] = (
             error_and_warning_info_current_log["error_count"]
             + error_and_warning_info_console_log["error_count"]
@@ -463,42 +386,31 @@ class RunTracker(ErsiliaBase):
             + error_and_warning_info_console_log["warning_count"]
         )
 
-        update_tracking_summary(model_id, run_data)
-
-        # Get the memory stats of the run processs
-        peak_memory = self.get_peak_memory()
-        total_memory, cpu_time = self.get_memory_info()
-
-        # Update the session file with the stats
-        session.update_peak_memory(peak_memory)
-        session.update_total_memory(total_memory)
-        session.update_cpu_time(cpu_time)
         result_summary = self.summarize_output(output)
 
         data = {
             "session_id": get_session_uuid(),
+            "event_id": event_id,
             "model_id": self.model_id,
-            "model_slug": meta["Slug"],
+            "slug": metadata["Slug"],
+            "task": metadata["Task"],
+            "subtask": metadata["Subtask"],
+            "source_type": metadata["Source Type"],
+            "output_consistency": metadata["Output Consistency"],
             "input_count": result_summary["num_inputs"],
             "output_dim": result_summary["output_dim"],
             "empty_cells_prop": result_summary["prop_empty_cells"],
             "empty_rows_count": result_summary["full_empty_rows"],
             "input_size_mb": run_data["input_size"],
             "output_size_mb": run_data["output_size"],
-            "container_cpu_perc": run_data["container_cpu_perc"],
-            "peak_container_cpu_perc": run_data["peak_container_cpu_perc"],
-            "container_memory_perc": run_data["container_memory_perc"],
-            "peak_container_memory_perc": run_data["peak_container_memory_perc"],
-            "peak_process_memory": peak_memory,
-            "total_process_memory": total_memory,
-            "process_cpu_time": cpu_time,
+            "time_sec": time_seconds,
             "log_error_count": run_data["error_count"],
             "log_warning_count": run_data["warning_count"],
         }
 
         return data
 
-    def track(self, input, output, meta, container_metrics):
+    def track(self, input, output, metadata, time_seconds):
         """
         Track the model run and upload to S3 bucket.
         This method collects relevant data for the run, updates the session file with the stats,
@@ -509,22 +421,21 @@ class RunTracker(ErsiliaBase):
             The input data used in the model run.
         output : str
             The output data in the form of a CSV file path.
-        meta : dict
+        metadata : dict
             The metadata of the model.
-        container_metrics : dict
-            The container metrics data.
         Returns
         -------
         None
             This method does not return any value.
         """
+        event_id = str(uuid.uuid4())
         data = self.create_event_data(
+            event_id=event_id,
             input=input,
             output=output,
-            meta=meta,
-            container_metrics=container_metrics,
+            metadata=metadata,
+            time_seconds=time_seconds,
         )
-        event_id = str(uuid.uuid4())
         self.logger.debug("Event ID: {0}".format(event_id))
         events_folder = os.path.join(self.session_folder, "events")
         if not os.path.exists(events_folder):
