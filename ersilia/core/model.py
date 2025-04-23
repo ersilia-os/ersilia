@@ -123,7 +123,6 @@ class ErsiliaModel(ErsiliaBase):
         verbose: bool = None,
         fetch_if_not_available: bool = True,
         preferred_port: int = None,
-        track_runs: bool = False,
         cache: bool = True,
         maxmemory: float = None,
     ):

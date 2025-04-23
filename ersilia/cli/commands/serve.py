@@ -110,7 +110,7 @@ def serve_cmd():
         echo("")
         echo(":floppy_disk: Local cache:", fg="blue")
         echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
-            f"   - Disabled: {redis_setup._is_amenable()[1]}", fg="red"
+            "   - Disabled", fg="red"
         )
         echo("")
         echo(":chart_increasing: Tracking:", fg="blue")

@@ -6,13 +6,12 @@ import os
 import re
 import resource
 import sys
-import tempfile
+import uuid
 
 import boto3
 import psutil
 from botocore.exceptions import ClientError, NoCredentialsError
 
-from ..default import SESSION_JSON
 from ..io.output_logger import TabularResultLogger
 from ..utils.csvfile import CsvDataLoader
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
@@ -26,7 +25,7 @@ from ..utils.tracking import (
 from .base import ErsiliaBase
 from .session import Session
 
-TRACKING_BUCKET = "ersilia-model-runs"
+TRACKING_BUCKET = "ersilia-models-runs"
 
 
 class AwsConfig(ErsiliaBase):
@@ -172,26 +171,6 @@ class RunTracker(ErsiliaBase):
             self.logger.warning("Invalid AWS credentials.")
             raise NoAWSCredentialsError()
 
-    def flatten_dict(self, data):
-        """
-        Flatten the nested dictionaries from the generator into a single-level dictionary.
-
-        Parameters
-        ----------
-        data : dict
-            The nested dictionary to flatten.
-
-        Returns
-        -------
-        dict
-            The flattened dictionary.
-        """
-        flat_dict = {}
-        for outer_key, inner_dict in data.items():
-            for inner_key, value in inner_dict.items():
-                flat_dict[inner_key] = value
-        return flat_dict
-
     def log_files_metrics(self, file_log):
         """
         Log the number of errors and warnings in the log files.
@@ -267,11 +246,6 @@ class RunTracker(ErsiliaBase):
 
             res_dict = {}
             res_dict["error_count"] = error_count
-
-            if len(errors) > 0:  # TODO We are not consuming this right now
-                res_dict["error_details"] = {}
-                for err in errors:
-                    res_dict["error_details"][err] = errors[err]
             res_dict["warning_count"] = warning_count
             return res_dict
         except (IsADirectoryError, FileNotFoundError):
@@ -279,172 +253,30 @@ class RunTracker(ErsiliaBase):
                 "Unable to calculate metrics for log file: log file not found"
             )
 
-    def serialize_session_json_to_csv(self, json_file, csv_file):
-        """
-        Serialize session JSON data to a CSV file.
-
-        Parameters
-        ----------
-        json_file : str
-            The path to the JSON file.
-        csv_file : str
-            The path to the CSV file.
-        """
-        with open(json_file, "r") as f:
-            data = json.load(f)
-            header = []
-            values = []
-            for k, v in data.items():
-                header += [k]
-                values += [v]
-        with open(csv_file, "w") as f:
-            writer = csv.writer(f)
-            writer.writerow(header)
-            writer.writerow(values)
-
-    def serialize_tracking_json_to_csv(self, json_file, csv_file):
-        """
-        Serialize tracking JSON data to a CSV file.
-
-        Parameters
-        ----------
-        json_file : str
-            The path to the JSON file.
-        csv_file : str
-            The path to the CSV file.
-        """
-        with open(json_file, "r") as f:
-            data = json.load(f)
-            header = ["model_id"] + list(data.keys())[2:]  # Ignore model_id and runs
-            num_rows = data["runs"]
-            rows = []
-            for i in range(num_rows):
-                row = [data["model_id"]] + [data[k][i] for k in header[1:]]
-                rows.append(row)
-        with open(csv_file, "w") as f:
-            writer = csv.writer(f)
-            writer.writerow(header)
-            for row in rows:
-                writer.writerow(row)
-
-    def get_nan_counts(self, data_list):
-        """
-        Calculate the number of NAN values in each key of a list of dictionaries.
-
-        Parameters
-        ----------
-        data_list : list
-            List of dictionaries containing the data.
-
-        Returns
-        -------
-        int
-            The count of NAN values for each key.
-        """
-        nan_count = {}
-
-        # Collect all keys from data_list
-        all_keys = set(key for item in data_list for key in item.keys())
-
-        # Initialize nan_count with all keys
-        for key in all_keys:
-            nan_count[key] = 0
-
-        # Count None values for each key
-        for item in data_list:
-            for key, value in item.items():
-                if value is None:
-                    nan_count[key] += 1
-        nan_count_agg = sum(nan_count.values())
-        return nan_count_agg
-
     def get_file_sizes(self, input_file, output_file):
         """
-        Calculate the size of the input and output dataframes, as well as the average size of each row.
+        Calculate the size of the input and output dataframes.
 
         Parameters
         ----------
-        input_file : pd.DataFrame
-            Pandas dataframe containing the input data.
-        output_file : pd.DataFrame
-            Pandas dataframe containing the output data.
+        input_file : str
+            File path containing the input data.
+        output_file : str
+            File path containing the output data.
 
         Returns
         -------
         dict
-            Dictionary containing the input size, output size, average input size, and average output size.
+            Dictionary containing the input size, output size.
         """
 
         input_size = sys.getsizeof(input_file) / 1024
         output_size = sys.getsizeof(output_file) / 1024
 
-        try:
-            input_avg_row_size = input_size / len(input_file)
-            output_avg_row_size = output_size / len(output_file)
-        except ZeroDivisionError:
-            self.logger.warning(
-                "Encountered a ZeroDivisionError. No data in input or output file"
-            )
-            input_avg_row_size = -1
-            output_avg_row_size = -1
-
         return {
             "input_size": input_size,
             "output_size": output_size,
-            "avg_input_size": input_avg_row_size,
-            "avg_output_size": output_avg_row_size,
         }
-
-    def check_types(self, result, metadata):
-        """
-        Check the types of the output file against the expected types.
-
-        This method checks the shape of the output file (list vs single) and the types of each column.
-
-        Parameters
-        ----------
-        result : list
-            The output data.
-        metadata : dict
-            The metadata dictionary.
-
-        Returns
-        -------
-        dict
-            A dictionary containing the number of mismatched types and a boolean for whether the shape is correct.
-        """
-
-        type_dict = {"float": "Float", "int": "Int"}
-
-        # Collect data types for each column, ignoring "key" and "input" columns
-        dtypes_list = {}
-        for item in result:
-            for key, value in item.items():
-                if key not in ["key", "input"]:
-                    if key not in dtypes_list:
-                        dtypes_list[key] = set()
-                    dtypes_list[key].add(type(value).__name__)
-
-        mismatched_types = 0
-        for column, dtype_set in dtypes_list.items():
-            if not all(
-                type_dict.get(dtype) == metadata["Output Type"][0]
-                for dtype in dtype_set
-            ):
-                mismatched_types += 1
-
-        # Check if the shape is correct
-        correct_shape = True
-        if len(dtypes_list) > 1 and metadata["Output Shape"] != "List":
-            self.logger.warning("Not right shape. Expected List but got Single")
-            correct_shape = False
-        elif len(dtypes_list) == 1 and metadata["Output Shape"] != "Single":
-            self.logger.warning("Not right shape. Expected Single but got List")
-            correct_shape = False
-
-        self.logger.info(f"Output has {mismatched_types} mismatched types")
-
-        return {"mismatched_types": mismatched_types, "correct_shape": correct_shape}
 
     def get_peak_memory(self):
         """
@@ -493,47 +325,38 @@ class RunTracker(ErsiliaBase):
         except Exception as e:
             return str(e)
 
-    def log_result(self, result):
+    def summarize_output(self, output_file):
         """
-        Log the result of the model run.
+        This method summarizes the output of a model run
+        Parameters
+        ----------
+        output_file : str
+            The path to the output file.
+        Returns
+        -------
+        data : dict
+            A dictionary containing the summarized data.
+        """
+        data = self.tabular_result_logger.summary(output_file)
+        return data
 
-        This method logs the result of the model run to a CSV file.
+    def upload_to_s3(self, event_id):
+        """
+        Upload event information into an S3 bucket
 
         Parameters
         ----------
-        result : list
-            The result data.
-        """
-        identifier = get_session_uuid()
-        output_file = os.path.join(self.lake_folder, f"output_{identifier}.csv")
-        tabular_result = self.tabular_result_logger.tabulate(
-            result, identifier=identifier, model_id=self.model_id
-        )
-        if tabular_result is None:
-            return
-        with open(output_file, "a+") as f:
-            writer = csv.writer(f, delimiter=",")
-            for r in tabular_result:
-                writer.writerow(r)
-
-    def upload_to_s3(self, metadata):
-        """
-        Upload a file to an S3 bucket.
-
-        Parameters
-        ----------
-        metadata : dict
-            The metadata to upload.
+        event_id : list
+            Event identifier.
 
         Returns
         -------
         bool
-            True if the file was uploaded successfully, False otherwise.
+            True if uploading completed successfully, False otherwise.
         """
         bucket = TRACKING_BUCKET
-        self.logger.debug(
-            "Uploading tracking data to AWS S3 bucket: {0}".format(bucket)
-        )
+
+        self.logger.debug("Connecting to ersilia-models-runs AWS S3 bucket")
         aws_config = self.aws_config.get()
         aws_access_key_id = aws_config["aws_access_key_id"]
         aws_secret_access_key = aws_config["aws_secret_key_access"]
@@ -545,37 +368,30 @@ class RunTracker(ErsiliaBase):
             aws_secret_access_key=aws_secret_access_key,
             region_name=region_name,
         )
+
+        self.logger.debug("Uploading event data to AWS S3 bucket: {0}".format(bucket))
+        event_json = os.path.abspath(
+            os.path.join(self.session_folder, "events", "json", f"{event_id}.json")
+        )
+        event_csv = os.path.abspath(
+            os.path.join(self.session_folder, "events", "csv", f"{event_id}.csv")
+        )
+        self.logger.debug("Event file JSON: {0}".format(event_json))
+        self.logger.debug("Event file CSV: {0}".format(event_csv))
+
         try:
-            self.logger.debug(
-                "Uploading tracking data to AWS S3 bucket: {0}".format(bucket)
+            s3_client.upload_file(
+                event_json,
+                bucket,
+                "events_json/{0}.json".format(event_id),
             )
-            tmp_metadata_file = tempfile.NamedTemporaryFile(mode="w", suffix=".json")
-            with open(tmp_metadata_file.name, "w") as f:
-                f.write(json.dumps(metadata, indent=4))
 
             s3_client.upload_file(
-                tmp_metadata_file.name,
+                event_csv,
                 bucket,
-                f"metadata/{self.model_id}_metadata.json",
+                "events_csv/{0}.csv".format(event_id),
             )
-            sid = get_session_uuid()
-            session_json_path = os.path.join(get_session_dir(), SESSION_JSON)
-            session_csv_path = session_json_path.split(".json")[0] + ".csv"
-            self.serialize_session_json_to_csv(session_json_path, session_csv_path)
-            s3_client.upload_file(
-                session_csv_path, bucket, f"summary/session_{sid}.csv"
-            )
-            os.remove(session_csv_path)
-            tracking_json_path = os.path.join(
-                get_session_dir(), f"{get_session_uuid()}.json"
-            )
-            s3_client.upload_file(
-                tracking_json_path, bucket, f"tracking_raw/{sid}.json"
-            )
-            tracking_csv_path = tracking_json_path.split(".json")[0] + ".csv"
-            self.serialize_tracking_json_to_csv(tracking_json_path, tracking_csv_path)
-            s3_client.upload_file(tracking_csv_path, bucket, f"tracking/{sid}.csv")
-            os.remove(tracking_csv_path)
+
         except NoCredentialsError:
             self.logger.error(
                 "Unable to upload tracking data to AWS: Credentials not found"
@@ -586,7 +402,7 @@ class RunTracker(ErsiliaBase):
         return True
 
     @throw_ersilia_exception()
-    def track(self, input, output, meta, container_metrics):
+    def create_event_data(self, input, output, meta, container_metrics):
         """
         Track the results of a model run.
 
@@ -618,8 +434,6 @@ class RunTracker(ErsiliaBase):
         result_data = self.data.read(output)
 
         # Collect relevant data for the run
-        nan_count = self.get_nan_counts(result_data)
-        type_and_shape_info = self.check_types(result_data, meta)
         size_info = self.get_file_sizes(input_data, result_data)
 
         current_log_file_path = os.path.join(get_session_dir(), "current.log")
@@ -636,19 +450,10 @@ class RunTracker(ErsiliaBase):
         run_data["output_size"] = (
             size_info["output_size"] if size_info["output_size"] else -1
         )
-        run_data["avg_input_size"] = (
-            size_info["avg_input_size"] if size_info["avg_input_size"] else -1
-        )
-        run_data["avg_output_size"] = (
-            size_info["avg_output_size"] if size_info["avg_output_size"] else -1
-        )
         run_data["container_cpu_perc"] = container_metrics["container_cpu_perc"]
         run_data["peak_container_cpu_perc"] = container_metrics["peak_cpu_perc"]
         run_data["container_memory_perc"] = container_metrics["container_memory_perc"]
         run_data["peak_container_memory_perc"] = container_metrics["peak_memory"]
-        run_data["nan_count_agg"] = nan_count if nan_count else -1
-        run_data["mismatched_type_count"] = type_and_shape_info["mismatched_types"]
-        run_data["correct_shape"] = type_and_shape_info["correct_shape"]
         run_data["error_count"] = (
             error_and_warning_info_current_log["error_count"]
             + error_and_warning_info_console_log["error_count"]
@@ -668,6 +473,76 @@ class RunTracker(ErsiliaBase):
         session.update_peak_memory(peak_memory)
         session.update_total_memory(total_memory)
         session.update_cpu_time(cpu_time)
-        self.log_result(output)
+        result_summary = self.summarize_output(output)
 
-        self.upload_to_s3(metadata=meta)
+        data = {
+            "session_id": get_session_uuid(),
+            "model_id": self.model_id,
+            "model_slug": meta["Slug"],
+            "input_count": result_summary["num_inputs"],
+            "output_dim": result_summary["output_dim"],
+            "empty_cells_prop": result_summary["prop_empty_cells"],
+            "empty_rows_count": result_summary["full_empty_rows"],
+            "input_size_mb": run_data["input_size"],
+            "output_size_mb": run_data["output_size"],
+            "container_cpu_perc": run_data["container_cpu_perc"],
+            "peak_container_cpu_perc": run_data["peak_container_cpu_perc"],
+            "container_memory_perc": run_data["container_memory_perc"],
+            "peak_container_memory_perc": run_data["peak_container_memory_perc"],
+            "peak_process_memory": peak_memory,
+            "total_process_memory": total_memory,
+            "process_cpu_time": cpu_time,
+            "log_error_count": run_data["error_count"],
+            "log_warning_count": run_data["warning_count"],
+        }
+
+        return data
+
+    def track(self, input, output, meta, container_metrics):
+        """
+        Track the model run and upload to S3 bucket.
+        This method collects relevant data for the run, updates the session file with the stats,
+        and uploads the data to AWS if credentials are available.
+        Parameters
+        ----------
+        input : str
+            The input data used in the model run.
+        output : str
+            The output data in the form of a CSV file path.
+        meta : dict
+            The metadata of the model.
+        container_metrics : dict
+            The container metrics data.
+        Returns
+        -------
+        None
+            This method does not return any value.
+        """
+        data = self.create_event_data(
+            input=input,
+            output=output,
+            meta=meta,
+            container_metrics=container_metrics,
+        )
+        event_id = str(uuid.uuid4())
+        self.logger.debug("Event ID: {0}".format(event_id))
+        events_folder = os.path.join(self.session_folder, "events")
+        if not os.path.exists(events_folder):
+            os.makedirs(events_folder)
+        events_folder_json = os.path.join(events_folder, "json")
+        if not os.path.exists(events_folder_json):
+            os.makedirs(events_folder_json)
+        event_file_json = os.path.join(events_folder_json, f"{event_id}.json")
+        with open(event_file_json, "w") as f:
+            json.dump(data, f, indent=4)
+        self.logger.debug("Event data saved to {0}".format(event_file_json))
+        events_folder_csv = os.path.join(events_folder, "csv")
+        if not os.path.exists(events_folder_csv):
+            os.makedirs(events_folder_csv)
+        event_file_csv = os.path.join(events_folder_csv, f"{event_id}.csv")
+        with open(event_file_csv, "w") as f:
+            writer = csv.writer(f, delimiter=",")
+            writer.writerow(data.keys())
+            writer.writerow(data.values())
+        self.logger.debug("Event data saved to {0}".format(event_file_csv))
+        self.upload_to_s3(event_id)
