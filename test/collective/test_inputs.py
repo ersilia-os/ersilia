@@ -4,16 +4,12 @@ import sys
 from ersilia.io.input import GenericInputAdapter
 
 root = os.path.abspath(os.path.dirname(__file__))
-inputs_path = os.path.abspath(os.path.join(root, "inputs"))
+inputs_path = os.path.abspath(os.path.join(root, "..", "inputs"))
 sys.path.append(inputs_path)
-from compound_list import smiles_list as compound_list_input
-from compound_lists import smiles_lists as compound_lists_input
-from compound_pair_of_lists import smiles_pair_of_lists as compound_pair_of_lists_input
-from compound_pairs_of_lists import (
-    smiles_pairs_of_lists as compound_pairs_of_lists_input,
-)
-from compound_single import smiles as compound_single_input
-from compound_singles import smiles as compound_singles_input
+from ..inputs.compound_list import smiles_list as compound_list_input
+from ..inputs.compound_lists import smiles_lists as compound_lists_input
+from ..inputs.compound_single import smiles as compound_single_input
+from ..inputs.compound_singles import smiles as compound_singles_input
 
 
 def test_compound_single():
