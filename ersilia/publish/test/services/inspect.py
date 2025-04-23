@@ -394,7 +394,7 @@ class ModelInspector:
             line = raw.strip()
 
             for installer, pin_re, skip_flags in [
-                (pip_install_re,   pip_pin_re,   ("--index-url", "--extra-index-url")),
+                (pip_install_re,   pip_pin_re,   ("--index-url", "--extra-index-url", "dgl", "-f")),
                 (conda_install_re, conda_pin_re, ("-c", "--channel", "-y", "--yes")),
             ]:
                 m = installer.search(line)
@@ -418,12 +418,14 @@ class ModelInspector:
                     if tok.startswith("git+"):
                         continue
 
+                    if "http" in tok:
+                        continue
+    
                     if not pin_re.match(tok):
                         errors.append(
                             f"Package '{tok}' in line '{line}' is not version-pinned."
                         )
                 break
-        print(errors)
         return errors
 
     def _validate_yml(self, yml_content):
