@@ -1,10 +1,6 @@
 import csv
 import os
 
-# TODO: For now, only explicitly tabular results are returned. We could, in principle, output any other result
-
-MAX_LOG_COLUMNS = 10
-
 
 class TabularResultLogger(object):
     """
@@ -19,48 +15,6 @@ class TabularResultLogger(object):
 
     def __init__(self):
         pass
-
-    def tabulate(self, result, identifier=None, model_id=None):
-        """
-        Tabulate the results from a file.
-
-        Parameters
-        ----------
-        result : str
-            Path to the result file.
-        identifier : str, optional
-            Identifier to include in the results.
-        model_id : str, optional
-            Model ID to include in the results.
-
-        Returns
-        -------
-        list or None
-            List of tabulated results or None if the file is not tabular.
-        """
-        if self._is_tabular_file(result):
-            if result.endswith(".h5"):
-                return False  # TODO include HDF5 compatibility
-            delimiter = self._get_delimiter(result)
-            with open(result, "r") as f:
-                reader = csv.reader(f, delimiter=delimiter)
-                h = []
-                if identifier:
-                    h += ["identifier"]
-                if model_id:
-                    h += ["model_id"]
-                h += next(reader)[:MAX_LOG_COLUMNS]
-                R = [h]
-                for r in reader:
-                    s = []
-                    if identifier:
-                        s += [identifier]
-                    if model_id:
-                        s += [model_id]
-                    s += r[:MAX_LOG_COLUMNS]
-                    R += [s]
-                return R
-        return None
 
     def _is_tabular_file(self, s):
         if type(s) is str:
@@ -81,3 +35,52 @@ class TabularResultLogger(object):
         if s.endswith(".tsv"):
             return "\t"
         return None
+
+    def summary(self, output):
+        """
+        Summarize results statistics
+        This class produces a summary of the results, counting inputs, output dimensions, etc.
+        Parameters
+        ----------
+        output : str
+            Path to the output file.
+        Returns
+        -------
+        data : dict
+            Summary of the results.
+        """
+        if not self._is_tabular_file(output):
+            raise ValueError("Output file is not a valid tabular file.")
+
+        if output.endswith(".h5"):
+            raise ValueError("Summarization is not yet available for HDF5 files.")
+
+        delimiter = self._get_delimiter(output)
+
+        with open(output, "r") as f:
+            reader = csv.reader(f, delimiter=delimiter)
+            output_dim = len(next(reader)) - 2
+            num_inputs = 0
+            full_empty_rows = 0
+            num_empty_cells = 0
+            for row in reader:
+                row = row[2:]
+                num_empty_cells_ = sum(
+                    1
+                    for cell in row
+                    if cell == "" or cell == "nan" or cell == "NaN" or cell == "None"
+                )
+                if num_empty_cells_ == output_dim:
+                    full_empty_rows += 1
+                num_empty_cells += num_empty_cells_
+                num_inputs += 1
+            proportion_empty_cells = num_empty_cells / (num_inputs * output_dim)
+
+        data = {
+            "num_inputs": num_inputs,
+            "output_dim": output_dim,
+            "prop_empty_cells": proportion_empty_cells,
+            "full_empty_rows": full_empty_rows,
+        }
+
+        return data

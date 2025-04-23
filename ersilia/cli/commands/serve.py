@@ -72,7 +72,6 @@ def serve_cmd():
             model,
             output_source=output_source,
             preferred_port=port,
-            track_runs=track,
             cache=cache,
             maxmemory=maxmemory,
         )
@@ -80,7 +79,7 @@ def serve_cmd():
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
 
-        mdl.serve()
+        mdl.serve(track_runs=track)
         if mdl.url is None:
             echo("No URL found. Service unsuccessful.", fg="red")
             return
@@ -91,11 +90,12 @@ def serve_cmd():
         )
         echo("")
         echo("   URL: {0}".format(mdl.url), fg="yellow")
-        echo("   PID: {0}".format(mdl.pid), fg="yellow")
+        if str(mdl.pid) != "-1":
+            echo("   PID: {0}".format(mdl.pid), fg="yellow")
         echo("   SRV: {0}".format(mdl.scl), fg="yellow")
-        echo("   Output source: {0}".format(mdl.output_source), fg="yellow")
+        echo("   Session: {0}".format(mdl.session._session_dir), fg="yellow")
         echo("")
-        echo(":backhand_index_pointing_right: To run model:", fg="blue")
+        echo(":backhand_index_pointing_right: Run model:", fg="blue")
         echo("   - run", fg="blue")
         apis = mdl.get_apis()
         if apis != ["run"]:
@@ -108,9 +108,15 @@ def serve_cmd():
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
         echo("")
-        echo(":backhand_index_pointing_right: Caching:", fg="blue")
+        echo(":floppy_disk: Local cache:", fg="blue")
         echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
-            f"   - Disabled: {redis_setup._is_amenable()[1]}", fg="red"
+            "   - Disabled", fg="red"
         )
+        echo("")
+        echo(":chart_increasing: Tracking:", fg="blue")
+        if track:
+            echo("   - Enabled", fg="green")
+        else:
+            echo("   - Disabled", fg="red")
 
     return serve

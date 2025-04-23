@@ -7,8 +7,6 @@ import sys
 import time
 import types
 
-from click import secho as echo  # Style-aware echo
-
 from .. import logger
 from ..default import (
     APIS_LIST_FILE,
@@ -31,8 +29,9 @@ from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
-from ..utils.docker import ContainerMetricsSampler
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
+from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
 from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.logging import make_temp_dir
 from ..utils.terminal import yes_no_input
@@ -123,7 +122,6 @@ class ErsiliaModel(ErsiliaBase):
         verbose: bool = None,
         fetch_if_not_available: bool = True,
         preferred_port: int = None,
-        track_runs: bool = False,
         cache: bool = True,
         maxmemory: float = None,
     ):
@@ -197,23 +195,6 @@ class ErsiliaModel(ErsiliaBase):
             maxmemory=maxmemory,
         )
         self._set_apis()
-        self.session = Session(config_json=self.config_json)
-        self._run_tracker = None
-        self.ct_tracker = None
-        self.track = False
-        if track_runs:
-            if not isinstance(self.autoservice.service, PulledDockerImageService):
-                echo(
-                    "Tracking runs is currently only supported for Dockerized models.\n",
-                    fg="yellow",
-                )
-            else:
-                self.track = True
-                self._run_tracker = RunTracker(
-                    model_id=self.model_id, config_json=self.config_json
-                )
-                self.ct_tracker = ContainerMetricsSampler(model_id=self.model_id)
-
         self.logger.info("Done with initialization!")
 
     def fetch(self):
@@ -495,7 +476,6 @@ class ErsiliaModel(ErsiliaBase):
             return True
         return False
 
-    # TODO should use the throw_ersilia_exception decorator
     def _get_api_runner(self, output):
         if output is None:
             use_iter = True
@@ -666,14 +646,35 @@ class ErsiliaModel(ErsiliaBase):
         """
         pass  # TODO Implement whenever this is necessary
 
-    def serve(self):
+    @throw_ersilia_exception()
+    def serve(self, track_runs=False):
         """
         Serve the model by starting the necessary services.
 
         This method sets up the required dependencies, opens a session, and starts the model service.
         It registers the service class and output source, updates the model's URL and process ID (PID),
         and tracks resource usage if tracking is enabled.
+
+        Parameters
+        ----------
+        track_runs : bool, optional
+            Whether to track runs, by default False.
         """
+        self.logger.debug("Starting serve")
+        self.session = Session(config_json=self.config_json)
+        self.run_tracker = None
+        self.track = False
+        if track_runs:
+            if not isinstance(self.autoservice.service, PulledDockerImageService):
+                self.logger.warning(
+                    "Tracking runs is currently only supported for Dockerized models"
+                )
+                raise TrackingNotSupportedError()
+            else:
+                self.track = True
+                self.run_tracker = RunTracker(
+                    model_id=self.model_id, config_json=self.config_json
+                )
         self.setup()
         self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track)
@@ -683,14 +684,13 @@ class ErsiliaModel(ErsiliaBase):
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
-
-        if self._run_tracker is not None:
-            memory_usage_serve, cpu_time_serve = self._run_tracker.get_memory_info()
-            peak_memory_serve = self._run_tracker.get_peak_memory()
-            session = Session(config_json=None)
-            session.update_peak_memory(peak_memory_serve)
-            session.update_total_memory(memory_usage_serve)
-            session.update_cpu_time(cpu_time_serve)
+        self.logger.debug("Done with basic session registration")
+        if self.run_tracker is not None:
+            memory_usage_serve, cpu_time_serve = self.run_tracker.get_memory_info()
+            peak_memory_serve = self.run_tracker.get_peak_memory()
+            self.session.update_peak_memory(peak_memory_serve)
+            self.session.update_total_memory(memory_usage_serve)
+            self.session.update_cpu_time(cpu_time_serve)
 
     def close(self):
         """
@@ -698,6 +698,9 @@ class ErsiliaModel(ErsiliaBase):
 
         This method stops the model service and closes the session.
         """
+        self.session = Session(config_json=self.config_json)
+        self.logger.debug("Closing session {0}".format(self.session._session_dir))
+        self.logger.debug("Stopping service")
         self.autoservice.close()
         self.session.close()
 
@@ -714,9 +717,7 @@ class ErsiliaModel(ErsiliaBase):
         """
         return self.autoservice.get_apis()
 
-    def _run(
-        self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE, track_run=False
-    ):
+    def _run(self, input=None, output=None, batch_size=DEFAULT_BATCH_SIZE):
         api_name = self.get_apis()[0]
         result = self.api(
             api_name=api_name, input=input, output=output, batch_size=batch_size
@@ -742,12 +743,12 @@ class ErsiliaModel(ErsiliaBase):
             status_ok,
         )  # TODO This doesn't actually check whether the result exists and isn't null
 
+    @throw_ersilia_exception()
     def run(
         self,
         input: str = None,
         output: str = None,
         batch_size: int = DEFAULT_BATCH_SIZE,
-        track_run: bool = False,
     ):
         """
         Run the model with the given input and output.
@@ -764,18 +765,31 @@ class ErsiliaModel(ErsiliaBase):
             The output data, by default None.
         batch_size : int, optional
             The batch size, by default DEFAULT_BATCH_SIZE.
-        track_run : bool, optional
-            Whether to track the run, by default False.
 
         Returns
         -------
         Any
             The result of the model run(such as output csv file name, json).
         """
+        t0 = time.time()
 
-        # Init the container metrics sampler
-        if self.ct_tracker and track_run:
-            self.ct_tracker.start_tracking()
+        session = Session(config_json=self.config_json)
+        track_run = session.tracking_status()
+
+        # Currently, tracking is only accepted for CSV files
+        if output is None:
+            if track_run:
+                raise TrackingNotSupportedError()
+        else:
+            if not output.endswith(".csv") and track_run:
+                raise TrackingNotSupportedError()
+
+        # Init the run tracker
+        if track_run:
+            self.logger.debug("Initializing the run trackers")
+            self.run_tracker = RunTracker(
+                model_id=self.model_id, config_json=self.config_json
+            )
         self.logger.info("Starting runner")
 
         # TODO The logic should be in a try except else finally block
@@ -795,14 +809,16 @@ class ErsiliaModel(ErsiliaBase):
 
         if not standard_status_ok:
             self.logger.debug("Trying conventional run")
-            result = self._run(
-                input=input, output=output, batch_size=batch_size, track_run=track_run
-            )
+            if track_run:
+                self.logger.error(
+                    "With conventional runner tracker will not be enabled. Disable tracking at serve time if you want to proceed."
+                )
+                raise TrackingNotSupportedError()
+            result = self._run(input=input, output=output, batch_size=batch_size)
 
         # Collect metrics sampled during run if tracking is enabled
-        if self._run_tracker and track_run:
-            self.ct_tracker.stop_tracking()
-            container_metrics = self.ct_tracker.get_average_metrics()
+        if track_run:
+            self.logger.debug("Collecting metrics")
             model_info = self.info()
             if "metadata" in model_info:
                 metadata = model_info["metadata"]
@@ -810,7 +826,10 @@ class ErsiliaModel(ErsiliaBase):
                 metadata = model_info["card"]
             else:
                 metadata = {}
-            self._run_tracker.track(input, result, metadata, container_metrics)
+
+            t1 = time.time()
+            time_taken = t1 - t0
+            self.run_tracker.track(input, output, metadata, time_taken)
 
         return result
 
