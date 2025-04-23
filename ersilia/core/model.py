@@ -685,12 +685,6 @@ class ErsiliaModel(ErsiliaBase):
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
         self.logger.debug("Done with basic session registration")
-        if self.run_tracker is not None:
-            memory_usage_serve, cpu_time_serve = self.run_tracker.get_memory_info()
-            peak_memory_serve = self.run_tracker.get_peak_memory()
-            self.session.update_peak_memory(peak_memory_serve)
-            self.session.update_total_memory(memory_usage_serve)
-            self.session.update_cpu_time(cpu_time_serve)
 
     def close(self):
         """
