@@ -374,49 +374,56 @@ class ModelInspector:
 
         return self._validate_repo_structure(required_items)
 
+
     def _validate_dockerfile(self, dockerfile_content):
-        lines, errors = dockerfile_content.splitlines(), []
+        lines = dockerfile_content.splitlines()
+        errors = []
 
         if "WORKDIR /repo" not in dockerfile_content:
             errors.append("Missing 'WORKDIR /repo'.")
         if "COPY . /repo" not in dockerfile_content:
             errors.append("Missing 'COPY . /repo'.")
 
-        pip_install_pattern = re.compile(r"pip install (.+)")
-        version_pin_pattern = re.compile(
-            r"^[a-zA-Z0-9_\-\.]+(==|>=|<=|>|<)[a-zA-Z0-9_\-\.]+$"
-        )
+        pip_install_re   = re.compile(r"pip install (.+)")
+        conda_install_re = re.compile(r"conda install (.+)")
 
-        for line in lines:
-            line = line.strip()
+        pip_pin_re   = re.compile(r"^[A-Za-z0-9_\-\.]+(==|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
+        conda_pin_re = re.compile(r"^[A-Za-z0-9_\-\.]+(=|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
 
-            match = pip_install_pattern.search(line)
-            if match:
-                install_cmd, _, _ = match.group(1).partition(
-                    "#"
-                )  # Remove comments, this actually crashes things
-                packages_and_options = install_cmd.strip().split()
+        for raw in lines:
+            line = raw.strip()
+
+            for installer, pin_re, skip_flags in [
+                (pip_install_re,   pip_pin_re,   ("--index-url", "--extra-index-url")),
+                (conda_install_re, conda_pin_re, ("-c", "--channel", "-y", "--yes")),
+            ]:
+                m = installer.search(line)
+                if not m:
+                    continue
+
+                install_part = m.group(1).split("#", 1)[0].strip()
+                tokens = install_part.split()
                 skip_next = False
 
-                for item in packages_and_options:
+                for tok in tokens:
                     if skip_next:
                         skip_next = False
                         continue
 
-                    if item.startswith("--index-url") or item.startswith(
-                        "--extra-index-url"
-                    ):
-                        skip_next = True
+                    if tok in skip_flags:
+                        if tok in ("-c", "--channel"):
+                            skip_next = True
                         continue
 
-                    if item.startswith("git+"):
+                    if tok.startswith("git+"):
                         continue
 
-                    if not version_pin_pattern.match(item):
+                    if not pin_re.match(tok):
                         errors.append(
-                            f"Package '{item}' in line '{line}' is not version-pinned (e.g., 'package==1.0.0')."
+                            f"Package '{tok}' in line '{line}' is not version-pinned."
                         )
-
+                break
+        print(errors)
         return errors
 
     def _validate_yml(self, yml_content):
