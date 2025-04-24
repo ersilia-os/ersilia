@@ -1,5 +1,6 @@
 import asyncio
 import csv
+import shutil
 import tempfile
 import time
 import uuid
@@ -324,21 +325,13 @@ class InferenceStoreApi(ErsiliaBase):
             return "No data to write."
 
         fieldnames = ["key", "input"] + self.col_name
-        writer = None
+        with open(self.output, "w", buffering=1 << 20) as out_f:
+            out_f.write(",".join(fieldnames) + "\n")
 
-        header_written = False
-        with open(self.output, "w", newline="") as out_f:
             for fp in temp_files:
-                with open(fp, newline="") as in_f:
-                    reader = csv.DictReader(in_f)
-
-                    if not header_written:
-                        out_f.write(",".join(fieldnames) + "\n")
-                        header_written = True
-
-                    writer = csv.DictWriter(out_f, fieldnames=reader.fieldnames)
-                    for row in reader:
-                        writer.writerow(row)
+                with open(fp, "r", buffering=1 << 20) as in_f:
+                    next(in_f)
+                    shutil.copyfileobj(in_f, out_f)
 
         self.logger.info(f"Combined CSV written to {self.output}")
         return self.output
