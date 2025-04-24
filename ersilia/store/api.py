@@ -14,6 +14,7 @@ from tqdm.asyncio import tqdm
 from ersilia.core.base import ErsiliaBase
 from ersilia.default import API_BASE, CLOUD_CACHE_CHUNK, INFERENCE_STORE_API_URL
 from ersilia.io.input import GenericInputAdapter
+from ersilia.io.output import GenericOutputAdapter
 from ersilia.store.utils import (
     OutputSource,
     delete_file_upon_upload,
@@ -56,11 +57,14 @@ class InferenceStoreApi(ErsiliaBase):
         self,
         model_id: str,
         output: str,
+        n_samples: int,
         output_source: str = "cloud-cache-only",
-        n_samples: int = -1,
     ):
         ErsiliaBase.__init__(self)
         self.n_samples = n_samples
+        self.generic_out = GenericOutputAdapter(model_id=model_id)
+        self.col_name = self.generic_out._fetch_schema_from_github()[0]
+        print(self.col_name)
         self.model_id = model_id
         self.output_source = output_source
         self.output_path = Path(f"{self.model_id}_cloud_cache.csv")
@@ -319,17 +323,20 @@ class InferenceStoreApi(ErsiliaBase):
             self.logger.error("No chunks → aborting")
             return "No data to write."
 
+        fieldnames = ["key", "input"] + self.col_name
         writer = None
 
+        header_written = False
         with open(self.output, "w", newline="") as out_f:
             for fp in temp_files:
                 with open(fp, newline="") as in_f:
                     reader = csv.DictReader(in_f)
 
-                    if writer is None:
-                        writer = csv.DictWriter(out_f, fieldnames=reader.fieldnames)
-                        writer.writeheader()
+                    if not header_written:
+                        out_f.write(",".join(fieldnames) + "\n")
+                        header_written = True
 
+                    writer = csv.DictWriter(out_f, fieldnames=reader.fieldnames)
                     for row in reader:
                         writer.writerow(row)
 

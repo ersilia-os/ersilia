@@ -14,7 +14,7 @@ def dump_cmd():
         short_help="Fetch precalculations from cloud and local sources",
         help="This command fetch cached precalculations from a cloud and from local. In the local case precalculation will be fetched from a Redis container.",
     )
-    @click.option("--n_samples", "-n", default=None, type=click.INT)
+    @click.option("--n_samples", "-n", default=-1, type=click.INT)
     @click.option(
         "-o", "--output", "output", required=False, default=None, type=click.STRING
     )
@@ -22,7 +22,12 @@ def dump_cmd():
         session = Session(config_json=None)
         model_id = session.current_model_id()
         output_source = session.current_output_source()
-        ifst = InferenceStoreApi(model_id, output, n_samples)
+        ifst = InferenceStoreApi(
+            model_id=model_id,
+            output=output,
+            output_source=output_source,
+            n_samples=n_samples,
+        )
         if output_source == OutputSource.CLOUD_ONLY:
             ifst.get_precalculations()
 
