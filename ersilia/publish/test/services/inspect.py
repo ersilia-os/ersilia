@@ -388,7 +388,7 @@ class ModelInspector:
         conda_install_re = re.compile(r"conda install (.+)")
 
         pip_pin_re   = re.compile(r"^[A-Za-z0-9_\-\.]+(==|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
-        conda_pin_re = re.compile(r"^[A-Za-z0-9_\-\.]+(=|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
+        conda_pin_re = re.compile(r"^[A-Za-z0-9_\-\.]+(==|=|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
 
         for raw in lines:
             line = raw.strip()
