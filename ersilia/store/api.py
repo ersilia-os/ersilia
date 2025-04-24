@@ -131,9 +131,11 @@ class InferenceStoreApi(ErsiliaBase):
         self._poll_status(job_id)
         shards = self._fetch_shards(job_id)
 
-        # Calculate total download size via HEAD
-        total_size = 0
-        click.echo(click.style("Calculating total download size...", fg="magenta"))
+        # Calculate total download size from /result metadata
+        total_size = sum(shard.get("size", 0) for shard in shards)
+        click.echo(
+            click.style(f"Total download: {total_size/1024:.1f} KB", fg="magenta")
+        )
         for shard in shards:
             h = requests.head(shard["url"], timeout=10)
             size = int(h.headers.get("Content-Length", 0))
