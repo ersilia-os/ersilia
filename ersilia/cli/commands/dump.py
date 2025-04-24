@@ -29,6 +29,6 @@ def dump_cmd():
             n_samples=n_samples,
         )
         if output_source == OutputSource.CLOUD_ONLY:
-            ifst.get_precalculations()
+            ifst.get_precalculations(None)
 
     return dump
