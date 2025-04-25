@@ -1,12 +1,8 @@
 import click
 
-from ersilia.store.api import (
-    echo_intro,
-)
-
 from ...core.session import Session
 from ...store.api import InferenceStoreApi
-from ...store.utils import OutputSource
+from ...store.utils import OutputSource, echo_intro
 from . import ersilia_cli
 
 
