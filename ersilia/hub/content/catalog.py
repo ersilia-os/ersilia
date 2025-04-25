@@ -226,7 +226,6 @@ class ModelCatalog(ErsiliaBase):
     MORE_FIELDS = LESS_FIELDS + [
         "Title",
         "Task",
-        "Input Shape",
         "Output",
         "Output Shape",
     ]
