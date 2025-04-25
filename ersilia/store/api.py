@@ -60,6 +60,7 @@ class InferenceStoreApi(ErsiliaBase):
         self.n_samples = n_samples
         self.output_source = output_source
         self.request_id = None
+        self.fetch_type = "all"
         cols = GenericOutputAdapter(model_id=model_id)._fetch_schema_from_github()[0]
         self.header = ["key", "input"] + cols
         self.output_path = Path(output) if output else Path(f"{model_id}_precalc.csv")
@@ -90,6 +91,7 @@ class InferenceStoreApi(ErsiliaBase):
         """
         self.request_id = str(uuid.uuid4())
         if self.output_source == OutputSource.CLOUD:
+            self.fetch_type = "filter"
             echo_uploading_inputs(self.click)
             pres = self.api.get_json(
                 f"{INFERENCE_STORE_API_URL}/upload-destination",
@@ -103,7 +105,7 @@ class InferenceStoreApi(ErsiliaBase):
         payload = {
             "requestid": self.request_id,
             "modelid": self.model_id,
-            "fetchtype": "all",
+            "fetchtype": self.fetch_type,
             "nsamples": self.n_samples,
         }
         job_id = self.api.post_json(f"{API_BASE}/submit", json=payload)["jobId"]
