@@ -8,8 +8,8 @@ from ersilia import ErsiliaModel
 from ersilia.core.session import Session
 from ersilia.hub.fetch.fetch import ModelFetcher
 
-MODELS = ["eos0t01", "eos3b5e", "eos0t03", "eos0t04"]
-RESULTS = [0, 312.89, 0, 0]
+MODELS = ["eos3b5e"]
+RESULTS = [312.89]
 API_NAME = "run"
 MIN_WEIGHT = 40.0
 MAX_WEIGHT = 60.0
@@ -32,7 +32,7 @@ def mock_set_apis():
 @pytest.fixture
 def mock_session():
     with (
-        patch.object(Session, "current_model_id", return_value=MODELS[1]),
+        patch.object(Session, "current_model_id", return_value=MODELS[0]),
         patch.object(Session, "current_service_class", return_value="docker"),
         patch.object(Session, "tracking_status", return_value=False),
         patch.object(Session, "current_output_source", return_value="LOCAL_ONLY"),
@@ -84,7 +84,7 @@ def mock_serve():
 
 @pytest.fixture
 def mock_run():
-    with patch.object(ErsiliaModel, "run", return_value=RESULTS[1]) as mock_run_:
+    with patch.object(ErsiliaModel, "run", return_value=RESULTS[0]) as mock_run_:
         yield mock_run_
 
 
@@ -100,7 +100,7 @@ def test_model_with_prior_fetching(
     mock_run,
     mock_close,
 ):
-    MODEL_ID = MODELS[1]
+    MODEL_ID = MODELS[0]
     INPUT = "CCCC"
 
     mf = ModelFetcher(overwrite=True)
@@ -121,7 +121,7 @@ def test_model_with_prior_fetching(
     em.serve()
     em.close()
 
-    assert result == RESULTS[1]
+    assert result == RESULTS[0]
     assert mock_fetcher.called
     assert mock_serve.called
     assert mock_run.called
@@ -140,7 +140,7 @@ def test_model_with_no_prior_fetching(
     mock_run,
     mock_close,
 ):
-    MODEL_ID = MODELS[1]
+    MODEL_ID = MODELS[0]
     INPUT = "CCCC"
 
     em = ErsiliaModel(
@@ -160,7 +160,7 @@ def test_model_with_no_prior_fetching(
     em.serve()
     em.close()
 
-    assert result == RESULTS[1]
+    assert result == RESULTS[0]
     assert mock_fetcher.called
     assert mock_serve.called
     assert mock_run.called
