@@ -51,14 +51,6 @@ def echo_job_submitted(click_iface, job_id: str):
     )
 
 
-def echo_polling_status(click_iface):
-    click_iface.echo(
-        "Waiting for precalculation to finish. Please be patient!",
-        fg="white",
-        bg="blue",
-    )
-
-
 def echo_status(click_iface, status: str):
     if status == JobStatus.PENDING:
         click_iface.echo(
@@ -70,7 +62,7 @@ def echo_status(click_iface, status: str):
         )
     elif status == JobStatus.RUNNING:
         click_iface.echo(
-            f"{log_prefix()}Submitted job status: {status}", fg="blue", bold=True
+            f"{log_prefix()}Submitted job status: {status}", fg="cyan", bold=True
         )
     else:
         click_iface.echo(

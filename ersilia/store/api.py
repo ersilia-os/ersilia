@@ -16,7 +16,6 @@ from ersilia.store.utils import (
     echo_job_submitted,
     echo_job_succeeded,
     echo_merged_saved,
-    echo_polling_status,
     echo_status,
     echo_submitting_job,
     echo_upload_complete,
@@ -90,7 +89,7 @@ class InferenceStoreApi(ErsiliaBase):
             If the job fails, no shards are returned, or polling times out.
         """
         self.request_id = str(uuid.uuid4())
-        if self.output_source == OutputSource.CLOUD_ONLY:
+        if self.output_source == OutputSource.CLOUD:
             echo_uploading_inputs(self.click)
             pres = self.api.get_json(
                 f"{INFERENCE_STORE_API_URL}/upload-destination",
@@ -110,7 +109,6 @@ class InferenceStoreApi(ErsiliaBase):
         job_id = self.api.post_json(f"{API_BASE}/submit", json=payload)["jobId"]
         echo_job_submitted(self.click, job_id)
 
-        echo_polling_status(self.click)
         start = time.time()
         while True:
             status = self.api.get_json(f"{API_BASE}/status", params={"jobId": job_id})[
@@ -125,7 +123,7 @@ class InferenceStoreApi(ErsiliaBase):
                     f"{API_BASE}/status", params={"jobId": job_id}
                 ).get("errorMessage", "Unknown error")
                 raise RuntimeError(f"Job failed: {error}")
-            if time.time() - start > 900:
+            if time.time() - start > 3600:
                 raise RuntimeError("Job polling timed out")
             time.sleep(5)
 
