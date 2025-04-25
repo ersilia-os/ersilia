@@ -457,7 +457,7 @@ class OutputSource:
         bool
             True if the option is cloud, False otherwise.
         """
-        return option == cls.CLOUD_ONLY
+        return option == cls.CLOUD
 
 
 class ModelNotInStore(InferenceStoreMessage):
