@@ -31,12 +31,12 @@ def echo_intro(click_iface):
 
 def echo_uploading_inputs(click_iface):
     click_iface.echo(
-        f"{log_prefix()}Uploading input CSV to S3...", fg="green", bold=True
+        f"{log_prefix()}Uploading input data to S3 bucket", fg="blue", bold=True
     )
 
 
 def echo_upload_complete(click_iface):
-    click_iface.echo(f"{log_prefix()}Upload complete.", fg="green", bold=True)
+    click_iface.echo(f"{log_prefix()}Upload completed.", fg="blue", bold=True)
 
 
 def echo_submitting_job(click_iface):
@@ -281,9 +281,8 @@ class FileManager:
         )
         writer = csv.writer(tmp)
         for rec in input_adapter.adapt_one_by_one(records):
-            writer.writerow([rec["input"]])
+            writer.writerow([rec["key"], rec["input"]])
         tmp.flush()
-        tmp.close()
         return tmp.name
 
     @staticmethod
@@ -353,9 +352,17 @@ class FileManager:
             fg="blue",
             bold=True,
         )
+        gz_shards = [
+            s
+            for s in shards
+            if s.get("key", "").endswith(".gz") or s.get("url", "").endswith(".gz")
+        ]
+
         with open(output_path, "w", encoding="utf-8", newline="") as out_f:
             out_f.write(",".join(header) + "\n")
             first = True
+
+            total_size = sum(s["size"] for s in gz_shards)
             pbar = click_iface.progress_bar(
                 total=total_size,
                 unit="B",
@@ -366,20 +373,23 @@ class FileManager:
                 ncols=70,
                 bar_format="{desc}: [{bar}] {percentage:3.0f}% {n_fmt}/{total_fmt} • {rate_fmt} • ETA: {remaining}",
             )
-            for shard in shards:
+
+            for shard in gz_shards:
                 buf = io.BytesIO()
                 for chunk in downloader.download_stream(shard["url"]):
                     buf.write(chunk)
                     pbar.update(len(chunk))
-                data = buf.getvalue()
-                if shard.get("key", "").endswith(".gz") or shard["url"].endswith(".gz"):
-                    data = gzip.decompress(data)
-                text = data.decode("utf-8", errors="replace")
+
+                decompressed = gzip.decompress(buf.getvalue())
+                text = decompressed.decode("utf-8", errors="replace")
+
                 for i, line in enumerate(text.splitlines(keepends=True)):
                     if not first and i == 0 and line.startswith(header[0]):
                         continue
                     out_f.write(line)
+
                 first = False
+
             pbar.close()
 
 

@@ -2,7 +2,7 @@ import click
 
 from ...core.session import Session
 from ...store.api import InferenceStoreApi
-from ...store.utils import OutputSource, echo_intro
+from ...store.utils import OutputSource
 from . import ersilia_cli
 
 
@@ -22,10 +22,6 @@ def dump_cmd():
         session = Session(config_json=None)
         model_id = session.current_model_id()
         output_source = session.current_output_source()
-        echo_intro(
-            InferenceStoreApi(click_iface=None, model_id=model_id, output=output).click
-        )
-
         ifst = InferenceStoreApi(
             model_id=model_id,
             output=output,

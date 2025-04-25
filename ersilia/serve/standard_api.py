@@ -552,7 +552,9 @@ class StandardCSVRunApi(ErsiliaBase):
         input_data = self.serialize_to_json(input)
 
         if OutputSource.is_cloud(output_source):
-            store = InferenceStoreApi(model_id=self.model_id, output=output)
+            store = InferenceStoreApi(
+                model_id=self.model_id, output=output, output_source=output_source
+            )
             return store.get_precalculations(input_data)
 
         url = f"{self.url}/{self.api_name}"

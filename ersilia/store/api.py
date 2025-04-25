@@ -13,6 +13,7 @@ from ersilia.store.utils import (
     JobStatus,
     OutputSource,
     echo_found_shards,
+    echo_intro,
     echo_job_submitted,
     echo_job_succeeded,
     echo_merged_saved,
@@ -89,6 +90,7 @@ class InferenceStoreApi(ErsiliaBase):
         RuntimeError
             If the job fails, no shards are returned, or polling times out.
         """
+        echo_intro(self.click)
         self.request_id = str(uuid.uuid4())
         if self.output_source == OutputSource.CLOUD:
             self.fetch_type = "filter"
@@ -100,7 +102,6 @@ class InferenceStoreApi(ErsiliaBase):
             tmp_path = self.files.create_temp_csv(inputs, self.input_adapter)
             self.files.upload_to_s3(pres, tmp_path)
             echo_upload_complete(self.click)
-
         echo_submitting_job(self.click)
         payload = {
             "requestid": self.request_id,
