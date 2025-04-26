@@ -17,6 +17,7 @@ from ersilia.store.utils import (
     echo_job_submitted,
     echo_job_succeeded,
     echo_merged_saved,
+    echo_small_sample_warning,
     echo_status,
     echo_submitting_job,
     echo_upload_complete,
@@ -91,6 +92,7 @@ class InferenceStoreApi(ErsiliaBase):
             If the job fails, no shards are returned, or polling times out.
         """
         echo_intro(self.click)
+        echo_small_sample_warning(self.click, self.n_samples)
         self.request_id = str(uuid.uuid4())
         if self.output_source == OutputSource.CLOUD:
             self.fetch_type = "filter"
@@ -102,7 +104,7 @@ class InferenceStoreApi(ErsiliaBase):
             tmp_path = self.files.create_temp_csv(inputs, self.input_adapter)
             self.files.upload_to_s3(pres, tmp_path)
             echo_upload_complete(self.click)
-        echo_submitting_job(self.click)
+        echo_submitting_job(self.click, self.model_id)
         payload = {
             "requestid": self.request_id,
             "modelid": self.model_id,

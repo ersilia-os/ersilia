@@ -19,60 +19,80 @@ def log_prefix():
     return f"[INFO]:[{now}] "
 
 
+# ruff: noqa: W291
+title = r"""
+    ____                            __              __        __   _                  ______               _            
+   / __ \ _____ ___   _____ ____ _ / /_____ __  __ / /____ _ / /_ (_)____   ____     / ____/____   ____ _ (_)____   ___ 
+  / /_/ // ___// _ \ / ___// __ `// // ___// / / // // __ `// __// // __ \ / __ \   / __/  / __ \ / __ `// // __ \ / _ \
+ / ____// /   /  __// /__ / /_/ // // /__ / /_/ // // /_/ // /_ / // /_/ // / / /  / /___ / / / // /_/ // // / / //  __/
+/_/    /_/    \___/ \___/ \__,_//_/ \___/ \__,_//_/ \__,_/ \__//_/ \____//_/ /_/  /_____//_/ /_/ \__, //_//_/ /_/ \___/ 
+                                                                                                /____/                                                       
+"""
+
+
 def echo_intro(click_iface):
-    width = 80
-    click_iface.echo("╔" + "═" * width + "╗", fg="blue", bold=True)
-    click_iface.echo(
-        f"║{'Ersilia Precalculation Store Engine':^{width}}║", fg="blue", bold=True
-    )
-    click_iface.echo(f"║{'Version 1.0':^{width}}║", fg="blue", bold=True)
-    click_iface.echo("╚" + "═" * width + "╝", fg="blue", bold=True)
+    width = 120
+    click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
+    click_iface.echo(f"{'[Version 0.0.1]\n':^{width}}", fg="red", bold=True)
 
 
 def echo_uploading_inputs(click_iface):
     click_iface.echo(
-        f"{log_prefix()}Uploading input data to S3 bucket", fg="blue", bold=True
+        f"{log_prefix()}Uploading input data to S3 bucket", fg="blue", bold=False
     )
 
 
 def echo_upload_complete(click_iface):
-    click_iface.echo(f"{log_prefix()}Upload completed.", fg="blue", bold=True)
+    click_iface.echo(f"{log_prefix()}Upload completed.", fg="blue", bold=False)
 
 
-def echo_submitting_job(click_iface):
+def echo_submitting_job(click_iface, model_id):
     click_iface.echo(
-        f"{log_prefix()}Submitting a task for precalculation", fg="blue", bold=True
+        f"{log_prefix()}Submitting a task for model[{model_id}] precalculation",
+        fg="blue",
+        bold=False,
     )
 
 
 def echo_job_submitted(click_iface, job_id: str):
     click_iface.echo(
-        f"{log_prefix()}Job submitted with a job id: {job_id}", fg="blue", bold=True
+        f"{log_prefix()}Job submitted with a job id: {job_id}", fg="blue", bold=False
     )
+
+
+def echo_small_sample_warning(click_iface, n: int):
+    if n <= 50000:
+        click_iface.echo(
+            f"{log_prefix()}Sample size of less than 50000 [{n}] is not recommended for fetching precalculation!",
+            fg="white",
+            blink=True,
+            bg="red",
+        )
+        click.confirm("Do you want to continue?", abort=True)
 
 
 def echo_status(click_iface, status: str):
     if status == JobStatus.PENDING:
         click_iface.echo(
-            f"{log_prefix()}Submitted job status: {status}", fg="yellow", bold=True
+            f"{log_prefix()}Submitted job status: {status}", fg="yellow", bold=False
         )
     elif status == JobStatus.FAILED:
         click_iface.echo(
-            f"{log_prefix()}Submitted job status: {status}", fg="red", bold=True
+            f"{log_prefix()}Submitted job status: {status}", fg="red", bold=False
         )
     elif status == JobStatus.RUNNING:
         click_iface.echo(
-            f"{log_prefix()}Submitted job status: {status}", fg="cyan", bold=True
+            f"{log_prefix()}Submitted job status: {status}", fg="cyan", bold=False
         )
     else:
         click_iface.echo(
-            f"{log_prefix()}Submitted job status: {status}", fg="green", bold=True
+            f"{log_prefix()}Submitted job status: {status}", fg="green", bold=False
         )
 
 
 def echo_job_succeeded(click_iface):
     click_iface.echo(
-        f"{log_prefix()}Precalculation successfully fetched", fg="blue", bold=True
+        f"{log_prefix()}Precalculation successfully fetched", fg="blue", bold=False
     )
 
 
@@ -80,13 +100,13 @@ def echo_found_shards(click_iface, count: int):
     click_iface.echo(
         f"{log_prefix()}Fetched {count} .gz compressed precalcultaion files.",
         fg="blue",
-        bold=True,
+        bold=False,
     )
 
 
 def echo_merged_saved(click_iface, output_path: Path):
     click_iface.echo(
-        f"{log_prefix()}Merged CSV saved to: {output_path}", fg="blue", bold=True
+        f"{log_prefix()}Merged CSV saved to: {output_path}", fg="blue", bold=False
     )
 
 
@@ -344,13 +364,13 @@ class FileManager:
         click_iface.echo(
             f"{log_prefix()}Total download file size: {total_size / 1024:.1f} KB",
             fg="blue",
-            bold=True,
+            bold=False,
         )
 
         click_iface.echo(
             f"{log_prefix()}Downloading and merging each file content",
             fg="blue",
-            bold=True,
+            bold=False,
         )
         gz_shards = [
             s
@@ -368,9 +388,9 @@ class FileManager:
                 unit="B",
                 unit_scale=True,
                 unit_divisor=1024,
-                desc="⬇ GZIP",
+                desc="⬇",
                 colour="blue",
-                ncols=70,
+                ncols=80,
                 bar_format="{desc}: [{bar}] {percentage:3.0f}% {n_fmt}/{total_fmt} • {rate_fmt} • ETA: {remaining}",
             )
 

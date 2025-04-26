@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from rich import box
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
 from ersilia.default import EOS_PLAYGROUND
+from rich_2 import box
 from test.playground.shared import results
 
 base_path = Path(EOS_PLAYGROUND)
