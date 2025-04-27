@@ -567,7 +567,9 @@ class ErsiliaModel(ErsiliaBase):
         Any
             The result of the API run.
         """
-        if OutputSource.is_cloud(self.output_source):
+        if OutputSource.is_cloud(self.output_source) or OutputSource.is_local(
+            self.output_source
+        ):
             store = InferenceStoreApi(model_id=self.model_id, output=output)
             return store.get_precalculations(input)
         elif self._do_cache_splits(input=input, output=output):
@@ -792,6 +794,8 @@ class ErsiliaModel(ErsiliaBase):
             self.logger.debug("We will try conventional run.")
 
         if not standard_status_ok:
+            print(standard_status_ok)
+            print(input)
             self.logger.debug("Trying conventional run")
             result = self._run(
                 input=input, output=output, batch_size=batch_size, track_run=track_run

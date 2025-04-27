@@ -2,7 +2,6 @@ import click
 
 from ...core.session import Session
 from ...store.api import InferenceStoreApi
-from ...store.utils import OutputSource
 from . import ersilia_cli
 
 
@@ -28,7 +27,6 @@ def dump_cmd():
             output_source=output_source,
             n_samples=n_samples,
         )
-        if output_source == OutputSource.CLOUD_ONLY:
-            ifst.get_precalculations(None)
+        ifst.get_precalculations(None)
 
     return dump

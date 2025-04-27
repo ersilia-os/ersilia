@@ -126,6 +126,7 @@ HEADER_INDICATORS = [
 ]  # TODO This list can be expanded. It is simply to detect headers easily.
 
 # URLS
+REDIS_EXPIRATION = 3600 * 24 * 7
 REDIS_PORT = 6379
 REDIS_SERVER = "redis://localhost:%s" % REDIS_PORT
 REDIS_CONTAINER_NAME = "redis-server"

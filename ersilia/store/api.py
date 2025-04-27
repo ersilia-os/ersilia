@@ -1,3 +1,5 @@
+import json
+import sys
 import time
 import uuid
 from pathlib import Path
@@ -6,6 +8,7 @@ from ersilia.core.base import ErsiliaBase
 from ersilia.default import API_BASE, INFERENCE_STORE_API_URL
 from ersilia.io.input import GenericInputAdapter
 from ersilia.io.output import GenericOutputAdapter
+from ersilia.store.dump import DumpLocalCache
 from ersilia.store.utils import (
     ApiClient,
     ClickInterface,
@@ -62,8 +65,10 @@ class InferenceStoreApi(ErsiliaBase):
         self.n_samples = n_samples
         self.output_source = output_source
         self.request_id = None
+        self.dump_local = DumpLocalCache()
         self.fetch_type = "all"
-        cols = GenericOutputAdapter(model_id=model_id)._fetch_schema_from_github()[0]
+        self.generic_output_adapter = GenericOutputAdapter(model_id=model_id)
+        cols = self.generic_output_adapter._fetch_schema_from_github()[0]
         self.header = ["key", "input"] + cols
         self.output_path = Path(output) if output else Path(f"{model_id}_precalc.csv")
         self.input_adapter = GenericInputAdapter(model_id=model_id)
@@ -92,6 +97,36 @@ class InferenceStoreApi(ErsiliaBase):
             If the job fails, no shards are returned, or polling times out.
         """
         echo_intro(self.click)
+        if self.output_source == OutputSource.LOCAL and inputs is not None:
+            self.dump_local.init_redis()
+            self.dump_local.fetch_cached_results(self.model_id, inputs)
+            results = self.dump_local.get_cached(self.model_id, inputs)
+            results = self.dump_local._standardize_output(
+                inputs, results, str(self.output_path), None
+            )
+            self.generic_output_adapter._adapt_generic(
+                json.dumps(results), str(self.output_path), self.model_id, "run"
+            )
+            sys.exit(1)
+            return self.output_path
+
+        if (
+            self.output_source == OutputSource.LOCAL_ONLY
+            and inputs is None
+            or self.output_source == OutputSource.LOCAL
+            and inputs is None
+        ):
+            self.dump_local.init_redis()
+            results, inputs = self.dump_local.fetch_all_cached(self.model_id)
+            results = self.dump_local._standardize_output(
+                inputs, results, str(self.output_path), None
+            )
+            self.generic_output_adapter._adapt_generic(
+                json.dumps(results), str(self.output_path), self.model_id, "run"
+            )
+            sys.exit(1)
+            return self.output_path
+
         echo_small_sample_warning(self.click, self.n_samples)
         self.request_id = str(uuid.uuid4())
         if self.output_source == OutputSource.CLOUD:
@@ -144,4 +179,5 @@ class InferenceStoreApi(ErsiliaBase):
         )
 
         echo_merged_saved(self.click, self.output_path)
+        sys.exit(1)
         return str(self.output_path)

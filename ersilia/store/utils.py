@@ -21,19 +21,18 @@ def log_prefix():
 
 # ruff: noqa: W291
 title = r"""
-    ____                            __              __        __   _                  ______               _            
-   / __ \ _____ ___   _____ ____ _ / /_____ __  __ / /____ _ / /_ (_)____   ____     / ____/____   ____ _ (_)____   ___ 
-  / /_/ // ___// _ \ / ___// __ `// // ___// / / // // __ `// __// // __ \ / __ \   / __/  / __ \ / __ `// // __ \ / _ \
- / ____// /   /  __// /__ / /_/ // // /__ / /_/ // // /_/ // /_ / // /_/ // / / /  / /___ / / / // /_/ // // / / //  __/
-/_/    /_/    \___/ \___/ \__,_//_/ \___/ \__,_//_/ \__,_/ \__//_/ \____//_/ /_/  /_____//_/ /_/ \__, //_//_/ /_/ \___/ 
-                                                                                                /____/                                                       
+    ____                            __              __        __   _                  _____  __                   
+   / __ \ _____ ___   _____ ____ _ / /_____ __  __ / /____ _ / /_ (_)____   ____     / ___/ / /_ ____   _____ ___ 
+  / /_/ // ___// _ \ / ___// __ `// // ___// / / // // __ `// __// // __ \ / __ \    \__ \ / __// __ \ / ___// _ \
+ / ____// /   /  __// /__ / /_/ // // /__ / /_/ // // /_/ // /_ / // /_/ // / / /   ___/ // /_ / /_/ // /   /  __/
+/_/    /_/    \___/ \___/ \__,_//_/ \___/ \__,_//_/ \__,_/ \__//_/ \____//_/ /_/   /____/ \__/ \____//_/    \___/                                                     
 """
 
 
 def echo_intro(click_iface):
     width = 120
     click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
-    click_iface.echo(f"{'[Version 0.0.1]\n':^{width}}", fg="red", bold=True)
+    click_iface.echo(f"{'[Version 1.0.0]\n':^{width}}", fg="red", bold=True)
 
 
 def echo_uploading_inputs(click_iface):
@@ -63,7 +62,7 @@ def echo_job_submitted(click_iface, job_id: str):
 def echo_small_sample_warning(click_iface, n: int):
     if n <= 50000:
         click_iface.echo(
-            f"{log_prefix()}Sample size of less than 50000 [{n}] is not recommended for fetching precalculation!",
+            f"{log_prefix()}Sample size of less than 50,000 [{n}] is not recommended for fetching precalculation!",
             fg="white",
             blink=True,
             bg="red",
@@ -470,7 +469,7 @@ class OutputSource:
         bool
             True if the option is local, False otherwise.
         """
-        return option == cls.LOCAL_ONLY
+        return option == cls.LOCAL
 
     @classmethod
     def is_cloud(cls, option):

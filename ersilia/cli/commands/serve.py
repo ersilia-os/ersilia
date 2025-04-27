@@ -69,6 +69,7 @@ def serve_cmd():
         cloud_cache_only,
         maxmemory,
     ):
+        output_source = None
         if local_cache_only:
             output_source = OutputSource.LOCAL_ONLY
         if local_cache:

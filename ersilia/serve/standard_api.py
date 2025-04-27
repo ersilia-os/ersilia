@@ -551,7 +551,7 @@ class StandardCSVRunApi(ErsiliaBase):
         """
         input_data = self.serialize_to_json(input)
 
-        if OutputSource.is_cloud(output_source):
+        if OutputSource.is_cloud(output_source) or OutputSource.is_local(output_source):
             store = InferenceStoreApi(
                 model_id=self.model_id, output=output, output_source=output_source
             )
@@ -568,7 +568,6 @@ class StandardCSVRunApi(ErsiliaBase):
         results, meta = self._fetch_result(input_data, url, batch_size)
         self.logger.info("Standardizing output...")
         results = self._standardize_output(input_data, results, output, meta)
-
         et = time.perf_counter()
         self.logger.info(f"All batches processed in {et - st:.4f} seconds")
 
@@ -610,7 +609,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 return None
         return overall_results, meta
 
-    def _standardize_output(self, input_data, results, output, meta):
+    def _standardize_output(input_data, results, output, meta):
         _results = []
         key = "outcome" if meta is None else meta["outcome"][0]
         keys = (
