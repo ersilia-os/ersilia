@@ -511,11 +511,13 @@ class ModelInspector:
                     timeout=TIMEOUT_SECONDS,
                 )
             except subprocess.TimeoutExpired as e:
-                return Result(False,
-                            f"Timeout after {TIMEOUT_SECONDS} seconds "
-                            f"while running {n} examples.")
+                return Result(
+                False, f"{n} predictions executed in None seconds. Timeout occured"
+            )
             if process.returncode != 0:
-                return Result(False, f"Error serving model: {process.stderr.strip()}")
+                return Result(
+                False, f"{n} predictions executed in None seconds. Timeout occured"
+            )
             execution_time = time.time() - start_time
             return Result(
                 True, f"{n} predictions executed in {execution_time:.2f} seconds."
