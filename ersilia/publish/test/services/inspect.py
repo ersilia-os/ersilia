@@ -27,7 +27,8 @@ from .constants import (
     BENTOML_FILES,
     ERSILIAPACK_FILES,
     BENTOML_FOLDERS,
-    ERSILIAPACK_FOLDERS
+    ERSILIAPACK_FOLDERS,
+    TIMEOUT_SECONDS
 
 )
 from .... import ErsiliaBase
@@ -494,21 +495,31 @@ class ModelInspector:
         return errors
 
     def _run_performance_check(self, n):
-        cmd = (
-            f"ersilia serve {self.model} --no-cache &&"
-            f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} -d &&"
-            f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
-        )
-        start_time = time.time()
-        process = subprocess.run(
-            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        if process.returncode != 0:
-            return Result(False, f"Error serving model: {process.stderr.strip()}")
-        execution_time = time.time() - start_time
-        return Result(
-            True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
-        )
+            cmd = (
+                f"ersilia serve {self.model} --no-cache && "
+                f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} -d && "
+                f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
+            )
+            start_time = time.time()
+            try:
+                process = subprocess.run(
+                    cmd,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=TIMEOUT_SECONDS,
+                )
+            except subprocess.TimeoutExpired as e:
+                return Result(False,
+                            f"Timeout after {TIMEOUT_SECONDS} seconds "
+                            f"while running {n} examples.")
+            if process.returncode != 0:
+                return Result(False, f"Error serving model: {process.stderr.strip()}")
+            execution_time = time.time() - start_time
+            return Result(
+                True, f"{n} predictions executed in {execution_time:.2f} seconds."
+            )
 
 
 class CheckStrategy:
