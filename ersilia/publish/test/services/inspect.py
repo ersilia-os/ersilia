@@ -406,6 +406,7 @@ class ModelInspector:
                 skip_next = False
 
                 for tok in tokens:
+                    print("TOK", tok)
                     if skip_next:
                         skip_next = False
                         continue
@@ -416,6 +417,7 @@ class ModelInspector:
                         continue
 
                     if tok.startswith("git+"):
+                        print("starts with git")
                         continue
 
                     if "http" in tok:
@@ -426,6 +428,8 @@ class ModelInspector:
                             f"Package '{tok}' in line '{line}' is not version-pinned."
                         )
                 break
+        if len(errors)>0:
+            logger.debug(f"Errors in Dockerfile install command: {errors}")
         return errors
 
     def _validate_yml(self, yml_content):
@@ -487,7 +491,8 @@ class ModelInspector:
                     errors.append(
                         f"Package '{package}' in command '{command}' does not have a valid pinned version."
                     )
-
+        if len(errors)>0:
+            logger.debug(f"Errors in Install YML file install command: {errors}")
         return errors
 
     def _run_performance_check(self, n):
