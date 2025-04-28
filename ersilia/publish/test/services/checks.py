@@ -373,7 +373,7 @@ class CheckService:
             raise texc.EmptyKey(key)
 
     def _check_model_computational_performance_one(self, data):
-        key = "Computational Performance #4"
+        key = "Computational Performance #1"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -381,8 +381,8 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
 
-    def _check_model_computational_performance_two(self, data):
-        key = "Computational Performance #7"
+    def _check_model_computational_performance_ten(self, data):
+        key = "Computational Performance #10"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -390,16 +390,16 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
 
-    def _check_model_computational_performance_three(self, data):
-        key = "Computational Performance #12"
+    def _check_model_computational_performance_hundred(self, data):
+        key = "Computational Performance #100"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-    def _check_model_computational_performance_four(self, data):
-        key = "Computational Performance #20"
+    def _check_model_computational_performance_thousands(self, data):
+        key = "Computational Performance #1000"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -407,27 +407,8 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
         
-    def _check_model_computational_performance_five(self, data):
-        key = "Computational Performance #34"
-        self.logger.debug(f"Checking {key}  field..")
-        if key in data:
-            if not data[key]:
-                raise texc.EmptyField(key)
-        else:
-            raise texc.EmptyKey(key)
-
-    def _check_model_computational_performance_six(self, data):
-        key = "Computational Performance #58"
-        self.logger.debug(f"Checking {key}  field..")
-        if key in data:
-            if not data[key]:
-                raise texc.EmptyField(key)
-        else:
-            raise texc.EmptyKey(key)
-
-
-    def _check_model_computational_performance_seven(self, data):
-        key = "Computational Performance #100"
+    def _check_model_computational_performance_ten_thousands(self, data):
+        key = "Computational Performance #10000"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -488,37 +469,27 @@ class CheckService:
         self._run_check(
             self._check_model_computational_performance_one,
             data,
-            "Model Computational Performance for 4 input",
+            "Model Computational Performance for 1 input",
         )
         self._run_check(
-            self._check_model_computational_performance_two,
+            self._check_model_computational_performance_ten,
             data,
-            "Model Computational Performance for 7 input",
+            "Model Computational Performance for 10 input",
         )
         self._run_check(
-            self._check_model_computational_performance_three,
+            self._check_model_computational_performance_hundred,
             data,
-            "Model Computational Performance for 12 input",
+            "Model Computational Performance for 100 input",
         )
         self._run_check(
-            self._check_model_computational_performance_four,
+            self._check_model_computational_performance_thousands,
             data,
-            "Model Computational Performance for 20 input",
+            "Model Computational Performance for 1,000 input",
         )
         self._run_check(
-            self._check_model_computational_performance_five,
+            self._check_model_computational_performance_ten_thousands,
             data,
-            "Model Computational Performance for 34 input",
-        )
-        self._run_check(
-            self._check_model_computational_performance_six,
-            data,
-            "Model Computational Performance for 58 input",
-        )
-        self._run_check(
-            self._check_model_computational_performance_seven,
-            data,
-            "Model Computational Performance for 100 inputs",
+            "Model Computational Performance for 10,000 input",
         )
 
     def _duplicate(self, csv_file):

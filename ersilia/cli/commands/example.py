@@ -22,7 +22,8 @@ def example_cmd():
     @click.option("--file_name", "-f", default=None, type=click.STRING)
     @click.option("--simple/--complete", "-s/-c", default=True)
     @click.option("--random/--predefined", "-r/-p", default=True)
-    def example(model, n_samples, file_name, simple, random):
+    @click.option("--deterministic", "-d", default=False, is_flag=True)
+    def example(model, n_samples, file_name, simple, random, deterministic):
         if model is not None:
             model_id = ModelBase(model).model_id
         else:
@@ -38,11 +39,23 @@ def example_cmd():
         if file_name is None:
             echo(
                 json.dumps(
-                    eg.example(n_samples, file_name, simple, try_predefined=not random),
+                    eg.example(
+                        n_samples,
+                        file_name,
+                        simple,
+                        try_predefined=not random,
+                        deterministic=deterministic,
+                    ),
                     indent=4,
                 )
             )
         else:
-            eg.example(n_samples, file_name, simple, try_predefined=not random)
+            eg.example(
+                n_samples,
+                file_name,
+                simple,
+                try_predefined=not random,
+                deterministic=deterministic,
+            )
 
     return example

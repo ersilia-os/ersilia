@@ -390,6 +390,54 @@ class ExampleGenerator(ErsiliaBase):
                         for v in self.IO.example(n_samples):
                             writer.writerow([v["key"], v["input"], v["text"]])
 
+    def fixed_example(self, n_samples, file_name, simple):
+        """
+        Generate deterministic example data. Samples same types of examples for each any sampling.
+
+        Parameters
+        ----------
+        n_samples : int
+            Number of samples to generate.
+        file_name : str
+            File name to save the examples.
+        simple : bool
+            Whether to generate simple examples.
+
+        Returns
+        -------
+        list or None
+            List of example data or None if saved to file.
+        """
+        if not self._force_simple:
+            simple = simple
+        else:
+            simple = True
+        if file_name is None:
+            data = [v for v in self.IO.example_fixed(n_samples)]
+            if simple:
+                data = [{"input": d["input"]} for d in data]
+            return data
+        else:
+            extension = file_name.split(".")[-1]
+            if extension == "json":
+                with open(file_name, "w") as f:
+                    data = [v for v in self.IO.example_fixed(n_samples)]
+                    if simple:
+                        data = [{"input": d["input"]} for d in data]
+                    json.dump(data, f, indent=4)
+            else:
+                delimiter = self._get_delimiter(file_name)
+                with open(file_name, "w", newline="") as f:
+                    writer = csv.writer(f, delimiter=delimiter)
+                    if simple:
+                        writer.writerow(["input"])
+                        for v in self.IO.example_fixed(n_samples):
+                            writer.writerow(self._flatten(v["input"]))
+                    else:
+                        writer.writerow(["key", "input", "text"])
+                        for v in self.IO.example_fixed(n_samples):
+                            writer.writerow([v["key"], v["input"], v["text"]])
+
     def predefined_example(self, file_name):
         """
         Get predefined example data.
@@ -413,7 +461,7 @@ class ExampleGenerator(ErsiliaBase):
             else:
                 return False
 
-    def example(self, n_samples, file_name, simple, try_predefined):
+    def example(self, n_samples, file_name, simple, try_predefined, deterministic):
         """
         Generate example data.
 
@@ -441,6 +489,15 @@ class ExampleGenerator(ErsiliaBase):
         if predefined_available:
             with open(file_name, "r") as f:
                 return f.read()
+        elif deterministic:
+            secho(
+                "Sampling input not randomly but in deterministic manner.",
+                fg="green",
+            )
+            self.logger.debug("Sampling input not randomly but in deterministic manner")
+            return self.fixed_example(
+                n_samples=n_samples, file_name=file_name, simple=simple
+            )
         else:
             if try_predefined and not predefined_available:
                 secho(

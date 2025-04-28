@@ -13,13 +13,11 @@ from ... import ErsiliaBase
 from ...utils.exceptions_utils.base_information_exceptions import (
     BiomedicalAreaBaseInformationError,
     BothIdentifiersBaseInformationError,
-    ComputationalPerformanceFiftyeightBaseInformationError,
-    ComputationalPerformanceFourBaseInformationError,
     ComputationalPerformanceHundredBaseInformationError,
-    ComputationalPerformanceSevenBaseInformationError,
-    ComputationalPerformanceThirtyfourBaseInformationError,
-    ComputationalPerformanceTwelveBaseInformationError,
-    ComputationalPerformanceTwentyBaseInformationError,
+    ComputationalPerformanceOneBaseInformationError,
+    ComputationalPerformanceTenBaseInformationError,
+    ComputationalPerformanceTenThousandsBaseInformationError,
+    ComputationalPerformanceThousandsBaseInformationError,
     ContributorBaseInformationError,
     DeploymentBaseInformationError,
     DescriptionBaseInformationError,
@@ -160,10 +158,10 @@ class BaseInformation(ErsiliaBase):
             Placeholder for seven-run computational performance.
         _computational_performance_twelve : None
             Placeholder for twelve-run computational performance.
-        _computational_performance_twenty : None
-            Placeholder for twenty-run computational performance.
-        _computational_performance_thirtyfour : None
-            Placeholder for thirtyfour-run computational performance.
+        _computational_performance_thousands : None
+            Placeholder for thousands-run computational performance.
+        _computational_performance_ten_thousands : None
+            Placeholder for ten_thousands-run computational performance.
         _computational_performance_fiftyeight : None
             Placeholder for fiftyeight-run computational performance.
         _computational_performance_hundred : None
@@ -210,13 +208,11 @@ class BaseInformation(ErsiliaBase):
         self._model_size = None
         self._environment_size = None
         self._image_size = None
-        self._computational_performance_four = None
-        self._computational_performance_seven = None
-        self._computational_performance_twelve = None
-        self._computational_performance_twenty = None
-        self._computational_performance_thirtyfour = None
-        self._computational_performance_fiftyeight = None
+        self._computational_performance_one = None
+        self._computational_performance_ten = None
         self._computational_performance_hundred = None
+        self._computational_performance_thousands = None
+        self._computational_performance_ten_thousands = None
         self._pack_method = None
         self._deployment = None
 
@@ -1454,19 +1450,19 @@ class BaseInformation(ErsiliaBase):
             self._image_size = self._serialize_to_numeric(new_image_size)
 
     @property
-    def computational_performance_four(self):
-        """Get the computational performance at level four.
+    def computational_performance_one(self):
+        """Get the computational performance at level one.
 
         Returns
         -------
         int or float
-            The computational performance metric at level four.
+            The computational performance metric at level one.
         """
-        return self._computational_performance_four
+        return self._computational_performance_one
 
-    @computational_performance_four.setter
-    def computational_performance_four(self, new_value):
-        """Set the computational performance at level four.
+    @computational_performance_one.setter
+    def computational_performance_one(self, new_value):
+        """Set the computational performance at level one.
 
         Parameters
         ----------
@@ -1479,15 +1475,15 @@ class BaseInformation(ErsiliaBase):
             If `new_value` is not an int or float.
         """
         if new_value is None:
-            self._computational_performance_four = None
+            self._computational_performance_one = None
         elif not self._is_numeric(new_value):
-            raise ComputationalPerformanceFourBaseInformationError
+            raise ComputationalPerformanceOneBaseInformationError
         else:
-            self._computational_performance_four = self._serialize_to_numeric(new_value)
+            self._computational_performance_one = self._serialize_to_numeric(new_value)
 
     @property
-    def computational_performance_seven(self):
-        """Get the computational performance at level seven.
+    def computational_performance_ten(self):
+        """Get the computational performance at level ten.
 
         Returns
         -------
@@ -1496,9 +1492,9 @@ class BaseInformation(ErsiliaBase):
         """
         return self._computational_performance_seven
 
-    @computational_performance_seven.setter
-    def computational_performance_seven(self, new_value):
-        """Set the computational performance at level seven.
+    @computational_performance_ten.setter
+    def computational_performance_ten(self, new_value):
+        """Set the computational performance at level ten.
 
         Parameters
         ----------
@@ -1507,153 +1503,15 @@ class BaseInformation(ErsiliaBase):
 
         Raises
         ------
-        ComputationalPerformanceSevenBaseInformationError
+        ComputationalPerformanceTenBaseInformationError
             If `new_value` is not an int or float.
         """
         if new_value is None:
-            self._computational_performance_seven = None
+            self._computational_performance_ten = None
         elif not self._is_numeric(new_value):
-            raise ComputationalPerformanceSevenBaseInformationError
+            raise ComputationalPerformanceTenBaseInformationError
         else:
-            self._computational_performance_seven = self._serialize_to_numeric(
-                new_value
-            )
-
-    @property
-    def computational_performance_twelve(self):
-        """Get the computational performance at level twelve.
-
-        Returns
-        -------
-        int or float
-            The computational performance metric at level twelve.
-        """
-        return self._computational_performance_twelve
-
-    @computational_performance_twelve.setter
-    def computational_performance_twelve(self, new_value):
-        """Set the computational performance at level twelve.
-
-        Parameters
-        ----------
-        new_value : int or float
-            The new computational performance value.
-
-        Raises
-        ------
-        ComputationalPerformanceTwelveBaseInformationError
-            If `new_value` is not an int or float.
-        """
-        if new_value is None:
-            self._computational_performance_twelve = None
-        elif not self._is_numeric(new_value):
-            raise ComputationalPerformanceTwelveBaseInformationError
-        else:
-            self._computational_performance_twelve = self._serialize_to_numeric(
-                new_value
-            )
-
-    @property
-    def computational_performance_twenty(self):
-        """Get the computational performance at level twenty.
-
-        Returns
-        -------
-        int or float
-            The computational performance metric at level twenty.
-        """
-        return self._computational_performance_twenty
-
-    @computational_performance_twenty.setter
-    def computational_performance_twenty(self, new_value):
-        """Set the computational performance at level twenty.
-
-        Parameters
-        ----------
-        new_value : int or float
-            The new computational performance value.
-
-        Raises
-        ------
-        ComputationalPerformanceTwentyBaseInformationError
-            If `new_value` is not an int or float.
-        """
-        if new_value is None:
-            self._computational_performance_twenty = None
-        elif not self._is_numeric(new_value):
-            raise ComputationalPerformanceTwentyBaseInformationError
-        else:
-            self._computational_performance_twenty = self._serialize_to_numeric(
-                new_value
-            )
-
-    @property
-    def computational_performance_thirtyfour(self):
-        """Get the computational performance at level thirtyfour.
-
-        Returns
-        -------
-        int or float
-            The computational performance metric at level thirtyfour.
-        """
-        return self._computational_performance_thirtyfour
-
-    @computational_performance_thirtyfour.setter
-    def computational_performance_thirtyfour(self, new_value):
-        """Set the computational performance at level thirtyfour.
-
-        Parameters
-        ----------
-        new_value : int or float
-            The new computational performance value.
-
-        Raises
-        ------
-        ComputationalPerformanceThirtyfourBaseInformationError
-            If `new_value` is not an int or float.
-        """
-        if new_value is None:
-            self._computational_performance_thirtyfour = None
-        elif not self._is_numeric(new_value):
-            raise ComputationalPerformanceThirtyfourBaseInformationError
-        else:
-            self._computational_performance_thirtyfour = self._serialize_to_numeric(
-                new_value
-            )
-
-    @property
-    def computational_performance_fiftyeight(self):
-        """Get the computational performance at level fiftyeight.
-
-        Returns
-        -------
-        int or float
-            The computational performance metric at level fiftyeight.
-        """
-        return self._computational_performance_fiftyeight
-
-    @computational_performance_fiftyeight.setter
-    def computational_performance_fiftyeight(self, new_value):
-        """Set the computational performance at level fiftyeight.
-
-        Parameters
-        ----------
-        new_value : int or float
-            The new computational performance value.
-
-        Raises
-        ------
-        ComputationalPerformanceFiftyeightBaseInformationError
-            If `new_value` is not an int or float.
-        """
-        if new_value is None:
-            self._computational_performance_fiftyeight = None
-        elif not self._is_numeric(new_value):
-            raise ComputationalPerformanceFiftyeightBaseInformationError
-        else:
-            self._computational_performance_fiftyeight = self._serialize_to_numeric(
-                new_value
-            )
+            self._computational_performance_ten = self._serialize_to_numeric(new_value)
 
     @property
     def computational_performance_hundred(self):
@@ -1677,7 +1535,7 @@ class BaseInformation(ErsiliaBase):
 
         Raises
         ------
-        ComputationalPerformanceHundredBaseInformationError
+        ComputationalPerformanceTwelveBaseInformationError
             If `new_value` is not an int or float.
         """
         if new_value is None:
@@ -1686,6 +1544,74 @@ class BaseInformation(ErsiliaBase):
             raise ComputationalPerformanceHundredBaseInformationError
         else:
             self._computational_performance_hundred = self._serialize_to_numeric(
+                new_value
+            )
+
+    @property
+    def computational_performance_thousands(self):
+        """Get the computational performance at level thousands.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric at level thousands.
+        """
+        return self._computational_performance_thousands
+
+    @computational_performance_thousands.setter
+    def computational_performance_thousands(self, new_value):
+        """Set the computational performance at level thousands.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceTwentyBaseInformationError
+            If `new_value` is not an int or float.
+        """
+        if new_value is None:
+            self._computational_performance_thousands = None
+        elif not self._is_numeric(new_value):
+            raise ComputationalPerformanceThousandsBaseInformationError
+        else:
+            self._computational_performance_thousands = self._serialize_to_numeric(
+                new_value
+            )
+
+    @property
+    def computational_performance_ten_thousands(self):
+        """Get the computational performance at level ten_thousands.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric at level ten_thousands.
+        """
+        return self._computational_performance_ten_thousands
+
+    @computational_performance_ten_thousands.setter
+    def computational_performance_ten_thousands(self, new_value):
+        """Set the computational performance at level ten_thousands.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceThirtyfourBaseInformationError
+            If `new_value` is not an int or float.
+        """
+        if new_value is None:
+            self._computational_performance_ten_thousands = None
+        elif not self._is_numeric(new_value):
+            raise ComputationalPerformanceTenThousandsBaseInformationError
+        else:
+            self._computational_performance_ten_thousands = self._serialize_to_numeric(
                 new_value
             )
 
@@ -1860,13 +1786,11 @@ class BaseInformation(ErsiliaBase):
             "Model Size": self.model_size,
             "Environment Size": self.environment_size,
             "Image Size": self.image_size,
-            "Computational Performance 4": self.computational_performance_four,
-            "Computational Performance 7": self.computational_performance_seven,
-            "Computational Performance 12": self.computational_performance_twelve,
-            "Computational Performance 20": self.computational_performance_twenty,
-            "Computational Performance 34": self.computational_performance_thirtyfour,
-            "Computational Performance 58": self.computational_performance_fiftyeight,
-            "Computational Performance 100": self.computational_performance_hundred,
+            "Computational Performance 1": self._computational_performance_one,
+            "Computational Performance 10": self._computational_performance_ten,
+            "Computational Performance 100": self._computational_performance_hundred,
+            "Computational Performance 1000": self.computational_performance_thousands,
+            "Computational Performance 10000": self.computational_performance_ten_thousands,
             "Docker Pack Method": self.pack_method,
             "Deployment": self.deployment,
         }
@@ -1920,25 +1844,23 @@ class BaseInformation(ErsiliaBase):
         self._assign("environment_size", "Environment Size", data)
         self._assign("image_size", "Image Size", data)
         self._assign(
-            "computational_performance_four", "Computational Performance 4", data
+            "computational_performance_one", "Computational Performance 1", data
         )
         self._assign(
-            "computational_performance_seven", "Computational Performance 7", data
-        )
-        self._assign(
-            "computational_performance_twelve", "Computational Performance 12", data
-        )
-        self._assign(
-            "computational_performance_twenty", "Computational Performance 20", data
-        )
-        self._assign(
-            "computational_performance_thirtyfour", "Computational Performance 34", data
-        )
-        self._assign(
-            "computational_performance_fiftyeight", "Computational Performance 58", data
+            "computational_performance_ten", "Computational Performance 10", data
         )
         self._assign(
             "computational_performance_hundred", "Computational Performance 100", data
+        )
+        self._assign(
+            "computational_performance_thousands",
+            "Computational Performance 1000",
+            data,
+        )
+        self._assign(
+            "computational_performance_ten_thousands",
+            "Computational Performance 10000",
+            data,
         )
         self._assign("docker_pack_method", "Docker Pack Method", data)
         self._assign("deployment", "Deployment", data)
