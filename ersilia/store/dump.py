@@ -87,10 +87,9 @@ class DumpLocalCache:
         if not self.init_redis():
             return [], None
         results, missing = self.fetch_cached_results(model_id, data)
-        print(missing)
         header = self.fetch_or_cache_header(model_id, computed_headers)
         results = self.orient_to_json(results, header, data, "records", ["float"])
-        return results
+        return results, missing
 
     def list_cached_inputs(self, model_id):
         hash_key = f"cache:{model_id}"

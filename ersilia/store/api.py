@@ -19,12 +19,14 @@ from ersilia.store.utils import (
     echo_intro,
     echo_job_submitted,
     echo_job_succeeded,
+    echo_local_sample_warning,
     echo_merged_saved,
     echo_small_sample_warning,
     echo_status,
     echo_submitting_job,
     echo_upload_complete,
     echo_uploading_inputs,
+    merge_csvs_stdlib,
 )
 
 
@@ -97,39 +99,70 @@ class InferenceStoreApi(ErsiliaBase):
             If the job fails, no shards are returned, or polling times out.
         """
         echo_intro(self.click)
-        if self.output_source == OutputSource.LOCAL and inputs is not None:
-            self.dump_local.init_redis()
+        if self.output_source in (OutputSource.LOCAL_ONLY, OutputSource.LOCAL):
+            return self._handle_strict_local(inputs)
+
+        shards = self._submit_and_get_shards(inputs)
+        return self._merge_shards(shards)
+
+    def _handle_strict_local(self, inputs: list) -> str:
+        self.dump_local.init_redis()
+
+        if inputs:
             self.dump_local.fetch_cached_results(self.model_id, inputs)
             results = self.dump_local.get_cached(self.model_id, inputs)
-            results = self.dump_local._standardize_output(
-                inputs, results, str(self.output_path), None
-            )
-            self.generic_output_adapter._adapt_generic(
-                json.dumps(results), str(self.output_path), self.model_id, "run"
-            )
-            sys.exit(1)
-            return self.output_path
+        else:
+            results, inputs = self.dump_local.fetch_all_cached(self.model_id)
 
+        results = self.dump_local._standardize_output(
+            inputs, results, str(self.output_path), None
+        )
+        self.generic_output_adapter._adapt_generic(
+            json.dumps(results), str(self.output_path), self.model_id, "run"
+        )
+        sys.exit(1)
+        return str(self.output_path)
+
+    def _handle_local(self, inputs: list) -> str:
+        self.dump_local.init_redis()
+        if inputs:
+            self.dump_local.fetch_cached_results(self.model_id, inputs)
+            results = self.dump_local.get_cached(self.model_id, inputs)
+            return results, None
+        else:
+            results, inputs = self.dump_local.fetch_all_cached(self.model_id)
+            if results:
+                results = self.dump_local._standardize_output(
+                    inputs, results, str(self.output_path), None
+                )
+                self.generic_output_adapter._adapt_generic(
+                    json.dumps(results),
+                    f"local_{str(self.output_path)}",
+                    self.model_id,
+                    "run",
+                )
+            return results, inputs
+
+    def _submit_and_get_shards(self, inputs: list) -> list:
         if (
-            self.output_source == OutputSource.LOCAL_ONLY
-            and inputs is None
-            or self.output_source == OutputSource.LOCAL
+            self.output_source in (OutputSource.CLOUD, OutputSource.CLOUD_ONLY)
             and inputs is None
         ):
-            self.dump_local.init_redis()
-            results, inputs = self.dump_local.fetch_all_cached(self.model_id)
-            results = self.dump_local._standardize_output(
-                inputs, results, str(self.output_path), None
-            )
-            self.generic_output_adapter._adapt_generic(
-                json.dumps(results), str(self.output_path), self.model_id, "run"
-            )
-            sys.exit(1)
-            return self.output_path
-
-        echo_small_sample_warning(self.click, self.n_samples)
+            results, _inputs = self._handle_local(inputs)
+            echo_local_sample_warning(self.click, self.n_samples, len(results))
+        if (
+            self.output_source in (OutputSource.CLOUD, OutputSource.CLOUD_ONLY)
+            and inputs
+        ):
+            results, _inputs = self._handle_local(inputs)
+        s = self.n_samples if inputs is None else len(inputs)
+        echo_small_sample_warning(self.click, s)
         self.request_id = str(uuid.uuid4())
-        if self.output_source == OutputSource.CLOUD:
+
+        if (
+            self.output_source in (OutputSource.CLOUD, OutputSource.CLOUD_ONLY)
+            and inputs
+        ):
             self.fetch_type = "filter"
             echo_uploading_inputs(self.click)
             pres = self.api.get_json(
@@ -139,6 +172,7 @@ class InferenceStoreApi(ErsiliaBase):
             tmp_path = self.files.create_temp_csv(inputs, self.input_adapter)
             self.files.upload_to_s3(pres, tmp_path)
             echo_upload_complete(self.click)
+
         echo_submitting_job(self.click, self.model_id)
         payload = {
             "requestid": self.request_id,
@@ -155,6 +189,7 @@ class InferenceStoreApi(ErsiliaBase):
                 "status"
             ]
             echo_status(self.click, status)
+
             if status == JobStatus.SUCCEEDED:
                 echo_job_succeeded(self.click)
                 break
@@ -174,10 +209,15 @@ class InferenceStoreApi(ErsiliaBase):
             raise RuntimeError("No shards returned")
         echo_found_shards(self.click, len(shards))
 
-        self.files.merge_shards(
-            shards, self.header, self.output_path, self.api, self.click
-        )
+        return shards
 
+    def _merge_shards(self, shards: list) -> str:
+        self.files.merge_shards(
+            shards, self.header, f"cloud_{self.output_path}", self.api, self.click
+        )
         echo_merged_saved(self.click, self.output_path)
+        merge_csvs_stdlib(
+            [f"cloud_{self.output_path}", f"local_{self.output_path}"], self.output_path
+        )
         sys.exit(1)
         return str(self.output_path)

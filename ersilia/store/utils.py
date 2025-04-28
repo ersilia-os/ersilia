@@ -59,6 +59,23 @@ def echo_job_submitted(click_iface, job_id: str):
     )
 
 
+def echo_local_sample_warning(click_iface, n: int, cache_size: int):
+    d = n - cache_size
+    if cache_size >= n:
+        message = "This is more or equal to a sample size you requested!"
+    else:
+        message = f"This is less than a sample size you requested by {d}!"
+
+    click_iface.echo(
+        f"{log_prefix()}Cache size of {cache_size} fetched from local Redis caching. {message}!",
+        fg="white",
+        blink=True,
+        bold=True,
+        bg="blue",
+    )
+    click.confirm("Do you want to continue to cloud for fetching?", abort=True)
+
+
 def echo_small_sample_warning(click_iface, n: int):
     if n <= 50000:
         click_iface.echo(
@@ -107,6 +124,20 @@ def echo_merged_saved(click_iface, output_path: Path):
     click_iface.echo(
         f"{log_prefix()}Merged CSV saved to: {output_path}", fg="blue", bold=False
     )
+
+
+def merge_csvs_stdlib(files, output):
+    with open(output, "w", newline="") as fout:
+        writer = None
+        for path in files:
+            with open(path, "r", newline="") as fin:
+                reader = csv.reader(fin)
+                header = next(reader)
+                if writer is None:
+                    writer = csv.writer(fout)
+                    writer.writerow(header)
+                for row in reader:
+                    writer.writerow(row)
 
 
 class ClickInterface:
