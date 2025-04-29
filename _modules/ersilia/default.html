@@ -333,6 +333,7 @@
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 <span class="n">BENTOML_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span> <span class="s2">&quot;bentoml&quot;</span><span class="p">)</span>
 <span class="n">CHECKSUM_NCHAR</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">CLOUD_CACHE_CHUNK</span> <span class="o">=</span> <span class="mi">100_000</span>
 <span class="n">CONDA_ENV_YML_FILE</span> <span class="o">=</span> <span class="s2">&quot;environment.yml&quot;</span>
 <span class="n">RUN_FILE</span> <span class="o">=</span> <span class="s2">&quot;run.sh&quot;</span>
 <span class="n">DOCKERFILE_FILE</span> <span class="o">=</span> <span class="s2">&quot;Dockerfile&quot;</span>
@@ -444,6 +445,7 @@
 <span class="p">]</span>  <span class="c1"># TODO This list can be expanded. It is simply to detect headers easily.</span>
 
 <span class="c1"># URLS</span>
+<span class="n">REDIS_EXPIRATION</span> <span class="o">=</span> <span class="mi">3600</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span>
 <span class="n">REDIS_PORT</span> <span class="o">=</span> <span class="mi">6379</span>
 <span class="n">REDIS_SERVER</span> <span class="o">=</span> <span class="s2">&quot;redis://localhost:</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">REDIS_PORT</span>
 <span class="n">REDIS_CONTAINER_NAME</span> <span class="o">=</span> <span class="s2">&quot;redis-server&quot;</span>
@@ -457,7 +459,7 @@
 <span class="n">INFERENCE_STORE_API_URL</span> <span class="o">=</span> <span class="p">(</span>
     <span class="s2">&quot;https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations&quot;</span>
 <span class="p">)</span>
-
+<span class="n">API_BASE</span> <span class="o">=</span> <span class="s2">&quot;https://hov95ejni7.execute-api.eu-central-1.amazonaws.com/dev/predict&quot;</span>
 <span class="c1"># EOS conda</span>
 <span class="n">_resolve_script</span> <span class="o">=</span> <span class="s2">&quot;conda_env_resolve.py&quot;</span>
 <span class="n">resolve_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">)</span>

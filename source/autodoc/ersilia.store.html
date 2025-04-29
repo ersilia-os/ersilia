@@ -332,44 +332,268 @@
 <span id="ersilia-store-api-module"></span><h2>ersilia.store.api module<a class="headerlink" href="#module-ersilia.store.api" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.store.api.InferenceStoreApi">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.api.</span></span><span class="sig-name descname"><span class="pre">InferenceStoreApi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.api.</span></span><span class="sig-name descname"><span class="pre">InferenceStoreApi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cloud-cache-only'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">click_iface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.store.utils.ClickInterface" title="ersilia.store.utils.ClickInterface"><span class="pre">ClickInterface</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_client</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.store.utils.ApiClient" title="ersilia.store.utils.ApiClient"><span class="pre">ApiClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_manager</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.store.utils.FileManager" title="ersilia.store.utils.FileManager"><span class="pre">FileManager</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
-<p>A class to interact with the Inference Store API.</p>
-<p>This class provides methods to upload input data to the inference store,
-request predictions, and retrieve the results. It handles the creation
-of unique request IDs, obtaining presigned URLs for file uploads, and
-managing the input data format.</p>
+<p>Synchronous client for the Inference Store API orchestrating end-to-end batch cloud precalculation fetcher.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model for which the inference is being performed.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to query.</p></li>
+<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to save the merged CSV (default is “&lt;model_id&gt;_precalc.csv”).</p></li>
+<li><p><strong>n_samples</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples to retrieve (default is -1 for all available).</p></li>
+<li><p><strong>output_source</strong> (<a class="reference internal" href="#ersilia.store.utils.OutputSource" title="ersilia.store.utils.OutputSource"><em>OutputSource</em></a><em>, </em><em>optional</em>) – Source of input data (default is OutputSource.CLOUD_ONLY).</p></li>
+<li><p><strong>click_iface</strong> (<a class="reference internal" href="#ersilia.store.utils.ClickInterface" title="ersilia.store.utils.ClickInterface"><em>ClickInterface</em></a><em>, </em><em>optional</em>) – CLI helper instance for styled output (default creates new one).</p></li>
+<li><p><strong>api_client</strong> (<a class="reference internal" href="#ersilia.store.utils.ApiClient" title="ersilia.store.utils.ApiClient"><em>ApiClient</em></a><em>, </em><em>optional</em>) – HTTP client for API interactions (default creates new one).</p></li>
+<li><p><strong>file_manager</strong> (<a class="reference internal" href="#ersilia.store.utils.FileManager" title="ersilia.store.utils.FileManager"><em>FileManager</em></a><em>, </em><em>optional</em>) – File operations helper (default creates new one).</p></li>
+</ul>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">InferenceStoreApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s2">&quot;eosxxxx&quot;</span><span class="p">)</span>
-<span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CCO&quot;</span><span class="p">,</span> <span class="s2">&quot;CCN&quot;</span><span class="p">]</span>
-<span class="n">api</span><span class="o">.</span><span class="n">get_precalculations</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-</pre></div>
-</div>
-<section id="mechanism">
-<h3>Mechanism<a class="headerlink" href="#mechanism" title="Link to this heading">¶</a></h3>
-<ol class="arabic simple">
-<li><p>Initialize the class with a model ID.</p></li>
-<li><p>Generate a unique request ID for each inference request.</p></li>
-<li><p>Obtain a presigned URL from the inference store for uploading input data.</p></li>
-<li><p>Adapt the input data to the required format and upload it using the presigned URL.</p></li>
-<li><p>Request the predictions from the inference store using the request ID.</p></li>
-<li><p>Retrieve and return the URL of the output predictions.</p></li>
-</ol>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.store.api.InferenceStoreApi.get_precalculations">
 <span class="sig-name descname"><span class="pre">get_precalculations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/store/api.html#InferenceStoreApi.get_precalculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.api.InferenceStoreApi.get_precalculations" title="Link to this definition">¶</a></dt>
-<dd><p>Get precalculations for the given inputs.</p>
+<dd><p>Execute full inference workflow: upload inputs, submit job, poll status,
+retrieve result shards, and merge them into a single CSV.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>inputs</strong> (<em>list</em>) – A list of input data for which precalculations are to be fetched.</p>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>list</em>) – List of input records to process.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The URL of the output presigned URL or an error message.</p>
+<dd class="field-even"><p>File path to the merged CSV containing inference results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the job fails, no shards are returned, or polling times out.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ersilia.store.dump">
+<span id="ersilia-store-dump-module"></span><h2>ersilia.store.dump module<a class="headerlink" href="#module-ersilia.store.dump" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.dump.</span></span><span class="sig-name descname"><span class="pre">DumpLocalCache</span></span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.cache_missing_results">
+<span class="sig-name descname"><span class="pre">cache_missing_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">computed_results</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.cache_missing_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.cache_missing_results" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.conn_redis">
+<span class="sig-name descname"><span class="pre">conn_redis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.conn_redis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.conn_redis" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.fetch_all_cached">
+<span class="sig-name descname"><span class="pre">fetch_all_cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.fetch_all_cached"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.fetch_all_cached" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.fetch_cached_results">
+<span class="sig-name descname"><span class="pre">fetch_cached_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.fetch_cached_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.fetch_cached_results" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.fetch_or_cache_header">
+<span class="sig-name descname"><span class="pre">fetch_or_cache_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">computed_headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.fetch_or_cache_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.fetch_or_cache_header" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.generate_redis_key">
+<span class="sig-name descname"><span class="pre">generate_redis_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.generate_redis_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.generate_redis_key" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.get_cached">
+<span class="sig-name descname"><span class="pre">get_cached</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">computed_headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.get_cached"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.get_cached" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.init_redis">
+<span class="sig-name descname"><span class="pre">init_redis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.init_redis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.init_redis" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.list_cached_inputs">
+<span class="sig-name descname"><span class="pre">list_cached_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.list_cached_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.list_cached_inputs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.make_hashable">
+<span class="sig-name descname"><span class="pre">make_hashable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.make_hashable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.make_hashable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.dump.DumpLocalCache.orient_to_json">
+<span class="sig-name descname"><span class="pre">orient_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orient</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/dump.html#DumpLocalCache.orient_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.dump.DumpLocalCache.orient_to_json" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ersilia.store.utils">
+<span id="ersilia-store-utils-module"></span><h2>ersilia.store.utils module<a class="headerlink" href="#module-ersilia.store.utils" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.store.utils.ApiClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">ApiClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3600</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ApiClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ApiClient" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>HTTP client wrapper for JSON-based and streaming API requests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_url</strong> (<em>str</em><em>, </em><em>optional</em>) – Base URL for all HTTP requests.</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em>, </em><em>optional</em>) – Default timeout in seconds for HTTP requests.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.ApiClient.download_stream">
+<span class="sig-name descname"><span class="pre">download_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">65536</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ApiClient.download_stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ApiClient.download_stream" title="Link to this definition">¶</a></dt>
+<dd><p>Stream binary data from a URL in configurable chunk sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – URL to download data from.</p></li>
+<li><p><strong>chunk_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of each chunk in bytes (default is 65536).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>bytes</em> – Chunks of data from the response.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.ApiClient.get_json">
+<span class="sig-name descname"><span class="pre">get_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ApiClient.get_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ApiClient.get_json" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a GET request and return parsed JSON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>endpoint</strong> (<em>str</em>) – API endpoint path (appended to base_url).</p></li>
+<li><p><strong>params</strong> (<em>dict</em><em>, </em><em>optional</em>) – Query parameters for the request.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed JSON response.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.ApiClient.head">
+<span class="sig-name descname"><span class="pre">head</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ApiClient.head"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ApiClient.head" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a HEAD request and return response headers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>url</strong> (<em>str</em>) – Full URL to send HEAD request to.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response headers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>requests.structures.CaseInsensitiveDict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.ApiClient.post_json">
+<span class="sig-name descname"><span class="pre">post_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ApiClient.post_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ApiClient.post_json" title="Link to this definition">¶</a></dt>
+<dd><p>Perform a POST request with JSON payload and return parsed JSON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>endpoint</strong> (<em>str</em>) – API endpoint path (appended to base_url).</p></li>
+<li><p><strong>json</strong> (<em>dict</em><em>, </em><em>optional</em>) – JSON payload to send.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed JSON response.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.store.utils.ClickInterface">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">ClickInterface</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colourize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ClickInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ClickInterface" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Interactive CLI helper for styled console output and progress bars.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>colourize</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to enable ANSI styling in output (default is True).</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.ClickInterface.echo">
+<span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blink</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ClickInterface.echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ClickInterface.echo" title="Link to this definition">¶</a></dt>
+<dd><p>Print a styled message with optional colors and text effects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<em>str</em>) – The text to display.</p></li>
+<li><p><strong>fg</strong> (<em>str</em><em>, </em><em>optional</em>) – Foreground color name or code.</p></li>
+<li><p><strong>bg</strong> (<em>str</em><em>, </em><em>optional</em>) – Background color name or code.</p></li>
+<li><p><strong>bold</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use bold text.</p></li>
+<li><p><strong>blink</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use blinking text.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.ClickInterface.progress_bar">
+<span class="sig-name descname"><span class="pre">progress_bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#ClickInterface.progress_bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.ClickInterface.progress_bar" title="Link to this definition">¶</a></dt>
+<dd><p>Create and return a progress bar instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>total</strong> (<em>int</em>) – Total count for the progress bar.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments passed to tqdm.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Configured progress bar.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tqdm.tqdm</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.store.utils.FileManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">FileManager</span></span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#FileManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.FileManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Utility class for temporary CSV creation, S3 uploads, and merging result shards.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.FileManager.create_temp_csv">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_temp_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_adapter</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#FileManager.create_temp_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.FileManager.create_temp_csv" title="Link to this definition">¶</a></dt>
+<dd><p>Write records to a temporary CSV file via a GenericInputAdapter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>records</strong> (<em>list</em>) – Iterable of input records to write.</p></li>
+<li><p><strong>input_adapter</strong> (<a class="reference internal" href="ersilia.io.html#ersilia.io.input.GenericInputAdapter" title="ersilia.io.input.GenericInputAdapter"><em>GenericInputAdapter</em></a>) – Adapter that yields dicts with ‘input’ key.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path of the created temporary CSV file.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -377,12 +601,39 @@ managing the input data format.</p>
 </dl>
 </dd></dl>
 
-</section>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.FileManager.merge_shards">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_shards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">click_iface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.store.utils.ClickInterface" title="ersilia.store.utils.ClickInterface"><span class="pre">ClickInterface</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_cache_csv_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#FileManager.merge_shards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.FileManager.merge_shards" title="Link to this definition">¶</a></dt>
+<dd><p>Download, decompress, and concatenate multiple CSV shards into a single file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shards</strong> (<em>list</em>) – List of dicts with keys ‘url’, ‘key’, and optional ‘size’.</p></li>
+<li><p><strong>header</strong> (<em>list</em>) – CSV header row.</p></li>
+<li><p><strong>output_path</strong> (<em>Path</em>) – Path to write the merged CSV.</p></li>
+<li><p><strong>downloader</strong> (<a class="reference internal" href="#ersilia.store.utils.ApiClient" title="ersilia.store.utils.ApiClient"><em>ApiClient</em></a>) – Used for HEAD and streaming GET requests.</p></li>
+<li><p><strong>click_iface</strong> (<a class="reference internal" href="#ersilia.store.utils.ClickInterface" title="ersilia.store.utils.ClickInterface"><em>ClickInterface</em></a>) – CLI interface for printing progress and warnings.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
-</section>
-<section id="module-ersilia.store.utils">
-<span id="ersilia-store-utils-module"></span><h2>ersilia.store.utils module<a class="headerlink" href="#module-ersilia.store.utils" title="Link to this heading">¶</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.FileManager.upload_to_s3">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">upload_to_s3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">presigned_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#FileManager.upload_to_s3"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.FileManager.upload_to_s3" title="Link to this definition">¶</a></dt>
+<dd><p>Upload a local file to S3 using provided presigned URL and form fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>presigned_info</strong> (<em>dict</em>) – Contains ‘url’ and optional ‘fields’ for multipart upload.</p></li>
+<li><p><strong>file_path</strong> (<em>str</em>) – Local path of the file to upload.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.store.utils.InferenceStoreMessage">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">InferenceStoreMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#InferenceStoreMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.InferenceStoreMessage" title="Link to this definition">¶</a></dt>
@@ -393,6 +644,33 @@ managing the input data format.</p>
 <dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The ID of the model for which the message is being generated.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.store.utils.JobStatus">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">JobStatus</span></span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#JobStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.JobStatus" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to define job completetion status.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.store.utils.JobStatus.FAILED">
+<span class="sig-name descname"><span class="pre">FAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'FAILED'</span></em><a class="headerlink" href="#ersilia.store.utils.JobStatus.FAILED" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.store.utils.JobStatus.PENDING">
+<span class="sig-name descname"><span class="pre">PENDING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PENDING'</span></em><a class="headerlink" href="#ersilia.store.utils.JobStatus.PENDING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.store.utils.JobStatus.RUNNING">
+<span class="sig-name descname"><span class="pre">RUNNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RUNNING'</span></em><a class="headerlink" href="#ersilia.store.utils.JobStatus.RUNNING" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.store.utils.JobStatus.SUCCEEDED">
+<span class="sig-name descname"><span class="pre">SUCCEEDED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SUCCEEDED'</span></em><a class="headerlink" href="#ersilia.store.utils.JobStatus.SUCCEEDED" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -420,17 +698,32 @@ managing the input data format.</p>
 <p>Class to define output source options.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.store.utils.OutputSource.ALL">
-<span class="sig-name descname"><span class="pre">ALL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['local-only',</span> <span class="pre">'cloud-only']</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.ALL" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ALL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['local-cache-only',</span> <span class="pre">'cloud-cache-only']</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.ALL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.store.utils.OutputSource.CACHE_ONLY">
+<span class="sig-name descname"><span class="pre">CACHE_ONLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cache-only'</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.CACHE_ONLY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.store.utils.OutputSource.CLOUD">
+<span class="sig-name descname"><span class="pre">CLOUD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cloud-cache'</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.CLOUD" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.store.utils.OutputSource.CLOUD_ONLY">
-<span class="sig-name descname"><span class="pre">CLOUD_ONLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cloud-only'</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.CLOUD_ONLY" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">CLOUD_ONLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'cloud-cache-only'</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.CLOUD_ONLY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.store.utils.OutputSource.LOCAL">
+<span class="sig-name descname"><span class="pre">LOCAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'local-cache'</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.LOCAL" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.store.utils.OutputSource.LOCAL_ONLY">
-<span class="sig-name descname"><span class="pre">LOCAL_ONLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'local-only'</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.LOCAL_ONLY" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">LOCAL_ONLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'local-cache-only'</span></em><a class="headerlink" href="#ersilia.store.utils.OutputSource.LOCAL_ONLY" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -460,6 +753,23 @@ managing the input data format.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>True if the option is local, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.store.utils.OutputSource.is_precalculation_enabled">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_precalculation_enabled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#OutputSource.is_precalculation_enabled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.OutputSource.is_precalculation_enabled" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the option is cloud.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>option</strong> (<em>str</em>) – The option to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the option is cloud, False otherwise.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>bool</p>
@@ -526,6 +836,86 @@ managing the input data format.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_found_shards">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_found_shards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_found_shards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_found_shards" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_intro">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_intro</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_intro"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_intro" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_job_submitted">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_job_submitted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_job_submitted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_job_submitted" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_job_succeeded">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_job_succeeded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_job_succeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_job_succeeded" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_local_sample_warning">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_local_sample_warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_local_sample_warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_local_sample_warning" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_merged_saved">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_merged_saved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_merged_saved"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_merged_saved" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_redis_fetched_missed">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_redis_fetched_missed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_missing</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_redis_fetched_missed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_redis_fetched_missed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_redis_job_submitted">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_redis_job_submitted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_redis_job_submitted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_redis_job_submitted" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_redis_local_completed">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_redis_local_completed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_redis_local_completed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_redis_local_completed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_small_sample_warning">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_small_sample_warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_small_sample_warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_small_sample_warning" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_status">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_status" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_submitting_job">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_submitting_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_submitting_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_submitting_job" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_upload_complete">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_upload_complete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_upload_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_upload_complete" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.echo_uploading_inputs">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">echo_uploading_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#echo_uploading_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.echo_uploading_inputs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.log_prefix">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">log_prefix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#log_prefix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.log_prefix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.store.utils.merge_csvs_stdlib">
+<span class="sig-prename descclassname"><span class="pre">ersilia.store.utils.</span></span><span class="sig-name descname"><span class="pre">merge_csvs_stdlib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#merge_csvs_stdlib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.merge_csvs_stdlib" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.store.utils.store_has_model">
@@ -614,18 +1004,64 @@ managing the input data format.</p>
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-ersilia.store.dump">ersilia.store.dump module</a><ul>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.cache_missing_results"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.cache_missing_results()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.conn_redis"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.conn_redis()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.fetch_all_cached"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.fetch_all_cached()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.fetch_cached_results"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.fetch_cached_results()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.fetch_or_cache_header"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.fetch_or_cache_header()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.generate_redis_key"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.generate_redis_key()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.get_cached"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.get_cached()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.init_redis"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.init_redis()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.list_cached_inputs"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.list_cached_inputs()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.make_hashable"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.make_hashable()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.dump.DumpLocalCache.orient_to_json"><code class="docutils literal notranslate"><span class="pre">DumpLocalCache.orient_to_json()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ersilia.store.utils">ersilia.store.utils module</a><ul>
+<li><a class="reference internal" href="#ersilia.store.utils.ApiClient"><code class="docutils literal notranslate"><span class="pre">ApiClient</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.store.utils.ApiClient.download_stream"><code class="docutils literal notranslate"><span class="pre">ApiClient.download_stream()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.ApiClient.get_json"><code class="docutils literal notranslate"><span class="pre">ApiClient.get_json()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.ApiClient.head"><code class="docutils literal notranslate"><span class="pre">ApiClient.head()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.ApiClient.post_json"><code class="docutils literal notranslate"><span class="pre">ApiClient.post_json()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.store.utils.ClickInterface"><code class="docutils literal notranslate"><span class="pre">ClickInterface</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.store.utils.ClickInterface.echo"><code class="docutils literal notranslate"><span class="pre">ClickInterface.echo()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.ClickInterface.progress_bar"><code class="docutils literal notranslate"><span class="pre">ClickInterface.progress_bar()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.store.utils.FileManager"><code class="docutils literal notranslate"><span class="pre">FileManager</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.store.utils.FileManager.create_temp_csv"><code class="docutils literal notranslate"><span class="pre">FileManager.create_temp_csv()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.FileManager.merge_shards"><code class="docutils literal notranslate"><span class="pre">FileManager.merge_shards()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.FileManager.upload_to_s3"><code class="docutils literal notranslate"><span class="pre">FileManager.upload_to_s3()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#ersilia.store.utils.InferenceStoreMessage"><code class="docutils literal notranslate"><span class="pre">InferenceStoreMessage</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.JobStatus"><code class="docutils literal notranslate"><span class="pre">JobStatus</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.store.utils.JobStatus.FAILED"><code class="docutils literal notranslate"><span class="pre">JobStatus.FAILED</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.JobStatus.PENDING"><code class="docutils literal notranslate"><span class="pre">JobStatus.PENDING</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.JobStatus.RUNNING"><code class="docutils literal notranslate"><span class="pre">JobStatus.RUNNING</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.JobStatus.SUCCEEDED"><code class="docutils literal notranslate"><span class="pre">JobStatus.SUCCEEDED</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#ersilia.store.utils.ModelNotInStore"><code class="docutils literal notranslate"><span class="pre">ModelNotInStore</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.store.utils.ModelNotInStore.echo"><code class="docutils literal notranslate"><span class="pre">ModelNotInStore.echo()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.store.utils.OutputSource"><code class="docutils literal notranslate"><span class="pre">OutputSource</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.store.utils.OutputSource.ALL"><code class="docutils literal notranslate"><span class="pre">OutputSource.ALL</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.OutputSource.CACHE_ONLY"><code class="docutils literal notranslate"><span class="pre">OutputSource.CACHE_ONLY</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.OutputSource.CLOUD"><code class="docutils literal notranslate"><span class="pre">OutputSource.CLOUD</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.store.utils.OutputSource.CLOUD_ONLY"><code class="docutils literal notranslate"><span class="pre">OutputSource.CLOUD_ONLY</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.OutputSource.LOCAL"><code class="docutils literal notranslate"><span class="pre">OutputSource.LOCAL</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.store.utils.OutputSource.LOCAL_ONLY"><code class="docutils literal notranslate"><span class="pre">OutputSource.LOCAL_ONLY</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.store.utils.OutputSource.is_cloud"><code class="docutils literal notranslate"><span class="pre">OutputSource.is_cloud()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.store.utils.OutputSource.is_local"><code class="docutils literal notranslate"><span class="pre">OutputSource.is_local()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.OutputSource.is_precalculation_enabled"><code class="docutils literal notranslate"><span class="pre">OutputSource.is_precalculation_enabled()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.store.utils.PrecalculationsInStore"><code class="docutils literal notranslate"><span class="pre">PrecalculationsInStore</span></code></a><ul>
@@ -637,6 +1073,22 @@ managing the input data format.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.store.utils.delete_file_upon_upload"><code class="docutils literal notranslate"><span class="pre">delete_file_upon_upload()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_found_shards"><code class="docutils literal notranslate"><span class="pre">echo_found_shards()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_intro"><code class="docutils literal notranslate"><span class="pre">echo_intro()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_job_submitted"><code class="docutils literal notranslate"><span class="pre">echo_job_submitted()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_job_succeeded"><code class="docutils literal notranslate"><span class="pre">echo_job_succeeded()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_local_sample_warning"><code class="docutils literal notranslate"><span class="pre">echo_local_sample_warning()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_merged_saved"><code class="docutils literal notranslate"><span class="pre">echo_merged_saved()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_redis_fetched_missed"><code class="docutils literal notranslate"><span class="pre">echo_redis_fetched_missed()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_redis_job_submitted"><code class="docutils literal notranslate"><span class="pre">echo_redis_job_submitted()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_redis_local_completed"><code class="docutils literal notranslate"><span class="pre">echo_redis_local_completed()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_small_sample_warning"><code class="docutils literal notranslate"><span class="pre">echo_small_sample_warning()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_status"><code class="docutils literal notranslate"><span class="pre">echo_status()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_submitting_job"><code class="docutils literal notranslate"><span class="pre">echo_submitting_job()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_upload_complete"><code class="docutils literal notranslate"><span class="pre">echo_upload_complete()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.echo_uploading_inputs"><code class="docutils literal notranslate"><span class="pre">echo_uploading_inputs()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.log_prefix"><code class="docutils literal notranslate"><span class="pre">log_prefix()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.store.utils.merge_csvs_stdlib"><code class="docutils literal notranslate"><span class="pre">merge_csvs_stdlib()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.store.utils.store_has_model"><code class="docutils literal notranslate"><span class="pre">store_has_model()</span></code></a></li>
 </ul>
 </li>
