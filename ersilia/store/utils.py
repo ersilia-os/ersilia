@@ -35,6 +35,28 @@ def echo_intro(click_iface):
     click_iface.echo(f"{'[Version 1.0.0]\n':^{width}}", fg="red", bold=True)
 
 
+def echo_redis_job_submitted(click_iface):
+    click_iface.echo(
+        f"{log_prefix()}Job submitted to Redis caching system", fg="blue", bold=False
+    )
+
+
+def echo_redis_fetched_missed(click_iface, size_res, size_missing):
+    click_iface.echo(
+        f"{log_prefix()}Results size of {size_res} fetched from local cache. Missing inputs: {size_missing}",
+        fg="cyan",
+        bold=False,
+    )
+
+
+def echo_redis_local_completed(click_iface):
+    click_iface.echo(
+        f"{log_prefix()}All inputs has results in local caches and won't processed further query. Exiting the system with output file",
+        fg="blue",
+        bold=False,
+    )
+
+
 def echo_uploading_inputs(click_iface):
     click_iface.echo(
         f"{log_prefix()}Uploading input data to S3 bucket", fg="blue", bold=False
@@ -69,7 +91,7 @@ def echo_local_sample_warning(click_iface, n: int, cache_size: int):
     click_iface.echo(
         f"{log_prefix()}Cache size of {cache_size} fetched from local Redis caching. {message}!",
         fg="white",
-        blink=True,
+        blink=False,
         bold=True,
         bg="blue",
     )
@@ -365,6 +387,7 @@ class FileManager:
         output_path: Path,
         downloader,
         click_iface: ClickInterface,
+        local_cache_csv_path: str,
     ):
         """
         Download, decompress, and concatenate multiple CSV shards into a single file.
@@ -442,6 +465,22 @@ class FileManager:
 
             pbar.close()
 
+            if (
+                os.path.exists(local_cache_csv_path)
+                and os.path.getsize(local_cache_csv_path) > 0
+            ):
+                with open(local_cache_csv_path, "r", encoding="utf-8") as cache_f:
+                    next(cache_f, None)
+                    for line in cache_f:
+                        out_f.write(line)
+
+                try:
+                    os.remove(local_cache_csv_path)
+                except OSError as e:
+                    raise Exception(
+                        f"Warning: could not delete cache file {local_cache_csv_path}: {e}"
+                    )
+
 
 class InferenceStoreMessage(object):
     """
@@ -477,6 +516,7 @@ class OutputSource:
     """
 
     LOCAL_ONLY = "local-cache-only"
+    CACHE_ONLY = "cache-only"
     LOCAL = "local-cache"
     CLOUD_ONLY = "cloud-cache-only"
     CLOUD = "cloud-cache"
@@ -500,7 +540,7 @@ class OutputSource:
         bool
             True if the option is local, False otherwise.
         """
-        return option == cls.LOCAL
+        return option == cls.LOCAL_ONLY
 
     @classmethod
     def is_cloud(cls, option):
@@ -517,7 +557,28 @@ class OutputSource:
         bool
             True if the option is cloud, False otherwise.
         """
-        return option == cls.CLOUD
+        return option == cls.CLOUD_ONLY
+
+    @classmethod
+    def is_precalculation_enabled(cls, option):
+        """
+        Check if the option is cloud.
+
+        Parameters
+        ----------
+        option : str
+            The option to check.
+
+        Returns
+        -------
+        bool
+            True if the option is cloud, False otherwise.
+        """
+        return (
+            option == cls.CLOUD_ONLY
+            or option == cls.LOCAL_ONLY
+            or option == cls.CACHE_ONLY
+        )
 
 
 class ModelNotInStore(InferenceStoreMessage):

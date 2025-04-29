@@ -50,11 +50,12 @@ def serve_cmd():
         required=False,
         default=False,
     )
-    @click.option("--cache/--no-cache", is_flag=True, default=True)
-    @click.option("--local-cache", is_flag=True, default=False)
+    @click.option(
+        "--enable-local-cache/--disable-local-cache", is_flag=True, default=True
+    )
     @click.option("--local-cache-only", is_flag=True, default=False)
-    @click.option("--cloud-cache", is_flag=True, default=False)
     @click.option("--cloud-cache-only", is_flag=True, default=False)
+    @click.option("--cache-only", is_flag=True, default=False)
     @click.option(
         "--max-cache-memory-frac", "maxmemory", type=click.FLOAT, default=None
     )
@@ -62,32 +63,28 @@ def serve_cmd():
         model,
         port,
         track,
-        cache,
-        local_cache,
+        enable_local_cache,
         local_cache_only,
-        cloud_cache,
         cloud_cache_only,
+        cache_only,
         maxmemory,
     ):
         output_source = None
         if local_cache_only:
             output_source = OutputSource.LOCAL_ONLY
-        if local_cache:
-            output_source = OutputSource.LOCAL
         if cloud_cache_only:
             output_source = OutputSource.CLOUD_ONLY
-        if cloud_cache:
-            output_source = OutputSource.CLOUD
-
+        if cache_only:
+            output_source = OutputSource.CACHE_ONLY
         mdl = ErsiliaModel(
             model,
             output_source=output_source,
             preferred_port=port,
             track_runs=track,
-            cache=cache,
+            cache=enable_local_cache,
             maxmemory=maxmemory,
         )
-        redis_setup = SetupRedis(cache, maxmemory)
+        redis_setup = SetupRedis(enable_local_cache, maxmemory)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
 

@@ -34,10 +34,8 @@ class DumpLocalCache:
         results, missing = [], []
         for item, val in zip(data, raw):
             if val:
-                print(val)
                 results.append(json.loads(val))
             else:
-                results.append([None])
                 missing.append(item)
         return results, missing
 
@@ -154,7 +152,7 @@ class DumpLocalCache:
             return serialized
         return None
 
-    def _standardize_output(self, input_data, results, output, meta):
+    def _standardize_output(self, input_data, results, output, meta, n_samples=None):
         def _parse(v):
             if isinstance(v, str):
                 try:
@@ -164,17 +162,26 @@ class DumpLocalCache:
             return v
 
         _results = []
-        keys = meta.get("outcome") if meta and meta.get("outcome") else ["outcome"]
-        for inp, out in zip(input_data, results):
-            vals = [_parse(v) for v in out.values()]
-            if output.endswith(".json"):
-                if len(keys) == len(vals):
-                    out_dict = dict(zip(keys, vals))
+        try:
+            keys = meta.get("outcome") if meta and meta.get("outcome") else ["outcome"]
+            if isinstance(results, tuple):
+                results, _ = results
+            if n_samples and results:
+                results = results[:n_samples]
+            for inp, out in zip(input_data, results):
+                vals = [_parse(v) for v in out.values()]
+                if output.endswith(".json"):
+                    if len(keys) == len(vals):
+                        out_dict = dict(zip(keys, vals))
+                    else:
+                        out_dict = {
+                            keys[0]: vals
+                            if len(vals) > 1
+                            else (vals[0] if vals else None)
+                        }
                 else:
-                    out_dict = {
-                        keys[0]: vals if len(vals) > 1 else (vals[0] if vals else None)
-                    }
-            else:
-                out_dict = {"outcome": vals[0] if len(vals) == 1 else vals}
-            _results.append({"input": inp, "output": out_dict})
+                    out_dict = {"outcome": vals[0] if len(vals) == 1 else vals}
+                _results.append({"input": inp, "output": out_dict})
+        except Exception as e:
+            raise Exception(f"Something went wring when standardizing the output: {e}")
         return _results

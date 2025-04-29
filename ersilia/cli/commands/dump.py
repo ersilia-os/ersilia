@@ -1,7 +1,11 @@
+import sys
+
 import click
 
 from ...core.session import Session
 from ...store.api import InferenceStoreApi
+from ...store.utils import OutputSource
+from ..echo import echo
 from . import ersilia_cli
 
 
@@ -21,6 +25,20 @@ def dump_cmd():
         session = Session(config_json=None)
         model_id = session.current_model_id()
         output_source = session.current_output_source()
+        message = """
+        Model is not served with one of the following flags:
+        * --local-cache-only
+        * --cloud-cache-only
+        * --cache-only
+        Please serve the model with one of the above flags first!
+        """
+        if output_source not in (
+            OutputSource.CACHE_ONLY,
+            OutputSource.LOCAL_ONLY,
+            OutputSource.CLOUD_ONLY,
+        ):
+            echo(message, fg="yellow", bold=True)
+            sys.exit(1)
         ifst = InferenceStoreApi(
             model_id=model_id,
             output=output,
