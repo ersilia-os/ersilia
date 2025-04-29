@@ -115,7 +115,7 @@ class ErsiliaModel(ErsiliaBase):
     def __init__(
         self,
         model: str,
-        output_source: OutputSource = OutputSource.LOCAL_ONLY,
+        output_source: OutputSource = None,
         service_class: str = None,
         config_json: dict = None,
         credentials_json: dict = None,
