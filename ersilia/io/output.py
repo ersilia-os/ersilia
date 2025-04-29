@@ -454,6 +454,10 @@ class GenericOutputAdapter(ResponseRefactor):
         return self._get_dtype(dtype)
 
     def _sinlge_cast(self, val, dtype):
+        if not isinstance(val, list) and val is not None:
+            return dtype(val)
+        if not isinstance(val, list) and val is None:
+            return val
         return [dtype(v) if v is not None else v for v in val]
 
     def _cast_values_from_github_metadata(self, values, dtype):
@@ -544,13 +548,10 @@ class GenericOutputAdapter(ResponseRefactor):
 
     def _resolve_schema_metadata(self, model_id: str):
         metadata = self._fetch_schema_from_github()
-        print(metadata)
         if metadata:
-            print("A")
             schema_keys, schema_dtypes, output_dim = metadata
             output_shape = self._convert_dimension_to_shape(output_dim)
         else:
-            print("B")
             schema_keys, schema_dtypes, output_dim = None, None, None
             output_shape = self._get_outputshape(model_id)
 

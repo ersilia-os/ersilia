@@ -14,6 +14,7 @@ EOS_PLAYGROUND = os.path.join(EOS, "playground")
 ROOT = os.path.dirname(os.path.realpath(__file__))
 BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
 CHECKSUM_NCHAR = 8
+CLOUD_CACHE_CHUNK = 100_000
 CONDA_ENV_YML_FILE = "environment.yml"
 RUN_FILE = "run.sh"
 DOCKERFILE_FILE = "Dockerfile"
@@ -125,6 +126,7 @@ HEADER_INDICATORS = [
 ]  # TODO This list can be expanded. It is simply to detect headers easily.
 
 # URLS
+REDIS_EXPIRATION = 3600 * 24 * 7
 REDIS_PORT = 6379
 REDIS_SERVER = "redis://localhost:%s" % REDIS_PORT
 REDIS_CONTAINER_NAME = "redis-server"
@@ -138,7 +140,7 @@ S3_BUCKET_URL_ZIP = "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com
 INFERENCE_STORE_API_URL = (
     "https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations"
 )
-
+API_BASE = "https://hov95ejni7.execute-api.eu-central-1.amazonaws.com/dev/predict"
 # EOS conda
 _resolve_script = "conda_env_resolve.py"
 resolve_script = os.path.join(EOS, _resolve_script)

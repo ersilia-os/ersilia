@@ -48,7 +48,6 @@ def run_cmd():
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
-
         output_source = session.current_output_source()
         if model_id is None:
             echo(

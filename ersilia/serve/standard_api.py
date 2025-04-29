@@ -551,8 +551,10 @@ class StandardCSVRunApi(ErsiliaBase):
         """
         input_data = self.serialize_to_json(input)
 
-        if OutputSource.is_cloud(output_source):
-            store = InferenceStoreApi(model_id=self.model_id)
+        if OutputSource.is_precalculation_enabled(output_source):
+            store = InferenceStoreApi(
+                model_id=self.model_id, output=output, output_source=output_source
+            )
             return store.get_precalculations(input_data)
 
         url = f"{self.url}/{self.api_name}"
@@ -566,7 +568,6 @@ class StandardCSVRunApi(ErsiliaBase):
         results, meta = self._fetch_result(input_data, url, batch_size)
         self.logger.info("Standardizing output...")
         results = self._standardize_output(input_data, results, output, meta)
-
         et = time.perf_counter()
         self.logger.info(f"All batches processed in {et - st:.4f} seconds")
 
@@ -579,14 +580,13 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def _fetch_result(self, input_data, url, batch_size):
         total, overall_results, meta = len(input_data), [], None
-
         for i in range(0, total, batch_size):
             batch = input_data[i : i + batch_size]
             st = time.perf_counter()
             response = requests.post(url, json=batch)
             et = time.perf_counter()
             self.logger.info(
-                f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
+                f"Batch {i//batch_size + 1} response fetched within: {et - st:.4f} seconds"
             )
 
             if response.status_code == 200:
@@ -604,12 +604,12 @@ class StandardCSVRunApi(ErsiliaBase):
                     del response["meta"]
             else:
                 self.logger.error(
-                    f"Batch {i // batch_size + 1} request failed with status: {response.status_code}"
+                    f"Batch {i//batch_size + 1} request failed with status: {response.status_code}"
                 )
                 return None
         return overall_results, meta
 
-    def _standardize_output(self, input_data, results, output, meta):
+    def _standardize_output(input_data, results, output, meta):
         _results = []
         key = "outcome" if meta is None else meta["outcome"][0]
         keys = (
