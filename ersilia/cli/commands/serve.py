@@ -72,10 +72,12 @@ def serve_cmd():
         output_source = None
         if local_cache_only:
             output_source = OutputSource.LOCAL_ONLY
+            enable_local_cache = True
         if cloud_cache_only:
             output_source = OutputSource.CLOUD_ONLY
         if cache_only:
             output_source = OutputSource.CACHE_ONLY
+            enable_local_cache = True
         mdl = ErsiliaModel(
             model,
             output_source=output_source,
