@@ -80,7 +80,6 @@ def serve_cmd():
             model,
             output_source=output_source,
             preferred_port=port,
-            track_runs=track,
             cache=enable_local_cache,
             maxmemory=maxmemory,
         )
