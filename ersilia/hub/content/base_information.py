@@ -1835,7 +1835,6 @@ class BaseInformation(ErsiliaBase):
             "Source": self.source,
             "Source Type": self.source_type,
             "Input": self.input,
-            "Input Shape": self.input_shape,
             "Input Dimension": self.input_dimension,
             "Task": self.task,
             "Subtask": self.subtask,
@@ -1895,7 +1894,6 @@ class BaseInformation(ErsiliaBase):
         self._assign("source", "Source", data)
         self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
-        self._assign("input_shape", "Input Shape", data)
         self._assign("input_dimension", "Input Dimension", data)
         self._assign("task", "Task", data)
         self._assign("subtask", "Subtask", data)

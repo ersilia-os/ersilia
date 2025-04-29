@@ -111,7 +111,7 @@ class CondaPack(BasePack):
             self.conda.create(environment=env, python_version=python_version)
             self.logger.debug("Creating base conda environment")
             commandlines = [
-                "python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git@refactor/removing-md5-key-functionality"
+                "python -m pip install git+https://github.com/ersilia-os/ersilia-pack.git"
             ]
             self.conda.run_commandlines(environment=env, commandlines=commandlines)
             self.logger.debug(

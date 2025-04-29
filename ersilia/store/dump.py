@@ -50,7 +50,7 @@ class DumpLocalCache:
         pipe.expire(hash_key, REDIS_EXPIRATION)
         pipe.execute()
 
-    def fetch_all_cached(self, model_id):
+    def fetch_all_cached(self, model_id, dtype):
         def dict_to_lists(d):
             keys = list(d.keys())
             values = list(d.values())
@@ -66,7 +66,7 @@ class DumpLocalCache:
                 {"input": input, "key": hashlib.md5(input.encode()).hexdigest()}
                 for input in inputs
             ]
-        results = self.orient_to_json(results, header, inputs, "records", ["float"])
+        results = self.orient_to_json(results, header, inputs, "records", dtype)
         return results, inputs
 
     def fetch_or_cache_header(self, model_id, computed_headers=None):
@@ -81,12 +81,12 @@ class DumpLocalCache:
             return computed_headers
         return None
 
-    def get_cached(self, model_id, data, computed_headers=None):
+    def get_cached(self, model_id, data, dtype, computed_headers=None):
         if not self.init_redis():
             return [], None
         results, missing = self.fetch_cached_results(model_id, data)
         header = self.fetch_or_cache_header(model_id, computed_headers)
-        results = self.orient_to_json(results, header, data, "records", ["float"])
+        results = self.orient_to_json(results, header, data, "records", dtype)
         return results, missing
 
     def list_cached_inputs(self, model_id):

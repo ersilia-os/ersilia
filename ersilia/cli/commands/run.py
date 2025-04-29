@@ -48,8 +48,6 @@ def run_cmd():
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
-        track_runs = session.tracking_status()
-        track_runs = session.tracking_status()
         output_source = session.current_output_source()
         if model_id is None:
             echo(
@@ -63,15 +61,9 @@ def run_cmd():
             output_source=output_source,
             service_class=service_class,
             config_json=None,
-            track_runs=track_runs,
         )
         try:
-            result = mdl.run(
-                input=input,
-                output=output,
-                batch_size=batch_size,
-                track_run=track_runs,
-            )
+            result = mdl.run(input=input, output=output, batch_size=batch_size)
             iter_values = []
             if isinstance(result, types.GeneratorType):
                 for result in mdl.run(

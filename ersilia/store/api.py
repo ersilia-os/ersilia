@@ -72,7 +72,9 @@ class InferenceStoreApi(ErsiliaBase):
         self.dump_local = DumpLocalCache()
         self.fetch_type = "all"
         self.generic_output_adapter = GenericOutputAdapter(model_id=model_id)
-        cols = self.generic_output_adapter._fetch_schema_from_github()[0]
+        self.schema = self.generic_output_adapter._fetch_schema_from_github()
+        cols = self.schema[0]
+        self.dtype = self.schema[1]
         self.header = ["key", "input"] + cols
         self.output_path = Path(output) if output else Path(f"{model_id}_precalc.csv")
         self.input_adapter = GenericInputAdapter(model_id=model_id)
@@ -114,9 +116,11 @@ class InferenceStoreApi(ErsiliaBase):
 
         if inputs:
             self.dump_local.fetch_cached_results(self.model_id, inputs)
-            results = self.dump_local.get_cached(self.model_id, inputs)
+            results = self.dump_local.get_cached(self.model_id, inputs, self.dtype)
         else:
-            results, inputs = self.dump_local.fetch_all_cached(self.model_id)
+            results, inputs = self.dump_local.fetch_all_cached(
+                self.model_id, self.dtype
+            )
 
         results = self.dump_local._standardize_output(
             inputs, results, str(self.output_path), None, self.n_samples
@@ -133,7 +137,9 @@ class InferenceStoreApi(ErsiliaBase):
         missing_inputs = []
         if inputs:
             self.dump_local.fetch_cached_results(self.model_id, inputs)
-            results, _missing_inputs = self.dump_local.get_cached(self.model_id, inputs)
+            results, _missing_inputs = self.dump_local.get_cached(
+                self.model_id, inputs, self.dtype
+            )
             missing_inputs.extend(_missing_inputs)
             results = self.dump_local._standardize_output(
                 inputs, results, str(self.output_path), None, self.n_samples
@@ -155,7 +161,9 @@ class InferenceStoreApi(ErsiliaBase):
                 DEFAULT_API_NAME,
             )
         else:
-            results, inputs = self.dump_local.fetch_all_cached(self.model_id)
+            results, inputs = self.dump_local.fetch_all_cached(
+                self.model_id, self.dtype
+            )
             if len(results) > self.n_samples:
                 results = results[: self.n_samples]
             if len(results) < self.n_samples:

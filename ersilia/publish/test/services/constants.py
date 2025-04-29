@@ -107,7 +107,7 @@ class Checks(Enum):
     COLUMN_CHECK_FAILURE = "Columns not coincide with run_columns"
     SIMPLE_MODEL_RUN = "Simple Model Run"
     SIMPLE_MODEL_RUN_COLUMNS = "Simple Model Run Columns"
-    DEPENDENCY_PINNED = "Dependency pinned"
+    DEPENDENCY_PINNED = "Checking package versions and file structure"
 
 
 class TableType(Enum):

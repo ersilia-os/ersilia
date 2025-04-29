@@ -95,46 +95,37 @@ class UpdateMetadata:
         )
         print(self.json_input)
         # Match the metadata keys to the JSON input keys
-        # We will only populate the metadata file with the JSON input if the metadata file is empty ("" or [])
-        # This is gross, sorry
-        if self.metadata["Identifier"] == "":
-            self.metadata["Identifier"] = self.repo
-        if self.metadata["Slug"] == "":
-            self.metadata["Slug"] = self.json_input["slug"]
-        if self.metadata["Title"] == "":
-            self.metadata["Title"] = self.json_input["model_name"]
-        if self.metadata["Description"] == "":
-            # Check if model_description is a list
-            if isinstance(self.json_input["model_description"], list):
-                # Join the list elements into a single string separated by commas
-                self.metadata["Description"] = ", ".join(
-                    self.json_input["model_description"]
-                )
-            else:
-                # If it's already a string, just assign it directly
-                self.metadata["Description"] = self.json_input["model_description"]
-        if self.metadata["Publication"] == "":
-            self.metadata["Publication"] = self.json_input["publication"]
-        if self.metadata["Source Code"] == "":
-            self.metadata["Source Code"] = self.json_input["source_code"]
-        if self.metadata["License"] == "":
-            self.metadata["License"] = self.json_input["license"]
-        if self.metadata["Tag"] == []:
-            # Check if the input is a string or list
-            if isinstance(self.json_input["tag"], str):
-                # Split the string by commas, remove whitespace, and cast to a list
-                tags = [tag.strip() for tag in self.json_input["tag"].split(",")]
-            elif isinstance(self.json_input["tag"], list):
-                # If it's already a list, assign it directly
-                tags = self.json_input["tag"]
-            else:
-                # Handle other possible cases or invalid input
-                tags = []
-                # Store the tags as a list in the metadata
-            self.metadata["Tag"] = tags
-            print(type(self.metadata["Tag"]))  # Verify that it's a list
-        if self.metadata["Status"] == "":
-            self.metadata["Status"] = "In progress"
+        # We will only populate the metadata file with the inputs from the new model submission request
+
+        self.metadata["Identifier"] = self.repo
+        self.metadata["Slug"] = self.json_input["slug"]
+        self.metadata["Title"] = self.json_input["model_name"]
+        # Check if model_description is a list
+        if isinstance(self.json_input["model_description"], list):
+            # Join the list elements into a single string separated by commas
+            self.metadata["Description"] = ", ".join(
+                self.json_input["model_description"]
+            )
+        else:
+            # If it's already a string, just assign it directly
+            self.metadata["Description"] = self.json_input["model_description"]
+        self.metadata["Publication"] = self.json_input["publication"]
+        self.metadata["Source Code"] = self.json_input["source_code"]
+        self.metadata["License"] = self.json_input["license"]
+        # Check if the input is a string or list
+        if isinstance(self.json_input["tag"], str):
+            # Split the string by commas, remove whitespace, and cast to a list
+            tags = [tag.strip() for tag in self.json_input["tag"].split(",")]
+        elif isinstance(self.json_input["tag"], list):
+            # If it's already a list, assign it directly
+            tags = self.json_input["tag"]
+        else:
+            # Handle other possible cases or invalid input
+            tags = []
+            # Store the tags as a list in the metadata
+        self.metadata["Tag"] = tags
+        print(type(self.metadata["Tag"]))  # Verify that it's a list
+        self.metadata["Status"] = "In progress"
 
     def write_metadata(self):
         """
