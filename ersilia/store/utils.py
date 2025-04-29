@@ -32,7 +32,9 @@ title = r"""
 def echo_intro(click_iface):
     width = 120
     click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
-    click_iface.echo(f"{'[Version 1.0.0]\n':^{width}}", fg="red", bold=True)
+    version_text = "[Version 1.0.0]"
+    click_iface.echo(f"{version_text:^{width}}", fg="red", bold=True)
+    click_iface.echo("")
 
 
 def echo_redis_job_submitted(click_iface):
