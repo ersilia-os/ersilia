@@ -748,6 +748,7 @@
                 <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">False</span>
 
                 <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TOK&quot;</span><span class="p">,</span> <span class="n">tok</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">skip_next</span><span class="p">:</span>
                         <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">False</span>
                         <span class="k">continue</span>
@@ -758,6 +759,7 @@
                         <span class="k">continue</span>
 
                     <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git+&quot;</span><span class="p">):</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;starts with git&quot;</span><span class="p">)</span>
                         <span class="k">continue</span>
 
                     <span class="k">if</span> <span class="s2">&quot;http&quot;</span> <span class="ow">in</span> <span class="n">tok</span><span class="p">:</span>
@@ -768,6 +770,8 @@
                             <span class="sa">f</span><span class="s2">&quot;Package &#39;</span><span class="si">{</span><span class="n">tok</span><span class="si">}</span><span class="s2">&#39; in line &#39;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&#39; is not version-pinned.&quot;</span>
                         <span class="p">)</span>
                 <span class="k">break</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Errors in Dockerfile install command: </span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">errors</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_yml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yml_content</span><span class="p">):</span>
@@ -829,7 +833,8 @@
                     <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Package &#39;</span><span class="si">{</span><span class="n">package</span><span class="si">}</span><span class="s2">&#39; in command &#39;</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">&#39; does not have a valid pinned version.&quot;</span>
                     <span class="p">)</span>
-
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Errors in Install YML file install command: </span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">errors</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_performance_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
