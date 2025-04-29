@@ -393,10 +393,12 @@
         <span class="n">output_source</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">local_cache_only</span><span class="p">:</span>
             <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span>
+            <span class="n">enable_local_cache</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">cloud_cache_only</span><span class="p">:</span>
             <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">CLOUD_ONLY</span>
         <span class="k">if</span> <span class="n">cache_only</span><span class="p">:</span>
             <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">CACHE_ONLY</span>
+            <span class="n">enable_local_cache</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span>
             <span class="n">output_source</span><span class="o">=</span><span class="n">output_source</span><span class="p">,</span>
