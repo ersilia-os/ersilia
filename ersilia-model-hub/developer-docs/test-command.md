@@ -16,23 +16,25 @@ ersilia test model_id
 
 The test command has three levels of complexity:
 
-* Surface: high level tests to ensure all the necessary files are available and metadata is compliant with Ersilia standards. It does not actually run the model, and is designed to be a quick maintenance for models.
-* Shallow: will run all the tests from the basic command and then test the model through Ersilia's CLI. Designed to be run by model contributors prior to incorporating the model and when any change is introduced in the model.
+* Basic: high level tests to ensure all the necessary files are available and metadata is compliant with Ersilia standards. It does not actually run the model, and is designed to be a quick maintenance for models
+* Surface: performs all basic tests and a simple run of the model fetched from the specified source through Ersilia's CLI. Designed to be run as a quick check during model maintenance.
+* Shallow: will run all the tests from the surface command and then test the model more thoroughly by testing all input types (`string`, `list`, `csv`) and output types (`csv`, `json`, `h5`). Also ensures the consistency of results between runs. Designed to be run by model contributors prior to incorporating the model and when any change is introduced in the model.
 * Deep: performs all shallow tests and in addition calculates performance metrics for the model. Designed to be used only by Ersilia maintainers when a new model is incorporated or significant changes are introduced.
 
 Hence, a test command could look like:
 
-```
-ersilia test model_id --surface
-ersilia test model_id --shallow
-ersilia test model_id --deep
+```bash
+ersilia test model_id #Basic run
+ersilia test model_id --surface #Surface check
+ersilia test model_id --shallow #Shallow check
+ersilia test model_id --deep #Deep check
 ```
 
 {% hint style="info" %}
 In addition to the printed output in the terminal, the test command produces a .json report stored in the directory where the command is run under the name `<model_id>-test.json`
 {% endhint %}
 
-## Surface test
+## Basic test
 
 ### Usage
 
@@ -42,29 +44,51 @@ The model is downloaded (not fetched) from its online storage in S3 or Github. B
 ersilia test model_id [OPT?]
 ```
 
-<table><thead><tr><th width="220">Flag</th><th width="129">Default</th><th>Description</th></tr></thead><tbody><tr><td>--from_github</td><td>True</td><td>Downloads the model from its repository on the ersilia-os organisation.</td></tr><tr><td>--from_s3</td><td>False</td><td>Downloads the model from its storage on the cloud (S3 Bucket)</td></tr><tr><td>--from_dir [path/to/dir]</td><td>False</td><td>Uses a model stored locally on the indicated path.</td></tr></tbody></table>
+<table><thead><tr><th width="220">Flag</th><th width="129">Default</th><th>Description</th></tr></thead><tbody><tr><td>--from_github</td><td>True</td><td>Downloads the model from its repository on the ersilia-os organisation.</td></tr><tr><td>--from_s3</td><td>False</td><td>Downloads the model from its storage on the cloud (S3 Bucket)</td></tr><tr><td>--from_dir [path/to/dir]</td><td>False</td><td>Uses a model stored locally on the indicated path.</td></tr><tr><td>--from_dockerhub</td><td>False</td><td>It will default back to from_github, as the model needs to be downloaded</td></tr></tbody></table>
 
 ### Tests performed
 
-* Model information: the model metadata is available in the `metadata.json` or `metadata.yml` and in the correct format. If the model is not yet fully incorporated in Ersilia, fields like S3 URL or Docker Architecture will not exist. Importantly those are marked as Not Passed, instead of Failed.
-* Model files: all required model files exist for either of Ersilia package modes:
+* Metadata checks: the model metadata is available in the `metadata.json` or `metadata.yml` and in the correct format. If the model is not yet fully incorporated in Ersilia, fields like S3 URL or Docker Architecture will not exist. Importantly those are marked as Not Passed, instead of Failed.
+* Model file checks: all required model files exist for either of Ersilia package modes:
   * BentoML packaging: Dockerfile, metadata.json, run.sh, service.py, pack.py, README.md, LICENSE.
-  * FastAPI packaging: install.yml, metadata.yml. input.csv, output.csv, run.sh, README.md, LICENSE
-* Example model files:
-  * run\_input.csv and run\_output.csv
-  * run\_columns.csv: output columns and its information are properly specified
+  * FastAPI packaging: install.yml, metadata.yml, README.md, LICENSE files, model/framework/examples/run\_input.csv, model/framework/examples/run\_output.csv, model/framework/columns/run\_columns.csv, model/framework/run.sh,&#x20;
+* File validity check: checks that the following files have the expected structure:
+  * Columns: there is a model/framework/columns/run\_columns.csv with four columns only: name, type, direction, description
+  * Dockerfile: the dockerfile or install.yml contains the proper formatting of dependencies (see more in the [Model Contribution](../model-contribution/) section)
 * Model directory size: calculates the size of the model directory (including model checkpoints)
-* Dependencies: ensures all dependencies specified are pinned to a specific version.
 
 ### Outputs
 
-The terminal will print four tables, one per each type of test specified above, and whether each check has PASSED or FAILED. In the `.json` file, the tests appear as True (passed) or False (failed).
+The terminal will print four tables, one per each type of test specified above, and whether each check has PASSED or FAILED. In the `.json` file, the tests appear as True (passed) or False (failed). The `-v` flag can always be used to see more information on the terminal.
+
+## Surface test
+
+### Usage
+
+The model is downloaded (not fetched) from its online storage in S3 or Github, and fetched via the specified source (including Dockerhub). By default, if no flag is specified the model will be fetched from GitHub. In addition, the basic tests can also be performed from a local directory, for example when a contributor is incorporating a new model.
+
+```
+ersilia test model_id --surface [OPT?]
+```
+
+<table><thead><tr><th width="220">Flag</th><th width="129">Default</th><th>Description</th></tr></thead><tbody><tr><td>--from_github</td><td>True</td><td>Downloads the model from its repository on the ersilia-os organisation.</td></tr><tr><td>--from_s3</td><td>False</td><td>Downloads the model from its storage on the cloud (S3 Bucket)</td></tr><tr><td>--from_dir [path/to/dir]</td><td>False</td><td>Uses a model stored locally on the indicated path.</td></tr><tr><td>--from_dockerhub</td><td>False</td><td>Downloads the model from GitHub and fetches it via DockerHub for the simple run</td></tr></tbody></table>
+
+### Tests performed
+
+All the basic tests and in addition
+
+* Model size check: it also calculates the environment size (if fetched `--from_github`, `--from_s3` or `--from_dir`) or image size (if fetched `--from_dockerhub`)
+* Model run check: fetches the model through Ersilia's CLI from the specified source and then runs an example of XX inputs. Outputs the result in -csv format and ensures that the result is not all None's and that the columns match the specified names in `run_columns.csv`
+
+### Outputs
+
+The terminal will print five tables, one per each type of test specified above, and whether each check has PASSED or FAILED. In the `.json` file, the tests appear as True (passed) or False (failed). The `-v` flag can always be used to see more information on the terminal.
 
 ## Shallow test
 
 ### Usage
 
-This command will not only download the model from the specified source but also test that it actually works by fetching, serving and running it via Ersilia's CLI.&#x20;
+Similar to the surface but performs more tests once the model is fetched.
 
 ```
 ersilia test model_id --shallow [OPT?]
@@ -80,22 +104,13 @@ To perform the basic test checks the model needs to be Downloaded, not Fetched, 
 
 In addition to the basic tests:
 
-* Environment size: total size of the enviroment created when installing the model dependencies. Only available if fetching --from\_dir/from\_s3/from\_github.
-* Container size: total size of the Docker Image downloaded from DockerHub. Only available if fetching --from\_dockerhub.
-* Output correctness: the test module performs several runs and ensures:
-  * The output contains the columns defined in run\_columns.csv
-  * The output can be passed in all accepted formats (single molecule, list or `.csv`) saved in all available formats (`.csv`, `.json`, `.h5`)
-  * The output is consistent between runs (for the same molecule, same result or small divergence in non-stochastic models)
-  * The output is consistent between running the model via Ersilia or directly from the run-sh command.
-  * The output does not contain a majority of null values.
+* Input output check: the test module performs several runs and ensures that the output can be passed in all accepted formats (single molecule, list or `.csv`) saved in all available formats (`.csv`, `.json`, `.h5`)
+* Model output consistency check: the output is consistent between runs (for the same molecule, same result or small divergence in non-stochastic models). The consistency will be calculated for both string and numerical outputs using scores like `rmse` and `spearmanr` (Spearman correlation coefficient with associated p-value).
+* Consistency summary between ersilia and bash execution: the output is consistent between running the model via Ersilia or directly from the `run.sh` bash file in `model/framework`.
 
 ### Outputs
 
-The basic checks are printed in the terminal first and then once the basic tests are completed the model is fetched, served and run, providing the following tables:
-
-* Validation and size check results: will evaluate the model size (environment or image) and the consistency of the model output. If an example input file is not included in the model, it will be created from a random sampling of Ersilia Maintained Inputs. The consistency will be calculated for both string and numerical outputs using scores like `rmse` and `spearmanr` (Spearman correlation coefficient with associated p-value).
-* Consistency summary between Ersilia and Bash execution options: will compare the consistency of running the model via Ersilia or directly running the run.sh file on a virtual environment.
-* Model output content validation summary: ensures all the combinations between input and output are valid and working.
+The terminal will print eight tables, one per each type of test specified above, and whether each check has PASSED or FAILED. In the `.json` file, the tests appear as True (passed) or False (failed). The `-v` flag can always be used to see more information on the terminal.
 
 ## Deep test
 
@@ -111,17 +126,11 @@ ersilia test model_id --deep [OPT?]
 
 ### Tests performed
 
-Computational performance assessment: after serving the models, they get executed for 1, 50, and 100 inputs. Model performance (seconds) will be recorded and reported using `wall clock` .
+* Computational performance assessment: after serving the models, they get executed for 1, 10, 100, 1000 and 10000 inputs. Model performance (seconds) will be recorded and reported using `wall clock` . By default, a `deterministic` flag is enabled, ensuring all models use the same list of molecules for the test commant
 
 ### Outputs
 
-The same tables as in the basic and shallow test and an additional model performance table evaluating the performance (time (s)) taken to run inputs of lenght:
-
-* 1
-* 10
-* 100
-* 1000
-* 10000
+The same tables as in the basic, surface and shallow test and an additional model performance table evaluating the performance (time (s)) taken to run inputs of each length.
 
 ## Detailed Methods
 
