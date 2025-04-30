@@ -53,8 +53,8 @@ ersilia test model_id [OPT?]
   * BentoML packaging: Dockerfile, metadata.json, run.sh, service.py, pack.py, README.md, LICENSE.
   * FastAPI packaging: install.yml, metadata.yml, README.md, LICENSE files, model/framework/examples/run\_input.csv, model/framework/examples/run\_output.csv, model/framework/columns/run\_columns.csv, model/framework/run.sh,&#x20;
 * File validity check: checks that the following files have the expected structure:
-  * Columns: there is a model/framework/columns/run\_columns.csv with four columns only: name, type, direction, description
-  * Dockerfile: the dockerfile or install.yml contains the proper formatting of dependencies (see more in the [Model Contribution](../model-contribution/) section)
+  * Columns: the columns specified in the `run_columns.csv` and the `run_output.csv` coincide.
+  * Dockerfile/Install\_yml: the dockerfile or install.yml contains the proper formatting of dependencies (see more in the [Model Contribution](../model-contribution/) section)
 * Model directory size: calculates the size of the model directory (including model checkpoints)
 
 ### Outputs
@@ -78,7 +78,7 @@ ersilia test model_id --surface [OPT?]
 All the basic tests and in addition
 
 * Model size check: it also calculates the environment size (if fetched `--from_github`, `--from_s3` or `--from_dir`) or image size (if fetched `--from_dockerhub`)
-* Model run check: fetches the model through Ersilia's CLI from the specified source and then runs an example of XX inputs. Outputs the result in -csv format and ensures that the result is not all None's and that the columns match the specified names in `run_columns.csv`
+* Model run check: fetches the model through Ersilia's CLI from the specified source and then runs the `run_input.csv`. Outputs the result in `.csv` format and ensures that the result is not all None's and that the columns match the results in `run_output.csv`
 
 ### Outputs
 
