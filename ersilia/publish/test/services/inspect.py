@@ -384,53 +384,51 @@ class ModelInspector:
         if "COPY . /repo" not in dockerfile_content:
             errors.append("Missing 'COPY . /repo'.")
 
-        pip_install_re   = re.compile(r"pip install (.+)")
-        conda_install_re = re.compile(r"conda install (.+)")
+        pip_install_re   = re.compile(r"^RUN\s+pip install\s+(.+)$")
+        conda_install_re = re.compile(r"^RUN\s+conda install\s+(.+)$")
 
-        pip_pin_re   = re.compile(r"^[A-Za-z0-9_\-\.]+(==|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
-        conda_pin_re = re.compile(r"^[A-Za-z0-9_\-\.]+(==|=|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
+        pip_pin_re   = re.compile(r"^[A-Za-z0-9_\-\.\[\]]+(?:==|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
+        conda_pin_re = re.compile(r"^[A-Za-z0-9_\-\.]+(?:==|=|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
+
+        skip_flags = {
+            'pip': ("--index-url", "--extra-index-url", "-f"),
+            'conda': ("-c", "--channel", "-y", "--yes")
+        }
 
         for raw in lines:
             line = raw.strip()
-
-            for installer, pin_re, skip_flags in [
-                (pip_install_re,   pip_pin_re,   ("--index-url", "--extra-index-url", "-f")),
-                (conda_install_re, conda_pin_re, ("-c", "--channel", "-y", "--yes")),
+            for kind, installer_re, pin_re in [
+                ('pip', pip_install_re, pip_pin_re),
+                ('conda', conda_install_re, conda_pin_re)
             ]:
-                m = installer.search(line)
+                m = installer_re.match(line)
                 if not m:
                     continue
 
                 install_part = m.group(1).split("#", 1)[0].strip()
                 tokens = install_part.split()
                 skip_next = False
-
                 for tok in tokens:
-                    print("TOK", tok)
                     if skip_next:
                         skip_next = False
                         continue
-
-                    if tok in skip_flags:
+                    if tok in skip_flags[kind]:
                         if tok in ("-c", "--channel"):
                             skip_next = True
                         continue
-
                     if tok.startswith("git+"):
-                        print("starts with git")
                         continue
-
-                    if "http" in tok:
+                    if tok.startswith("http://") or tok.startswith("https://"):
                         continue
-    
                     if not pin_re.match(tok):
                         errors.append(
-                            f"Package '{tok}' in line '{line}' is not version-pinned."
+                            f"Package '{tok}' in line '{line}' is not properly version-pinned."
                         )
                 break
-        if len(errors)>0:
+        if errors:
             logger.debug(f"Errors in Dockerfile install command: {errors}")
         return errors
+
 
     def _validate_yml(self, yml_content):
         errors = []

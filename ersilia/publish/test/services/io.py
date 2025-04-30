@@ -40,6 +40,7 @@ from .constants import (
     ERSILIAPACK_FILES,
     BENTOML_FILES,
 )
+from .parser import DockerfileInstallParser, YAMLInstallParser
 from .setup import SetupService
 from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.conda import SimpleConda
@@ -476,89 +477,63 @@ class IOService:
 
 
 class PackageInstaller:
-    def __init__(self, dir, model_id):
-        self.dir = dir
+    def __init__(self, dir_path, model_id):
+        self.dir = dir_path
         self.model_id = model_id
         self.conda = SimpleConda()
         self.logger = logger
 
-    def _get_python_version_from_line(self, line: str):
-        m = re.search(r"-py(\d+)", line)
-        if m:
-            ver_str = m.group(1)
-            return f"{ver_str[0]}.{ver_str[1:]}"
-        return None
+    def _initialize_env(self, python_version):
+        if not self.conda.exists(self.model_id):
+            self.logger.info(f"Creating conda environment '{self.model_id}' with Python {python_version}")
+            self.conda.create(self.model_id, python_version)
+        else:
+            self.logger.info(f"Conda environment '{self.model_id}' already exists")
 
-    def _parse_install_yaml(self, path: str):
-        with open(path, "r") as f:
-            data = yaml.safe_load(f)
-        python_version = data.get("python")
-        pip_packages = []
-        conda_packages = []
-        commands = data.get("commands", [])
+    def _install_commands(self, commands):
         for cmd in commands:
-            if cmd[0].lower() == "pip":
-                pkg_spec = f"{cmd[1]}=={cmd[2]}" if len(cmd) >= 3 else cmd[1]
-                pip_packages.append(pkg_spec)
-            elif cmd[0].lower() == "conda":
-                pkg_spec = f"{cmd[1]}={cmd[2]}" if len(cmd) >= 3 else cmd[1]
-                conda_packages.append(pkg_spec)
-        return python_version, pip_packages, conda_packages
+            if isinstance(cmd, list):
+                if cmd[0] == 'pip':
+                    if len(cmd) == 2:
+                        spec = cmd[1]
+                        flags = []
+                    else:
+                        spec = f"{cmd[1]}=={cmd[2]}"
+                        flags = cmd[3:]
+                    self.logger.info(f"Installing pip package: {spec} {' '.join(flags)}")
+                    args = ["conda", "run", "-n", self.model_id, "pip", "install", spec] + flags
+                    run_command(args)
+                elif cmd[0] == 'conda':
+                    extras = cmd[1:]
+                    self.logger.info(f"Installing conda package: {' '.join(extras)}")
+                    args = ["conda", "install", "-n", self.model_id, "-y"] + extras
+                    run_command(args)
+                else:
+                    self.logger.warning(f"Unknown install command: {cmd}")
+            else:
+                self.logger.info(f"Running raw command: {cmd}")
+                run_command(cmd.split())
 
-    def _parse_dockerfile(self, path: str):
-        pip_packages = []
-        conda_packages = []
-        python_version = None
-        with open(path, "r") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                if line.startswith("FROM"):
-                    python_version = self._get_python_version_from_line(line)
-                if line.startswith("RUN pip install"):
-                    cmd = line.split("#")[0]
-                    parts = cmd.split()
-                    if len(parts) >= 4:
-                        pkg_spec = parts[3]
-                        pip_packages.append(pkg_spec)
-                if line.startswith("RUN conda install"):
-                    cmd = line.split("#")[0]
-                    parts = cmd.split()
-                    if parts:
-                        pkg_spec = parts[-1]
-                        conda_packages.append(pkg_spec)
-        return python_version, pip_packages, conda_packages
+    def install_packages_from_dir(self):
+        yaml_path = os.path.join(self.dir, INSTALL_YAML_FILE)
+        docker_path = os.path.join(self.dir, DOCKERFILE_FILE)
 
-    def _install_packages_from_dir(self):
-        install_yml_path = os.path.join(self.dir, INSTALL_YAML_FILE)
-        dockerfile_path = os.path.join(self.dir, DOCKERFILE_FILE)
-
-        if os.path.exists(install_yml_path):
-            python_version, pip_packages, conda_packages = self._parse_install_yaml(
-                install_yml_path
-            )
-        elif os.path.exists(dockerfile_path):
-            python_version, pip_packages, conda_packages = self._parse_dockerfile(
-                dockerfile_path
-            )
+        if os.path.exists(yaml_path):
+            parser = YAMLInstallParser(self.dir)
+        elif os.path.exists(docker_path):
+            parser = DockerfileInstallParser(self.dir)
         else:
             self.logger.info(
                 "Neither 'install.yml' nor 'Dockerfile' was found in the specified directory."
             )
             return
-        
-        if self.conda.exists(self.model_id):
-            return
-        
-        if not self.conda.exists(self.model_id):
-            self.conda.create(self.model_id, python_version)
-        for pkg in pip_packages:
-            self.logger.info(f"Installing pip package: {pkg}")
-            run_command(["conda", "run", "-n", self.model_id, "pip", "install", pkg])
-        for pkg in conda_packages:
-            self.logger.info(f"Installing conda package: {pkg}")
-            run_command(["conda", "install", "-n", self.model_id, "-y", pkg])
+
+        python_version = parser.python_version
+        commands = parser._get_commands()
+
+        self._initialize_env(python_version)
+
+        self._install_commands(commands)
         self.logger.info(
             f"Installation complete in the conda environment: {self.model_id}"
         )
