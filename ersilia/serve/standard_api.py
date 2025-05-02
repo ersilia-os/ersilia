@@ -586,7 +586,7 @@ class StandardCSVRunApi(ErsiliaBase):
             response = requests.post(url, json=batch)
             et = time.perf_counter()
             self.logger.info(
-                f"Batch {i//batch_size + 1} response fetched within: {et - st:.4f} seconds"
+                f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
             )
 
             if response.status_code == 200:
@@ -604,12 +604,12 @@ class StandardCSVRunApi(ErsiliaBase):
                     del response["meta"]
             else:
                 self.logger.error(
-                    f"Batch {i//batch_size + 1} request failed with status: {response.status_code}"
+                    f"Batch {i // batch_size + 1} request failed with status: {response.status_code}"
                 )
                 return None
         return overall_results, meta
 
-    def _standardize_output(input_data, results, output, meta):
+    def _standardize_output(self, input_data, results, output, meta):
         _results = []
         key = "outcome" if meta is None else meta["outcome"][0]
         keys = (

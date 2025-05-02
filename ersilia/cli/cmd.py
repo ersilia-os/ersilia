@@ -9,13 +9,6 @@ class Command(object):
     def __init__(self):
         pass
 
-    def auth(self):
-        """
-        Authenticate the user.
-        """
-        m = importlib.import_module("ersilia.cli.commands.auth")
-        m.auth_cmd()
-
     def catalog(self):
         """
         Display the catalog.

@@ -19,7 +19,6 @@ def create_ersilia_cli():
 
     cmd = Command()
 
-    cmd.auth()
     cmd.catalog()
     cmd.uninstall()
     cmd.close()
