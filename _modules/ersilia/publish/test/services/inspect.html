@@ -726,53 +726,51 @@
         <span class="k">if</span> <span class="s2">&quot;COPY . /repo&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dockerfile_content</span><span class="p">:</span>
             <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Missing &#39;COPY . /repo&#39;.&quot;</span><span class="p">)</span>
 
-        <span class="n">pip_install_re</span>   <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;pip install (.+)&quot;</span><span class="p">)</span>
-        <span class="n">conda_install_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;conda install (.+)&quot;</span><span class="p">)</span>
+        <span class="n">pip_install_re</span>   <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^RUN\s+pip install\s+(.+)$&quot;</span><span class="p">)</span>
+        <span class="n">conda_install_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^RUN\s+conda install\s+(.+)$&quot;</span><span class="p">)</span>
 
-        <span class="n">pip_pin_re</span>   <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z0-9_\-\.]+(==|&gt;=|&lt;=|&gt;|&lt;)[A-Za-z0-9_\-\.]+$&quot;</span><span class="p">)</span>
-        <span class="n">conda_pin_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z0-9_\-\.]+(==|=|&gt;=|&lt;=|&gt;|&lt;)[A-Za-z0-9_\-\.]+$&quot;</span><span class="p">)</span>
+        <span class="n">pip_pin_re</span>   <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z0-9_\-\.\[\]]+(?:==|&gt;=|&lt;=|&gt;|&lt;)[A-Za-z0-9_\-\.]+$&quot;</span><span class="p">)</span>
+        <span class="n">conda_pin_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z0-9_\-\.]+(?:==|=|&gt;=|&lt;=|&gt;|&lt;)[A-Za-z0-9_\-\.]+$&quot;</span><span class="p">)</span>
+
+        <span class="n">skip_flags</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;pip&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;--index-url&quot;</span><span class="p">,</span> <span class="s2">&quot;--extra-index-url&quot;</span><span class="p">,</span> <span class="s2">&quot;-f&quot;</span><span class="p">),</span>
+            <span class="s1">&#39;conda&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--channel&quot;</span><span class="p">,</span> <span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;--yes&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
 
         <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-
-            <span class="k">for</span> <span class="n">installer</span><span class="p">,</span> <span class="n">pin_re</span><span class="p">,</span> <span class="n">skip_flags</span> <span class="ow">in</span> <span class="p">[</span>
-                <span class="p">(</span><span class="n">pip_install_re</span><span class="p">,</span>   <span class="n">pip_pin_re</span><span class="p">,</span>   <span class="p">(</span><span class="s2">&quot;--index-url&quot;</span><span class="p">,</span> <span class="s2">&quot;--extra-index-url&quot;</span><span class="p">,</span> <span class="s2">&quot;-f&quot;</span><span class="p">)),</span>
-                <span class="p">(</span><span class="n">conda_install_re</span><span class="p">,</span> <span class="n">conda_pin_re</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--channel&quot;</span><span class="p">,</span> <span class="s2">&quot;-y&quot;</span><span class="p">,</span> <span class="s2">&quot;--yes&quot;</span><span class="p">)),</span>
+            <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">installer_re</span><span class="p">,</span> <span class="n">pin_re</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="p">(</span><span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="n">pip_install_re</span><span class="p">,</span> <span class="n">pip_pin_re</span><span class="p">),</span>
+                <span class="p">(</span><span class="s1">&#39;conda&#39;</span><span class="p">,</span> <span class="n">conda_install_re</span><span class="p">,</span> <span class="n">conda_pin_re</span><span class="p">)</span>
             <span class="p">]:</span>
-                <span class="n">m</span> <span class="o">=</span> <span class="n">installer</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">installer_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">m</span><span class="p">:</span>
                     <span class="k">continue</span>
 
                 <span class="n">install_part</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">tokens</span> <span class="o">=</span> <span class="n">install_part</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                 <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">False</span>
-
                 <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TOK&quot;</span><span class="p">,</span> <span class="n">tok</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">skip_next</span><span class="p">:</span>
                         <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">False</span>
                         <span class="k">continue</span>
-
-                    <span class="k">if</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">skip_flags</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">skip_flags</span><span class="p">[</span><span class="n">kind</span><span class="p">]:</span>
                         <span class="k">if</span> <span class="n">tok</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--channel&quot;</span><span class="p">):</span>
                             <span class="n">skip_next</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="k">continue</span>
-
                     <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git+&quot;</span><span class="p">):</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;starts with git&quot;</span><span class="p">)</span>
                         <span class="k">continue</span>
-
-                    <span class="k">if</span> <span class="s2">&quot;http&quot;</span> <span class="ow">in</span> <span class="n">tok</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">tok</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">):</span>
                         <span class="k">continue</span>
-    
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">pin_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">tok</span><span class="p">):</span>
                         <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Package &#39;</span><span class="si">{</span><span class="n">tok</span><span class="si">}</span><span class="s2">&#39; in line &#39;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&#39; is not version-pinned.&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Package &#39;</span><span class="si">{</span><span class="n">tok</span><span class="si">}</span><span class="s2">&#39; in line &#39;</span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&#39; is not properly version-pinned.&quot;</span>
                         <span class="p">)</span>
                 <span class="k">break</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Errors in Dockerfile install command: </span><span class="si">{</span><span class="n">errors</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">errors</span>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_yml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">yml_content</span><span class="p">):</span>
         <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>

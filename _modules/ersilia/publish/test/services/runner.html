@@ -348,7 +348,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PREDEFINED_COLUMN_FILE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....io.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.exceptions_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">test_exceptions</span> <span class="k">as</span> <span class="n">texc</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.spinner</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_loader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command_check_output</span><span class="p">,</span> <span class="n">run_command</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 
@@ -689,7 +688,7 @@
                 <span class="p">)</span>
                 <span class="k">return</span>
             
-            <span class="bp">self</span><span class="o">.</span><span class="n">installer</span><span class="o">.</span><span class="n">_install_packages_from_dir</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">installer</span><span class="o">.</span><span class="n">install_packages_from_dir</span><span class="p">()</span>
 
             <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">                source </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">/etc/profile.d/conda.sh</span>
@@ -838,7 +837,6 @@
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_directory_sizes</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">results</span>
 
-    <span class="nd">@show_loader</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Performing surface checks&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_surface_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
@@ -866,7 +864,6 @@
 
         <span class="k">return</span> <span class="n">results</span>
 
-    <span class="nd">@show_loader</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Performing shallow checks&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_shallow_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -891,7 +888,6 @@
         <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">validations</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">results</span>
 
-    <span class="nd">@show_loader</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Performing deep checks&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_deep_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">performance_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;computational_performance_tracking&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span>
