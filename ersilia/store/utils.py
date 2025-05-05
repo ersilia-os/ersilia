@@ -134,23 +134,24 @@ def echo_local_only_empty_cache(click_iface):
 def echo_local_sample_warning(click_iface, n: int, cache_size: int):
     if cache_size == 0:
         echo_local_only_empty_cache(click_iface)
-        return
-    d = n - cache_size
-    if cache_size >= n:
-        bg = "cyan"
-        message = "This is more or equal to a sample size you requested!"
-    elif cache_size <= n:
-        bg = "yellow"
-        message = f"This is less than a sample size you requested by {d}!"
+        click.confirm("Do you want to continue to cloud for fetching?", abort=True)
+    else:
+        d = n - cache_size
+        if cache_size >= n:
+            bg = "cyan"
+            message = "This is more or equal to a sample size you requested!"
+        elif cache_size <= n:
+            bg = "yellow"
+            message = f"This is less than a sample size you requested by {d}!"
 
-    click_iface.echo(
-        f"{log_prefix()}Cache size of {cache_size} fetched from local Redis caching. {message}!",
-        fg="white",
-        blink=False,
-        bold=True,
-        bg=bg,
-    )
-    click.confirm("Do you want to continue to cloud for fetching?", abort=True)
+        click_iface.echo(
+            f"{log_prefix()}Cache size of {cache_size} fetched from local Redis caching. {message}!",
+            fg="white",
+            blink=False,
+            bold=True,
+            bg=bg,
+        )
+        click.confirm("Do you want to continue to cloud for fetching?", abort=True)
 
 
 def echo_small_sample_warning(click_iface, n: int):
