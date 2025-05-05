@@ -34,7 +34,8 @@ def echo_intro(click_iface, mode):
     mode = mode if mode != "cache-only" else "Hybrid [Local + Cloud]"
     mode = mode.split("-") if "-" in mode else mode
     mode = " ".join(mode) if "-" in mode else mode
-    mode = mode.upper()
+    print("Mode", mode)
+    mode = mode.upper() if not isinstance(mode, list) else mode[0].upper()
     click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
     mode_text = f"FETCH MODE: {mode}"
     version_text = "[Version 0.1.0]"
