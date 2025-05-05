@@ -153,7 +153,7 @@ class InferenceStoreApi(ErsiliaBase):
         if inputs:
             echo_redis_job_submitted(self.click, f"Input size: {len(inputs)}")
             results, _missing_inputs = self.dump_local.get_cached(
-                self.model_id, inputs, self.dtype
+                self.model_id, inputs, self.dtype, cols=self.cols
             )
             echo_local_fetched_cache_szie(self.click, len(results))
             missing_inputs.extend(_missing_inputs)
@@ -171,6 +171,7 @@ class InferenceStoreApi(ErsiliaBase):
                 echo_redis_local_completed(self.click)
                 echo_sys_exited(self.click)
                 sys.exit(1)
+
             self.generic_output_adapter._adapt_generic(
                 json.dumps(results),
                 self.local_cache_csv_path,
@@ -199,11 +200,24 @@ class InferenceStoreApi(ErsiliaBase):
                 )
         return results, missing_inputs
 
+    def _get_none_size(self, res):
+        size = 0
+        for r in res:
+            vals = list(r["output"].values())
+            if "None" in vals[0]:
+                size += 1
+        return size
+
     def _submit_and_get_shards(self, inputs: list) -> list:
         if self.output_source == OutputSource.CACHE_ONLY:
             results, missing_input = self._handle_local(inputs)
-            echo_local_sample_warning(self.click, self.n_samples, len(results))
+            cache_size = self._get_none_size(results)
+            print(print(inputs), cache_size)
+            # print(results, len(missing_input))
+            echo_local_sample_warning(self.click, self.n_samples, cache_size)
+            print("This is whats going on")
             inputs = missing_input if len(missing_input) >= 1 else inputs
+            print("This is whats going on")
 
         s = self.n_samples if inputs is None else len(inputs)
 

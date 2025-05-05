@@ -31,10 +31,15 @@ title = r"""
 
 def echo_intro(click_iface, mode):
     width = 120
+    mode = mode if mode != "cache-only" else "Hybrid [Local + Cloud]"
+    mode = mode.split("-") if "-" in mode else mode
+    mode = " ".join(mode) if "-" in mode else mode
+    mode = mode.upper()
     click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
-    version_text = f"MODE: {mode[0].split("-").upper()}"
-    click_iface.echo(f"{version_text:^{width}}", fg="red", bold=True)
-    click_iface.echo(f"{version_text:^{width}}", fg="red", bold=True)
+    mode_text = f"FETCH MODE: {mode}"
+    version_text = "[Version 0.1.0]"
+    click_iface.echo(f"{version_text:^{width}}", fg="cyan", bold=True)
+    click_iface.echo(f"{mode_text:^{width}}", fg="cyan", bold=True)
     click_iface.echo("")
 
 
@@ -49,17 +54,18 @@ def echo_redis_job_submitted(click_iface, message):
 def echo_redis_fetched_missed(click_iface, size_res, size_missing):
     click_iface.echo(
         f"{log_prefix()}Results size of {size_res} fetched from local cache. Missing inputs: {size_missing}",
-        fg="cyan",
+        fg="blue",
         bold=False,
     )
 
 
 def echo_redis_local_completed(click_iface):
     click_iface.echo(
-        f"{log_prefix()}All inputs has results in local caches and won't processed further query. Exiting the system with output file",
+        f"{log_prefix()}All inputs has results in local caches and won't processed further query.",
         fg="blue",
         bold=False,
     )
+    echo_sys_exited(click_iface)
 
 
 def echo_uploading_inputs(click_iface):
@@ -125,10 +131,13 @@ def echo_local_only_empty_cache(click_iface):
 
 
 def echo_local_sample_warning(click_iface, n: int, cache_size: int):
+    if cache_size == 0:
+        echo_local_only_empty_cache(click_iface)
+        return
     d = n - cache_size
     if cache_size >= n:
         message = "This is more or equal to a sample size you requested!"
-    else:
+    elif cache_size <= n:
         message = f"This is less than a sample size you requested by {d}!"
 
     click_iface.echo(
@@ -136,7 +145,7 @@ def echo_local_sample_warning(click_iface, n: int, cache_size: int):
         fg="white",
         blink=False,
         bold=True,
-        bg="blue",
+        bg="cyan",
     )
     click.confirm("Do you want to continue to cloud for fetching?", abort=True)
 
