@@ -70,14 +70,18 @@ def serve_cmd():
         maxmemory,
     ):
         output_source = None
+        cache_status = "Disabled"
         if local_cache_only:
             output_source = OutputSource.LOCAL_ONLY
             enable_local_cache = True
+            cache_status = "Local Only"
         if cloud_cache_only:
             output_source = OutputSource.CLOUD_ONLY
+            cache_status = "Cloud Only"
         if cache_only:
             output_source = OutputSource.CACHE_ONLY
             enable_local_cache = True
+            cache_status = "Hybrid"
         mdl = ErsiliaModel(
             model,
             output_source=output_source,
@@ -117,6 +121,13 @@ def serve_cmd():
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
+        echo("")
+        echo(":person_tipping_hand: Cache fetching Mode:", fg="blue")
+        echo(
+            f"   - status: {cache_status}", fg="red"
+        ) if cache_status == "Disabled" else echo(
+            f"   - status: {cache_status}", fg="green"
+        )
         echo("")
         echo(":floppy_disk: Local cache:", fg="blue")
         echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
