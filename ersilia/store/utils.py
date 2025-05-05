@@ -136,8 +136,10 @@ def echo_local_sample_warning(click_iface, n: int, cache_size: int):
         return
     d = n - cache_size
     if cache_size >= n:
+        bg = "cyan"
         message = "This is more or equal to a sample size you requested!"
     elif cache_size <= n:
+        bg = "yellow"
         message = f"This is less than a sample size you requested by {d}!"
 
     click_iface.echo(
@@ -145,7 +147,7 @@ def echo_local_sample_warning(click_iface, n: int, cache_size: int):
         fg="white",
         blink=False,
         bold=True,
-        bg="cyan",
+        bg=bg,
     )
     click.confirm("Do you want to continue to cloud for fetching?", abort=True)
 

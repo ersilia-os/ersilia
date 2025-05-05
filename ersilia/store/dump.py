@@ -36,7 +36,7 @@ class DumpLocalCache:
             if val:
                 results.append(json.loads(val))
             else:
-                results.append([None] * dim)
+                results.append([""] * dim)
                 missing.append(item)
         return results, missing
 
