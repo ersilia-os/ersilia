@@ -36,7 +36,7 @@ def compound_csv():
 
 def test_api(compound_csv):
     is_fetched = fetch()
-    model = ErsiliaModel(model=MODEL_ID, verbose=True)
+    model = ErsiliaModel(model=MODEL_ID, verbose=True, output_source=None)
     model.serve()
     model.run(input=INPUT_CSV, output=OUTPUT_CSV)
     has_contents = simple_csv_content_check(OUTPUT_CSV)

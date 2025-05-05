@@ -29,7 +29,6 @@ from .checks import CheckService
 from ....default import PREDEFINED_COLUMN_FILE
 from ....io.input import ExampleGenerator
 from ....utils.exceptions_utils import test_exceptions as texc
-from ....utils.spinner import show_loader
 from ....utils.terminal import run_command_check_output, run_command
 from ....cli import echo
 
@@ -141,7 +140,7 @@ class RunnerService:
             The output of the command.
         """
 
-        cmd = f"ersilia serve {self.model_id} --no-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
+        cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
         out = run_command(cmd)
         return out
     
@@ -365,7 +364,7 @@ class RunnerService:
                 )
                 return
             
-            self.installer._install_packages_from_dir()
+            self.installer.install_packages_from_dir()
 
             bash_script = f"""
                 source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
@@ -391,7 +390,7 @@ class RunnerService:
                 )
             bsh_data, _ = read_csv(bash_output_path)
             self.logger.debug("Running model for bash data consistency checking")
-            cmd = f"ersilia serve {self.model_id} --no-cache && ersilia -v run -i '{input_file_path}' -o {output_path}"
+            cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i '{input_file_path}' -o {output_path}"
             out = run_command(cmd)
             ers_data, _ = read_csv(output_path, flag=True)
             self.checkup_service.original_smiles_list = (
@@ -511,7 +510,6 @@ class RunnerService:
         results.append(self._log_directory_sizes())
         return results
 
-    @show_loader(text="Performing surface checks", color="cyan")
     def _perform_surface_check(self):
         self.fetch()
         results = []
@@ -539,7 +537,6 @@ class RunnerService:
 
         return results
 
-    @show_loader(text="Performing shallow checks", color="cyan")
     def _perform_shallow_checks(self):
         results = []
 
@@ -564,7 +561,6 @@ class RunnerService:
         results.extend(validations)
         return results
 
-    @show_loader(text="Performing deep checks", color="cyan")
     def _perform_deep_checks(self):
         performance_data = self.inspector.run(["computational_performance_tracking"])
         return self._generate_table_from_check(

@@ -84,7 +84,7 @@ jobs:
           REPO: ${{ steps.create-model-repo.outputs.repo_name }}
           JSON: ${{ steps.issue-parser.outputs.json }}
         run: |
-          python3 .github/scripts/update_metadata.py 
+          python3 .github/scripts/update_metadata_from_model_request.py 
 
       # upload git-lfs object
       - name: checkout persist credentials

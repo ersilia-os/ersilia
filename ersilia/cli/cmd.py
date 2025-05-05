@@ -9,13 +9,6 @@ class Command(object):
     def __init__(self):
         pass
 
-    def auth(self):
-        """
-        Authenticate the user.
-        """
-        m = importlib.import_module("ersilia.cli.commands.auth")
-        m.auth_cmd()
-
     def catalog(self):
         """
         Display the catalog.
@@ -113,3 +106,10 @@ class Command(object):
         """
         m = importlib.import_module("ersilia.cli.commands.test")
         m.test_cmd()
+
+    def dump(self):
+        """
+        Dump precalculation.
+        """
+        m = importlib.import_module("ersilia.cli.commands.dump")
+        m.dump_cmd()

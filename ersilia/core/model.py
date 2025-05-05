@@ -115,7 +115,7 @@ class ErsiliaModel(ErsiliaBase):
     def __init__(
         self,
         model: str,
-        output_source: OutputSource = OutputSource.LOCAL_ONLY,
+        output_source: OutputSource = None,
         service_class: str = None,
         config_json: dict = None,
         credentials_json: dict = None,
@@ -549,8 +549,8 @@ class ErsiliaModel(ErsiliaBase):
         Any
             The result of the API run.
         """
-        if OutputSource.is_cloud(self.output_source):
-            store = InferenceStoreApi(model_id=self.model_id)
+        if OutputSource.is_precalculation_enabled(self.output_source):
+            store = InferenceStoreApi(model_id=self.model_id, output=output)
             return store.get_precalculations(input)
         elif self._do_cache_splits(input=input, output=output):
             splitted_inputs = self.tfr.split_in_cache()

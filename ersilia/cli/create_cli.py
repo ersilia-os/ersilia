@@ -19,7 +19,6 @@ def create_ersilia_cli():
 
     cmd = Command()
 
-    cmd.auth()
     cmd.catalog()
     cmd.uninstall()
     cmd.close()
@@ -28,6 +27,7 @@ def create_ersilia_cli():
     cmd.fetch()
     cmd.info()
     cmd.test()
+    cmd.dump()
 
     # TODO: publishing functionalities
     if is_contributor:

@@ -1,7 +1,7 @@
 import click
 
 from ... import ErsiliaModel
-from ...store.utils import ModelNotInStore, OutputSource, store_has_model
+from ...store.utils import OutputSource
 from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from .. import echo
@@ -35,14 +35,6 @@ def serve_cmd():
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
     @click.option(
-        "--output-source",
-        type=click.Choice(OutputSource.ALL),
-        default=OutputSource.LOCAL_ONLY,
-        required=False,
-        help=f"Get outputs from locally hosted model only ({OutputSource.LOCAL_ONLY}), \
-            from cloud precalculation store only ({OutputSource.CLOUD_ONLY})",
-    )
-    @click.option(
         "--port",
         "-p",
         default=None,
@@ -58,24 +50,42 @@ def serve_cmd():
         required=False,
         default=False,
     )
-    @click.option("--cache/--no-cache", is_flag=True, default=True)
+    @click.option(
+        "--enable-local-cache/--disable-local-cache", is_flag=True, default=True
+    )
+    @click.option("--local-cache-only", is_flag=True, default=False)
+    @click.option("--cloud-cache-only", is_flag=True, default=False)
+    @click.option("--cache-only", is_flag=True, default=False)
     @click.option(
         "--max-cache-memory-frac", "maxmemory", type=click.FLOAT, default=None
     )
-    def serve(model, output_source, port, track, cache, maxmemory):
-        if OutputSource.is_cloud(output_source):
-            if store_has_model(model_id=model):
-                echo("Model {0} found in inference store.".format(model))
-            else:
-                ModelNotInStore(model).echo()
+    def serve(
+        model,
+        port,
+        track,
+        enable_local_cache,
+        local_cache_only,
+        cloud_cache_only,
+        cache_only,
+        maxmemory,
+    ):
+        output_source = None
+        if local_cache_only:
+            output_source = OutputSource.LOCAL_ONLY
+            enable_local_cache = True
+        if cloud_cache_only:
+            output_source = OutputSource.CLOUD_ONLY
+        if cache_only:
+            output_source = OutputSource.CACHE_ONLY
+            enable_local_cache = True
         mdl = ErsiliaModel(
             model,
             output_source=output_source,
             preferred_port=port,
-            cache=cache,
+            cache=enable_local_cache,
             maxmemory=maxmemory,
         )
-        redis_setup = SetupRedis(cache, maxmemory)
+        redis_setup = SetupRedis(enable_local_cache, maxmemory)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
 
