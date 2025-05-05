@@ -32,7 +32,7 @@ title = r"""
 def echo_intro(click_iface, mode):
     width = 120
     click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
-    version_text = f"MODE: {mode.split("-").uppercase()}"
+    version_text = f"MODE: {mode.split("-").upper()}"
     click_iface.echo(f"{version_text:^{width}}", fg="red", bold=True)
     click_iface.echo(f"{version_text:^{width}}", fg="red", bold=True)
     click_iface.echo("")
