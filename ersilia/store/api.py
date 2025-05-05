@@ -214,8 +214,7 @@ class InferenceStoreApi(ErsiliaBase):
             none_count = self._get_none_size(results)
             print(len(inputs), none_count)
             cache_size = abs(len(inputs) - none_count)
-            print(cache_size)
-            echo_local_sample_warning(self.click, self.n_samples, none_count)
+            echo_local_sample_warning(self.click, self.n_samples, cache_size)
             inputs = missing_input if len(missing_input) >= 1 else inputs
 
         s = self.n_samples if inputs is None else len(inputs)
