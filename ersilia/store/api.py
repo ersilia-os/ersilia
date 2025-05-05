@@ -211,13 +211,12 @@ class InferenceStoreApi(ErsiliaBase):
     def _submit_and_get_shards(self, inputs: list) -> list:
         if self.output_source == OutputSource.CACHE_ONLY:
             results, missing_input = self._handle_local(inputs)
-            cache_size = self._get_none_size(results)
-            print(print(len(inputs)), cache_size)
-            # print(results, len(missing_input))
-            echo_local_sample_warning(self.click, self.n_samples, cache_size)
-            print("This is whats going on")
+            none_count = self._get_none_size(results)
+            print(len(inputs), none_count)
+            cache_size = abs(len(inputs) - none_count)
+            print(cache_size)
+            echo_local_sample_warning(self.click, self.n_samples, none_count)
             inputs = missing_input if len(missing_input) >= 1 else inputs
-            print("This is whats going on")
 
         s = self.n_samples if inputs is None else len(inputs)
 
