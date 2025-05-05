@@ -212,7 +212,7 @@ class InferenceStoreApi(ErsiliaBase):
         if self.output_source == OutputSource.CACHE_ONLY:
             results, missing_input = self._handle_local(inputs)
             cache_size = self._get_none_size(results)
-            print(print(inputs), cache_size)
+            print(print(len(inputs)), cache_size)
             # print(results, len(missing_input))
             echo_local_sample_warning(self.click, self.n_samples, cache_size)
             print("This is whats going on")
