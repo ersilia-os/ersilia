@@ -19,14 +19,18 @@ from ersilia.store.utils import (
     echo_intro,
     echo_job_submitted,
     echo_job_succeeded,
+    echo_local_fetched_cache_szie,
+    echo_local_only_empty_cache,
     echo_local_sample_warning,
     echo_merged_saved,
     echo_redis_fetched_missed,
+    echo_redis_file_saved,
     echo_redis_job_submitted,
     echo_redis_local_completed,
     echo_small_sample_warning,
     echo_status,
     echo_submitting_job,
+    echo_sys_exited,
     echo_upload_complete,
     echo_uploading_inputs,
 )
@@ -73,9 +77,10 @@ class InferenceStoreApi(ErsiliaBase):
         self.fetch_type = "all"
         self.generic_output_adapter = GenericOutputAdapter(model_id=model_id)
         self.schema = self.generic_output_adapter._fetch_schema_from_github()
-        cols = self.schema[0]
+        assert self.schema is not None, "Model schema can not be fetched from github."
+        self.cols = self.schema[0]
         self.dtype = self.schema[1]
-        self.header = ["key", "input"] + cols
+        self.header = ["key", "input"] + self.cols
         self.output_path = Path(output) if output else Path(f"{model_id}_precalc.csv")
         self.input_adapter = GenericInputAdapter(model_id=model_id)
         self.click = click_iface or ClickInterface()
@@ -103,7 +108,7 @@ class InferenceStoreApi(ErsiliaBase):
         RuntimeError
             If the job fails, no shards are returned, or polling times out.
         """
-        echo_intro(self.click)
+        echo_intro(self.click, self.output_source)
         if self.output_source == OutputSource.LOCAL_ONLY:
             return self._handle_strict_local(inputs)
 
@@ -112,15 +117,25 @@ class InferenceStoreApi(ErsiliaBase):
 
     def _handle_strict_local(self, inputs: list) -> str:
         self.dump_local.init_redis()
-        echo_redis_job_submitted(self.click)
-
         if inputs:
-            self.dump_local.fetch_cached_results(self.model_id, inputs)
-            results = self.dump_local.get_cached(self.model_id, inputs, self.dtype)
-        else:
-            results, inputs = self.dump_local.fetch_all_cached(
-                self.model_id, self.dtype
+            echo_redis_job_submitted(self.click, f"Input size: {len(inputs)}")
+            results = self.dump_local.get_cached(
+                self.model_id, inputs, self.dtype, cols=self.cols
             )
+            cache_size = abs(len(results[0]) - len(results[1]))
+            echo_local_fetched_cache_szie(self.click, cache_size)
+        else:
+            ns = self.n_samples if self.n_samples != -1 else "all"
+            echo_redis_job_submitted(self.click, f"Sample size: {ns}")
+            results, inputs = self.dump_local.fetch_all_cached(
+                self.model_id, self.dtype, cols=self.cols
+            )
+            if not results:
+                echo_local_only_empty_cache(self.click)
+                echo_sys_exited(self.click)
+                sys.exit(1)
+
+            echo_local_fetched_cache_szie(self.click, len(results))
 
         results = self.dump_local._standardize_output(
             inputs, results, str(self.output_path), None, self.n_samples
@@ -128,18 +143,19 @@ class InferenceStoreApi(ErsiliaBase):
         self.generic_output_adapter._adapt_generic(
             json.dumps(results), str(self.output_path), self.model_id, DEFAULT_API_NAME
         )
+        echo_redis_file_saved(self.click, str(self.output_path))
         sys.exit(1)
         return str(self.output_path)
 
     def _handle_local(self, inputs: list) -> str:
         self.dump_local.init_redis()
-        echo_redis_job_submitted(self.click)
         missing_inputs = []
         if inputs:
-            self.dump_local.fetch_cached_results(self.model_id, inputs)
+            echo_redis_job_submitted(self.click, f"Input size: {len(inputs)}")
             results, _missing_inputs = self.dump_local.get_cached(
                 self.model_id, inputs, self.dtype
             )
+            echo_local_fetched_cache_szie(self.click, len(results))
             missing_inputs.extend(_missing_inputs)
             results = self.dump_local._standardize_output(
                 inputs, results, str(self.output_path), None, self.n_samples
@@ -153,6 +169,7 @@ class InferenceStoreApi(ErsiliaBase):
                     DEFAULT_API_NAME,
                 )
                 echo_redis_local_completed(self.click)
+                echo_sys_exited(self.click)
                 sys.exit(1)
             self.generic_output_adapter._adapt_generic(
                 json.dumps(results),
@@ -161,9 +178,12 @@ class InferenceStoreApi(ErsiliaBase):
                 DEFAULT_API_NAME,
             )
         else:
+            ns = self.n_samples if self.n_samples != -1 else "all"
+            echo_redis_job_submitted(self.click, f"Sample size: {ns}")
             results, inputs = self.dump_local.fetch_all_cached(
                 self.model_id, self.dtype
             )
+            echo_local_fetched_cache_szie(self.click, len(results))
             if len(results) > self.n_samples:
                 results = results[: self.n_samples]
             if len(results) < self.n_samples:
@@ -209,6 +229,7 @@ class InferenceStoreApi(ErsiliaBase):
             "modelid": self.model_id,
             "fetchtype": self.fetch_type,
             "nsamples": self.n_samples,
+            "dim": len(self.cols),
         }
         job_id = self.api.post_json(f"{API_BASE}/submit", json=payload)["jobId"]
         echo_job_submitted(self.click, job_id)

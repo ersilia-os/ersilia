@@ -29,17 +29,20 @@ title = r"""
 """
 
 
-def echo_intro(click_iface):
+def echo_intro(click_iface, mode):
     width = 120
     click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
-    version_text = "[Version 1.0.0]"
+    version_text = f"MODE: {mode.split("-").uppercase()}"
+    click_iface.echo(f"{version_text:^{width}}", fg="red", bold=True)
     click_iface.echo(f"{version_text:^{width}}", fg="red", bold=True)
     click_iface.echo("")
 
 
-def echo_redis_job_submitted(click_iface):
+def echo_redis_job_submitted(click_iface, message):
     click_iface.echo(
-        f"{log_prefix()}Job submitted to Redis caching system", fg="blue", bold=False
+        f"{log_prefix()}Job submitted to Redis caching system. {message}",
+        fg="blue",
+        bold=False,
     )
 
 
@@ -65,6 +68,18 @@ def echo_uploading_inputs(click_iface):
     )
 
 
+def echo_local_fetched_cache_szie(click_iface, cache_size):
+    if cache_size != 0:
+        click_iface.echo(
+            f"{log_prefix()}Found cache size of {cache_size} from local Redis cache. Post processing started!",
+            fg="blue",
+            bold=False,
+        )
+    else:
+        echo_local_only_empty_cache(click_iface)
+        echo_redis_null_output(click_iface)
+
+
 def echo_upload_complete(click_iface):
     click_iface.echo(f"{log_prefix()}Upload completed.", fg="blue", bold=False)
 
@@ -77,9 +92,35 @@ def echo_submitting_job(click_iface, model_id):
     )
 
 
+def echo_sys_exited(click_iface):
+    click_iface.echo(
+        f"{log_prefix()}System exits with exit code 1",
+        fg="blue",
+        bold=False,
+    )
+
+
+def echo_redis_null_output(click_iface):
+    click_iface.echo(
+        f"{log_prefix()}Beware that output file may contain None values",
+        fg="yellow",
+        bold=True,
+    )
+
+
 def echo_job_submitted(click_iface, job_id: str):
     click_iface.echo(
         f"{log_prefix()}Job submitted with a job id: {job_id}", fg="blue", bold=False
+    )
+
+
+def echo_local_only_empty_cache(click_iface):
+    click_iface.echo(
+        f"{log_prefix()}Ooopps! No cached results found in local Redis system for the model! Try cloud caching!",
+        fg="white",
+        blink=False,
+        bold=True,
+        bg="yellow",
     )
 
 
@@ -147,6 +188,12 @@ def echo_found_shards(click_iface, count: int):
 def echo_merged_saved(click_iface, output_path: Path):
     click_iface.echo(
         f"{log_prefix()}Merged CSV saved to: {output_path}", fg="blue", bold=False
+    )
+
+
+def echo_redis_file_saved(click_iface, output_path: Path):
+    click_iface.echo(
+        f"{log_prefix()}Output file is saved to: {output_path}", fg="blue", bold=False
     )
 
 
