@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -31,7 +31,7 @@ jobs:
       run:
         shell: bash -el {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -57,7 +57,7 @@ jobs:
         shell: bash -el {0}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -81,7 +81,7 @@ jobs:
         shell: bash -el {0}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -107,7 +107,7 @@ jobs:
           shell: bash -el {0}
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v4.2.2
         - uses: conda-incubator/setup-miniconda@v3
           with:
             auto-update-conda: true
@@ -141,7 +141,7 @@ jobs:
           - os: macos-latest
             fetch_source: from_dockerhub  
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -164,7 +164,7 @@ jobs:
         shell: bash -el {0}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
@@ -196,7 +196,7 @@ jobs:
     needs: run-pytest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.2.2
       - name: Path Filter
         id: filter
         uses: dorny/paths-filter@v3
