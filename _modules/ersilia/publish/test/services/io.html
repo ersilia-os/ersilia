@@ -640,12 +640,14 @@
             <span class="k">return</span> <span class="n">status</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">parse_performance</span><span class="p">(</span><span class="n">status</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">{</span>
-                <span class="sa">f</span><span class="s2">&quot;pred_</span><span class="si">{</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
-                    <span class="sa">r</span><span class="s2">&quot;(\d+) predictions executed in (\d+\.\d</span><span class="si">{2}</span><span class="s2">) seconds. \n&quot;</span><span class="p">,</span> <span class="n">status</span>
-                <span class="p">)</span>
-            <span class="p">}</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(\d+) predictions executed in (-?\d+\.\d+) seconds. \n&quot;</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">secs</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
+                <span class="n">secs_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">secs</span><span class="p">)</span>
+                <span class="n">out</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pred_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secs_f</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">out</span>
 
         <span class="n">key</span> <span class="o">=</span> <span class="n">clean_string</span><span class="p">(</span><span class="n">sanitize_name</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
         <span class="n">json_data</span> <span class="o">=</span> <span class="p">{}</span>
