@@ -312,35 +312,35 @@ class ModelSizeMbBaseInformationError(ErsiliaError):
 class ComputationalPerformanceOneBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Computational Performance One field error"
-        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 4 input predictions per second"
+        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 1 input predictions per second"
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class ComputationalPerformanceTenBaseInformationError(ErsiliaError):
     def __init__(self):
-        self.message = "Computational Performance Ten field error"
-        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 7 input predictions per second"
+        self.message = "Computational Performance Two field error"
+        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 10 input predictions per second"
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class ComputationalPerformanceHundredBaseInformationError(ErsiliaError):
     def __init__(self):
-        self.message = "Computational Performance Hundred field error"
-        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 12 input predictions per second"
+        self.message = "Computational Performance Three field error"
+        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 100 input predictions per second"
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class ComputationalPerformanceThousandsBaseInformationError(ErsiliaError):
     def __init__(self):
-        self.message = "Computational Performance Thousands field error"
-        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 20 input predictions per second"
+        self.message = "Computational Performance Four field error"
+        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 1000 input predictions per second"
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
 class ComputationalPerformanceTenThousandsBaseInformationError(ErsiliaError):
     def __init__(self):
-        self.message = "Computational Performance TenThousands field error"
-        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 34 input predictions per second"
+        self.message = "Computational Performance Five field error"
+        self.hints = "Computational Performance field must be specified as a valid numeric value indicating the 10000 input predictions per second"
         ErsiliaError.__init__(self, self.message, self.hints)
 
 

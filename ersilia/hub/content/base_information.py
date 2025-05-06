@@ -152,12 +152,12 @@ class BaseInformation(ErsiliaBase):
             Placeholder for environment size in megabytes.
         _image_size : None
             Placeholder for Docker image size in megabytes.
-        _computational_performance_four : None
-            Placeholder for four-run computational performance.
+        _computational_performance_one : None
+            Placeholder for one-run computational performance.
         _computational_performance_seven : None
             Placeholder for seven-run computational performance.
-        _computational_performance_twelve : None
-            Placeholder for twelve-run computational performance.
+        _computational_performance_two : None
+            Placeholder for two-run computational performance.
         _computational_performance_thousands : None
             Placeholder for thousands-run computational performance.
         _computational_performance_ten_thousands : None
@@ -1471,7 +1471,7 @@ class BaseInformation(ErsiliaBase):
 
         Raises
         ------
-        ComputationalPerformanceFourBaseInformationError
+        ComputationalPerformanceoneBaseInformationError
             If `new_value` is not an int or float.
         """
         if new_value is None:
@@ -1535,7 +1535,7 @@ class BaseInformation(ErsiliaBase):
 
         Raises
         ------
-        ComputationalPerformanceTwelveBaseInformationError
+        ComputationalPerformancetwoBaseInformationError
             If `new_value` is not an int or float.
         """
         if new_value is None:
@@ -1603,7 +1603,7 @@ class BaseInformation(ErsiliaBase):
 
         Raises
         ------
-        ComputationalPerformanceThirtyfourBaseInformationError
+        ComputationalPerformanceThirtyoneBaseInformationError
             If `new_value` is not an int or float.
         """
         if new_value is None:
@@ -1787,10 +1787,10 @@ class BaseInformation(ErsiliaBase):
             "Environment Size": self.environment_size,
             "Image Size": self.image_size,
             "Computational Performance 1": self._computational_performance_one,
-            "Computational Performance 10": self._computational_performance_ten,
-            "Computational Performance 100": self._computational_performance_hundred,
-            "Computational Performance 1000": self.computational_performance_thousands,
-            "Computational Performance 10000": self.computational_performance_ten_thousands,
+            "Computational Performance 2": self._computational_performance_ten,
+            "Computational Performance 3": self._computational_performance_hundred,
+            "Computational Performance 4": self.computational_performance_thousands,
+            "Computational Performance 5": self.computational_performance_ten_thousands,
             "Docker Pack Method": self.pack_method,
             "Deployment": self.deployment,
         }
@@ -1847,19 +1847,19 @@ class BaseInformation(ErsiliaBase):
             "computational_performance_one", "Computational Performance 1", data
         )
         self._assign(
-            "computational_performance_ten", "Computational Performance 10", data
+            "computational_performance_ten", "Computational Performance 2", data
         )
         self._assign(
-            "computational_performance_hundred", "Computational Performance 100", data
+            "computational_performance_hundred", "Computational Performance 3", data
         )
         self._assign(
             "computational_performance_thousands",
-            "Computational Performance 1000",
+            "Computational Performance 4",
             data,
         )
         self._assign(
             "computational_performance_ten_thousands",
-            "Computational Performance 10000",
+            "Computational Performance 5",
             data,
         )
         self._assign("docker_pack_method", "Docker Pack Method", data)
