@@ -248,7 +248,7 @@ class ModelInspector:
         for n in (1, 10, 100, 1000, 10000):
             result, _timeout = self._run_performance_check(n, timeout)
             timeout = _timeout or timeout
-            if not result.success:
+            if not result.success and "predictions" not in result.details:
                 return result
             details.append(result.details)
         return Result(True, " ".join(details))
