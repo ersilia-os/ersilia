@@ -27,10 +27,8 @@ from ersilia.store.utils import (
     echo_local_only_empty_cache,
     echo_local_sample_warning_,
     echo_merged_saved,
-    echo_redis_fetched_missed,
     echo_redis_file_saved,
     echo_redis_job_submitted,
-    echo_redis_local_completed,
     echo_small_sample_warning,
     echo_status,
     echo_submitting_job,
@@ -168,39 +166,19 @@ class InferenceStoreApi(ErsiliaBase):
         sys.exit(1)
         return str(self.output_path)
 
-    def _handle_local(self, inputs: list) -> str:
+    def _handle_local(self, inputs: list) -> tuple:
         self.dump_local.init_redis()
         missing_inputs = []
+
         if inputs:
-            ns = len(inputs)
             echo_redis_job_submitted(self.click, f"Input size: {len(inputs)}")
-            results, _missing_inputs = self.dump_local.get_cached(
+            results, missing_inputs = self.dump_local.get_cached(
                 self.model_id, inputs, self.dtype, cols=self.cols
             )
-            missing_inputs.extend(_missing_inputs)
             results = self.dump_local._standardize_output(
                 inputs, results, str(self.output_path), None
             )
-            none_count = self._get_none_size(results)
-            cache_size = len(inputs) - none_count
-            echo_redis_fetched_missed(self.click, len(results), len(missing_inputs))
-            if len(results) + 1 >= len(inputs) and not missing_inputs:
-                self.generic_output_adapter._adapt_generic(
-                    json.dumps(results),
-                    str(self.output_path),
-                    self.model_id,
-                    DEFAULT_API_NAME,
-                )
-                echo_redis_local_completed(self.click)
-                echo_sys_exited(self.click)
-                sys.exit(1)
-            if cache_size != 0:
-                self.generic_output_adapter._adapt_generic(
-                    json.dumps(results),
-                    self.local_cache_csv_path,
-                    self.model_id,
-                    DEFAULT_API_NAME,
-                )
+            cache_size = len(results) - self._get_none_size(results)
         else:
             ns = self.n_samples if self.n_samples != -1 else "all"
             echo_redis_job_submitted(self.click, f"Sample size: {ns}")
@@ -210,36 +188,46 @@ class InferenceStoreApi(ErsiliaBase):
             results = self.dump_local._standardize_output(
                 inputs, results, str(self.output_path), None, self.n_samples
             )
-            none_count = self._get_none_size(results)
             cache_size = len(results)
-            if len(results) > self.n_samples:
+            if isinstance(self.n_samples, int) and len(results) > self.n_samples:
                 results = results[: self.n_samples]
-        _continue = echo_local_sample_warning_(self.click, ns, cache_size)
-        if not _continue and cache_size > 0:
-            self.generic_output_adapter._adapt_generic(
-                json.dumps(results),
-                str(self.output_path),
-                self.model_id,
-                DEFAULT_API_NAME,
-            )
-            echo_redis_file_saved(self.click, str(self.output_path))
+
+        proceed = echo_local_sample_warning_(
+            self.click,
+            len(inputs) or self.n_samples,
+            cache_size,
+        )
+        if not proceed:
             echo_sys_exited(self.click)
-            sys.exit(1)
+            sys.exit(0)
+
+        if cache_size == 0:
+            return results, missing_inputs
+
+        if not missing_inputs:
+            target_path = str(self.output_path)
         else:
-            self.generic_output_adapter._adapt_generic(
-                json.dumps(results),
-                self.local_cache_csv_path,
-                self.model_id,
-                DEFAULT_API_NAME,
-            )
-        if missing_inputs:
-            missing_inputs = [input["input"] for input in missing_inputs]
+            target_path = self.local_cache_csv_path
+
+        self.generic_output_adapter._adapt_generic(
+            json.dumps(results),
+            target_path,
+            self.model_id,
+            DEFAULT_API_NAME,
+        )
+
+        if target_path == str(self.output_path):
+            echo_redis_file_saved(self.click, target_path)
+
         return results, missing_inputs
 
     def _get_none_size(self, res):
         size = 0
         for r in res:
             vals = list(r["output"].values())
+            if isinstance(vals[0], list):
+                if "" in vals[0]:
+                    size += 1
             if isinstance(vals, list):
                 if "" in vals or None in vals:
                     size += 1
