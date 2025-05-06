@@ -306,9 +306,11 @@ class IOService:
         def parse_performance(status):
             pattern = r"(\d+) predictions executed in (-?\d+\.\d+) seconds. \n"
             out = {}
+            i = 1
             for count, secs in re.findall(pattern, status):
                 secs_f = float(secs)
-                out[f"pred_{count}"] = secs_f
+                out[f"pred_{i}"] = secs_f
+                i += 1
             return out
 
         key = clean_string(sanitize_name(key))

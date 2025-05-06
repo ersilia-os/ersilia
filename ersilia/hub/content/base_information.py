@@ -1493,7 +1493,7 @@ class BaseInformation(ErsiliaBase):
         return self._computational_performance_two
 
     @computational_performance_two.setter
-    def computational_performance_ten(self, new_value):
+    def computational_performance_two(self, new_value):
         """Set the computational performance at level ten.
 
         Parameters

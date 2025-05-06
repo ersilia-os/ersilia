@@ -461,8 +461,8 @@ class RunnerService:
                 results.extend(self._perform_shallow_checks())
 
             if self.deep:
-                # results.extend(self._perform_surface_check())
-                # results.extend(self._perform_shallow_checks())
+                results.extend(self._perform_surface_check())
+                results.extend(self._perform_shallow_checks())
                 deep_result = self._perform_deep_checks()
                 results.append(deep_result)
 
@@ -562,8 +562,6 @@ class RunnerService:
         return results
 
     def _perform_deep_checks(self):
-        self.fetch()
-
         performance_data = self.inspector.run(["computational_performance_tracking"])
         return self._generate_table_from_check(
             TableType.COMPUTATIONAL_PERFORMANCE, performance_data, large=True
