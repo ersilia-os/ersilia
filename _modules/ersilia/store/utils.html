@@ -353,20 +353,29 @@
 
 <div class="viewcode-block" id="echo_intro">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_intro">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">echo_intro</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_intro</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
     <span class="n">width</span> <span class="o">=</span> <span class="mi">120</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Hybrid [Local + Cloud]&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;cache-only&quot;</span>
+        <span class="k">else</span> <span class="n">mode</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+    <span class="p">)</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">version_text</span> <span class="o">=</span> <span class="s2">&quot;[Version 1.0.0]&quot;</span>
-    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">version_text</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">mode_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;⚙️ Fetch Mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">version_text</span> <span class="o">=</span> <span class="s2">&quot;🏷️ [Version 0.1.0] 🏷️&quot;</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">version_text</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode_text</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="echo_redis_job_submitted">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_job_submitted">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_job_submitted</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_job_submitted</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Job submitted to Redis caching system&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Job submitted to Redis caching system. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -376,7 +385,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_fetched_missed</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">size_res</span><span class="p">,</span> <span class="n">size_missing</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Results size of </span><span class="si">{</span><span class="n">size_res</span><span class="si">}</span><span class="s2"> fetched from local cache. Missing inputs: </span><span class="si">{</span><span class="n">size_missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -386,10 +395,11 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_local_completed">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_local_completed</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">All inputs has results in local caches and won&#39;t processed further query. Exiting the system with output file&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">All inputs has results in local caches and won&#39;t processed further query.&quot;</span><span class="p">,</span>
         <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span></div>
+    <span class="p">)</span>
+    <span class="n">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span></div>
 
 
 
@@ -399,6 +409,23 @@
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Uploading input data to S3 bucket&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="echo_local_fetched_cache_szie">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_local_fetched_cache_szie">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_local_fetched_cache_szie</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">,</span> <span class="n">none_count</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cache_size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Found cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> from local Redis cache. Post processing started!&quot;</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+            <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">echo_local_only_empty_cache</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
+        <span class="n">echo_redis_null_output</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">none_count</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">echo_redis_null_output</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span></div>
 
 
 
@@ -420,6 +447,28 @@
 
 
 
+<div class="viewcode-block" id="echo_sys_exited">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_sys_exited">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">System exits with exit code 1&quot;</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="echo_redis_null_output">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_null_output">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_null_output</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Beware that output file may contain None or empty values!&quot;</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="echo_job_submitted">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_job_submitted">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_job_submitted</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -429,23 +478,76 @@
 
 
 
-<div class="viewcode-block" id="echo_local_sample_warning">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_local_sample_warning">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">echo_local_sample_warning</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">cache_size</span>
-    <span class="k">if</span> <span class="n">cache_size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;This is more or equal to a sample size you requested!&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;This is less than a sample size you requested by </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">!&quot;</span>
-
+<div class="viewcode-block" id="echo_local_only_empty_cache">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_local_only_empty_cache">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_local_only_empty_cache</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> fetched from local Redis caching. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Ooopps! No cached results found in local Redis system for the model! Try cloud caching!&quot;</span><span class="p">,</span>
         <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
         <span class="n">blink</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="echo_local_sample_warning_">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_local_sample_warning_">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_local_sample_warning_</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Do you want to continue to cloud for fetching?&quot;</span>
+
+    <span class="k">if</span> <span class="n">cache_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">echo_local_only_empty_cache</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+
+    <span class="n">d</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">cache_size</span>
+    <span class="k">if</span> <span class="n">cache_size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span>
+        <span class="n">bg</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;This is more or equal to the sample size you requested!&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bg</span> <span class="o">=</span> <span class="s2">&quot;yellow&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;This is less than the sample size you requested by </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> fetched from local Redis caching. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="n">blink</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s2">&quot;Do you want to continue to cloud for fetching?&quot;</span><span class="p">,</span> <span class="n">abort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="echo_local_sample_warning">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_local_sample_warning">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_local_sample_warning</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Do you want to continue to cloud for fetching?&quot;</span>
+
+    <span class="k">if</span> <span class="n">cache_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">echo_local_only_empty_cache</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+            <span class="n">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">cache_size</span>
+        <span class="k">if</span> <span class="n">cache_size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span>
+            <span class="n">bg</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;This is more or equal to the sample size you requested!&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bg</span> <span class="o">=</span> <span class="s2">&quot;yellow&quot;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;This is less than the sample size you requested by </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">!&quot;</span>
+
+        <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> fetched from local Redis caching. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+            <span class="n">blink</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+            <span class="n">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 
 
@@ -510,6 +612,15 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_merged_saved</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Merged CSV saved to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="echo_redis_file_saved">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_file_saved">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_file_saved</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Output file is saved to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
 
 

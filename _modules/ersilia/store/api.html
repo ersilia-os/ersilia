@@ -318,10 +318,14 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.store.api</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">click.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Abort</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">ersilia.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ersilia.default</span><span class="w"> </span><span class="kn">import</span> <span class="n">API_BASE</span><span class="p">,</span> <span class="n">DEFAULT_API_NAME</span><span class="p">,</span> <span class="n">EOS_TMP</span><span class="p">,</span> <span class="n">INFERENCE_STORE_API_URL</span>
@@ -338,14 +342,16 @@
     <span class="n">echo_intro</span><span class="p">,</span>
     <span class="n">echo_job_submitted</span><span class="p">,</span>
     <span class="n">echo_job_succeeded</span><span class="p">,</span>
-    <span class="n">echo_local_sample_warning</span><span class="p">,</span>
+    <span class="n">echo_local_fetched_cache_szie</span><span class="p">,</span>
+    <span class="n">echo_local_only_empty_cache</span><span class="p">,</span>
+    <span class="n">echo_local_sample_warning_</span><span class="p">,</span>
     <span class="n">echo_merged_saved</span><span class="p">,</span>
-    <span class="n">echo_redis_fetched_missed</span><span class="p">,</span>
+    <span class="n">echo_redis_file_saved</span><span class="p">,</span>
     <span class="n">echo_redis_job_submitted</span><span class="p">,</span>
-    <span class="n">echo_redis_local_completed</span><span class="p">,</span>
     <span class="n">echo_small_sample_warning</span><span class="p">,</span>
     <span class="n">echo_status</span><span class="p">,</span>
     <span class="n">echo_submitting_job</span><span class="p">,</span>
+    <span class="n">echo_sys_exited</span><span class="p">,</span>
     <span class="n">echo_upload_complete</span><span class="p">,</span>
     <span class="n">echo_uploading_inputs</span><span class="p">,</span>
 <span class="p">)</span>
@@ -394,9 +400,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fetch_type</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span> <span class="o">=</span> <span class="n">GenericOutputAdapter</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span><span class="o">.</span><span class="n">_fetch_schema_from_github</span><span class="p">()</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Model schema can not be fetched from github.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">cols</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="k">if</span> <span class="n">output</span> <span class="k">else</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">_precalc.csv&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_adapter</span> <span class="o">=</span> <span class="n">GenericInputAdapter</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">click</span> <span class="o">=</span> <span class="n">click_iface</span> <span class="ow">or</span> <span class="n">ClickInterface</span><span class="p">()</span>
@@ -426,92 +433,136 @@
 <span class="sd">        RuntimeError</span>
 <span class="sd">            If the job fails, no shards are returned, or polling times out.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">echo_intro</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span> <span class="o">==</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_strict_local</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">echo_intro</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_cache_csv_path</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_cache_csv_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span> <span class="o">==</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_strict_local</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
 
-        <span class="n">shards</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_submit_and_get_shards</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_shards</span><span class="p">(</span><span class="n">shards</span><span class="p">)</span></div>
+            <span class="n">shards</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_submit_and_get_shards</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_shards</span><span class="p">(</span><span class="n">shards</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">Abort</span><span class="p">:</span>
+            <span class="n">echo_sys_exited</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;Precalculations workflow failed. See traceback above for details.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_handle_strict_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">init_redis</span><span class="p">()</span>
-        <span class="n">echo_redis_job_submitted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">inputs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">fetch_cached_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">get_cached</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">echo_redis_job_submitted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Input size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">get_cached</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span>
+            <span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span>
+                <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">none_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_none_size</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="n">cache_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">-</span> <span class="n">none_count</span>
+            <span class="n">echo_local_fetched_cache_szie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">,</span> <span class="n">none_count</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;all&quot;</span>
+            <span class="n">echo_redis_job_submitted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Sample size: </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">results</span><span class="p">,</span> <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">fetch_all_cached</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span>
             <span class="p">)</span>
-
-        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span>
-            <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DEFAULT_API_NAME</span>
-        <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">init_redis</span><span class="p">()</span>
-        <span class="n">echo_redis_job_submitted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
-        <span class="n">missing_inputs</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">inputs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">fetch_cached_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
-            <span class="n">results</span><span class="p">,</span> <span class="n">_missing_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">get_cached</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
-            <span class="p">)</span>
-            <span class="n">missing_inputs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_missing_inputs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+                <span class="n">echo_local_only_empty_cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
+                <span class="n">echo_sys_exited</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span>
                 <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
             <span class="p">)</span>
-            <span class="n">echo_redis_fetched_missed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_inputs</span><span class="p">))</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">missing_inputs</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span>
-                    <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
-                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
-                    <span class="n">DEFAULT_API_NAME</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">echo_redis_local_completed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span>
-                <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">local_cache_csv_path</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
-                <span class="n">DEFAULT_API_NAME</span><span class="p">,</span>
+            <span class="n">cache_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="n">echo_local_fetched_cache_szie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DEFAULT_API_NAME</span>
+        <span class="p">)</span>
+        <span class="n">echo_redis_file_saved</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">init_redis</span><span class="p">()</span>
+        <span class="n">missing_inputs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="n">echo_redis_job_submitted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Input size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">results</span><span class="p">,</span> <span class="n">missing_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">get_cached</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span>
             <span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span>
+                <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">cache_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_none_size</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;all&quot;</span>
+            <span class="n">echo_redis_job_submitted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Sample size: </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">results</span><span class="p">,</span> <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">fetch_all_cached</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span>
             <span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span>
+                <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
+            <span class="p">)</span>
+            <span class="n">cache_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">:</span>
                 <span class="n">results</span> <span class="o">=</span> <span class="n">results</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-                <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dump_local</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span>
-                    <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span>
-                    <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">local_cache_csv_path</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
-                    <span class="n">DEFAULT_API_NAME</span><span class="p">,</span>
-                <span class="p">)</span>
+
+        <span class="n">proceed</span> <span class="o">=</span> <span class="n">echo_local_sample_warning_</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
+            <span class="n">cache_size</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">proceed</span><span class="p">:</span>
+            <span class="n">echo_sys_exited</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cache_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">missing_inputs</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">missing_inputs</span><span class="p">:</span>
+            <span class="n">target_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">target_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_cache_csv_path</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span>
+            <span class="n">target_path</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">DEFAULT_API_NAME</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">target_path</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">):</span>
+            <span class="n">echo_redis_file_saved</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">target_path</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="n">missing_inputs</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_none_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;&quot;</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">size</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;&quot;</span> <span class="ow">in</span> <span class="n">vals</span> <span class="ow">or</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
+                    <span class="n">size</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">size</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_submit_and_get_shards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span> <span class="o">==</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">CACHE_ONLY</span><span class="p">:</span>
-            <span class="n">results</span><span class="p">,</span> <span class="n">missing_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_local</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-            <span class="n">echo_local_sample_warning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">missing_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_local</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
             <span class="n">inputs</span> <span class="o">=</span> <span class="n">missing_input</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_input</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">inputs</span>
-
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">if</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-
-        <span class="n">echo_small_sample_warning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+        <span class="n">ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">if</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="n">echo_small_sample_warning</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">request_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="p">(</span>
@@ -533,6 +584,7 @@
             <span class="s2">&quot;modelid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
             <span class="s2">&quot;fetchtype&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_type</span><span class="p">,</span>
             <span class="s2">&quot;nsamples&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
+            <span class="s2">&quot;dim&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">),</span>
         <span class="p">}</span>
         <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">post_json</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">API_BASE</span><span class="si">}</span><span class="s2">/submit&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">)[</span><span class="s2">&quot;jobId&quot;</span><span class="p">]</span>
         <span class="n">echo_job_submitted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">job_id</span><span class="p">)</span>
