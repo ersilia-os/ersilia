@@ -152,7 +152,7 @@ class DataFrame(object):
         """
         if delimiter is None:
             delimiter = self._get_delimiter(file_name)
-        none_str = "None"
+        none_str = ""
         with open(file_name, "w", newline="") as f:
             f.write(delimiter.join(self.columns) + "\n")
             for row in self.data:
@@ -458,7 +458,8 @@ class GenericOutputAdapter(ResponseRefactor):
             return dtype(val)
         if not isinstance(val, list) and val is None:
             return val
-        return [dtype(v) if v is not None else v for v in val]
+        out = [dtype(v) if (v is not None and v != "") else None for v in val]
+        return out
 
     def _cast_values_from_github_metadata(self, values, dtype):
         return [self._sinlge_cast(val, dtype) for val in values]
