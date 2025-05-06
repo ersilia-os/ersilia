@@ -1577,9 +1577,7 @@ class BaseInformation(ErsiliaBase):
         elif not self._is_numeric(new_value):
             raise ComputationalPerformanceThousandsBaseInformationError
         else:
-            self._computational_performance_four = self._serialize_to_numeric(
-                new_value
-            )
+            self._computational_performance_four = self._serialize_to_numeric(new_value)
 
     @property
     def computational_performance_five(self):
@@ -1611,9 +1609,7 @@ class BaseInformation(ErsiliaBase):
         elif not self._is_numeric(new_value):
             raise ComputationalPerformanceTenThousandsBaseInformationError
         else:
-            self._computational_performance_five = self._serialize_to_numeric(
-                new_value
-            )
+            self._computational_performance_five = self._serialize_to_numeric(new_value)
 
     @property
     def pack_method(self):
