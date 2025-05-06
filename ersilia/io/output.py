@@ -152,7 +152,7 @@ class DataFrame(object):
         """
         if delimiter is None:
             delimiter = self._get_delimiter(file_name)
-        none_str = "None"
+        none_str = ""
         with open(file_name, "w", newline="") as f:
             f.write(delimiter.join(self.columns) + "\n")
             for row in self.data:
