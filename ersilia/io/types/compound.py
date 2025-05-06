@@ -47,6 +47,7 @@ class IO(object):
                 "InputShapeSingle shape: {0}".format(self.input_shape.name)
             )
             self._example = self._example_single
+            self._example_fixed = self._example_single_fixed
             self._parser = self._parse_single
             self._test = test_examples.input_shape_single
         if type(self.input_shape) is InputShapeList:
@@ -88,6 +89,22 @@ class IO(object):
             Generator yielding example data.
         """
         return self._example(n_samples)
+
+    def example_fixed(self, n_samples):
+        """
+        Generate example data deterministically.
+
+        Parameters
+        ----------
+        n_samples : int
+            Number of samples to generate.
+
+        Returns
+        -------
+        generator
+            Generator yielding example data.
+        """
+        return self._example_fixed(n_samples)
 
     def test(self):
         """
@@ -192,8 +209,29 @@ class IO(object):
             D += [{"key": r[0], "input": r[1], "text": r[2]}]
         return D
 
+    def _sample_example_singlets_fixed(self, n_samples):
+        if self.example_file.endswith(".tsv"):
+            delimiter = "\t"
+        elif self.example_file.endswith(".csv"):
+            delimiter = ","
+        else:
+            raise ValueError(f"Unsupported file type: {self.example_file!r}")
+
+        with open(self.example_file, "r", newline="") as f:
+            reader = csv.reader(f, delimiter=delimiter)
+            rows = list(reader)
+
+        selected = rows[:n_samples]
+
+        return [{"key": r[0], "input": r[1], "text": r[2]} for r in selected]
+
     def _example_single(self, n_samples):
         D = self._sample_example_singlets(n_samples)
+        for d in D:
+            yield d
+
+    def _example_single_fixed(self, n_samples):
+        D = self._sample_example_singlets_fixed(n_samples)
         for d in D:
             yield d
 

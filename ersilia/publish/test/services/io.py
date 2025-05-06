@@ -304,12 +304,14 @@ class IOService:
             return status
 
         def parse_performance(status):
-            return {
-                f"pred_{match[0]}": float(match[1])
-                for match in re.findall(
-                    r"(\d+) predictions executed in (\d+\.\d{2}) seconds. \n", status
-                )
-            }
+            pattern = r"(\d+) predictions executed in (-?\d+\.\d+) seconds. \n"
+            out = {}
+            i = 1
+            for count, secs in re.findall(pattern, status):
+                secs_f = float(secs)
+                out[f"pred_{i}"] = secs_f
+                i += 1
+            return out
 
         key = clean_string(sanitize_name(key))
         json_data = {}

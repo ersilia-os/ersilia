@@ -26,6 +26,10 @@ from .constants import (
     COMMON_FILES,
     BENTOML_FILES,
     ERSILIAPACK_FILES,
+    BENTOML_FOLDERS,
+    ERSILIAPACK_FOLDERS,
+    TIMEOUT_SECONDS
+
 )
 from .... import ErsiliaBase
 from ....hub.content.card import RepoMetadataFile
@@ -240,10 +244,11 @@ class ModelInspector:
         Result
             A namedtuple containing the success status and details of the check.
         """
-        details = []
-        for n in (4, 7, 12, 20, 34, 58, 100):
-            result = self._run_performance_check(n)
-            if not result.success:
+        details, timeout = [], False
+        for n in (1, 10, 100, 1000, 10000):
+            result, _timeout = self._run_performance_check(n, timeout)
+            timeout = _timeout or timeout
+            if not result.success and "predictions" not in result.details:
                 return result
             details.append(result.details)
         return Result(True, " ".join(details))
@@ -258,9 +263,9 @@ class ModelInspector:
             A namedtuple containing the success status and details of the check.
         """
         if self.pack_type == PACK_METHOD_BENTOML:
-            expected_items = self.BENTOML_FILES + self.BENTOML_FOLDERS
+            expected_items = self.BENTOML_FILES + BENTOML_FOLDERS
         elif self.pack_type == PACK_METHOD_FASTAPI:
-            expected_items = self.ERSILIAPACK_FILES + self.ERSILIAPACK_FOLDERS
+            expected_items = self.ERSILIAPACK_FILES + ERSILIAPACK_FOLDERS
         else:
             return Result(False, f"Unsupported pack type: {self.pack_type}")
 
@@ -493,22 +498,38 @@ class ModelInspector:
             logger.debug(f"Errors in Install YML file install command: {errors}")
         return errors
 
-    def _run_performance_check(self, n):
-        cmd = (
-            f"ersilia serve {self.model} --disable-local-cache &&"
-            f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} &&"
-            f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
-        )
-        start_time = time.time()
-        process = subprocess.run(
-            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        if process.returncode != 0:
-            return Result(False, f"Error serving model: {process.stderr.strip()}")
-        execution_time = time.time() - start_time
-        return Result(
-            True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
-        )
+    def _run_performance_check(self, n, timeout):
+            cmd = (
+                f"ersilia serve {self.model} --disable-local-cache && "
+                f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} -d && "
+                f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
+            )
+            if timeout:
+                return Result(
+                    False, f"{n} predictions executed in {-1.00} seconds. \n"
+                ), timeout   
+            start_time = time.time()
+            try:
+                process = subprocess.run(
+                    cmd,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=TIMEOUT_SECONDS,
+                )
+            except subprocess.TimeoutExpired as e:
+                return Result(
+                False, f"{n} predictions executed in {-1.00} seconds. \n"
+            ), True
+            if process.returncode != 0:
+                return Result(
+                False, "Something happened when running the deep check!"
+            ), False
+            execution_time = time.time() - start_time
+            return Result(
+                True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
+            ), False
 
 
 class CheckStrategy:
