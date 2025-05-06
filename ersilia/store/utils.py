@@ -34,12 +34,11 @@ def echo_intro(click_iface, mode):
     mode = (
         "Hybrid [Local + Cloud]"
         if mode == "cache-only"
-        else mode.replace("-", " ").upper()
+        else mode.replace("-", " ").capitalize()
     )
-    print(mode)
     click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
-    mode_text = f"FETCH MODE: {mode}"
-    version_text = "[Version 0.1.0]"
+    mode_text = f"⚙️ Fetch Mode: {mode}"
+    version_text = "🏷️ [Version 0.1.0] 🏷️"
     click_iface.echo(f"{version_text:^{width}}", fg="cyan", bold=True)
     click_iface.echo(f"{mode_text:^{width}}", fg="cyan", bold=True)
     click_iface.echo("")
@@ -76,7 +75,7 @@ def echo_uploading_inputs(click_iface):
     )
 
 
-def echo_local_fetched_cache_szie(click_iface, cache_size):
+def echo_local_fetched_cache_szie(click_iface, cache_size, none_count):
     if cache_size != 0:
         click_iface.echo(
             f"{log_prefix()}Found cache size of {cache_size} from local Redis cache. Post processing started!",
@@ -85,6 +84,8 @@ def echo_local_fetched_cache_szie(click_iface, cache_size):
         )
     else:
         echo_local_only_empty_cache(click_iface)
+        echo_redis_null_output(click_iface)
+    if none_count != 0:
         echo_redis_null_output(click_iface)
 
 
@@ -110,7 +111,7 @@ def echo_sys_exited(click_iface):
 
 def echo_redis_null_output(click_iface):
     click_iface.echo(
-        f"{log_prefix()}Beware that output file may contain None values",
+        f"{log_prefix()}Beware that output file may contain None or empty values!",
         fg="yellow",
         bold=True,
     )
@@ -132,27 +133,58 @@ def echo_local_only_empty_cache(click_iface):
     )
 
 
-def echo_local_sample_warning(click_iface, n: int, cache_size: int):
+def echo_local_sample_warning_(click_iface, n: int, cache_size: int) -> bool:
+    prompt = "Do you want to continue to cloud for fetching?"
+
     if cache_size == 0:
         echo_local_only_empty_cache(click_iface)
-        click.confirm("Do you want to continue to cloud for fetching?", abort=True)
+        return click.confirm(prompt)
+
+    d = n - cache_size
+    if cache_size >= n:
+        bg = "cyan"
+        message = "This is more or equal to the sample size you requested!"
+    else:
+        bg = "yellow"
+        message = f"This is less than the sample size you requested by {d}!"
+
+    click_iface.echo(
+        f"{log_prefix()}Cache size of {cache_size} fetched from local Redis caching. {message}",
+        fg="white",
+        blink=False,
+        bold=True,
+        bg=bg,
+    )
+    return click.confirm(prompt)
+
+
+def echo_local_sample_warning(click_iface, n: int, cache_size: int):
+    prompt = "Do you want to continue to cloud for fetching?"
+
+    if cache_size == 0:
+        echo_local_only_empty_cache(click_iface)
+        if not click.confirm(prompt):
+            echo_sys_exited(click_iface)
+            sys.exit(0)
     else:
         d = n - cache_size
         if cache_size >= n:
             bg = "cyan"
-            message = "This is more or equal to a sample size you requested!"
-        elif cache_size <= n:
+            message = "This is more or equal to the sample size you requested!"
+        else:
             bg = "yellow"
-            message = f"This is less than a sample size you requested by {d}!"
+            message = f"This is less than the sample size you requested by {d}!"
 
         click_iface.echo(
-            f"{log_prefix()}Cache size of {cache_size} fetched from local Redis caching. {message}!",
+            f"{log_prefix()}Cache size of {cache_size} fetched from local Redis caching. {message}",
             fg="white",
             blink=False,
             bold=True,
             bg=bg,
         )
-        click.confirm("Do you want to continue to cloud for fetching?", abort=True)
+        if not click.confirm(prompt):
+            echo_sys_exited(click_iface)
+            sys.exit(0)
 
 
 def echo_small_sample_warning(click_iface, n: int):

@@ -1,8 +1,12 @@
 import json
+import os
 import sys
 import time
+import traceback
 import uuid
 from pathlib import Path
+
+from click.exceptions import Abort
 
 from ersilia.core.base import ErsiliaBase
 from ersilia.default import API_BASE, DEFAULT_API_NAME, EOS_TMP, INFERENCE_STORE_API_URL
@@ -21,7 +25,7 @@ from ersilia.store.utils import (
     echo_job_succeeded,
     echo_local_fetched_cache_szie,
     echo_local_only_empty_cache,
-    echo_local_sample_warning,
+    echo_local_sample_warning_,
     echo_merged_saved,
     echo_redis_fetched_missed,
     echo_redis_file_saved,
@@ -108,22 +112,39 @@ class InferenceStoreApi(ErsiliaBase):
         RuntimeError
             If the job fails, no shards are returned, or polling times out.
         """
-        echo_intro(self.click, self.output_source)
-        if self.output_source == OutputSource.LOCAL_ONLY:
-            return self._handle_strict_local(inputs)
+        try:
+            echo_intro(self.click, self.output_source)
+            if os.path.exists(self.local_cache_csv_path):
+                os.remove(self.local_cache_csv_path)
+            if self.output_source == OutputSource.LOCAL_ONLY:
+                return self._handle_strict_local(inputs)
 
-        shards = self._submit_and_get_shards(inputs)
-        return self._merge_shards(shards)
+            shards = self._submit_and_get_shards(inputs)
+            return self._merge_shards(shards)
+
+        except Abort:
+            echo_sys_exited(self.click)
+            sys.exit(0)
+
+        except Exception as e:
+            traceback.print_exc()
+            raise RuntimeError(
+                "Precalculations workflow failed. See traceback above for details."
+            ) from e
 
     def _handle_strict_local(self, inputs: list) -> str:
         self.dump_local.init_redis()
         if inputs:
             echo_redis_job_submitted(self.click, f"Input size: {len(inputs)}")
-            results = self.dump_local.get_cached(
+            results, _ = self.dump_local.get_cached(
                 self.model_id, inputs, self.dtype, cols=self.cols
             )
-            cache_size = abs(len(results[0]) - len(results[1]))
-            echo_local_fetched_cache_szie(self.click, cache_size)
+            results = self.dump_local._standardize_output(
+                inputs, results, str(self.output_path), None
+            )
+            none_count = self._get_none_size(results)
+            cache_size = len(inputs) - none_count
+            echo_local_fetched_cache_szie(self.click, cache_size, none_count)
         else:
             ns = self.n_samples if self.n_samples != -1 else "all"
             echo_redis_job_submitted(self.click, f"Sample size: {ns}")
@@ -134,12 +155,12 @@ class InferenceStoreApi(ErsiliaBase):
                 echo_local_only_empty_cache(self.click)
                 echo_sys_exited(self.click)
                 sys.exit(1)
+            results = self.dump_local._standardize_output(
+                inputs, results, str(self.output_path), None, self.n_samples
+            )
+            cache_size = len(results)
+            echo_local_fetched_cache_szie(self.click, cache_size, 0)
 
-            echo_local_fetched_cache_szie(self.click, len(results))
-
-        results = self.dump_local._standardize_output(
-            inputs, results, str(self.output_path), None, self.n_samples
-        )
         self.generic_output_adapter._adapt_generic(
             json.dumps(results), str(self.output_path), self.model_id, DEFAULT_API_NAME
         )
@@ -151,15 +172,17 @@ class InferenceStoreApi(ErsiliaBase):
         self.dump_local.init_redis()
         missing_inputs = []
         if inputs:
+            ns = len(inputs)
             echo_redis_job_submitted(self.click, f"Input size: {len(inputs)}")
             results, _missing_inputs = self.dump_local.get_cached(
                 self.model_id, inputs, self.dtype, cols=self.cols
             )
-            echo_local_fetched_cache_szie(self.click, len(results))
             missing_inputs.extend(_missing_inputs)
             results = self.dump_local._standardize_output(
-                inputs, results, str(self.output_path), None, self.n_samples
+                inputs, results, str(self.output_path), None
             )
+            none_count = self._get_none_size(results)
+            cache_size = len(inputs) - none_count
             echo_redis_fetched_missed(self.click, len(results), len(missing_inputs))
             if len(results) + 1 >= len(inputs) and not missing_inputs:
                 self.generic_output_adapter._adapt_generic(
@@ -171,53 +194,62 @@ class InferenceStoreApi(ErsiliaBase):
                 echo_redis_local_completed(self.click)
                 echo_sys_exited(self.click)
                 sys.exit(1)
-
-            self.generic_output_adapter._adapt_generic(
-                json.dumps(results),
-                self.local_cache_csv_path,
-                self.model_id,
-                DEFAULT_API_NAME,
-            )
-        else:
-            ns = self.n_samples if self.n_samples != -1 else "all"
-            echo_redis_job_submitted(self.click, f"Sample size: {ns}")
-            results, inputs = self.dump_local.fetch_all_cached(
-                self.model_id, self.dtype
-            )
-            echo_local_fetched_cache_szie(self.click, len(results))
-            if len(results) > self.n_samples:
-                results = results[: self.n_samples]
-            if len(results) < self.n_samples:
-                self.n_samples = self.n_samples - len(results)
-                results = self.dump_local._standardize_output(
-                    inputs, results, str(self.output_path), None, self.n_samples
-                )
+            if cache_size != 0:
                 self.generic_output_adapter._adapt_generic(
                     json.dumps(results),
                     self.local_cache_csv_path,
                     self.model_id,
                     DEFAULT_API_NAME,
                 )
+        else:
+            ns = self.n_samples if self.n_samples != -1 else "all"
+            echo_redis_job_submitted(self.click, f"Sample size: {ns}")
+            results, inputs = self.dump_local.fetch_all_cached(
+                self.model_id, self.dtype, cols=self.cols
+            )
+            results = self.dump_local._standardize_output(
+                inputs, results, str(self.output_path), None, self.n_samples
+            )
+            none_count = self._get_none_size(results)
+            cache_size = len(results)
+            if len(results) > self.n_samples:
+                results = results[: self.n_samples]
+        _continue = echo_local_sample_warning_(self.click, ns, cache_size)
+        if not _continue and cache_size > 0:
+            self.generic_output_adapter._adapt_generic(
+                json.dumps(results),
+                str(self.output_path),
+                self.model_id,
+                DEFAULT_API_NAME,
+            )
+            echo_redis_file_saved(self.click, str(self.output_path))
+            echo_sys_exited(self.click)
+            sys.exit(1)
+        else:
+            self.generic_output_adapter._adapt_generic(
+                json.dumps(results),
+                self.local_cache_csv_path,
+                self.model_id,
+                DEFAULT_API_NAME,
+            )
+        if missing_inputs:
+            missing_inputs = [input["input"] for input in missing_inputs]
         return results, missing_inputs
 
     def _get_none_size(self, res):
         size = 0
         for r in res:
             vals = list(r["output"].values())
-            if "None" in vals[0]:
-                size += 1
+            if isinstance(vals, list):
+                if "" in vals or None in vals:
+                    size += 1
         return size
 
     def _submit_and_get_shards(self, inputs: list) -> list:
-        ns = self.n_samples if inputs is None else len(inputs)
         if self.output_source == OutputSource.CACHE_ONLY:
-            results, missing_input = self._handle_local(inputs)
-            none_count = self._get_none_size(results)
-            print(len(inputs), none_count)
-            cache_size = abs(len(inputs) - none_count)
-            echo_local_sample_warning(self.click, ns, cache_size)
+            _, missing_input = self._handle_local(inputs)
             inputs = missing_input if len(missing_input) >= 1 else inputs
-
+        ns = self.n_samples if inputs is None else len(inputs)
         echo_small_sample_warning(self.click, ns)
         self.request_id = str(uuid.uuid4())
 

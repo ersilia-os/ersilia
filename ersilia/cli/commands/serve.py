@@ -122,7 +122,7 @@ def serve_cmd():
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
         echo("")
-        echo(":arrows_counterclockwise: Cache fetching Mode:", fg="blue")
+        echo("🔄 Cache fetching Mode:", fg="blue")
         echo(
             f"   - status: {cache_status}", fg="red"
         ) if cache_status == "Disabled" else echo(
