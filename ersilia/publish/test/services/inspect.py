@@ -244,9 +244,10 @@ class ModelInspector:
         Result
             A namedtuple containing the success status and details of the check.
         """
-        details = []
+        details, timeout = [], False
         for n in (1, 10, 100, 1000, 10000):
-            result = self._run_performance_check(n)
+            result, _timeout = self._run_performance_check(n, timeout)
+            timeout = _timeout or timeout
             if not result.success:
                 return result
             details.append(result.details)
@@ -497,12 +498,16 @@ class ModelInspector:
             logger.debug(f"Errors in Install YML file install command: {errors}")
         return errors
 
-    def _run_performance_check(self, n):
+    def _run_performance_check(self, n, timeout):
             cmd = (
                 f"ersilia serve {self.model} --disable-local-cache && "
                 f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} -d && "
                 f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
             )
+            if timeout:
+                return Result(
+                    False, f"{n} predictions executed in {-1.00} seconds. \n"
+                ), timeout   
             start_time = time.time()
             try:
                 process = subprocess.run(
@@ -516,15 +521,15 @@ class ModelInspector:
             except subprocess.TimeoutExpired as e:
                 return Result(
                 False, f"{n} predictions executed in {-1.00} seconds. \n"
-            )
+            ), True
             if process.returncode != 0:
                 return Result(
-                False, f"{n} predictions executed in {-1.00} seconds. \n"
-            )
+                False, "Something happened when running the deep check!"
+            ), False
             execution_time = time.time() - start_time
             return Result(
                 True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
-            )
+            ), False
 
 
 class CheckStrategy:
