@@ -36,7 +36,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     OutputDimensionBaseInformationError,
     OutputShapeBaseInformationError,
     OutputTypeBaseInformationError,
-    PackMethodBaseInformationError,
     PublicationBaseInformationError,
     PublicationTypeBaseInformationError,
     PublicationYearBaseInformationError,
@@ -1457,39 +1456,6 @@ class BaseInformation(ErsiliaBase):
             return property(getter, setter)
 
     @property
-    def pack_method(self):
-        """
-        Get the model pack method.
-
-        Returns
-        -------
-        str
-            The model pack method.
-        """
-        return self._pack_method
-
-    @pack_method.setter
-    def pack_method(self, new_pack_method):
-        """
-        Set the model pack method.
-
-        Parameters
-        ----------
-        pack_method : str
-            The new model pack method.
-        Raises
-        ------
-        PackMethodBaseInformationError
-            If the pack method is not valid.
-        """
-        if new_pack_method is None:
-            self._pack_method = None
-        elif new_pack_method not in self._read_default_fields("Docker Pack Method"):
-            raise PackMethodBaseInformationError
-        else:
-            self._pack_method = new_pack_method
-
-    @property
     def incorporation_date(self):
         """
         Get the model contributing date.
@@ -1642,7 +1608,6 @@ class BaseInformation(ErsiliaBase):
             "Computational Performance 5": self._make_performance_property.__func__(
             "computational_performance_five", ComputationalPerformanceBaseInformationError
             ),
-            "Docker Pack Method": self.pack_method,
             "Deployment": self.deployment,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
@@ -1713,5 +1678,4 @@ class BaseInformation(ErsiliaBase):
             "Computational Performance 5",
             data,
         )
-        self._assign("docker_pack_method", "Docker Pack Method", data)
         self._assign("deployment", "Deployment", data)

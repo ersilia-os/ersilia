@@ -336,15 +336,6 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
 
-    def _check_model_pack_method(self, data):
-        key = "Pack Method"
-        self.logger.debug(f"Checking {key}  field..")
-        if key in data:
-            if not data[key]:
-                raise texc.EmptyField(key)
-        else:
-            raise texc.EmptyKey(key)
-
     def _check_model_image_size(self, data):
         key = "Image Size"
         self.logger.debug(f"Checking {key}  field..")
@@ -407,7 +398,7 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
         
-    def _check_model_computational_performance_ten_five(self, data):
+    def _check_model_computational_performance_five(self, data):
         key = "Computational Performance #5"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -462,7 +453,6 @@ class CheckService:
         self._run_check(
             self._check_model_contribution_date, data, "Model Contribution Date"
         )
-        self._run_check(self._check_model_pack_method, data, "Model Pack Method")
         self._run_check(self._check_model_image_size, data, "Model Image Size")
         self._run_check(self._check_model_env_size, data, "Model Environment Size")
         self._run_check(self._check_model_model_size, data, "Model Directory Size")
@@ -487,7 +477,7 @@ class CheckService:
             "Model Computational Performance for 1000 input",
         )
         self._run_check(
-            self._check_model_computational_performance_ten_five,
+            self._check_model_computational_performance_five,
             data,
             "Model Computational Performance for 10000 input",
         )
