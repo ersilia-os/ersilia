@@ -495,6 +495,7 @@ class RunnerService:
 
             if self.deep:
                 echo("Performing deep checks.", fg="yellow", bold=True)
+                results.extend(self._perform_basic_checks())
                 results.extend(self._perform_surface_check())
                 results.extend(self._perform_shallow_checks())
                 deep_result = self._perform_deep_checks()

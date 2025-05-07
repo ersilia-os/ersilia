@@ -397,8 +397,14 @@ class ModelInspector:
         semver_re    = re.compile(r"^[0-9]+(?:\.[0-9A-Za-z]+)*$")
 
         skip_flags = {
-            'pip': ("--index-url", "--extra-index-url", "-f"),
-            'conda': ("-c", "--channel", "-y", "--yes")
+            'pip': (
+                "--index-url", "--extra-index-url", "-f",
+                "--no-deps", "--upgrade", "--no-cache-dir", "-r"
+            ),
+            'conda': (
+                "-c", "--channel", "-y", "--yes",
+                "--override-channels", "--no-deps", "--prune", "--no-pin"
+            )
         }
 
         for raw in lines:
