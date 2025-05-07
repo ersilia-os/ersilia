@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 import warnings
 import tempfile
 import traceback
@@ -31,6 +32,7 @@ from ....io.input import ExampleGenerator
 from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.terminal import run_command_check_output, run_command
 from ....cli import echo
+from ....store.utils import echo_exceptions, ClickInterface
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
 
@@ -75,6 +77,8 @@ class RunnerService:
         Instance of InspectService for inspecting models and their configurations.
     surface : bool
         Flag indicating whether to perform surface checks.
+    inspect : bool
+        Flag indicating whether to perform inspect checks.
     """
 
     def __init__(
@@ -96,6 +100,7 @@ class RunnerService:
         report_path: str,
         inspector: InspectService,
         surface: bool,
+        inspect: bool
     ):
         self.model_id = model_id
         self.logger = logger
@@ -110,6 +115,7 @@ class RunnerService:
         self.from_s3 = from_s3
         self.from_dockerhub = from_dockerhub
         self.version = version
+        self.inspect = inspect
         self.shallow = shallow
         self.deep = deep
         self.report_path = Path(report_path) if report_path else Path().cwd()
@@ -120,7 +126,6 @@ class RunnerService:
         self.surface = surface
         self.installer = PackageInstaller(self.dir, self.model_id)
 
-    @throw_ersilia_exception()
     def run_model(self, inputs: list, output: str, batch: int):
         """
         Run the model with the given input and output parameters.
@@ -144,7 +149,6 @@ class RunnerService:
         out = run_command(cmd)
         return out
     
-    @throw_ersilia_exception()
     def delete(self):
         """
         Delete model if existed
@@ -161,7 +165,6 @@ class RunnerService:
                 ),
             )
 
-    @throw_ersilia_exception()
     def fetch(self):
         """
         Fetch the model repository from the specified directory.
@@ -214,7 +217,6 @@ class RunnerService:
         )
         return examples
 
-    @throw_ersilia_exception()
     def run_bash(self):
         """
         Run the model using a bash script and compare the outputs for consistency.
@@ -237,6 +239,17 @@ class RunnerService:
                 bv = [row[column] for row in bsh_data]
                 ev = [row[column] for row in ers_data]
 
+                b_types = set(type(val) for val in bv)
+                e_types = set(type(val) for val in ev)
+                if b_types != e_types:
+                    msg = (
+                        f"Datatype mismatch for column '{column}': "
+                        f"bash types {sorted({t.__name__ for t in b_types})}, "
+                        f"ersilia types {sorted({t.__name__ for t in e_types})}"
+                    )
+                    echo_exceptions(msg, ClickInterface())
+                    return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
+
                 if all(isinstance(val, (int, float)) for val in bv + ev):
                     rmse = compute_rmse(bv, ev)
                     _rmse.append(rmse)
@@ -246,11 +259,24 @@ class RunnerService:
                         _completed_status.append(
                             (
                                 f"RMSE-{column}",
-                                f"RMSE > 10%{rmse_perc}%",
+                                f"RMSE > 10%: {rmse_perc}%",
                                 str(STATUS_CONFIGS.FAILED),
                             )
                         )
-                        raise texc.InconsistentOutputs(self.model_id)
+                        echo_exceptions(
+                            "Model output is inconsistent between bash and ersilia. Skipped the checks!",
+                            ClickInterface(),
+                        )
+                        return _completed_status
+                    else:
+                        rmse_perc = round(rmse * 100, 2)
+                        _completed_status.append(
+                            (
+                                f"RMSE-{column}",
+                                f"RMSE <= 10%: {rmse_perc}%",
+                                str(STATUS_CONFIGS.PASSED),
+                            )
+                        )
 
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
@@ -260,24 +286,31 @@ class RunnerService:
                         _completed_status.append(
                             ("String Similarity", "< 95%", str(STATUS_CONFIGS.FAILED))
                         )
-                        raise texc.InconsistentOutputs(self.model_id)
+                        echo_exceptions(
+                            "Model output is inconsistent between bash and ersilia. Skipped the checks!",
+                            ClickInterface(),
+                        )
+                        return _completed_status
+
                     _completed_status.append(
                         ("String Similarity", "> 95%", str(STATUS_CONFIGS.PASSED))
                     )
 
-            rmse = sum(_rmse) / len(_rmse) if _rmse else 0
-            rmse_perc = round(rmse * 100, 2)
+            mean_rmse = sum(_rmse) / len(_rmse) if _rmse else 0
+            mean_rmse_perc = round(mean_rmse * 100, 2)
             _completed_status.append(
-                ("RMSE-MEAN", f"RMSE < 10% | {rmse_perc}%", str(STATUS_CONFIGS.PASSED))
+                (
+                    "RMSE-MEAN",
+                    f"RMSE < 10% | {mean_rmse_perc}%",
+                    str(STATUS_CONFIGS.PASSED),
+                )
             )
 
             return _completed_status
 
         def read_csv(path, flag=False):
             if not os.path.exists(path):
-                raise FileNotFoundError(
-                    f"File not found this might be due to error happened when executing the run.sh: {path}"
-                )
+                echo_exceptions(f"File not found this might be due to error happened when executing the run.sh: {path}", ClickInterface())
             try:
                 with open(path, "r") as file:
                     self.logger.info("Reading the lines")
@@ -297,21 +330,26 @@ class RunnerService:
                     values = line.strip().split(",")
                     values = values[2:] if flag else values
 
-                    def parse(value):
-                        try:
-                            v = int(value)
-                            return v
-                        except ValueError:
-                            pass
-
-                        try:
-                            v = float(value)
-                            return v
-                        except ValueError:
-                            pass
-
-                        if isinstance(value, str):
+                    def parse(value: str):
+                        if value == "":
                             return value
+
+                        try:
+                            i = int(value)
+                            if str(i) == value or (value.startswith(('+', '-')) and str(i) == value.lstrip('+')):
+                                print("Int parsed value\n", i)
+
+                                return i
+                        except ValueError:
+                            pass
+                        try:
+                            f = float(value)
+                            if value.lower() not in ("nan", "+nan", "-nan", "none", "inf", "+inf", "-inf"):
+                                return f
+                        except ValueError:
+                            pass
+
+                        return value
 
                     try:
                         _values = [parse(x) for x in values]
@@ -323,11 +361,11 @@ class RunnerService:
                 return data, None
 
             except Exception as e:
-                raise RuntimeError(f"Failed to read CSV from {path}.") from e
-
+                echo_exceptions(f"Failed to read CSV from {path}.", ClickInterface())
+                
         def read_logs(path):
             if not os.path.exists(path):
-                raise FileNotFoundError(f"File not found: {path}")
+                echo_exceptions(f"File not found: {path}", ClickInterface())
             with open(path, "r") as file:
                 return file.readlines()
 
@@ -383,11 +421,7 @@ class RunnerService:
             logs = read_logs(error_log_path)
             formatted_error = "".join(logs)
             if formatted_error:
-                echo(
-                    f"Running bash: {formatted_error}",
-                    fg="yellow",
-                    bold=True,
-                )
+                echo_exceptions(f"Error detected originated from the bash execution: {formatted_error}", ClickInterface(), bg=None, fg="red")
             bsh_data, _ = read_csv(bash_output_path)
             self.logger.debug("Running model for bash data consistency checking")
             cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i '{input_file_path}' -o {output_path}"
@@ -448,19 +482,24 @@ class RunnerService:
         try:
             self._configure_environment()
             self.setup_service.get_model()
-
-            basic_results = self._perform_basic_checks()
-            results.extend(basic_results)
+            if self.inspect:
+                echo("Performing basic checks [inspection].", fg="yellow", bold=True)
+                basic_results = self._perform_basic_checks()
+                results.extend(basic_results)
 
             if self.surface:
+                echo("Performing surface checks.", fg="yellow", bold=True)
                 surface_results = self._perform_surface_check()
                 results.extend(surface_results)
 
             if self.shallow:
+                echo("Performing shallow checks.", fg="yellow", bold=True)
                 results.extend(self._perform_surface_check())
                 results.extend(self._perform_shallow_checks())
 
             if self.deep:
+                echo("Performing deep checks.", fg="yellow", bold=True)
+                results.extend(self._perform_basic_checks())
                 results.extend(self._perform_surface_check())
                 results.extend(self._perform_shallow_checks())
                 deep_result = self._perform_deep_checks()
@@ -473,6 +512,15 @@ class RunnerService:
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
+        except SystemExit as e:
+            tb = traceback.format_exc()
+            error_info = {"exception": str(e), "traceback": tb}
+            results.append(error_info)
+            echo(f"Caught SystemExit({e.code}), returning partial results. Saving report, deleting model and exiting.", fg="yellow", bold=True)
+            self.ios_service.collect_and_save_json(results, self.report_file)
+            self.delete()
+            echo("Model successfully deleted", fg="green", bold=True)
+            sys.exit(1)
         except Exception as error:
             tb = traceback.format_exc()
             error_info = {"exception": str(error), "traceback": tb}
@@ -534,11 +582,13 @@ class RunnerService:
         results.append(
             self._generate_table_from_check(TableType.MODEL_RUN_CHECK, simple_output)
         )
-
+        if simple_output[0][-1] == str(STATUS_CONFIGS.FAILED):
+            echo_exceptions("Model simple run check has problem. System is exiting before proceeding!", ClickInterface(), exit=True)
         return results
 
     def _perform_shallow_checks(self):
         results = []
+        self.fetch()
 
         model_output = self.checkup_service.check_model_output_content(
             self.run_example, self.run_model
@@ -559,6 +609,8 @@ class RunnerService:
             self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
         )
         results.extend(validations)
+        if bash_results[0][-1] == str(STATUS_CONFIGS.FAILED):
+            echo_exceptions("Model output is not consistent. System is exiting before proceeding!", ClickInterface(), exit=True)
         return results
 
     def _perform_deep_checks(self):

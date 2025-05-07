@@ -1,12 +1,10 @@
 import os
-
 import yaml
-
-import os
 import re
-def eval_conda_prefix():
-  return os.popen("conda info --base").read().strip()
+import warnings
 
+def eval_conda_prefix():
+    return os.popen("conda info --base").read().strip()
 
 class InstallParser:
   def __init__(self, file_name, conda_env_name=None):
@@ -30,10 +28,7 @@ class InstallParser:
 
   @staticmethod
   def _has_conda(commands):
-    for command in commands:
-      if isinstance(command, list) and command[0] == "conda":
-        return True
-    return False
+    return any(isinstance(cmd, list) and cmd[0] == "conda" for cmd in commands)
 
   def _is_valid_url(self, url):
     pattern = re.compile(r"^(git\+https://|git\+ssh://|https://).*")
@@ -48,14 +43,33 @@ class InstallParser:
         return f"pip install {pkg}"
       else:
         raise ValueError("pip install entry must have at least package and version")
-    pkg = command[1]
-    ver = command[2]
+    pkg, ver = command[1], command[2]
     spec = f"{pkg}=={ver}"
     flags = command[3:]
     return f"pip install {spec}" + (" " + " ".join(flags) if flags else "")
 
   def _convert_conda_entry_to_bash(self, command):
-    # command: ["conda", "install", flags/channels..., pkg[=ver]]
+    if len(command) >= 4 and command[1] != "install":
+      _, pkg, ver, *rest = command
+      if not re.match(r"^[\w\-.]+(?:={1,2})[\w\-.]+$", f"{pkg}={ver}"):
+        raise ValueError(
+          "Conda shorthand must include valid version pin, e.g. pkg=ver or pkg==ver"
+        )
+      channels = [x for x in rest if x not in ("-y",)]
+      flags = [x for x in rest if x == "-y"]
+      if not channels:
+        warnings.warn(
+          f"No channel specified for conda package '{pkg}', defaulting to 'default'."
+        )
+        channels = ["default"]
+      channel_flags = []
+      for ch in channels:
+        channel_flags.extend(["-c", ch])
+      cmd = ["conda", "install"] + flags + channel_flags + [f"{pkg}={ver}"]
+      if "-y" not in flags:
+        cmd.append("-y")
+      return " ".join(cmd)
+
     parts = command[1:]
     cmd = ["conda", "install"]
     channels = []
@@ -75,8 +89,9 @@ class InstallParser:
         i += 1
     if not pkg_spec:
       raise ValueError("No package specified for conda install")
+    if not re.search(r"={1,2}", pkg_spec):
+      raise ValueError("Conda install entry must specify package and version")
     cmd += flags + channels + [pkg_spec]
-    # auto-confirm
     if "-y" not in flags:
       cmd.append("-y")
     return " ".join(cmd)
@@ -87,27 +102,25 @@ class InstallParser:
     conda_prefix = eval_conda_prefix() or ""
     python_exe = self.get_python_exe()
     lines = []
-
     if has_conda:
       env = self.conda_env_name or "base"
-      header = []
       if conda_prefix:
-        header.append(f"source {conda_prefix}/etc/profile.d/conda.sh")
-      header.append(f"conda activate {env}")
-      lines.extend(header)
-
+        lines.append(f"source {conda_prefix}/etc/profile.d/conda.sh")
+      lines.append(f"conda activate {env}")
     for cmd in commands:
       if isinstance(cmd, list):
         if cmd[0] == "pip":
           bash = f"{python_exe} -m {self._convert_pip_entry_to_bash(cmd)}"
+          print("Pip\n", bash)
         elif cmd[0] == "conda":
           bash = self._convert_conda_entry_to_bash(cmd)
+          print("Conda\n", bash)
+
         else:
           raise ValueError(f"Unknown command type: {cmd[0]}")
       else:
         bash = cmd
       lines.append(bash)
-
     return os.linesep.join(lines)
 
   def write_bash_script(self, file_name=None):
@@ -123,83 +136,86 @@ FILE_TYPE = "install.yml"
 
 
 class YAMLInstallParser(InstallParser):
-  def __init__(self, file_dir, conda_env_name=None):
-    self.file_type = FILE_TYPE
-    self.file_name = os.path.join(file_dir, self.file_type)
-    self.data = self._load_yaml()
-    super().__init__(self.file_name, conda_env_name)
+    def __init__(self, file_dir, conda_env_name=None):
+        self.file_type = FILE_TYPE
+        self.file_name = os.path.join(file_dir, self.file_type)
+        self.data = self._load_yaml()
+        super().__init__(self.file_name, conda_env_name)
 
-  def _load_yaml(self):
-    with open(self.file_name, "r") as file:
-      return yaml.safe_load(file)
+    def _load_yaml(self):
+        with open(self.file_name, "r") as file:
+            return yaml.safe_load(file)
 
-  def _get_python_version(self):
-    if "python" not in self.data or not isinstance(self.data["python"], str):
-      raise ValueError("Python version must be a string")
-    return self.data["python"]
+    def _get_python_version(self):
+        if "python" not in self.data or not isinstance(self.data["python"], str):
+            raise ValueError("Python version must be a string")
+        return self.data["python"]
 
-  def _get_commands(self):
-    if "commands" not in self.data:
-      raise KeyError("Missing 'commands' key in YAML file")
-    return self.data["commands"]
+    def _get_commands(self):
+        if "commands" not in self.data:
+            raise KeyError("Missing 'commands' key in YAML file")
+        return self.data["commands"]
 
 
 FILE_TYPE = "Dockerfile"
 
 
 class DockerfileInstallParser(InstallParser):
-  def __init__(self, file_dir, conda_env_name=None):
-    file_name = os.path.join(file_dir, FILE_TYPE)
-    super().__init__(file_name, conda_env_name)
+    def __init__(self, file_dir, conda_env_name=None):
+        file_name = os.path.join(file_dir, FILE_TYPE)
+        super().__init__(file_name, conda_env_name)
 
-  def _get_python_version(self):
-    with open(self.file_name) as f:
-      for line in f:
-        if line.startswith("FROM"):
-          match = re.search(r"py(\d+\.\d+|\d{2,3})", line)
-          if match:
-            v = match.group(1)
-            if "." not in v:
-              v = f"{v[0]}.{v[1:]}"
-            return v
-    raise ValueError("Python version not found")
+    def _get_python_version(self):
+        with open(self.file_name) as f:
+            for line in f:
+                if line.startswith("FROM"):
+                    match = re.search(r"py(\d+\.\d+|\d{2,3})", line)
+                    if match:
+                        v = match.group(1)
+                        if "." not in v:
+                            v = f"{v[0]}.{v[1:]}"
+                        return v
+        raise ValueError("Python version not found")
 
-  @staticmethod
-  def _tokenize(command):
-    return command.split()
+    @staticmethod
+    def _tokenize(command):
+        return command.split()
 
-  @staticmethod
-  def _process_pip_command(command):
-    parts = DockerfileInstallParser._tokenize(command)
-    if len(parts) < 3 or parts[0] != "pip" or parts[1] != "install":
-      raise ValueError("Invalid pip install command")
-    pkg_spec = parts[2]
-    if pkg_spec.startswith("git+"):
-      return ["pip", pkg_spec]
-    if "==" in pkg_spec:
-      pkg, ver = pkg_spec.split("==", 1)
-    else:
-      raise ValueError("pip install must specify version or git URL")
-    flags = parts[3:]
-    return ["pip", pkg, ver] + flags
+    @staticmethod
+    def _process_pip_command(command):
+        parts = DockerfileInstallParser._tokenize(command)
+        if len(parts) < 3 or parts[0] != "pip" or parts[1] != "install":
+            raise ValueError("Invalid pip install command")
+        pkg_spec = parts[2]
+        if pkg_spec.startswith("git+"):
+            return ["pip", pkg_spec]
+        if "==" in pkg_spec:
+            pkg, ver = pkg_spec.split("==", 1)
+        else:
+            raise ValueError("pip install must specify version or git URL")
+        flags = parts[3:]
+        return ["pip", pkg, ver] + flags
 
-  @staticmethod
-  def _process_conda_command(command):
-    parts = command.split()
-    if len(parts) < 3 or parts[0] != "conda" or parts[1] != "install":
-      raise ValueError("Invalid conda install command")
-    return parts
+    @staticmethod
+    def _process_conda_command(command):
+        parts = command.split()
+        if len(parts) < 3 or parts[0] != "conda" or parts[1] != "install":
+            raise ValueError("Invalid conda install command")
+        pkg_spec = next((p for p in parts[2:] if not p.startswith("-") and "=" in p), None)
+        if not pkg_spec:
+            raise ValueError("Conda install entry must specify package and version")
+        return parts
 
-  def _get_commands(self):
-    cmds = []
-    with open(self.file_name) as f:
-      for line in f:
-        if line.strip().startswith("RUN"):
-          cmd = line.strip()[3:].strip()
-          if cmd.startswith("pip"):
-            cmds.append(self._process_pip_command(cmd))
-          elif cmd.startswith("conda"):
-            cmds.append(self._process_conda_command(cmd))
-          else:
-            cmds.append(cmd)
-    return cmds
+    def _get_commands(self):
+        cmds = []
+        with open(self.file_name) as f:
+            for line in f:
+                if line.strip().startswith("RUN"):
+                    cmd = line.strip()[3:].strip()
+                    if cmd.startswith("pip"):
+                        cmds.append(self._process_pip_command(cmd))
+                    elif cmd.startswith("conda"):
+                        cmds.append(self._process_conda_command(cmd))
+                    else:
+                        cmds.append(cmd)
+        return cmds

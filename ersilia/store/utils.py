@@ -44,6 +44,13 @@ def echo_intro(click_iface, mode):
     click_iface.echo("")
 
 
+def echo_exceptions(message, click_iface, exit=False, bg="red", fg="white"):
+    click_iface.echo(f"{message}", fg=fg, bg=bg, bold=False)
+    if exit:
+        echo_sys_exited(click_iface)
+        sys.exit(1)
+
+
 def echo_redis_job_submitted(click_iface, message):
     click_iface.echo(
         f"{log_prefix()}Job submitted to Redis caching system. {message}",

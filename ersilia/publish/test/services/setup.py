@@ -178,19 +178,11 @@ class SetupService:
                         logger.info(line.strip())
 
                 process.wait()
-                if process.returncode != 0:
-                    raise subprocess.CalledProcessError(
-                        returncode=process.returncode,
-                        cmd=command,
-                        output="\n".join(stdout_lines),
-                        stderr="\n".join(stderr_lines),
-                    )
-
                 return process.stdout
 
         except subprocess.CalledProcessError as e:
             logger.error(f"Error executing command: {e}")
-            echo(f"\n Error executing command: {e}", fg="red")
+            echo(f"\n Error happened when : {e}", fg="red")
             if e.output:
                 logger.debug(f"Output: {e.output.strip()}")
                 echo(f"Output: {e.output.strip()}", fg="red")

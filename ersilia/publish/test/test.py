@@ -131,6 +131,7 @@ class ModelTester(ErsiliaBase):
             self.report_path,
             self.inspector,
             self.surface,
+            self.inspect
         )
 
     def _check_pedendency(self):

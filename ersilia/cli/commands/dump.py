@@ -12,7 +12,7 @@ from . import ersilia_cli
 def dump_cmd():
     """Create dump command"""
 
-    # dumpy usage: ersilia dumpy -n 10 [--output {FILE_NAME}]
+    # dumpy usage: ersilia dump -n 10 [--output {FILE_NAME}]
     @ersilia_cli.command(
         short_help="Fetch precalculations from cloud and local sources",
         help="This command fetch cached precalculations from a cloud and from local. In the local case precalculation will be fetched from a Redis container.",
