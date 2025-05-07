@@ -330,23 +330,26 @@ class RunnerService:
                     values = line.strip().split(",")
                     values = values[2:] if flag else values
 
-                    def parse(value):
-                        if flag:
+                    def parse(value: str):
+                        if value == "":
                             return value
+
                         try:
-                            v = int(value)
-                            return v
+                            i = int(value)
+                            if str(i) == value or (value.startswith(('+', '-')) and str(i) == value.lstrip('+')):
+                                print("Int parsed value\n", i)
+
+                                return i
+                        except ValueError:
+                            pass
+                        try:
+                            f = float(value)
+                            if value.lower() not in ("nan", "+nan", "-nan", "none", "inf", "+inf", "-inf"):
+                                return f
                         except ValueError:
                             pass
 
-                        try:
-                            v = float(value)
-                            return v
-                        except ValueError:
-                            pass
-
-                        if isinstance(value, str):
-                            return value
+                        return value
 
                     try:
                         _values = [parse(x) for x in values]
@@ -585,6 +588,7 @@ class RunnerService:
 
     def _perform_shallow_checks(self):
         results = []
+        self.fetch()
 
         model_output = self.checkup_service.check_model_output_content(
             self.run_example, self.run_model
