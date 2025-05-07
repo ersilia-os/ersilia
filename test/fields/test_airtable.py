@@ -6,13 +6,11 @@ from unittest.mock import patch, MagicMock
 MODEL_ID = "eos3b5e"
 ENVIRONMENT_SIZE = 345
 IMAGE_SIZE = 1010
-COMPUTATIONAL_PERFORMANCE_4 = 10.11
-COMPUTATIONAL_PERFORMANCE_7 = 14.12
-COMPUTATIONAL_PERFORMANCE_12 = 50.45
-COMPUTATIONAL_PERFORMANCE_20 = 50.45
-COMPUTATIONAL_PERFORMANCE_34 = 50.45
-COMPUTATIONAL_PERFORMANCE_58 = 50.45
-COMPUTATIONAL_PERFORMANCE_100 = 50.45
+COMPUTATIONAL_PERFORMANCE_1 = 10.11
+COMPUTATIONAL_PERFORMANCE_2 = 14.12
+COMPUTATIONAL_PERFORMANCE_3 = 50.45
+COMPUTATIONAL_PERFORMANCE_4 = 50.45
+COMPUTATIONAL_PERFORMANCE_5 = 50.45
 DUMMP_API_KEY = "airtable_api_key_456"
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.github/scripts")))
@@ -24,13 +22,11 @@ MOCK_RECORD = {
         "Identifier": MODEL_ID,
         "Environment Size": ENVIRONMENT_SIZE,
         "Image Size": IMAGE_SIZE,
+        "Computational Performance 1": COMPUTATIONAL_PERFORMANCE_1,
+        "Computational Performance 2": COMPUTATIONAL_PERFORMANCE_2,
+        "Computational Performance 3": COMPUTATIONAL_PERFORMANCE_3,
         "Computational Performance 4": COMPUTATIONAL_PERFORMANCE_4,
-        "Computational Performance 7": COMPUTATIONAL_PERFORMANCE_7,
-        "Computational Performance 12": COMPUTATIONAL_PERFORMANCE_12,
-        "Computational Performance 20": COMPUTATIONAL_PERFORMANCE_20,
-        "Computational Performance 34": COMPUTATIONAL_PERFORMANCE_34,
-        "Computational Performance 58": COMPUTATIONAL_PERFORMANCE_58,
-        "Computational Performance 100": COMPUTATIONAL_PERFORMANCE_100,
+        "Computational Performance 5": COMPUTATIONAL_PERFORMANCE_5,
     },
     "id": "rec_123",
 }
@@ -76,13 +72,11 @@ def test_airtable_interface_rw(mock_create_table, mock_rw_api_key, mock_airtable
     assert items[0]["fields"]["Identifier"] == MODEL_ID
     assert items[0]["fields"]["Environment Size"] == ENVIRONMENT_SIZE
     assert items[0]["fields"]["Image Size"] == IMAGE_SIZE
+    assert items[0]["fields"]["Computational Performance 1"] == COMPUTATIONAL_PERFORMANCE_1
+    assert items[0]["fields"]["Computational Performance 2"] == COMPUTATIONAL_PERFORMANCE_2
+    assert items[0]["fields"]["Computational Performance 3"] == COMPUTATIONAL_PERFORMANCE_3
     assert items[0]["fields"]["Computational Performance 4"] == COMPUTATIONAL_PERFORMANCE_4
-    assert items[0]["fields"]["Computational Performance 7"] == COMPUTATIONAL_PERFORMANCE_7
-    assert items[0]["fields"]["Computational Performance 12"] == COMPUTATIONAL_PERFORMANCE_12
-    assert items[0]["fields"]["Computational Performance 20"] == COMPUTATIONAL_PERFORMANCE_20
-    assert items[0]["fields"]["Computational Performance 34"] == COMPUTATIONAL_PERFORMANCE_34
-    assert items[0]["fields"]["Computational Performance 58"] == COMPUTATIONAL_PERFORMANCE_58
-    assert items[0]["fields"]["Computational Performance 100"] == COMPUTATIONAL_PERFORMANCE_100
+    assert items[0]["fields"]["Computational Performance 5"] == COMPUTATIONAL_PERFORMANCE_5
 
 
 @patch("airtableops.AirtableMetadata._find_record")
@@ -93,10 +87,8 @@ def test_airtable_metadata_find_record(mock_find_record):
     assert data["Identifier"] == MODEL_ID
     assert data["Environment Size"] == ENVIRONMENT_SIZE
     assert data["Image Size"] == IMAGE_SIZE
+    assert data["Computational Performance 1"] == COMPUTATIONAL_PERFORMANCE_1
+    assert data["Computational Performance 2"] == COMPUTATIONAL_PERFORMANCE_2
+    assert data["Computational Performance 3"] == COMPUTATIONAL_PERFORMANCE_3
     assert data["Computational Performance 4"] == COMPUTATIONAL_PERFORMANCE_4
-    assert data["Computational Performance 7"] == COMPUTATIONAL_PERFORMANCE_7
-    assert data["Computational Performance 12"] == COMPUTATIONAL_PERFORMANCE_12
-    assert data["Computational Performance 20"] == COMPUTATIONAL_PERFORMANCE_20
-    assert data["Computational Performance 34"] == COMPUTATIONAL_PERFORMANCE_34
-    assert data["Computational Performance 58"] == COMPUTATIONAL_PERFORMANCE_58
-    assert data["Computational Performance 100"] == COMPUTATIONAL_PERFORMANCE_100
+    assert data["Computational Performance 5"] == COMPUTATIONAL_PERFORMANCE_5
