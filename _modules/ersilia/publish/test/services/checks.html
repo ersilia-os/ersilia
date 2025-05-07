@@ -660,15 +660,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Pack Method&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_image_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Image Size&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
@@ -731,7 +722,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         
-    <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_computational_performance_ten_five</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_computational_performance_five</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Computational Performance #5&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
@@ -786,7 +777,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_model_contribution_date</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Contribution Date&quot;</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_pack_method</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Pack Method&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_image_size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Image Size&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_env_size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Environment Size&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_model_size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Directory Size&quot;</span><span class="p">)</span>
@@ -811,7 +801,7 @@
             <span class="s2">&quot;Model Computational Performance for 1000 input&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_check_model_computational_performance_ten_five</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_model_computational_performance_five</span><span class="p">,</span>
             <span class="n">data</span><span class="p">,</span>
             <span class="s2">&quot;Model Computational Performance for 10000 input&quot;</span><span class="p">,</span>
         <span class="p">)</span>
