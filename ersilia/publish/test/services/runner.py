@@ -239,6 +239,18 @@ class RunnerService:
                 bv = [row[column] for row in bsh_data]
                 ev = [row[column] for row in ers_data]
 
+                b_types = set(type(val) for val in bv)
+                e_types = set(type(val) for val in ev)
+
+                if b_types != e_types:
+                    msg = (
+                        f"Datatype mismatch for column '{column}': "
+                        f"bash types {sorted({t.__name__ for t in b_types})}, "
+                        f"ersilia types {sorted({t.__name__ for t in e_types})}"
+                    )
+                    echo_exceptions(msg, ClickInterface())
+                    return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
+
                 if all(isinstance(val, (int, float)) for val in bv + ev):
                     rmse = compute_rmse(bv, ev)
                     _rmse.append(rmse)
@@ -248,12 +260,24 @@ class RunnerService:
                         _completed_status.append(
                             (
                                 f"RMSE-{column}",
-                                f"RMSE > 10%{rmse_perc}%",
+                                f"RMSE > 10%: {rmse_perc}%",
                                 str(STATUS_CONFIGS.FAILED),
                             )
                         )
-                        echo_exceptions("Model output is incosistent between bash and ersilia. Skipped the checks!", ClickInterface())
+                        echo_exceptions(
+                            "Model output is inconsistent between bash and ersilia. Skipped the checks!",
+                            ClickInterface(),
+                        )
                         return _completed_status
+                    else:
+                        rmse_perc = round(rmse * 100, 2)
+                        _completed_status.append(
+                            (
+                                f"RMSE-{column}",
+                                f"RMSE <= 10%: {rmse_perc}%",
+                                str(STATUS_CONFIGS.PASSED),
+                            )
+                        )
 
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
@@ -263,17 +287,24 @@ class RunnerService:
                         _completed_status.append(
                             ("String Similarity", "< 95%", str(STATUS_CONFIGS.FAILED))
                         )
-                        echo_exceptions("Model output is incosistent between bash and ersilia. Skipped the checks!", ClickInterface())
+                        echo_exceptions(
+                            "Model output is inconsistent between bash and ersilia. Skipped the checks!",
+                            ClickInterface(),
+                        )
                         return _completed_status
 
                     _completed_status.append(
                         ("String Similarity", "> 95%", str(STATUS_CONFIGS.PASSED))
                     )
 
-            rmse = sum(_rmse) / len(_rmse) if _rmse else 0
-            rmse_perc = round(rmse * 100, 2)
+            mean_rmse = sum(_rmse) / len(_rmse) if _rmse else 0
+            mean_rmse_perc = round(mean_rmse * 100, 2)
             _completed_status.append(
-                ("RMSE-MEAN", f"RMSE < 10% | {rmse_perc}%", str(STATUS_CONFIGS.PASSED))
+                (
+                    "RMSE-MEAN",
+                    f"RMSE < 10% | {mean_rmse_perc}%",
+                    str(STATUS_CONFIGS.PASSED),
+                )
             )
 
             return _completed_status
