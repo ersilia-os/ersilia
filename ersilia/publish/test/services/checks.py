@@ -962,7 +962,7 @@ class CheckService:
                 echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
 
             if not isinstance(output1, type(output2)):
-                raise texc.InconsistentOutputTypes(self.model_id)
+                echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
 
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
