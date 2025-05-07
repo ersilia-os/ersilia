@@ -281,6 +281,8 @@ def update_metadata_to_airtable(user, repo, branch, api_key):
     # Works with airtable-update option
     rm = RepoMetadataFile(model_id=repo, config_json=None)
     data = rm.read_information(org=user, branch=branch)
+    print("Update Airtable with:")
+    print(data)
     am = AirtableMetadata(model_id=repo, api_key=api_key, mode="rw")
     am.write_information(data)
 

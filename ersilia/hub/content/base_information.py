@@ -1440,20 +1440,167 @@ class BaseInformation(ErsiliaBase):
         else:
             self._image_size = self._serialize_to_numeric(new_image_size)
 
-    def _make_performance_property(attr_name, error_class):
-        private_attr = f"_{attr_name}"
+    @property
+    def computational_performance_one(self):
+        """Get the computational performance at run one.
 
-        def getter(self):
-            return getattr(self, private_attr)
+        Returns
+        -------
+        int or float
+            The computational performance metric at run one.
+        """
+        return self._computational_performance_one
 
-        def setter(self, new_value):
-            if new_value is None:
-                setattr(self, private_attr, None)
-            elif not self._is_numeric(new_value):
-                raise error_class
-            else:
-                setattr(self, private_attr, self._serialize_to_numeric(new_value))
-            return property(getter, setter)
+    @computational_performance_one.setter
+    def computational_performance_one(self, new_value):
+        """Set the computational performance at run one.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceBaseInformationError
+            If new_value is not an int or float.
+        """
+        if new_value is None:
+            self._computational_performance_one = None
+        elif not self._is_numeric(new_value):
+            raise ComputationalPerformanceBaseInformationError
+        else:
+            self._computational_performance_one = self._serialize_to_numeric(new_value)
+
+    @property
+    def computational_performance_two(self):
+        """Get the computational performance at run two.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric for run two.
+        """
+        return self._computational_performance_two
+
+    @computational_performance_two.setter
+    def computational_performance_two(self, new_value):
+        """Set the computational performance run two.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceBaseInformationError
+            If new_value is not an int or float.
+        """
+        if new_value is None:
+            self._computational_performance_two = None
+        elif not self._is_numeric(new_value):
+            raise ComputationalPerformanceBaseInformationError
+        else:
+            self._computational_performance_two = self._serialize_to_numeric(new_value)
+
+    @property
+    def computational_performance_three(self):
+        """Get the computational performance at run three.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric at run three.
+        """
+        return self._computational_performance_three
+
+    @computational_performance_three.setter
+    def computational_performance_three(self, new_value):
+        """Set the computational performance at run three.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformancetwoBaseInformationError
+            If new_value is not an int or float.
+        """
+        if new_value is None:
+            self._computational_performance_three = None
+        elif not self._is_numeric(new_value):
+            raise ComputationalPerformanceBaseInformationError
+        else:
+            self._computational_performance_three = self._serialize_to_numeric(
+                new_value
+            )
+
+    @property
+    def computational_performance_four(self):
+        """Get the computational performance at run four.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric at run four.
+        """
+        return self._computational_performance_four
+
+    @computational_performance_four.setter
+    def computational_performance_four(self, new_value):
+        """Set the computational performance at run four.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceBaseInformationError
+            If new_value is not an int or float.
+        """
+        if new_value is None:
+            self._computational_performance_four = None
+        elif not self._is_numeric(new_value):
+            raise ComputationalPerformanceBaseInformationError
+        else:
+            self._computational_performance_four = self._serialize_to_numeric(new_value)
+
+    @property
+    def computational_performance_five(self):
+        """Get the computational performance at run five.
+
+        Returns
+        -------
+        int or float
+            The computational performance metric at run five.
+        """
+        return self._computational_performance_five
+
+    @computational_performance_five.setter
+    def computational_performance_five(self, new_value):
+        """Set the computational performance at run five.
+
+        Parameters
+        ----------
+        new_value : int or float
+            The new computational performance value.
+
+        Raises
+        ------
+        ComputationalPerformanceBaseInformationError
+            If new_value is not an int or float.
+        """
+        if new_value is None:
+            self._computational_performance_five = None
+        elif not self._is_numeric(new_value):
+            raise ComputationalPerformanceBaseInformationError
+        else:
+            self._computational_performance_five = self._serialize_to_numeric(new_value)
 
     @property
     def incorporation_date(self):
@@ -1593,21 +1740,11 @@ class BaseInformation(ErsiliaBase):
             "Model Size": self.model_size,
             "Environment Size": self.environment_size,
             "Image Size": self.image_size,
-            "Computational Performance 1": self._make_performance_property.__func__(
-            "computational_performance_one", ComputationalPerformanceBaseInformationError
-            ),
-            "Computational Performance 2": self._make_performance_property.__func__(
-            "computational_performance_two", ComputationalPerformanceBaseInformationError
-            ),
-            "Computational Performance 3": self._make_performance_property.__func__(
-            "computational_performance_three", ComputationalPerformanceBaseInformationError
-            ),
-            "Computational Performance 4": self._make_performance_property.__func__(
-            "computational_performance_four", ComputationalPerformanceBaseInformationError
-            ),
-            "Computational Performance 5": self._make_performance_property.__func__(
-            "computational_performance_five", ComputationalPerformanceBaseInformationError
-            ),
+            "Computational Performance 1": self.computational_performance_one,
+            "Computational Performance 2": self.computational_performance_two,
+            "Computational Performance 3": self.computational_performance_three,
+            "Computational Performance 4": self.computational_performance_four,
+            "Computational Performance 5": self.computational_performance_five,
             "Deployment": self.deployment,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
