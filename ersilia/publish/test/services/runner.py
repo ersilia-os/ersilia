@@ -241,7 +241,6 @@ class RunnerService:
 
                 b_types = set(type(val) for val in bv)
                 e_types = set(type(val) for val in ev)
-
                 if b_types != e_types:
                     msg = (
                         f"Datatype mismatch for column '{column}': "
@@ -332,6 +331,8 @@ class RunnerService:
                     values = values[2:] if flag else values
 
                     def parse(value):
+                        if flag:
+                            return value
                         try:
                             v = int(value)
                             return v
