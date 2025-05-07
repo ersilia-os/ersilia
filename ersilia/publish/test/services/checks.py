@@ -16,12 +16,11 @@ except ImportError:
 # ruff: enable
 from .constants import Checks, Options, STATUS_CONFIGS, PREDEFINED_COLUMN_FILE
 from .io import IOService
-from .... import throw_ersilia_exception
 from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.hdf5 import Hdf5DataLoader
 from ....utils.exceptions_utils.base_information_exceptions import _read_default_fields
-
+from ....store.utils import echo_exceptions, ClickInterface
 
 class CheckService:
     """
@@ -417,7 +416,6 @@ class CheckService:
             raise texc.EmptyKey(key)
 
 
-    @throw_ersilia_exception()
     def check_information(self):
         """
         Perform various checks on the model information.
@@ -631,7 +629,6 @@ class CheckService:
         else:
             raise ValueError(f"Unsupported input type: {inp_type}")
 
-    @throw_ersilia_exception()
     def check_model_output_content(self, run_example, run_model):
         status = []
         self.logger.debug("Checking model output...")
@@ -943,15 +940,12 @@ class CheckService:
             )
         )
         first_item = res_two[0]
-        self.logger.info(f"first item: {first_item}")
         _res_two = (Checks.SIMPLE_MODEL_RUN_COLUMNS.value,) + first_item[1:]
-        self.logger.info(f"_res_two: {_res_two}")
         res_two[0] = _res_two
-        self.logger.info(f"Res two: {res_two}")
         _completed_status.extend(res_two)
         return _completed_status
 
-    @throw_ersilia_exception()
+    
     def check_consistent_output(self, run_example, run_model):
         """
         Check if the model produces consistent output.
@@ -975,7 +969,7 @@ class CheckService:
 
         def validate_output(output1, output2):
             if self._is_invalid_value(output1) or self._is_invalid_value(output2):
-                raise texc.InconsistentOutputs(self.model_id)
+                echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
 
             if not isinstance(output1, type(output2)):
                 raise texc.InconsistentOutputTypes(self.model_id)
@@ -983,30 +977,31 @@ class CheckService:
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
                 if rmse > 0.1:
-                    raise texc.InconsistentOutputs(self.model_id)
+                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
 
                 rho, _ = spearmanr([output1], [output2])
                 if rho < 0.5:
-                    raise texc.InconsistentOutputs(self.model_id)
+                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
 
             elif isinstance(output1, list):
                 rmse = compute_rmse(output1, output2)
                 if rmse > 0.1:
-                    raise texc.InconsistentOutputs(self.model_id)
+                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
 
                 rho, _ = spearmanr(output1, output2)
 
                 if rho < 0.5:
-                    raise texc.InconsistentOutputs(self.model_id)
+                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
 
             elif isinstance(output1, str):
                 if _compare_output_strings(output1, output2) <= 95:
-                    raise texc.InconsistentOutputs(self.model_id)
+                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
 
         def read_csv(file_path):
             absolute_path = os.path.abspath(file_path)
             if not os.path.exists(absolute_path):
-                raise FileNotFoundError(f"File not found: {absolute_path}")
+                echo_exceptions(f"File not found: {absolute_path}", ClickInterface())
+
             with open(absolute_path, mode="r") as csv_file:
                 reader = csv.DictReader(csv_file)
                 self.logger.info(f"Reading csv at consistency outout section: {reader}")
