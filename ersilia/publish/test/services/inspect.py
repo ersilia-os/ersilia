@@ -394,6 +394,7 @@ class ModelInspector:
 
         pip_pin_re   = re.compile(r"^[A-Za-z0-9_\-\.\[\]]+(?:==|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
         conda_pin_re = re.compile(r"^[A-Za-z0-9_\-\.]+(?:==|=|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
+        semver_re    = re.compile(r"^[0-9]+(?:\.[0-9A-Za-z]+)*$")
 
         skip_flags = {
             'pip': ("--index-url", "--extra-index-url", "-f"),
@@ -413,6 +414,8 @@ class ModelInspector:
                 install_part = m.group(1).split("#", 1)[0].strip()
                 tokens = install_part.split()
                 skip_next = False
+                version_found = False
+
                 for tok in tokens:
                     if skip_next:
                         skip_next = False
@@ -421,19 +424,23 @@ class ModelInspector:
                         if tok in ("-c", "--channel"):
                             skip_next = True
                         continue
-                    if tok.startswith("git+"):
+                    if tok.startswith(("git+", "http://", "https://")):
+                        version_found = True
                         continue
-                    if tok.startswith("http://") or tok.startswith("https://"):
+                    # pin or semver check
+                    if pin_re.match(tok) or (kind == 'conda' and semver_re.match(tok)):
+                        version_found = True
                         continue
-                    if not pin_re.match(tok):
-                        errors.append(
-                            f"Package '{tok}' in line '{line}' is not properly version-pinned."
-                        )
+                    errors.append(
+                        f"Package '{tok}' in line '{line}' is not properly version-pinned."
+                    )
+                if kind == 'conda' and not version_found:
+                    errors.append(f"Missing or invalid version pin in conda line: '{line}'")
                 break
+
         if errors:
             logger.debug(f"Errors in Dockerfile install command: {errors}")
         return errors
-
 
     def _validate_yml(self, yml_content):
         errors = []
@@ -445,58 +452,65 @@ class ModelInspector:
         python_version = yml_data.get("python")
         if not python_version:
             errors.append("Missing Python version in dependency.yml.")
-        elif not re.match(r"^\d+(\.\d+){0,2}$", python_version):
+        elif not re.match(r"^\d+(?:\.\d+){0,2}$", str(python_version)):
             errors.append(f"Invalid Python version format: {python_version}")
 
-        version_pin_pattern = re.compile(
-            r"^[a-zA-Z0-9_\-\.]+(==|>=|<=|>|<)[a-zA-Z0-9_\-\.]+$"
-        )
-
         commands = yml_data.get("commands", [])
-        for command in commands:
-            if not isinstance(command, list) or len(command) < 2:
-                errors.append(f"Invalid command format: {command}")
+        semver_re = re.compile(r"^[0-9]+(?:\.[0-9A-Za-z]+)*$")
+
+        for cmd in commands:
+            if not isinstance(cmd, list) or len(cmd) < 2:
+                errors.append(f"Invalid command format: {cmd}")
                 continue
 
-            tool = command[0]
-            package = command[1]
-            version = command[2] if len(command) > 2 else None
-            additional_args = command[3:] if len(command) > 3 else []
-            if tool not in ("pip", "conda"):
-                errors.append(f"Unsupported package manager: {tool}")
-                continue
-            if not version:
-                errors.append(
-                    f"Missing version for package '{package}' in command '{command}'."
-                )
-            if tool in ("pip", "conda"):
-                if tool == "pip":
-                    if package.startswith("git+"):
+            tool = cmd[0]
+            if tool == 'pip':
+                pkg = cmd[1]
+                if pkg.startswith('git+'):
+                    continue
+                if len(cmd) < 3:
+                    errors.append(f"Missing version for pip package '{pkg}' in {cmd}.")
+                    continue
+                ver = cmd[2]
+                if not re.match(rf"^{pkg}=={re.escape(ver)}$", f"{pkg}=={ver}"):
+                    errors.append(f"Pip package '{pkg}' in {cmd} is not properly version-pinned.")
+
+            elif tool == 'conda':
+                if len(cmd) >= 3 and cmd[1] != 'install':
+                    pkg = cmd[1]
+                    if len(cmd) < 3 or not semver_re.match(cmd[2]):
+                        errors.append(f"Missing or invalid version for conda package '{pkg}' in {cmd}.")
+                    continue
+
+                if len(cmd) < 3 or cmd[1] != 'install':
+                    errors.append(f"Invalid conda install command: {cmd}")
+                    continue
+                parts = cmd[2:]
+                found_spec = False
+                i = 0
+                while i < len(parts):
+                    part = parts[i]
+                    if part in ('-c', '--channel') and i + 1 < len(parts):
+                        i += 2
                         continue
-                    if version and not version_pin_pattern.match(
-                        f"{package}=={version}"
-                    ):
-                        errors.append(
-                            f"Package '{package}' in command '{command}' is not properly version-pinned."
-                        )
+                    if part in ('-y', '--yes'):
+                        i += 1
+                        continue
+                    if re.match(r"^[\w\-.]+(?:={1,2})[\w\-.]+$", part):
+                        found_spec = True
+                    else:
+                        errors.append(f"Conda package spec not properly pinned in {cmd}: {part}")
+                    break
+                if not found_spec:
+                    errors.append(f"Missing or invalid version pin in conda command: {cmd}")
 
-                    for arg in additional_args:
-                        if arg.startswith("--index-url") or arg.startswith(
-                            "--extra-index-url"
-                        ):
-                            continue
-                        if not version_pin_pattern.match(arg):
-                            errors.append(
-                                f"Unexpected argument in command '{command}': {arg}"
-                            )
+            else:
+                errors.append(f"Unsupported package manager: {tool}")
 
-                elif tool == "conda" and not version:
-                    errors.append(
-                        f"Package '{package}' in command '{command}' does not have a valid pinned version."
-                    )
-        if len(errors)>0:
+        if errors:
             logger.debug(f"Errors in Install YML file install command: {errors}")
         return errors
+
 
     def _run_performance_check(self, n, timeout):
             cmd = (
