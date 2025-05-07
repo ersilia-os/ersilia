@@ -369,6 +369,16 @@
 
 
 
+<div class="viewcode-block" id="echo_exceptions">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_exceptions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_exceptions</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">click_iface</span><span class="p">,</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">):</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">fg</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">exit</span><span class="p">:</span>
+        <span class="n">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="echo_redis_job_submitted">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_job_submitted">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_job_submitted</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>

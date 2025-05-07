@@ -361,8 +361,17 @@
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_consistent_output">
-<span class="sig-name descname"><span class="pre">check_consistent_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_consistent_output" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">check_consistent_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_example</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_consistent_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_consistent_output" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the model produces consistent output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_example</strong> (<em>callable</em>) – Function to generate example input.</p></li>
+<li><p><strong>run_model</strong> (<em>callable</em>) – Function to run the model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_files">
@@ -372,12 +381,18 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_information">
-<span class="sig-name descname"><span class="pre">check_information</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_information" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">check_information</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_information"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_information" title="Link to this definition">¶</a></dt>
+<dd><p>Perform various checks on the model information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>output</strong> (<em>file-like object</em>) – The output file to write to.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_model_output_content">
-<span class="sig-name descname"><span class="pre">check_model_output_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_model_output_content" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">check_model_output_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_example</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_model_output_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_model_output_content" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1138,7 +1153,7 @@ if both exist, both are validated. If neither is present, an error is returned.<
 <span id="ersilia-publish-test-services-runner-module"></span><h2>ersilia.publish.test.services.runner module<a class="headerlink" href="#module-ersilia.publish.test.services.runner" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.runner.</span></span><span class="sig-name descname"><span class="pre">RunnerService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ios_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.io.IOService" title="ersilia.publish.test.services.io.IOService"><span class="pre">IOService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkup_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService" title="ersilia.publish.test.services.checks.CheckService"><span class="pre">CheckService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService" title="ersilia.publish.test.services.setup.SetupService"><span class="pre">SetupService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dockerhub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shallow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.inspect.InspectService" title="ersilia.publish.test.services.inspect.InspectService"><span class="pre">InspectService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.publish.test.services.runner.</span></span><span class="sig-name descname"><span class="pre">RunnerService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ios_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.io.IOService" title="ersilia.publish.test.services.io.IOService"><span class="pre">IOService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkup_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService" title="ersilia.publish.test.services.checks.CheckService"><span class="pre">CheckService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">setup_service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.setup.SetupService" title="ersilia.publish.test.services.setup.SetupService"><span class="pre">SetupService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dockerhub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shallow</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.publish.test.services.inspect.InspectService" title="ersilia.publish.test.services.inspect.InspectService"><span class="pre">InspectService</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">surface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inspect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Service for running model tests and checks.</p>
 <dl class="field-list simple">
@@ -1161,18 +1176,21 @@ if both exist, both are validated. If neither is present, an error is returned.<
 <li><p><strong>report_path</strong> (<em>bool</em>) – Flag to specify the path for output as json.</p></li>
 <li><p><strong>inspector</strong> (<a class="reference internal" href="#ersilia.publish.test.services.inspect.InspectService" title="ersilia.publish.test.services.inspect.InspectService"><em>InspectService</em></a>) – Instance of InspectService for inspecting models and their configurations.</p></li>
 <li><p><strong>surface</strong> (<em>bool</em>) – Flag indicating whether to perform surface checks.</p></li>
+<li><p><strong>inspect</strong> (<em>bool</em>) – Flag indicating whether to perform inspect checks.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.delete">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.delete" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Delete model if existed</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.fetch">
-<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.fetch" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.fetch" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch the model repository from the specified directory.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.run">
@@ -1182,8 +1200,14 @@ if both exist, both are validated. If neither is present, an error is returned.<
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.run_bash">
-<span class="sig-name descname"><span class="pre">run_bash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.run_bash" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">run_bash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.run_bash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.run_bash" title="Link to this definition">¶</a></dt>
+<dd><p>Run the model using a bash script and compare the outputs for consistency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If there is an error during the subprocess execution or output comparison.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.run_example">
@@ -1209,8 +1233,24 @@ if both exist, both are validated. If neither is present, an error is returned.<
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.runner.RunnerService.run_model">
-<span class="sig-name descname"><span class="pre">run_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.run_model" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">run_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/runner.html#RunnerService.run_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.runner.RunnerService.run_model" title="Link to this definition">¶</a></dt>
+<dd><p>Run the model with the given input and output parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>list</em>) – List of input samples.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – Path to the output file.</p></li>
+<li><p><strong>batch</strong> (<em>int</em>) – Batch size for running the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output of the command.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 

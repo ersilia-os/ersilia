@@ -318,16 +318,14 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.publish.test.services.parser</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-
 <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
 <div class="viewcode-block" id="eval_conda_prefix">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.parser.eval_conda_prefix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">eval_conda_prefix</span><span class="p">():</span>
-  <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s2">&quot;conda info --base&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
-
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s2">&quot;conda info --base&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="InstallParser">
@@ -357,10 +355,7 @@
 
   <span class="nd">@staticmethod</span>
   <span class="k">def</span><span class="w"> </span><span class="nf">_has_conda</span><span class="p">(</span><span class="n">commands</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
-      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span> <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">)</span>
 
   <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
     <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(git\+https://|git\+ssh://|https://).*&quot;</span><span class="p">)</span>
@@ -375,14 +370,33 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;pip install </span><span class="si">{</span><span class="n">pkg</span><span class="si">}</span><span class="s2">&quot;</span>
       <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pip install entry must have at least package and version&quot;</span><span class="p">)</span>
-    <span class="n">pkg</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">ver</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">pkg</span><span class="p">,</span> <span class="n">ver</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">command</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pkg</span><span class="si">}</span><span class="s2">==</span><span class="si">{</span><span class="n">ver</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">flags</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;pip install </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span> <span class="k">if</span> <span class="n">flags</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
   <span class="k">def</span><span class="w"> </span><span class="nf">_convert_conda_entry_to_bash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
-    <span class="c1"># command: [&quot;conda&quot;, &quot;install&quot;, flags/channels..., pkg[=ver]]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;install&quot;</span><span class="p">:</span>
+      <span class="n">_</span><span class="p">,</span> <span class="n">pkg</span><span class="p">,</span> <span class="n">ver</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span> <span class="o">=</span> <span class="n">command</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[\w\-.]+(?:={1,2})[\w\-.]+$&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pkg</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">ver</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;Conda shorthand must include valid version pin, e.g. pkg=ver or pkg==ver&quot;</span>
+        <span class="p">)</span>
+      <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rest</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;-y&quot;</span><span class="p">,)]</span>
+      <span class="n">flags</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rest</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;-y&quot;</span><span class="p">]</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">channels</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;No channel specified for conda package &#39;</span><span class="si">{</span><span class="n">pkg</span><span class="si">}</span><span class="s2">&#39;, defaulting to &#39;default&#39;.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span>
+      <span class="n">channel_flags</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">channels</span><span class="p">:</span>
+        <span class="n">channel_flags</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">ch</span><span class="p">])</span>
+      <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;conda&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">flags</span> <span class="o">+</span> <span class="n">channel_flags</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pkg</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">ver</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+      <span class="k">if</span> <span class="s2">&quot;-y&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">flags</span><span class="p">:</span>
+        <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-y&quot;</span><span class="p">)</span>
+      <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
     <span class="n">parts</span> <span class="o">=</span> <span class="n">command</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;conda&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">]</span>
     <span class="n">channels</span> <span class="o">=</span> <span class="p">[]</span>
@@ -402,8 +416,9 @@
         <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_spec</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No package specified for conda install&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;={1,2}&quot;</span><span class="p">,</span> <span class="n">pkg_spec</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Conda install entry must specify package and version&quot;</span><span class="p">)</span>
     <span class="n">cmd</span> <span class="o">+=</span> <span class="n">flags</span> <span class="o">+</span> <span class="n">channels</span> <span class="o">+</span> <span class="p">[</span><span class="n">pkg_spec</span><span class="p">]</span>
-    <span class="c1"># auto-confirm</span>
     <span class="k">if</span> <span class="s2">&quot;-y&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">flags</span><span class="p">:</span>
       <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-y&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
@@ -414,27 +429,25 @@
     <span class="n">conda_prefix</span> <span class="o">=</span> <span class="n">eval_conda_prefix</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
     <span class="n">python_exe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_python_exe</span><span class="p">()</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-
     <span class="k">if</span> <span class="n">has_conda</span><span class="p">:</span>
       <span class="n">env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda_env_name</span> <span class="ow">or</span> <span class="s2">&quot;base&quot;</span>
-      <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
       <span class="k">if</span> <span class="n">conda_prefix</span><span class="p">:</span>
-        <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;source </span><span class="si">{</span><span class="n">conda_prefix</span><span class="si">}</span><span class="s2">/etc/profile.d/conda.sh&quot;</span><span class="p">)</span>
-      <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;conda activate </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-      <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;source </span><span class="si">{</span><span class="n">conda_prefix</span><span class="si">}</span><span class="s2">/etc/profile.d/conda.sh&quot;</span><span class="p">)</span>
+      <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;conda activate </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
       <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pip&quot;</span><span class="p">:</span>
           <span class="n">bash</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">python_exe</span><span class="si">}</span><span class="s2"> -m </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_convert_pip_entry_to_bash</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+          <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pip</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bash</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span><span class="p">:</span>
           <span class="n">bash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_conda_entry_to_bash</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+          <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Conda</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bash</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
           <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown command type: </span><span class="si">{</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
       <span class="k">else</span><span class="p">:</span>
         <span class="n">bash</span> <span class="o">=</span> <span class="n">cmd</span>
       <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bash</span><span class="p">)</span>
-
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
 <div class="viewcode-block" id="InstallParser.write_bash_script">
@@ -459,25 +472,25 @@
 <div class="viewcode-block" id="YAMLInstallParser">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.parser.YAMLInstallParser">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">YAMLInstallParser</span><span class="p">(</span><span class="n">InstallParser</span><span class="p">):</span>
-  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_dir</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">=</span> <span class="n">FILE_TYPE</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_yaml</span><span class="p">()</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_dir</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">=</span> <span class="n">FILE_TYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_yaml</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="p">)</span>
 
-  <span class="k">def</span><span class="w"> </span><span class="nf">_load_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-      <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_yaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
-  <span class="k">def</span><span class="w"> </span><span class="nf">_get_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">if</span> <span class="s2">&quot;python&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Python version must be a string&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;python&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Python version must be a string&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">]</span>
 
-  <span class="k">def</span><span class="w"> </span><span class="nf">_get_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">if</span> <span class="s2">&quot;commands&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;commands&#39; key in YAML file&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;commands&quot;</span><span class="p">]</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;commands&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;commands&#39; key in YAML file&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;commands&quot;</span><span class="p">]</span></div>
 
 
 
@@ -487,61 +500,64 @@
 <div class="viewcode-block" id="DockerfileInstallParser">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.parser.DockerfileInstallParser">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DockerfileInstallParser</span><span class="p">(</span><span class="n">InstallParser</span><span class="p">):</span>
-  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_dir</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">FILE_TYPE</span><span class="p">)</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_dir</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">FILE_TYPE</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="p">)</span>
 
-  <span class="k">def</span><span class="w"> </span><span class="nf">_get_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FROM&quot;</span><span class="p">):</span>
-          <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;py(\d+\.\d+|\d{2,3})&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
-          <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-              <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">return</span> <span class="n">v</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Python version not found&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;FROM&quot;</span><span class="p">):</span>
+                    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;py(\d+\.\d+|\d{2,3})&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                        <span class="n">v</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                            <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="k">return</span> <span class="n">v</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Python version not found&quot;</span><span class="p">)</span>
 
-  <span class="nd">@staticmethod</span>
-  <span class="k">def</span><span class="w"> </span><span class="nf">_tokenize</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tokenize</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
 
-  <span class="nd">@staticmethod</span>
-  <span class="k">def</span><span class="w"> </span><span class="nf">_process_pip_command</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
-    <span class="n">parts</span> <span class="o">=</span> <span class="n">DockerfileInstallParser</span><span class="o">.</span><span class="n">_tokenize</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;pip&quot;</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;install&quot;</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid pip install command&quot;</span><span class="p">)</span>
-    <span class="n">pkg_spec</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">pkg_spec</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git+&quot;</span><span class="p">):</span>
-      <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="n">pkg_spec</span><span class="p">]</span>
-    <span class="k">if</span> <span class="s2">&quot;==&quot;</span> <span class="ow">in</span> <span class="n">pkg_spec</span><span class="p">:</span>
-      <span class="n">pkg</span><span class="p">,</span> <span class="n">ver</span> <span class="o">=</span> <span class="n">pkg_spec</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;==&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pip install must specify version or git URL&quot;</span><span class="p">)</span>
-    <span class="n">flags</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
-    <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="n">pkg</span><span class="p">,</span> <span class="n">ver</span><span class="p">]</span> <span class="o">+</span> <span class="n">flags</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_pip_command</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">DockerfileInstallParser</span><span class="o">.</span><span class="n">_tokenize</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;pip&quot;</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;install&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid pip install command&quot;</span><span class="p">)</span>
+        <span class="n">pkg_spec</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">pkg_spec</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git+&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="n">pkg_spec</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;==&quot;</span> <span class="ow">in</span> <span class="n">pkg_spec</span><span class="p">:</span>
+            <span class="n">pkg</span><span class="p">,</span> <span class="n">ver</span> <span class="o">=</span> <span class="n">pkg_spec</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;==&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pip install must specify version or git URL&quot;</span><span class="p">)</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="n">pkg</span><span class="p">,</span> <span class="n">ver</span><span class="p">]</span> <span class="o">+</span> <span class="n">flags</span>
 
-  <span class="nd">@staticmethod</span>
-  <span class="k">def</span><span class="w"> </span><span class="nf">_process_conda_command</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
-    <span class="n">parts</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;conda&quot;</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;install&quot;</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid conda install command&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">parts</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_conda_command</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;conda&quot;</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;install&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid conda install command&quot;</span><span class="p">)</span>
+        <span class="n">pkg_spec</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">p</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pkg_spec</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Conda install entry must specify package and version&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">parts</span>
 
-  <span class="k">def</span><span class="w"> </span><span class="nf">_get_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">cmds</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;RUN&quot;</span><span class="p">):</span>
-          <span class="n">cmd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-          <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">):</span>
-            <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_pip_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
-          <span class="k">elif</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;conda&quot;</span><span class="p">):</span>
-            <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_conda_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
-          <span class="k">else</span><span class="p">:</span>
-            <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">cmds</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cmds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;RUN&quot;</span><span class="p">):</span>
+                    <span class="n">cmd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()[</span><span class="mi">3</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;pip&quot;</span><span class="p">):</span>
+                        <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_pip_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;conda&quot;</span><span class="p">):</span>
+                        <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_conda_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cmds</span></div>
 
 </pre></div>
         </article>
