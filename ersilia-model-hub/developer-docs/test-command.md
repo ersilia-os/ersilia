@@ -24,7 +24,7 @@ The test command has three levels of complexity:
 Hence, a test command could look like:
 
 ```bash
-ersilia test model_id #Basic run
+ersilia test model_id --inspect #Basic run
 ersilia test model_id --surface #Surface check
 ersilia test model_id --shallow #Shallow check
 ersilia test model_id --deep #Deep check
@@ -34,14 +34,14 @@ ersilia test model_id --deep #Deep check
 In addition to the printed output in the terminal, the test command produces a .json report stored in the directory where the command is run under the name `<model_id>-test.json`
 {% endhint %}
 
-## Basic test
+## Inspect test
 
 ### Usage
 
 The model is downloaded (not fetched) from its online storage in S3 or Github. By default, if no flag is specified the model will be fetched from GitHub. In addition, the basic tests can also be performed from a local directory, for example when a contributor is incorporating a new model.
 
 ```
-ersilia test model_id [OPT?]
+ersilia test model_id --inspect [OPT?]
 ```
 
 <table><thead><tr><th width="220">Flag</th><th width="129">Default</th><th>Description</th></tr></thead><tbody><tr><td>--from_github</td><td>True</td><td>Downloads the model from its repository on the ersilia-os organisation.</td></tr><tr><td>--from_s3</td><td>False</td><td>Downloads the model from its storage on the cloud (S3 Bucket)</td></tr><tr><td>--from_dir [path/to/dir]</td><td>False</td><td>Uses a model stored locally on the indicated path.</td></tr><tr><td>--from_dockerhub</td><td>False</td><td>It will default back to from_github, as the model needs to be downloaded</td></tr></tbody></table>
@@ -105,8 +105,8 @@ To perform the basic test checks the model needs to be Downloaded, not Fetched, 
 In addition to the basic tests:
 
 * Input output check: the test module performs several runs and ensures that the output can be passed in all accepted formats (single molecule, list or `.csv`) saved in all available formats (`.csv`, `.json`, `.h5`)
-* Model output consistency check: the output is consistent between runs (for the same molecule, same result or small divergence in non-stochastic models). The consistency will be calculated for both string and numerical outputs using scores like `rmse` and `spearmanr` (Spearman correlation coefficient with associated p-value).
-* Consistency summary between ersilia and bash execution: the output is consistent between running the model via Ersilia or directly from the `run.sh` bash file in `model/framework`.
+* Model output consistency check: the output is consistent between runs (for the same molecule, same result or small divergence in non-stochastic models). The consistency will be calculated for both string and numerical outputs using scores like `rmse` and `spearmanr` (Spearman correlation coefficient with associated p-value). The `example/run_input.csv` file is used for this check.
+* Consistency summary between ersilia and bash execution: the output is consistent between running the model via Ersilia or directly from the `run.sh` bash file in `model/framework`. The `example/run_input.csv` file is used for this check.
 
 ### Outputs
 
@@ -126,7 +126,7 @@ ersilia test model_id --deep [OPT?]
 
 ### Tests performed
 
-* Computational performance assessment: after serving the models, they get executed for 1, 10, 100, 1000 and 10000 inputs. Model performance (seconds) will be recorded and reported using `wall clock` . By default, a `deterministic` flag is enabled, ensuring all models use the same list of molecules for the test commant
+* Computational performance assessment: after serving the models, they get executed for 1, 10, 100, 1000 and 10000 inputs. Model performance (seconds) will be recorded and reported using `wall clock` . By default, a `deterministic` flag is enabled for the `example` command, ensuring all models use the same list of molecules for the test command.
 
 ### Outputs
 
@@ -147,6 +147,6 @@ The process typically involves:
 1. Setting up the environment and fetching the model repository.
 2. Running various checks to ensure the model's integrity.
 3. Generating tables and logs of the results.
-4. Cleaning up temporary files and directories (model directotry only if the `--remove` flag is enabled).
+4. Cleaning up temporary files and directories (model directory only if the `--remove` flag is enabled).
 
 ***

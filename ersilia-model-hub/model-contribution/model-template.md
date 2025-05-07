@@ -118,7 +118,42 @@ This dependency configuration file has two top level keys, namely, `python`, and
 * `conda` dependencies are expected to be four element lists in the format `["conda", "library", "version", "channel"]`, where channel is the conda channel to install the required library.
 * When the model is run from source, Ersilia always defaults to creating a conda environment for the model to provide isolation. However, when the model is Dockerized, whether conda is used in that process depends entirely on there being conda dependencies in this file.&#x20;
 
-The `install.yml` available in the Ersilia Model Template is the following:
+The `install.yml` available in the Ersilia Model Template only defines two top-level keys as follows:
+
+```yaml
+python: "3.10"        # REQUIRED; value must be a string
+commands:            # REQUIRED; value must be a sequence (list)
+  - ["pip", "package", "1.2.3"]
+  - ["pip", "git+https://…"]
+  - ["conda", "install", "-c", "channel", "pkg=4.5.6"]
+```
+
+The commands key only allows the following entries:
+
+* String: any shell command passed verbatim
+
+```yaml
+- "apt-get update"
+- "mkdir -p /data"
+```
+
+* List with pip: a two-element list for Git URLs that begin with `git+https://`, `git+ssh://`, or `https://` or a list with three or more elements containing the package name (compulsory), package version  (compulsory) and optional pip flags
+
+```yaml
+- ["pip", "git+https://github.com/user/repo.git"]
+- ["pip", "mypkg", "0.1.2", "--upgrade", "--no-deps"]
+```
+
+* List with conda: users can specify a long version (recommended) where channels are indicated by `-c` or use a shorthand form with the following order: `conda`, package name, version string, then any channels.  If the `-y` flag is not added, it will be automatically appended in both cases. Packages must have the version specified either as `package=version` or as `"[package", "version"].` If no channel is specified, default will be used
+
+```yaml
+- ["conda", "install", "-y", "-c", "channel", "package=version"] #long one channel
+- ["conda", "install", "-y", "-c", "channel1", "-c", "channel2","package=version"] #long two channels
+- ["conda", "package", "version", "channel1", "channel2", "-y"] #short version with channels specified
+- ["conda", "package", "2024.3.6"] # short version no channel specified
+```
+
+This example demonstrates an installation instructions for an environment using Python 3.10.
 
 {% code title="install.yml" %}
 ```yaml
@@ -128,8 +163,6 @@ commands:
     - ["conda", "pandas", "1.3.5", "default"]
 ```
 {% endcode %}
-
-In this case, when running the model from source, a Conda environment will be used to isolate the model. Additionally, a conda environment will also be used inside the Docker image of the mode. This example demonstrates an installation instructions for an environment using Python 3.10.
 
 In this example, the `rdkit-pypi==2022.3.1b1` will be installed using `pip`, while `pandas==1.3.5` will be installed using `conda` through the default package channel on conda.
 
@@ -263,26 +296,40 @@ At the time of writing this tutorial, the Ersilia Model Hub has approximately 15
 
 Ersilia uses a `Dockerfile` file to specify installation instructions. The reason for this is that Docker provides the maximum level of isolation possible (i.e. a container), which may be needed to run models in some systems. However, in most practical scenarios, a Docker container will not be necessary and a Conda environment, or even a Virtualenv environment, will suffice. The Ersilia CLI will decide which isolation level to provide depending on the content of the `Dockerfile:`
 
-The `Dockerfile` available in the Ersilia Model Template is the following:
+The `Dockerfile` uses a templated file, where the lines beginning with `RUN` are scanned; installer commands are normalized, all other shell commands are preserved.
+
+1. Non-`pip`/`conda` RUN commands\
+   – Entire line (after `RUN`) is retained as a single string.
+2. Pip installs:
+   * Token count must be ≥3 (`pip`, `install`, `pkg_spec`)
+   * `pkg_spec` starting with `git+` → `["pip", "git+…"]`
+   *   Otherwise, `pkg_spec` must contain `==version`; its absence will raise the following error:
+
+       ```
+       ValueError("pip install must specify version or git URL")
+       ```
+   * Additional tokens → appended as flags, resulting in\
+     `["pip", "pkg", "ver", …flags]`
+3. Conda installs:
+
+* Tokens must begin with `conda install` and package version must be specified
+* Entire token list returned, e.g.:\
+  `["conda", "install", "-y", "numpy=1.23.0", "-c", "conda-forge"]`
+
+The python version is specified from the first line, even though BentoML is no longer in use.
 
 <pre class="language-docker"><code class="lang-docker"><strong>Dockerfile 
-</strong><strong>
-</strong><strong>FROM bentoml/model-server:0.11.0-py310 
-</strong>MAINTAINER ersilia
+</strong>FROM bentoml/model-server:0.11.0-py310
+…
 
-RUN pip install rdkit==23. 
-RUN pip install joblib==1.1.0
+RUN pip install mypkg==0.3.1
+RUN pip install mypkg[option]==0.3.1
+RUN pip install git+https://github.com/user/repo.git
+RUN conda install -y numpy=1.23.0 -c conda-forge -c other-channel -y
 
-WORKDIR /repo COPY . /repo
+WORKDIR /repo 
+COPY . /repo
 </code></pre>
-
-The first line of the `Dockerfile` indicates that this Conda environment will have **BentoML 0.11.0** installed on **Python 3.10.** In this example, the `rdkit` library will be installed using `conda`, and `joblib` will be installed using `pip`.
-
-The `Dockerfile` can contain as many `RUN` commands as necessary, between the `MAINTAINER` and the `WORKDIR` lines. Please limit the packages to the bare minimmum required, sometimes models have additional packages for extra functionalities that are not required to run the model. It is good practice to trim to the minimmum the package dependencies to avoid conflicts. Whenever possible, pin the version of the package.
-
-{% hint style="warning" %}
-The `Dockerfile` contains the installation instructions of the model. Therefore, the content of this file can be very variable, since each model will have its own dependencies.
-{% endhint %}
 
 ### The [`service`](https://github.com/ersilia-os/eos-template/blob/42ce4063e67122968c3c948bd8ea142ac621c105/src/service.py) file
 
