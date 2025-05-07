@@ -398,7 +398,7 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
         
-    def _check_model_computational_performance_ten_five(self, data):
+    def _check_model_computational_performance_five(self, data):
         key = "Computational Performance #5"
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -477,7 +477,7 @@ class CheckService:
             "Model Computational Performance for 1000 input",
         )
         self._run_check(
-            self._check_model_computational_performance_ten_five,
+            self._check_model_computational_performance_five,
             data,
             "Model Computational Performance for 10000 input",
         )

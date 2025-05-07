@@ -315,15 +315,6 @@ class ComputationalPerformanceBaseInformationError(ErsiliaError):
         self.hints = "Computational Performance field must be specified as a valid numeric value indicating the time (s) needed to run the input"
         ErsiliaError.__init__(self, self.message, self.hints)
 
-class PackMethodBaseInformationError(ErsiliaError):
-    def __init__(self):
-        self.message = "Pack Method field error"
-        self.hints = "Only one of the following pack methods is allowed: {}".format(
-            ", ".join(_read_default_fields("Pack Method"))
-        )
-        ErsiliaError.__init__(self, self.message, self.hints)
-
-
 class ContributorBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Contributor field error"
