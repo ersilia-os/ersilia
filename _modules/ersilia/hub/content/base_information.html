@@ -332,11 +332,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.base_information_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BiomedicalAreaBaseInformationError</span><span class="p">,</span>
     <span class="n">BothIdentifiersBaseInformationError</span><span class="p">,</span>
-    <span class="n">ComputationalPerformanceHundredBaseInformationError</span><span class="p">,</span>
-    <span class="n">ComputationalPerformanceOneBaseInformationError</span><span class="p">,</span>
-    <span class="n">ComputationalPerformanceTenBaseInformationError</span><span class="p">,</span>
-    <span class="n">ComputationalPerformanceTenThousandsBaseInformationError</span><span class="p">,</span>
-    <span class="n">ComputationalPerformanceThousandsBaseInformationError</span><span class="p">,</span>
+    <span class="n">ComputationalPerformanceBaseInformationError</span><span class="p">,</span>
     <span class="n">ContributorBaseInformationError</span><span class="p">,</span>
     <span class="n">DeploymentBaseInformationError</span><span class="p">,</span>
     <span class="n">DescriptionBaseInformationError</span><span class="p">,</span>
@@ -474,19 +470,15 @@
 <span class="sd">        _image_size : None</span>
 <span class="sd">            Placeholder for Docker image size in megabytes.</span>
 <span class="sd">        _computational_performance_one : None</span>
-<span class="sd">            Placeholder for one-run computational performance.</span>
-<span class="sd">        _computational_performance_seven : None</span>
-<span class="sd">            Placeholder for seven-run computational performance.</span>
+<span class="sd">            Placeholder for run one of computational performance.</span>
 <span class="sd">        _computational_performance_two : None</span>
-<span class="sd">            Placeholder for two-run computational performance.</span>
-<span class="sd">        _computational_performance_thousands : None</span>
-<span class="sd">            Placeholder for thousands-run computational performance.</span>
-<span class="sd">        _computational_performance_two_thousands : None</span>
-<span class="sd">            Placeholder for ten_thousands-run computational performance.</span>
-<span class="sd">        _computational_performance_fiftyeight : None</span>
-<span class="sd">            Placeholder for fiftyeight-run computational performance.</span>
+<span class="sd">            Placeholder for run two of computational performance.</span>
 <span class="sd">        _computational_performance_three : None</span>
-<span class="sd">            Placeholder for hundred-run computational performance.</span>
+<span class="sd">            Placeholder for run three of computational performance.</span>
+<span class="sd">        _computational_performance_four : None</span>
+<span class="sd">            Placeholder for run four of computational performance.</span>
+<span class="sd">        _computational_performance_five : None</span>
+<span class="sd">            Placeholder for run five of computational performance.</span>
 <span class="sd">        _pack_method : None</span>
 <span class="sd">            Placeholder for the method used to pack the model.</span>
 <span class="sd">        _deployment: None</span>
@@ -1770,167 +1762,20 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_image_size</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_one</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the computational performance at level one.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_performance_property</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">error_class</span><span class="p">):</span>
+        <span class="n">private_attr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        int or float</span>
-<span class="sd">            The computational performance metric at level one.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">private_attr</span><span class="p">)</span>
 
-    <span class="nd">@computational_performance_one</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the computational performance at level one.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        new_value : int or float</span>
-<span class="sd">            The new computational performance value.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ComputationalPerformanceoneBaseInformationError</span>
-<span class="sd">            If `new_value` is not an int or float.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">ComputationalPerformanceOneBaseInformationError</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_one</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_two</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the computational performance at level ten.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        int or float</span>
-<span class="sd">            The computational performance metric at level ten.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_two</span>
-
-    <span class="nd">@computational_performance_two</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_two</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the computational performance at level ten.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        new_value : int or float</span>
-<span class="sd">            The new computational performance value.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ComputationalPerformanceTenBaseInformationError</span>
-<span class="sd">            If `new_value` is not an int or float.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_two</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">ComputationalPerformanceTenBaseInformationError</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_three</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the computational performance at level hundred.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        int or float</span>
-<span class="sd">            The computational performance metric at level hundred.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_three</span>
-
-    <span class="nd">@computational_performance_three</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_three</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the computational performance at level hundred.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        new_value : int or float</span>
-<span class="sd">            The new computational performance value.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ComputationalPerformancetwoBaseInformationError</span>
-<span class="sd">            If `new_value` is not an int or float.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_three</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">ComputationalPerformanceHundredBaseInformationError</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_three</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span>
-                <span class="n">new_value</span>
-            <span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_four</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the computational performance at level thousands.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        int or float</span>
-<span class="sd">            The computational performance metric at level thousands.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_four</span>
-
-    <span class="nd">@computational_performance_four</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_four</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the computational performance at level thousands.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        new_value : int or float</span>
-<span class="sd">            The new computational performance value.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ComputationalPerformanceTwentyBaseInformationError</span>
-<span class="sd">            If `new_value` is not an int or float.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_four</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">ComputationalPerformanceThousandsBaseInformationError</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_four</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_five</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the computational performance at level ten_thousands.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        int or float</span>
-<span class="sd">            The computational performance metric at level ten_thousands.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_five</span>
-
-    <span class="nd">@computational_performance_five</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">computational_performance_five</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the computational performance at level ten_thousands.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        new_value : int or float</span>
-<span class="sd">            The new computational performance value.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        ComputationalPerformanceThirtyoneBaseInformationError</span>
-<span class="sd">            If `new_value` is not an int or float.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_five</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">ComputationalPerformanceTenThousandsBaseInformationError</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_computational_performance_five</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">new_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">private_attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">error_class</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">private_attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_numeric</span><span class="p">(</span><span class="n">new_value</span><span class="p">))</span>
+            <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="n">getter</span><span class="p">,</span> <span class="n">setter</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2105,11 +1950,21 @@
             <span class="s2">&quot;Model Size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_size</span><span class="p">,</span>
             <span class="s2">&quot;Environment Size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment_size</span><span class="p">,</span>
             <span class="s2">&quot;Image Size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_size</span><span class="p">,</span>
-            <span class="s2">&quot;Computational Performance 1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_one</span><span class="p">,</span>
-            <span class="s2">&quot;Computational Performance 2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_two</span><span class="p">,</span>
-            <span class="s2">&quot;Computational Performance 3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_three</span><span class="p">,</span>
-            <span class="s2">&quot;Computational Performance 4&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_four</span><span class="p">,</span>
-            <span class="s2">&quot;Computational Performance 5&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">computational_performance_five</span><span class="p">,</span>
+            <span class="s2">&quot;Computational Performance 1&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_performance_property</span><span class="o">.</span><span class="vm">__func__</span><span class="p">(</span>
+            <span class="s2">&quot;computational_performance_one&quot;</span><span class="p">,</span> <span class="n">ComputationalPerformanceBaseInformationError</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;Computational Performance 2&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_performance_property</span><span class="o">.</span><span class="vm">__func__</span><span class="p">(</span>
+            <span class="s2">&quot;computational_performance_two&quot;</span><span class="p">,</span> <span class="n">ComputationalPerformanceBaseInformationError</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;Computational Performance 3&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_performance_property</span><span class="o">.</span><span class="vm">__func__</span><span class="p">(</span>
+            <span class="s2">&quot;computational_performance_three&quot;</span><span class="p">,</span> <span class="n">ComputationalPerformanceBaseInformationError</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;Computational Performance 4&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_performance_property</span><span class="o">.</span><span class="vm">__func__</span><span class="p">(</span>
+            <span class="s2">&quot;computational_performance_four&quot;</span><span class="p">,</span> <span class="n">ComputationalPerformanceBaseInformationError</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;Computational Performance 5&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_performance_property</span><span class="o">.</span><span class="vm">__func__</span><span class="p">(</span>
+            <span class="s2">&quot;computational_performance_five&quot;</span><span class="p">,</span> <span class="n">ComputationalPerformanceBaseInformationError</span>
+            <span class="p">),</span>
             <span class="s2">&quot;Docker Pack Method&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span><span class="p">,</span>
             <span class="s2">&quot;Deployment&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">deployment</span><span class="p">,</span>
         <span class="p">}</span>
