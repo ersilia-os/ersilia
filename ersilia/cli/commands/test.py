@@ -68,25 +68,25 @@ def test_cmd():
         "--shallow",
         is_flag=True,
         default=False,
-        help="This flag is used to check shallow checks (such as container size, output consistency..)",
+        help="This flag is used to test shallow checks (fetch and run models and output consistency.)",
     )
     @click.option(
         "--deep",
         is_flag=True,
         default=False,
-        help="This flag is used to check deep checks (such as computational performance checks)",
+        help="This flag is used to test deep checks (computational performance)",
     )
     @click.option(
         "--surface",
         is_flag=True,
         default=False,
-        help="This flag is used to check deep checks (such as computational performance checks)",
+        help="This flag is used to test surface checks (simple model fetch and run)",
     )
     @click.option(
         "--inspect",
         is_flag=True,
         default=False,
-        help="This flag is used to check deep checks (such as computational performance checks)",
+        help="This flag is used to check inspect checks (file structure and metadata)",
     )
     @click.option(
         "--report_path",

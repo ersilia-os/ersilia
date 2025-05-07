@@ -25,9 +25,9 @@ class ReadmeFormatter():
         text += "* Output Shape: `{0}`\n".format(d["Output Shape"])
         text += "* Interpretation: {0}\n\n".format(d["Interpretation"])
         text += "## Baseline Performance\n\n"
-        text += "* Computational Performance For Four Inputs: `{0}`\n".format(d["Computational Performance 4"])
-        text += "* Computational Performance For Twenty Inputs: `{0}`\n".format(d["Computational Performance 20"])
-        text += "* Computational Performance For Hundred Inputs: `{0}`\n".format(d["Computational Performance 100"])
+        text += "* Computational Performance For Ten Inputs: `{0}`\n".format(d["Computational Performance 1"])
+        text += "* Computational Performance For Hundred Inputs: `{0}`\n".format(d["Computational Performance 3"])
+        text += "* Computational Performance For Ten Thousand Inputs: `{0}`\n".format(d["Computational Performance 5"])
         text += "## References\n\n"
         text += "* [Publication]({0})\n".format(d["Publication"])
         text += "* [Source Code]({0})\n".format(d["Source Code"])
@@ -178,14 +178,14 @@ class ReadmeFormatter():
         if d.get("Image Size"):
             text += "- **Image Size (Mb):** `{0}`\n".format(d.get("Image Size"))
         text += "\n"
-        if d.get("Computational Performance 4"):
+        if d.get("Computational Performance 1"):
             text += "**Computational Performance (seconds):**\n"
-        if d.get("Computational Performance 4"):
-            text += "- 4 inputs: `{0}`\n".format(d.get("Computational Performance 4"))
-        if d.get("Computational Performance 20"):
-            text += "- 20 inputs: `{0}`\n".format(d.get("Computational Performance 20"))
-        if d.get("Computational Performance 100"):
-            text += "- 100 inputs: `{0}`\n".format(d.get("Computational Performance 100"))
+        if d.get("Computational Performance 1"):
+            text += "- 10 inputs: `{0}`\n".format(d.get("Computational Performance 1"))
+        if d.get("Computational Performance 3"):
+            text += "- 100 inputs: `{0}`\n".format(d.get("Computational Performance 3"))
+        if d.get("Computational Performance 5"):
+            text += "- 10000 inputs: `{0}`\n".format(d.get("Computational Performance 5"))
         text += "\n"
 
         # References
