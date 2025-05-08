@@ -239,16 +239,15 @@ class RunnerService:
                 bv = [row[column] for row in bsh_data]
                 ev = [row[column] for row in ers_data]
 
-                b_types = set(type(val) for val in bv)
-                e_types = set(type(val) for val in ev)
-                if b_types != e_types:
-                    msg = (
-                        f"Datatype mismatch for column '{column}': "
-                        f"bash types {sorted({t.__name__ for t in b_types})}, "
-                        f"ersilia types {sorted({t.__name__ for t in e_types})}"
-                    )
-                    echo_exceptions(msg, ClickInterface())
-                    return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
+                for idx, (b_val, e_val) in enumerate(zip(bv, ev), start=1):
+                    if type(b_val) is not type(e_val):
+                        msg = (
+                            f"Datatype mismatch for column '{column}' at row {idx}: "
+                            f"bash value type={type(b_val).__name__}, "
+                            f"ersilia value type={type(e_val).__name__}"
+                        )
+                        echo_exceptions(msg, ClickInterface())
+                        return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
 
                 if all(isinstance(val, (int, float)) for val in bv + ev):
                     rmse = compute_rmse(bv, ev)
@@ -426,6 +425,7 @@ class RunnerService:
                 cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i '{input_file_path}' -o {output_path}"
                 out = run_command(cmd)
                 ers_data, _ = read_csv(output_path, flag=True)
+
             except Exception as e:
                 return [
                     (
@@ -546,7 +546,6 @@ class RunnerService:
         except SystemExit as e:
             tb = traceback.format_exc()
             error_info = {"exception": str(e), "traceback": tb}
-            print(results)
             results.append(error_info)
             echo(
                 f"Caught SystemExit({e.code}), returning partial results. "
@@ -640,7 +639,6 @@ class RunnerService:
             validations.append(
                 self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY, res)
             )
-        print("Bash consistency checks started!")
         bash_results = self.run_bash()
         validations.append(
             self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
