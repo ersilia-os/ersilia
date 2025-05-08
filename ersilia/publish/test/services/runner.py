@@ -480,6 +480,9 @@ class RunnerService:
         """
         results = []
         try:
+            if not self.inspect and not self.surface and not self.shallow and not self.deep:
+                echo("No flag is specified please at least specify [--inspect].", fg="red", bold=True)
+                sys.exit(1)
             self._configure_environment()
             self.setup_service.get_model()
             if self.inspect:
