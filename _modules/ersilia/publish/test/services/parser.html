@@ -466,14 +466,14 @@
 </div>
 
 
-<span class="n">FILE_TYPE</span> <span class="o">=</span> <span class="s2">&quot;install.yml&quot;</span>
+<span class="n">INSTALL_YML</span> <span class="o">=</span> <span class="s2">&quot;install.yml&quot;</span>
 
 
 <div class="viewcode-block" id="YAMLInstallParser">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.parser.YAMLInstallParser">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">YAMLInstallParser</span><span class="p">(</span><span class="n">InstallParser</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_dir</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">=</span> <span class="n">FILE_TYPE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">=</span> <span class="n">INSTALL_YML</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_yaml</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="p">)</span>
@@ -494,14 +494,14 @@
 
 
 
-<span class="n">FILE_TYPE</span> <span class="o">=</span> <span class="s2">&quot;Dockerfile&quot;</span>
+<span class="n">DOCKERFILE</span> <span class="o">=</span> <span class="s2">&quot;Dockerfile&quot;</span>
 
 
 <div class="viewcode-block" id="DockerfileInstallParser">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.parser.DockerfileInstallParser">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DockerfileInstallParser</span><span class="p">(</span><span class="n">InstallParser</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_dir</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">FILE_TYPE</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_dir</span><span class="p">,</span> <span class="n">DOCKERFILE</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">conda_env_name</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
