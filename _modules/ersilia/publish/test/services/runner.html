@@ -827,11 +827,13 @@
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">:</span>
                 <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Performing surface checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
                 <span class="n">surface_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">()</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">surface_results</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shallow</span><span class="p">:</span>
                 <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Performing shallow checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">())</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_shallow_checks</span><span class="p">())</span>
 
