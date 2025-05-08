@@ -489,11 +489,13 @@ class RunnerService:
 
             if self.surface:
                 echo("Performing surface checks.", fg="yellow", bold=True)
+                results.extend(self._perform_basic_checks())
                 surface_results = self._perform_surface_check()
                 results.extend(surface_results)
 
             if self.shallow:
                 echo("Performing shallow checks.", fg="yellow", bold=True)
+                results.extend(self._perform_basic_checks())
                 results.extend(self._perform_surface_check())
                 results.extend(self._perform_shallow_checks())
 
