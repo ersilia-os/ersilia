@@ -132,12 +132,12 @@ class InstallParser:
   def check_file_exists(self):
     return os.path.exists(self.file_name)
 
-FILE_TYPE = "install.yml"
+INSTALL_YML = "install.yml"
 
 
 class YAMLInstallParser(InstallParser):
     def __init__(self, file_dir, conda_env_name=None):
-        self.file_type = FILE_TYPE
+        self.file_type = INSTALL_YML
         self.file_name = os.path.join(file_dir, self.file_type)
         self.data = self._load_yaml()
         super().__init__(self.file_name, conda_env_name)
@@ -157,12 +157,12 @@ class YAMLInstallParser(InstallParser):
         return self.data["commands"]
 
 
-FILE_TYPE = "Dockerfile"
+DOCKERFILE = "Dockerfile"
 
 
 class DockerfileInstallParser(InstallParser):
     def __init__(self, file_dir, conda_env_name=None):
-        file_name = os.path.join(file_dir, FILE_TYPE)
+        file_name = os.path.join(file_dir, DOCKERFILE)
         super().__init__(file_name, conda_env_name)
 
     def _get_python_version(self):
