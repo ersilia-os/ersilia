@@ -337,8 +337,6 @@ class RunnerService:
                         try:
                             i = int(value)
                             if str(i) == value or (value.startswith(('+', '-')) and str(i) == value.lstrip('+')):
-                                print("Int parsed value\n", i)
-
                                 return i
                         except ValueError:
                             pass
@@ -416,17 +414,28 @@ class RunnerService:
                 script_file.write(bash_script)
 
             self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
-            out = run_command(["bash", temp_script_path])
-            self.logger.info(f"Bash script subprocess output: {out}")
-            logs = read_logs(error_log_path)
-            formatted_error = "".join(logs)
-            if formatted_error:
-                echo_exceptions(f"Error detected originated from the bash execution: {formatted_error}", ClickInterface(), bg=None, fg="red")
-            bsh_data, _ = read_csv(bash_output_path)
-            self.logger.debug("Running model for bash data consistency checking")
-            cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i '{input_file_path}' -o {output_path}"
-            out = run_command(cmd)
-            ers_data, _ = read_csv(output_path, flag=True)
+            try:
+                out = run_command(["bash", temp_script_path])
+                self.logger.info(f"Bash script subprocess output: {out}")
+                logs = read_logs(error_log_path)
+                formatted_error = "".join(logs)
+                if formatted_error:
+                    echo_exceptions(f"Error detected originated from the bash execution: {formatted_error}", ClickInterface(), bg=None, fg="red")
+                bsh_data, _ = read_csv(bash_output_path)
+                self.logger.debug("Running model for bash data consistency checking")
+                cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i '{input_file_path}' -o {output_path}"
+                out = run_command(cmd)
+                ers_data, _ = read_csv(output_path, flag=True)
+            except Exception as e:
+                return [
+                    (
+                        (
+                            Checks.RUN_BASH.value,
+                            f"Detailed error: {e}",
+                            str(STATUS_CONFIGS.FAILED),
+                        )
+                    )
+                ]
             self.checkup_service.original_smiles_list = (
                 self.checkup_service._get_original_smiles_list("csv", input_file_path)
             )
@@ -479,40 +488,57 @@ class RunnerService:
         Run the model tests and checks.
         """
         results = []
-        try:
-            if not self.inspect and not self.surface and not self.shallow and not self.deep:
-                echo("No flag is specified please at least specify [--inspect].", fg="red", bold=True)
+
+        def _process_stage(name, method, echo_prefix=True):
+            if echo_prefix:
+                echo(f"Performing {name} checks.", fg="yellow", bold=True)
+
+            results.extend(self._perform_basic_checks())
+
+            out = method()
+            if isinstance(out, tuple) and len(out) == 2:
+                good, _bad = out
+                results.extend(good)
                 sys.exit(1)
+
+            if isinstance(out, list):
+                results.extend(out)
+            else:
+                results.append(out)
+
+        try:
+            if not any((self.inspect, self.surface, self.shallow, self.deep)):
+                echo("No flag is specified please at least specify [--inspect].",
+                    fg="red", bold=True)
+                sys.exit(1)
+
             self._configure_environment()
             self.setup_service.get_model()
+
             if self.inspect:
                 echo("Performing basic checks [inspection].", fg="yellow", bold=True)
-                basic_results = self._perform_basic_checks()
-                results.extend(basic_results)
+                results.extend(self._perform_basic_checks())
 
             if self.surface:
-                echo("Performing surface checks.", fg="yellow", bold=True)
-                results.extend(self._perform_basic_checks())
-                surface_results = self._perform_surface_check()
-                results.extend(surface_results)
+                _process_stage("surface", self._perform_surface_check)
 
             if self.shallow:
-                echo("Performing shallow checks.", fg="yellow", bold=True)
-                results.extend(self._perform_basic_checks())
-                results.extend(self._perform_surface_check())
-                results.extend(self._perform_shallow_checks())
+                _process_stage("surface", self._perform_surface_check)
+                _process_stage("shallow", self._perform_shallow_checks)
 
             if self.deep:
                 echo("Performing deep checks.", fg="yellow", bold=True)
-                results.extend(self._perform_basic_checks())
-                results.extend(self._perform_surface_check())
-                results.extend(self._perform_shallow_checks())
-                deep_result = self._perform_deep_checks()
-                results.append(deep_result)
+
+                for name, method in (
+                    ("surface", self._perform_surface_check),
+                    ("shallow", self._perform_shallow_checks),
+                ):
+                    _process_stage(name, method, echo_prefix=False)
+
+                results.append(self._perform_deep_checks())
 
             self.ios_service.collect_and_save_json(results, self.report_file)
             echo("Model tests and checks completed.", fg="green", bold=True)
-            
             echo("Deleting model...", fg="yellow", bold=True)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
@@ -520,12 +546,18 @@ class RunnerService:
         except SystemExit as e:
             tb = traceback.format_exc()
             error_info = {"exception": str(e), "traceback": tb}
+            print(results)
             results.append(error_info)
-            echo(f"Caught SystemExit({e.code}), returning partial results. Saving report, deleting model and exiting.", fg="yellow", bold=True)
+            echo(
+                f"Caught SystemExit({e.code}), returning partial results. "
+                "Saving report, deleting model and exiting.",
+                fg="yellow", bold=True,
+            )
             self.ios_service.collect_and_save_json(results, self.report_file)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
+
         except Exception as error:
             tb = traceback.format_exc()
             error_info = {"exception": str(error), "traceback": tb}
@@ -534,7 +566,6 @@ class RunnerService:
             echo("Deleting model...", fg="yellow", bold=True)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
-
             self.ios_service.collect_and_save_json(results, self.report_file)
 
     def _configure_environment(self):
@@ -588,7 +619,8 @@ class RunnerService:
             self._generate_table_from_check(TableType.MODEL_RUN_CHECK, simple_output)
         )
         if simple_output[0][-1] == str(STATUS_CONFIGS.FAILED):
-            echo_exceptions("Model simple run check has problem. System is exiting before proceeding!", ClickInterface(), exit=True)
+            echo_exceptions("Model simple run check has problem. System is exiting before proceeding!", ClickInterface())
+            return results, 1
         return results
 
     def _perform_shallow_checks(self):
@@ -608,14 +640,15 @@ class RunnerService:
             validations.append(
                 self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY, res)
             )
-
+        print("Bash consistency checks started!")
         bash_results = self.run_bash()
         validations.append(
             self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
         )
         results.extend(validations)
         if bash_results[0][-1] == str(STATUS_CONFIGS.FAILED):
-            echo_exceptions("Model output is not consistent. System is exiting before proceeding!", ClickInterface(), exit=True)
+            echo_exceptions("Model output is not consistent. System is exiting before proceeding!", ClickInterface())
+            return results, 1
         return results
 
     def _perform_deep_checks(self):
