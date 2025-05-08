@@ -108,6 +108,10 @@ In addition to the basic tests:
 * Model output consistency check: the output is consistent between runs (for the same molecule, same result or small divergence in non-stochastic models). The consistency will be calculated for both string and numerical outputs using scores like `rmse` and `spearmanr` (Spearman correlation coefficient with associated p-value). The `example/run_input.csv` file is used for this check.
 * Consistency summary between ersilia and bash execution: the output is consistent between running the model via Ersilia or directly from the `run.sh` bash file in `model/framework`. The `example/run_input.csv` file is used for this check.
 
+{% hint style="warning" %}
+The `--shallow` test will first run all `--surface` checks. If the simple run fails, the test command will exit early to save time as the subsequent tests would also fail.
+{% endhint %}
+
 ### Outputs
 
 The terminal will print eight tables, one per each type of test specified above, and whether each check has PASSED or FAILED. In the `.json` file, the tests appear as True (passed) or False (failed). The `-v` flag can always be used to see more information on the terminal.
@@ -127,6 +131,10 @@ ersilia test model_id --deep [OPT?]
 ### Tests performed
 
 * Computational performance assessment: after serving the models, they get executed for 1, 10, 100, 1000 and 10000 inputs. Model performance (seconds) will be recorded and reported using `wall clock` . By default, a `deterministic` flag is enabled for the `example` command, ensuring all models use the same list of molecules for the test command.
+
+{% hint style="warning" %}
+The `--deep` test will first run all `--surface`  and `--shallow` checks. If the simple run fails, or the consistency checks fail, the test command will exit early.
+{% endhint %}
 
 ### Outputs
 
