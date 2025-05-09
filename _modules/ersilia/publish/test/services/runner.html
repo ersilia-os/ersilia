@@ -831,8 +831,6 @@
             <span class="k">if</span> <span class="n">echo_prefix</span><span class="p">:</span>
                 <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
-
             <span class="n">out</span> <span class="o">=</span> <span class="n">method</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">good</span><span class="p">,</span> <span class="n">_bad</span> <span class="o">=</span> <span class="n">out</span>
@@ -858,14 +856,20 @@
                 <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
                 <span class="n">_process_stage</span><span class="p">(</span><span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shallow</span><span class="p">:</span>
-                <span class="n">_process_stage</span><span class="p">(</span><span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">)</span>
-                <span class="n">_process_stage</span><span class="p">(</span><span class="s2">&quot;shallow&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_shallow_checks</span><span class="p">)</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">&quot;shallow&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_shallow_checks</span><span class="p">),</span>
+                        <span class="p">):</span>
+                            <span class="n">_process_stage</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">echo_prefix</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep</span><span class="p">:</span>
                 <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Performing deep checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
 
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span>
                     <span class="p">(</span><span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">),</span>
