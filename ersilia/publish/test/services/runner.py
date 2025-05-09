@@ -493,8 +493,6 @@ class RunnerService:
             if echo_prefix:
                 echo(f"Performing {name} checks.", fg="yellow", bold=True)
 
-            results.extend(self._perform_basic_checks())
-
             out = method()
             if isinstance(out, tuple) and len(out) == 2:
                 good, _bad = out
@@ -520,14 +518,20 @@ class RunnerService:
                 results.extend(self._perform_basic_checks())
 
             if self.surface:
+                results.extend(self._perform_basic_checks())
                 _process_stage("surface", self._perform_surface_check)
 
             if self.shallow:
-                _process_stage("surface", self._perform_surface_check)
-                _process_stage("shallow", self._perform_shallow_checks)
+                results.extend(self._perform_basic_checks())
+                for name, method in (
+                            ("surface", self._perform_surface_check),
+                            ("shallow", self._perform_shallow_checks),
+                        ):
+                            _process_stage(name, method, echo_prefix=False)
 
             if self.deep:
                 echo("Performing deep checks.", fg="yellow", bold=True)
+                results.extend(self._perform_basic_checks())
 
                 for name, method in (
                     ("surface", self._perform_surface_check),
