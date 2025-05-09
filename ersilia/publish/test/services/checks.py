@@ -936,13 +936,13 @@ class CheckService:
         input_path = IOService._get_input_file_path(self.dir)
         output_path = IOService._get_output_file_path(self.dir)
         run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
-        res_one = self.find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
-        # res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
+        # res_one = self.find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
+        res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
         res_two = self.compare_csv_columns(
             os.path.join(self.dir, PREDEFINED_COLUMN_FILE), Options.OUTPUT_CSV.value
         )
         _completed_status = []
-        if res_one:
+        if res_one[-1] == str(STATUS_CONFIGS.FAILED):
             self.logger.error("Model output has content problem")
             _completed_status.append(
                 (
