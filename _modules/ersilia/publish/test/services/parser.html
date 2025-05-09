@@ -321,6 +321,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
 
 <div class="viewcode-block" id="eval_conda_prefix">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.parser.eval_conda_prefix">[docs]</a>
@@ -438,11 +439,8 @@
       <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pip&quot;</span><span class="p">:</span>
           <span class="n">bash</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">python_exe</span><span class="si">}</span><span class="s2"> -m </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_convert_pip_entry_to_bash</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-          <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pip</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bash</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;conda&quot;</span><span class="p">:</span>
           <span class="n">bash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_conda_entry_to_bash</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-          <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Conda</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bash</span><span class="p">)</span>
-
         <span class="k">else</span><span class="p">:</span>
           <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown command type: </span><span class="si">{</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
       <span class="k">else</span><span class="p">:</span>
@@ -458,6 +456,10 @@
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
       <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_convert_commands_to_bash_script</span><span class="p">())</span></div>
 
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_install_packages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;bash </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
 
 <div class="viewcode-block" id="InstallParser.check_file_exists">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.parser.InstallParser.check_file_exists">[docs]</a>
