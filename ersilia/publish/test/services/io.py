@@ -2,11 +2,9 @@ import csv
 import docker
 import json
 import os
-import platform
 import re
 import warnings
 import yaml
-import warnings
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 
@@ -521,21 +519,21 @@ class PackageInstaller:
         docker_path = os.path.join(self.dir, DOCKERFILE_FILE)
 
         if os.path.exists(yaml_path):
-            parser = YAMLInstallParser(self.dir)
+            parser = YAMLInstallParser(self.dir, self.model_id)
         elif os.path.exists(docker_path):
-            parser = DockerfileInstallParser(self.dir)
+            parser = DockerfileInstallParser(self.dir, self.model_id)
         else:
             self.logger.info(
                 "Neither 'install.yml' nor 'Dockerfile' was found in the specified directory."
             )
             return
-
+        echo(f"Preparing test for bash command execution", fg="green", bold=True)
+        shell_path = os.path.join(self.dir, "install.sh")
+        parser.write_bash_script(shell_path)
         python_version = parser.python_version
-        commands = parser._get_commands()
-
         self._initialize_env(python_version)
-
-        self._install_commands(commands)
+        echo(f"Environment creation and package installation started!", fg="green", bold=True)
+        parser._install_packages(shell_path)
         self.logger.info(
-            f"Installation complete in the conda environment: {self.model_id}"
+            f"Installation completed in the conda environment: {self.model_id}"
         )

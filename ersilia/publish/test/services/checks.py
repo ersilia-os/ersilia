@@ -858,6 +858,34 @@ class CheckService:
 
     def _read_column_header(self, reader):
         return [row[0] for row in reader if row][1:]
+    
+    def find_csv_mismatches(self, csv_out_one, csv_out_two):
+        with open(csv_out_one, newline='') as f1, open(csv_out_two, newline='') as f2:
+            rows1 = list(csv.reader(f1))
+            rows2 = list(csv.reader(f2))
+
+        mismatches = []
+        max_rows = max(len(rows1), len(rows2))
+        for i in range(max_rows):
+            row1 = rows1[i] if i < len(rows1) else []
+            row2 = rows2[i] if i < len(rows2) else []
+            max_cols = max(len(row1), len(row2))
+            for j in range(max_cols):
+                v1 = row1[j] if j < len(row1) else None
+                v2 = row2[j] if j < len(row2) else None
+                if v1 != v2:
+                    mismatches.append((i, j, v1, v2))
+        return mismatches
+    
+    def find_missing_first_output_col(self, path):
+        missing = []
+        with open(path, newline='') as f:
+            reader = csv.reader(f)
+            for i, row in enumerate(reader):
+                val = row[3] if len(row) > 3 else ''
+                if val is None or val.strip() == '':
+                    missing.append((i, 3))
+        return missing
 
     def compare_csv_columns(self, column_csv, csv_file):
         try:
@@ -906,18 +934,20 @@ class CheckService:
 
     def check_simple_model_output(self, run_model):
         input_path = IOService._get_input_file_path(self.dir)
+        output_path = IOService._get_output_file_path(self.dir)
         run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
-        res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
+        res_one = self.find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
+        # res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
         res_two = self.compare_csv_columns(
             os.path.join(self.dir, PREDEFINED_COLUMN_FILE), Options.OUTPUT_CSV.value
         )
         _completed_status = []
-        if res_one[-1] == str(STATUS_CONFIGS.FAILED):
+        if res_one:
             self.logger.error("Model output has content problem")
             _completed_status.append(
                 (
                     Checks.SIMPLE_MODEL_RUN.value,
-                    res_one[1],
+                    res_one,
                     str(STATUS_CONFIGS.FAILED),
                 )
             )

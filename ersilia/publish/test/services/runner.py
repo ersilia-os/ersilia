@@ -624,8 +624,6 @@ class RunnerService:
 
     def _perform_shallow_checks(self):
         results = []
-        self.fetch()
-
         model_output = self.checkup_service.check_model_output_content(
             self.run_example, self.run_model
         )

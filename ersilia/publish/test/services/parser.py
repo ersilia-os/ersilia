@@ -2,6 +2,7 @@ import os
 import yaml
 import re
 import warnings
+from ....utils.terminal import run_command
 
 def eval_conda_prefix():
     return os.popen("conda info --base").read().strip()
@@ -111,11 +112,8 @@ class InstallParser:
       if isinstance(cmd, list):
         if cmd[0] == "pip":
           bash = f"{python_exe} -m {self._convert_pip_entry_to_bash(cmd)}"
-          print("Pip\n", bash)
         elif cmd[0] == "conda":
           bash = self._convert_conda_entry_to_bash(cmd)
-          print("Conda\n", bash)
-
         else:
           raise ValueError(f"Unknown command type: {cmd[0]}")
       else:
@@ -128,6 +126,10 @@ class InstallParser:
       file_name = os.path.splitext(self.file_name)[0] + ".sh"
     with open(file_name, "w") as f:
       f.write(self._convert_commands_to_bash_script())
+
+  def _install_packages(self, file_path):
+    cmd = f"bash {file_path}"
+    run_command(cmd)
 
   def check_file_exists(self):
     return os.path.exists(self.file_name)
