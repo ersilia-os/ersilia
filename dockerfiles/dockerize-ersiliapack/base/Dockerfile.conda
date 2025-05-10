@@ -1,7 +1,7 @@
 FROM debian:12.7-slim
 
 ARG VERSION=version
-ARG TARGETARCH
+ARG REPO_BRANCH=master
 ENV VERSION=$VERSION
 ENV PATH=$PATH:/usr/bin/conda/bin
 
@@ -10,7 +10,8 @@ COPY . /ersilia-pack
 
 RUN set -eux; \
     apt-get update; \
-    if [ "$TARGETARCH" = "arm64" ]; then \
+    ARCH=$(uname -m); \
+    if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then \
       apt-get install -y --no-install-recommends wget g++; \
     else \
       apt-get install -y --no-install-recommends wget; \
