@@ -548,28 +548,21 @@ class RunnerService:
             echo("Model successfully deleted", fg="green", bold=True)
 
         except SystemExit as e:
-            tb = traceback.format_exc()
-            error_info = {"exception": str(e), "traceback": tb}
-            results.append(error_info)
             echo(
                 f"Caught SystemExit({e.code}), returning partial results. "
                 "Saving report, deleting model and exiting.",
                 fg="yellow", bold=True,
             )
-            self.ios_service.collect_and_save_json(results, self.report_file)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
 
         except Exception as error:
             tb = traceback.format_exc()
-            error_info = {"exception": str(error), "traceback": tb}
-            results.append(error_info)
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
-            self.ios_service.collect_and_save_json(results, self.report_file)
 
     def _configure_environment(self):
         if self.from_dockerhub:
