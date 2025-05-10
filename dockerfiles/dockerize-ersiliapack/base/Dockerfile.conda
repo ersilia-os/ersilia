@@ -12,9 +12,9 @@ RUN set -eux; \
     apt-get update; \
     ARCH=$(uname -m); \
     if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then \
-      apt-get install -y --no-install-recommends wget g++; \
+      apt-get install -y --no-install-recommends wget ca-certificates g++; \
     else \
-      apt-get install -y --no-install-recommends wget; \
+      apt-get install -y --no-install-recommends wget ca-certificates; \
     fi; \
     rm -rf /var/lib/apt/lists/*
 
