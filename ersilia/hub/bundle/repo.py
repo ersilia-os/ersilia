@@ -1,7 +1,7 @@
 import json
 import os
 
-from ... import ErsiliaBase, logger
+from ... import ErsiliaBase
 from ...default import (
     CONDA_ENV_YML_FILE,
     DEFAULT_MODEL_ID,
@@ -11,7 +11,6 @@ from ...default import (
 from ...utils.conda import SimpleConda
 from ...utils.docker import SimpleDockerfileParser
 from ...utils.paths import Paths
-from ...utils.system import SystemChecker
 
 ROOT_CHECKFILE = "README.md"
 
@@ -280,12 +279,12 @@ class DockerfileFile(object):
             "py38",
             "py39",
         ]:
-            if SystemChecker().is_arm64():
-                logger.warning(
-                    "This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10."
-                )
-                result["python"] = "py310"
-        return result
+            # if SystemChecker().is_arm64():
+            #     logger.warning(
+            #         "This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10."
+            #     )
+            #     result["python"] = "py310"
+            return result
 
     def get_python_version(self) -> str:
         """
