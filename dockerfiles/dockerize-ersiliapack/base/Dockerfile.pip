@@ -1,9 +1,19 @@
-FROM python:version
+FROM python:${VERSION}
+
 WORKDIR /root
 COPY . /ersilia-pack
-RUN apt-get clean && apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/* && cd /ersilia-pack && pip install -e . && \
-    mv /ersilia-pack/docker-entrypoint.sh /root/docker-entrypoint.sh && \
-    chmod + /root/docker-entrypoint.sh 
+
+RUN set -x \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends g++ \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    \
+    && cd /ersilia-pack \
+    && pip install -e . \
+    \
+    && mv docker-entrypoint.sh /root/docker-entrypoint.sh \
+    && chmod +x /root/docker-entrypoint.sh
+
 EXPOSE 80
-ENTRYPOINT [ "sh", "/root/docker-entrypoint.sh"]
+ENTRYPOINT ["sh", "/root/docker-entrypoint.sh"]
