@@ -90,8 +90,6 @@ class InstallParser:
         i += 1
     if not pkg_spec:
       raise ValueError("No package specified for conda install")
-    if not re.search(r"={1,2}", pkg_spec):
-      raise ValueError("Conda install entry must specify package and version")
     cmd += flags + channels + [pkg_spec]
     if "-y" not in flags:
       cmd.append("-y")
