@@ -267,24 +267,24 @@ class DockerfileFile(object):
             if len(tag) != 2:
                 return None
         result = {"version": tag[0], "slim": slim, "python": tag[-1]}
-        if result["python"] in [
-            "py30",
-            "py31",
-            "py32",
-            "py33",
-            "py34",
-            "py35",
-            "py36",
-            "py37",
-            "py38",
-            "py39",
-        ]:
-            # if SystemChecker().is_arm64():
-            #     logger.warning(
-            #         "This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10."
-            #     )
-            #     result["python"] = "py310"
-            return result
+        # if result["python"] in [
+        #     "py30",
+        #     "py31",
+        #     "py32",
+        #     "py33",
+        #     "py34",
+        #     "py35",
+        #     "py36",
+        #     "py37",
+        #     "py38",
+        #     "py39",
+        # ]:
+        # if SystemChecker().is_arm64():
+        #     logger.warning(
+        #         "This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10."
+        #     )
+        #     result["python"] = "py310"
+        return result
 
     def get_python_version(self) -> str:
         """
