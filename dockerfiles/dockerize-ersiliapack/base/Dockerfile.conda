@@ -6,7 +6,7 @@ WORKDIR /root
 COPY . /ersilia-pack
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends libarchive13 wget && \
+    apt-get install -y --no-install-recommends ca-certificates libarchive13 wget && \
     ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ]; then \
         echo "AMD64 architecture detected" && \
@@ -32,9 +32,10 @@ RUN set -x && \
     bash /root/miniconda.sh -b -u -p /usr/bin/conda && \
     rm /root/miniconda.sh && \
     . /usr/bin/conda/etc/profile.d/conda.sh && \
-    conda init && \
-    /usr/bin/conda/bin/conda clean -afy && \
-    cd /ersilia-pack && \
+    conda init &&  \
+    conda update -n base conda && \
+    conda install -n base -y conda-libmamba-solver && \
+    conda clean -afy && \
     /usr/bin/conda/bin/python -m pip install . && \
     mv /ersilia-pack/docker-entrypoint.sh /root/docker-entrypoint.sh && \
     chmod +x /root/docker-entrypoint.sh
