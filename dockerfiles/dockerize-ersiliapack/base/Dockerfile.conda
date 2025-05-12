@@ -6,7 +6,7 @@ WORKDIR /root
 COPY . /ersilia-pack
 RUN set -x && \
     apt-get update && \
-    apt-get install -y wget && \
+    apt-get install -y --no-install-recommends libarchive13 wget && \
     ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ]; then \
         echo "AMD64 architecture detected" && \
