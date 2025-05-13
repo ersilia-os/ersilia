@@ -4,8 +4,6 @@ ENV MODEL=$MODEL
 WORKDIR /root
 COPY ./$MODEL /root/$MODEL
 
-RUN conda config --set solver classic
-
 RUN apt-get update && \ 
     apt-get install -y git && \
     mkdir /root/bundles && ersilia_model_pack --repo_path $MODEL --bundles_repo_path /root/bundles && \
