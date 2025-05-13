@@ -27,7 +27,8 @@ ENV PYTHONUNBUFFERED=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 # We need this because the model's run.sh will look for Python in this path
 ENV PATH="/usr/bin/conda/bin/:$PATH"
-
+ENV BABEL_LIBDIR="/usr/bin/conda/lib/openbabel/3.1.0"
+ENV BABEL_DATADIR="/usr/bin/conda/share/openbabel/3.1.0"
 
 COPY --from=build /root/bundles /root/bundles
 COPY --from=build /root/docker-entrypoint.sh /root/docker-entrypoint.sh
