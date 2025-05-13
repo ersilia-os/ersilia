@@ -74,14 +74,14 @@ def serve_cmd():
         if local_cache_only:
             output_source = OutputSource.LOCAL_ONLY
             enable_local_cache = True
-            cache_status = "Local Only"
+            cache_status = "Local only"
         if cloud_cache_only:
             output_source = OutputSource.CLOUD_ONLY
-            cache_status = "Cloud Only"
+            cache_status = "Cloud only"
         if cache_only:
             output_source = OutputSource.CACHE_ONLY
             enable_local_cache = True
-            cache_status = "Hybrid"
+            cache_status = "Hybrid (local & cloud)"
         mdl = ErsiliaModel(
             model,
             output_source=output_source,
@@ -122,11 +122,11 @@ def serve_cmd():
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
         echo("")
-        echo("🔄 Cache fetching Mode:", fg="blue")
+        echo("🔄 Cache fetching mode:", fg="blue")
         echo(
-            f"   - status: {cache_status}", fg="red"
+            f"   - {cache_status}", fg="red"
         ) if cache_status == "Disabled" else echo(
-            f"   - status: {cache_status}", fg="green"
+            f"   - {cache_status}", fg="green"
         )
         echo("")
         echo(":floppy_disk: Local cache:", fg="blue")
