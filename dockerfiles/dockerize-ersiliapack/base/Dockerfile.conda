@@ -1,13 +1,26 @@
 FROM debian:12.7-slim
-ARG VERSION=version
+ARG VERSION=py38_23.11.0-2
 ENV VERSION=$VERSION
 ENV PATH=$PATH:/usr/bin/conda/bin
 WORKDIR /root
 COPY . /ersilia-pack
+    
 RUN set -x && \
     apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates wget && \
     ARCH=$(uname -m) && \
+    if [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then \
+        echo "ARM64 architecture detected: installing compilers..." && \
+        apt-get install -y --no-install-recommends \
+            gcc \
+            g++ \
+            make \
+            binutils \
+            pkg-config && \
+        echo "Compilers installed on $ARCH"; \
+    else \
+        echo "Non-ARM architecture ($ARCH): skipping compiler install"; \
+    fi && \
     if [ "$ARCH" = "x86_64" ]; then \
         echo "AMD64 architecture detected" && \
         wget https://repo.anaconda.com/miniconda/Miniconda3-$VERSION-Linux-x86_64.sh -O miniconda.sh; \
