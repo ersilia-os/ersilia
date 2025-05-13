@@ -34,9 +34,11 @@ RUN set -x && \
     . /usr/bin/conda/etc/profile.d/conda.sh && \
     conda init && \
     /usr/bin/conda/bin/conda update -n base conda && \
+    /usr/bin/conda/bin/conda config --set channel_priority strict && \
     /usr/bin/conda/bin/conda install -n base -y -c conda-forge conda-libmamba-solver && \
     /usr/bin/conda/bin/conda config --set solver libmamba && \
     /usr/bin/conda/bin/conda config --add channels defaults && \
+    /usr/bin/conda/bin/conda config --add channels conda-forge && \
     /usr/bin/conda/bin/conda clean -afy && \
     cd /ersilia-pack && \
     /usr/bin/conda/bin/python -m pip install . && \
