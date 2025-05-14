@@ -99,10 +99,94 @@ Once we are able to successfully run the run.sh model, we need to try it with Er
 ersilia -v fetch eos9ei3 --repo_path eos9ei3 > out.log 2>&1
 ```
 
-## 3. Update the model
+## 4. Update the model
 
 * Remove any temporal edits, like `print` statements.
 * Ensure the packages listed in the `install.yml` are updated to the version that is working.
 * Revise the `.gitattributes` file.
 
-Whenou are ready to push the changes to your fork of the model, open a PR to the main branch. As in the Model Incorporation, a series of [automated tests](example-of-the-model-incorporation-workflow.md#open-a-pull-request) will be triggered. Please check their result before moving on.
+When you are ready to push the changes to your fork of the model, open a PR to the main branch. As in the Model Incorporation, a series of [automated tests](example-of-the-model-incorporation-workflow.md#open-a-pull-request) will be triggered. Please check their result before moving on.
+
+## 5. Check the Docker image
+
+It may happen that workflows fail to build a Docker image, or that a Docker image is built and uploaded to DockerHub, but nonetheless the model does not successfully run. Below, we try to cover various scenarios and provide guidelines on how to troubleshoot them.
+
+### Docker image is available in DockerHub, but it does not run successfully
+
+If an image is already available in Ersilia's DockerHub but it fails to run successfully, then the best is to simply pull the image with the Docker CLI, and inspect it from the command line.
+
+```bash
+# docker pull ersiliaos/$MODEL_ID:[latest,dev-amd64,dev-arm64]
+docker pull ersiliaos/eos5axz:latest
+docker run -it --entrypoint /bin/bash ersiliaos/eos5axz:latest
+```
+
+Now your terminal should let you inspect the content of the docker container.
+
+* If you model did not require any Conda installation, then your system Python should already have all dependencies installed. You can check it by simply typing `python` and trying to import any of the model packages (for example, `import rdkit`).
+* If your model did require Conda installation, then in principle you should already be inside a default Conda environment with all your packages available.
+
+To test the model inside the Docker container, the best is to go to the `framework` folder and simply run it using the `run.sh` file:
+
+```bash
+# cd /bundles/eos5axz/[random_id]/model/framework
+cd /bundles/eos5axz/20250507-a54cd98a-fcb7-4989-9e99-1f10018ac004/model/framework
+bash run.sh . examples/run_input.csv examples/run_output.csv
+```
+
+### Docker image works on AMD64, but it fails in ARM64
+
+Oftentimes, building models on AMD64 platforms works but, unfortunately, they fail on ARM64. In that case, there can be several reasons for the failure:
+
+* **Different packages between AMD64 and ARM64:** In that case, it will be necessary to specify the packages on a platform-specific way in the model repository. Broadly speaking, there are two scenarios:
+  * Compilers are not available in ARM64
+  * Model-specific packages have different versions/binaries in AMD64 vs ARM64
+* **Different model code between AMD64 and ARM64:** This is a more rare scenario, but it can happen that code for running the models on ARM64 is different that that of AMD64. In that case, it will be necessary to provide code both for ARM64 and AMD64 separately.
+
+Generally, the best way to troubleshoot ARM64-related issues is to build models from source in an ARM64 platform, including Apple M1/2/3 chips.
+
+{% hint style="danger" %}
+Note that we do not have a well-established way to specify platform-specific dependencies in the model repository, nor to specify platform-specific code. We are currently working on this.
+{% endhint %}
+
+{% hint style="warning" %}
+ARM64 platforms (for example, Apple M1 chips) do not work with Python versions below 3.8. Please check that the Python version of your model is 3.8 or above. Otherwise, the model will not get packaged successfully for ARM64 architectures.
+{% endhint %}
+
+### Docker image was not pushed to DockerHub successfully
+
+If your Docker image was not pushed to DockerHub successfully on the workflows, then you can try to install the model from source in an interactive way.
+
+We have several base images containing the [Ersilia Pack](https://github.com/ersilia-os/ersilia-pack) repository. The naming convention is as follows:
+
+* **ersiliaos/ersiliapack-py38** will contain Ersilia Pack and Python 3.8 as a system Python. Similarly, ersiliaos/ersiliapack-py312 will contain Python 3.12. You should consider this image if your model does _not_ have any Conda package.
+* **ersiliaos/ersiliapack-conda-py38** will contain Ersilia Pack along with Conda (Python 3.8). You should consider this image if your model has Conda packages.
+
+First, pull the image and run it in interactive mode:
+
+```bash
+docker pull ersiliaos/ersiliapack-py312:latest
+docker run -it --entrypoint /bin/bash ersiliaos/ersiliapack-py312:latest
+```
+
+By default, you will be place in the  `/root`  directory in the container. You will notice that this directory is essentially empty.
+
+You'll need to download the model source to work with it. The easiest is to get if from S3:
+
+```bash
+apt-get update
+apt-get install wget
+apt-get install unzip
+
+wget https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos5axz.zip
+unzip eos5axz.zip
+```
+
+Now you should have the model folder available. Ersilia is _not_ installed inside the base image, so you need to try and package the model with Ersilia Pack:
+
+```bash
+# ersilia_model_pack --repo_path $REPO_PATH --bundles_repo_path $BUNDLE_PATH
+ersilia_model_pack --repo_path eos5axz --bundles_repo_path bundles
+```
+
+For more information, visit the [Ersilia Pack](https://github.com/ersilia-os/ersilia-pack) documentation.
