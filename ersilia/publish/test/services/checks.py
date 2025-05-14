@@ -550,7 +550,7 @@ class CheckService:
             error = "Invalid value"
             
             if is_fixed:
-                missing_values_in_first_col = self.find_missing_first_output_col()
+                missing_values_in_first_col = self.find_missing_first_output_col(file_path)
                 if not is_online:
                     if len(missing_values_in_first_col) > 0:
                         error_details.extend(missing_values_in_first_col)
