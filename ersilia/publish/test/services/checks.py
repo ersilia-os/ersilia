@@ -748,7 +748,7 @@ class CheckService:
                 )
 
         def check_h5():
-            return (input_type.upper(), "HDF5 tested skipped", str(STATUS_CONFIGS.SUCCESS))
+            return (input_type.upper(), "HDF5 tested skipped", str(STATUS_CONFIGS.PASSED))
             self.logger.debug(f"Checking HDF5 file: {file_path}")
             error_details = []
             metadata = self.ios._read_metadata()
