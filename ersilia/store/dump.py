@@ -60,9 +60,9 @@ class DumpLocalCache:
         hash_key = f"cache:{model_id}"
         header = self.fetch_or_cache_header(model_id)
         header = header or cols
-        assert (
-            header is not None
-        ), "Headers can not be empty! This might happened either the header is not cached or resolved from model schema."
+        assert header is not None, (
+            "Headers can not be empty! This might happened either the header is not cached or resolved from model schema."
+        )
         raw = redis_client.hgetall(hash_key)
         results = {field: json.loads(val) for field, val in raw.items()}
         inputs, results = dict_to_lists(results)
@@ -93,9 +93,9 @@ class DumpLocalCache:
         results, missing = self.fetch_cached_results(model_id, data, len(cols))
         header = self.fetch_or_cache_header(model_id, computed_headers)
         header = header or cols
-        assert (
-            header is not None
-        ), "Headers can not be empty! This might happened either the header is not cached or resolved from model schema."
+        assert header is not None, (
+            "Headers can not be empty! This might happened either the header is not cached or resolved from model schema."
+        )
         results = self.orient_to_json(results, header, data, "records", dtype)
         return results, missing
 

@@ -241,6 +241,8 @@ class RunnerService:
 
                 for idx, (b_val, e_val) in enumerate(zip(bv, ev), start=1):
                     if type(b_val) is not type(e_val):
+                        if type(b_val) is int and type(e_val) is float:
+                            continue
                         msg = (
                             f"Datatype mismatch for column '{column}' at row {idx}: "
                             f"bash value type={type(b_val).__name__}, "

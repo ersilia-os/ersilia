@@ -315,6 +315,7 @@ class ComputationalPerformanceBaseInformationError(ErsiliaError):
         self.hints = "Computational Performance field must be specified as a valid numeric value indicating the time (s) needed to run the input"
         ErsiliaError.__init__(self, self.message, self.hints)
 
+
 class ContributorBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Contributor field error"

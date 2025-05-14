@@ -123,9 +123,7 @@ def serve_cmd():
         echo("   - info", fg="blue")
         echo("")
         echo("🔄 Cache fetching mode:", fg="blue")
-        echo(
-            f"   - {cache_status}", fg="red"
-        ) if cache_status == "Disabled" else echo(
+        echo(f"   - {cache_status}", fg="red") if cache_status == "Disabled" else echo(
             f"   - {cache_status}", fg="green"
         )
         echo("")
