@@ -395,14 +395,14 @@
         <span class="k">if</span> <span class="n">local_cache_only</span><span class="p">:</span>
             <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span>
             <span class="n">enable_local_cache</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Local Only&quot;</span>
+            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Local only&quot;</span>
         <span class="k">if</span> <span class="n">cloud_cache_only</span><span class="p">:</span>
             <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">CLOUD_ONLY</span>
-            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Cloud Only&quot;</span>
+            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Cloud only&quot;</span>
         <span class="k">if</span> <span class="n">cache_only</span><span class="p">:</span>
             <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">CACHE_ONLY</span>
             <span class="n">enable_local_cache</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Hybrid&quot;</span>
+            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Hybrid (local &amp; cloud)&quot;</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span>
             <span class="n">output_source</span><span class="o">=</span><span class="n">output_source</span><span class="p">,</span>
@@ -443,11 +443,9 @@
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:person_tipping_hand: Information:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - info&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;🔄 Cache fetching Mode:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;   - status: </span><span class="si">{</span><span class="n">cache_status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
-        <span class="p">)</span> <span class="k">if</span> <span class="n">cache_status</span> <span class="o">==</span> <span class="s2">&quot;Disabled&quot;</span> <span class="k">else</span> <span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;   - status: </span><span class="si">{</span><span class="n">cache_status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;🔄 Cache fetching mode:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - </span><span class="si">{</span><span class="n">cache_status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_status</span> <span class="o">==</span> <span class="s2">&quot;Disabled&quot;</span> <span class="k">else</span> <span class="n">echo</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;   - </span><span class="si">{</span><span class="n">cache_status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:floppy_disk: Local cache:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
