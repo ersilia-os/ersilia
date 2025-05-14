@@ -406,11 +406,6 @@
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.find_csv_mismatches">
-<span class="sig-name descname"><span class="pre">find_csv_mismatches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">csv_out_one</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">csv_out_two</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.find_csv_mismatches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.find_csv_mismatches" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.find_missing_first_output_col">
 <span class="sig-name descname"><span class="pre">find_missing_first_output_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.find_missing_first_output_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.find_missing_first_output_col" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -452,6 +447,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Checks.COLUMN_MISMATCH">
+<span class="sig-name descname"><span class="pre">COLUMN_MISMATCH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Column</span> <span class="pre">mismatch</span> <span class="pre">check'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Checks.COLUMN_MISMATCH" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Checks.COLUMN_NAME_VALIDITY">
 <span class="sig-name descname"><span class="pre">COLUMN_NAME_VALIDITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Columns'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Checks.COLUMN_NAME_VALIDITY" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -474,6 +474,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Checks.DIR_SIZE">
 <span class="sig-name descname"><span class="pre">DIR_SIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Directory</span> <span class="pre">Size</span> <span class="pre">Mb'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Checks.DIR_SIZE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Checks.EMPTY_COLUMNS">
+<span class="sig-name descname"><span class="pre">EMPTY_COLUMNS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Empty</span> <span class="pre">Column</span> <span class="pre">Found'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Checks.EMPTY_COLUMNS" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1414,7 +1419,6 @@ if both exist, both are validated. If neither is present, an error is returned.<
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_model_output_content"><code class="docutils literal notranslate"><span class="pre">CheckService.check_model_output_content()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_simple_model_output"><code class="docutils literal notranslate"><span class="pre">CheckService.check_simple_model_output()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.compare_csv_columns"><code class="docutils literal notranslate"><span class="pre">CheckService.compare_csv_columns()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.find_csv_mismatches"><code class="docutils literal notranslate"><span class="pre">CheckService.find_csv_mismatches()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.find_missing_first_output_col"><code class="docutils literal notranslate"><span class="pre">CheckService.find_missing_first_output_col()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.get_inputs"><code class="docutils literal notranslate"><span class="pre">CheckService.get_inputs()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.trim_string"><code class="docutils literal notranslate"><span class="pre">CheckService.trim_string()</span></code></a></li>
@@ -1427,11 +1431,13 @@ if both exist, both are validated. If neither is present, an error is returned.<
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks"><code class="docutils literal notranslate"><span class="pre">Checks</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.COLUMN_CHECK_FAILURE"><code class="docutils literal notranslate"><span class="pre">Checks.COLUMN_CHECK_FAILURE</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.COLUMN_CHECK_SUCCESS"><code class="docutils literal notranslate"><span class="pre">Checks.COLUMN_CHECK_SUCCESS</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.COLUMN_MISMATCH"><code class="docutils literal notranslate"><span class="pre">Checks.COLUMN_MISMATCH</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.COLUMN_NAME_VALIDITY"><code class="docutils literal notranslate"><span class="pre">Checks.COLUMN_NAME_VALIDITY</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.CONSISTENCY"><code class="docutils literal notranslate"><span class="pre">Checks.CONSISTENCY</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.CSV_CONTENT_CHECK"><code class="docutils literal notranslate"><span class="pre">Checks.CSV_CONTENT_CHECK</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.DEPENDENCY_PINNED"><code class="docutils literal notranslate"><span class="pre">Checks.DEPENDENCY_PINNED</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.DIR_SIZE"><code class="docutils literal notranslate"><span class="pre">Checks.DIR_SIZE</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.EMPTY_COLUMNS"><code class="docutils literal notranslate"><span class="pre">Checks.EMPTY_COLUMNS</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.ENV_SIZE"><code class="docutils literal notranslate"><span class="pre">Checks.ENV_SIZE</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.IMAGE_SIZE"><code class="docutils literal notranslate"><span class="pre">Checks.IMAGE_SIZE</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.INCONSISTENCY"><code class="docutils literal notranslate"><span class="pre">Checks.INCONSISTENCY</span></code></a></li>

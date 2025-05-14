@@ -864,58 +864,79 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">):</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking CSV file: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">input_type</span><span class="si">}</span><span class="s2"> input&quot;</span><span class="p">)</span>
         <span class="n">error_details</span> <span class="o">=</span> <span class="p">[]</span>
-
+        <span class="n">is_online</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;Source&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Source&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Online&quot;</span><span class="p">:</span>
+                <span class="n">is_online</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="s2">&quot;Output Consistency&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Consistency&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">:</span>
+                <span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                 <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;Invalid value&quot;</span>
-            <span class="k">for</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-                <span class="n">error</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; at row </span><span class="si">{</span><span class="n">row_idx</span><span class="si">}</span><span class="s2">: [&quot;</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_invalid_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-                        <span class="n">error</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, col </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: [</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">]&quot;</span>
-                <span class="n">error</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
+            
+            <span class="k">if</span> <span class="n">is_fixed</span><span class="p">:</span>
+                <span class="n">missing_values_in_first_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_missing_first_output_col</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_online</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">error_details</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+                        <span class="n">error_details</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="s2">&quot;col&quot;</span> <span class="ow">in</span> <span class="n">error</span><span class="p">:</span>
-                <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trim_string</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-                <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-                <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation failed: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_details</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="n">output_smiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
-
-            <span class="n">total_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_smiles</span><span class="p">)</span>
-            <span class="n">null_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">output_smiles</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">null_percentage</span> <span class="o">=</span> <span class="p">(</span><span class="n">null_count</span> <span class="o">/</span> <span class="n">total_outputs</span><span class="p">)</span> <span class="k">if</span> <span class="n">total_outputs</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_consistency</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">null_percentage</span> <span class="o">&gt;</span> <span class="mf">0.25</span><span class="p">:</span>
-                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="s2">&quot;Null output percentage exceeds 25</span><span class="si">% f</span><span class="s2">or variable output consistency.&quot;</span>
-                    <span class="p">)</span>
-                <span class="n">non_null_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">output_smiles</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
-                <span class="n">non_null_expected</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="p">]</span>
-                <span class="k">if</span> <span class="n">non_null_output</span> <span class="o">!=</span> <span class="n">non_null_expected</span><span class="p">:</span>
-                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="s2">&quot;Non-null input SMILES mismatch or order incorrect in CSV.&quot;</span>
-                    <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">null_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="s2">&quot;Missing &#39;input&#39; column in CSV for fixed output consistency.&quot;</span>
-                    <span class="p">)</span>
-                <span class="k">elif</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span>
-                    <span class="ow">and</span> <span class="n">output_smiles</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span>
-                <span class="p">):</span>
-                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="s2">&quot;Input SMILES mismatch or order incorrect in CSV.&quot;</span>
-                    <span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">error</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; at row </span><span class="si">{</span><span class="n">row_idx</span><span class="si">}</span><span class="s2">: [&quot;</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_invalid_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                            <span class="n">error</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, col </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: [</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">]&quot;</span>
+                    <span class="n">error</span> <span class="o">+=</span> <span class="s2">&quot;]&quot;</span>
+
+                <span class="k">if</span> <span class="s2">&quot;col&quot;</span> <span class="ow">in</span> <span class="n">error</span><span class="p">:</span>
+                    <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trim_string</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation failed: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_details</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="n">output_smiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+
+                <span class="n">total_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_smiles</span><span class="p">)</span>
+                <span class="n">null_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">output_smiles</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">null_percentage</span> <span class="o">=</span> <span class="p">(</span><span class="n">null_count</span> <span class="o">/</span> <span class="n">total_outputs</span><span class="p">)</span> <span class="k">if</span> <span class="n">total_outputs</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_consistency</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">null_percentage</span> <span class="o">&gt;</span> <span class="mf">0.25</span><span class="p">:</span>
+                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="s2">&quot;Null output percentage exceeds 25</span><span class="si">% f</span><span class="s2">or variable output consistency.&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">non_null_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">output_smiles</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+                    <span class="n">non_null_expected</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="p">]</span>
+                    <span class="k">if</span> <span class="n">non_null_output</span> <span class="o">!=</span> <span class="n">non_null_expected</span><span class="p">:</span>
+                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="s2">&quot;Non-null input SMILES mismatch or order incorrect in CSV.&quot;</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">null_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="s2">&quot;Missing &#39;input&#39; column in CSV for fixed output consistency.&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span>
+                        <span class="ow">and</span> <span class="n">output_smiles</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span>
+                    <span class="p">):</span>
+                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="s2">&quot;Input SMILES mismatch or order incorrect in CSV.&quot;</span>
+                        <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">error_details</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">(</span>
@@ -1067,7 +1088,22 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">check_h5</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking HDF5 file: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">error_details</span> <span class="o">=</span> <span class="p">[]</span>
-
+            <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
+            <span class="n">is_online</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="s2">&quot;Source&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Source&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Online&quot;</span><span class="p">:</span>
+                    <span class="n">is_online</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="s2">&quot;Output Consistency&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Consistency&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">:</span>
+                    <span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">is_fixed</span> <span class="ow">and</span> <span class="n">is_online</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">-HDF5&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;Test not applicable for online models with fixed output consistency&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">),</span>
+                <span class="p">)</span>
+            
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">loader</span> <span class="o">=</span> <span class="n">Hdf5DataLoader</span><span class="p">()</span>
                 <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
@@ -1085,7 +1121,7 @@
                     <span class="p">),</span>
                     <span class="kc">None</span><span class="p">,</span>
                 <span class="p">)</span>
-
+                
                 <span class="n">output_smiles</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">loader</span><span class="o">.</span><span class="n">inputs</span><span class="p">]</span> <span class="k">if</span> <span class="n">loader</span><span class="o">.</span><span class="n">inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
                 <span class="p">)</span>
@@ -1095,32 +1131,87 @@
 
                 <span class="n">content_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
-                    <span class="n">invalid_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">content_array</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
-                    <span class="n">invalid_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">]:</span>
-                    <span class="n">invalid_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">content_array</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span>
-                    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-                            <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
-                        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                            <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="k">return</span> <span class="kc">False</span>
+                <span class="c1"># check if content array is string</span>
+                <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>                        
+                <span class="k">if</span> <span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;O&quot;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                        <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">content_array</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+                            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
-                    <span class="n">vector_is_empty</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">is_empty</span><span class="p">)</span>
-                    <span class="n">invalid_mask</span> <span class="o">=</span> <span class="n">vector_is_empty</span><span class="p">(</span><span class="n">content_array</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">invalid_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                        <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">content_array</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+                        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">invalid_mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                    <span class="n">invalid_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">invalid_mask</span><span class="p">)</span>
-                    <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;H5 content invalid value at index: &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">invalid_indices</span><span class="p">)</span>
-                    <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trim_string</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
-                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">is_fixed</span><span class="p">:</span>
+                    <span class="n">missing_values_in_first_col</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                            <span class="n">missing_values_in_first_col</span> <span class="o">+=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_online</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">error_details</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+                            <span class="n">error_details</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">missing_values_in_any_col</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+                        <span class="n">counts</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                                <span class="n">counts</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">missing_values_in_any_col</span> <span class="o">+=</span> <span class="p">[</span><span class="n">counts</span><span class="p">]</span>
+                    
+                    <span class="n">non_empty_rows</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missing_values_in_any_col</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">non_empty_rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_empty_rows</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;All rows are empty&quot;</span><span class="p">)</span>
+
+                    
+
+                <span class="c1"># if np.issubdtype(content_array.dtype, np.floating):</span>
+                <span class="c1">#     invalid_mask = np.isnan(content_array)</span>
+                <span class="c1"># elif np.issubdtype(content_array.dtype, np.integer):</span>
+                <span class="c1">#     invalid_mask = np.full(content_array.shape, False)</span>
+                <span class="c1"># elif content_array.dtype.kind in [&#39;S&#39;, &#39;U&#39;]:</span>
+                <span class="c1">#     invalid_mask = (content_array == &#39;&#39;)</span>
+                <span class="c1"># elif content_array.dtype.kind == &#39;O&#39;:</span>
+                <span class="c1">#     def is_empty(x):</span>
+                <span class="c1">#         if isinstance(x, bytes):</span>
+                <span class="c1">#             return x == b&#39;&#39;</span>
+                <span class="c1">#         elif isinstance(x, str):</span>
+                <span class="c1">#             return x == &#39;&#39;</span>
+                <span class="c1">#         else:</span>
+                <span class="c1">#             return False</span>
+
+                <span class="c1">#     vector_is_empty = np.vectorize(is_empty)</span>
+                <span class="c1">#     invalid_mask = vector_is_empty(content_array)</span>
+                <span class="c1"># else:</span>
+                <span class="c1">#     invalid_mask = np.full(content_array.shape, False)</span>
+
+                <span class="c1"># if invalid_mask.any():</span>
+                <span class="c1">#     invalid_indices = np.argwhere(invalid_mask)</span>
+                <span class="c1">#     error = &quot;H5 content invalid value at index: &quot; + &quot;, &quot;.join(str(index) for index in invalid_indices)</span>
+                <span class="c1">#     error = self.trim_string(error)</span>
+                <span class="c1">#     self.logger.error(error)</span>
+                <span class="c1">#     error_details.append(error)</span>
 
                 <span class="k">if</span> <span class="n">error_details</span><span class="p">:</span>
                     <span class="k">return</span> <span class="p">(</span>
@@ -1129,38 +1220,38 @@
                         <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
                     <span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Matching the input SMILES in HDF5 file: </span><span class="si">{</span><span class="n">output_smiles</span><span class="si">}</span><span class="s2"> and original smiles: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
+                <span class="c1"># self.logger.info(</span>
+                <span class="c1">#     f&quot;Matching the input SMILES in HDF5 file: {output_smiles} and original smiles: {self.original_smiles_list}&quot;</span>
+                <span class="c1"># )</span>
 
-                <span class="n">total_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_smiles</span><span class="p">)</span>
-                <span class="n">null_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">output_smiles</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="n">null_percentage</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="p">(</span><span class="n">null_count</span> <span class="o">/</span> <span class="n">total_outputs</span><span class="p">)</span> <span class="k">if</span> <span class="n">total_outputs</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-                <span class="p">)</span>
+                <span class="c1"># total_outputs = len(output_smiles)</span>
+                <span class="c1"># null_count = sum(1 for s in output_smiles if s is None)</span>
+                <span class="c1"># null_percentage = (</span>
+                <span class="c1">#     (null_count / total_outputs) if total_outputs &gt; 0 else 0</span>
+                <span class="c1"># )</span>
                 
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_consistency</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">null_percentage</span> <span class="o">&gt;</span> <span class="mf">0.25</span><span class="p">:</span>
-                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="s2">&quot;Null output percentage exceeds 25</span><span class="si">% f</span><span class="s2">or variable output consistency.&quot;</span>
-                        <span class="p">)</span>
-                    <span class="n">non_null_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">output_smiles</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
-                    <span class="n">non_null_expected</span> <span class="o">=</span> <span class="p">[</span>
-                        <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                    <span class="p">]</span>
-                    <span class="k">if</span> <span class="n">non_null_output</span> <span class="o">!=</span> <span class="n">non_null_expected</span><span class="p">:</span>
-                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="s2">&quot;Non-null SMILES mismatch or order incorrect in HDF5.&quot;</span>
-                        <span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">null_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="s2">&quot;Null outputs found in fixed output consistency.&quot;</span>
-                        <span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">output_smiles</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span><span class="p">:</span>
-                        <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;SMILES mismatch. Expected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span><span class="p">)</span><span class="si">}</span><span class="s2"> items, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">output_smiles</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="p">)</span>
+                <span class="c1"># if self._get_output_consistency() != &quot;Fixed&quot;:</span>
+                <span class="c1">#     if null_percentage &gt; 0.25:</span>
+                <span class="c1">#         error_details.append(</span>
+                <span class="c1">#             &quot;Null output percentage exceeds 25% for variable output consistency.&quot;</span>
+                <span class="c1">#         )</span>
+                <span class="c1">#     non_null_output = [s for s in output_smiles if s is not None]</span>
+                <span class="c1">#     non_null_expected = [</span>
+                <span class="c1">#         s for s in self.original_smiles_list if s is not None</span>
+                <span class="c1">#     ]</span>
+                <span class="c1">#     if non_null_output != non_null_expected:</span>
+                <span class="c1">#         error_details.append(</span>
+                <span class="c1">#             &quot;Non-null SMILES mismatch or order incorrect in HDF5.&quot;</span>
+                <span class="c1">#         )</span>
+                <span class="c1"># else:</span>
+                <span class="c1">#     if null_count &gt; 0:</span>
+                <span class="c1">#         error_details.append(</span>
+                <span class="c1">#             &quot;Null outputs found in fixed output consistency.&quot;</span>
+                <span class="c1">#         )</span>
+                <span class="c1">#     elif output_smiles != self.original_smiles_list:</span>
+                <span class="c1">#         error_details.append(</span>
+                <span class="c1">#             f&quot;SMILES mismatch. Expected {len(self.original_smiles_list)} items, got {len(output_smiles)}&quot;</span>
+                <span class="c1">#         )</span>
 
                 <span class="k">return</span> <span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">-HDF5&quot;</span><span class="p">,</span>
@@ -1168,7 +1259,7 @@
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">error_details</span>
                     <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;Errors: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_details</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="nb">str</span><span class="p">(</span>
-                        <span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span>
+                        <span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">)</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">error_details</span>
                         <span class="k">else</span> <span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span>
                     <span class="p">),</span>
@@ -1198,26 +1289,54 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_column_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span> <span class="k">if</span> <span class="n">row</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
     
-<div class="viewcode-block" id="CheckService.find_csv_mismatches">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.find_csv_mismatches">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">find_csv_mismatches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csv_out_one</span><span class="p">,</span> <span class="n">csv_out_two</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_out_one</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f1</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_out_two</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f2</span><span class="p">:</span>
-            <span class="n">rows1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f1</span><span class="p">))</span>
-            <span class="n">rows2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f2</span><span class="p">))</span>
-
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_csv_mismatches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csv_out_one</span><span class="p">,</span> <span class="n">csv_out_two</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_out_one</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
+            <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;input&quot;</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;key&quot;</span><span class="p">]</span>
+            <span class="n">rows1</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;There was a row with less columns than expected&quot;</span><span class="p">)</span>
+                <span class="n">rows1</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">])</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_out_two</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
+            <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;input&quot;</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;key&quot;</span><span class="p">]</span>
+            <span class="n">rows2</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;There was a row with less columns than expected&quot;</span><span class="p">)</span>
+                <span class="n">rows2</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">])</span>
         <span class="n">mismatches</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">max_rows</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows2</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_rows</span><span class="p">):</span>
             <span class="n">row1</span> <span class="o">=</span> <span class="n">rows1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows1</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
             <span class="n">row2</span> <span class="o">=</span> <span class="n">rows2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows2</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
             <span class="n">max_cols</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">row2</span><span class="p">))</span>
+            <span class="n">is_empty_row1</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">is_empty_row2</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span><span class="p">:</span>
+                    <span class="n">is_empty_row1</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row2</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">x</span><span class="p">:</span>
+                    <span class="n">is_empty_row2</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">is_empty_row1</span> <span class="ow">or</span> <span class="n">is_empty_row2</span><span class="p">:</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s2">&quot;Source&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Source&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Online&quot;</span><span class="p">:</span>
+                        <span class="k">continue</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_cols</span><span class="p">):</span>
                 <span class="n">v1</span> <span class="o">=</span> <span class="n">row1</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">row1</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="n">v2</span> <span class="o">=</span> <span class="n">row2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">row2</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="n">v1</span> <span class="o">!=</span> <span class="n">v2</span><span class="p">:</span>
                     <span class="n">mismatches</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">mismatches</span></div>
-
+        <span class="k">if</span> <span class="n">mismatches</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Column mismatch found: </span><span class="si">{</span><span class="n">mismatches</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))]</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span> <span class="s2">&quot;No column mismatches&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">))]</span>
     
 <div class="viewcode-block" id="CheckService.find_missing_first_output_col">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.find_missing_first_output_col">[docs]</a>
@@ -1226,12 +1345,50 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
-                <span class="n">val</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> 
                 <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
                     <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">missing</span></div>
 
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_all_columns_not_null</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">col_index</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">missing_rows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">total_rows</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">missing_cols</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
+                <span class="n">total_rows</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">col_index</span><span class="p">:]</span>
+                <span class="n">num_missing</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>                
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">val</span> <span class="ow">or</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                        <span class="n">num_missing</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">missing_cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">num_missing</span><span class="p">]</span>
+            <span class="n">total_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
+        <span class="c1"># rows that are fully emtpy</span>
+        <span class="n">fully_empty_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missing_cols</span><span class="p">)</span> <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="n">total_cols</span><span class="p">]</span>
 
+        <span class="c1"># rows that are partially empty</span>
+        <span class="n">partially_empty_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missing_cols</span><span class="p">)</span> <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">total_cols</span><span class="p">]</span>
+
+        <span class="c1"># if all rows are empty...</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fully_empty_rows</span><span class="p">)</span> <span class="o">==</span> <span class="n">total_rows</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span> <span class="s2">&quot;All columns values are nulls&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))]</span>
+        
+        <span class="c1"># if some rows are fully empty...</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fully_empty_rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">missing_rows</span> <span class="o">+=</span> <span class="n">fully_empty_rows</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;All columns values are nulls at these row indices: </span><span class="si">{</span><span class="n">missing_rows</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">))]</span>
+
+        <span class="c1"># if some rows are partially empty...</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">partially_empty_rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">missing_rows</span> <span class="o">+=</span> <span class="n">partially_empty_rows</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Some columns values are nulls at these row indices: </span><span class="si">{</span><span class="n">missing_rows</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">))]</span>
+                
+        <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span> <span class="s2">&quot;All columns values are not nulls&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">))]</span>
+            
 <div class="viewcode-block" id="CheckService.compare_csv_columns">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.compare_csv_columns">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compare_csv_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_csv</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
@@ -1286,18 +1443,22 @@
         <span class="n">input_path</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">_get_input_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
         <span class="n">output_path</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">_get_output_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
         <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-        <span class="c1"># res_one = self.find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)</span>
-        <span class="n">res_one</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_csv</span><span class="p">(</span><span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span>
+        <span class="n">output_consistency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_consistency</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">output_consistency</span> <span class="o">==</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">:</span>
+            <span class="n">res_one</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_csv_mismatches</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res_one</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_all_columns_not_null</span><span class="p">(</span><span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="c1"># res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type=&quot;csv&quot;)</span>
         <span class="n">res_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compare_csv_columns</span><span class="p">(</span>
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">PREDEFINED_COLUMN_FILE</span><span class="p">),</span> <span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span>
         <span class="p">)</span>
         <span class="n">_completed_status</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="n">res_one</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">res_one</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Model output has content problem&quot;</span><span class="p">)</span>
             <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="n">Checks</span><span class="o">.</span><span class="n">SIMPLE_MODEL_RUN</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                    <span class="n">res_one</span><span class="p">,</span>
+                    <span class="n">res_one</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -1305,7 +1466,7 @@
         <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="p">(</span>
                 <span class="n">Checks</span><span class="o">.</span><span class="n">SIMPLE_MODEL_RUN</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-                <span class="n">res_one</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">res_one</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="p">)</span>

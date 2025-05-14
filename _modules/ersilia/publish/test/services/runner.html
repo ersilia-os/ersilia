@@ -818,6 +818,11 @@
         <span class="k">return</span> <span class="n">default_env</span> <span class="o">==</span> <span class="s2">&quot;base&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_compare_string_similarity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios_service</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">str1</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">str2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;Source&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Source&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Online&quot;</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
         <span class="n">similarity</span> <span class="o">=</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">ratio</span><span class="p">(</span><span class="n">str1</span><span class="p">,</span> <span class="n">str2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">similarity</span> <span class="o">&gt;=</span> <span class="n">threshold</span>
 
