@@ -185,7 +185,7 @@ class IOService:
             else:
                 return ERSILIAPACK_FILES
         else:
-            raise None
+            raise Exception(f"Unsupported model type {model_type}")
 
     def _run_check(
         self, check_function, data, check_name: str, additional_info=None
