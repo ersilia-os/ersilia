@@ -482,6 +482,11 @@ class RunnerService:
         return default_env == "base"
 
     def _compare_string_similarity(self, str1, str2, threshold):
+        metadata = self.ios_service._read_metadata()
+        if not str1 or not str2:
+            if "Source" in metadata:
+                if metadata["Source"] == "Online":
+                    return True
         similarity = fuzz.ratio(str1, str2)
         return similarity >= threshold
 

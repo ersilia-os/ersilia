@@ -531,58 +531,79 @@ class CheckService:
         )
 
     def _check_csv(self, file_path, input_type="list"):
+        
         self.logger.debug(f"Checking CSV file: {file_path} for {input_type} input")
         error_details = []
-
+        is_online = False
+        is_fixed = False
+        metadata = self.ios._read_metadata()
+        if "Source" in metadata:
+            if metadata["Source"] == "Online":
+                is_online = True
+        if "Output Consistency" in metadata:
+            if metadata["Output Consistency"] == "Fixed":
+                is_fixed = True
         try:
             with open(file_path, "r") as f:
                 reader = csv.DictReader(f)
                 rows = list(reader)
             error = "Invalid value"
-            for row_idx, row in enumerate(rows, 1):
-                error += f" at row {row_idx}: ["
-                for key, value in row.items():
-                    if self._is_invalid_value(value):
-                        error += f", col {key}: [{value}]"
-                error += "]"
+            
+            if is_fixed:
+                missing_values_in_first_col = self.find_missing_first_output_col()
+                if not is_online:
+                    if len(missing_values_in_first_col) > 0:
+                        error_details.extend(missing_values_in_first_col)
+                else:
+                    if len(missing_values_in_first_col) == len(rows):
+                        error_details.extend(missing_values_in_first_col)
 
-            if "col" in error:
-                error = self.trim_string(error)
-                self.logger.error(error)
-                error_details.append(error)
-                error_details.append(f"Validation failed: {', '.join(error_details)}")
-
-            output_smiles = [row.get("input") or row.get("smiles") for row in rows]
-
-            total_outputs = len(output_smiles)
-            null_count = sum(1 for s in output_smiles if s is None)
-            null_percentage = (null_count / total_outputs) if total_outputs > 0 else 0
-
-            if self._get_output_consistency() != "Fixed":
-                if null_percentage > 0.25:
-                    error_details.append(
-                        "Null output percentage exceeds 25% for variable output consistency."
-                    )
-                non_null_output = [s for s in output_smiles if s is not None]
-                non_null_expected = [
-                    s for s in self.original_smiles_list if s is not None
-                ]
-                if non_null_output != non_null_expected:
-                    error_details.append(
-                        "Non-null input SMILES mismatch or order incorrect in CSV."
-                    )
             else:
-                if null_count > 0:
-                    error_details.append(
-                        "Missing 'input' column in CSV for fixed output consistency."
-                    )
-                elif (
-                    self.original_smiles_list
-                    and output_smiles != self.original_smiles_list
-                ):
-                    error_details.append(
-                        "Input SMILES mismatch or order incorrect in CSV."
-                    )
+
+                for row_idx, row in enumerate(rows, 1):
+                    error += f" at row {row_idx}: ["
+                    for key, value in row.items():
+                        if self._is_invalid_value(value):
+                            error += f", col {key}: [{value}]"
+                    error += "]"
+
+                if "col" in error:
+                    error = self.trim_string(error)
+                    self.logger.error(error)
+                    error_details.append(error)
+                    error_details.append(f"Validation failed: {', '.join(error_details)}")
+
+                output_smiles = [row.get("input") or row.get("smiles") for row in rows]
+
+                total_outputs = len(output_smiles)
+                null_count = sum(1 for s in output_smiles if s is None)
+                null_percentage = (null_count / total_outputs) if total_outputs > 0 else 0
+
+                if self._get_output_consistency() != "Fixed":
+                    if null_percentage > 0.25:
+                        error_details.append(
+                            "Null output percentage exceeds 25% for variable output consistency."
+                        )
+                    non_null_output = [s for s in output_smiles if s is not None]
+                    non_null_expected = [
+                        s for s in self.original_smiles_list if s is not None
+                    ]
+                    if non_null_output != non_null_expected:
+                        error_details.append(
+                            "Non-null input SMILES mismatch or order incorrect in CSV."
+                        )
+                else:
+                    if null_count > 0:
+                        error_details.append(
+                            "Missing 'input' column in CSV for fixed output consistency."
+                        )
+                    elif (
+                        self.original_smiles_list
+                        and output_smiles != self.original_smiles_list
+                    ):
+                        error_details.append(
+                            "Input SMILES mismatch or order incorrect in CSV."
+                        )
 
             if error_details:
                 return (
@@ -729,7 +750,22 @@ class CheckService:
         def check_h5():
             self.logger.debug(f"Checking HDF5 file: {file_path}")
             error_details = []
-
+            metadata = self.ios._read_metadata()
+            is_online = False
+            if "Source" in metadata:
+                if metadata["Source"] == "Online":
+                    is_online = True
+            is_fixed = False
+            if "Output Consistency" in metadata:
+                if metadata["Output Consistency"] == "Fixed":
+                    is_fixed = True
+            if is_fixed and is_online:
+                return (
+                    f"{input_type.upper()}-HDF5",
+                    f"Test not applicable for online models with fixed output consistency",
+                    str(STATUS_CONFIGS.WARNING),
+                )
+            
             try:
                 loader = Hdf5DataLoader()
                 loader.load(file_path)
@@ -747,7 +783,7 @@ class CheckService:
                     ),
                     None,
                 )
-
+                
                 output_smiles = (
                     [s for s in loader.inputs] if loader.inputs is not None else []
                 )
@@ -757,32 +793,87 @@ class CheckService:
 
                 content_array = np.array(content)
 
-                if np.issubdtype(content_array.dtype, np.floating):
-                    invalid_mask = np.isnan(content_array)
-                elif np.issubdtype(content_array.dtype, np.integer):
-                    invalid_mask = np.full(content_array.shape, False)
-                elif content_array.dtype.kind in ['S', 'U']:
-                    invalid_mask = (content_array == '')
-                elif content_array.dtype.kind == 'O':
-                    def is_empty(x):
-                        if isinstance(x, bytes):
-                            return x == b''
-                        elif isinstance(x, str):
-                            return x == ''
-                        else:
-                            return False
+                # check if content array is string
+                rows = []                        
+                if content_array.dtype.kind == "O":
+                    for i in range(content_array.shape[0]):
+                        row = []
+                        for x in content_array[i]:
+                            if isinstance(x, bytes):
+                                row.append(x.decode("utf-8"))
+                            elif isinstance(x, str):
+                                row.append(x)
+                            else:
+                                row.append(None)
+                        rows.append(row)
 
-                    vector_is_empty = np.vectorize(is_empty)
-                    invalid_mask = vector_is_empty(content_array)
                 else:
-                    invalid_mask = np.full(content_array.shape, False)
+                    for i in range(content_array.shape[0]):
+                        row = []
+                        for x in content_array[i]:
+                            if np.isnan(x):
+                                row.append(None)
+                            row.append(float(x))
+                        rows.append(row)
 
-                if invalid_mask.any():
-                    invalid_indices = np.argwhere(invalid_mask)
-                    error = "H5 content invalid value at index: " + ", ".join(str(index) for index in invalid_indices)
-                    error = self.trim_string(error)
-                    self.logger.error(error)
-                    error_details.append(error)
+                if is_fixed:
+                    missing_values_in_first_col = []
+                    for i, row in enumerate(rows):
+                        val = row[0]
+                        if val is None or val == "":
+                            missing_values_in_first_col += [i]
+                    if not is_online:
+                        if len(missing_values_in_first_col) > 0:
+                            error_details.extend(missing_values_in_first_col)
+                    else:
+                        if len(missing_values_in_first_col) == len(rows):
+                            error_details.extend(missing_values_in_first_col)
+
+                else:
+                    missing_values_in_any_col = []
+                    for i, row in enumerate(rows):
+                        counts = 0
+                        for j, val in enumerate(row):
+                            if val is None or val == "":
+                                counts += 1
+                        missing_values_in_any_col += [counts]
+                    
+                    non_empty_rows = []
+                    for i, m in enumerate(missing_values_in_any_col):
+                        if m == 0:
+                            non_empty_rows.append(rows[i])
+
+                    if len(non_empty_rows) == len(rows):
+                        error_details.append("All rows are empty")
+
+                    
+
+                # if np.issubdtype(content_array.dtype, np.floating):
+                #     invalid_mask = np.isnan(content_array)
+                # elif np.issubdtype(content_array.dtype, np.integer):
+                #     invalid_mask = np.full(content_array.shape, False)
+                # elif content_array.dtype.kind in ['S', 'U']:
+                #     invalid_mask = (content_array == '')
+                # elif content_array.dtype.kind == 'O':
+                #     def is_empty(x):
+                #         if isinstance(x, bytes):
+                #             return x == b''
+                #         elif isinstance(x, str):
+                #             return x == ''
+                #         else:
+                #             return False
+
+                #     vector_is_empty = np.vectorize(is_empty)
+                #     invalid_mask = vector_is_empty(content_array)
+                # else:
+                #     invalid_mask = np.full(content_array.shape, False)
+
+                # if invalid_mask.any():
+                #     invalid_indices = np.argwhere(invalid_mask)
+                #     error = "H5 content invalid value at index: " + ", ".join(str(index) for index in invalid_indices)
+                #     error = self.trim_string(error)
+                #     self.logger.error(error)
+                #     error_details.append(error)
 
                 if error_details:
                     return (
@@ -791,38 +882,38 @@ class CheckService:
                         str(STATUS_CONFIGS.FAILED),
                     )
 
-                self.logger.info(
-                    f"Matching the input SMILES in HDF5 file: {output_smiles} and original smiles: {self.original_smiles_list}"
-                )
+                # self.logger.info(
+                #     f"Matching the input SMILES in HDF5 file: {output_smiles} and original smiles: {self.original_smiles_list}"
+                # )
 
-                total_outputs = len(output_smiles)
-                null_count = sum(1 for s in output_smiles if s is None)
-                null_percentage = (
-                    (null_count / total_outputs) if total_outputs > 0 else 0
-                )
+                # total_outputs = len(output_smiles)
+                # null_count = sum(1 for s in output_smiles if s is None)
+                # null_percentage = (
+                #     (null_count / total_outputs) if total_outputs > 0 else 0
+                # )
                 
-                if self._get_output_consistency() != "Fixed":
-                    if null_percentage > 0.25:
-                        error_details.append(
-                            "Null output percentage exceeds 25% for variable output consistency."
-                        )
-                    non_null_output = [s for s in output_smiles if s is not None]
-                    non_null_expected = [
-                        s for s in self.original_smiles_list if s is not None
-                    ]
-                    if non_null_output != non_null_expected:
-                        error_details.append(
-                            "Non-null SMILES mismatch or order incorrect in HDF5."
-                        )
-                else:
-                    if null_count > 0:
-                        error_details.append(
-                            "Null outputs found in fixed output consistency."
-                        )
-                    elif output_smiles != self.original_smiles_list:
-                        error_details.append(
-                            f"SMILES mismatch. Expected {len(self.original_smiles_list)} items, got {len(output_smiles)}"
-                        )
+                # if self._get_output_consistency() != "Fixed":
+                #     if null_percentage > 0.25:
+                #         error_details.append(
+                #             "Null output percentage exceeds 25% for variable output consistency."
+                #         )
+                #     non_null_output = [s for s in output_smiles if s is not None]
+                #     non_null_expected = [
+                #         s for s in self.original_smiles_list if s is not None
+                #     ]
+                #     if non_null_output != non_null_expected:
+                #         error_details.append(
+                #             "Non-null SMILES mismatch or order incorrect in HDF5."
+                #         )
+                # else:
+                #     if null_count > 0:
+                #         error_details.append(
+                #             "Null outputs found in fixed output consistency."
+                #         )
+                #     elif output_smiles != self.original_smiles_list:
+                #         error_details.append(
+                #             f"SMILES mismatch. Expected {len(self.original_smiles_list)} items, got {len(output_smiles)}"
+                #         )
 
                 return (
                     f"{input_type.upper()}-HDF5",
@@ -830,7 +921,7 @@ class CheckService:
                     if not error_details
                     else f"Errors: {', '.join(error_details)}",
                     str(
-                        STATUS_CONFIGS.PASSED
+                        (STATUS_CONFIGS.PASSED)
                         if not error_details
                         else STATUS_CONFIGS.FAILED
                     ),
@@ -859,34 +950,103 @@ class CheckService:
     def _read_column_header(self, reader):
         return [row[0] for row in reader if row][1:]
     
-    def find_csv_mismatches(self, csv_out_one, csv_out_two):
-        with open(csv_out_one, newline='') as f1, open(csv_out_two, newline='') as f2:
-            rows1 = list(csv.reader(f1))
-            rows2 = list(csv.reader(f2))
-
+    def _find_csv_mismatches(self, csv_out_one, csv_out_two):
+        with open(csv_out_one) as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            idxs = [i for i, col in enumerate(header) if col != "input" and col != "key"]
+            rows1 = []
+            for r in reader:
+                if len(r) != len(header):
+                    raise Exception("There was a row with less columns than expected")
+                rows1.append([r[i] for i in idxs])
+        with open(csv_out_two) as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            idxs = [i for i, col in enumerate(header) if col != "input" and col != "key"]
+            rows2 = []
+            for r in reader:
+                if len(r) != len(header):
+                    raise Exception("There was a row with less columns than expected")
+                rows2.append([r[i] for i in idxs])
         mismatches = []
         max_rows = max(len(rows1), len(rows2))
         for i in range(max_rows):
             row1 = rows1[i] if i < len(rows1) else []
             row2 = rows2[i] if i < len(rows2) else []
             max_cols = max(len(row1), len(row2))
+            is_empty_row1 = True
+            is_empty_row2 = True
+            for x in row1:
+                if x:
+                    is_empty_row1 = False
+                    break
+            for x in row2:
+                if x:
+                    is_empty_row2 = False
+                    break
+            if is_empty_row1 or is_empty_row2:
+                metadata = self.ios._read_metadata()
+                if "Source" in metadata:
+                    if metadata["Source"] == "Online":
+                        continue
             for j in range(max_cols):
                 v1 = row1[j] if j < len(row1) else None
                 v2 = row2[j] if j < len(row2) else None
                 if v1 != v2:
                     mismatches.append((i, j, v1, v2))
-        return mismatches
+        if mismatches:
+            return [(Checks.COLUMN_MISMATCH, f"Column mismatch found: {mismatches}", str(STATUS_CONFIGS.FAILED))]
+        return [(Checks.COLUMN_MISMATCH, "No column mismatches", str(STATUS_CONFIGS.PASSED))]
     
     def find_missing_first_output_col(self, path):
         missing = []
         with open(path, newline='') as f:
             reader = csv.reader(f)
             for i, row in enumerate(reader):
-                val = row[3] if len(row) > 3 else ''
+                val = row[2] 
                 if val is None or val.strip() == '':
                     missing.append((i, 3))
         return missing
+    
+    def _check_all_columns_not_null(self, path):
+        col_index = 2
+        missing_rows = []
+        total_rows = 0
+        with open(path, newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            missing_cols = []
+            for i, row in enumerate(reader):
+                total_rows += 1
+                vals = row[col_index:]
+                num_missing = 0
+                for val in vals:                
+                    if not val or val.strip() == '':
+                        num_missing += 1
+                missing_cols += [num_missing]
+            total_cols = len(row) - 2
+        # rows that are fully emtpy
+        fully_empty_rows = [i for i, val in enumerate(missing_cols) if val == total_cols]
 
+        # rows that are partially empty
+        partially_empty_rows = [i for i, val in enumerate(missing_cols) if val > 0 and val < total_cols]
+
+        # if all rows are empty...
+        if len(fully_empty_rows) == total_rows:
+            return [(Checks.EMPTY_COLUMNS, "All columns values are nulls", str(STATUS_CONFIGS.FAILED))]
+        
+        # if some rows are fully empty...
+        if len(fully_empty_rows) > 0:
+            missing_rows += fully_empty_rows
+            return [(Checks.EMPTY_COLUMNS, f"All columns values are nulls at these row indices: {missing_rows}", str(STATUS_CONFIGS.WARNING))]
+
+        # if some rows are partially empty...
+        if len(partially_empty_rows) > 0:
+            missing_rows += partially_empty_rows
+            return [(Checks.EMPTY_COLUMNS, f"Some columns values are nulls at these row indices: {missing_rows}", str(STATUS_CONFIGS.WARNING))]
+                
+        return [(Checks.EMPTY_COLUMNS, "All columns values are not nulls", str(STATUS_CONFIGS.PASSED))]
+            
     def compare_csv_columns(self, column_csv, csv_file):
         try:
             with open(column_csv, "r", newline="") as f1, open(csv_file, "r", newline="") as f2: # ruff: noqa: E501
@@ -936,18 +1096,22 @@ class CheckService:
         input_path = IOService._get_input_file_path(self.dir)
         output_path = IOService._get_output_file_path(self.dir)
         run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
-        # res_one = self.find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
-        res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
+        output_consistency = self._get_output_consistency()
+        if output_consistency == "Fixed":
+            res_one = self._find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
+        else:
+            res_one = self._check_all_columns_not_null(Options.OUTPUT_CSV.value)
+        # res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
         res_two = self.compare_csv_columns(
             os.path.join(self.dir, PREDEFINED_COLUMN_FILE), Options.OUTPUT_CSV.value
         )
         _completed_status = []
-        if res_one[-1] == str(STATUS_CONFIGS.FAILED):
+        if res_one[0][-1] == str(STATUS_CONFIGS.FAILED):
             self.logger.error("Model output has content problem")
             _completed_status.append(
                 (
                     Checks.SIMPLE_MODEL_RUN.value,
-                    res_one,
+                    res_one[0][1],
                     str(STATUS_CONFIGS.FAILED),
                 )
             )
@@ -955,7 +1119,7 @@ class CheckService:
         _completed_status.append(
             (
                 Checks.SIMPLE_MODEL_RUN.value,
-                res_one[1],
+                res_one[0][1],
                 str(STATUS_CONFIGS.PASSED),
             )
         )

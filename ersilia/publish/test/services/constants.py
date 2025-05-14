@@ -97,6 +97,8 @@ class Checks(Enum):
     DIR_SIZE = "Directory Size Mb"
     # messages
     SIZE_CACL_SUCCESS = "Size Successfully Calculated"
+    EMPTY_COLUMNS = "Empty Column Found"
+    COLUMN_MISMATCH = "Column mismatch check"
     SIZE_CACL_FAILED = "Size Calculation Failed"
     INCONSISTENCY = "Inconsistent Output Detected"
     CONSISTENCY = "Model Output Was Consistent"
