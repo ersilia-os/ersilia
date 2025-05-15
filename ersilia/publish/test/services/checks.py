@@ -662,7 +662,7 @@ class CheckService:
 
         def check_json():
             # TODO remove this
-            return (input_type.upper(), "Artificially passed JSON test", str(STATUS_CONFIGS.PASSED))
+            return (input_type.upper()+"-JSON", "Artificially passed JSON test", str(STATUS_CONFIGS.PASSED))
 
             self.logger.debug(
                 f"Checking JSON file: {file_path} for input: {input_type}"
@@ -788,9 +788,10 @@ class CheckService:
                     None,
                 )
                 
-                output_smiles = (
-                    [s for s in loader.inputs] if loader.inputs is not None else []
-                )
+                # TODO remove output_smiles?
+                # output_smiles = (
+                #     [s for s in loader.inputs] if loader.inputs is not None else []
+                #)
 
                 if content is None or (hasattr(content, "size") and content.size == 0):
                     error_details.append("Empty content")
