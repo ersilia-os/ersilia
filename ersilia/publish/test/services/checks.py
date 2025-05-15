@@ -1157,33 +1157,33 @@ class CheckService:
 
         def validate_output(output1, output2):
             if self._is_invalid_value(output1) or self._is_invalid_value(output2):
-                echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
+                echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
 
             if not isinstance(output1, type(output2)):
-                echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
+                echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
 
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
                 if rmse > 0.1:
-                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
+                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
 
                 rho, _ = spearmanr([output1], [output2])
                 if rho < 0.5:
-                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
+                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
 
             elif isinstance(output1, list):
                 rmse = compute_rmse(output1, output2)
                 if rmse > 0.1:
-                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
+                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
 
                 rho, _ = spearmanr(output1, output2)
 
                 if rho < 0.5:
-                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
+                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
 
             elif isinstance(output1, str):
                 if _compare_output_strings(output1, output2) <= 95:
-                    echo_exceptions("Model output is incosistent. Skipped the checks!", ClickInterface())
+                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
 
         def read_csv(file_path):
             absolute_path = os.path.abspath(file_path)
