@@ -482,6 +482,11 @@ class RunnerService:
         return default_env == "base"
 
     def _compare_string_similarity(self, str1, str2, threshold):
+        metadata = self.ios_service._read_metadata()
+        if not str1 or not str2:
+            if "Source" in metadata:
+                if metadata["Source"] == "Online":
+                    return True
         similarity = fuzz.ratio(str1, str2)
         return similarity >= threshold
 
@@ -555,6 +560,7 @@ class RunnerService:
                 "Saving report, deleting model and exiting.",
                 fg="yellow", bold=True,
             )
+            self.ios_service.collect_and_save_json(results, self.report_file)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
@@ -563,6 +569,7 @@ class RunnerService:
             tb = traceback.format_exc()
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
+            self.ios_service.collect_and_save_json(results, self.report_file)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 

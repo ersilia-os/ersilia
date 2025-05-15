@@ -35,7 +35,11 @@ class Options(Enum):
         "file.h5",
         "file.json",
     ]
+    OUTPUT_FILES_TEST = [
+        "file.csv",
+    ]
     INPUT_TYPES = ["str", "list", "csv"]
+    INPUT_TYPES_TEST = ["csv"]
 
     def __getattribute__(self, name):
         file_path = os.path.join(EOS_TMP, "files")
@@ -97,6 +101,8 @@ class Checks(Enum):
     DIR_SIZE = "Directory Size Mb"
     # messages
     SIZE_CACL_SUCCESS = "Size Successfully Calculated"
+    EMPTY_COLUMNS = "Empty Column Found"
+    COLUMN_MISMATCH = "Column mismatch check"
     SIZE_CACL_FAILED = "Size Calculation Failed"
     INCONSISTENCY = "Inconsistent Output Detected"
     CONSISTENCY = "Model Output Was Consistent"
