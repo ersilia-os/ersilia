@@ -254,7 +254,20 @@ class IOService:
                     raise ValueError(f"Unsupported file format: {path}")
             return data
         return None
-
+    
+    def _read_metadata_from_strict_path(self):
+        path = self._get_metadata_file()
+        if path is not None:
+            with open(path, "r") as file:
+                if path.endswith(".json"):
+                    data = json.load(file)
+                elif path.endswith((".yml", ".yaml")):
+                    data = yaml.safe_load(file)
+                else:
+                    raise ValueError(f"Unsupported file format: {path}")
+            return data
+        return None
+    
     def _combine_dir_size(self, data):
         keys = ("directory_size_mb", "model_size_check", "directory_size_check")
         if keys[1] in data:

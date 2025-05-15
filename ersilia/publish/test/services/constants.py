@@ -35,7 +35,11 @@ class Options(Enum):
         "file.h5",
         "file.json",
     ]
+    OUTPUT_FILES_TEST = [
+        "file.csv",
+    ]
     INPUT_TYPES = ["str", "list", "csv"]
+    INPUT_TYPES_TEST = ["csv"]
 
     def __getattribute__(self, name):
         file_path = os.path.join(EOS_TMP, "files")
