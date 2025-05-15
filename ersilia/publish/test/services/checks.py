@@ -1,5 +1,6 @@
 import csv
 import json
+import math
 import numpy as np
 import os
 import random
@@ -589,7 +590,6 @@ class CheckService:
                 str(STATUS_CONFIGS.PASSED),
             )
         except Exception as e:
-            print(f"Validation error: {str(e)}")
             return (
                 f"{input_type.upper()}-CSV",
                 f"Validation error: {str(e)}",
@@ -767,13 +767,15 @@ class CheckService:
                 output_smiles = (
                     [s for s in loader.inputs] if loader.inputs is not None else []
                 )
-                print(f"Output smiles hdf5: {output_smiles}")
                 is_order_matchs = self._input_matchs_output_order(self.original_smiles_list, output_smiles)
+                
+                if not is_order_matchs:
+                    error_details.append("Order Mis match happens")
+
                 if content is None or (hasattr(content, "size") and content.size == 0):
                     error_details.append("Empty content")
 
                 content_array = np.array(content)
-                print(content_array)
                     
 
                 if np.issubdtype(content_array.dtype, np.floating):
@@ -846,6 +848,20 @@ class CheckService:
         return [row[0] for row in reader if row][1:]
     
     def _find_csv_mismatches(self, csv_out_one, csv_out_two):
+        def _round_sig(x, sig=4):
+            return float(f"{x:.{sig}g}")
+        
+        is_online = False
+        metadata = {}
+        try:
+            metadata = self.ios._read_metadata()
+        except:
+            self.logger.info("Models are running from playground!")
+            metadata["Source"] = "Local"
+        if "Source" in metadata:
+            if metadata["Source"] == "Online":
+                is_online = True
+
         with open(csv_out_one) as f:
             reader = csv.reader(f)
             header = next(reader)
@@ -881,20 +897,29 @@ class CheckService:
                     is_empty_row2 = False
                     break
             if is_empty_row1 or is_empty_row2:
-                metadata = {}
-                try:
-                    metadata = self.ios._read_metadata()
-                except:
-                    self.logger.info("Models are running from playground!")
-                    metadata["Source"] = "Local"
-                if "Source" in metadata:
-                    if metadata["Source"] == "Online":
-                        continue
+                if is_online:
+                    continue
             for j in range(max_cols):
                 v1 = row1[j] if j < len(row1) else None
                 v2 = row2[j] if j < len(row2) else None
-                if v1 != v2:
-                    mismatches.append((i, j, v1, v2))
+
+                try:
+                    if v1 == "" or v2 == "":
+                        raise ValueError
+
+                    f1 = float(v1)
+                    f2 = float(v2)
+
+                    if math.isnan(f1) and math.isnan(f2):
+                        continue
+
+                    if _round_sig(f1, 4) != _round_sig(f2, 4):
+                        mismatches.append((i, j, v1, v2))
+
+                except (ValueError, TypeError):
+                    if v1 != v2:
+                        mismatches.append((i, j, v1, v2))
+
         if mismatches:
             return [(Checks.COLUMN_MISMATCH, f"Column mismatch found: {mismatches}", str(STATUS_CONFIGS.FAILED))]
         return [(Checks.COLUMN_MISMATCH, "No column mismatches", str(STATUS_CONFIGS.PASSED))]
