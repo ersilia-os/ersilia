@@ -356,7 +356,11 @@
         <span class="s2">&quot;file.h5&quot;</span><span class="p">,</span>
         <span class="s2">&quot;file.json&quot;</span><span class="p">,</span>
     <span class="p">]</span>
+    <span class="n">OUTPUT_FILES_TEST</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;file.csv&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
     <span class="n">INPUT_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;str&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">]</span>
+    <span class="n">INPUT_TYPES_TEST</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS_TMP</span><span class="p">,</span> <span class="s2">&quot;files&quot;</span><span class="p">)</span>
@@ -424,6 +428,8 @@
     <span class="n">DIR_SIZE</span> <span class="o">=</span> <span class="s2">&quot;Directory Size Mb&quot;</span>
     <span class="c1"># messages</span>
     <span class="n">SIZE_CACL_SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;Size Successfully Calculated&quot;</span>
+    <span class="n">EMPTY_COLUMNS</span> <span class="o">=</span> <span class="s2">&quot;Empty Column Found&quot;</span>
+    <span class="n">COLUMN_MISMATCH</span> <span class="o">=</span> <span class="s2">&quot;Column mismatch check&quot;</span>
     <span class="n">SIZE_CACL_FAILED</span> <span class="o">=</span> <span class="s2">&quot;Size Calculation Failed&quot;</span>
     <span class="n">INCONSISTENCY</span> <span class="o">=</span> <span class="s2">&quot;Inconsistent Output Detected&quot;</span>
     <span class="n">CONSISTENCY</span> <span class="o">=</span> <span class="s2">&quot;Model Output Was Consistent&quot;</span>
