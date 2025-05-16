@@ -1074,34 +1074,41 @@ class CheckService:
 
         def validate_output(output1, output2):
             if self._is_invalid_value(output1) or self._is_invalid_value(output2):
-                echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
+                echo_exceptions("Model output is invalid.", ClickInterface())
+                raise ValueError
 
             if not isinstance(output1, type(output2)):
-                echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
+                echo_exceptions("Model output is inconsistent.", ClickInterface())
+                raise ValueError
 
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
                 if rmse > 0.1:
-                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
+                    echo_exceptions(f"Model output is inconsistent. The RMSE between two consequetive outputs found to be > 10%:[{rmse*100}]", ClickInterface())
+                    raise ValueError
 
                 rho, _ = spearmanr([output1], [output2])
                 if rho < 0.5:
-                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
+                    echo_exceptions(f"Model output is inconsistent. The Spearman correlation between two consequetive outputs found to be < 50%", ClickInterface())
+                    raise ValueError
 
             elif isinstance(output1, list):
                 rmse = compute_rmse(output1, output2)
                 if rmse > 0.1:
-                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
-
+                    echo_exceptions(f"Model output is inconsistent. The RMSE between two consequetive outputs found to be > 10%:[{rmse*100}]", ClickInterface())
+                    raise ValueError
+                
                 rho, _ = spearmanr(output1, output2)
 
                 if rho < 0.5:
-                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
-
+                    echo_exceptions(f"Model output is inconsistent. The Spearman correlation between two consequetive outputs found to be < 50%", ClickInterface())
+                    raise ValueError
+                
             elif isinstance(output1, str):
                 if _compare_output_strings(output1, output2) <= 95:
-                    echo_exceptions("Model output is inconsistent. Skipped the checks!", ClickInterface())
-
+                    echo_exceptions(f"Model output is inconsistent. The Fuzz ratio correlation between two consequetive outputs found to be <= 950%", ClickInterface())
+                    raise ValueError
+                
         def read_csv(file_path):
             absolute_path = os.path.abspath(file_path)
             if not os.path.exists(absolute_path):
@@ -1117,14 +1124,14 @@ class CheckService:
 
         self.logger.debug("Confirming model produces consistent output...")
 
-        input = self.get_inputs(types="list")
+        input = self.get_inputs(types="csv")
 
         run_model(inputs=input, output=output1_path, batch=100)
         run_model(inputs=input, output=output2_path, batch=100)
-        self.original_smiles_list = self._get_original_smiles_list("list", input)
-        check_status_one = self._check_csv(output1_path)
-        self.original_smiles_list = self._get_original_smiles_list("list", input)
-        check_status_two = self._check_csv(output2_path)
+        self.original_smiles_list = self._get_original_smiles_list("csv", input)
+        check_status_one = self._check_csv(output1_path, input_type="csv")
+        self.original_smiles_list = self._get_original_smiles_list("csv", input)
+        check_status_two = self._check_csv(output2_path, input_type="csv")
         _completed_status = []
         if check_status_one[-1] == str(STATUS_CONFIGS.FAILED) or check_status_two[
             -1
@@ -1156,7 +1163,7 @@ class CheckService:
                         str(STATUS_CONFIGS.PASSED),
                     )
                 )
-            except:
+            except ValueError:
                 return _completed_status.append(
                     (
                         Checks.MODEL_CONSISTENCY.value,
