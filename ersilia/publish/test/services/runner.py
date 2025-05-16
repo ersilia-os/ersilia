@@ -417,6 +417,10 @@ class RunnerService:
             self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
             try:
                 out = run_command(["bash", temp_script_path])
+                if os.path.exists(output_log_path):
+                    with open(output_log_path, "r") as f:
+                        data = f.read()
+                        echo(data, fg="cyan", bold=True)
                 self.logger.info(f"Bash script subprocess output: {out}")
                 logs = read_logs(error_log_path)
                 formatted_error = "".join(logs)
