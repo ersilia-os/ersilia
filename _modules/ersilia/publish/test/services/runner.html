@@ -969,6 +969,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_shallow_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios_service</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
+        <span class="n">is_online</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Source&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Online&quot;</span>
         <span class="n">model_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_model_output_content</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">run_example</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_model</span>
         <span class="p">)</span>
@@ -976,22 +978,23 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_OUTPUT</span><span class="p">,</span> <span class="n">model_output</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">validations</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="s2">&quot;Fixed&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios_service</span><span class="o">.</span><span class="n">get_output_consistency</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="s2">&quot;Fixed&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios_service</span><span class="o">.</span><span class="n">get_output_consistency</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_online</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_single_and_example_input_checks</span><span class="p">()</span>
 
             <span class="n">validations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">SHALLOW_CHECK_SUMMARY</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
             <span class="p">)</span>
-        <span class="n">bash_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bash</span><span class="p">()</span>
-        <span class="n">validations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">CONSISTENCY_BASH</span><span class="p">,</span> <span class="n">bash_results</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">validations</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">bash_results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
-            <span class="n">echo_exceptions</span><span class="p">(</span><span class="s2">&quot;Model output is not consistent. System is exiting before proceeding!&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
-            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">1</span>
+            <span class="n">bash_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bash</span><span class="p">()</span>
+            <span class="n">validations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">CONSISTENCY_BASH</span><span class="p">,</span> <span class="n">bash_results</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">validations</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bash_results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
+                <span class="n">echo_exceptions</span><span class="p">(</span><span class="s2">&quot;Model output is not consistent. System is exiting before proceeding!&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">results</span>
-
+        
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_deep_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">performance_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;computational_performance_tracking&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span>
