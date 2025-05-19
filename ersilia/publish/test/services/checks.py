@@ -848,7 +848,7 @@ class CheckService:
         return [row[0] for row in reader if row][1:]
     
     def _find_csv_mismatches(self, csv_out_one, csv_out_two):
-        def _round_dec(x, dec=5):
+        def _round_dec(x, dec=4):
             return round(x, dec)
         
         is_online = False
