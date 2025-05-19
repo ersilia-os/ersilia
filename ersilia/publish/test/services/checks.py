@@ -913,7 +913,7 @@ class CheckService:
                     if math.isnan(f1) and math.isnan(f2):
                         continue
 
-                    if _round_dec(f1, 5) != _round_dec(f2, 5):
+                    if _round_dec(f1) != _round_dec(f2):
                         mismatches.append((i, j, v1, v2))
 
                 except (ValueError, TypeError):
