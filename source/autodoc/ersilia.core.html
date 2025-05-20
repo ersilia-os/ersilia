@@ -813,6 +813,21 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.core.session.Session.get_tracking_use_case">
+<span class="sig-name descname"><span class="pre">get_tracking_use_case</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.get_tracking_use_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.get_tracking_use_case" title="Link to this definition">¶</a></dt>
+<dd><p>Get the tracking use case from the session.</p>
+<p>This method retrieves the tracking use case from the session data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The tracking use case, or None if no session data is available.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.open">
 <span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_runs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.open" title="Link to this definition">¶</a></dt>
 <dd><p>Open a new session for the specified model.</p>
@@ -847,6 +862,18 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>service_class</strong> (<em>str</em>) – The service class to register.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.core.session.Session.register_tracking_use_case">
+<span class="sig-name descname"><span class="pre">register_tracking_use_case</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">use_case</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.register_tracking_use_case"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.register_tracking_use_case" title="Link to this definition">¶</a></dt>
+<dd><p>Register the tracking use case in the session.</p>
+<p>This method updates the session data with the provided tracking use case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>use_case</strong> (<em>str</em>) – The tracking use case to register.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -949,7 +976,7 @@ If the credentials are found, they are returned as a dictionary.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">RunTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.core.tracking.</span></span><span class="sig-name descname"><span class="pre">RunTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_case</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>This class is responsible for tracking model runs. It calculates the desired metadata based on a model’s
 inputs, outputs, and other run-specific features, before uploading them to AWS to be ingested
@@ -966,6 +993,22 @@ to Ersilia’s Splunk dashboard.</p>
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.create_event_data">
 <span class="sig-name descname"><span class="pre">create_event_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.core.tracking.RunTracker.create_event_data" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.get_country">
+<span class="sig-name descname"><span class="pre">get_country</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/tracking.html#RunTracker.get_country"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.tracking.RunTracker.get_country" title="Link to this definition">¶</a></dt>
+<dd><p>Get the country of the user.
+This method uses retrieves the country information.
+If the country information is not available, it defaults to ‘Unknown’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The country of the user.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.tracking.RunTracker.get_file_sizes">
@@ -1174,9 +1217,11 @@ and uploads the data to AWS if credentials are available.
 <li><a class="reference internal" href="#ersilia.core.session.Session.current_output_source"><code class="docutils literal notranslate"><span class="pre">Session.current_output_source()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.current_service_class"><code class="docutils literal notranslate"><span class="pre">Session.current_service_class()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.get"><code class="docutils literal notranslate"><span class="pre">Session.get()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.get_tracking_use_case"><code class="docutils literal notranslate"><span class="pre">Session.get_tracking_use_case()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.open"><code class="docutils literal notranslate"><span class="pre">Session.open()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.register_output_source"><code class="docutils literal notranslate"><span class="pre">Session.register_output_source()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.register_service_class"><code class="docutils literal notranslate"><span class="pre">Session.register_service_class()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.register_tracking_use_case"><code class="docutils literal notranslate"><span class="pre">Session.register_tracking_use_case()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.tracking_status"><code class="docutils literal notranslate"><span class="pre">Session.tracking_status()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.update_cpu_time"><code class="docutils literal notranslate"><span class="pre">Session.update_cpu_time()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.update_peak_memory"><code class="docutils literal notranslate"><span class="pre">Session.update_peak_memory()</span></code></a></li>
@@ -1193,6 +1238,7 @@ and uploads the data to AWS if credentials are available.
 </li>
 <li><a class="reference internal" href="#ersilia.core.tracking.RunTracker"><code class="docutils literal notranslate"><span class="pre">RunTracker</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.create_event_data"><code class="docutils literal notranslate"><span class="pre">RunTracker.create_event_data()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.get_country"><code class="docutils literal notranslate"><span class="pre">RunTracker.get_country()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.get_file_sizes"><code class="docutils literal notranslate"><span class="pre">RunTracker.get_file_sizes()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.log_files_metrics"><code class="docutils literal notranslate"><span class="pre">RunTracker.log_files_metrics()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.tracking.RunTracker.summarize_output"><code class="docutils literal notranslate"><span class="pre">RunTracker.summarize_output()</span></code></a></li>

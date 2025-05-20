@@ -319,6 +319,10 @@
           <h1>Source code for ersilia.utils.system</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stat</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
 
 
 <div class="viewcode-block" id="is_inside_docker">
@@ -407,6 +411,71 @@
 <span class="sd">            True if running inside a Docker container, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">is_inside_docker</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SystemChecker.get_country">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.system.SystemChecker.get_country">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_country</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the country code of the system based on the IP address.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            The country of the system and its 3-character code (Country, Code).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">bash_script</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;#!/usr/bin/env bash</span>
+
+<span class="s2">        # Usage: ./geoip.sh [IP_ADDRESS]</span>
+<span class="s2">        IP=&quot;${1:-$(curl -s https://ifconfig.me)}&quot;</span>
+<span class="s2">        RESP=$(curl -s &quot;http://ip-api.com/json/$</span><span class="si">{IP}</span><span class="s2">&quot;)</span>
+
+<span class="s2">        # helper: extract the first JSON field value for a given key</span>
+<span class="s2">        #   args: $1 = JSON text, $2 = field name</span>
+<span class="s2">        get_field(){</span>
+<span class="s2">        # strip up to &quot;&lt;key&gt;&quot;:&quot;...&quot;</span>
+<span class="s2">        local tmp=&quot;${1#*</span><span class="se">\\\&quot;</span><span class="s2">$2</span><span class="se">\\\&quot;</span><span class="s2">:</span><span class="se">\\\&quot;</span><span class="s2">}&quot;</span>
+<span class="s2">        # then strip everything after the closing quote</span>
+<span class="s2">        printf &#39;</span><span class="si">%s</span><span class="s2">&#39; &quot;${tmp</span><span class="si">%%</span><span class="se">\\\&quot;</span><span class="s2">*}&quot;</span>
+<span class="s2">        }</span>
+
+<span class="s2">        status=$(get_field &quot;$RESP&quot; status)</span>
+<span class="s2">        if [[ &quot;$status&quot; != success ]]; then</span>
+<span class="s2">        msg=$(get_field &quot;$RESP&quot; message)</span>
+<span class="s2">        echo &quot;Lookup failed: ${msg:-$status}&quot; &gt;&amp;2</span>
+<span class="s2">        exit 1</span>
+<span class="s2">        fi</span>
+
+<span class="s2">        country=$(get_field &quot;$RESP&quot; country)</span>
+<span class="s2">        code=$(get_field &quot;$RESP&quot; countryCode)</span>
+
+<span class="s2">        echo &quot;Country: $country&quot;</span>
+<span class="s2">        echo &quot;Code:    $code&quot;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">&quot;geoip.sh&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">&quot;geoip.sh&quot;</span><span class="p">),</span>
+            <span class="n">stat</span><span class="o">.</span><span class="n">S_IRUSR</span> <span class="o">|</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IWUSR</span> <span class="o">|</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IXUSR</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">run_command</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bash </span><span class="si">{</span><span class="n">tmp_dir</span><span class="si">}</span><span class="s2">/geoip.sh &gt; </span><span class="si">{</span><span class="n">tmp_dir</span><span class="si">}</span><span class="s2">/geoip.txt&quot;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">&quot;geoip.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s2">&quot;Country&quot;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+                <span class="n">country</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Country: &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Code:    &quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">country</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">code</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

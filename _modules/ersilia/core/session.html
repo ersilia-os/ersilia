@@ -467,6 +467,26 @@
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="Session.register_tracking_use_case">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_tracking_use_case">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_tracking_use_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_case</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the tracking use case in the session.</span>
+
+<span class="sd">        This method updates the session data with the provided tracking use case.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        use_case : str</span>
+<span class="sd">            The tracking use case to register.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;tracking_use_case&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_case</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Registering tracking use case: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">use_case</span><span class="p">))</span></div>
+
+
 <div class="viewcode-block" id="Session.tracking_status">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.tracking_status">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">tracking_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -485,6 +505,26 @@
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;track_runs&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Session.get_tracking_use_case">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.get_tracking_use_case">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tracking_use_case</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the tracking use case from the session.</span>
+
+<span class="sd">        This method retrieves the tracking use case from the session data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The tracking use case, or None if no session data is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tracking_use_case&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.open">
