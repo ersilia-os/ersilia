@@ -441,7 +441,7 @@
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_strict_local</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
 
             <span class="n">shards</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_submit_and_get_shards</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_shards</span><span class="p">(</span><span class="n">shards</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_shards</span><span class="p">(</span><span class="n">shards</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="n">Abort</span><span class="p">:</span>
             <span class="n">echo_sys_exited</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">)</span>
@@ -617,10 +617,11 @@
 
         <span class="k">return</span> <span class="n">shards</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_shards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shards</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_shards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shards</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">merge_shards</span><span class="p">(</span>
             <span class="n">shards</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span>
+            <span class="n">inputs</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span>

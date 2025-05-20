@@ -603,19 +603,10 @@ retrieve result shards, and merge them into a single CSV.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.store.utils.FileManager.merge_shards">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_shards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">click_iface</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#ersilia.store.utils.ClickInterface" title="ersilia.store.utils.ClickInterface"><span class="pre">ClickInterface</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_cache_csv_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#FileManager.merge_shards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.FileManager.merge_shards" title="Link to this definition">¶</a></dt>
-<dd><p>Download, decompress, and concatenate multiple CSV shards into a single file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>shards</strong> (<em>list</em>) – List of dicts with keys ‘url’, ‘key’, and optional ‘size’.</p></li>
-<li><p><strong>header</strong> (<em>list</em>) – CSV header row.</p></li>
-<li><p><strong>output_path</strong> (<em>Path</em>) – Path to write the merged CSV.</p></li>
-<li><p><strong>downloader</strong> (<a class="reference internal" href="#ersilia.store.utils.ApiClient" title="ersilia.store.utils.ApiClient"><em>ApiClient</em></a>) – Used for HEAD and streaming GET requests.</p></li>
-<li><p><strong>click_iface</strong> (<a class="reference internal" href="#ersilia.store.utils.ClickInterface" title="ersilia.store.utils.ClickInterface"><em>ClickInterface</em></a>) – CLI interface for printing progress and warnings.</p></li>
-</ul>
-</dd>
-</dl>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">merge_shards</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shards</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">smiles_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">click_iface</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_cache_csv_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/store/utils.html#FileManager.merge_shards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.store.utils.FileManager.merge_shards" title="Link to this definition">¶</a></dt>
+<dd><p>Download, decompress, and concatenate multiple CSV shards into a single file.
+If <cite>smiles_list</cite> is non-empty, reorder the rows to match its order;
+otherwise, just merge them sequentially.</p>
 </dd></dl>
 
 <dl class="py method">
