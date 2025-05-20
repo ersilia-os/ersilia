@@ -4,6 +4,7 @@ import json
 import os
 import re
 import uuid
+from datetime import datetime
 
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
@@ -12,6 +13,7 @@ from ..io.output_logger import TabularResultLogger
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import NoAWSCredentialsError
 from ..utils.session import get_session_dir, get_session_uuid
+from ..utils.system import SystemChecker
 from .base import ErsiliaBase
 
 TRACKING_BUCKET = "ersilia-models-runs"
@@ -124,8 +126,9 @@ class RunTracker(ErsiliaBase):
         Configuration in JSON format.
     """
 
-    def __init__(self, model_id, config_json):
+    def __init__(self, model_id, use_case, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.use_case = use_case
         self.aws_config = AwsConfig()
         self.time_start = None
         self.memory_usage_start = 0
@@ -340,6 +343,27 @@ class RunTracker(ErsiliaBase):
             return False
         return True
 
+    def get_country(self):
+        """
+        Get the country of the user.
+        This method uses retrieves the country information.
+        If the country information is not available, it defaults to 'Unknown'.
+
+        Returns
+        -------
+        str
+            The country of the user.
+        """
+        sc = SystemChecker()
+        country, _ = sc.get_country()
+        if country is None:
+            self.logger.warning(
+                "Unable to get country information. Defaulting to 'Unknown'."
+            )
+            country = "Unknown"
+        self.logger.debug("Country: {0}".format(country))
+        return country
+
     @throw_ersilia_exception()
     def create_event_data(self, event_id, input, output, metadata, time_seconds):
         """
@@ -386,11 +410,16 @@ class RunTracker(ErsiliaBase):
             + error_and_warning_info_console_log["warning_count"]
         )
 
+        country = self.get_country()
+
         result_summary = self.summarize_output(output)
 
         data = {
             "session_id": get_session_uuid(),
             "event_id": event_id,
+            "country": country,
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "use_case": self.use_case.capitalize(),
             "model_id": self.model_id,
             "slug": metadata["Slug"],
             "task": metadata["Task"],

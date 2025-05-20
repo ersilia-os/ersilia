@@ -51,23 +51,33 @@ def serve_cmd():
         default=False,
     )
     @click.option(
+        "--tracking-use-case",
+        type=click.Choice(
+            ["local", "self-service", "hosted", "test"], case_sensitive=True
+        ),
+        required=False,
+        default="local",
+        help="Tracking use case. Options: local, self-service, hosted, test",
+    )
+    @click.option(
         "--enable-local-cache/--disable-local-cache", is_flag=True, default=True
     )
     @click.option("--local-cache-only", is_flag=True, default=False)
     @click.option("--cloud-cache-only", is_flag=True, default=False)
     @click.option("--cache-only", is_flag=True, default=False)
     @click.option(
-        "--max-cache-memory-frac", "maxmemory", type=click.FLOAT, default=None
+        "--max-cache-memory-frac", "max_memory", type=click.FLOAT, default=None
     )
     def serve(
         model,
         port,
         track,
+        tracking_use_case,
         enable_local_cache,
         local_cache_only,
         cloud_cache_only,
         cache_only,
-        maxmemory,
+        max_memory,
     ):
         output_source = None
         cache_status = "Disabled"
@@ -87,11 +97,16 @@ def serve_cmd():
             output_source=output_source,
             preferred_port=port,
             cache=enable_local_cache,
-            maxmemory=maxmemory,
+            maxmemory=max_memory,
         )
-        redis_setup = SetupRedis(enable_local_cache, maxmemory)
+        redis_setup = SetupRedis(enable_local_cache, max_memory)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
+
+        if track:
+            track = tracking_use_case
+        else:
+            track = None
 
         mdl.serve(track_runs=track)
         if mdl.url is None:
@@ -134,7 +149,7 @@ def serve_cmd():
         echo("")
         echo(":chart_increasing: Tracking:", fg="blue")
         if track:
-            echo("   - Enabled", fg="green")
+            echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
         else:
             echo("   - Disabled", fg="red")
 
