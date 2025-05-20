@@ -118,7 +118,7 @@ class InferenceStoreApi(ErsiliaBase):
                 return self._handle_strict_local(inputs)
 
             shards = self._submit_and_get_shards(inputs)
-            return self._merge_shards(shards)
+            return self._merge_shards(shards, inputs)
 
         except Abort:
             echo_sys_exited(self.click)
@@ -293,10 +293,11 @@ class InferenceStoreApi(ErsiliaBase):
 
         return shards
 
-    def _merge_shards(self, shards: list) -> str:
+    def _merge_shards(self, shards: list, inputs: list) -> str:
         self.files.merge_shards(
             shards,
             self.header,
+            inputs,
             self.output_path,
             self.api,
             self.click,

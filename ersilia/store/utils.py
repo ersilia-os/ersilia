@@ -484,104 +484,201 @@ class FileManager:
 
     @staticmethod
     def merge_shards(
-        shards: list,
-        header: list,
-        output_path: Path,
+        shards,
+        header,
+        smiles_list,
+        output_path,
         downloader,
-        click_iface: ClickInterface,
-        local_cache_csv_path: str,
+        click_iface,
+        local_cache_csv_path,
     ):
         """
         Download, decompress, and concatenate multiple CSV shards into a single file.
+        If `smiles_list` is non-empty, reorder the rows to match its order;
+        otherwise, just merge them sequentially.
 
-        Parameters
-        ----------
-        shards : list
-            List of dicts with keys 'url', 'key', and optional 'size'.
-        header : list
-            CSV header row.
-        output_path : Path
-            Path to write the merged CSV.
-        downloader : ApiClient
-            Used for HEAD and streaming GET requests.
-        click_iface : ClickInterface
-            CLI interface for printing progress and warnings.
         """
-        total_size = 0
-        for shard in shards:
-            size = shard.get("size", 0)
-            try:
-                headers = downloader.head(shard["url"])
-                size = int(headers.get("Content-Length", size))
-            except requests.HTTPError:
-                pass
-            total_size += size
-        click_iface.echo(
-            f"{log_prefix()}Total download file size: {total_size / 1024:.1f} KB",
-            fg="blue",
-            bold=False,
-        )
-
-        click_iface.echo(
-            f"{log_prefix()}Downloading and merging each file content",
-            fg="blue",
-            bold=False,
-        )
         gz_shards = [
             s
             for s in shards
             if s.get("key", "").endswith(".gz") or s.get("url", "").endswith(".gz")
         ]
+        total_size = 0
+        for s in gz_shards:
+            size = s.get("size", 0)
+            try:
+                hdrs = downloader.head(s["url"])
+                size = int(hdrs.get("Content-Length", size))
+            except Exception:
+                pass
+            total_size += size
 
-        with open(output_path, "w", encoding="utf-8", newline="") as out_f:
-            out_f.write(",".join(header) + "\n")
-            first = True
+        click_iface.echo(
+            f"⬇ Total download size: {total_size / 1024:.1f} KB", fg="blue"
+        )
 
-            total_size = sum(s["size"] for s in gz_shards)
-            pbar = click_iface.progress_bar(
-                total=total_size,
-                unit="B",
-                unit_scale=True,
-                unit_divisor=1024,
-                desc="⬇",
-                colour="blue",
-                ncols=80,
-                bar_format="{desc}: [{bar}] {percentage:3.0f}% {n_fmt}/{total_fmt} • {rate_fmt} • ETA: {remaining}",
+        if not smiles_list:
+            click_iface.echo(
+                "⬇ No reorder list provided; merging sequentially", fg="blue"
             )
-
-            for shard in gz_shards:
-                buf = io.BytesIO()
-                for chunk in downloader.download_stream(shard["url"]):
-                    buf.write(chunk)
-                    pbar.update(len(chunk))
-
-                decompressed = gzip.decompress(buf.getvalue())
-                text = decompressed.decode("utf-8", errors="replace")
-
-                for i, line in enumerate(text.splitlines(keepends=True)):
-                    if not first and i == 0 and line.startswith(header[0]):
-                        continue
-                    out_f.write(line)
-
-                first = False
-
-            pbar.close()
+            with open(output_path, "w", newline="", encoding="utf-8") as out_f:
+                writer = csv.writer(out_f)
+                writer.writerow(header)
+                pbar = click_iface.progress_bar(
+                    total=total_size,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=1024,
+                    desc="⬇ downloading shards",
+                    colour="blue",
+                    ncols=80,
+                )
+                first_shard = True
+                for shard in gz_shards:
+                    buf = io.BytesIO()
+                    for chunk in downloader.download_stream(shard["url"]):
+                        buf.write(chunk)
+                        pbar.update(len(chunk))
+                    text = gzip.decompress(buf.getvalue()).decode(
+                        "utf-8", errors="replace"
+                    )
+                    reader = csv.reader(io.StringIO(text))
+                    if first_shard:
+                        first_shard = False
+                    for row in reader:
+                        writer.writerow(row)
+                pbar.close()
 
             if (
                 os.path.exists(local_cache_csv_path)
                 and os.path.getsize(local_cache_csv_path) > 0
             ):
-                with open(local_cache_csv_path, "r", encoding="utf-8") as cache_f:
+                with (
+                    open(local_cache_csv_path, "r", encoding="utf-8") as cache_f,
+                    open(output_path, "a", newline="", encoding="utf-8") as out_f,
+                ):
                     next(cache_f, None)
                     for line in cache_f:
                         out_f.write(line)
-
                 try:
                     os.remove(local_cache_csv_path)
-                except OSError as e:
-                    raise Exception(
-                        f"Warning: could not delete cache file {local_cache_csv_path}: {e}"
-                    )
+                except OSError:
+                    pass
+
+            click_iface.echo(
+                f"✅ Sequential merge written to {output_path}", fg="green"
+            )
+            return
+
+        if "input" not in header:
+            raise KeyError("Header must contain 'input' to reorder")
+
+        col_idx = header.index("input")
+
+        normalized = []
+        for item in smiles_list:
+            if isinstance(item, str):
+                normalized.append(item)
+            elif isinstance(item, dict) and "input" in item:
+                normalized.append(item["input"])
+            else:
+                raise TypeError(f"Cannot extract 'input' from {item}")
+
+        click_iface.echo("⬇ Building lookup and reordering by 'input'", fg="blue")
+        lookup = {}
+        pbar = click_iface.progress_bar(
+            total=total_size,
+            unit="B",
+            unit_scale=True,
+            unit_divisor=1024,
+            desc="⬇ downloading shards",
+            colour="blue",
+            ncols=80,
+        )
+        first_shard = True
+        for shard in gz_shards:
+            buf = io.BytesIO()
+            for chunk in downloader.download_stream(shard["url"]):
+                buf.write(chunk)
+                pbar.update(len(chunk))
+            text = gzip.decompress(buf.getvalue()).decode("utf-8", errors="replace")
+            reader = csv.reader(io.StringIO(text))
+            if first_shard:
+                first_shard = False
+            for row in reader:
+                lookup[row[col_idx]] = row
+        pbar.close()
+
+        with open(output_path, "w", newline="", encoding="utf-8") as out_f:
+            writer = csv.writer(out_f)
+            writer.writerow(header)
+            for inp in normalized:
+                row = lookup.get(inp)
+                if row:
+                    writer.writerow(row)
+                else:
+                    empty_row = [""] * len(header)
+                    empty_row[col_idx] = inp
+                    writer.writerow(empty_row)
+
+        if (
+            os.path.exists(local_cache_csv_path)
+            and os.path.getsize(local_cache_csv_path) > 0
+        ):
+            with open(local_cache_csv_path, "r", encoding="utf-8") as cache_f:
+                cache_reader = csv.reader(cache_f)
+                next(cache_reader, None)
+                cache_rows = list(cache_reader)
+
+            with open(output_path, "r", newline="", encoding="utf-8") as merged_f:
+                merged_reader = csv.reader(merged_f)
+                merged_header = next(merged_reader)
+                merged_rows = list(merged_reader)
+
+            if "input" in merged_header:
+                idx = merged_header.index("input")
+            else:
+                idx = None
+
+            def is_full(row):
+                return all(cell.strip() for cell in row)
+
+            final_cache = []
+            for cro in cache_rows:
+                match = None
+                for mro in merged_rows:
+                    if idx is not None and cro[idx] == mro[idx]:
+                        match = mro
+                        break
+                    elif idx is None and cro == mro:
+                        match = mro
+                        break
+
+                if match and not is_full(cro) and is_full(match):
+                    final_cache.append(match)
+                else:
+                    final_cache.append(cro)
+
+            with open(output_path, "w", newline="", encoding="utf-8") as wf:
+                writer = csv.writer(wf)
+                writer.writerow(merged_header)
+
+                seen = set()
+                for row in final_cache:
+                    writer.writerow(row)
+                    key = row[idx] if idx is not None else tuple(row)
+                    seen.add(key)
+
+                for mro in merged_rows:
+                    key = mro[idx] if idx is not None else tuple(mro)
+                    if key not in seen:
+                        writer.writerow(mro)
+            try:
+                os.remove(local_cache_csv_path)
+            except OSError:
+                pass
+
+        click_iface.echo(f"✅ Final ordered CSV written to {output_path}", fg="green")
 
 
 class InferenceStoreMessage(object):

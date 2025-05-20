@@ -80,6 +80,7 @@ class SetupRedis:
             RuntimeError: If the container fails to start.
         """
         logger.info("Checking Redis server status...")
+
         if not self._is_amenable()[0]:
             return
 
@@ -98,7 +99,6 @@ class SetupRedis:
 
         time.sleep(0.5)
         self._configure_redis_memory_policy()
-
         logger.info("Redis server setup completed.")
 
     def _is_amenable(self):
@@ -245,22 +245,34 @@ class SetupRedis:
         self._create_docker_network()
         self._create_data_volume()
 
-        logger.info(f"Starting a new container: {REDIS_CONTAINER_NAME}")
         try:
+            container = self.client.containers.get(REDIS_CONTAINER_NAME)
+            networks = container.attrs["NetworkSettings"]["Networks"].keys()
+            if DEFAULT_DOCKER_NETWORK_NAME not in networks:
+                logger.info(
+                    f"Attaching existing Redis to network {DEFAULT_DOCKER_NETWORK_NAME}"
+                )
+                self.network.connect(container)
+            else:
+                logger.info(
+                    "Redis container is already running on the correct network."
+                )
+            return container
+
+        except docker.errors.NotFound:
             container = self.client.containers.run(
                 image=REDIS_IMAGE,
                 name=REDIS_CONTAINER_NAME,
+                volumes={self.volume.name: {"bind": "/data", "mode": "rw"}},
                 detach=True,
                 ports={f"{REDIS_PORT}/tcp": REDIS_PORT},
                 network=DEFAULT_DOCKER_NETWORK_NAME,
-                volumes={self.volume.name: {"bind": "/data", "mode": "rw"}},
                 auto_remove=True,
             )
             logger.info(
-                f"Container {REDIS_CONTAINER_NAME} started successfully. ID: {container.id}"
+                f"Started new Redis container on {self.network.name}: {container.id}"
             )
-        except docker.errors.APIError:
-            logger.error("Failed to start new container.")
+            return container
 
     def _pull_and_start_container(self):
         try:
