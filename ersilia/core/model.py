@@ -647,7 +647,7 @@ class ErsiliaModel(ErsiliaBase):
         pass  # TODO Implement whenever this is necessary
 
     @throw_ersilia_exception()
-    def serve(self, track_runs=False):
+    def serve(self, track_runs=None):
         """
         Serve the model by starting the necessary services.
 
@@ -657,14 +657,14 @@ class ErsiliaModel(ErsiliaBase):
 
         Parameters
         ----------
-        track_runs : bool, optional
-            Whether to track runs, by default False.
+        track_runs : str, optional
+            Whether to track runs, by default is None (i.e. do not track).
         """
         self.logger.debug("Starting serve")
         self.session = Session(config_json=self.config_json)
         self.run_tracker = None
         self.track = False
-        if track_runs:
+        if track_runs is not None:
             if not isinstance(self.autoservice.service, PulledDockerImageService):
                 self.logger.warning(
                     "Tracking runs is currently only supported for Dockerized models"
@@ -673,7 +673,9 @@ class ErsiliaModel(ErsiliaBase):
             else:
                 self.track = True
                 self.run_tracker = RunTracker(
-                    model_id=self.model_id, config_json=self.config_json
+                    model_id=self.model_id,
+                    config_json=self.config_json,
+                    use_case=track_runs,
                 )
         self.setup()
         self.close()

@@ -51,6 +51,13 @@ def serve_cmd():
         default=False,
     )
     @click.option(
+        "--tracking-use-case",
+        type=click.Choice(["local", "run"], case_sensitive=True),
+        required=False,
+        default="serve",
+        help="Tracking use case. Options: local, workflow, self-service, hosted, test",
+    )
+    @click.option(
         "--enable-local-cache/--disable-local-cache", is_flag=True, default=True
     )
     @click.option("--local-cache-only", is_flag=True, default=False)
@@ -63,6 +70,7 @@ def serve_cmd():
         model,
         port,
         track,
+        tracking_use_case,
         enable_local_cache,
         local_cache_only,
         cloud_cache_only,
@@ -92,6 +100,11 @@ def serve_cmd():
         redis_setup = SetupRedis(enable_local_cache, maxmemory)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
+
+        if track:
+            track = tracking_use_case
+        else:
+            track = None
 
         mdl.serve(track_runs=track)
         if mdl.url is None:
