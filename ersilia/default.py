@@ -115,7 +115,7 @@ VERBOSE_FILE = ".verbose.json"
 
 H5_EXTENSION = ".h5"
 H5_DATA_FILE = "data.h5"
-REDIS_SERVER = "redis://127.0.0.1:6379"
+REDIS_SERVER = "redis://redis:6379"
 # Other
 FEATURE_MERGE_PATTERN = "---"
 HEADER_INDICATORS = [
@@ -128,8 +128,7 @@ HEADER_INDICATORS = [
 # URLS
 REDIS_EXPIRATION = 3600 * 24 * 7
 REDIS_PORT = 6379
-REDIS_SERVER = "redis://localhost:%s" % REDIS_PORT
-REDIS_CONTAINER_NAME = "redis-server"
+REDIS_CONTAINER_NAME = "redis"
 REDIS_IMAGE = "redis:latest"
 REDIS_HOST = "localhost"
 ERSILIA_WEB_URL = "https://ersilia.io"

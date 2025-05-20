@@ -1368,29 +1368,32 @@ class PulledDockerImageService(BaseServing):
         Serve the model using the Docker image service.
         """
         self._create_docker_network()
-
         self._stop_all_containers_of_image()
-        self.container_name = "{0}_{1}".format(self.model_id, str(uuid.uuid4())[:4])
-        self.logger.debug("Trying to run container")
-        if self._mem_gb is None:
-            self.container = self.client.containers.run(
-                self.image_name,
-                name=self.container_name,
-                detach=True,
-                ports={"80/tcp": self.port},
-            )
-        else:
-            self.container = self.client.containers.run(
-                self.image_name,
-                name=self.container_name,
-                detach=True,
-                ports={"80/tcp": self.port},
-                mem_limit="{0}g".format(self._mem_gb),
-            )
-        self.logger.debug("Serving container {0}".format(self.container_name))
+        self.container_name = f"{self.model_id}_{str(uuid.uuid4())[:4]}"
+
+        env = {
+            "REDIS_HOST": os.getenv("REDIS_HOST", "redis"),
+            "REDIS_PORT": os.getenv("REDIS_PORT", "6379"),
+            "REDIS_URI": os.getenv("REDIS_URI", "redis://redis:6379"),
+            "REDIS_EXPIRATION": os.getenv("REDIS_EXPIRATION", str(3600 * 24 * 7)),
+        }
+
+        run_kwargs = dict(
+            image=self.image_name,
+            name=self.container_name,
+            detach=True,
+            ports={"80/tcp": self.port},
+            environment=env,
+            network=DEFAULT_DOCKER_NETWORK_NAME,
+        )
+
+        if self._mem_gb is not None:
+            run_kwargs["mem_limit"] = f"{self._mem_gb}g"
+
+        self.logger.debug(f"Running container with env: {env!r}")
+        self.container = self.client.containers.run(**run_kwargs)
 
         self.container_id = self.container.id
-        self.logger.debug(f"Running container {self.container_id}")
         self.url = f"http://0.0.0.0:{self.port}"
         self._wait_until_container_is_running()
         self._apis_list = self._get_apis()
