@@ -417,9 +417,9 @@ class AutoService(ErsiliaBase):
         self.clean_before_serving()
         self.clean_temp_dir()
         self.close()
+        self.service.serve()
         self.logger.info("Setting up Redis")
         self.setup_redis.ensure_redis_running()
-        self.service.serve()
         tmp_file = tmp_pid_file(self.model_id)
         with open(tmp_file, "a+") as f:
             f.write("{0} {1}{2}".format(self.service.pid, self.service.url, os.linesep))
