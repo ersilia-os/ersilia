@@ -417,6 +417,10 @@ class RunnerService:
             self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
             try:
                 out = run_command(["bash", temp_script_path])
+                if os.path.exists(output_log_path):
+                    with open(output_log_path, "r") as f:
+                        data = f.read()
+                        echo(data, fg="cyan", bold=True)
                 self.logger.info(f"Bash script subprocess output: {out}")
                 logs = read_logs(error_log_path)
                 formatted_error = "".join(logs)
@@ -630,6 +634,8 @@ class RunnerService:
 
     def _perform_shallow_checks(self):
         results = []
+        metadata = self.ios_service._read_metadata()
+        is_online = metadata.get("Source") == "Online"
         model_output = self.checkup_service.check_model_output_content(
             self.run_example, self.run_model
         )
@@ -637,22 +643,23 @@ class RunnerService:
             self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)
         )
         validations = []
-        if "Fixed" in self.ios_service.get_output_consistency():
+
+        if "Fixed" in self.ios_service.get_output_consistency() and not is_online:
             res = self._run_single_and_example_input_checks()
 
             validations.append(
                 self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY, res)
             )
-        bash_results = self.run_bash()
-        validations.append(
-            self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
-        )
-        results.extend(validations)
-        if bash_results[0][-1] == str(STATUS_CONFIGS.FAILED):
-            echo_exceptions("Model output is not consistent. System is exiting before proceeding!", ClickInterface())
-            return results, 1
+            bash_results = self.run_bash()
+            validations.append(
+                self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
+            )
+            results.extend(validations)
+            if bash_results[0][-1] == str(STATUS_CONFIGS.FAILED):
+                echo_exceptions("Model output is not consistent. System is exiting before proceeding!", ClickInterface())
+                return results, 1
         return results
-
+        
     def _perform_deep_checks(self):
         performance_data = self.inspector.run(["computational_performance_tracking"])
         return self._generate_table_from_check(
