@@ -128,6 +128,23 @@ class Session(ErsiliaBase):
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
 
+    def register_tracking_use_case(self, use_case):
+        """
+        Register the tracking use case in the session.
+
+        This method updates the session data with the provided tracking use case.
+
+        Parameters
+        ----------
+        use_case : str
+            The tracking use case to register.
+        """
+        data = self.get()
+        data["tracking_use_case"] = use_case
+        with open(self.session_file, "w") as f:
+            json.dump(data, f, indent=4)
+        self.logger.debug("Registering tracking use case: {0}".format(use_case))
+
     def tracking_status(self):
         """
         Get the tracking status from the session.
@@ -144,6 +161,23 @@ class Session(ErsiliaBase):
             return None
         else:
             return data["track_runs"]
+
+    def get_tracking_use_case(self):
+        """
+        Get the tracking use case from the session.
+
+        This method retrieves the tracking use case from the session data.
+
+        Returns
+        -------
+        str or None
+            The tracking use case, or None if no session data is available.
+        """
+        data = self.get()
+        if data is None:
+            return None
+        else:
+            return data.get("tracking_use_case", None)
 
     def open(self, model_id, track_runs):
         """

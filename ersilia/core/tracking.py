@@ -4,6 +4,7 @@ import json
 import os
 import re
 import uuid
+from datetime import datetime
 
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
@@ -417,6 +418,8 @@ class RunTracker(ErsiliaBase):
             "session_id": get_session_uuid(),
             "event_id": event_id,
             "country": country,
+            "date": datetime.now().strftime("%Y-%m-%d"),
+            "use_case": self.use_case.capitalize(),
             "model_id": self.model_id,
             "slug": metadata["Slug"],
             "task": metadata["Task"],

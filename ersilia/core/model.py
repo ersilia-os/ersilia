@@ -663,6 +663,7 @@ class ErsiliaModel(ErsiliaBase):
         self.logger.debug("Starting serve")
         self.session = Session(config_json=self.config_json)
         self.run_tracker = None
+        self.tracking_use_case = track_runs
         self.track = False
         if track_runs is not None:
             if not isinstance(self.autoservice.service, PulledDockerImageService):
@@ -683,6 +684,8 @@ class ErsiliaModel(ErsiliaBase):
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
+        if self.track:
+            self.session.register_tracking_use_case(self.tracking_use_case)
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
@@ -782,9 +785,12 @@ class ErsiliaModel(ErsiliaBase):
 
         # Init the run tracker
         if track_run:
-            self.logger.debug("Initializing the run trackers")
+            use_case = session.get_tracking_use_case()
+            self.logger.debug(
+                "Initializing the run trackers (use case {0})".format(use_case)
+            )
             self.run_tracker = RunTracker(
-                model_id=self.model_id, config_json=self.config_json
+                model_id=self.model_id, config_json=self.config_json, use_case=use_case
             )
         self.logger.info("Starting runner")
 

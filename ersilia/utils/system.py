@@ -120,7 +120,6 @@ class SystemChecker(object):
         """
 
         tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
-        tmp_dir = os.getcwd()
 
         with open(os.path.join(tmp_dir, "geoip.sh"), "w") as f:
             f.write(bash_script)

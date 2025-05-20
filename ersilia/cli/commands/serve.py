@@ -52,10 +52,12 @@ def serve_cmd():
     )
     @click.option(
         "--tracking-use-case",
-        type=click.Choice(["local", "run"], case_sensitive=True),
+        type=click.Choice(
+            ["local", "self-service", "hosted", "test"], case_sensitive=True
+        ),
         required=False,
-        default="serve",
-        help="Tracking use case. Options: local, workflow, self-service, hosted, test",
+        default="local",
+        help="Tracking use case. Options: local, self-service, hosted, test",
     )
     @click.option(
         "--enable-local-cache/--disable-local-cache", is_flag=True, default=True
@@ -64,7 +66,7 @@ def serve_cmd():
     @click.option("--cloud-cache-only", is_flag=True, default=False)
     @click.option("--cache-only", is_flag=True, default=False)
     @click.option(
-        "--max-cache-memory-frac", "maxmemory", type=click.FLOAT, default=None
+        "--max-cache-memory-frac", "max_memory", type=click.FLOAT, default=None
     )
     def serve(
         model,
@@ -75,7 +77,7 @@ def serve_cmd():
         local_cache_only,
         cloud_cache_only,
         cache_only,
-        maxmemory,
+        max_memory,
     ):
         output_source = None
         cache_status = "Disabled"
@@ -95,9 +97,9 @@ def serve_cmd():
             output_source=output_source,
             preferred_port=port,
             cache=enable_local_cache,
-            maxmemory=maxmemory,
+            maxmemory=max_memory,
         )
-        redis_setup = SetupRedis(enable_local_cache, maxmemory)
+        redis_setup = SetupRedis(enable_local_cache, max_memory)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
 
@@ -147,7 +149,7 @@ def serve_cmd():
         echo("")
         echo(":chart_increasing: Tracking:", fg="blue")
         if track:
-            echo("   - Enabled", fg="green")
+            echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
         else:
             echo("   - Disabled", fg="red")
 
