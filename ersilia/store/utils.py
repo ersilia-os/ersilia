@@ -553,10 +553,8 @@ class FileManager:
                 os.path.exists(local_cache_csv_path)
                 and os.path.getsize(local_cache_csv_path) > 0
             ):
-                with (
-                    open(local_cache_csv_path, "r", encoding="utf-8") as cache_f,
-                    open(output_path, "a", newline="", encoding="utf-8") as out_f,
-                ):
+                # fmt: off
+                with open(local_cache_csv_path, "r", encoding="utf-8") as cache_f, open(output_path, "a", newline="", encoding="utf-8") as out_f:
                     next(cache_f, None)
                     for line in cache_f:
                         out_f.write(line)
@@ -564,6 +562,7 @@ class FileManager:
                     os.remove(local_cache_csv_path)
                 except OSError:
                     pass
+                # fmt: off
 
             click_iface.echo(
                 f"✅ Sequential merge written to {output_path}", fg="green"
