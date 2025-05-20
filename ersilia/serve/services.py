@@ -1367,6 +1367,7 @@ class PulledDockerImageService(BaseServing):
         """
         Serve the model using the Docker image service.
         """
+        self._create_docker_network()
         self._stop_all_containers_of_image()
         self.container_name = f"{self.model_id}_{str(uuid.uuid4())[:4]}"
 
