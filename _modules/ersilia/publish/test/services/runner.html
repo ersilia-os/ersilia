@@ -863,30 +863,30 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">setup_service</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspect</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Performing basic checks [inspection].&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
+                <span class="n">_process_stage</span><span class="p">(</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">:</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
-                <span class="n">_process_stage</span><span class="p">(</span><span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span>
+                                <span class="p">(</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">)</span>
+                            <span class="p">):</span>
+                                <span class="n">_process_stage</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shallow</span><span class="p">:</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span>
+                            <span class="p">(</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">),</span>
                             <span class="p">(</span><span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">),</span>
                             <span class="p">(</span><span class="s2">&quot;shallow&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_shallow_checks</span><span class="p">),</span>
                         <span class="p">):</span>
-                            <span class="n">_process_stage</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">echo_prefix</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                            <span class="n">_process_stage</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Performing deep checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">())</span>
-
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_basic_checks</span><span class="p">),</span>
                     <span class="p">(</span><span class="s2">&quot;surface&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_surface_check</span><span class="p">),</span>
                     <span class="p">(</span><span class="s2">&quot;shallow&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_shallow_checks</span><span class="p">),</span>
                 <span class="p">):</span>
-                    <span class="n">_process_stage</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">echo_prefix</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">_process_stage</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
 
                 <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_perform_deep_checks</span><span class="p">())</span>
 
@@ -938,8 +938,13 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_docker_yml_column_name_check</span><span class="p">())</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_directory_sizes</span><span class="p">())</span>
+        <span class="n">docker_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docker_yml_column_name_check</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docker_check</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">docker_check</span> <span class="o">=</span> <span class="n">docker_check</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">docker_check</span><span class="p">)</span>
+            <span class="n">echo_exceptions</span><span class="p">(</span><span class="s2">&quot;Dependencies are not pinned properly. System is exiting!&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">results</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_surface_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1016,7 +1021,10 @@
             <span class="p">(</span><span class="n">docker_check_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Checks</span><span class="o">.</span><span class="n">DEPENDENCY_PINNED</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">docker_check_data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="p">]</span>
         <span class="n">data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">docker_check_data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">DEPENDECY_COLUMN_CHECK</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">DEPENDECY_COLUMN_CHECK</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">docker_check_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">results</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_env_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">env_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios_service</span><span class="o">.</span><span class="n">get_env_sizes</span><span class="p">()</span>
