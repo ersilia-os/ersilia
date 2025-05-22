@@ -583,7 +583,7 @@ class FileManager:
                 first_shard = False
             for row in reader:
                 row_len = len(row) // 2
-                row = row[:row_len]
+                row = row[:row_len] if row_len > 1 else row
                 lookup[row[col_idx]] = row
         pbar.close()
 
