@@ -607,23 +607,6 @@
             <span class="n">clean_lfs_files_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dic</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">clean_lfs_files_list</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_git_lfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="c1"># This function is run for all files not downloaded from S3 or with unexpected sha256.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⏳ Trying LFS clone for file </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="c1"># Use --quiet to suppress Git LFS progress; redirect both stdout and stderr to /dev/null</span>
-        <span class="n">script</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;cd </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2"> &amp;&amp; &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;git lfs pull --quiet --include </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> &gt; /dev/null 2&gt;&amp;1&quot;</span>
-        <span class="p">)</span>
-        <span class="c1"># Create a temporary folder for the helper script</span>
-        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
-        <span class="n">run_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;run_lfs.sh&quot;</span><span class="p">)</span>
-        <span class="c1"># Write and execute the script</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bash </span><span class="si">{</span><span class="n">run_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">&quot;✅ Git LFS pull completed without progress output.&quot;</span><span class="p">)</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_download_s3_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
         <span class="n">file_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">S3_BUCKET_URL</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">local_filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span> <span class="o">/</span> <span class="n">filename</span>
@@ -657,13 +640,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❗ Unexpected error while downloading </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_download_large_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">total_length</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="c1"># Download in chunks without printing a progress bar</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;⏳ Downloading large file </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> from S3 bucket.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading large file </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> from S3 bucket.&quot;</span><span class="p">)</span>
+        <span class="n">downloaded</span> <span class="o">=</span> <span class="mi">0</span>
+
         <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">8192</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
-                <span class="k">continue</span>
             <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Completed download of </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> from S3.&quot;</span><span class="p">)</span>
+            <span class="n">downloaded</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_large_file_checksum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
         <span class="c1"># This function takes filenames and checksums from lfs ls-files</span>
@@ -687,6 +669,18 @@
                 <span class="p">)</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">filename</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_git_lfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="c1"># This function is run for all the files that were</span>
+        <span class="c1"># not downloaded from an S3 bucket or have unexpected sha256 value.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;⏳ Trying LFS clone for file </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
+        <span class="n">script</span> <span class="o">=</span> <span class="s2">&quot;cd </span><span class="si">{0}</span><span class="s2">; git lfs pull --include </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+        <span class="n">run_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;run_lfs.sh&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">run_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run_file</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s2">&quot;✅&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_download_large_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
         <span class="c1"># This function downloads large files (as listed in .gitattributes).</span>
