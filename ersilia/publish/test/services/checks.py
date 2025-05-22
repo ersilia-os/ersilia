@@ -918,7 +918,10 @@ class CheckService:
                         mismatches.append((i, j, v1, v2))
 
         if mismatches:
-            return [(Checks.COLUMN_MISMATCH, f"Column mismatch found: {mismatches}", str(STATUS_CONFIGS.FAILED))]
+            if len(mismatches) > 3:
+                return [(Checks.COLUMN_MISMATCH, f"Column mismatches found (and more): {mismatches[:3]}", str(STATUS_CONFIGS.FAILED))]
+            else:
+                return [(Checks.COLUMN_MISMATCH, f"Column mismatch found: {mismatches}", str(STATUS_CONFIGS.FAILED))]
         return [(Checks.COLUMN_MISMATCH, "No column mismatches", str(STATUS_CONFIGS.PASSED))]
     
     def find_missing_first_output_col(self, path):
