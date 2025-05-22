@@ -259,23 +259,6 @@ class GitHubDownloader(object):
             clean_lfs_files_list.append(dic)
         return clean_lfs_files_list
 
-    def _git_lfs(self, destination, filename):
-        # This function is run for all files not downloaded from S3 or with unexpected sha256.
-        self.logger.debug(f"⏳ Trying LFS clone for file {filename}")
-        # Use --quiet to suppress Git LFS progress; redirect both stdout and stderr to /dev/null
-        script = (
-            f"cd {destination} && "
-            f"git lfs pull --quiet --include {filename} > /dev/null 2>&1"
-        )
-        # Create a temporary folder for the helper script
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        run_file = os.path.join(tmp_folder, "run_lfs.sh")
-        # Write and execute the script
-        with open(run_file, "w") as f:
-            f.write(script)
-        run_command(f"bash {run_file}")
-        self.logger.success("✅ Git LFS pull completed without progress output.")
-
     def _download_s3_files(self, filename, repo, destination):
         file_url = f"{S3_BUCKET_URL}/{repo}/{filename}"
         local_filename = Path(destination) / filename
@@ -309,13 +292,12 @@ class GitHubDownloader(object):
             self.logger.error(f"❗ Unexpected error while downloading {filename}: {e}")
 
     def _download_large_file(self, response, file, total_length, filename):
-        # Download in chunks without printing a progress bar
-        self.logger.info(f"⏳ Downloading large file {filename} from S3 bucket.")
+        self.logger.info(f"Downloading large file {filename} from S3 bucket.")
+        downloaded = 0
+
         for chunk in response.iter_content(chunk_size=8192):
-            if not chunk:
-                continue
             file.write(chunk)
-        self.logger.success(f"✅ Completed download of {filename} from S3.")
+            downloaded += len(chunk)
 
     def _check_large_file_checksum(self, filename, destination):
         # This function takes filenames and checksums from lfs ls-files
@@ -339,6 +321,18 @@ class GitHubDownloader(object):
                 )
             )
             return filename
+
+    def _git_lfs(self, destination, filename):
+        # This function is run for all the files that were
+        # not downloaded from an S3 bucket or have unexpected sha256 value.
+        self.logger.debug("⏳ Trying LFS clone for file {0}".format(filename))
+        script = "cd {0}; git lfs pull --include {1}".format(destination, filename)
+        tmp_folder = make_temp_dir(prefix="ersilia-")
+        run_file = os.path.join(tmp_folder, "run_lfs.sh")
+        with open(run_file, "w") as f:
+            f.write(script)
+        run_command("bash {0}".format(run_file))
+        self.logger.success("✅")
 
     def _download_large_files(self, repo, destination):
         # This function downloads large files (as listed in .gitattributes).
