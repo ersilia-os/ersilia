@@ -503,7 +503,9 @@
 
 <div class="viewcode-block" id="echo_local_sample_warning_">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_local_sample_warning_">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">echo_local_sample_warning_</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_local_sample_warning_</span><span class="p">(</span>
+    <span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Do you want to continue to cloud for fetching?&quot;</span>
 
     <span class="k">if</span> <span class="n">cache_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -525,39 +527,10 @@
         <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="k">if</span> <span class="n">cache_size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span>
+        <span class="n">echo_redis_file_saved</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
     <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="echo_local_sample_warning">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_local_sample_warning">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">echo_local_sample_warning</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Do you want to continue to cloud for fetching?&quot;</span>
-
-    <span class="k">if</span> <span class="n">cache_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">echo_local_only_empty_cache</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
-            <span class="n">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">cache_size</span>
-        <span class="k">if</span> <span class="n">cache_size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span>
-            <span class="n">bg</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;This is more or equal to the sample size you requested!&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">bg</span> <span class="o">=</span> <span class="s2">&quot;yellow&quot;</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;This is less than the sample size you requested by </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">!&quot;</span>
-
-        <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> fetched from local Redis caching. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
-            <span class="n">blink</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
-            <span class="n">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
 
 
@@ -565,13 +538,14 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_small_sample_warning">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_small_sample_warning</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">50000</span><span class="p">:</span>
+        <span class="n">promompt</span> <span class="o">=</span> <span class="s2">&quot;Do you want to continue?&quot;</span>
         <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Sample size of less than 50,000 [</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">] is not recommended for fetching precalculation!&quot;</span><span class="p">,</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
             <span class="n">blink</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s2">&quot;Do you want to continue?&quot;</span><span class="p">,</span> <span class="n">abort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">promompt</span><span class="p">)</span></div>
 
 
 
@@ -1027,6 +1001,8 @@
             <span class="k">if</span> <span class="n">first_shard</span><span class="p">:</span>
                 <span class="n">first_shard</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">row_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">[:</span><span class="n">row_len</span><span class="p">]</span>
                 <span class="n">lookup</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">col_idx</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span>
         <span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
