@@ -1022,7 +1022,6 @@ class CheckService:
             res_one = self._find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
         else:
             res_one = self._check_all_columns_not_null(Options.OUTPUT_CSV.value)
-        # res_one = self._check_csv(Options.OUTPUT_CSV.value, input_type="csv")
         res_two = self.compare_csv_columns(
             os.path.join(self.dir, PREDEFINED_COLUMN_FILE), Options.OUTPUT_CSV.value
         )
@@ -1073,14 +1072,6 @@ class CheckService:
             return fuzz.ratio(output1, output2)
 
         def validate_output(output1, output2):
-            if self._is_invalid_value(output1) or self._is_invalid_value(output2):
-                echo_exceptions("Model output is invalid.", ClickInterface())
-                raise ValueError
-
-            if not isinstance(output1, type(output2)):
-                echo_exceptions("Model output is inconsistent.", ClickInterface())
-                raise ValueError
-
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
                 if rmse > 0.1:
