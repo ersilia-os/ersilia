@@ -525,30 +525,30 @@ class RunnerService:
             self.setup_service.get_model()
 
             if self.inspect:
-                echo("Performing basic checks [inspection].", fg="yellow", bold=True)
-                results.extend(self._perform_basic_checks())
+                _process_stage("basic", self._perform_basic_checks)
 
             if self.surface:
-                results.extend(self._perform_basic_checks())
-                _process_stage("surface", self._perform_surface_check)
+                for name, method in (
+                                ("basic", self._perform_basic_checks),
+                                ("surface", self._perform_surface_check)
+                            ):
+                                _process_stage(name, method)
 
             if self.shallow:
-                results.extend(self._perform_basic_checks())
                 for name, method in (
+                            ("basic", self._perform_basic_checks),
                             ("surface", self._perform_surface_check),
                             ("shallow", self._perform_shallow_checks),
                         ):
-                            _process_stage(name, method, echo_prefix=False)
+                            _process_stage(name, method)
 
             if self.deep:
-                echo("Performing deep checks.", fg="yellow", bold=True)
-                results.extend(self._perform_basic_checks())
-
                 for name, method in (
+                    ("basic", self._perform_basic_checks),
                     ("surface", self._perform_surface_check),
                     ("shallow", self._perform_shallow_checks),
                 ):
-                    _process_stage(name, method, echo_prefix=False)
+                    _process_stage(name, method)
 
                 results.append(self._perform_deep_checks())
 
@@ -599,8 +599,13 @@ class RunnerService:
             )
         )
 
-        results.append(self._docker_yml_column_name_check())
         results.append(self._log_directory_sizes())
+        docker_check = self._docker_yml_column_name_check()
+        if isinstance(docker_check, tuple):
+            docker_check = docker_check[0]
+            results.append(docker_check)
+            echo_exceptions("Dependencies are not pinned properly. System is exiting!", ClickInterface())
+            return results, 1
         return results
 
     def _perform_surface_check(self):
@@ -677,7 +682,10 @@ class RunnerService:
             (docker_check_data[0], Checks.DEPENDENCY_PINNED.value, docker_check_data[1])
         ]
         data.extend(docker_check_data)
-        return self._generate_table_from_check(TableType.DEPENDECY_COLUMN_CHECK, data)
+        results = self._generate_table_from_check(TableType.DEPENDECY_COLUMN_CHECK, data)
+        if docker_check_data[0][-1] == str(STATUS_CONFIGS.FAILED):
+            return results, 1
+        return results
 
     def _log_env_sizes(self):
         env_size = self.ios_service.get_env_sizes()
