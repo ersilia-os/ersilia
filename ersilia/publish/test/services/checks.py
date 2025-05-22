@@ -847,11 +847,7 @@ class CheckService:
     def _read_column_header(self, reader):
         return [row[0] for row in reader if row][1:]
     
-    def _find_csv_mismatches(self, csv_out_one, csv_out_two):
-        def _truncate(f, decimals=4):
-            multiplier = 10 ** decimals
-            return int(f * multiplier) / multiplier
-        
+    def _find_csv_mismatches(self, csv_out_one, csv_out_two):        
         is_online = False
         metadata = {}
         try:
@@ -914,7 +910,7 @@ class CheckService:
                     if math.isnan(f1) and math.isnan(f2):
                         continue
 
-                    if _truncate(f1) != _truncate(f2):
+                    if abs(f1-f2)>0.0001:
                         mismatches.append((i, j, v1, v2))
 
                 except (ValueError, TypeError):
