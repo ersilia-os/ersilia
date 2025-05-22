@@ -193,12 +193,16 @@ class InferenceStoreApi(ErsiliaBase):
                 results = results[: self.n_samples]
 
         proceed = echo_local_sample_warning_(
-            self.click,
-            len(inputs) or self.n_samples,
-            cache_size,
+            self.click, len(inputs) or self.n_samples, cache_size, str(self.output_path)
         )
         if not proceed:
             echo_sys_exited(self.click)
+            self.generic_output_adapter._adapt_generic(
+                json.dumps(results),
+                str(self.output_path),
+                self.model_id,
+                DEFAULT_API_NAME,
+            )
             sys.exit(0)
 
         if cache_size == 0:
@@ -235,10 +239,23 @@ class InferenceStoreApi(ErsiliaBase):
 
     def _submit_and_get_shards(self, inputs: list) -> list:
         if self.output_source == OutputSource.CACHE_ONLY:
-            _, missing_input = self._handle_local(inputs)
+            results, missing_input = self._handle_local(inputs)
             inputs = missing_input if len(missing_input) >= 1 else inputs
         ns = self.n_samples if inputs is None else len(inputs)
-        echo_small_sample_warning(self.click, ns)
+        proceed = echo_small_sample_warning(self.click, ns)
+        if not proceed:
+            echo_redis_file_saved(self.click, str(self.output_path))
+            self.generic_output_adapter._adapt_generic(
+                json.dumps(results),
+                str(self.output_path),
+                self.model_id,
+                DEFAULT_API_NAME,
+            )
+            if os.path.exists(self.local_cache_csv_path):
+                os.remove(self.local_cache_csv_path)
+            echo_sys_exited(self.click)
+            sys.exit(0)
+
         self.request_id = str(uuid.uuid4())
 
         if (

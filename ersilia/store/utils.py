@@ -140,7 +140,9 @@ def echo_local_only_empty_cache(click_iface):
     )
 
 
-def echo_local_sample_warning_(click_iface, n: int, cache_size: int) -> bool:
+def echo_local_sample_warning_(
+    click_iface, n: int, cache_size: int, output_path: str = None
+) -> bool:
     prompt = "Do you want to continue to cloud for fetching?"
 
     if cache_size == 0:
@@ -162,47 +164,22 @@ def echo_local_sample_warning_(click_iface, n: int, cache_size: int) -> bool:
         bold=True,
         bg=bg,
     )
+    if cache_size >= n:
+        echo_redis_file_saved(click_iface, output_path)
+        return False
     return click.confirm(prompt)
-
-
-def echo_local_sample_warning(click_iface, n: int, cache_size: int):
-    prompt = "Do you want to continue to cloud for fetching?"
-
-    if cache_size == 0:
-        echo_local_only_empty_cache(click_iface)
-        if not click.confirm(prompt):
-            echo_sys_exited(click_iface)
-            sys.exit(0)
-    else:
-        d = n - cache_size
-        if cache_size >= n:
-            bg = "cyan"
-            message = "This is more or equal to the sample size you requested!"
-        else:
-            bg = "yellow"
-            message = f"This is less than the sample size you requested by {d}!"
-
-        click_iface.echo(
-            f"{log_prefix()}Cache size of {cache_size} fetched from local Redis caching. {message}",
-            fg="white",
-            blink=False,
-            bold=True,
-            bg=bg,
-        )
-        if not click.confirm(prompt):
-            echo_sys_exited(click_iface)
-            sys.exit(0)
 
 
 def echo_small_sample_warning(click_iface, n: int):
     if n <= 50000:
+        promompt = "Do you want to continue?"
         click_iface.echo(
             f"{log_prefix()}Sample size of less than 50,000 [{n}] is not recommended for fetching precalculation!",
             fg="white",
             blink=True,
             bg="red",
         )
-        click.confirm("Do you want to continue?", abort=True)
+        return click.confirm(promompt)
 
 
 def echo_status(click_iface, status: str):
@@ -605,6 +582,8 @@ class FileManager:
             if first_shard:
                 first_shard = False
             for row in reader:
+                row_len = len(row) // 2
+                row = row[:row_len]
                 lookup[row[col_idx]] = row
         pbar.close()
 
