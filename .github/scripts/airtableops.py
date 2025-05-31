@@ -268,6 +268,7 @@ def insert_metadata_to_airtable(model, contributor, api_key):
     airtable_data["Identifier"] = model
     airtable_data["Slug"] = data["Slug"]
     airtable_data["Title"] = data["Title"]
+    airtable_data["Input"] = data["Input"]
     airtable_data["GitHub"] = github
     airtable_data["Contributor"] = contributor
     airtable_data["Status"] = "In progress"
