@@ -183,10 +183,8 @@ class IOService:
         elif model_type == PACK_METHOD_FASTAPI:
             path = os.path.join(self.from_dir, METADATA_JSON_FILE) if self.from_dir else os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE)
             if os.path.exists(path):
-                print("In principle this should happen")
                 return ERSILIAPACK_BACK_FILES
             else:
-                print("This happened anyways")
                 return ERSILIAPACK_FILES
         else:
             return None
@@ -239,14 +237,11 @@ class IOService:
 
     def _get_metadata_file(self):
         if METADATA_JSON_FILE in self.get_file_requirements():
-            print("This happened")
             path = os.path.join(self.dir, METADATA_JSON_FILE)
         elif METADATA_YAML_FILE in self.get_file_requirements():
-            print("This happened yml")
             path = os.path.join(self.dir, METADATA_YAML_FILE)
         else:
             return None
-        print("This happened final")
         return path
 
     def _read_metadata(self):
