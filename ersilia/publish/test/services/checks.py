@@ -157,9 +157,11 @@ class CheckService:
     def _check_model_dockerhub_url(self, data):
         key = "DockerHub"
         self.logger.debug(f"Checking {key} URL field..")
-        if not data[key]:
-            self.logger.debug(f"Checking {key} URL field..")
-            raise texc.EmptyField(key)
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
 
     def _check_model_s3_url(self, data):
         key = "S3"
