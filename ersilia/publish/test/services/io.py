@@ -74,7 +74,8 @@ class IOService:
         ios.read_metadata()
     """
 
-    def __init__(self, logger, model_id: str, dir: str):
+    def __init__(self, logger, model_id: str, dir: str, from_dir: str):
+        self.from_dir = from_dir
         self.logger = logger
         self.model_id = model_id
         self.dir = dir
@@ -180,9 +181,12 @@ class IOService:
         if model_type == PACK_METHOD_BENTOML:
             return BENTOML_FILES
         elif model_type == PACK_METHOD_FASTAPI:
-            if os.path.exists(os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE)):
+            path = os.path.join(self.from_dir, METADATA_JSON_FILE) if self.from_dir else os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE)
+            if os.path.exists(path):
+                print("In principle this should happen")
                 return ERSILIAPACK_BACK_FILES
             else:
+                print("This happened anyways")
                 return ERSILIAPACK_FILES
         else:
             return None
@@ -235,11 +239,14 @@ class IOService:
 
     def _get_metadata_file(self):
         if METADATA_JSON_FILE in self.get_file_requirements():
+            print("This happened")
             path = os.path.join(self.dir, METADATA_JSON_FILE)
         elif METADATA_YAML_FILE in self.get_file_requirements():
+            print("This happened yml")
             path = os.path.join(self.dir, METADATA_YAML_FILE)
         else:
             return None
+        print("This happened final")
         return path
 
     def _read_metadata(self):

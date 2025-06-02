@@ -103,7 +103,7 @@ class ModelTester(ErsiliaBase):
             self.from_s3,
             self.logger,
         )
-        self.ios = IOService(self.logger, self.model_id, self.dir)
+        self.ios = IOService(self.logger, self.model_id, self.dir, self.from_dir)
         self.checks = CheckService(
             self.logger,
             self.model_id,
