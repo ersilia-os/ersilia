@@ -337,7 +337,6 @@
     <span class="n">MISSING_PACKAGES</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># ruff: enable</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">....</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">RUN_FILE</span><span class="p">,</span>
 <span class="p">)</span>
@@ -348,7 +347,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheckService</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PREDEFINED_COLUMN_FILE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....io.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleGenerator</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.exceptions_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">test_exceptions</span> <span class="k">as</span> <span class="n">texc</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command_check_output</span><span class="p">,</span> <span class="n">run_command</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo_exceptions</span><span class="p">,</span> <span class="n">ClickInterface</span>
@@ -507,12 +505,14 @@
                 <span class="o">+</span> <span class="p">([</span><span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="k">else</span> <span class="p">[])</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fetching the model from: </span><span class="si">{</span><span class="n">loc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">run_command</span><span class="p">([</span><span class="s2">&quot;ersilia&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="o">*</span><span class="n">loc</span><span class="p">],</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">([</span><span class="s2">&quot;ersilia&quot;</span><span class="p">,</span> <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;fetch&quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="o">*</span><span class="n">loc</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">out</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
-        <span class="n">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span></div>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">_fetch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
 
-
+    
 <div class="viewcode-block" id="RunnerService.run_example">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.runner.RunnerService.run_example">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run_example</span><span class="p">(</span>
@@ -948,8 +948,20 @@
         <span class="k">return</span> <span class="n">results</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_surface_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="p">[(</span>
+                    <span class="n">Checks</span><span class="o">.</span><span class="n">FETCH_FAILS</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;Model not fetched successfully&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+            <span class="p">)]</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">FETCH_STATUS_SURFACE</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">echo_exceptions</span><span class="p">(</span><span class="s2">&quot;Model was not fetched successfully during start of surface checks. System is exiting before proceeding!&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_github</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_s3</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dir</span><span class="p">:</span>
             <span class="n">env_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_env_sizes</span><span class="p">()</span>
