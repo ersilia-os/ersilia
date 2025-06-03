@@ -62,6 +62,7 @@
 * [Introduction to ML for Drug Discovery](training-materials/ml-for-drug-discovery.md)
 * [Python 101](training-materials/python-101.md)
 * [External resources](training-materials/external-resources.md)
+* [AI2050 H3D in-house workshop](training-materials/ai2050-h3d-in-house-workshop.md)
 
 ## 🎨 Styles
 
