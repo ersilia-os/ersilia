@@ -74,7 +74,7 @@ class IOService:
         ios.read_metadata()
     """
 
-    def __init__(self, logger, model_id: str, dir: str, from_dir: str):
+    def __init__(self, logger, model_id: str, dir: str, from_dir: str=None):
         self.from_dir = from_dir
         self.logger = logger
         self.model_id = model_id
