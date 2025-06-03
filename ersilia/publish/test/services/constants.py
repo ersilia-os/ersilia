@@ -101,6 +101,7 @@ class Checks(Enum):
     DIR_SIZE = "Directory Size Mb"
     # messages
     SIZE_CACL_SUCCESS = "Size Successfully Calculated"
+    FETCH_FAILS = "Fetch Status"
     EMPTY_COLUMNS = "Empty Column Found"
     COLUMN_MISMATCH = "Column mismatch check"
     SIZE_CACL_FAILED = "Size Calculation Failed"
@@ -122,6 +123,7 @@ class TableType(Enum):
     """
 
     MODEL_INFORMATION_CHECKS = "Model Metadata Checks"
+    FETCH_STATUS_SURFACE = "Model Fetching Check"
     MODEL_FILE_CHECKS = "Model File Checks"
     MODEL_DIRECTORY_SIZES = "Directory Size Check"
     MODEL_SIZES = "Model Size Check"
@@ -192,6 +194,9 @@ TABLE_CONFIGS = {
     TableType.MODEL_RUN_CHECK: TableConfig(
         title="\nModel Run Check", headers=["Check", "Details", "Status"]
     ),
+    TableType.FETCH_STATUS_SURFACE: TableConfig(
+        title="\nModel Fetching Check", headers=["Check", "Status"]
+    )
 }
 
 

@@ -18,7 +18,6 @@ except ImportError:
     MISSING_PACKAGES = True
 # ruff: enable
 
-from .... import throw_ersilia_exception
 from ....default import (
     RUN_FILE,
 )
@@ -29,7 +28,6 @@ from .io import IOService, PackageInstaller
 from .checks import CheckService
 from ....default import PREDEFINED_COLUMN_FILE
 from ....io.input import ExampleGenerator
-from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.terminal import run_command_check_output, run_command
 from ....cli import echo
 from ....store.utils import echo_exceptions, ClickInterface
@@ -178,11 +176,13 @@ class RunnerService:
                 + (["--version", self.version] if self.version else [])
             )
             self.logger.info(f"Fetching the model from: {loc}")
-            run_command(["ersilia", "-v", "fetch", model_id, *loc], quiet=True)
+            out = run_command(["ersilia", "-v", "fetch", model_id, *loc])
+            return out
 
         self.delete()
-        _fetch(self.model_id, self.logger)
-
+        out = _fetch(self.model_id, self.logger)
+        return out
+    
     def run_example(
         self,
         n_samples: int,
@@ -609,8 +609,20 @@ class RunnerService:
         return results
 
     def _perform_surface_check(self):
-        self.fetch()
         results = []
+
+        out = self.fetch()
+        if out.returncode != 0:
+            status = [(
+                    Checks.FETCH_FAILS.value,
+                    "Model not fetched successfully",
+                    str(STATUS_CONFIGS.FAILED),
+            )]
+            results.append(
+                self._generate_table_from_check(TableType.FETCH_STATUS_SURFACE, status)
+            )
+            echo_exceptions("Model was not fetched successfully during start of surface checks. System is exiting before proceeding!", ClickInterface())
+            return results, 1
 
         if self.from_github or self.from_s3 or self.from_dir:
             env_result = self._log_env_sizes()
