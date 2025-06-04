@@ -49,6 +49,8 @@ class ModelStandardExample(ErsiliaBase):
                     break
             col_widths = [max(len(str(item)) for item in col) for col in zip(*data)]
             for row in data:
+                if len(row[:max_cols]) > len(col_widths):
+                    max_cols = len(col_widths)
                 lines += [
                     " | ".join(
                         f"{int(item):<{col_widths[i]}}"
