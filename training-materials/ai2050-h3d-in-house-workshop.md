@@ -8,7 +8,7 @@ description: >-
 
 ## Session 1: Ready-to-use AI/ML models for drug discovery with the Ersilia Model Hub
 
-How can AI/ML methods help in drug discovery?
+Drug Discovery is a long and expensive process - how can AI/ML methods help?
 
 Why is this particularly relevant in low-resource settings?
 
@@ -22,7 +22,7 @@ ADMET properties are a fundamental consideration in drug discovery pipelines. AD
 
 Examples of ADMET properties are:
 
-* Blood-brain barrer penetration:&#x20;
+* Blood-brain barrier penetration
 * Cytochrome inhibition
 
 
