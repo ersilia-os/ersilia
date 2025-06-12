@@ -141,25 +141,27 @@ class DataFrame(object):
 
     def write_text(self, file_name: str, delimiter: str = None):
         """
-        Writes the DataFrame to a text file.
-
-        Parameters
-        ----------
-        file_name : str
-            The name of the file to write to.
-        delimiter : str, optional
-            The delimiter to use in the text file (default is None).
+        Writes the DataFrame to a text file, wrapping any string-valued field in quotes.
         """
         if delimiter is None:
             delimiter = self._get_delimiter(file_name)
+
         none_str = ""
         with open(file_name, "w", newline="") as f:
             f.write(delimiter.join(self.columns) + "\n")
+
             for row in self.data:
-                row_str = delimiter.join(
-                    none_str if val is None else str(val) for val in row
-                )
-                f.write(row_str + "\n")
+                out_fields = []
+                for val in row:
+                    if val is None:
+                        text = none_str
+                    else:
+                        text = str(val)
+                        if isinstance(val, str):
+                            text = f'"{text}"'
+                    out_fields.append(text)
+
+                f.write(delimiter.join(out_fields) + "\n")
 
     def write(self, file_name: str, delimiter: str = None):
         """
