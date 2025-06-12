@@ -564,8 +564,9 @@ class StandardCSVRunApi(ErsiliaBase):
 
         st = time.perf_counter()
 
-        self.logger.info("waiting for the server to respond...")
+        self.logger.info("Waiting for the server to respond...")
         results, meta = self._fetch_result(input_data, url, batch_size)
+        self.logger.info("The server has responded")
         self.logger.info("Standardizing output...")
         results = self._standardize_output(input_data, results, output, meta)
         et = time.perf_counter()
@@ -583,12 +584,23 @@ class StandardCSVRunApi(ErsiliaBase):
         for i in range(0, total, batch_size):
             batch = input_data[i : i + batch_size]
             st = time.perf_counter()
-            response = requests.post(url, json=batch)
+            batch = [d["input"] for d in batch]
+            # TODO @Abel: This is a hack to make the API work with the current implementation.
+            # However, the params need to be parametrized properly in the API, including the save_cache, cache_only, min_workers and max_workers
+            params = {
+                "orient": "records",
+                "fetch_cache": "true",
+                "save_cache": "true",
+                "cache_only": "false",
+                "min_workers": "1",
+                "max_workers": "12",
+            }
+            headers = {"accept": "application/json", "Content-Type": "application/json"}
+            response = requests.post(url, params=params, headers=headers, json=batch)
             et = time.perf_counter()
             self.logger.info(
                 f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
             )
-
             if response.status_code == 200:
                 response = response.json()
                 if "result" in response:

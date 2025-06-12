@@ -176,7 +176,9 @@ class RunnerService:
                 + (["--version", self.version] if self.version else [])
             )
             self.logger.info(f"Fetching the model from: {loc}")
-            out = run_command(["ersilia", "-v", "fetch", model_id, *loc])
+            cmd = " ".join(["ersilia", "-v", "fetch", model_id, *loc])
+            self.logger.debug(f"Running fetch command for testing: {cmd}")
+            out = run_command(cmd)
             return out
 
         self.delete()
@@ -394,7 +396,8 @@ class RunnerService:
             input_file_path = IOService._get_input_file_path(self.dir)
             rename_col(input_file_path)
 
-            run_sh_path = os.path.join(model_path, "model", "framework", RUN_FILE)
+            run_sh_path = os.path.abspath(os.path.join(model_path, "model", "framework", RUN_FILE))
+            input_file_path = os.path.abspath(input_file_path)
             if not os.path.exists(run_sh_path):
                 self.logger.warning(
                     f"{RUN_FILE} not found at {run_sh_path}. Skipping bash run."
@@ -402,6 +405,11 @@ class RunnerService:
                 return
             
             self.installer.install_packages_from_dir()
+
+            self.logger.debug("The self.dir is: {0}".format(self.dir))
+            self.logger.debug("Input file path: {0}".format(input_file_path))
+            self.logger.debug("Run script path: {0}".format(run_sh_path))
+            self.logger.debug("Output path: {0}".format(output_path))
 
             bash_script = f"""
                 source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
@@ -415,8 +423,15 @@ class RunnerService:
                 script_file.write(bash_script)
 
             self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
+            with open(temp_script_path, "r") as script_file:
+                self.logger.debug(f"Bash script content:\n{script_file.read()}\n")
             try:
                 out = run_command(["bash", temp_script_path])
+                self.logger.debug(f"Bash script output: {out}")
+                self.logger.debug("Reading output path")
+                with open(bash_output_path, "r") as f:
+                    self.logger.debug(f.read())
+                self.logger.debug("Done reading output path")
                 if os.path.exists(output_log_path):
                     with open(output_log_path, "r") as f:
                         data = f.read()
@@ -428,7 +443,10 @@ class RunnerService:
                     echo_exceptions(f"Error detected originated from the bash execution: {formatted_error}", ClickInterface(), bg=None, fg="red")
                 bsh_data, _ = read_csv(bash_output_path)
                 self.logger.debug("Running model for bash data consistency checking")
-                cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i '{input_file_path}' -o {output_path}"
+                if not os.path.exists(input_file_path):
+                    raise Exception("Input file path {0} does not exist".format(os.path.abspath(input_file_path)))
+                cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
+                self.logger.debug(f"Running command: {cmd}")
                 out = run_command(cmd)
                 ers_data, _ = read_csv(output_path, flag=True)
 

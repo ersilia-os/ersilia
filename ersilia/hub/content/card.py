@@ -173,8 +173,9 @@ class MetadataCard(ErsiliaBase):
 
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json)
+        self.logger.debug("Initializing MetadataCard")
 
-    def get(self, model_id: str = None, slug: str = None) -> dict:
+    def get(self, model_id: str = None) -> dict:
         """
         Get the metadata card of a model from the local repository.
 
@@ -182,14 +183,13 @@ class MetadataCard(ErsiliaBase):
         ----------
         model_id : str, optional
             The ID of the model.
-        slug : str, optional
-            The slug of the model.
 
         Returns
         -------
         dict
             The metadata card of the model.
         """
+        self.logger.debug("Getting metadata card for model_id: {0}".format(model_id))
         if model_id is not None:
             dest_dir = self._model_path(model_id=model_id)
             self.logger.debug("Trying to get metadata from: {0}".format(dest_dir))
@@ -354,6 +354,9 @@ class LocalCard(ErsiliaBase):
         """
         if model_id:
             card = self._load_data(model_id)
+            if card is None:
+                mc = MetadataCard(config_json=self.config_json)
+                card = mc.get(model_id)
             return card
         else:
             return
@@ -458,7 +461,7 @@ class ModelCard(object):
         if card is not None:
             return card
         mc = MetadataCard(config_json=self.config_json)
-        card = mc.get(model_id, slug)
+        card = mc.get(model_id)
         if card is not None:
             return card
         jc = S3JsonCard(config_json=self.config_json)
