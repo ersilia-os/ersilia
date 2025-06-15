@@ -3,7 +3,6 @@ from . import ersilia_cli
 
 
 def uninstall_cmd():
-    """Uninstalls all Ersilia artifacts present locally on the user's system"""
     """
     Uninstalls all Ersilia artifacts present locally on the user's system
 
