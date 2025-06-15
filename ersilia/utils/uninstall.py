@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-from ..default import BENTOML_PATH, EOS
+from ..default import BENTOML_PATH, EOS, SESSIONS_DIR
 from .conda import SimpleConda
 from .docker import SimpleDocker
 from .logging import logger
@@ -14,7 +14,7 @@ class Uninstaller(object):
 
     Methods
     -------
-    uninstall()
+    uninstall(sessions, docker, conda, all)
         Main uninstallation method.
     """
 
@@ -29,6 +29,17 @@ class Uninstaller(object):
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to uninstall Ersilia package: {e}")
 
+    def _sessions(self):
+        for sdir in os.listdir(SESSIONS_DIR):
+        	dir = os.path.join( SESSIONS_DIR, sdir)
+            if os.path.exists(dir):
+                try:
+                    logger.info(f"Removing directory: {sdir}...")
+                    shutil.rmtree(dir)
+                    logger.info(f"Session {sdir} removed successfully.")
+                except Exception as e:
+                    logger.error(f"Failed to remove session {sdir}: {e}")
+    	
     def _directories(self):
         dirs_to_remove = [EOS, BENTOML_PATH]
         for dir in dirs_to_remove:
@@ -65,17 +76,26 @@ class Uninstaller(object):
         except Exception as e:
             logger.error(f"Failed to remove Conda environment {env_name}: {e}")
 
-    def uninstall(self):
+    def uninstall(self, sessions, docker, conda, all):
         """
         Main uninstallation method.
         """
         try:
             logger.info("Starting Ersilia uninstallation...")
-
-            self.docker_cleaner.cleanup_ersilia_images()
-            self._uninstall_ersilia_package()
-            self._conda()
-            self._directories()
+			
+			if( all ):
+		        self.docker_cleaner.cleanup_ersilia_images()
+		        self._uninstall_ersilia_package()
+		        self._conda()
+		        self._sessions()
+		        self._directories()
+		    else:
+		    	if( docker ):
+		    		self.docker_cleaner.cleanup_ersilia_images()
+		    	if( conda ):
+		    		self._conda()
+		    	if( sessions ):
+		    		self._sessions()
 
             logger.info("Ersilia uninstallation completed")
         except Exception as e:
