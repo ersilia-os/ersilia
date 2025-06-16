@@ -1256,9 +1256,14 @@ class BaseInformation(ErsiliaBase):
         DockerhubBaseInformationError
             If the DockerHub URL is not valid.
         """
-        if not new_dockerhub_url.startswith("https://hub.docker.com/r/ersiliaos/"):
-            raise DockerhubBaseInformationError
-        self._dockerhub = new_dockerhub_url
+        if new_dockerhub_url is None:
+            self._dockerhub = None
+        elif str(new_dockerhub_url).lower() == "none" or str(new_dockerhub_url).lower() == "null":
+            self._dockerhub = None
+        else:
+            if not new_dockerhub_url.startswith("https://hub.docker.com/r/ersiliaos/"):
+                raise DockerhubBaseInformationError
+            self._dockerhub = new_dockerhub_url
 
     @property
     def docker_architecture(self):
