@@ -1577,9 +1577,14 @@
 <span class="sd">        DockerhubBaseInformationError</span>
 <span class="sd">            If the DockerHub URL is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_dockerhub_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://hub.docker.com/r/ersiliaos/&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DockerhubBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="n">new_dockerhub_url</span>
+        <span class="k">if</span> <span class="n">new_dockerhub_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_dockerhub_url</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_dockerhub_url</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;null&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">new_dockerhub_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://hub.docker.com/r/ersiliaos/&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">DockerhubBaseInformationError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dockerhub</span> <span class="o">=</span> <span class="n">new_dockerhub_url</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">docker_architecture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
