@@ -1671,9 +1671,14 @@ class BaseInformation(ErsiliaBase):
         contributor : str
             Model contributor github handle.
         """
-        if not isinstance(new_contributor, str) or not new_contributor.strip():
-            raise ContributorBaseInformationError
-        self._contributor = new_contributor
+        if new_contributor is None:
+            self._contributor = None
+        elif str(new_contributor).lower() == "none" or str(new_contributor).lower() == "null":
+            self._contributor = None
+        else:
+            if not isinstance(new_contributor, str) or not new_contributor.strip():
+                raise ContributorBaseInformationError
+            self._contributor = new_contributor
 
     @property
     def deployment(self):
