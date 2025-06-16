@@ -1338,9 +1338,14 @@
 <span class="sd">        PublicationBaseInformationError</span>
 <span class="sd">            If the publication URL is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_url</span><span class="p">(</span><span class="n">new_publication</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">PublicationBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="n">new_publication</span>
+        <span class="k">if</span> <span class="n">new_publication</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_publication</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_publication</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;null&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_url</span><span class="p">(</span><span class="n">new_publication</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">PublicationBaseInformationError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_publication</span> <span class="o">=</span> <span class="n">new_publication</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">publication_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1436,9 +1441,14 @@
 <span class="sd">        SourceCodeBaseInformationError</span>
 <span class="sd">            If the source code URL is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_url</span><span class="p">(</span><span class="n">new_source_code</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">SourceCodeBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="n">new_source_code</span>
+        <span class="k">if</span> <span class="n">new_source_code</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_source_code</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_source_code</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;null&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_url</span><span class="p">(</span><span class="n">new_source_code</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SourceCodeBaseInformationError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_source_code</span> <span class="o">=</span> <span class="n">new_source_code</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">license</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
