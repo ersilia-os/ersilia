@@ -1613,13 +1613,18 @@
 <span class="sd">        DockerArchitectureBaseInformationError</span>
 <span class="sd">            If the Docker architecture is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">new_docker_architecture</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span>
-            <span class="n">new_docker_architecture</span>
-        <span class="p">)</span>
-        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">new_docker_architecture</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">DockerArchitectureBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="n">new_docker_architecture</span>
+        <span class="k">if</span> <span class="n">new_docker_architecture</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_docker_architecture</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_docker_architecture</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;null&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_docker_architecture</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span>
+                <span class="n">new_docker_architecture</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">new_docker_architecture</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">DockerArchitectureBaseInformationError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_docker_architecture</span> <span class="o">=</span> <span class="n">new_docker_architecture</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">s3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1648,11 +1653,16 @@
 <span class="sd">        S3BaseInformationError</span>
 <span class="sd">            If the S3 URL is not valid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">new_s3_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-            <span class="s2">&quot;https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/&quot;</span>
-        <span class="p">):</span>
-            <span class="k">raise</span> <span class="n">S3BaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="n">new_s3_url</span>
+        <span class="k">if</span> <span class="n">new_s3_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_s3_url</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_s3_url</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;null&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">new_s3_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="s2">&quot;https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/&quot;</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="n">S3BaseInformationError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_s3</span> <span class="o">=</span> <span class="n">new_s3_url</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">both_identifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2029,13 +2039,18 @@
 <span class="sd">        deployment : str</span>
 <span class="sd">            The model deployment.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">new_deployment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DeploymentBaseInformationError</span>
-        <span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="n">new_deployment</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">nt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Deployment&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new_deployment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_deployment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;null&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_deployment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_deployment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize_to_list_if_necessary</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">new_deployment</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">list</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DeploymentBaseInformationError</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_deployment</span> <span class="o">=</span> <span class="n">new_deployment</span>
+            <span class="k">for</span> <span class="n">nt</span> <span class="ow">in</span> <span class="n">new_deployment</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">nt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Deployment&quot;</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">DeploymentBaseInformationError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_deployment</span> <span class="o">=</span> <span class="n">new_deployment</span>
 
 <div class="viewcode-block" id="BaseInformation.as_dict">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information.BaseInformation.as_dict">[docs]</a>
