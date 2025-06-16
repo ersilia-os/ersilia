@@ -1,8 +1,7 @@
 import click
 
 from ... import ErsiliaModel
-from ...store.utils import OutputSource
-from ...utils.cache import SetupRedis
+from ...store.utils import CacheRetrievingOptions, CacheSavingOptions, OutputSource
 from ...utils.session import register_model_session
 from .. import echo
 from ..messages import ModelNotFound
@@ -47,59 +46,85 @@ def serve_cmd():
         "--track",
         "track",
         is_flag=True,
-        required=False,
         default=False,
+        help="Enable tracking of this serve session",
     )
     @click.option(
         "--tracking-use-case",
         type=click.Choice(
-            ["local", "self-service", "hosted", "test"], case_sensitive=True
+            ["local", "self-service", "hosted", "test"], case_sensitive=False
         ),
-        required=False,
         default="local",
         help="Tracking use case. Options: local, self-service, hosted, test",
     )
     @click.option(
-        "--enable-local-cache/--disable-local-cache", is_flag=True, default=True
+        "--cache-saving",
+        "cache_saving",
+        type=click.Choice(
+            ["disabled", "local", "cloud", "hybrid"], case_sensitive=False
+        ),
+        default="local",
+        help="Cache saving options: disabled, local, cloud, hybrid",
     )
-    @click.option("--local-cache-only", is_flag=True, default=False)
-    @click.option("--cloud-cache-only", is_flag=True, default=False)
-    @click.option("--cache-only", is_flag=True, default=False)
     @click.option(
-        "--max-cache-memory-frac", "max_memory", type=click.FLOAT, default=None
+        "--cache-retrieving",
+        "cache_retrieving",
+        type=click.Choice(
+            ["disabled", "local", "cloud", "hybrid"], case_sensitive=False
+        ),
+        default="local",
+        help="Cache retrieving options: disabled, local, cloud, hybrid",
+    )
+    @click.option(
+        "-co",
+        "--cache-only",
+        "cache_only",
+        is_flag=True,
+        default=False,
+        help="Only use cache, never fetch new",
+    )
+    @click.option(
+        "--max-cache-memory-frac",
+        "max_memory",
+        type=click.FLOAT,
+        default=None,
+        help="Max fraction of memory to dedicate to cache",
     )
     def serve(
         model,
         port,
         track,
         tracking_use_case,
-        enable_local_cache,
-        local_cache_only,
-        cloud_cache_only,
+        cache_saving,
+        cache_retrieving,
         cache_only,
         max_memory,
     ):
         output_source = None
         cache_status = "Disabled"
-        if local_cache_only:
+        enable_local_cache = True
+        if (
+            cache_retrieving == CacheRetrievingOptions.DISABLED
+            and cache_saving == CacheSavingOptions.DISABLED
+        ):
+            enable_local_cache = False
+            cache_only = False
+        if cache_retrieving.lower() == CacheRetrievingOptions.LOCAL:
+            cache_status = "Local"
             output_source = OutputSource.LOCAL_ONLY
-            enable_local_cache = True
-            cache_status = "Local only"
-        if cloud_cache_only:
+        if cache_retrieving.lower() == CacheRetrievingOptions.CLOUD:
+            cache_status = "Cloud"
             output_source = OutputSource.CLOUD_ONLY
-            cache_status = "Cloud only"
-        if cache_only:
-            output_source = OutputSource.CACHE_ONLY
-            enable_local_cache = True
-            cache_status = "Hybrid (local & cloud)"
+
         mdl = ErsiliaModel(
             model,
             output_source=output_source,
             preferred_port=port,
             cache=enable_local_cache,
             maxmemory=max_memory,
+            cache_only=cache_only,
+            cache_saving_source=cache_saving.lower(),
         )
-        redis_setup = SetupRedis(enable_local_cache, max_memory)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
 
@@ -137,13 +162,15 @@ def serve_cmd():
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")
         echo("")
-        echo("🔄 Cache fetching mode:", fg="blue")
+        echo("🔄 Cache retrieving mode:", fg="blue")
         echo(f"   - {cache_status}", fg="red") if cache_status == "Disabled" else echo(
             f"   - {cache_status}", fg="green"
         )
         echo("")
-        echo(":floppy_disk: Local cache:", fg="blue")
-        echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
+        echo("💾 Cache Saving mode:", fg="blue")
+        echo(
+            f"   - {cache_saving.lower().capitalize()}", fg="green"
+        ) if cache_saving.lower() != CacheSavingOptions.DISABLED else echo(
             "   - Disabled", fg="red"
         )
         echo("")

@@ -26,7 +26,7 @@ from ..serve.autoservice import AutoService, PulledDockerImageService
 from ..serve.schema import ApiSchema
 from ..serve.standard_api import StandardCSVRunApi
 from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
+from ..store.utils import CacheSavingOptions, OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
@@ -59,6 +59,10 @@ class ErsiliaModel(ErsiliaBase):
         The identifier of the model.
     output_source : OutputSource, optional
         The source of the output, by default OutputSource.LOCAL_ONLY.
+    cache_saving_source : CacheSavingOptions, optional
+        The source to save the output, by default OutputSource.LOCAL_ONLY.
+    cache_only : bool, optional
+        The source of the output, by default False.
     service_class : str, optional
         The service class, by default None.
     config_json : dict, optional
@@ -116,6 +120,8 @@ class ErsiliaModel(ErsiliaBase):
         self,
         model: str,
         output_source: OutputSource = None,
+        cache_saving_source: CacheSavingOptions = None,
+        cache_only: bool = False,
         service_class: str = None,
         config_json: dict = None,
         credentials_json: dict = None,
@@ -153,16 +159,16 @@ class ErsiliaModel(ErsiliaBase):
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
 
-        assert self._is_valid, (
-            "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
-                model
-            )
+        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+            model
         )
         self.config_json = config_json
         self.model_id = mdl.model_id
         self.slug = mdl.slug
         self.text = mdl.text
         self.output_source = output_source
+        self.cache_only = cache_only
+        self.cache_saving_source = cache_saving_source
         self._is_available_locally = mdl.is_available_locally()
         if not self._is_available_locally and fetch_if_not_available:
             self.logger.info("Model is not available locally")
@@ -288,9 +294,9 @@ class ErsiliaModel(ErsiliaBase):
     def _get_url(self):
         model_id = self.model_id
         tmp_file = tmp_pid_file(model_id)
-        assert os.path.exists(tmp_file), (
-            "Process ID file does not exist. Please serve the model first!"
-        )
+        assert os.path.exists(
+            tmp_file
+        ), "Process ID file does not exist. Please serve the model first!"
         with open(tmp_file, "r") as f:
             for l in f:
                 url = l.rstrip().split()[1]
@@ -300,9 +306,9 @@ class ErsiliaModel(ErsiliaBase):
         url = self._get_url()
         if api_name is None:
             api_names = self.autoservice.get_apis()
-            assert len(api_names) == 1, (
-                "More than one API found, please specificy api_name"
-            )
+            assert (
+                len(api_names) == 1
+            ), "More than one API found, please specificy api_name"
             api_name = api_names[0]
         api = Api(
             model_id=self.model_id,
@@ -336,9 +342,9 @@ class ErsiliaModel(ErsiliaBase):
             The result of each API call.
         """
         for result in api.post(input=input, output=output, batch_size=batch_size):
-            assert result is not None, (
-                "Something went wrong. Please contact us at hello@ersila.io"
-            )
+            assert (
+                result is not None
+            ), "Something went wrong. Please contact us at hello@ersila.io"
             yield result
 
     def _api_runner_return(self, api: Api, input: str, output: str, batch_size: int):
@@ -684,6 +690,8 @@ class ErsiliaModel(ErsiliaBase):
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
+        self.session.register_cache_saving_source(self.cache_saving_source)
+        self.session.register_retrieving_calculation_option(self.cache_only)
         if self.track:
             self.session.register_tracking_use_case(self.tracking_use_case)
         self.url = self.autoservice.service.url

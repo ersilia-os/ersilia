@@ -20,7 +20,6 @@ from ersilia.store.utils import (
     JobStatus,
     OutputSource,
     echo_found_shards,
-    echo_intro,
     echo_job_submitted,
     echo_job_succeeded,
     echo_local_fetched_cache_szie,
@@ -111,7 +110,6 @@ class InferenceStoreApi(ErsiliaBase):
             If the job fails, no shards are returned, or polling times out.
         """
         try:
-            echo_intro(self.click, self.output_source)
             if os.path.exists(self.local_cache_csv_path):
                 os.remove(self.local_cache_csv_path)
             if self.output_source == OutputSource.LOCAL_ONLY:

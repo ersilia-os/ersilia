@@ -4,11 +4,13 @@ import importlib
 import json
 import os
 import time
+from typing import Any, Sequence
 
 import nest_asyncio
 import requests
 
 from .. import ErsiliaBase
+from ..core.session import Session
 from ..default import (
     API_SCHEMA_FILE,
     DEFAULT_API_NAME,
@@ -19,7 +21,7 @@ from ..default import (
 )
 from ..io.output import GenericOutputAdapter
 from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
+from ..store.utils import CacheSavingOptions, OutputSource
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -87,6 +89,7 @@ class StandardCSVRunApi(ErsiliaBase):
         else:
             self.logger.debug("Expected header could not be determined from file")
         self.generic_adapter = GenericOutputAdapter(model_id=self.model_id)
+        self.session = Session(config_json=None)
 
     def _read_information_file(self):
         try:
@@ -579,10 +582,25 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")
         return output
 
-    def _fetch_result(self, input_data, url, batch_size):
-        total, overall_results, meta = len(input_data), [], None
+    def _fetch_result(self, input_data: Sequence[Any], url: str, batch_size: int):
+        total = len(input_data)
+        overall_results = []
+        meta = None
+        output_source = self.session.current_output_source()
+        cache_save_option = self.session.current_cache_saving_source()
+        cache_only = self.session.is_current_retrieving_calculation_option_cache_only()
+        fetch_cache = True if output_source == OutputSource.LOCAL_ONLY else False
+        save_cache = True if cache_save_option == CacheSavingOptions.LOCAL else False
+        print(fetch_cache, save_cache, cache_only)
+        params = {
+            "fetch_cache": fetch_cache,
+            "save_cache": save_cache,
+            "cache_only": cache_only,
+        }
+
         for i in range(0, total, batch_size):
             batch = input_data[i : i + batch_size]
+
             st = time.perf_counter()
             batch = [d["input"] for d in batch]
             # TODO @Abel: This is a hack to make the API work with the current implementation.
@@ -596,7 +614,19 @@ class StandardCSVRunApi(ErsiliaBase):
                 "max_workers": "12",
             }
             headers = {"accept": "application/json", "Content-Type": "application/json"}
-            response = requests.post(url, params=params, headers=headers, json=batch)
+
+            try:
+                response = requests.post(
+                    url, json=batch, params=params, headers=headers
+                )
+                response.raise_for_status()
+            except requests.exceptions.HTTPError:
+                if response.status_code == 422:
+                    response = requests.post(url, json=batch)
+                    response.raise_for_status()
+                else:
+                    raise
+
             et = time.perf_counter()
             self.logger.info(
                 f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
@@ -622,20 +652,27 @@ class StandardCSVRunApi(ErsiliaBase):
         return overall_results, meta
 
     def _standardize_output(self, input_data, results, output, meta):
-        _results = []
-        key = "outcome" if meta is None else meta["outcome"][0]
-        keys = (
-            [key] * len(input_data)
-            if "outcome" in key or (meta is not None and len(meta["outcome"]) == 1)
-            else meta["outcome"]
-        )
+        standardized = []
         for inp, out in zip(input_data, results):
-            _v = list(out.values())
-            _k = list(out.keys()) if "outcome" not in out.keys() else keys
-            _output = (
-                {k: v for k, v in zip(_k, _v)}
-                if output.endswith(".json")
-                else {"outcome": _v}
-            )
-            _results.append({"input": inp, "output": _output})
-        return _results
+            vals = list(out.values())
+
+            if output.endswith(".json"):
+                if meta and "outcome" in meta:
+                    names = meta["outcome"]
+                    if len(names) == len(vals):
+                        keys = names
+                    elif len(names) == 1:
+                        keys = [names[0]] * len(vals)
+                    else:
+                        keys = list(out.keys())
+                else:
+                    keys = ["outcome"] * len(vals)
+
+                record = dict(zip(keys, vals))
+
+            else:
+                record = {"outcome": vals}
+
+            standardized.append({"input": inp, "output": record})
+
+        return standardized

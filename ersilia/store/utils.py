@@ -687,6 +687,98 @@ class JobStatus:
     SUCCEEDED = "SUCCEEDED"
 
 
+class CacheRetrievingOptions:
+    """
+    Class to define output source options.
+    """
+
+    LOCAL = "local"
+    DISABLED = "disabled"
+    CACHE_ONLY = "cache-only"
+    CLOUD = "cloud"
+    HYBRID = "hybrid"
+
+    @classmethod
+    def is_local(cls, option):
+        """
+        Check if the option is local.
+
+        Parameters
+        ----------
+        option : str
+            The option to check.
+
+        Returns
+        -------
+        bool
+            True if the option is local, False otherwise.
+        """
+        return option == cls.LOCAL
+
+    @classmethod
+    def is_cloud(cls, option):
+        """
+        Check if the option is cloud.
+
+        Parameters
+        ----------
+        option : str
+            The option to check.
+
+        Returns
+        -------
+        bool
+            True if the option is cloud, False otherwise.
+        """
+        return option == cls.CLOUD
+
+
+class CacheSavingOptions:
+    """
+    Class to define output source options.
+    """
+
+    LOCAL = "local"
+    DISABLED = "disabled"
+    CACHE_ONLY = "cache-only"
+    CLOUD = "cloud"
+    HYBRID = "hybrid"
+
+    @classmethod
+    def is_local(cls, option):
+        """
+        Check if the option is local.
+
+        Parameters
+        ----------
+        option : str
+            The option to check.
+
+        Returns
+        -------
+        bool
+            True if the option is local, False otherwise.
+        """
+        return option == cls.LOCAL
+
+    @classmethod
+    def is_cloud(cls, option):
+        """
+        Check if the option is cloud.
+
+        Parameters
+        ----------
+        option : str
+            The option to check.
+
+        Returns
+        -------
+        bool
+            True if the option is cloud, False otherwise.
+        """
+        return option == cls.CLOUD
+
+
 class OutputSource:
     """
     Class to define output source options.
@@ -751,11 +843,7 @@ class OutputSource:
         bool
             True if the option is cloud, False otherwise.
         """
-        return (
-            option == cls.CLOUD_ONLY
-            or option == cls.LOCAL_ONLY
-            or option == cls.CACHE_ONLY
-        )
+        return option == cls.CLOUD_ONLY or option == cls.CACHE_ONLY
 
 
 class ModelNotInStore(InferenceStoreMessage):
