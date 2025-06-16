@@ -1292,13 +1292,18 @@ class BaseInformation(ErsiliaBase):
         DockerArchitectureBaseInformationError
             If the Docker architecture is not valid.
         """
-        new_docker_architecture = self._serialize_to_list_if_necessary(
-            new_docker_architecture
-        )
-        for d in new_docker_architecture:
-            if d not in self._read_default_fields("Docker Architecture"):
-                raise DockerArchitectureBaseInformationError
-        self._docker_architecture = new_docker_architecture
+        if new_docker_architecture is None:
+            self._docker_architecture = None
+        elif str(new_docker_architecture).lower() == "none" or str(new_docker_architecture).lower() == "null":
+            self._docker_architecture = None
+        else:
+            new_docker_architecture = self._serialize_to_list_if_necessary(
+                new_docker_architecture
+            )
+            for d in new_docker_architecture:
+                if d not in self._read_default_fields("Docker Architecture"):
+                    raise DockerArchitectureBaseInformationError
+            self._docker_architecture = new_docker_architecture
 
     @property
     def s3(self):
@@ -1327,11 +1332,16 @@ class BaseInformation(ErsiliaBase):
         S3BaseInformationError
             If the S3 URL is not valid.
         """
-        if not new_s3_url.startswith(
-            "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/"
-        ):
-            raise S3BaseInformationError
-        self._s3 = new_s3_url
+        if new_s3_url is None:
+            self._s3 = None
+        elif str(new_s3_url).lower() == "none" or str(new_s3_url).lower() == "null":
+            self._s3 = None
+        else:
+            if not new_s3_url.startswith(
+                "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/"
+            ):
+                raise S3BaseInformationError
+            self._s3 = new_s3_url
 
     @property
     def both_identifiers(self):
@@ -1708,13 +1718,18 @@ class BaseInformation(ErsiliaBase):
         deployment : str
             The model deployment.
         """
-        new_deployment = self._serialize_to_list_if_necessary(new_deployment)
-        if type(new_deployment) is not list:
-            raise DeploymentBaseInformationError
-        for nt in new_deployment:
-            if nt not in self._read_default_fields("Deployment"):
+        if new_deployment is None:
+            self._deployment = None
+        elif str(new_deployment).lower() == "none" or str(new_deployment).lower() == "null":
+            self._deployment = None
+        else:
+            new_deployment = self._serialize_to_list_if_necessary(new_deployment)
+            if type(new_deployment) is not list:
                 raise DeploymentBaseInformationError
-        self._deployment = new_deployment
+            for nt in new_deployment:
+                if nt not in self._read_default_fields("Deployment"):
+                    raise DeploymentBaseInformationError
+            self._deployment = new_deployment
 
     def as_dict(self):
         """
