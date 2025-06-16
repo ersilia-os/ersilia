@@ -1017,9 +1017,14 @@ class BaseInformation(ErsiliaBase):
         PublicationBaseInformationError
             If the publication URL is not valid.
         """
-        if not self._is_valid_url(new_publication):
-            raise PublicationBaseInformationError
-        self._publication = new_publication
+        if new_publication is None:
+            self._publication = None
+        elif str(new_publication).lower() == "none" or str(new_publication).lower() == "null":
+            self._publication = None
+        else:
+            if not self._is_valid_url(new_publication):
+                raise PublicationBaseInformationError
+            self._publication = new_publication
 
     @property
     def publication_type(self):
@@ -1115,9 +1120,14 @@ class BaseInformation(ErsiliaBase):
         SourceCodeBaseInformationError
             If the source code URL is not valid.
         """
-        if not self._is_valid_url(new_source_code):
-            raise SourceCodeBaseInformationError
-        self._source_code = new_source_code
+        if new_source_code is None:
+            self._source_code = None
+        elif str(new_source_code).lower() == "none" or str(new_source_code).lower() == "null":
+            self._source_code = None
+        else:
+            if not self._is_valid_url(new_source_code):
+                raise SourceCodeBaseInformationError
+            self._source_code = new_source_code
 
     @property
     def license(self):
