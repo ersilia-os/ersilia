@@ -172,7 +172,7 @@ jobs:
 
       # comment on the issue comment with further instructions for the user
       - name: comment
-        uses: GrantBirki/comment@v2.1.0
+        uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/new-model.md
@@ -183,7 +183,7 @@ jobs:
       # steps to run if the workflow fails for any reason
       - name: comment on failure
         if: failure()
-        uses: GrantBirki/comment@v2.1.0
+        uses: GrantBirki/comment@v2.1.1
         with:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           file: .github/templates/approve-workflow-failed.md
