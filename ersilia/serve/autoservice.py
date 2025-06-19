@@ -73,12 +73,15 @@ class AutoService(ErsiliaBase):
         preferred_port=None,
         url=None,
         cache=True,
+        cache_saving=None,
         maxmemory=None,
     ):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Setting autoservice for {0}".format(model_id))
         self.config_json = config_json
-        self.setup_redis = SetupRedis(cache=cache, maxmemory=maxmemory)
+        self.setup_redis = SetupRedis(
+            cache=cache, maxmemory=maxmemory, cache_saving=cache_saving
+        )
         self.model_id = model_id
         self._meta = None
         self._preferred_port = preferred_port

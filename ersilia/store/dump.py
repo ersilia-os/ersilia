@@ -1,11 +1,98 @@
+import csv
 import hashlib
 import json
 
 from redis import ConnectionError, Redis
 
 from ..default import REDIS_EXPIRATION, REDIS_HOST, REDIS_PORT
+from ..utils.logging import logger
 
 # ruff: noqa: D101, D102
+
+
+class CSVRedisCacheManager:
+    def __init__(self, csv_path, model_id, expiration=REDIS_EXPIRATION):
+        self.csv_path = csv_path
+        self.model_id = model_id
+        self.logging = logger
+        self.expiration = expiration
+        self.hash_key = f"cache:{model_id}"
+        self.header_key = f"{model_id}:header"
+        self.init_redis()
+
+    def conn_redis(self):
+        return Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
+
+    def init_redis(self):
+        global redis_client
+        try:
+            redis_client = self.conn_redis()
+            return True
+        except ConnectionError:
+            redis_client = None
+            return False
+
+    def _read_and_filter(self):
+        with open(self.csv_path, newline="") as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            rows = [row for row in reader if row[2]]
+        return header, rows
+
+    def save_csv_to_redis(self):
+        header, rows = self._read_and_filter()
+        value_headers = header[2:]
+
+        try:
+            pipe = redis_client.pipeline()
+            for row in rows:
+                pipe.hset(self.hash_key, row[1], json.dumps(row[2:]))
+            pipe.expire(self.hash_key, self.expiration)
+            pipe.execute()
+        except Exception as e:
+            self.logging.warning("Redis cache save failed: %s", e)
+
+        try:
+            redis_client.setex(
+                self.header_key, self.expiration, json.dumps(value_headers)
+            )
+        except Exception as e:
+            self.logging.warning("Redis setex header failed: %s", e)
+
+        return {"rows_cached": len(rows), "header": value_headers}
+
+    def load_from_cache(self, inputs, fetch_cache=True):
+        header = None
+        if fetch_cache:
+            try:
+                raw = redis_client.get(self.header_key)
+                if raw:
+                    header = json.loads(raw)
+            except Exception as e:
+                self.logging.warning("Redis get header failed: %s", e)
+        if header is None:
+            header, _ = self._read_and_filter()
+
+        if not fetch_cache:
+            results = [None] * len(inputs)
+        else:
+            try:
+                raw_vals = redis_client.hmget(self.hash_key, inputs)
+            except Exception as e:
+                self.logging.logginging.warning("Redis hmget failed: %s", e)
+                raw_vals = [None] * len(inputs)
+
+            results = []
+            for v in raw_vals:
+                if v:
+                    try:
+                        results.append(json.loads(v))
+                    except Exception:
+                        results.append(None)
+                else:
+                    results.append(None)
+
+        return results, header
 
 
 class DumpLocalCache:
@@ -60,9 +147,9 @@ class DumpLocalCache:
         hash_key = f"cache:{model_id}"
         header = self.fetch_or_cache_header(model_id)
         header = header or cols
-        assert header is not None, (
-            "Headers can not be empty! This might happened either the header is not cached or resolved from model schema."
-        )
+        assert (
+            header is not None
+        ), "Headers can not be empty! This might happened either the header is not cached or resolved from model schema."
         raw = redis_client.hgetall(hash_key)
         results = {field: json.loads(val) for field, val in raw.items()}
         inputs, results = dict_to_lists(results)
@@ -93,9 +180,9 @@ class DumpLocalCache:
         results, missing = self.fetch_cached_results(model_id, data, len(cols))
         header = self.fetch_or_cache_header(model_id, computed_headers)
         header = header or cols
-        assert header is not None, (
-            "Headers can not be empty! This might happened either the header is not cached or resolved from model schema."
-        )
+        assert (
+            header is not None
+        ), "Headers can not be empty! This might happened either the header is not cached or resolved from model schema."
         results = self.orient_to_json(results, header, data, "records", dtype)
         return results, missing
 

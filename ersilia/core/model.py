@@ -690,6 +690,7 @@ class ErsiliaModel(ErsiliaBase):
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
+        self.session.register_cache_only_option(self.cache_only)
         self.session.register_cache_saving_source(self.cache_saving_source)
         self.session.register_retrieving_calculation_option(self.cache_only)
         if self.track:

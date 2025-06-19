@@ -1,3 +1,5 @@
+import sys
+
 import click
 
 from ... import ErsiliaModel
@@ -72,7 +74,7 @@ def serve_cmd():
         type=click.Choice(
             ["disabled", "local", "cloud", "hybrid"], case_sensitive=False
         ),
-        default="local",
+        default=None,
         help="Cache retrieving options: disabled, local, cloud, hybrid",
     )
     @click.option(
@@ -100,21 +102,35 @@ def serve_cmd():
         cache_only,
         max_memory,
     ):
+        if cache_saving.lower() in ("cloud", "hybrid"):
+            echo(
+                f"Warning: cache-saving mode '{cache_saving}' is not supported yet. "
+                "Please use 'local' or 'disabled'.",
+                fg="yellow",
+            )
+            sys.exit(1)
+
         output_source = None
         cache_status = "Disabled"
         enable_local_cache = True
+
         if (
             cache_retrieving == CacheRetrievingOptions.DISABLED
             and cache_saving == CacheSavingOptions.DISABLED
         ):
             enable_local_cache = False
             cache_only = False
-        if cache_retrieving.lower() == CacheRetrievingOptions.LOCAL:
-            cache_status = "Local"
-            output_source = OutputSource.LOCAL_ONLY
-        if cache_retrieving.lower() == CacheRetrievingOptions.CLOUD:
-            cache_status = "Cloud"
-            output_source = OutputSource.CLOUD_ONLY
+
+        _status_map = {
+            CacheRetrievingOptions.LOCAL: ("Local", OutputSource.LOCAL_ONLY),
+            CacheRetrievingOptions.CLOUD: ("Cloud", OutputSource.CLOUD_ONLY),
+            CacheRetrievingOptions.HYBRID: ("Hybrid", OutputSource.HYBRID),
+        }
+
+        try:
+            cache_status, output_source = _status_map[cache_retrieving]
+        except KeyError:
+            pass
 
         mdl = ErsiliaModel(
             model,
@@ -149,15 +165,6 @@ def serve_cmd():
         echo("   SRV: {0}".format(mdl.scl), fg="yellow")
         echo("   Session: {0}".format(mdl.session._session_dir), fg="yellow")
         echo("")
-        echo(":backhand_index_pointing_right: Run model:", fg="blue")
-        echo("   - run", fg="blue")
-        apis = mdl.get_apis()
-        if apis != ["run"]:
-            echo("")
-            echo("   These APIs are also valid:", fg="blue")
-            for api in apis:
-                if api != "run":
-                    echo("   - {0}".format(api), fg="blue")
         echo("")
         echo(":person_tipping_hand: Information:", fg="blue")
         echo("   - info", fg="blue")

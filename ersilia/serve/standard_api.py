@@ -4,7 +4,6 @@ import importlib
 import json
 import os
 import time
-from typing import Any, Sequence
 
 import nest_asyncio
 import requests
@@ -21,7 +20,7 @@ from ..default import (
 )
 from ..io.output import GenericOutputAdapter
 from ..store.api import InferenceStoreApi
-from ..store.utils import CacheSavingOptions, OutputSource
+from ..store.utils import CacheRetrievingOptions, OutputSource
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -63,6 +62,20 @@ class StandardCSVRunApi(ErsiliaBase):
             self.url = url[:-1]
         else:
             self.url = url
+        self.session = Session(config_json=None)
+        self.fetch_cache = (
+            True
+            if self.session.current_output_source()
+            in (OutputSource.LOCAL_ONLY, OutputSource.HYBRID)
+            else False
+        )
+        self.save_cache = (
+            True
+            if self.session.current_cache_saving_source()
+            == CacheRetrievingOptions.LOCAL
+            else False
+        )
+        self.cache_only = self.session.is_cache_only()
         self.logger.debug("Standard API processor started at {0}".format(self.url))
         self.api_name = DEFAULT_API_NAME
         self.path = os.path.abspath(self._model_path(self.model_id))
@@ -77,10 +90,10 @@ class StandardCSVRunApi(ErsiliaBase):
         self.input_shape = self._read_field_from_metadata(metadata, "Input Shape")
         self.logger.debug("This is the input type: {0}".format(self.input_type))
         self.encoder = self.get_identifier_object_by_input_type()
-        # TODO This whole validate_smiles thing can go away since we already handle this in the encoder
-        self.validate_smiles = (
-            self.get_identifier_object_by_input_type().validate_smiles
-        )  # TODO this can just be self.encoder.validate_smiles
+        # TODO This whole validate_input thing can go away since we already handle this in the encoder
+        self.validate_input = (
+            self.get_identifier_object_by_input_type().validate_input
+        )  # TODO this can just be self.encoder.validate_input
         self.header = self.get_expected_output_header()
         if self.header is not None:
             self.logger.debug(
@@ -89,7 +102,6 @@ class StandardCSVRunApi(ErsiliaBase):
         else:
             self.logger.debug("Expected header could not be determined from file")
         self.generic_adapter = GenericOutputAdapter(model_id=self.model_id)
-        self.session = Session(config_json=None)
 
     def _read_information_file(self):
         try:
@@ -247,46 +259,46 @@ class StandardCSVRunApi(ErsiliaBase):
             self.logger.error(f"Could not determine header from file {file}")
             return None
 
-    def parse_smiles_list(self, input_data):
+    def parse_input_list(self, input_data):
         """
-        Parse a list of SMILES strings.
+        Parse a list of input strings.
 
         Parameters
         ----------
         input_data : list
-            List of SMILES strings.
+            List of input strings.
 
         Returns
         -------
         list
-            List of dictionaries containing encoded SMILES strings.
+            List of dictionaries containing encoded input strings.
         """
         if not input_data or all(not s.strip() for s in input_data):
             raise ValueError(
-                "The list of SMILES strings is empty or contains only empty strings."
+                "The list of input strings is empty or contains only empty strings."
             )
         return [
-            {"key": self.encoder.encode(smiles), "input": smiles, "text": smiles}
-            for smiles in input_data
-            if self.validate_smiles(smiles)
+            {"key": self.encoder.encode(input), "input": input, "text": input}
+            for input in input_data
+            if self.validate_input(input)
         ]
 
-    def parse_smiles_string(self, input):
+    def parse_input_string(self, input):
         """
-        Parse a single SMILES string.
+        Parse a single input string.
 
         Parameters
         ----------
         input : str
-            A SMILES string.
+            A input string.
 
         Returns
         -------
         list
-            List containing a dictionary with the encoded SMILES string.
+            List containing a dictionary with the encoded input string.
         """
-        if not self.validate_smiles(input):
-            raise ValueError("The SMILES string is invalid.")
+        if not self.validate_input(input):
+            raise ValueError("The input string is invalid.")
         key = self.encoder.encode(input)
         return [{"key": key, "input": input, "text": input}]
 
@@ -309,7 +321,7 @@ class StandardCSVRunApi(ErsiliaBase):
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                if self.validate_smiles(row[1]):
+                if self.validate_input(row[1]):
                     json_data += [{"key": row[0], "input": row[1], "text": row[2]}]
         return json_data
 
@@ -332,7 +344,7 @@ class StandardCSVRunApi(ErsiliaBase):
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                if self.validate_smiles(row[1]):
+                if self.validate_input(row[1]):
                     json_data += [{"key": row[0], "input": row[1], "text": row[1]}]
         return json_data
 
@@ -355,7 +367,7 @@ class StandardCSVRunApi(ErsiliaBase):
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                if self.validate_smiles(row[0]):
+                if self.validate_input(row[0]):
                     key = self.encoder.encode(row[0])
                     json_data += [{"key": key, "input": row[0], "text": row[0]}]
         return json_data
@@ -374,9 +386,9 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The serialized JSON data.
         """
-        smiles_list = self.get_list_from_csv(input_data)
-        smiles_list = [smiles for smiles in smiles_list if self.validate_smiles(smiles)]
-        json_data = await self.encoder.encode_batch(smiles_list)
+        input_list = self.get_list_from_csv(input_data)
+        input_list = [input for input in input_list if self.validate_input(input)]
+        json_data = await self.encoder.encode_batch(input_list)
         return json_data
 
     def get_list_from_csv(self, input_data):
@@ -393,16 +405,16 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The list of data from the CSV file.
         """
-        smiles_list = []
+        input_list = []
         with open(input_data, mode="r") as file:
             reader = csv.DictReader(file)
             header = reader.fieldnames
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
-                smiles = row.get(key)
-                if self.validate_smiles(smiles):
-                    smiles_list.append(smiles)
-        return smiles_list
+                input = row.get(key)
+                if self.validate_input(input):
+                    input_list.append(input)
+        return input_list
 
     def serialize_to_json(self, input_data):
         """
@@ -411,7 +423,7 @@ class StandardCSVRunApi(ErsiliaBase):
         Parameters
         ----------
         input_data : str | list
-            Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+            Input data which can be a file path, a input string, or a list of input strings.
 
         Returns
         -------
@@ -437,12 +449,12 @@ class StandardCSVRunApi(ErsiliaBase):
                 )
                 return None
         elif isinstance(input_data, str):
-            return self.parse_smiles_string(input_data)
+            return self.parse_input_string(input_data)
         elif isinstance(input_data, list):
-            return self.parse_smiles_list(input_data)
+            return self.parse_input_list(input_data)
         else:
             raise ValueError(
-                "Input must be either a file path (string), a SMILES string, or a list of SMILES strings."
+                "Input must be either a file path (string), a input string, or a list of input strings."
             )
 
     def is_amenable(self, output):
@@ -539,7 +551,7 @@ class StandardCSVRunApi(ErsiliaBase):
         Parameters
         ----------
         input : str | list
-            Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+            Input data which can be a file path, a input string, or a list of input strings.
         output : str
             Path to the output CSV file.
         batch_size : int
@@ -582,51 +594,18 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")
         return output
 
-    def _fetch_result(self, input_data: Sequence[Any], url: str, batch_size: int):
-        total = len(input_data)
-        overall_results = []
-        meta = None
-        output_source = self.session.current_output_source()
-        cache_save_option = self.session.current_cache_saving_source()
-        cache_only = self.session.is_current_retrieving_calculation_option_cache_only()
-        fetch_cache = True if output_source == OutputSource.LOCAL_ONLY else False
-        save_cache = True if cache_save_option == CacheSavingOptions.LOCAL else False
-        print(fetch_cache, save_cache, cache_only)
+    def _fetch_result(self, input_data, url, batch_size):
         params = {
-            "fetch_cache": fetch_cache,
-            "save_cache": save_cache,
-            "cache_only": cache_only,
+            "fetch_cache": self.fetch_cache,
+            "save_cache": self.save_cache,
+            "cache_only": self.cache_only,
         }
-
+        total, overall_results, meta = len(input_data), [], None
         for i in range(0, total, batch_size):
             batch = input_data[i : i + batch_size]
-
             st = time.perf_counter()
             batch = [d["input"] for d in batch]
-            # TODO @Abel: This is a hack to make the API work with the current implementation.
-            # However, the params need to be parametrized properly in the API, including the save_cache, cache_only, min_workers and max_workers
-            params = {
-                "orient": "records",
-                "fetch_cache": "true",
-                "save_cache": "true",
-                "cache_only": "false",
-                "min_workers": "1",
-                "max_workers": "12",
-            }
-            headers = {"accept": "application/json", "Content-Type": "application/json"}
-
-            try:
-                response = requests.post(
-                    url, json=batch, params=params, headers=headers
-                )
-                response.raise_for_status()
-            except requests.exceptions.HTTPError:
-                if response.status_code == 422:
-                    response = requests.post(url, json=batch)
-                    response.raise_for_status()
-                else:
-                    raise
-
+            response = requests.post(url, json=batch, params=params)
             et = time.perf_counter()
             self.logger.info(
                 f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"

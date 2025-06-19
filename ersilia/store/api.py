@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 import sys
@@ -9,12 +10,15 @@ from pathlib import Path
 from click.exceptions import Abort
 
 from ersilia.core.base import ErsiliaBase
+from ersilia.core.session import Session
 from ersilia.default import API_BASE, DEFAULT_API_NAME, EOS_TMP, INFERENCE_STORE_API_URL
 from ersilia.io.input import GenericInputAdapter
 from ersilia.io.output import GenericOutputAdapter
-from ersilia.store.dump import DumpLocalCache
+from ersilia.store.autocomplete_result import CalculateMissingResult
+from ersilia.store.dump import CSVRedisCacheManager, DumpLocalCache
 from ersilia.store.utils import (
     ApiClient,
+    CacheRetrievingOptions,
     ClickInterface,
     FileManager,
     JobStatus,
@@ -35,6 +39,8 @@ from ersilia.store.utils import (
     echo_upload_complete,
     echo_uploading_inputs,
 )
+
+TEMP_CSV_FILE = "res.csv"
 
 
 class InferenceStoreApi(ErsiliaBase):
@@ -88,6 +94,25 @@ class InferenceStoreApi(ErsiliaBase):
         self.api = api_client or ApiClient()
         self.files = file_manager or FileManager()
         self.local_cache_csv_path = f"{EOS_TMP}/local.csv"
+        self.session = Session(config_json=None)
+        self.fetch_cache = (
+            True
+            if self.session.current_output_source()
+            in (OutputSource.LOCAL_ONLY, OutputSource.HYBRID)
+            else False
+        )
+        self.save_cache = (
+            True
+            if self.session.current_cache_saving_source()
+            == CacheRetrievingOptions.LOCAL
+            else False
+        )
+        self.cache_saving = self.session.current_cache_saving_source()
+        self.cmr = CalculateMissingResult(
+            self.output_path, TEMP_CSV_FILE, self.model_id, self.cache_saving
+        )
+        self.cache_only = self.session.is_cache_only()
+        self.csv_cache_manager = CSVRedisCacheManager(self.output_path, self.model_id)
 
     def get_precalculations(self, inputs: list) -> str:
         """
@@ -132,7 +157,7 @@ class InferenceStoreApi(ErsiliaBase):
         self.dump_local.init_redis()
         if inputs:
             echo_redis_job_submitted(self.click, f"Input size: {len(inputs)}")
-            results, _ = self.dump_local.get_cached(
+            results, missing = self.dump_local.get_cached(
                 self.model_id, inputs, self.dtype, cols=self.cols
             )
             results = self.dump_local._standardize_output(
@@ -160,6 +185,9 @@ class InferenceStoreApi(ErsiliaBase):
         self.generic_output_adapter._adapt_generic(
             json.dumps(results), str(self.output_path), self.model_id, DEFAULT_API_NAME
         )
+        if missing and not self.cache_only:
+            print(f"Missing results: {missing}")
+            self.cmr.process(self.output_path)
         echo_redis_file_saved(self.click, str(self.output_path))
         sys.exit(1)
         return str(self.output_path)
@@ -235,8 +263,17 @@ class InferenceStoreApi(ErsiliaBase):
                     size += 1
         return size
 
+    def _has_missing(self, path: str) -> bool:
+        with open(path, newline="", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            next(reader, None)
+            for row in reader:
+                if not row[2].strip():
+                    return True
+        return False
+
     def _submit_and_get_shards(self, inputs: list) -> list:
-        if self.output_source == OutputSource.CACHE_ONLY:
+        if self.output_source == OutputSource.HYBRID:
             results, missing_input = self._handle_local(inputs)
             inputs = missing_input if len(missing_input) >= 1 else inputs
         ns = self.n_samples if inputs is None else len(inputs)
@@ -257,7 +294,8 @@ class InferenceStoreApi(ErsiliaBase):
         self.request_id = str(uuid.uuid4())
 
         if (
-            self.output_source in (OutputSource.CACHE_ONLY, OutputSource.CLOUD_ONLY)
+            self.output_source
+            in (OutputSource.CACHE_ONLY, OutputSource.CLOUD_ONLY, OutputSource.HYBRID)
             and inputs
         ):
             self.fetch_type = "filter"
@@ -318,6 +356,14 @@ class InferenceStoreApi(ErsiliaBase):
             self.click,
             self.local_cache_csv_path,
         )
+        has_missing_input = self._has_missing(self.output_path)
+        if self.save_cache:
+            self.csv_cache_manager.save_csv_to_redis()
+        if has_missing_input and not self.cache_only:
+            self.logger.info(
+                "Performing autocomplete the missing results for the missing inputs in the final output. Have patient please!"
+            )
+            self.cmr.process(self.output_path)
         echo_merged_saved(self.click, self.output_path)
         sys.exit(1)
         return str(self.output_path)

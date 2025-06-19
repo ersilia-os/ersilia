@@ -113,6 +113,23 @@ class Session(ErsiliaBase):
         else:
             return data["cache_saving_source"]
 
+    def is_cache_only(self):
+        """
+        Get the current cache_saving source from the session.
+
+        This method retrieves the current cache_saving source from the session data.
+
+        Returns
+        -------
+        str or None
+            The current cache_saving source, or None if no session data is available.
+        """
+        data = self.get()
+        if data is None:
+            return None
+        else:
+            return data["cache_only"]
+
     def is_current_retrieving_calculation_option_cache_only(self):
         """
         Get the current retrieving_calculation_option source from the session.
@@ -173,6 +190,20 @@ class Session(ErsiliaBase):
         """
         data = self.get()
         data["cache_saving_source"] = cache_saving_source
+        with open(self.session_file, "w") as f:
+            json.dump(data, f, indent=4)
+
+    def register_cache_only_option(self, cache_only):
+        """
+        Register the cache only source in the session.
+
+        Parameters
+        ----------
+        cache_saving_source : str
+            The saving source to register.
+        """
+        data = self.get()
+        data["cache_only"] = cache_only
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
 
