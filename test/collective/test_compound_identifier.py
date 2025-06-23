@@ -38,8 +38,8 @@ class TestCompoundIdentifier:
     @pytest.mark.parametrize(
         "input, expected",
         [
-            ("C[C@@H](O)[C@H](N)C(O)=O", "smiles"),
-            ("CCO", "smiles"),
+            ("C[C@@H](O)[C@H](N)C(O)=O", "input"),
+            ("CCO", "input"),
             (None, UNPROCESSABLE_INPUT),
             ("", UNPROCESSABLE_INPUT),
             (" ", UNPROCESSABLE_INPUT),
