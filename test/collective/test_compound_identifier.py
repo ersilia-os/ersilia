@@ -33,7 +33,7 @@ class TestCompoundIdentifier:
     def test_is_smiles(self, compound_identifier, smiles, expected):
         """Test _is_smiles returns True for valid SMILES strings."""
         compound_identifier.Chem = None
-        assert compound_identifier._is_smiles(smiles) == expected
+        assert compound_identifier._is_input(smiles) == expected
 
     @pytest.mark.parametrize(
         "input, expected",
