@@ -520,7 +520,7 @@ class ModelInspector:
 
     def _run_performance_check(self, n, timeout):
             cmd = (
-                f"ersilia serve {self.model} --disable-local-cache && "
+                f"ersilia serve {self.model} --cache-saving disabled --cache-retrieving disabled && "
                 f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} -d && "
                 f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
             )

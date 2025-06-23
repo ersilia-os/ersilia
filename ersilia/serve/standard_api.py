@@ -273,14 +273,10 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             List of dictionaries containing encoded input strings.
         """
-        if not input_data or all(not s.strip() for s in input_data):
-            raise ValueError(
-                "The list of input strings is empty or contains only empty strings."
-            )
+        input_data = input_data[0] if isinstance(input_data[0], list) else input_data
         return [
             {"key": self.encoder.encode(input), "input": input, "text": input}
             for input in input_data
-            if self.validate_input(input)
         ]
 
     def parse_input_string(self, input):
@@ -297,9 +293,8 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             List containing a dictionary with the encoded input string.
         """
-        if not self.validate_input(input):
-            raise ValueError("The input string is invalid.")
         key = self.encoder.encode(input)
+        input = input[0] if isinstance(input, list) else input
         return [{"key": key, "input": input, "text": input}]
 
     def serialize_to_json_three_columns(self, input_data):
@@ -430,6 +425,7 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             List of dictionaries containing serialized input data.
         """
+        input_data = self._ensure_list(input_data)
         if isinstance(input_data, str) and os.path.isfile(input_data):
             with open(input_data, "r") as f:
                 reader = csv.reader(f)
@@ -451,11 +447,23 @@ class StandardCSVRunApi(ErsiliaBase):
         elif isinstance(input_data, str):
             return self.parse_input_string(input_data)
         elif isinstance(input_data, list):
+            input_data = self._ensure_list(input_data)
             return self.parse_input_list(input_data)
         else:
             raise ValueError(
                 "Input must be either a file path (string), a input string, or a list of input strings."
             )
+
+    def _ensure_list(self, item):
+        if isinstance(item, str) and item.startswith("[") and item.endswith("]"):
+            try:
+                parsed = json.loads(item)
+            except json.JSONDecodeError:
+                return item
+            else:
+                if isinstance(parsed, list):
+                    return parsed
+        return item
 
     def is_amenable(self, output):
         """
@@ -565,7 +573,6 @@ class StandardCSVRunApi(ErsiliaBase):
             Path to the output CSV file if successful, None otherwise.
         """
         input_data = self.serialize_to_json(input)
-
         if OutputSource.is_precalculation_enabled(output_source):
             store = InferenceStoreApi(
                 model_id=self.model_id, output=output, output_source=output_source
