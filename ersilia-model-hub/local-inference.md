@@ -65,9 +65,9 @@ Each model is identified by:
 * Slug: 1-3 word reference for the model
 * Title: brief description of the model
 
-Additionally, each model is assiciated a "Task" and "Output" labels (e.g. Regression and Score, respectively) as well as "Input" and "Output" shapes (e.g. Single and Single, respectively).&#x20;
+Additionally, each model is associated to a `Task` e.g. Regression, an `Output`, e.g. Score and an `Output Shape` e.g Single, or List.&#x20;
 
-Throughout this documentation, we will use the model eos2r5a (retrosynthetic-accessibility) as an example. This model has been incorporated from the paper _Retrosynthetic accessibility score (RAscore) – rapid machine learned synthesizability classification from AI driven retrosynthetic planning_ by [Thakkar et al, 2021](http://dx.doi.org/10.1039/D0SC05401A). The RA score is particularly useful to pre-screen large libraries of compounds, for example those produced by generative models. RA scores lie in the \[0,1] range; higher values indicate greater confidence that a compound is synthetically accessible.
+Throughout this documentation, we will use the model `eos2r5a` (retrosynthetic-accessibility) as an example. This model has been incorporated from the paper _Retrosynthetic accessibility score (RAscore) – rapid machine learned synthesizability classification from AI driven retrosynthetic planning_ by [Thakkar et al, 2021](http://dx.doi.org/10.1039/D0SC05401A). The RA score is particularly useful to pre-screen large libraries of compounds, for example those produced by generative models. RA scores lie in the \[0,1] range; higher values indicate greater confidence that a compound is synthetically accessible.
 
 To use a model, there are a few basic commands:
 
