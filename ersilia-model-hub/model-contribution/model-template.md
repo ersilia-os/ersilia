@@ -78,6 +78,8 @@ Some contributors may find it difficult to come up with a good description for t
 
 Before opening the first PR to add the model to Ersilia, the contributor must manually fill in the rest of metadata fields available in the file as specified below. The quality of the metadata is checked by automated GitHub Actions. The fields are constrained to certain parameters (length, list or string etc). Please make sure to revise the self-explanatory message on the Action run if the metadata check fails. Please double check and make amendments if necessary. All accepted and predefined fields in Ersilia Metadata are listed in these .txt [files](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). If you wish to include a new one, please open a PR in Ersilia.
 
+**Status:** at model incorproation, the status is In Progress. This will automatically be moved to Ready once it is fully incorporated. Do not modify it.
+
 **Deployment:** the model is available only for local inference (Local) or also online inference (online) in Ersilia's servers. Note the difference with the actual Model Source. A model whose source is Local can still be deployed Online. This field is a list with only Local and/or Online as accepted values.
 
 **Source:** whether the model runs locally (Local; in your computer if fetched locally, or on an Ersilia cloud for online deployed models) or Online (posts predictions to a server **external** to Ersilia). Note we cannot guarantee privacy of your predictions or input SMILES for Online models. This field is a string with only one accepted value.

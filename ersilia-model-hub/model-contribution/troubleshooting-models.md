@@ -36,22 +36,16 @@ The first step is to download the model in your system and use the fetch from lo
 
 ```bash
 git clone https://github.com/contributor-user/eos9ei3.git
-ersilia -v fetch eos9ei3 --repo_path eos9ei3 > out.log 2>&1
+ersilia -v fetch eos9ei3 --from_dir eos9ei3 > out.log 2>&1
 ```
 
 Always:
 
 * Run the fetch command in verbose mode (`-v`) to print the output in the terminal
-* Use the `--repo_path` flag to fetch from the locally cloned repository instead of its online version
+* Use the `--from_dir` flag to fetch from the locally cloned repository instead of its online version
 * Copy the log to a file `out.log 2>&1`
 
-We need to then carefully read the output that the fetch step is giving. At the end, it typically says:&#x20;
-
-```
-Model API eos9ei3:predict did not produce an output
-```
-
-This is not the final error, it is simply stating that it could not calculate the test molecules, hence the empty output. We need to <mark style="color:red;">**read the whole fetch file**</mark>. In this log file, look for Error messages, package dependencies, memory or connection issues, it can give you a good hint of what is happening. If it is an easy fix, you can go ahead an try it out by following the steps below.
+We need to then carefully read the output that the fetch step is giving. We need to <mark style="color:red;">**read the whole fetch file**</mark>. In this log file, look for Error messages, package dependency incompatibilities, memory or connection issues, it can give you a good hint of what is happening. If it is an easy fix, you can go ahead an try it out by following the steps below.
 
 If you encounter serious problems, please open a Bug Report issue in the Ersilia page and paste there as much information as possible, including the log file and which system you are using.
 
@@ -84,7 +78,7 @@ We have replicated the first steps of the Ersilia `fetch` command. If there are 
 
 ```bash
 cd eos9ei3/model/framework
-bash run.sh . ~/Desktop/test.csv ~/Desktop/output.csv
+bash run.sh . examples/run_input.csv output.csv #compare with the actual run_output
 ```
 
 This command will print an output on the terminal, which will give us hints of what can be the problem. Most typically, the errors are due to:
@@ -93,10 +87,64 @@ This command will print an output on the terminal, which will give us hints of w
 * Input and output adapters: add print statements in the code to see that the input and output are in the right format, and modify them if needed.
 * GPU - CPU issues: models that use pyTorch or other packages might have GPU specific configurations that need to be tweaked in order to work in most systems.
 
-Once we are able to successfully run the run.sh model, we need to try it with Ersilia. Hopefully, the local fetch will now work. If it does not, go through the log file to obtain a hint of what might be going wrong.
+Once we are able to successfully run the run.sh model, we need to try it with Ersilia. Hopefully, the local fetch will now work. If it does not, go through the log file to obtain a hint of what might be going wrong or proceed to step 4 (advanced users).
 
 ```
-ersilia -v fetch eos9ei3 --repo_path eos9ei3 > out.log 2>&1
+ersilia -v fetch eos9ei3 --from_dir eos9ei3 > out.log 2>&1
+```
+
+## 4. Package the model locally
+
+Our models are packaged using FastAPI via the [ersilia-pack](https://github.com/ersilia-os/ersilia-pack) implementation. If you are able to run the model from the run.sh file but unable to make it work within Ersilia, try packaging it locally to see where the source of the error is. We assume the model is cloned in the working directory and the conda environment of the model exists to be able to run the following code.
+
+#### Install Ersilia Pack in its own environment
+
+```bash
+git clone https://github.com/ersilia-os/ersilia-pack
+cd ersilia-pack
+conda create -n ersiliapack python=3.12
+conda activate ersiliapack
+pip install -e .
+cd ..
+```
+
+#### Bundle the model
+
+Run the following command in your terminal, assuming you are in the root where the model directory is found
+
+```bash
+ersilia_model_pack --repo_path eos9ei3 --bundles_repo_path ~/eos/repository --conda_env_name eos9ei3 && ersilia_model_serve --bundle_path ~/eos/repository/eos9ei3 --port 45220
+```
+
+This will start the model package locally, with a message in the terminal like like:
+
+```bash
+INFO:     Will watch for changes in these directories: ['/home/ubuntu/eos/repository/eos4tcc/20250603-f8020c82-101e-4893-addf-8a85dc799323/app', '/home/ubuntu/eos/repository/eos4tcc/20250603-f8020c82-101e-4893-addf-8a85dc799323/model/framework']
+INFO:     Uvicorn running on http://0.0.0.0:45220 (Press CTRL+C to quit)
+INFO:     Started reloader process [67143] using WatchFiles
+INFO:     Started server process [67145]
+INFO:     Waiting for application startup.
+Redis not connected
+INFO:     Application startup complete.
+```
+
+Go to the URL specified by the INFO (http://0.0.0.0:45220). Do not close the terminal
+
+#### Run the packaged model
+
+The URL will bring you to the endpoints available for the model. You need to go to /docs to see them, so type in your browser: http://0.0.0.0:45220/docs
+
+Go to the Run endpoint, select Try it out and run the example input provided. If it works, you'll see the expected output displayed. If it does not, you'll see an error message. Go back to the terminal and read through the exact error that happened when trying the Run endpoint (you need to scroll through the terminal to identify it)
+
+#### Close the open port
+
+Once you have completed the tests, is best to kill the process in the open port. For this you need to identify the Process ID (PID) and kill it:
+
+```bash
+lsof -i :45220
+COMMAND   PID   USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+python3  12345 username   12u  IPv4 123456      0t0  TCP *:45220 (LISTEN)
+kill -9 12345
 ```
 
 ## 4. Update the model
