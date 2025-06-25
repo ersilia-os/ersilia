@@ -199,7 +199,7 @@ cp SA_Score/fpscores.pkl.gz eos9ei3/model/checkpoints/.
 ```
 
 {% hint style="info" %}
-The github repository contains a dummy `mock.csv` that can be deleted.
+The github repository contains a dummy `mock.csv` that can be deleted. Also remove the .gitattributes file if it is not needed.
 {% endhint %}
 
 {% hint style="danger" %}
@@ -224,7 +224,7 @@ Going back to our model of interest, we have identified three necessary steps to
 
 **Write the input adapter**
 
-By default, for chemical compound inputs, Ersilia uses single-column files with a header. However, the `sascorer.py` [expects](example-of-the-model-incorporation-workflow.md#test-the-model) a two-column file. Let's write an **input** **adapter**:
+By default, for chemical compound inputs, Ersilia uses single-column files with a header. However, the `sascorer.py` [expects](example-of-the-model-incorporation-workflow.md#test-the-model) a two-column file. Let's write an **input** **adapter.** The best practice to create temporary files is to include a temporal folder with the prefix "ersilia" and remove it at the end of the model run.
 
 {% code title="input_adapter.py" %}
 ```python
@@ -233,6 +233,11 @@ import csv
 import tempfile
 
 input_file = sys.argv[1] 
+
+root = os.path.dirname(os.path.abspath(__file__))
+temp_dir = tempfile.mkdtemp(prefix="ersilia_", dir=root)
+temp_input = os.path.join(temp_dir, "tmp_input.smi")
+
 smiles_list = []
 with open(input_file, "r") as f:
     reader = csv.reader(f)
@@ -240,7 +245,7 @@ with open(input_file, "r") as f:
     for r in reader:
         smiles_list += [r[0]]
 
-with open("tmp_input.smi", "w") as f:
+with open(temp_input, "w") as f:
     writer = csv.writer(f, delimiter=" ")
     writer.writerow(["smiles", "identifier"]) # header
     for i, smi in enumerate(smiles_list):
@@ -248,7 +253,7 @@ with open("tmp_input.smi", "w") as f:
 ```
 {% endcode %}
 
-The script creates an intermediate `tmp_input.smi` file that can be used as input for `sascorer.py`. We can keep this as a separate file under `/code`, but since it is a small function, we will write it inside the `main.py` file:
+The script creates an intermediate `tmp_input.smi` file that can be used as input for `sascorer.py`. We can keep this as a separate script under `/code`, but since it is a small function, we will write it inside the `main.py` file:
 
 {% code title="code/main.py from line 20" %}
 ```python
@@ -260,7 +265,7 @@ with open(input_file, "r") as f:
     for r in reader:
         smiles_list += [r[0]]
 
-with open("tmp_input.smi", "w") as f:
+with open(temp_input, "w") as f:
     writer = csv.writer(f, delimiter=" ")
     writer.writerow(["smiles", "identifier"]) # header
     for i, smi in enumerate(smiles_list):
@@ -317,6 +322,8 @@ output_file = sys.argv[2]
 
 # current file directory
 root = os.path.dirname(os.path.abspath(__file__))
+temp_dir = tempfile.mkdtemp(prefix="ersilia_", dir=root)
+temp_input = os.path.join(temp_dir, "tmp_input.smi")
 
 # read SMILES from .csv file, assuming one column with header
 smiles_list = []
@@ -326,7 +333,7 @@ with open(input_file, "r") as f:
     for r in reader:
         smiles_list += [r[0]]
 
-with open("tmp_input.smi", "w") as f:
+with open(temp_input, "w") as f:
     writer = csv.writer(f, delimiter=" ")
     writer.writerow(["smiles", "identifier"]) # header
     for i, smi in enumerate(smiles_list):
@@ -337,7 +344,7 @@ t1 = time.time()
 readFragmentScores("fpscores")
 t2 = time.time()
 
-suppl = Chem.SmilesMolSupplier("tmp_input.smi")
+suppl = Chem.SmilesMolSupplier(temp_input)
 t3 = time.time()
 R = processMols(suppl)
 t4 = time.time()
@@ -367,7 +374,7 @@ def processMols(mols):
 
 #### Write the output adapters
 
-We need to understand the output of the model in order to collect it correctly. The easiest will be to add a print(R) statement in main.py and run the `run.sh` file with a mock test file.
+We need to understand the output of the model in order to collect it correctly. The easiest will be to add a `print(R)` statement in `main.py` and run the `run.sh` file with the example test file.
 
 ```bash
 cd model/framework
@@ -378,7 +385,7 @@ We observe that the output provided by `sascorer.py` has three columns (tab-sepa
 
 <table><thead><tr><th width="462.3333333333333">smiles</th><th>Name</th><th>sa_score</th></tr></thead><tbody><tr><td>C(F)Oc1ccc(-c2nnc3cncc(Oc4ccc5ccsc5c4)n23)cc1</td><td>mol0</td><td>2.823995</td></tr><tr><td>C(F)Oc1ccc(-c2nnc3cncc(OCC[C]4BBBBBBBBBB[CH]4)n23)cc1</td><td>mol1</td><td>5.757383</td></tr><tr><td>Cn1cc2ccc(Oc3cncc4nnc(-c5ccc(OC(F)F)cc5)n34)cc2n1</td><td>mol2</td><td>2.910502</td></tr></tbody></table>
 
-Likewise, we can subsitute this piece of code in `main.py`:
+Likewise, we can substitute this piece of code in `main.py`:
 
 {% code title="code/main.py  template line29" %}
 ```python
@@ -400,10 +407,10 @@ with open(output_file, "w") as f:
 ```
 {% endcode %}
 
-Finally, let's add one more line to main.py to clean up the temporary files we have created:
+Finally, let's add one more line to `main.py` to clean up the temporary files we have created:
 
 ```python
-os.remove("tmp_input.smi")
+shutil.rmtree(temp_dir)
 ```
 
 ### 4. Run the model locally
@@ -442,9 +449,22 @@ sa_score
 ```
 {% endcode %}
 
+#### Write the example files
+
+If you haven't yet, make sure the run\_input.csv (3 inputs) and run\_output.csv (outcome of the `bash run.sh` command) are in `model/framework/examples`
+
+#### Write the columns file
+
+Modify the `model/framework/columns/run_columns.csv` file to include the information for each of the output columns of the model, in this case it would simply be:
+
+```
+name,type,direction,description
+sa_score,float,low,Synthetic accessibility score
+```
+
 #### Edit the `install.yml` file
 
-The `install.yml` file should include all the installation steps that you run after creating the working Conda environment. In the case of `sa-scorer`, we only installed RDKit:
+The `install.yml` file should include all the installation steps that you run after creating the working Conda environment. In the case of `sa-scorer`, we only installed RDKit. It is important to specify the right version of each package to avoid clashes.
 
 {% code title="install.yml" %}
 ```yaml
@@ -465,46 +485,59 @@ Slug: sa-score
 Status: Ready
 Title: Synthetic accessibility score
 Description: "Estimation of synthetic accessibility score (SAScore) of drug-like molecules based on molecular complexity and fragment contributions. The fragment contributions are based on a 1M sample from PubChem and the molecular complexity is based on the presence/absence of non-standard structural features. It has been validated comparing the SAScore and the estimates of medicinal chemist experts for 40 molecules (r2 = 0.89). The SAScore has been contributed to the RDKit Package.\n"
-Mode: Pretrained
+Deployment: 
+    - Local
+Source: Local
+Source Type: External
+Task: Annotation
+Subtask: Property prediction or calculation
 Input:
     - Compound
-Input Shape: Single
-Task:
-    - Regression
+Input Dimension: 1
 Output:
     - Score
-Output Type:
-    - Float
-Output Shape: Single
+Output Dimension: 1
+Output Consistency: Fixed
 Interpretation: Low scores indicate higher synthetic accessibility
 Tag:
     - Synthetic accessibility
     - Chemical synthesis
+Biomedical Area:
+    - Any
+Target Organism:
+    - Not applicable
+Publication Type: Peer reiewed
+Publication Year: 2021
 Publication: https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8
 Source Code: https://github.com/rdkit/rdkit/tree/master/Contrib/SA_Score
-License: BSD-3.0
-Contributor: miquelduranfrigola
-S3: https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com/eos9ei3.zip
-DockerHub: https://hub.docker.com/r/ersiliaos/eos9ei3
-Docker Architecture:
-    - AMD64
-    - ARM64
+License: BSD-3-Clause
 ```
 
 ### 5. Run the local model inside Ersilia
 
-Before committing our new model to Ersilia, we must check it will work within the Ersilia environment. To do so, we have a very convenient option at model fetch time, `--repo_path` that allows us to specify a local path to the model we are fetching (so, instead of looking for it online it will use the local folder). <mark style="color:purple;">**It is crucial to complete this step**</mark> before committing the model to GitHub.
+Before committing our new model to Ersilia, we must check it will work within the Ersilia environment. To do so, we have a very convenient option at model fetch time, `--from_dir` that allows us to specify a local path to the model we are fetching (so, instead of looking for it on GitHub it will use the local folder). <mark style="color:orange;">**It is crucial to complete this step**</mark> before committing the model to GitHub.
 
 ```
 conda activate ersilia
-ersilia -v fetch eos9ei3 --repo_path ~/Desktop/eos9ei3
+ersilia -v fetch eos9ei3 --from_dir ~/Desktop/eos9ei3
 ersilia serve eos9ei3
 ersilia predict -i molecules.csv -o output.csv
 ```
 
-If this runs without issues, the model is ready to be incorporated. If not, please go back to step 4 and revise the model indeed is running without issues.
+If this runs without issues, the model is ready to be incorporated. If not, please go to the [Troubleshooting](troubleshooting-models.md) section to know what to do next.&#x20;
 
-### 6. Commit changes to the repository
+### 6. Test the model
+
+In addition to locally running the model, we advise going an step further and testing the model using the convenient test command. This will revise that the metadata is correct and all files necessary are present:
+
+```
+conda activate ersilia
+ersilia -v test eos9ei3 --shallow --from_dir ~/Desktop/eos9ei3
+```
+
+This will create a report file stating if any test has not passed. To learn more about the different tests available, have a look at the [Developers documentation](../developer-docs/test-command.md).
+
+### 7. Commit changes to the repository
 
 We are now ready to commit changes, first to our fork, and then to the main Ersilia repository by opening a pull request. Before doing so, complete the steps below:
 
@@ -540,22 +573,18 @@ Once the model is ready, open a pull request to merge your changes back into the
 
 * <mark style="color:green;">Security workflow</mark>: makes sure that no private key is released with the model
 * <mark style="color:green;">Json syntax check:</mark> controls that the metadata file does not contain Json syntax errors (does not check the content, only syntax)
-* <mark style="color:green;">Model Test on PR</mark>: this workflow will first test that the metadata.json has the correct fields (if it doesn't, it will fail. Please look at the Action Run to get more information on why it has failed). If the metadata is correct, it will then go onto installing Ersilia and testing the model.
+* <mark style="color:green;">Model Test on PR</mark>: this workflow will first test that the `metadata.yml` has the correct fields (if it doesn't, it will fail. Please look at the Action Run to get more information on why it has failed). If the metadata is correct, it will then go onto installing Ersilia and testing the model, similar to what we have done locally
 
 If the Actions at Pull request fail, please check them and work on debugging them before making a new pull request. <mark style="color:purple;">**Ersilia maintainers will only merge PR's that have passed all the checks.**</mark> Once the PR has the three green checks, the PR will be merged. This triggers a <mark style="color:green;">Model Test on Push</mark> action that will:
 
 * Test the model once more
 * Update the `README.md` and AirTable metadata&#x20;
-* Open a new issue requesting two Ersilia Community members to test the model.
 
-This workflow is also triggered each time there is a push to the repository, to ensure changes to the code do maintain model functionality and metadata is not outdated. If the model testing works, two final actions will be triggered:
-
-* <mark style="color:green;">Upload model to Dockerhub</mark>: the model will be packaged in a docker image and made available via the [Ersilia DockerHub](https://hub.docker.com/orgs/ersiliaos) page
-* <mark style="color:green;">Upload model to S3</mark>: the model is zipped and uploaded to S3, to facilitate upload and download from the CLI and avoid incurring Git-LFS bandwidth problems.
+This workflow is also triggered each time there is a push to the repository, to ensure changes to the code do maintain model functionality and metadata is not outdated. If the model testing works, the model will then be zipped and uploaded to S3 as a backup and packaged in a Docker image and made available via the [Ersilia DockerHub](https://hub.docker.com/orgs/ersiliaos) page. The Docker image is also tested extensively in the workflows before being added to the DockerHub.
 
 You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-os/eos9ei3) and check that your work is publicly available.
 
-### 7. Fetch and serve the model with Ersilia
+### 8. Fetch and serve the model with Ersilia
 
 We are ready to test the model in the context of the Ersilia CLI. To run the model, simply run:
 
@@ -575,7 +604,7 @@ The input output should look like this:
         "text": "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
     },
     "output": {
-        "outcome": [
+        "sa-score": [
             2.297982
         ]
     }
@@ -583,11 +612,11 @@ The input output should look like this:
 ```
 
 {% hint style="danger" %}
-Debugging the `fetch` and the `api` commands of Ersilia can be very complicated. Read the Troubleshooting models page and, if you are still stuck, please open an issue in the model repository if you are stuck at this stage.
+Debugging the `fetch` and command of Ersilia can be very complicated. Read the Troubleshooting models page and, if you are still stuck, please open an issue in the model repository.
 {% endhint %}
 
-As mentioned, the workflow will also trigger a request for model testing to members of the Ersilia community via a GitHub issue in the same repository. The original model contributor should make sure the model is working for different users and answer any questions or issues that might arise during model testing. If amends must be made, the original model contributor should work on those.
+The original model contributor should make sure the model is working for different users and answer any questions or issues that might arise during model testing. If amends must be made, the original model contributor should work on those.
 
-#### 8. Clean up
+### 9. Clean up
 
 Please, help us keep a healthy environment and avoid duplication of files and consuming of our Git LFS quota. Delete the repository fork after the model has been successfully incorporated.

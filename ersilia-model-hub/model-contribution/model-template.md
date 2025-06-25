@@ -36,7 +36,15 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 
 ### The `metadata.yml` file
 
-The `metadata.yml` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable [interface](https://ersilia.io/model-hub) of the Ersilia Model Hub and the `README.md` file will automatically be updated from the `metadata.yml` upon merge of the Pull Request. It is important to understand the flow of information: the model contributor is asked to fill in a few metadata fields in the Model Request issue. Those will be automatically included in the metadata.yml file of the created repository. Before opening the first PR to add the model to Ersilia, the contributor must manually fill in the rest of metadata fields available in the file as specified below. Finally, some fields will be automatically updated by Ersilia upon model incroporation. The quality of the metadata is checked by automated GitHub Actions. The fields are constrained to certain parameters (lenght, list or string etc). Please make sure to revise the self-explanatory message on the Action run if the metadata check fails. Please double check and make amendments if necessary. All accepted and predefined fields in Ersilia Metadata are listed in these .txt [files](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). If you wish to include a new one, please open a PR in Ersilia.
+The `metadata.yml` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable [interface](https://ersilia.io/model-hub) of the Ersilia Model Hub and the `README.md` file will automatically be updated from the `metadata.yml` upon merge of the Pull Request. It is important to understand the flow of information: the metadata file is updated sequentially, some of the fields require input from the Model Contributor and some others are automatically added ans should not be modified.&#x20;
+
+{% hint style="danger" %}
+Note that all fields are filled in as Python strings, therefore misspellings or lower / uppercase will affect their recognition as valid values.
+{% endhint %}
+
+#### Metadata at Model Request
+
+The model contributor is asked to fill in a few metadata fields in the Model Request issue. Those will be automatically included in the `metadata.yml` file of the created repository:
 
 **Identifier:** the `eos` identifier described above. It will be automatically filled in. _<mark style="color:red;">Do not modify</mark>._
 
@@ -50,27 +58,7 @@ The `metadata.yml` file is where all the model information can be found. This is
 Some contributors may find it difficult to come up with a good description for the model. You can find some inspiration in [Semantic Scholar](https://semanticscholar.org). This portal provides an AI-based TL;DR short description of many indexed papers.&#x20;
 {% endhint %}
 
-**Source:** whether the model runs locally (Local; in your computer if fetched locally, or on an Ersilia cloud for online deployed models) or Online (posts predictions to a server **external** to Ersilia). Note we cannot guarantee privacy of your predictions or input SMILES for Online models. This field is a string with only one accepted value.
-
-**Source type:** where does the model come from. Most typically they are External models (third party) or Internal (developed by the Ersilia team). In some cases we might encounter Replicated models (re-trained using original author's guides). This field is a string with only one accepted value.
-
-**Task**: the ML task performed by the model. This field is typically a list, with one ore more than one entries. The only accepted [tasks](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/task.txt) are: `Annotation`, `Representation`, `Sampling`. This field is a string with only one accepted value.
-
-**Subtask:** more granular task description. Annotation models can be `Property calculation or prediction` or `Activity prediction`. Representation models can be `Featurization` or `Projection` and Sampling models can be `Similarity` search or `Generation`. This field is a string with only one accepted value.
-
-**Input**: data type required by the model. Currently all Ersilia models accept only Compound as input. This field is a string with only one accepted value.
-
-**Input dimension:** data format required by the model. Currently all Ersilia models accept only One (in numeric, 1) as input dimension. This does not mean we cannot pass a list of inputs to the model, but the predictions are done on one input, not a combination of them.  This field is an integer with only one accepted value.
-
-**Output:** data type outputed by the model.  The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`. This field is a string with only one accepted value.
-
-**Output Dimension:** similar to the input dimension, what is the length of the output per each input? . This field is an integer with only one accepted value.
-
-**Output Consistency:** the model produces always the same prediction given the same molecule (Fixed) or not (Variable). Most QSAR models are Fixed, with the exception of Generative models. This field is a string with only one accepted value.
-
-**Interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification. This field is a single string.
-
-**Tag:** labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.falciparum_ as tag. This field is a list with one or more accepted values since models can have more than one [tag](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/tag.txt). Select between one and five relevant from the following categories. tags are predefined in a list at Model Request time. Do not deviate from that. This field is a list of strings.
+**Tag:** labels to facilitate model search. For example, a model that predicts activity against malaria could have _P.falciparum_ as tag. This field is a list with one or more accepted values since models can have more than one [tag](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/tag.txt). Select between one and five relevant from the following categories. Tags are predefined in a list at Model Request time. Do not deviate from that. This field is a list of strings.
 
 * Disease: `AIDS`, `Alzheimer`, `Cancer`, `Cardiotoxicity`, `Cytotoxicity`, `COVID19`, `Dengue`, `Malaria`, `Neglected tropical disease`, `Schistosomiasis`, `Tuberculosis`.
 * Organism: `A.baumannii`, `E.coli`, `E.faecium`, `HBV`, `HIV`, `Human`, `K.pneumoniae`, `Mouse`, `M.tuberculosis`, `P.aeruginosa`, `P.falciparum`, `Rat`, `Sars-CoV-2`,  `S.aureus`, `ESKAPE`.
@@ -80,19 +68,45 @@ Some contributors may find it difficult to come up with a good description for t
 * Dataset: `ChEMBL`, `DrugBank`, `MoleculeNet`, `Tox21`, `ToxCast`, `ZINC`, `TDCommons`.
 * Chemoinformatics: `Chemical graph model`, `Chemical language model`, `Chemical notation`, `Chemical synthesis`, `Compound generation`, `Descriptor`, `Drug-likeness`, `Embedding`, `Fingerprint`, `Similarity`.&#x20;
 
+**Publication:** link to the original publication. Please refer to the journal page whenever possible, instead of PubMed, ResearchGate or other secondary webs. If the model is not published in a scientific journal, please contact Ersilia maintainers. This field is a string with URL format.
+
+**Source Code:** link to the original code repository of the model. If the model is a _de-novo_ incorporation without another source code, please link the ML package used to train the model. This field is a string with URL format.
+
+**License:** License of the original code. Only SPDX abbreviations are accepted, and listed in the Model Request issue. If the code was released without a license, please add `None` in this field. Make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code (such as adding the license file together with the original code). This field is a string with only one accepted value.
+
+#### Metadata at model contribution time
+
+Before opening the first PR to add the model to Ersilia, the contributor must manually fill in the rest of metadata fields available in the file as specified below. The quality of the metadata is checked by automated GitHub Actions. The fields are constrained to certain parameters (length, list or string etc). Please make sure to revise the self-explanatory message on the Action run if the metadata check fails. Please double check and make amendments if necessary. All accepted and predefined fields in Ersilia Metadata are listed in these .txt [files](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). If you wish to include a new one, please open a PR in Ersilia.
+
+**Deployment:** the model is available only for local inference (Local) or also online inference (online) in Ersilia's servers. Note the difference with the actual Model Source. A model whose source is Local can still be deployed Online. This field is a list with only Local and/or Online as accepted values.
+
+**Source:** whether the model runs locally (Local; in your computer if fetched locally, or on an Ersilia cloud for online deployed models) or Online (posts predictions to a server **external** to Ersilia). Note we cannot guarantee privacy of your predictions or input SMILES for Online models. This field is a string with only one accepted value.
+
+**Source Type:** where does the model come from. Most typically they are External models (third party) or Internal (developed by the Ersilia team). In some cases we might encounter Replicated models (re-trained using original author's guides). This field is a string with only one accepted value.
+
+**Task**: the ML task performed by the model. This field is typically a list, with one ore more than one entries. The only accepted [tasks](https://github.com/ersilia-os/ersilia/blob/master/ersilia/hub/content/metadata/task.txt) are: `Annotation`, `Representation`, `Sampling`. This field is a string with only one accepted value.
+
+**Subtask:** more granular task description. Annotation models can be `Property calculation or prediction` or `Activity prediction`. Representation models can be `Featurization` or `Projection` and Sampling models can be `Similarity` search or `Generation`. This field is a string with only one accepted value.
+
+**Input**: data type required by the model. Currently all Ersilia models accept only Compound as input. This field is a string with only one accepted value.
+
+**Input dimension:** data format required by the model. Currently all Ersilia models accept only One (in numeric, 1) as input dimension. This does not mean we cannot pass a list of inputs to the model, but the predictions are done on one input, not a combination of them.  This field is an integer with only one accepted value.
+
+**Output:** data type outputted by the model.  The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`. This field is a string with only one accepted value.
+
+**Output Dimension:** similar to the input dimension, what is the length of the output per each input? . This field is an integer with only one accepted value.
+
+**Output Consistency:** the model produces always the same prediction given the same molecule (Fixed) or not (Variable). Most QSAR models are Fixed, with the exception of Generative models. This field is a string with only one accepted value.
+
+**Interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification. This field is a single string.
+
 **Biomedical area:** the pertinent area of research or disease targeted. More than one can be selected from the same model, for example ADMET and Malaria, if both are relevant. Any can be used when the model could be applied to all fields of disease (for example a featuriser). This field is a list of strings.
 
 **Target organism:** if existing, the pathogen the model is related to, for example _Plasmodium falciparum,_ or organism in case of ADMET, for example _Mus musculus_ or _Homo sapiens._ If the model is unrelated to any organism, select Not applicable. This field is a list of strings.
 
-**Publication type:** peer-reviewed, preprint or other. Most Ersilia models are peer-reviewed, and only on exception "other" is accepted. This field is a string with only one accepted value.
+**Publication type:** peer reviewed, preprint or other. Most Ersilia models are peer-reviewed, and only on exception "other" is accepted. This field is a string with only one accepted value.
 
 **Publication year:** year of publication of the original model. This field is an integer with only one accepted value.
-
-**Publication:** link to the original publication. Please refer to the journal page whenever possible, instead of PubMed, ResearchGate or other secondary webs. If the model is not published in a scientific journal, please contact Ersilia maintaners. This field is a string with URL format.
-
-**Source Code:** link to the original code repository of the model. If the model is a de-novo incorporation without another source code, please link the ML package used to train the model. This field is a string with URL format.
-
-**License:** License of the original code. Only SPDX abreviations are accepted. If the code was released without a license, please add `None` in this field. Make sure to abide by requirements of the original license when re-licensing or sub-licensing third-party author code (such as adding the license file together with the original code). This field is a string with only one accepted value.
 
 {% hint style="info" %}
 If the predetermined fields are not sufficient for your use case, you can open a pull request to include new ones to our [repository](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). Please do so only if strictly necessary (for example, if a disease is not already in the Tag field).
@@ -100,8 +114,30 @@ If the predetermined fields are not sufficient for your use case, you can open a
 Ersilia maintainers will review and approve / reject PRs for additions to the existing lists of approved items.
 {% endhint %}
 
-{% hint style="danger" %}
-Note that these fields are filled in as Python strings, therefore misspellings or lower / uppercases will affect their recognition as valid values.
+#### Metadata updated by Ersilia
+
+Once a PR successfuly passes the tests, Ersilia will run a series of workflows that will sequentially include the following metadata fields in the `.yml` file. Those should <mark style="color:red;">not</mark> be edited or removed.
+
+**Contributor:** the github handle of the model contributor.
+
+**Incorporation Date:** date when the model was first included in Ersilia, this is a string with the format YYYY-MM-DD.
+
+**S3:** URL of the model zipped and stored in AWS as a backend
+
+**DockerHub:** URL of the Docker image of the model, part of Ersilia's orgainzation Docker Community.
+
+**Docker Architecture:** list of the docker architectures available for the model, in most cases both AMD64 and ARM64 are available but in some models one of the two backends is not available. (specially relevant to MacOS users)
+
+**Model Size:** total size of the model repository in MB.
+
+**Environment Size:** size of the conda environment required to build the model, in MB.
+
+**Image Size:** size of the Docker image of the model, in MB.
+
+**Computational Performance 1,2,3,4 and 5:** fields storing the time required to run 1 , 10, 100, 1000 and 10000 inputs through the model, in seconds.&#x20;
+
+{% hint style="info" %}
+To learn more about how those fields are filled in, go to the [Developers CI/CD](../developer-docs/#ci-cd-workflows-and-testing) section.
 {% endhint %}
 
 ### The [`README`](https://github.com/ersilia-os/eos-template/blob/main/README.md) file
