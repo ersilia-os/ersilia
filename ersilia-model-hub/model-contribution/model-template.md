@@ -36,9 +36,7 @@ The `eos` identifier follows this regular expression: `eos[1-9][a-z0-9]{3}`. Tha
 
 ### The `metadata.yml` file
 
-The `metadata.yml` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable [interface](https://ersilia.io/model-hub) of the Ersilia Model Hub and the `README.md` file will automatically be updated from the `metadata.yml` upon merge of the Pull Request.&#x20;
-
-YAML fields are constrained by certain parameters. The Pull request triggers a GitHub action that checks the quality of the submitted metadata. If it fails, an explanatory message will be shown on the Action run. Please double check and make amendments if necessary. All accepted and predefined fields in Ersilia Metadata are listed in these .txt [files](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). If you wish to include a new one, please open a PR in Ersilia.
+The `metadata.yml` file is where all the model information can be found. This is the only place where you should modify or update the model description, interpretation etc. The Airtable backend, the browsable [interface](https://ersilia.io/model-hub) of the Ersilia Model Hub and the `README.md` file will automatically be updated from the `metadata.yml` upon merge of the Pull Request. It is important to understand the flow of information: the model contributor is asked to fill in a few metadata fields in the Model Request issue. Those will be automatically included in the metadata.yml file of the created repository. Before opening the first PR to add the model to Ersilia, the contributor must manually fill in the rest of metadata fields available in the file as specified below. Finally, some fields will be automatically updated by Ersilia upon model incroporation. The quality of the metadata is checked by automated GitHub Actions. The fields are constrained to certain parameters (lenght, list or string etc). Please make sure to revise the self-explanatory message on the Action run if the metadata check fails. Please double check and make amendments if necessary. All accepted and predefined fields in Ersilia Metadata are listed in these .txt [files](https://github.com/ersilia-os/ersilia/tree/master/ersilia/hub/content/metadata). If you wish to include a new one, please open a PR in Ersilia.
 
 **Identifier:** the `eos` identifier described above. It will be automatically filled in. _<mark style="color:red;">Do not modify</mark>._
 
@@ -66,7 +64,7 @@ Some contributors may find it difficult to come up with a good description for t
 
 **Output:** data type outputed by the model.  The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`. This field is a string with only one accepted value.
 
-**Output Dimension:** similar to the input dimension, what is the lenght of the output per each input? . This field is an integer with only one accepted value.
+**Output Dimension:** similar to the input dimension, what is the length of the output per each input? . This field is an integer with only one accepted value.
 
 **Output Consistency:** the model produces always the same prediction given the same molecule (Fixed) or not (Variable). Most QSAR models are Fixed, with the exception of Generative models. This field is a string with only one accepted value.
 
@@ -124,8 +122,8 @@ Ersilia uses an `install.yml` file to specify installation instructions. The YAM
 
 This dependency configuration file has two top level keys, namely, `python`, and `commands.` They dependencies are to be specified in the following manner:
 
-* `python` key expects a string value denoting a python version (eg `"3.10"`)
-* `commands` key expects a list of values, each of which is a list on its own, denoting the dependencies required by the model. Currently, dependencies  from`pip` and `conda` are supported.
+* `python` key expects a string value denoting a python version (eg `"3.10"`). **Only Python 3.8 or above are accepted.**
+* `commands` key expects a list of values, each of which is a list on its own, denoting the dependencies required by the model. Currently, dependencies  from `pip` and `conda` are supported.
 * `pip` dependencies are expected to be three element lists in the format `["pip", "library", "version"]`
 * `conda` dependencies are expected to be four element lists in the format `["conda", "library", "version", "channel"]`, where channel is the conda channel to install the required library.
 * When the model is run from source, Ersilia always defaults to creating a conda environment for the model to provide isolation. However, when the model is Dockerized, whether conda is used in that process depends entirely on there being conda dependencies in this file.&#x20;
@@ -188,7 +186,7 @@ The `install.yml` file contains the installation instructions of the model. Ther
 
 The `model` folder is the most important one. It contains two sub-folders:
 
-* `framework`: In this folder, we keep all the necessary code to run the model (assuming dependencies are already installed).
+* `framework`: In this folder, we keep all the necessary code to run the model (assuming dependencies are already installed) as well as example files.
 * `checkpoints`: In this folder, we store the model data (pretrained model parameters, scaling data, etc).
 
 {% hint style="danger" %}
@@ -288,6 +286,24 @@ In the template, the example provided is very simple. Depending on the model bei
 
 Each script will be one `.py` file, we can create as many as necessary and rename them appropriately (see below for examples).
 {% endhint %}
+
+#### Example files
+
+To ensure Ersilia is running the model appropriately, we provide an example of the expected input and output files. Those are stored in the `framework/examples` folder and consist of:
+
+* `run_input.csv`: csv file with a single column, header smiles and three rows containing one SMILES each. These can be generated using the example command at Ersilia (from an existing served model) or sourced from ChEMBL.
+* `run_output.csv`: the expected output of the model when running the run.sh, this means only the output columns for the three example inputs selected (netiher the key or smiles has to be present in this file)
+
+The run\_output and the actual output of Ersilia will be routinely tested except for models labelled as Variable. Make sure to add the right output.
+
+#### Columns file
+
+Information about the model output is provided in the `framework/columns` folder. This is a csv file named `run_columns.csv` that must have the following columns:
+
+* Name: column name exactly as outputted by Ersilia. Column names must all be lowercase, without spaces or hypens (use only underscores). In the case of models outputting new molecules, we suggest using smi\_00, smi\_01, smi\_02... as column names, and for featurisers, unless they have specific names, please use feat\_00, feat\_01... Use zfill to complete the column number appropriately.
+* Type: string, float or integer are the only accepted types. A model can contain mixed output columns that are integer and float, but string outputs cannot be passed along with numeric outputs.
+* Direction: direction for the interpretation of the value provided. For example, a probability will be direction high. Only `high` and `low` are accepted, if no direction is relevant (for example for a generative model outputting a smiles as a result) leave empty
+* Description: one line description of the column (importantly, without commas)
 
 ### The `.gitattributes` file
 

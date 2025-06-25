@@ -6,11 +6,13 @@ description: Example of an end-to-end model incorporation workflow
 
 ## Overview
 
-The model incorporation workflow is streamlined by a series of GitHub Actions. Each push to Ersilia's codebase triggers a series of events that automatically maintain our platform updated across the different services we use to maintain our infrastructure (GitHub, Airtable, DockerHub and AWS).
+The model incorporation pipeline is streamlined by a series of GitHub Actions that will automatize model testing and updating of our backend services (Airtable, DockerHub and AWS), simplifying the process for model contributors. The different workflows involved can be found in:
 
-There are two sets of workflows. The ones triggered by changes in the Ersilia Model Hub itself, and the ones triggered by each individual model. Here, we will focus on the workflow triggered when a new model is being incorporated:&#x20;
+* Reusable workflows: the actual workflows are stored in a single repository, [ersilia-model-workflows](https://github.com/ersilia-os/ersilia-model-workflows), so any change done in those will easily propagate to all models.
+* Caller workfflows: the reusable workflows are called by the workflows in [eos-template](https://github.com/ersilia-os/eos-template/tree/main/.github/workflows) upon Pull Request (PR) or Push to the model repository.&#x20;
+* Model request workflow: the model incorporation pipeline is triggered when a Model request issue is approved by an Ersilia maintainer. This [workflow](https://github.com/ersilia-os/ersilia/blob/master/.github/workflows/approve-dispatch.yml) is part of Ersilia's main repository workflows.
 
-<figure><img src="../../.gitbook/assets/workflow (1).png" alt=""><figcaption><p>Diagram of the Ersilia Workflow at new model incorporation. Purple indicates automated GitHub Actions, bold indicates Ersilia team and contributor actions.</p></figcaption></figure>
+More details on the actual workflows can be found in the [Developers](../developer-docs/#ci-cd-workflows-and-testing) section. Here we are just giving an overview of the steps a model contributor needs to take to successfully include a new model in Ersilia.
 
 ## A toy example
 
@@ -28,7 +30,7 @@ If you want to test the workflow with a toy example, we have prepared an [Ersili
    * **Tag**: Malaria,P.falciparum
    * **Publication**: [https://jcheminf.biomedcentral.com/articles/10.1186/s13321-021-00487-2](https://jcheminf.biomedcentral.com/articles/10.1186/s13321-021-00487-2)
    * **Code**: [https://www.ebi.ac.uk/chembl/maip/](https://jcheminf.biomedcentral.com/articles/10.1186/s13321-021-00487-2)
-   * **License**: GPL-3.0
+   * **License**: GPL-3.0-only
 
 ### 2. Wait until model approval
 
@@ -39,7 +41,7 @@ If you want to test the workflow with a toy example, we have prepared an [Ersili
 ### 3. Fork the model repository
 
 1. Go to the model repository page: https://github.com/ersilia-os/eosXabc, in this case.
-2. Fork the repository to your username.
+2. Fork the repository to your GitHub user.
 3. Clone the forked repository. This should create a `eosXabc` folder in your local filesystem.
 
 ### 4. Use this demo model
@@ -56,7 +58,7 @@ If you want to test the workflow with a toy example, we have prepared an [Ersili
 ### 6. Wait until model is merged
 
 1. The Ersilia team will revise your PR and merge it eventually. More GitHub Actions workflows will be triggered at this point.
-2. Once the model is merged, you should see it in [Ersilia's AirTable](https://airtable.com/shrNc3sTtTA3QeEZu).
+2. Once the model is merged, you should see it in [Ersilia's AirTable](https://airtable.com/appR6ZwgLgG8RTdoU/shr7scXQV3UYqnM6Q).
 
 ### 7. Assist with curation and publication
 
@@ -65,7 +67,7 @@ If you want to test the workflow with a toy example, we have prepared an [Ersili
 
 ## A real-world example
 
-Now that we have an idea of the contents of the [Ersilia Model Template](https://github.com/ersilia-os/eos-template), we will follow the example of a simple but widely used model to calculate the **synthetic accessibility** of small molecule compounds. Synthetic accessibility measures the feasibility of synthesizing a molecule in the laboratory. In [2009, Peter Ertl presented the synthetic accessiblity (SA) score](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), based on measures of molecular complexity and occurrence of certain fragments in the small molecule structure. High (greater than 6) SA scores denote difficult-to-synthesize molecules, and low (lower than 3) SA scores suggest that the molecule will be easy to synthesize.
+Now that we have a general idea of the contents of the [Ersilia Model Template](https://github.com/ersilia-os/eos-template), we will follow the example of a simple but widely used model to calculate the **synthetic accessibility** of small molecule compounds. Synthetic accessibility measures the feasibility of synthesizing a molecule in the laboratory. In [2009, Peter Ertl presented the synthetic accessiblity (SA) score](https://jcheminf.biomedcentral.com/articles/10.1186/1758-2946-1-8), based on measures of molecular complexity and occurrence of certain fragments in the small molecule structure. High (greater than 6) SA scores denote difficult-to-synthesize molecules, and low (lower than 3) SA scores suggest that the molecule will be easy to synthesize.
 
 ### 1. Open a Model Request Issue
 
@@ -79,10 +81,6 @@ It is important that you read the original publication in order to understand th
 
 Code to calculate the SA score does not seem to be available from the publication. Fortunately, though, the RDKit library, in its contributions module, contains an implementation of the SA score. The code can be found [here](https://github.com/rdkit/rdkit/tree/master/Contrib/SA_Score). This RDKit-based implementation was developed in 2013 by Peter Ertl and Greg Laundrum.
 
-{% hint style="success" %}
-Both the link to the code and to the original publication are accessible from the Ersilia Model Hub AirTable database.
-{% endhint %}
-
 ### 2. Run the code outside Ersilia
 
 Before incorporating the `sa-score` model to the Ersilia Model Hub, we need to make sure that we can actually run the code provided by the third party. [In this case](https://github.com/rdkit/rdkit/tree/master/Contrib/SA_Score), upon quick inspection, two elements seem to be central in the repository:
@@ -95,10 +93,14 @@ Before incorporating the `sa-score` model to the Ersilia Model Hub, we need to m
 No installation instructions are provided for this model. However, the `sascorer.py` file `import` statements indicate that, at least, `rdkit` is necessary. We can create a Conda environment and install the `rdkit`  library as follows:
 
 ```bash
-conda create -n sa-score python=3.8
+conda create -n sa-score python=3.10
 conda activate sa-score
 pip install rdkit
 ```
+
+{% hint style="success" %}
+At this stage it is useful to note down the specific versions of each package required, as Ersilia requires them.
+{% endhint %}
 
 #### Download code and parameters
 
@@ -197,7 +199,7 @@ cp SA_Score/fpscores.pkl.gz eos9ei3/model/checkpoints/.
 ```
 
 {% hint style="info" %}
-The checkpoints contains a dummy `checkpoints.joblib` that can be deleted.
+The github repository contains a dummy `mock.csv` that can be deleted.
 {% endhint %}
 
 {% hint style="danger" %}
@@ -222,12 +224,13 @@ Going back to our model of interest, we have identified three necessary steps to
 
 **Write the input adapter**
 
-By default, for chemical compound inputs, Ersilia uses single-column files with a header (see the `service.py` [file](model-template.md#the-service-file)). However, the `sascorer.py` [expects](example-of-the-model-incorporation-workflow.md#test-the-model) a two-column file. Let's write an **input** **adapter**:
+By default, for chemical compound inputs, Ersilia uses single-column files with a header. However, the `sascorer.py` [expects](example-of-the-model-incorporation-workflow.md#test-the-model) a two-column file. Let's write an **input** **adapter**:
 
 {% code title="input_adapter.py" %}
 ```python
 import sys
 import csv
+import tempfile
 
 input_file = sys.argv[1] 
 smiles_list = []
@@ -245,7 +248,7 @@ with open("tmp_input.smi", "w") as f:
 ```
 {% endcode %}
 
-The script creates an intermediate `tmp_input.smi` file that can be used as input for `sascorer.py`. We can keep this as a separate file under /code, but since it is a small function, we will write it inside the `main.py` file:
+The script creates an intermediate `tmp_input.smi` file that can be used as input for `sascorer.py`. We can keep this as a separate file under `/code`, but since it is a small function, we will write it inside the `main.py` file:
 
 {% code title="code/main.py from line 20" %}
 ```python
@@ -292,7 +295,7 @@ def readFragmentScores(name='fpscores'):
 
 **Run the model inside main.py**
 
-We now have the input adapter and the model code and parameters. We simply need to run the model in `main.py` by calling the `sascorer.py.`
+We now have the input adapter and the model code and parameters. We simply need to run the model in `main.py` by calling the `sascorer.py`.
 
 We first make sure to import the necessary packages and delete the non-necessary ones (in this case, the MW by RDKit). The sa-scorer uses `time` to measure how long did the model take, as well as the functions `readFragmentScores` and `processMols`.
 
@@ -368,7 +371,7 @@ We need to understand the output of the model in order to collect it correctly. 
 
 ```bash
 cd model/framework
-python run.sh . ~/test.csv ~/output.csv
+python run.sh . examples/run_input.csv examples/run_output.csv
 ```
 
 We observe that the output provided by `sascorer.py` has three columns (tab-separated), so we need to adapt it.
