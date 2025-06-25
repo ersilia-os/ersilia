@@ -5,7 +5,7 @@ description: >-
   Discovery
 ---
 
-# ML for Drug Discovery
+# Introduction to ML for Drug Discovery
 
 ## Course Overview
 
@@ -47,7 +47,7 @@ This model brings a hands-on exercise where students are faced with a real-life 
 * Material:
   * [Presentation](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/ersilia-intro-workshop-m1.pdf)
   * Knowledge surveys [1a](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/surveys/ersilia-intro-m1a.pdf) and [1b](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/surveys/ersilia-intro-m1b.pdf)
-  * Antimalarial screening [notebook](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/notebooks/m1\_antimalarial\_exercise.ipynb)
+  * Antimalarial screening [notebook](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/notebooks/m1_antimalarial_exercise.ipynb)
 
 ### Module 2: Setting up the computational environment
 
@@ -57,7 +57,7 @@ The student learns about tools for data science, including basic Python and bash
 * Material:
   * [Presentation](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/ersilia-intro-workshop-m2.pdf)
   * Knowledge surveys [2a](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/surveys/ersilia-intro-m2a.pdf), [2b](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/surveys/ersilia-intro-m2b.pdf) and [2c](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/surveys/ersilia-intro-m2c.pdf)
-  * Python extension [notebooks](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/notebooks/m2\_python.ipynb) and [exercise notebooks](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/notebooks/m2\_python\_exercises.ipynb)
+  * Python extension [notebooks](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/notebooks/m2_python.ipynb) and [exercise notebooks](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/notebooks/m2_python_exercises.ipynb)
 
 ### Module 3: Training an AI model for bioactivity prediction
 
@@ -68,7 +68,7 @@ This module starts with the presentations by the students of their own research 
   * [Presentation](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/ersilia-intro-workshop-m3.pdf)
   * [Exercise example](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/ersilia-intro-workshop-m3-exercises.pdf)
   * Knowledge survey [3](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/surveys/ersilia-intro-m3.pdf)
-  * Template [notebook](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/notebooks/m3\_building\_a\_model.ipynb) for AI model training
+  * Template [notebook](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/notebooks/m3_building_a_model.ipynb) for AI model training
 
 ### Module 4: The Ersilia Model Hub
 
@@ -77,7 +77,7 @@ The course concludes with the addition of the models built in the class to the E
 * Duration: 2 days
 * Material:
   * [Presentation](https://github.com/ersilia-os/ersilia-intro-workshop/blob/main/presentations/ersilia-intro-workshop-m4.pdf)
-  * [Ersilia documentation](../ersilia-model-hub/antibiotic-activity-prediction.md)
+  * [Ersilia documentation](broken-reference)
 
 {% hint style="info" %}
 If time allows, the best to finish the course is a presentation in small groups of the work developed during M3 and M4

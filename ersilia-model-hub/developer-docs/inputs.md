@@ -1,12 +1,13 @@
 ---
 description: Here we describe the types of valid inputs while running Ersilia models
+hidden: true
 ---
 
 # Inputs
 
 ## Compound inputs
 
-Small molecule structures are typically expressed in the well known [SMILES](https://en.wikipedia.org/wiki/Simplified\_molecular-input\_line-entry\_system) format. Below are the SMILES strings of a few drug molecules:
+Small molecule structures are typically expressed in the well known [SMILES](https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system) format. Below are the SMILES strings of a few drug molecules:
 
 <table><thead><tr><th width="166">Drug</th><th>SMILES</th></tr></thead><tbody><tr><td>Artemisin</td><td>CC1C2C(CC3(C=CC(=O)C(=C3C2OC1=O)C)C)O</td></tr><tr><td>Isoniazid</td><td>C1=CN=CC=C1C(=O)NN</td></tr><tr><td>Tenofovir</td><td>CC(CN1C=NC2=C(N=CN=C21)N)OCP(=O)(O)O</td></tr><tr><td>Aspirin</td><td>CC(=O)OC1=CC=CC=C1C(=O)O</td></tr><tr><td>Ibuprofen</td><td>CC(C)CC1=CC=C(C=C1)C(C)C(=O)O</td></tr><tr><td>Remdesivir</td><td>CC1(OC2C(OC(C2O1)(C#N)C3=CC=C4N3N=CN=C4N)CO)C</td></tr><tr><td>Cephalotaxin</td><td>COC1=CC23CCCN2CCC4=CC5=C(C=C4C3C1O)OCO5</td></tr></tbody></table>
 
@@ -351,7 +352,7 @@ ersilia example chemprop-antibiotic -n 1000 -f input.csv
 
 This command simply samples drug molecules from the attached table.
 
-{% file src="../.gitbook/assets/drug_molecules.tsv" %}
+{% file src="../../.gitbook/assets/drug_molecules.tsv" %}
 Tab-separated file containing drug molecules from the [Drug Repurposing Hub](https://www.broadinstitute.org/drug-repurposing-hub). InChIKeys, SMILES and names are provided.
 {% endfile %}
 

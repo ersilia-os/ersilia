@@ -13,21 +13,12 @@ These workflows ensure that we push quality code to [Ersilia](https://github.com
 
 ### Testing
 
-#### Testing Ersilia on a Pull Request
+#### Testing Ersilia on a Pull Request/Push
 
-* Objective: Ensure Ersilia continues to work with any new code merging from contributors and maintainers to the master branch
-* Workflow name: Deploy and test ersilia on PR
-* Workflow file: [pr\_check.yml](https://github.com/ersilia-os/ersilia/blob/master/.github/workflows/pr_check.yml)
-* Runs on: automatically when a PR is open on the Ersilia master branch.
-* Jobs:&#x20;
-  * `Build`: creates a conda environment (py3.10 currently) and installs the Ersilia codebase from the open PR. Then it tests the following functions: catalog and model running (fetch, serve, info and run) from GitHub, S3 and DockerHub. A single molecule is passed as input, and the output is analysed.
-
-#### Testing and cleaning up
-
-* Objective: Ensure that Ersilia is installable across supported Python environments, supported platforms, both through source and while interacting with Dockerized models. This workflow also runs the unit and integration test suite for the repository.
-* Workflow name: Ersilia tests, installation checks, and cleanup of model request template
+* Objective: Ensure Ersilia continues to work with any new code merging from contributors and maintainers to the master branch. Comprehensive tests include several Python versions, supported platforms and testing several models. This workflow also runs the unit and integration test suite for the repository.
+* Workflow name: Test Ersilia codebase
 * Workflow file: [tests\_and\_cleanup.yml](https://github.com/ersilia-os/ersilia/blob/master/.github/workflows/tests_and_cleanup.yml)
-* Run: when a PR is opened against the master branch, and again when code is pushed to the master branch.
+* Runs on: automatically when a PR is open on the Ersilia master branch or a push is made directly to master.
 * Jobs:
   * `install-ersilia`, installs Ersilia from Python 3.8 to Python 3.12 on an Ubuntu base.
   * `test-docker`  is the next step to follow after we confirm that Ersilia can be installed in environments created with different Python versions. This step tests whether dockerized models can be fetched using the ersilia CLI, ie the happy flow works without issues.

@@ -2,7 +2,7 @@
 description: 4-day workshop on the use of AI for Drug Discovery
 ---
 
-# AI2050 - AI for Drug Discovery
+# AI2050 AI for Drug Discovery
 
 ## Course overview
 
@@ -27,9 +27,9 @@ In case you need further information to follow the course, be sure to check the 
 
 * Ersilia Model Hub: list of all [available models](https://ersilia.io/model-hub).
 * Ersilia Model Hub: [self-service](https://github.com/ersilia-os/ersilia-self-service) on GitHub (requires a GitHub account).
-* Ersilia Model Hub: [local installation](../ersilia-model-hub/antibiotic-activity-prediction.md) documentation (only expert users).
-* [Publications](https://drive.google.com/drive/folders/1lSan\_efMH-mOVz41HM-aNvAqyIHcQ0Fr?usp=sharing) referred to during the workshop.
-* [Datasets](https://drive.google.com/drive/folders/1FVd05NeUf\_zJXD-OlSyinmOi0lOcLdrr?usp=sharing) required for the workshop.
+* Ersilia Model Hub: [local installation](broken-reference) documentation (only expert users).
+* [Publications](https://drive.google.com/drive/folders/1lSan_efMH-mOVz41HM-aNvAqyIHcQ0Fr?usp=sharing) referred to during the workshop.
+* [Datasets](https://drive.google.com/drive/folders/1FVd05NeUf_zJXD-OlSyinmOi0lOcLdrr?usp=sharing) required for the workshop.
 
 ## Breakout Sessions
 
@@ -110,7 +110,7 @@ In this activity, we will replicate the work described in Liu et al, 2023, where
 
 During the skills development session, we have done a deep dive into ML model building using the _A.baumannii_ model as an example. Now, you have to download the list of compounds available in the Drug Repurposing Hub and continue the "virtual screening" similar to the original author's work. To that end, we suggest running predictions against _A.baumannii_ activity and a few accessory models available through Ersilia to select the best candidates. In short, the steps to follow are:
 
-1. Download the Drug Repurposing Hub data for your group from this [link](https://drive.google.com/drive/folders/1FVd05NeUf\_zJXD-OlSyinmOi0lOcLdrr?usp=drive\_link).
+1. Download the Drug Repurposing Hub data for your group from this [link](https://drive.google.com/drive/folders/1FVd05NeUf_zJXD-OlSyinmOi0lOcLdrr?usp=drive_link).
 2. Look at the [Ersilia Model Hub](https://ersilia.io/model-hub) models available online (select Online in the left menu of the website).
 3. Select which models would be relevant to your exercise and why, and take notes on model interpretation, expected results, priority level etc.
 4. Run predictions for the Drug Repurposing Hub molecules using the selected models.&#x20;

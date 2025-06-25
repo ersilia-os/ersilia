@@ -203,7 +203,7 @@ A big part of what we do at Ersilia is to screen the scientific literature in se
 
 In this week, focus on diving into the scientific literature, trying to find studies of interest to our community. To that end, we suggest using websites like PubMed, Google Scholar, BioRxiv and Papers with Code.
 
-To get inspired, check the [Contribute models](../../ersilia-model-hub/incorporate-models.md) section, look at [existing models](https://www.ersilia.io/model-hub) in the Hub and our list of [pending models](https://airtable.com/shrTpe45mLKqaHXsc) to incorporate.
+To get inspired, check the [Contribute models](broken-reference) section, look at [existing models](https://www.ersilia.io/model-hub) in the Hub and our list of [pending models](https://airtable.com/shrTpe45mLKqaHXsc) to incorporate.
 
 #### Task 1: a first model suggestion
 

@@ -23,12 +23,9 @@
   * [Testing playground](ersilia-model-hub/developer-docs/testing-playground.md)
   * [Model packaging](ersilia-model-hub/developer-docs/model-packaging.md)
   * [Inputs](ersilia-model-hub/developer-docs/inputs.md)
-  * [Dockerization of Ersilia Models](ersilia-model-hub/developer-docs/dockerization-of-ersilia-models.md)
-  * [Codebase quality and consistency](ersilia-model-hub/developer-docs/developer-guide-for-codebase-quality-and-consistency.md)
   * [Results caching](ersilia-model-hub/developer-docs/results-caching.md)
   * [Ersilia Cache Retrieval Guide](ersilia-model-hub/developer-docs/ersilia-cache-retrieval-guide.md)
-* [Model usage](ersilia-model-hub/antibiotic-activity-prediction.md)
-* [Contribute models](ersilia-model-hub/incorporate-models.md)
+  * [Best code practices](ersilia-model-hub/developer-docs/developer-guide-for-codebase-quality-and-consistency.md)
 
 ## 💊 Chemistry tools
 
