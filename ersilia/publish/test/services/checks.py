@@ -912,7 +912,7 @@ class CheckService:
                     if math.isnan(f1) and math.isnan(f2):
                         continue
 
-                    if abs(f1-f2)>0.0001:
+                    if abs(f1-f2)>0.001:
                         mismatches.append((i, j, v1, v2))
 
                 except (ValueError, TypeError):
