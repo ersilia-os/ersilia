@@ -88,38 +88,18 @@ If you serve a model that is not available locally, Ersilia will try to fetch it
 
 The Ersilia Model Hub takes **chemical structures** as input, which should be specified as SMILES strings. To obtain the SMILES string of your compounds, you can use resources like [PubChem](https://pubchem.ncbi.nlm.nih.gov/).
 
-The SMILES can be passed directly to the CLI:
-
-```bash
-# Halicin
-ersilia run -i "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]"
-```
-
-You can make **multiple predictions** in batch mode. This is typically much faster than running predictions one by one in a loop:
-
-```bash
-# Halicin and Ibuprofen
-ersilia run -i "['C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]','CC(C)CC1=CC=C(C=C1)C(C)C(=O)O']"
-```
-
-The easiest, though, is to provide an input file instead. A simple `.csv` file with one column is sufficient.
+Ersilia only accepts an input file in csv format, with one column and a header. Predictions are returned in tabular format as either .csv, .json or .h5 depending on what is specified by the user:
 
 {% code title="input.csv" %}
 ```bash
+smiles
 C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]
 CC(C)CC1=CC=C(C=C1)C(C)C(=O)O
 ```
 {% endcode %}
 
 ```bash
-# predict using an input file
-ersilia run -i input.csv
-```
-
-By default, predictions are returned in the standard **output** of the terminal. We favour the widely used **JSON format** because it offers great flexibility and interoperability. However, many of the model APIs return an output that can be naturally expressed in tabular format, for example, in a **CSV file**. If this is what you want, simply specify an output file with the `.csv` extension.
-
-```bash
-# save output in a CSV file
+# predict using an input file and output file
 ersilia run -i input.csv -o output.csv
 ```
 

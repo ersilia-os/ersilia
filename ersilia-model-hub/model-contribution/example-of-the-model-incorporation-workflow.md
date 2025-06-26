@@ -586,29 +586,19 @@ You can now visit the `eos9ei3` [GitHub repository](https://github.com/ersilia-o
 
 ### 8. Fetch and serve the model with Ersilia
 
-We are ready to test the model in the context of the Ersilia CLI. To run the model, simply run:
+We are ready to test the model in the context of the Ersilia CLI. To run the model, simply run (using an example .csv file in the right format)
 
 ```bash
 ersilia fetch eos9ei3
 ersilia serve eos9ei3
-ersilia run -i "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
+ersilia run -i input.csv -o output.csv
 ```
 
-The input output should look like this:
+The output should look like this:
 
-```json
-{
-    "input": {
-        "key": "RYYVLZVUVIJVGH-UHFFFAOYSA-N",
-        "input": "Cn1cnc2n(C)c(=O)n(C)c(=O)c12",
-        "text": "Cn1cnc2n(C)c(=O)n(C)c(=O)c12"
-    },
-    "output": {
-        "sa-score": [
-            2.297982
-        ]
-    }
-}
+```csv
+ "key","input","sa-score"
+ "RYYVLZVUVIJVGH-UHFFFAOYSA-N","Cn1cnc2n(C)c(=O)n(C)c(=O)c12",2.297982
 ```
 
 {% hint style="danger" %}
