@@ -43,7 +43,7 @@ flagged_keys = {
         "delete": {"all"},
         "catalog": {"more", "as-json", "local", "hub", "local"},
         "example": {"simple", "random", "predefined", "complete", "file_name", "n_samples"},
-        "serve": {"enable-local-cache", "disable-local-cache"},
+        "serve": {"cache-saving ", "cache-retrieving"},
 }
 
 def parse_yaml(file_path):

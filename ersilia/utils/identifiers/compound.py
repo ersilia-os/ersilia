@@ -23,14 +23,14 @@ class CompoundIdentifier(object):
     .. code-block:: python
 
         identifier = CompoundIdentifier()
-        smiles = "CCO"
-        key = identifier.encode(smiles)
+        input = "CCO"
+        key = identifier.encode(input)
 
     """
 
     def __init__(self, concurrency_limit=10):
-        self.default_type = "smiles"
-        self.input_header_synonyms = set(["smiles", "input"])
+        self.default_type = "input"
+        self.input_header_synonyms = set(["input", "input"])
         self.key_header_synonyms = set(["key"])
         # The APIs have the worst rate limitation so its better not to increase more than 10
         self.concurrency_limit = concurrency_limit
@@ -67,14 +67,14 @@ class CompoundIdentifier(object):
         """
         return h.lower() in self.key_header_synonyms
 
-    def _is_smiles(self, text):
+    def _is_input(self, text):
         if not isinstance(text, str) or not text.strip():
             return False
-        # Rough SMILES pattern, allows space for CXSMILES
-        SMILES_REGEX = re.compile(
+        # Rough input pattern, allows space for CXinput
+        input_REGEX = re.compile(
             r"^[A-Za-z0-9@+\-\[\]\(\)=#$:.\\/%,*]+(?:\s[A-Za-z0-9@+\-\[\]\(\)=#$:.\\/%,*]+)*$"
         )
-        return bool(SMILES_REGEX.fullmatch(text.strip()))
+        return bool(input_REGEX.fullmatch(text.strip()))
 
     def _is_key(self, text):
         if not isinstance(text, str) or not text.strip():
@@ -82,27 +82,27 @@ class CompoundIdentifier(object):
         KEY_REGEX = re.compile(r"^[A-Za-z0-9]{32}$")
         return bool(KEY_REGEX.fullmatch(text.strip()))
 
-    def convert_smiles_to_checksum(self, smiles):
+    def convert_input_to_checksum(self, input):
         """
-        Convert a SMILES string to a checksum.
+        Convert a input string to a checksum.
 
         Parameters
         ----------
-        smiles : str
-            The SMILES string to convert.
+        input : str
+            The input string to convert.
 
         Returns
         -------
         str
             The converted checksum.
         """
-        if smiles is None:
+        if input is None:
             return None
-        return hashlib.md5(smiles.encode()).hexdigest()
+        return hashlib.md5(input.encode()).hexdigest()
 
     def guess_type(self, text):
         """
-        Guess the type of the given text (either 'smiles').
+        Guess the type of the given text (either 'input').
 
         Parameters
         ----------
@@ -112,22 +112,22 @@ class CompoundIdentifier(object):
         Returns
         -------
         str
-            The guessed type ('smiles', 'UNPROCESSABLE_INPUT').
+            The guessed type ('input', 'UNPROCESSABLE_INPUT').
         """
         if not isinstance(text, str) or not text.strip() or text == UNPROCESSABLE_INPUT:
             return UNPROCESSABLE_INPUT
-        if self._is_smiles(text):
-            return "smiles"
+        if self._is_input(text):
+            return "input"
         return UNPROCESSABLE_INPUT
 
-    async def process_smiles(self, smiles, semaphore, result_list):
+    async def process_input(self, input, semaphore, result_list):
         """
-        Process a SMILES string asynchronously.
+        Process a input string asynchronously.
 
         Parameters
         ----------
-        smiles : str
-            The SMILES string to process.
+        input : str
+            The input string to process.
         semaphore : asyncio.Semaphore
             The semaphore to limit concurrency.
         session : aiohttp.ClientSession
@@ -136,17 +136,17 @@ class CompoundIdentifier(object):
             The list to store results.
         """
         async with semaphore:  # high performance resource manager
-            key = self.convert_smiles_to_checksum(smiles)
-            result_list.append({"key": key, "input": smiles, "text": smiles})
+            key = self.convert_input_to_checksum(input)
+            result_list.append({"key": key, "input": input, "text": input})
 
-    async def encode_batch(self, smiles_list):
+    async def encode_batch(self, input_list):
         """
-        Encode a batch of SMILES strings asynchronously.
+        Encode a batch of input strings asynchronously.
 
         Parameters
         ----------
-        smiles_list : list
-            The list of SMILES strings to encode.
+        input_list : list
+            The list of input strings to encode.
 
         Returns
         -------
@@ -156,20 +156,20 @@ class CompoundIdentifier(object):
         result_list = []
         semaphore = asyncio.Semaphore(self.concurrency_limit)
         tasks = []
-        for _, smiles in enumerate(smiles_list):
-            tasks.append(self.process_smiles(smiles, semaphore, result_list))
+        for _, input in enumerate(input_list):
+            tasks.append(self.process_input(input, semaphore, result_list))
 
         await asyncio.gather(*tasks)
         return result_list
 
-    def encode(self, smiles):
+    def encode(self, input):
         """
-        Get the key of a compound based on its SMILES string.
+        Get the key of a compound based on its input string.
 
         Parameters
         ----------
-        smiles : str
-            The SMILES string of the compound.
+        input : str
+            The input string of the compound.
 
         Returns
         -------
@@ -177,30 +177,30 @@ class CompoundIdentifier(object):
             The key of the compound, or 'UNPROCESSABLE_INPUT' if conversion fails.
         """
         if (
-            not isinstance(smiles, str)
-            or not smiles.strip()
-            or smiles == UNPROCESSABLE_INPUT
+            not isinstance(input, str)
+            or not input.strip()
+            or input == UNPROCESSABLE_INPUT
         ):
             return UNPROCESSABLE_INPUT
 
-        key = self.convert_smiles_to_checksum(smiles)
+        key = self.convert_input_to_checksum(input)
         return key if key else UNPROCESSABLE_INPUT
 
-    def validate_smiles(self, smiles):
+    def validate_input(self, input):
         """
-        Validate a SMILES string.
+        Validate a input string.
 
         Parameters
         ----------
-        smiles : str
-            The SMILES string to validate.
+        input : str
+            The input string to validate.
 
         Returns
         -------
         bool
-            True if the SMILES string is valid, False otherwise.
+            True if the input string is valid, False otherwise.
         """
-        return self._is_smiles(smiles)
+        return self._is_input(input)
 
 
 Identifier = CompoundIdentifier

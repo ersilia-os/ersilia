@@ -150,7 +150,7 @@ class IO(object):
         bool
             True if the text is a valid input, False otherwise.
         """
-        return self.identifier._is_smiles(text)
+        return self.identifier._is_input(text)
 
     def is_key(self, text):
         """

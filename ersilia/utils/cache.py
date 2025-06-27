@@ -39,7 +39,7 @@ class SetupRedis:
 
     """
 
-    def __init__(self, cache, maxmemory):
+    def __init__(self, cache, maxmemory, cache_saving):
         self.cache = cache
         self.maxmemory = maxmemory
         try:
