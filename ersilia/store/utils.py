@@ -1,5 +1,6 @@
 import csv
 import gzip
+import importlib
 import io
 import os
 import sys
@@ -20,28 +21,6 @@ def log_prefix():
 
 
 # ruff: noqa: W291
-title = r"""
-    ____                            __              __        __   _                  _____  __                   
-   / __ \ _____ ___   _____ ____ _ / /_____ __  __ / /____ _ / /_ (_)____   ____     / ___/ / /_ ____   _____ ___ 
-  / /_/ // ___// _ \ / ___// __ `// // ___// / / // // __ `// __// // __ \ / __ \    \__ \ / __// __ \ / ___// _ \
- / ____// /   /  __// /__ / /_/ // // /__ / /_/ // // /_/ // /_ / // /_/ // / / /   ___/ // /_ / /_/ // /   /  __/
-/_/    /_/    \___/ \___/ \__,_//_/ \___/ \__,_//_/ \__,_/ \__//_/ \____//_/ /_/   /____/ \__/ \____//_/    \___/                                                     
-"""
-
-
-def echo_intro(click_iface, mode):
-    width = 120
-    mode = (
-        "Hybrid [Local + Cloud]"
-        if mode == "cache-only"
-        else mode.replace("-", " ").capitalize()
-    )
-    click_iface.echo(f"{title:^{width}}", fg="red", bold=True)
-    mode_text = f"⚙️ Fetch Mode: {mode}"
-    version_text = "🏷️ [Version 0.1.0] 🏷️"
-    click_iface.echo(f"{version_text:^{width}}", fg="cyan", bold=True)
-    click_iface.echo(f"{mode_text:^{width}}", fg="cyan", bold=True)
-    click_iface.echo("")
 
 
 def echo_exceptions(message, click_iface, exit=False, bg="red", fg="white"):
@@ -411,6 +390,12 @@ class FileManager:
     """
 
     @staticmethod
+    def _encoder():
+        identifier_module_path = "ersilia.utils.identifiers.compound"
+        encoder = importlib.import_module(identifier_module_path).Identifier()
+        return encoder
+
+    @staticmethod
     def create_temp_csv(records, input_adapter) -> str:
         """
         Write records to a temporary CSV file via a GenericInputAdapter.
@@ -523,6 +508,7 @@ class FileManager:
                     if first_shard:
                         first_shard = False
                     for row in reader:
+                        print(row)
                         writer.writerow(row)
                 pbar.close()
 
@@ -592,11 +578,13 @@ class FileManager:
             writer.writerow(header)
             for inp in normalized:
                 row = lookup.get(inp)
+                key = FileManager._encoder().encode(inp)
                 if row:
                     writer.writerow(row)
                 else:
                     empty_row = [""] * len(header)
                     empty_row[col_idx] = inp
+                    empty_row[0] = key
                     writer.writerow(empty_row)
 
         if (

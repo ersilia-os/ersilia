@@ -361,7 +361,7 @@ class InferenceStoreApi(ErsiliaBase):
             self.csv_cache_manager.save_csv_to_redis()
         if has_missing_input and not self.cache_only:
             self.logger.info(
-                "Performing autocomplete the missing results for the missing inputs in the final output. Have patient please!"
+                "Performing autocomplete the missing results for the missing inputs in the final output. Have patience please!"
             )
             self.cmr.process(self.output_path)
         echo_merged_saved(self.click, self.output_path)
