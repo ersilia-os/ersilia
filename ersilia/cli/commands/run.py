@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import types
 
 import click
@@ -7,7 +8,7 @@ import click
 from ... import ErsiliaModel
 from ...core.session import Session
 from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
-from ...utils.terminal import print_result_table
+from ...utils.terminal import is_quoted_list, print_result_table
 from .. import echo
 from . import ersilia_cli
 
@@ -45,6 +46,15 @@ def run_cmd():
     )
     @click.option("--as_table/-t", is_flag=True, default=False)
     def run(input, output, batch_size, as_table):
+        if (type(input) == str and not input.endswith(".csv")) or is_quoted_list(
+            json.dumps(input)
+        ):
+            echo(
+                "String and list input types are not allowed in Ersilia. Please a csv input instead",
+                fg="red",
+                bold=True,
+            )
+            sys.exit(1)
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
@@ -63,6 +73,9 @@ def run_cmd():
             config_json=None,
         )
         try:
+            print(
+                f"Input: {json.dumps(input)} | Input type: {is_quoted_list(json.dumps(input))}"
+            )
             result = mdl.run(input=input, output=output, batch_size=batch_size)
             iter_values = []
             if isinstance(result, types.GeneratorType):

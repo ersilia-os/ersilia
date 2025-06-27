@@ -1,6 +1,7 @@
 import csv
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -219,6 +220,11 @@ def _read_csv(file_path):
     with open(file_path, mode="r") as file:
         reader = csv.DictReader(file)
         return [dict(row) for row in reader]
+
+
+def is_quoted_list(s: str) -> bool:
+    pattern = r"^(['\"])\[.*\]\1$"
+    return bool(re.match(pattern, s))
 
 
 def print_result_table(data):
