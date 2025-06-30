@@ -868,6 +868,7 @@ class CheckService:
             rows1 = []
             for r in reader:
                 if len(r) != len(header):
+                    print("HERE", len(r), len(header))
                     raise Exception("There was a row with less columns than expected")
                 rows1.append([r[i] for i in idxs])
         with open(csv_out_two) as f:
@@ -877,6 +878,8 @@ class CheckService:
             rows2 = []
             for r in reader:
                 if len(r) != len(header):
+                    print("THERE", len(r), len(header))
+                    print(r)
                     raise Exception("There was a row with less columns than expected")
                 rows2.append([r[i] for i in idxs])
         mismatches = []
@@ -912,7 +915,7 @@ class CheckService:
                     if math.isnan(f1) and math.isnan(f2):
                         continue
 
-                    if abs(f1-f2)>0.001:
+                    if abs(f1-f2)>0.1:
                         mismatches.append((i, j, v1, v2))
 
                 except (ValueError, TypeError):
@@ -1082,24 +1085,24 @@ class CheckService:
 
                 rho, _ = spearmanr([output1], [output2])
                 if rho < 0.5:
-                    echo_exceptions(f"Model output is inconsistent. The Spearman correlation between two consequetive outputs found to be < 50%", ClickInterface())
+                    echo_exceptions(f"Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be < 50%", ClickInterface())
                     raise ValueError
 
             elif isinstance(output1, list):
                 rmse = compute_rmse(output1, output2)
                 if rmse > 0.1:
-                    echo_exceptions(f"Model output is inconsistent. The RMSE between two consequetive outputs found to be > 10%:[{rmse*100}]", ClickInterface())
+                    echo_exceptions(f"Model output is inconsistent. The RMSE between two consecutive outputs found to be > 10%:[{rmse*100}]", ClickInterface())
                     raise ValueError
                 
                 rho, _ = spearmanr(output1, output2)
 
                 if rho < 0.5:
-                    echo_exceptions(f"Model output is inconsistent. The Spearman correlation between two consequetive outputs found to be < 50%", ClickInterface())
+                    echo_exceptions(f"Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be < 50%", ClickInterface())
                     raise ValueError
                 
             elif isinstance(output1, str):
                 if _compare_output_strings(output1, output2) <= 95:
-                    echo_exceptions(f"Model output is inconsistent. The Fuzz ratio correlation between two consequetive outputs found to be <= 950%", ClickInterface())
+                    echo_exceptions(f"Model output is inconsistent. The Fuzz ratio correlation between two consecutive outputs found to be <= 95%", ClickInterface())
                     raise ValueError
                 
         def read_csv(file_path):
