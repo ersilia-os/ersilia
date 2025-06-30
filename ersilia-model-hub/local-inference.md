@@ -88,7 +88,7 @@ If you serve a model that is not available locally, Ersilia will try to fetch it
 
 The Ersilia Model Hub takes **chemical structures** as input, which should be specified as SMILES strings. To obtain the SMILES string of your compounds, you can use resources like [PubChem](https://pubchem.ncbi.nlm.nih.gov/).
 
-Ersilia only accepts an input file in csv format, with one column and a header. Predictions are returned in tabular format as either .csv, .json or .h5 depending on what is specified by the user:
+Ersilia only accepts an input file in csv format, with one column and a header. Predictions are returned in tabular format as either .csv or .h5 depending on what is specified by the user:
 
 {% code title="input.csv" %}
 ```bash
