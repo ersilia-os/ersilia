@@ -868,7 +868,6 @@ class CheckService:
             rows1 = []
             for r in reader:
                 if len(r) != len(header):
-                    print("HERE", len(r), len(header))
                     raise Exception("There was a row with less columns than expected")
                 rows1.append([r[i] for i in idxs])
         with open(csv_out_two) as f:
@@ -878,9 +877,7 @@ class CheckService:
             rows2 = []
             for r in reader:
                 if len(r) != len(header):
-                    print("THERE", len(r), len(header))
-                    print(r)
-                    raise Exception("There was a row with less columns than expected")
+                    return [(Checks.COLUMN_MISMATCH, "There was a row with less columns than expected", str(STATUS_CONFIGS.FAILED))]
                 rows2.append([r[i] for i in idxs])
         mismatches = []
         max_rows = max(len(rows1), len(rows2))
