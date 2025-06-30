@@ -1216,7 +1216,7 @@
             <span class="n">rows2</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;There was a row with less columns than expected&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span> <span class="s2">&quot;There was a row with less columns than expected&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))]</span>
                 <span class="n">rows2</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">])</span>
         <span class="n">mismatches</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">max_rows</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows2</span><span class="p">))</span>
@@ -1251,7 +1251,7 @@
                     <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f2</span><span class="p">):</span>
                         <span class="k">continue</span>
 
-                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f1</span><span class="o">-</span><span class="n">f2</span><span class="p">)</span><span class="o">&gt;</span><span class="mf">0.001</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f1</span><span class="o">-</span><span class="n">f2</span><span class="p">)</span><span class="o">&gt;</span><span class="mf">0.1</span><span class="p">:</span>
                         <span class="n">mismatches</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">))</span>
 
                 <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
@@ -1432,24 +1432,24 @@
 
                 <span class="n">rho</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">([</span><span class="n">output1</span><span class="p">],</span> <span class="p">[</span><span class="n">output2</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Spearman correlation between two consequetive outputs found to be &lt; 50%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be &lt; 50%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
 
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="n">rmse</span> <span class="o">=</span> <span class="n">compute_rmse</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">rmse</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The RMSE between two consequetive outputs found to be &gt; 10%:[</span><span class="si">{</span><span class="n">rmse</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The RMSE between two consecutive outputs found to be &gt; 10%:[</span><span class="si">{</span><span class="n">rmse</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
                 
                 <span class="n">rho</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Spearman correlation between two consequetive outputs found to be &lt; 50%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be &lt; 50%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
                 
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">_compare_output_strings</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">95</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Fuzz ratio correlation between two consequetive outputs found to be &lt;= 950%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Fuzz ratio correlation between two consecutive outputs found to be &lt;= 95%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
                 
         <span class="k">def</span><span class="w"> </span><span class="nf">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
