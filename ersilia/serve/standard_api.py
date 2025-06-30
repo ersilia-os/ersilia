@@ -360,17 +360,17 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def serialize_to_json(self, input_data):
         """
-        Serialize input data to JSON format.
+            Serialize input data to JSON format.
 
-        Parameters
+            Parameters
         ----------
-        input_data : str | list
-            Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+            input_data : str | list
+                Input data which can be a file path, a SMILES string, or a list of SMILES strings.
 
-        Returns
-        -------
-        list
-            List of dictionaries containing serialized input data.
+            Returns
+            -------
+            list
+                List of dictionaries containing serialized input data.
         """
         if isinstance(input_data, str) and os.path.isfile(input_data):
             with open(input_data, "r") as f:
