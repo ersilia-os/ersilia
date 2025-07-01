@@ -2,7 +2,7 @@
 description: Documentation for those who want to contribute new models to the Hub
 ---
 
-# Model Contribution
+# Model contribution
 
 ## Setting up
 
@@ -42,8 +42,9 @@ Summary of the contributor’s pipeline:
    1. Include the model checkpoints in the `/checkpoints` directory. Track them as git-lfs files using the `.gitattributes` file if necessary
    2. Include any code needed to run the model as .py script files in the `/framework/code` directory
    3. Adapt the functions in `main.py` to actually run your model and provide the output in the specified format
-   4. Include the dependencies (specifying the version) in the `install.yml` file
-   5. Complete all fields on the `metadata.yml`. Note that many are pre-defined, ensure you are using the correct notation.
+   4. Create the `run_columns.csv` file including information about the model output.&#x20;
+   5. Include the dependencies (specifying the version) in the `install.yml` file
+   6. Complete all fields on the `metadata.yml`. Note that many are pre-defined, ensure you are using the correct notation.
 6. Open a PR to the main branch of the model repository. A series of automated tests will be triggered. Ensure they are passing.
 7. Check if your PR has been successfully merged and the model is uploaded to AWS S3 and DockerHub.
 8. Delete your fork of the model repository.
