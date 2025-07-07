@@ -1,4 +1,4 @@
-from .... import ErsiliaModel
+from ersilia import ErsiliaModel
 from ...core.session import Session
 from ...utils.session import deregister_model_session
  
