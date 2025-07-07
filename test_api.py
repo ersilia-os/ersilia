@@ -1,6 +1,7 @@
 from ersilia.api import ErsiliaAPI
 
-mdl = ErsiliaAPI()
+mdl = ErsiliaAPI("eo3sb5e")
 mdl.serve()
-example_input = mdl.example(n = 10)
-df = mdl.run(example_input, batch_size = 100)
+input = ["CCCCO"]
+# example_input = mdl.example(n = 10)
+df = mdl.run(input, 100)
