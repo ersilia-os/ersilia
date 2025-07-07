@@ -1,4 +1,4 @@
-from .commands import run, serve, close
+from .commands import run, serve, close, info
 
 class ErsiliaAPI:
     def __init__(self, model_id):
@@ -24,3 +24,6 @@ class ErsiliaAPI:
     
     def info(self):
         info.info()
+
+    # def example():
+    #     example.example(model, n_samples=5, random=True, deterministic=True)
