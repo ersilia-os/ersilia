@@ -51,7 +51,7 @@ The Community for Open-Antimicrobial Drug Discovery (CO-ADD) has curated a datab
 
 This activity is split into three parts:
 
-1. Follow the task 1 guidance to download a dataset from CO-ADD.
+1. Follow the task 1 guidance ([day 1 breakout slides](https://drive.google.com/file/d/1vmBo_DVdcE0JSMckWH7lftz47KrLX3iO/view?usp=sharing)) to download a dataset from CO-ADD.
 2. Answer questions 1 to 5.
 3. Deliverable: Compile the list of data issues (question 4) that your group identified within the raw dataset which needs to be addressed to clean the dataset.
 
@@ -77,7 +77,7 @@ Let’s imagine we have trained a model to predict antiplasmodium activity and w
 
 Steps to complete this activity:
 
-1. Follow the task 2 guidance to download a dataset from ChEMBL.
+1. Follow the task 2 guidance ([day 1 breakout slides](https://drive.google.com/file/d/1vmBo_DVdcE0JSMckWH7lftz47KrLX3iO/view?usp=sharing)) to download a dataset from ChEMBL.
 2. Answer questions 1 to 6.
 3. Deliverable (question 5): a) A screenshot of your UMAP chemical space, b) the library you have chosen to screen and a short reason why you choose this library.
 
