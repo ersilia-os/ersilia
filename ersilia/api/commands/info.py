@@ -1,8 +1,6 @@
 from ... import ErsiliaModel
 from ...core.session import Session
 from ...hub.content.information import InformationDisplayer
-from .. import echo
-from . import ersilia_cli
 
 def info(model_id):
 	# Provides infomration about the current model.
