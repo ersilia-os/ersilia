@@ -21,23 +21,18 @@ def run(model_id, input, batch_size=100):
     print("No model seems to be served. Please run 'ersilia serve ...' before.",
           fg="red")
     return
-  
-  with tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8', suffix='.csv', delete=False) as input,\
-    tempfile.NamedTemporaryFile(mode='r', encoding='utf-8', suffix='.csv', delete=False) as output:
-        mdl = ErsiliaModel(model_id, output_source = output, service_class=service_class, config_json=None,)
+  input_df = pd.DataFrame({"input": input})
+  with tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8', suffix='.csv', delete=False) as input_file,\
+    tempfile.NamedTemporaryFile(mode='r', encoding='utf-8', suffix='.csv', delete=False) as output_file:
+        mdl = ErsiliaModel(model_id, output_source = output_file, service_class=service_class, config_json=None,)
+
         # Question - Formatting of input for run
-        input.write("\n".join(input))
-        input.flush()
+        input_df.to_csv(input_file.name, index=False)
+        input_file.flush()
         
-        result = mdl.run(input=input.name, output=output.name, batch_size=batch_size)
-        # iter_values = []
-        # if result is not None:
-        #   iter_values.append(result)
-        print(
-                f"✅ The output successfully generated in {output.name} file!",
-                fg="green",
-                bold=True,
-            )
+        result = mdl.run(input=input_file.name, output=output_file.name, batch_size=batch_size)
+      
+        print(f"✅ The output successfully generated in {output_file.name} file!",)
         
-        output.seek(0)
-        return pd.read_csv(output.name)
+        output_file.seek(0)
+        return pd.read_csv(output_file.name)
