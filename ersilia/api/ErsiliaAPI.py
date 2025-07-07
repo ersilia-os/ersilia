@@ -1,4 +1,4 @@
-from .commands import run, serve, close
+from .commands import run, serve
 
 class ErsiliaAPI:
     def __init__(self, model_id):
@@ -17,3 +17,9 @@ class ErsiliaAPI:
 
     def run(self, input, batch_size):
         print(run.run(self.model_id, input, batch_size))
+
+    def close(self, model_id):
+        self.model_id = model_id
+        print(f"Model {self.model_id} closed.")
+
+    def info(self):
