@@ -27,7 +27,7 @@ In case you need further information to follow the course, be sure to check the 
 
 * Ersilia Model Hub: list of all [available models](https://ersilia.io/model-hub).
 * Ersilia Model Hub: [self-service](https://github.com/ersilia-os/ersilia-self-service) on GitHub (requires a GitHub account).
-* Ersilia Model Hub: [local installation](broken-reference) documentation (only expert users).
+* Ersilia Model Hub: [local installation](https://github.com/ersilia-os/ersilia) documentation (only expert users).
 * [Publications](https://drive.google.com/drive/folders/1lSan_efMH-mOVz41HM-aNvAqyIHcQ0Fr?usp=sharing) referred to during the workshop.
 * [Datasets](https://drive.google.com/drive/folders/1FVd05NeUf_zJXD-OlSyinmOi0lOcLdrr?usp=sharing) required for the workshop.
 
