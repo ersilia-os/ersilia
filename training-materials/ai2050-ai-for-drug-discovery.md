@@ -35,15 +35,7 @@ In case you need further information to follow the course, be sure to check the 
 
 ### Breakout session day 1
 
-Everything we do in AI is driven by the data we have available. Often, this data, whether generated in-house or obtained from literature, is inconsistent and includes many sources of noise. It is important to be aware of the causes for noisy data and how to minimize this before feeding the data into data science tools. It is also helpful to understand the chemical space that the model has trained on and how this relates to the chemical space we are interested in. This understanding will contribute to our confidence in the model predictions before using them for prospective screening.
-
-This activity is split into three parts:
-
-1. A short ice-breaker to get to know your assigned breakout group members.&#x20;
-2. A data cleaning activity from a real-world public dataset.
-3. A chemical space analysis activity to compare the similarities and differences between chemical libraries.
-
-#### Activity 1: Ice-breaker
+#### Pre-activity 1: Ice-breaker
 
 Take a few minutes to get to know the members of your breakout group. Take turns to cover the following points about yourself:
 
@@ -53,48 +45,56 @@ Take a few minutes to get to know the members of your breakout group. Take turns
 
 Lastly, select a scribe for your breakout group as well as someone else who will provide some feedback on your group’s discussion for the next two tasks during the feedback session.
 
-#### Activity 2: Data Cleaning
+#### Task 1: Data Cleaning
 
-<mark style="color:blue;">Task 2.1: Data consistency discussion</mark>
+The Community for Open-Antimicrobial Drug Discovery (CO-ADD) has curated a database of compounds that have been tested for activity against a set of infectious bacteria known as the ESKAPE pathogens. This is a great source of data for training models that can predict a compound’s activity against bacteria. However, we will need to clean the raw data first.
 
-Do some group discussion around the following properties. Why should data have each of them before we train models from it? Think about what problem(s) might result from a dataset that does not have each of these properties.
+This activity is split into three parts:
 
-* Completeness
-* Consistency
-* Accuracy
-* Relevancy
+1. Follow the task 1 guidance to download a dataset from CO-ADD.
+2. Answer questions 1 to 5.
+3. Deliverable: Compile the list of data issues (question 4) that your group identified within the raw dataset which needs to be addressed to clean the dataset.
 
-<mark style="color:blue;">Task 2.2: Data cleaning hands-on example.</mark>
+**Questions:**
 
-During the skills development, we spoke about the need for clean data and some examples of common problems in chemical datasets. Ideally, we need a set of compound structures and corresponding assay outcomes from the same experimental conditions. Now we will identify some examples of data inconsistencies in a dataset from literature.
+1. What is the assay(s) in this dataset measuring?
+2. Why should datasets have each of the following properties before we use them to train models
+   1. Completeness
+   2. Consistency
+   3. Accuracy
+   4. Relevancy
+3. What problem(s) might result from a dataset that does not have each of these properties when used to train a model?
+4. Deliverable: Find examples of data inconsistencies that are causing the dataset to not be complete, consistent, accurate, or relevant for modelling A. baumanni activity. How could you address each of the points you found in (b) to clean the dataset?
+5. Were there any other problems that you thought to look for but were not a problem in this dataset?
 
-The Community for Open-Antimicrobial Drug Discovery (CO-ADD) has curated a database of compounds that have been tested for activity against a set of infectious bacteria known as the ESKAPE pathogens. Let’s say we want to create a clean dataset to predict the activity of compounds against the _A.baumannii_ bacteria. Download the dose-response dataset from this [link](https://db.co-add.org/downloads/) and answer the following questions:
+**Deliverable:**
 
-1. What is the output of the assay measuring?
-2. Find examples of data inconsistencies that cause the dataset to not be complete, consistent, accurate, or relevant for modelling _A.baumannii_ activity. How did you find this issue in the dataset?
-3. How could you address each of the points you found in (b) to make the dataset more clean?
-4. Were there any other checks you performed where the dataset did not have an issue?
+Place your answers to question 4 in a word document. You will email these answers after adding the task 2 deliverable to this document.
 
-#### Activity 3: Chemical Space Exploration
+#### Task 2: Chemical Space Exploration
 
-<mark style="color:blue;">Task 3.1: Chemical space discussion</mark>
+Let’s imagine we have trained a model to predict antiplasmodium activity and we have two potential compound libraries that we now could virtually screen for new chemical hits. We want to start by selecting just one of these two libraries based on how relevant the training data of our model might is to each library.&#x20;
 
-In group, discuss and answer the following questions:
+Steps to complete this activity:
+
+1. Follow the task 2 guidance to download a dataset from ChEMBL.
+2. Answer questions 1 to 6.
+3. Deliverable (question 5): a) A screenshot of your UMAP chemical space, b) the library you have chosen to screen and a short reason why you choose this library.
+
+**Questions:**
 
 1. What do you understand by the term 'chemical space’?
-2. How does this differ to the concept of 'drug-like molecules’?
-3. Why should the compounds we use to train models and compounds we want predictions for be similar?
-4. How might the requirements for our training data vary between the following scenarios?
-   1. Virtual screening for novel chemical hits?
-   2. Ranking closely related analogues within one chemical series?
+2. How does this differ from the concept of 'drug-like molecules’?
+3. Why should the compounds we use to train models be similar to the compounds we want to obtain predictions for?
+4. What type of training data is needed for each of the following scenarios?:
+   1. Virtual screening of broad chemical space for novel chemical hits?
+   2. Ranking closely related analogues within a chemical series to prioritize compounds for synthesis?
+5. Deliverable: Follow the guidance for task 2 to download and plot the chemical space of several antiplasmodial screening libraries. Do you think that a model that has been trained on the St Jude 3D7 dataset would be better at predicting activity in the MMV Malaria Box or the Open Source Malaria libraries? Why?
+6. How could we improve our model once we’ve experimentally tested the first set of compounds that were selected from the virtual screening?
 
-<mark style="color:blue;">Task 3.2: Chemical space visualization</mark>
+**Deliverable:**&#x20;
 
-Go to ChEMBL and download the St Jude 3D7 screening set for malaria (ID: CHEMBL730079). Follow the step-by-step instructions in the breakout session slides. Then upload this dataset to the chemical space visualization app (link) and select the ‘MMV Malaria Box’ and ‘Open Source Malaria’ checkboxes from the list of example libraries. Imagine we use the St Jude 3D7 dataset to train a model to screen for new chemical hits in the MMV Malaria Box and Open Source Malaria datasets. Answer the following questions:
-
-1. Do you think that a model that has been trained on the St Jude 3D7 dataset would be more predictive for the MMV Malaria Box or the Open Source Malaria libraries? Why?
-2. What steps could you take to make our model more applicable to the library that would be more difficult to make predictions for?
-3. How could we improve our model once we’ve experimentally tested the first set of compounds that were selected from the virtual screening?
+Add to your deliverable document from Task 1 a) A screenshot of your UMAP chemical space, b) the library you have chosen to screen and a short reason why you choose this library. Then email this document to the facilitator by the end of the breakout session.
 
 ### Breakout session day 2
 
