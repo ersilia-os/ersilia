@@ -1,4 +1,4 @@
-from commands import run
+from .commands import run
 
 class ErsiliaAPI:
     def __init__(self, model_id):
