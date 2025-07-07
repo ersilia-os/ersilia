@@ -4,7 +4,7 @@ from ... import ErsiliaModel
 from ...core.session import Session
 
 # input is list
-def run(input, batch_size=100):
+def run(model_id, input, batch_size=100):
     # Runs the current model on a list of SMILES strings and 
     # returns the prediction as a pandas data frame.
 	   
@@ -22,18 +22,22 @@ def run(input, batch_size=100):
           fg="red")
     return
   
-  mdl = ErsiliaModel(
-    model_id,
-    service_class=service_class,
-    config_json=None,
-        )
   with tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8', suffix='.csv', delete=False) as input,\
     tempfile.NamedTemporaryFile(mode='r', encoding='utf-8', suffix='.csv', delete=False) as output:
+        mdl = ErsiliaModel(model_id, output_source = output, service_class=service_class, config_json=None,)
         # Question - Formatting of input for run
         input.write("\n".join(input))
         input.flush()
         
-        result = mdl.run(input=input, output=output, batch_size=batch_size)
+        result = mdl.run(input=input.name, output=output.name, batch_size=batch_size)
+        # iter_values = []
+        # if result is not None:
+        #   iter_values.append(result)
+        print(
+                f"✅ The output successfully generated in {output.name} file!",
+                fg="green",
+                bold=True,
+            )
         
         output.seek(0)
-        return pd.read_csv(output)
+        return pd.read_csv(output.name)
