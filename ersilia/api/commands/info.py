@@ -11,4 +11,4 @@ def info(model_id):
   if model_id is None:
       raise RuntimeError("No model was served")
   mdl = ErsiliaModel(model_id, service_class=service_class) 
-  return mdl.info() # check that this is a dictionary (maybe simplify if comp.)
+  print(mdl.info()) # check that this is a dictionary (maybe simplify if comp.)
