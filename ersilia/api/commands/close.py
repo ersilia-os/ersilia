@@ -1,10 +1,9 @@
-from ... import ErsiliaModel
-from ..core.session import Session
-from ..utils.session import deregister_model_session
+from .... import ErsiliaModel
+from ...core.session import Session
+from ...utils.session import deregister_model_session
  
-def close():
+def close(model_id):
   session = Session(config_json=None)
-  model_id = session.current_model_id()
   service_class = session.current_service_class()
   if model_id is None:
     raise RuntimeError("No model was served")
