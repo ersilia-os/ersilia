@@ -9,3 +9,5 @@ mdl.close()
 # input = ["CCCCO", "CCO", "CCCN"]
 # df = mdl.run(input, 100)
 # mdl.close()
+
+mdl.info()
