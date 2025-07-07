@@ -2,7 +2,6 @@ from ... import ErsiliaModel
 from ...store.utils import OutputSource
 from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
-from ..messages import ModelNotFound
 
 def serve(
     model: str,

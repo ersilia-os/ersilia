@@ -1,7 +1,7 @@
 import pandas as pd
 import tempfile
 from ... import ErsiliaModel
-from ..core.session import Session
+from ...core.session import Session
 
 # input is list
 def run(input, batch_size=100):

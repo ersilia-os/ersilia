@@ -1,7 +1,6 @@
-from ersilia.api import ErsiliaAPI
+from ersilia.api.ErsiliaAPI import ErsiliaAPI
 
-mdl = ErsiliaAPI("eo3sb5e")
-mdl.serve()
-input = ["CCCCO"]
+mdl = ErsiliaAPI("eos3b5e")
+# input = ["CCCCO"]
 # example_input = mdl.example(n = 10)
-df = mdl.run(input, 100)
+# df = mdl.run(input, 100)
