@@ -23,7 +23,4 @@ class ErsiliaAPI:
         print(f"Model {self.model_id} closed.")
     
     def info(self):
-        info.info()
-
-    # def example():
-    #     example.example(model, n_samples=5, random=True, deterministic=True)
+        info.info(self.model_id)
