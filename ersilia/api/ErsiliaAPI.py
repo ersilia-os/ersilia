@@ -1,4 +1,4 @@
-from .commands import run, serve, close
+from .commands import run, serve, close, info
 
 class ErsiliaAPI:
     def __init__(self, model_id):
@@ -23,4 +23,4 @@ class ErsiliaAPI:
         print(f"Model {self.model_id} closed.")
     
     def info(self):
-        info.info()
+        info.info(model_id)
