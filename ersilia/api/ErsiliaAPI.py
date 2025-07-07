@@ -21,3 +21,6 @@ class ErsiliaAPI:
     def close(self):
         close.close(self.model_id)
         print(f"Model {self.model_id} closed.")
+    
+    def info(self):
+        info.info()
