@@ -2,10 +2,8 @@ import json
 import tempfile
 
 from ... import ModelBase
-from ..core.session import Session
-from ..io.input import ExampleGenerator
-from .. import echo
-from . import ersilia_cli
+from ...core.session import Session
+from ...io.input import ExampleGenerator
 
 """Create example command"""
 def example(model, n_samples=5, random=True, deterministic=True):
@@ -24,6 +22,7 @@ def example(model, n_samples=5, random=True, deterministic=True):
               output_file_name,
               try_predefined=not random,
               deterministic=deterministic,
+              simple=True
           )
         output.seek(0)
         example_data = json.load(output)
