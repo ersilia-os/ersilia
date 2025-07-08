@@ -1,8 +1,17 @@
-from .commands import run, serve, close, info, example
+from .commands import run, serve, close, info, example, fetch, delete
 
 class ErsiliaAPI:
     def __init__(self, model_id):
         self.model_id = model_id
+        print(fetch.fetch(self, model=model_id,
+        overwrite=True,
+        from_dir=None,
+        from_github=False,
+        from_dockerhub=True,
+        version=latest,
+        from_s3=False,
+        from_hosted=False,
+        with_fastapi=True))
         serve_dict = serve.serve(model=model_id,
                     port=None,
                     track=False,
@@ -19,12 +28,14 @@ class ErsiliaAPI:
         print(run.run(self.model_id, input, batch_size))
 
     def close(self):
-        close.close(self.model_id)
-        print(f"Model {self.model_id} closed.")
+        print(close.close(self.model_id))
     
     def info(self):
         info.info(self.model_id)
 
     def example(self, n_samples, random, deterministic):
         print(example.example(self.model_id, n_samples, random, deterministic))
+
+    def delete():
+        print(delete.delete(self.model_id))
 

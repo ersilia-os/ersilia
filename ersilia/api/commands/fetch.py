@@ -1,52 +1,51 @@
+from ersilia.models.base import ModelBase
+from ersilia.models.fetcher import ModelFetcher
+from ersilia.api.commands.utils import _fetch
+
 def fetch(
-        model,
-        overwrite,
-        from_dir,
-        from_github,
-        from_dockerhub,
-        version,
-        from_s3,
-        from_hosted,
-        hosted_url,
-        with_bentoml,
-        with_fastapi,
-    ):
-        if with_bentoml and with_fastapi:
-            raise Exception("Cannot use both BentoML and FastAPI")
+    model,
+    overwrite,
+    from_dir,
+    from_github,
+    from_dockerhub,
+    version,
+    from_s3,
+    from_hosted,
+    with_fastapi,
+    with_bentoml=None,
+    hosted_url=None,
+):
+    if from_dir is not None:
+        mdl = ModelBase(repo_path=from_dir)
+    else:
+        mdl = ModelBase(model_id_or_slug=model)
+    model_id = mdl.model_id
+    print(
+        ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
+        fg="blue",
+    )
+    mf = ModelFetcher(
+        repo_path=from_dir,
+        overwrite=overwrite,
+        force_from_github=from_github,
+        force_from_s3=from_s3,
+        force_from_dockerhub=from_dockerhub,
+        img_version=version,
+        force_from_hosted=from_hosted,
+        force_with_bentoml=with_bentoml,
+        force_with_fastapi=with_fastapi,
+        hosted_url=hosted_url,
+        local_dir=from_dir,
+    )
+    fetch_result = _fetch(mf, model_id)
 
-        if from_dir is not None:
-            mdl = ModelBase(repo_path=from_dir)
-        else:
-            mdl = ModelBase(model_id_or_slug=model)
-        model_id = mdl.model_id
+    if fetch_result.fetch_success:
         print(
-            ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
-            fg="blue",
+            ":thumbs_up: Model {0} fetched successfully!".format(model_id),
+            fg="green",
         )
-        mf = ModelFetcher(
-            repo_path=from_dir,
-            overwrite=overwrite,
-            force_from_github=from_github,
-            force_from_s3=from_s3,
-            force_from_dockerhub=from_dockerhub,
-            img_version=version,
-            force_from_hosted=from_hosted,
-            force_with_bentoml=with_bentoml,
-            force_with_fastapi=with_fastapi,
-            hosted_url=hosted_url,
-            local_dir=from_dir,
+    else:
+        print(
+            f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
+            fg="red",
         )
-        fetch_result = _fetch(mf, model_id)
-
-        if fetch_result.fetch_success:
-            echo(
-                ":thumbs_up: Model {0} fetched successfully!".format(model_id),
-                fg="green",
-            )
-        else:
-            echo(
-                f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
-                fg="red",
-            )
-
-    return fetch

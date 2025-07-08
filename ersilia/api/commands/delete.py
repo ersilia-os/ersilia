@@ -1,4 +1,4 @@
-from ... import ModelBase
+from .... import ModelBase
 from ...hub.content.catalog import ModelCatalog
 from ...hub.delete.delete import ModelFullDeleter
 

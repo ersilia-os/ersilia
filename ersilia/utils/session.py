@@ -3,6 +3,7 @@ import os
 import shutil
 import stat
 
+import psutil
 
 from ..default import (
     EOS,
