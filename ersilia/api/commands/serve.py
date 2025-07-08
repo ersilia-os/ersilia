@@ -84,16 +84,50 @@ def serve(
         for api in apis:
             if api != "run":
                 additional_apis.append(api)
-     
 
-    return {
-        "Model ID": mdl.model_id,
-        "URL": mdl.url,
-        "SRV": mdl.scl,
-        "Session": mdl.session._session_dir,
-        "Cache Fetching Mode": cache_status,
-        "Local Cache": "Enabled" if redis_setup._is_amenable()[0] else "Disabled",
-        "Tracking": "Enabled" if track else "Disabled",
-        "Default API": "run",
-        "Additional APIs": additional_apis
-    }
+    print(f"\033[92m🚀 Serving model {mdl.model_id}: {mdl.slug}\033[0m")
+    print("")
+    print(f"\033[93m   URL: {mdl.url}\033[0m")
+    if str(mdl.pid) != "-1":
+        print(f"\033[93m   PID: {mdl.pid}\033[0m")
+    print(f"\033[93m   SRV: {mdl.scl}\033[0m")
+    print(f"\033[93m   Session: {mdl.session._session_dir}\033[0m")
+    print("")
+    # print("\033[94m👉 Run model:\033[0m")
+    # print("\033[94m   - run\033[0m")
+    # apis = mdl.get_apis()
+    # if apis != ["run"]:
+    #     print("")
+    #     print("\033[94m   These APIs are also valid:\033[0m")
+    #     for api in apis:
+    #         if api != "run":
+    #             print(f"\033[94m  - {api}\033[0m")
+    # print("")
+    # print("\033[94m 💁 Information:\033[0m")
+    # print("\033[94m   - info\033[0m")
+    # print("")
+    print("\033[94m 🔄 Cache fetching mode:\033[0m")
+    print(f"\033[91m   - {cache_status}\033[0m") if cache_status == "Disabled" else print(
+        f"\033[92m   - {cache_status}\033[0m")
+    print("")
+    print("\033[94m 💾 Local cache:\033[0m")
+    print("\033[92m   - Enabled\033[0m") if redis_setup._is_amenable()[0] else print(
+        f"\033[92m   - Disabled\033[0m")
+    print("")
+    print("\0ss[94m 📈 Tracking: \033[0m")
+    if track:
+        print(f"\033[92m   - Enabled ({tracking_use_case})\033[0m")
+    else:
+        print("\033[91m   - Disabled\033[0m") 
+
+    # return {
+    #     "Model ID": mdl.model_id,
+    #     "URL": mdl.url,
+    #     "SRV": mdl.scl,
+    #     "Session": mdl.session._session_dir,
+    #     "Cache Fetching Mode": cache_status,
+    #     "Local Cache": "Enabled" if redis_setup._is_amenable()[0] else "Disabled",
+    #     "Tracking": "Enabled" if track else "Disabled",
+    #     "Default API": "run",
+    #     "Additional APIs": additional_apis
+    # }
