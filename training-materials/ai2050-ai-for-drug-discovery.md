@@ -140,11 +140,17 @@ For each model, think about the following questions:
 * What is the interpretation of the model outcome?
 * What cut-off, if any, we should use for that particular model?
 
+**Deliverable:** fill in the following [excel table](https://docs.google.com/spreadsheets/d/1Yq39mA3Xy2u7JqdwPHgEHfe2AEPziPHr_ztQAnN-JQg/edit?usp=sharing) and send it to gemma\[at]ersilia.io
+
 In addition, think about the following concepts:
 
 * Does the outcome of the model make sense? If it does not make sense, perhaps we have the wrong interpretation of the model output.
 * Is the cut-off I have selected too stringent (i.e, I am losing too many molecules and I should be more permissive?)
 * Is this model very relevant for the current dataset (i.e, is malaria activity equally important as natural product likeness?)
+
+{% hint style="info" %}
+Model information can be found in the metadata of the model available through Ersilia's GitHub repository, but it's best to read the original publication. Publications are available in [this folder](https://drive.google.com/drive/folders/1Fs_jYG_jh1g19P2T2wV7UBbg0lec1yHb) with highlighted sections to facilitate model understanding.
+{% endhint %}
 
 **Molecule selection**
 
@@ -159,6 +165,8 @@ Finally, prepare a short presentation for the rest of the participants. This sho
 * Which models did you choose and why
 * What selection strategy did you decide
 * Which were your selected molecules
+
+**Deliverable:** list of top 10 candidates
 
 {% hint style="success" %}
 Extension: if you finish the proposed activity, have a look at what else is available in the [Ersilia Model Hub](https://ersilia.io/model-hub) and what would you like to see deployed online!
