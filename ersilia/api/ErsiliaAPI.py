@@ -8,7 +8,7 @@ class ErsiliaAPI:
         from_dir=None,
         from_github=False,
         from_dockerhub=True,
-        version=None, # how to make this the latest version?
+        version="latest", # how to make this the latest version?
         from_s3=False,
         from_hosted=False,
         with_fastapi=True,
