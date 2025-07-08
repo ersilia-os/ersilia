@@ -110,8 +110,8 @@ In this activity, we will replicate the work described in Liu et al, 2023, where
 
 During the skills development session, we have done a deep dive into ML model building using the _A.baumannii_ model as an example. Now, you have to download the list of compounds available in the Drug Repurposing Hub and continue the "virtual screening" similar to the original author's work. To that end, we suggest running predictions against _A.baumannii_ activity and a few accessory models available through Ersilia to select the best candidates. In short, the steps to follow are:
 
-1. Download the Drug Repurposing Hub data for your group from this [link](https://drive.google.com/drive/folders/1FVd05NeUf_zJXD-OlSyinmOi0lOcLdrr?usp=drive_link).
-2. Look at the [Ersilia Model Hub](https://ersilia.io/model-hub) models available online (select Online in the left menu of the website).
+1. Download the Drug Repurposing Hub data for your group from this [link](https://drive.google.com/drive/folders/121MigvZot9Dx0SCgw9cmGUseENDXkqjP?usp=drive_link).
+2. Look at the pre-selected [Ersilia Model Hub](https://ersilia.io/model-hub) models available online (eos3804, eos4e40, eos43at, eos9ei3, eos7d58, eos9yui).
 3. Select which models would be relevant to your exercise and why, and take notes on model interpretation, expected results, priority level etc.
 4. Run predictions for the Drug Repurposing Hub molecules using the selected models.&#x20;
 5. Select the best molecule candidates based on your defined filters of activity, ADME properties and other considerations.
@@ -161,7 +161,7 @@ Finally, prepare a short presentation for the rest of the participants. This sho
 * Which were your selected molecules
 
 {% hint style="success" %}
-Extension: if you finish the proposed activity, have a look at what else is available in the Ersilia Model Hub and what would you like to see deployed online!
+Extension: if you finish the proposed activity, have a look at what else is available in the [Ersilia Model Hub](https://ersilia.io/model-hub) and what would you like to see deployed online!
 {% endhint %}
 
 ### Breakout session day 3
