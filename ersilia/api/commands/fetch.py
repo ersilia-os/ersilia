@@ -6,8 +6,8 @@ from ...hub.fetch.fetch import ModelFetcher
 nest_asyncio.apply()
  
 def _fetch(mf, model_id):
-        res = asyncio.run(mf.fetch(model_id))
-        return res
+    res = asyncio.run(mf.fetch(model_id))
+    return res
 def fetch(
     model,
     overwrite,
