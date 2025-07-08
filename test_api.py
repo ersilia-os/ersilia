@@ -1,4 +1,4 @@
-from ersilia.api.ErsiliaAPI import ErsiliaAPI
+from ersilia.api.create_api import ErsiliaAPI
 
 mdl = ErsiliaAPI("eos3b5e")
 # input = ["CCCCO", "C", "CC"]
