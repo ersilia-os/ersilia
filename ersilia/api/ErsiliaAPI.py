@@ -3,15 +3,18 @@ from .commands import run, serve, close, info, example, fetch, delete
 class ErsiliaAPI:
     def __init__(self, model_id):
         self.model_id = model_id
-        print(fetch.fetch(self, model=model_id,
+        print(fetch.fetch(model=model_id,
         overwrite=True,
         from_dir=None,
         from_github=False,
         from_dockerhub=True,
-        version=latest,
+        version=None, # how to make this the latest version?
         from_s3=False,
         from_hosted=False,
-        with_fastapi=True))
+        with_fastapi=True,
+        with_bentoml=None,
+        hosted_url=None,
+        ))
         serve_dict = serve.serve(model=model_id,
                     port=None,
                     track=False,
@@ -36,6 +39,6 @@ class ErsiliaAPI:
     def example(self, n_samples, random, deterministic):
         print(example.example(self.model_id, n_samples, random, deterministic))
 
-    def delete():
+    def delete(self):
         print(delete.delete(self.model_id))
 

@@ -1,8 +1,8 @@
 from ersilia.api.ErsiliaAPI import ErsiliaAPI
 
-mdl = ErsiliaAPI("eos3b5e")
+mdl = ErsiliaAPI("eos8ub5")
 input = ["CCCCO", "CCO"]
-mdl.delete()
+#mdl.delete()
 
 # mdl = ErsiliaAPI("eos3b5e")
 # input = ["CCCCO", "CCO", "CCCN"]

@@ -1,9 +1,15 @@
+
+import asyncio
+import nest_asyncio
 from ... import ModelBase
 from ...hub.fetch.fetch import ModelFetcher
-#from ersilia.api.commands.utils import _fetch
-
+nest_asyncio.apply()
+ 
+def _fetch(mf, model_id):
+        res = asyncio.run(mf.fetch(model_id))
+        return res
 def fetch(
-    model,
+     model,
     overwrite,
     from_dir,
     from_github,
@@ -11,10 +17,12 @@ def fetch(
     version,
     from_s3,
     from_hosted,
+    hosted_url,
+    with_bentoml,
     with_fastapi,
-    with_bentoml=None,
-    hosted_url=None,
 ):
+    if with_bentoml and with_fastapi:
+            raise Exception("Cannot use both BentoML and FastAPI")
     if from_dir is not None:
         mdl = ModelBase(repo_path=from_dir)
     else:
@@ -22,7 +30,6 @@ def fetch(
     model_id = mdl.model_id
     print(
         ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
-        fg="blue",
     )
     mf = ModelFetcher(
         repo_path=from_dir,
@@ -41,11 +48,9 @@ def fetch(
 
     if fetch_result.fetch_success:
         print(
-            ":thumbs_up: Model {0} fetched successfully!".format(model_id),
-            fg="green",
+            ":thumbs_up: Model {0} fetched successfully!".format(model_id)
         )
     else:
         print(
-            f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
-            fg="red",
+            f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}"
         )
