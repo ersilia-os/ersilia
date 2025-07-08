@@ -1,6 +1,6 @@
-from ersilia.models.base import ModelBase
-from ersilia.models.fetcher import ModelFetcher
-from ersilia.api.commands.utils import _fetch
+from ... import ModelBase
+from ...hub.fetch.fetch import ModelFetcher
+#from ersilia.api.commands.utils import _fetch
 
 def fetch(
     model,

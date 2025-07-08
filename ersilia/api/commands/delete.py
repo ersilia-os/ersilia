@@ -1,8 +1,8 @@
-from .... import ModelBase
+from ... import ModelBase
 from ...hub.content.catalog import ModelCatalog
 from ...hub.delete.delete import ModelFullDeleter
 
-from ...deletion import ModelFullDeleter  # adjust import as needed
+#from ...deletion import ModelFullDeleter  # adjust import as needed
 
 def delete(model_id: str) -> str:
     """
