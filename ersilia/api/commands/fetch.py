@@ -9,7 +9,7 @@ def _fetch(mf, model_id):
         res = asyncio.run(mf.fetch(model_id))
         return res
 def fetch(
-     model,
+    model,
     overwrite,
     from_dir,
     from_github,
