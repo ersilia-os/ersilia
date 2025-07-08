@@ -24,6 +24,6 @@ def delete(model_id: str) -> str:
     if can_delete:
         print(f"Deleting model {model_id}...")
         md.delete(model_id)
-        return f" Model {model_id} deleted successfully!"
+        return f"💥 Model {model_id} deleted successfully!"
     else:
         raise RuntimeError(f" {reason}")

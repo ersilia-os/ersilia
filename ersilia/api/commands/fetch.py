@@ -29,7 +29,7 @@ def fetch(
         mdl = ModelBase(model_id_or_slug=model)
     model_id = mdl.model_id
     print(
-        ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
+        f"⬇️ Fetching model {0}: {1}".format(model_id, mdl.slug),
     )
     mf = ModelFetcher(
         repo_path=from_dir,
@@ -48,9 +48,9 @@ def fetch(
 
     if fetch_result.fetch_success:
         print(
-            ":thumbs_up: Model {0} fetched successfully!".format(model_id)
+            f" Model {0} fetched successfully!".format(model_id)
         )
     else:
         print(
-            f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}"
+            f"👎 Model {model_id} failed to fetch! {fetch_result.reason}"
         )
