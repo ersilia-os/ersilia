@@ -3,6 +3,7 @@ from ...store.utils import OutputSource
 from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from ... import __version__, logger
+from .. echo import echo
 
 def serve(
     model: str,
@@ -91,15 +92,52 @@ def serve(
         for api in apis:
             if api != "run":
                 additional_apis.append(api)
-
-    print(f"\033[92m🚀 Serving model {mdl.model_id}: {mdl.slug}\033[0m")
-    print("")
-    print(f"\033[93m   URL: {mdl.url}\033[0m")
+    echo(
+            ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"
+        )
+    echo("")
+    echo("   URL: {0}".format(mdl.url), fg="yellow")
     if str(mdl.pid) != "-1":
-        print(f"\033[93m   PID: {mdl.pid}\033[0m")
-    print(f"\033[93m   SRV: {mdl.scl}\033[0m")
-    print(f"\033[93m   Session: {mdl.session._session_dir}\033[0m")
-    print("")
+        echo("   PID: {0}".format(mdl.pid), fg="yellow")
+    echo("   SRV: {0}".format(mdl.scl), fg="yellow")
+    echo("   Session: {0}".format(mdl.session._session_dir), fg="yellow")
+    echo("")
+    # echo(":backhand_index_pointing_right: Run model:", fg="blue")
+    # echo("   - run", fg="blue")
+    # apis = mdl.get_apis()
+    # if apis != ["run"]:
+    #     echo("")
+    #     echo("   These APIs are also valid:", fg="blue")
+    #     for api in apis:
+    #         if api != "run":
+    #             echo("   - {0}".format(api), fg="blue")
+    # echo("")
+    # echo(":person_tipping_hand: Information:", fg="blue")
+    # echo("   - info", fg="blue")
+    # echo("")
+    echo("🔄 Cache fetching mode:", fg="blue")
+    echo(f"   - {cache_status}", fg="red") if cache_status == "Disabled" else echo(
+        f"   - {cache_status}", fg="green"
+    )
+    echo("")
+    echo(":floppy_disk: Local cache:", fg="blue")
+    echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
+        "   - Disabled", fg="red"
+    )
+    echo("")
+    echo(":chart_increasing: Tracking:", fg="blue")
+    if track:
+        echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
+    else:
+        echo("   - Disabled", fg="red")
+    # print(f"\033[92m🚀 Serving model {mdl.model_id}: {mdl.slug}\033[0m")
+    # print("")
+    # print(f"\033[93m   URL: {mdl.url}\033[0m")
+    # if str(mdl.pid) != "-1":
+    #     print(f"\033[93m   PID: {mdl.pid}\033[0m")
+    # print(f"\033[93m   SRV: {mdl.scl}\033[0m")
+    # print(f"\033[93m   Session: {mdl.session._session_dir}\033[0m")
+    # print("")
     # print("\033[94m👉 Run model:\033[0m")
     # print("\033[94m   - run\033[0m")
     # apis = mdl.get_apis()

@@ -34,7 +34,7 @@ class ErsiliaAPI:
         print(run.run(self.model_id, input, batch_size))
 
     def close(self):
-        print(close.close(self.model_id))
+        close.close(self.model_id)
     
     def info(self):
         info.info(self.model_id)
@@ -43,5 +43,5 @@ class ErsiliaAPI:
         print(example.example(self.model_id, n_samples, random, deterministic))
 
     def delete(self):
-        print(delete.delete(self.model_id))
+        delete.delete(self.model_id, verbose=False)
 

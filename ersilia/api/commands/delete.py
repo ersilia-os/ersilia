@@ -1,10 +1,12 @@
 from ... import ModelBase
 from ...hub.content.catalog import ModelCatalog
 from ...hub.delete.delete import ModelFullDeleter
+from ... import __version__, logger
+from .. echo import echo
 
 #from ...deletion import ModelFullDeleter  # adjust import as needed
 
-def delete(model_id: str) -> str:
+def delete(model_id: str, verbose=False):
     """
     Deletes a specified model from local storage.
 
@@ -17,13 +19,25 @@ def delete(model_id: str) -> str:
     Raises:
         RuntimeError: If the model cannot be deleted.
     """
+    if verbose:
+        logger.set_verbosity(1)
+    else:
+        logger.set_verbosity(0)
+
     md = ModelFullDeleter()
     can_delete, reason = md.can_be_deleted(model_id)
     #can_delete is bool, reason is message
 
     if can_delete:
-        print(f"Deleting model {model_id}...")
+        echo("Deleting model {0}".format(model_id))
         md.delete(model_id)
-        return f"💥 Model {model_id} deleted successfully!"
+        echo(
+                ":collision: Model {0} deleted successfully!".format(model_id),
+                fg="green",
+            )
     else:
-        raise RuntimeError(f" {reason}")
+        echo(
+                f":person_tipping_hand: {reason}".format(model_id),
+                fg="yellow",
+            )
+    return
