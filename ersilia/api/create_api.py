@@ -39,8 +39,8 @@ class ErsiliaAPI:
     def info(self):
         info.info(self.model_id)
 
-    def example(self, n_samples, file_name, simple, random, deterministic):
-        print(example.example(self.model_id, n_samples, file_name, simple, random, deterministic))
+    def example(self, file_name, simple, random, n_samples, deterministic):
+        print(example.example(self.model_id, file_name, simple, random, n_samples, deterministic))
 
     def delete(self):
         delete.delete(self.model_id, verbose=False)
