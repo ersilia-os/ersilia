@@ -13,7 +13,7 @@ mdl.delete()
 # mdl.serve()
 # input = ["CCCCO", "C", "CC"]
 # df = mdl.run(input, 100)
-# mdl.info()
+mdl.info()
 # mdl.example()
 # mdl.close()
 # mdl.delete()
