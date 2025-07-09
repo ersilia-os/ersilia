@@ -151,19 +151,19 @@ def serve(
     # print("\033[94m 💁 Information:\033[0m")
     # print("\033[94m   - info\033[0m")
     # print("")
-    print("\033[94m 🔄 Cache fetching mode:\033[0m")
-    print(f"\033[91m   - {cache_status}\033[0m") if cache_status == "Disabled" else print(
-        f"\033[92m   - {cache_status}\033[0m")
-    print("")
-    print("\033[94m 💾 Local cache:\033[0m")
-    print("\033[92m   - Enabled\033[0m") if redis_setup._is_amenable()[0] else print(
-        f"\033[92m   - Disabled\033[0m")
-    print("")
-    print("\033[94m 📈 Tracking: \033[0m")
-    if track:
-        print(f"\033[92m   - Enabled ({tracking_use_case})\033[0m")
-    else:
-        print("\033[91m   - Disabled\033[0m") 
+    # print("\033[94m 🔄 Cache fetching mode:\033[0m")
+    # print(f"\033[91m   - {cache_status}\033[0m") if cache_status == "Disabled" else print(
+    #     f"\033[92m   - {cache_status}\033[0m")
+    # print("")
+    # print("\033[94m 💾 Local cache:\033[0m")
+    # print("\033[92m   - Enabled\033[0m") if redis_setup._is_amenable()[0] else print(
+    #     f"\033[92m   - Disabled\033[0m")
+    # print("")
+    # print("\033[94m 📈 Tracking: \033[0m")
+    # if track:
+    #     print(f"\033[92m   - Enabled ({tracking_use_case})\033[0m")
+    # else:
+    #     print("\033[91m   - Disabled\033[0m") 
 
     # return {
     #     "Model ID": mdl.model_id,
