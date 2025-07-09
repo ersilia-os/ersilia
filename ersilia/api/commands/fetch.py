@@ -1,8 +1,8 @@
-
 import asyncio
 import nest_asyncio
 from ... import ModelBase
 from ...hub.fetch.fetch import ModelFetcher
+from ... import __version__, logger
 nest_asyncio.apply()
  
 def _fetch(mf, model_id):
@@ -20,7 +20,13 @@ def fetch(
     hosted_url,
     with_bentoml,
     with_fastapi,
+    verbose,
 ):
+    if verbose:
+        logger.set_verbosity(1)
+    else:
+        logger.set_verbosity(0)
+
     if with_bentoml and with_fastapi:
             raise Exception("Cannot use both BentoML and FastAPI")
     if from_dir is not None:

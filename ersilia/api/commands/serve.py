@@ -2,6 +2,7 @@ from ... import ErsiliaModel
 from ...store.utils import OutputSource
 from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
+from ... import __version__, logger
 
 def serve(
     model: str,
@@ -13,6 +14,7 @@ def serve(
     cloud_cache_only: bool = False,
     cache_only: bool = False,
     max_cache_memory_frac: float = None,
+    verbose: bool = False,
 ):
     """
     Serves a specified model as an API.
@@ -31,6 +33,11 @@ def serve(
     Returns:
         A dictionary of URL, Model ID, SRV, Session, Caching Mode Status, Tracking Status
     """
+    if verbose:
+        logger.set_verbosity(1)
+    else:
+        logger.set_verbosity(0)
+        
     # recommended value 0.2-0.7
     if max_cache_memory_frac is not None:
         if not (0.2 <= max_cache_memory_frac <= 0.7):

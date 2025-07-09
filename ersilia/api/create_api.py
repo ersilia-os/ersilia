@@ -14,6 +14,7 @@ class ErsiliaAPI:
         with_fastapi=True,
         with_bentoml=None,
         hosted_url=None,
+        verbose=False,
         ))
         
     def serve(self):
@@ -26,6 +27,7 @@ class ErsiliaAPI:
                     cloud_cache_only=False,
                     cache_only=False,
                     max_cache_memory_frac=None,
+                    verbose=False
                     )
         # print(serve_dict)
 
