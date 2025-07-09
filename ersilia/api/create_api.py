@@ -3,7 +3,7 @@ from .commands import run, serve, close, info, example, fetch, delete
 class ErsiliaAPI:
     def __init__(self, model_id):
         self.model_id = model_id
-        print(fetch.fetch(model=model_id,
+        fetch.fetch(model=model_id,
         overwrite=True,
         from_dir=None,
         from_github=False,
@@ -15,7 +15,7 @@ class ErsiliaAPI:
         with_bentoml=None,
         hosted_url=None,
         verbose=False,
-        ))
+        )
         
     def serve(self):
         serve.serve(self.model_id,
