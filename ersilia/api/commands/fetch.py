@@ -3,6 +3,7 @@ import nest_asyncio
 from ... import ModelBase
 from ...hub.fetch.fetch import ModelFetcher
 from ... import __version__, logger
+from .. echo import echo
 nest_asyncio.apply()
  
 def _fetch(mf, model_id):
