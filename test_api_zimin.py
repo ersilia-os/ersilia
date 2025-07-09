@@ -4,11 +4,8 @@ mdl = ErsiliaAPI("eos3b5e")
 mdl.serve()
 input = ["CCCCO", "C", "CC"]
 df = mdl.run(input, 100)
-mdl.info()
-mdl.example(5, True, True)
-mdl.close()
+mdl.example("example_filename", True, True, 5, True)
 mdl.delete()
-
 # mdl = ErsiliaAPI("eos3b5e")
 # input = ["CCCCO", "CCO", "CCCN"]
 # df = mdl.run(input, 100)
