@@ -121,7 +121,7 @@ def serve(
     print("\033[92m   - Enabled\033[0m") if redis_setup._is_amenable()[0] else print(
         f"\033[92m   - Disabled\033[0m")
     print("")
-    print("\0ss[94m 📈 Tracking: \033[0m")
+    print("\033[94m 📈 Tracking: \033[0m")
     if track:
         print(f"\033[92m   - Enabled ({tracking_use_case})\033[0m")
     else:
