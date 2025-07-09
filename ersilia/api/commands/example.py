@@ -7,7 +7,7 @@ from ...io.input import ExampleGenerator
 from .. echo import echo
 
 """Create example command"""
-def example(model, file_name, simple, random, n_samples = 5, deterministic = False):
+def example(model, file_name, simple = True, random = True, n_samples = 5, deterministic = False): #model, file_name, simple, random, n_samples = 5, deterministic = False
     if model is not None:
         model_id = ModelBase(model).model_id
     else:
