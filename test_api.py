@@ -5,6 +5,6 @@ mdl.serve()
 input = ["CCCCO", "C", "CC"]
 df = mdl.run(input, 100)
 mdl.info()
-mdl.example()
+mdl.example(5, True, True)
 mdl.close()
 mdl.delete()
