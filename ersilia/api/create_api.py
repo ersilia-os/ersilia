@@ -18,7 +18,7 @@ class ErsiliaAPI:
         ))
         
     def serve(self):
-        serve_dict = serve.serve(self.model_id,
+        serve.serve(self.model_id,
                     port=None,
                     track=False,
                     tracking_use_case= "local",
@@ -29,7 +29,6 @@ class ErsiliaAPI:
                     max_cache_memory_frac=None,
                     verbose=False
                     )
-        # print(serve_dict)
 
     def run(self, input, batch_size):
         print(run.run(self.model_id, input, batch_size))
