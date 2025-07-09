@@ -1,6 +1,7 @@
 from ... import ErsiliaModel
 from ...core.session import Session
 from ...hub.content.information import InformationDisplayer
+from .. import echo
 
 def info(model_id):
 	# Provides infomration about the current model.
@@ -11,4 +12,5 @@ def info(model_id):
   if model_id is None:
       raise RuntimeError("No model was served")
   mdl = ErsiliaModel(model_id, service_class=service_class) 
-  print(mdl.info()) # check that this is a dictionary (maybe simplify if comp.)
+  info = mdl.info() 
+  InformationDisplayer(info).echo()
