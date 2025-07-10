@@ -20,7 +20,8 @@ def serve(
     """
     Serves a specified model as an API.
 
-    Args:
+    Args
+    -------
         model: The model ID to be served. Can either be the eos identifier or the slug identifier.
         port: The port to use when creating a model server. If unspecified, Ersilia looks for empty ports to use on the user's system.
         track: Whether the model's runs should be tracked to monitor model and system performance.
@@ -31,15 +32,21 @@ def serve(
         cache_only: Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.
         max_cache_memory_frac: Sets the maximum fraction of memory to use by Redis for caching. Recommended value 0.2-0.7.
 
-    Returns:
-        A dictionary of URL, Model ID, SRV, Session, Caching Mode Status, Tracking Status
+    Returns
+    -------
+        Model ID, URL, SRV, Session, SRV, Session, Caching Mode Status, Local Cache Status, Tracking Status
+
+    Raises
+    -------
+        RuntimeError: If the model/URL is not valid or not found, 
+        or if the maximum cache memory fraction is outside of the recommended range.
+    
     """
     if verbose:
         logger.set_verbosity(1)
     else:
         logger.set_verbosity(0)
 
-    # recommended value 0.2-0.7
     if max_cache_memory_frac is not None:
         if not (0.2 <= max_cache_memory_frac <= 0.7):
             raise RuntimeError(
@@ -83,7 +90,6 @@ def serve(
 
     register_model_session(mdl.model_id, mdl.session._session_dir)
 
-    # Additional APIs
     apis = mdl.get_apis()
 
     additional_apis = None
@@ -100,19 +106,6 @@ def serve(
     echo("   SRV: {0}".format(mdl.scl), fg="yellow")
     echo("   Session: {0}".format(mdl.session._session_dir), fg="yellow")
     echo("")
-    # echo(":backhand_index_pointing_right: Run model:", fg="blue")
-    # echo("   - run", fg="blue")
-    # apis = mdl.get_apis()
-    # if apis != ["run"]:
-    #     echo("")
-    #     echo("   These APIs are also valid:", fg="blue")
-    #     for api in apis:
-    #         if api != "run":
-    #             echo("   - {0}".format(api), fg="blue")
-    # echo("")
-    # echo(":person_tipping_hand: Information:", fg="blue")
-    # echo("   - info", fg="blue")
-    # echo("")
     echo("🔄 Cache fetching mode:", fg="blue")
     echo(f"   - {cache_status}", fg="red") if cache_status == "Disabled" else echo(
         f"   - {cache_status}", fg="green"
@@ -128,49 +121,4 @@ def serve(
         echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
     else:
         echo("   - Disabled", fg="red")
-    # print(f"\033[92m🚀 Serving model {mdl.model_id}: {mdl.slug}\033[0m")
-    # print("")
-    # print(f"\033[93m   URL: {mdl.url}\033[0m")
-    # if str(mdl.pid) != "-1":
-    #     print(f"\033[93m   PID: {mdl.pid}\033[0m")
-    # print(f"\033[93m   SRV: {mdl.scl}\033[0m")
-    # print(f"\033[93m   Session: {mdl.session._session_dir}\033[0m")
-    # print("")
-    # print("\033[94m👉 Run model:\033[0m")
-    # print("\033[94m   - run\033[0m")
-    # apis = mdl.get_apis()
-    # if apis != ["run"]:
-    #     print("")
-    #     print("\033[94m   These APIs are also valid:\033[0m")
-    #     for api in apis:
-    #         if api != "run":
-    #             print(f"\033[94m  - {api}\033[0m")
-    # print("")
-    # print("\033[94m 💁 Information:\033[0m")
-    # print("\033[94m   - info\033[0m")
-    # print("")
-    # print("\033[94m 🔄 Cache fetching mode:\033[0m")
-    # print(f"\033[91m   - {cache_status}\033[0m") if cache_status == "Disabled" else print(
-    #     f"\033[92m   - {cache_status}\033[0m")
-    # print("")
-    # print("\033[94m 💾 Local cache:\033[0m")
-    # print("\033[92m   - Enabled\033[0m") if redis_setup._is_amenable()[0] else print(
-    #     f"\033[92m   - Disabled\033[0m")
-    # print("")
-    # print("\033[94m 📈 Tracking: \033[0m")
-    # if track:
-    #     print(f"\033[92m   - Enabled ({tracking_use_case})\033[0m")
-    # else:
-    #     print("\033[91m   - Disabled\033[0m")
-
-    # return {
-    #     "Model ID": mdl.model_id,
-    #     "URL": mdl.url,
-    #     "SRV": mdl.scl,
-    #     "Session": mdl.session._session_dir,
-    #     "Cache Fetching Mode": cache_status,
-    #     "Local Cache": "Enabled" if redis_setup._is_amenable()[0] else "Disabled",
-    #     "Tracking": "Enabled" if track else "Disabled",
-    #     "Default API": "run",
-    #     "Additional APIs": additional_apis
-    # }
+    
