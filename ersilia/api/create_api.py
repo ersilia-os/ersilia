@@ -4,8 +4,10 @@ from .commands import close, delete, example, fetch, info, run, serve
 class ErsiliaAPI:
     def __init__(self, model_id):
         self.model_id = model_id
+        
+    def fetch(self):
         fetch.fetch(
-            model=model_id,
+            model=self.model_id,
             overwrite=True,
             from_dir=None,
             from_github=False,

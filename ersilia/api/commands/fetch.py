@@ -9,6 +9,26 @@ nest_asyncio.apply()
 
 
 def _fetch(mf, model_id):
+    """
+    Fetches a specified model.
+
+    This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc...).
+
+    Returns
+    -------
+    function
+        The fetch command function to be used by the CLI and for testing in the pytest.
+
+    Examples
+    --------
+    .. code-block:: console
+
+        Fetch a model by its ID:
+        $ ersilia fetch <model_id> [auto model source decider] or ersilia fetch <model_id> --from_github/--from_dockerhub
+
+        Fetch a model from a local directory:
+        $ ersilia fetch <model_id> --from_dir <path>
+    """
     res = asyncio.run(mf.fetch(model_id))
     return res
 
