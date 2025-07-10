@@ -4,13 +4,29 @@ from ...hub.content.information import InformationDisplayer
 from .. import echo
 
 def info(model_id):
-	# Provides infomration about the current model.
-	
-	# Displays info using the InformationDisplayer class?
-  session = Session(config_json=None)
-  service_class = session.current_service_class()
-  if model_id is None:
-      raise RuntimeError("No model was served")
-  mdl = ErsiliaModel(model_id, service_class=service_class) 
-  info = mdl.info() 
-  InformationDisplayer(info).echo()
+    """
+    Provides information about a specified model.
+
+    This command allows users to get detailed information about a current active session, 
+    including information about Model Identifiers, Code and Parameters, Docker Hub link and Architectures.
+
+    Args
+    -------
+    model_id (str): ID of the model to delete.
+
+    Returns
+    -------
+    function: The info command function to be used by the API.
+    str: Confirmation message on success or warning message on failure.
+
+    """
+    # Provides information about the current model.
+
+    # Displays info using the InformationDisplayer class
+    session = Session(config_json=None)
+    service_class = session.current_service_class()
+    if model_id is None:
+        raise RuntimeError("No model was served")
+    mdl = ErsiliaModel(model_id, service_class=service_class)
+    info = mdl.info()
+    InformationDisplayer(info).echo()
