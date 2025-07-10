@@ -168,6 +168,12 @@ Next, let's use the models we have discussed to run some predictios!
 
 **Deliverable:** list of top 5 candidates
 
+Feel free to use these tools:
+
+* [AI Workshop GPT](https://chatgpt.com/g/g-686d06e62bdc8191999ee66c42f082cc-ai2050-drug-discovery-workshop) to ask about unclear concepts
+* [Ersilia Model Hub](https://ersilia.io/) to browse models
+* [Simple app](https://ai2050-dd-day3b.streamlit.app/) to merge Ersilia output files
+
 {% hint style="success" %}
 Extension: if you finish the proposed activity, have a look at what else is available in the [Ersilia Model Hub](https://ersilia.io/model-hub) and what would you like to see deployed online!
 {% endhint %}
