@@ -70,11 +70,9 @@ def run(model_id, input, output, batch_size=100):
                 service_class=service_class,
                 config_json=None,
     )
+    result = mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
     if type(input) == str or isinstance(input, list):
-        os.remove(input_file)
-
-    mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
-    #result = mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
+        os.remove(input_file.name)
 
     print(
         f"✅ The output successfully generated in {output_path} file!",
