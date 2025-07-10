@@ -15,7 +15,7 @@ Each day is organised in four main activities:
 
 ### Course Contents <a href="#course-contents" id="course-contents"></a>
 
-<table><thead><tr><th width="148">Activity</th><th>Session 1</th><th>Session 2</th><th>Session 3</th><th>Session 4</th></tr></thead><tbody><tr><td>Keynote</td><td><p><a href="https://drive.google.com/file/d/1d0N9ZjtvPR8mV__1SBQoqVec8M0_qV_U/view?usp=drive_link">Slides A</a></p><p><a href="https://drive.google.com/file/d/1jGoEApS8Ngce5QlBJUAqJkgBHGGfQVy4/view?usp=drive_link">Slides B</a></p><p><a href="https://drive.google.com/file/d/1H2ULtuFXutHjHtqDBYCu_noqffWU7JHN/view?usp=drive_link">Slides C</a><br><a href="https://www.menti.com/alsc5obgc7z6">Menti</a></p></td><td><a href="https://drive.google.com/file/d/1sFIf2qv-5A8GtqAWOISs9Zbn5nLp9KK7/view?usp=drive_link">Slides A</a><br><a href="https://drive.google.com/file/d/1COlQgWbPQOoGClX_H2bVvvvxPKxcnZWJ/view?usp=drive_link">Slides B</a></td><td><p>Slides A</p><p><a href="https://drive.google.com/file/d/1lkxeS6yIJBhuH0qfiFRt6WaMSyOlBvNn/view?usp=drive_link">Slides B</a></p></td><td>Slides A<br><a href="https://drive.google.com/file/d/1qA9syRAHM7trE1gexJNFs5qMFa1hNM1N/view?usp=drive_link">Slides B</a></td></tr><tr><td>Skills development</td><td><a href="https://ai2050-day1.streamlit.app/">App</a><br><a href="https://drive.google.com/file/d/1_dSLrTAkWYqYGDfwxI6cl_ZySOR31ESf/view?usp=drive_link">Slides</a><br><a href="https://www.menti.com/alfgx5p5x3qq">Menti</a></td><td><p><a href="https://ai2050-day2-z2w9u.ondigitalocean.app/">App A</a></p><p><a href="https://ai2050-day2.streamlit.app/">App B</a></p><p><a href="https://drive.google.com/file/d/1hmovb3B5K5KbptTpCR2yQQCKv8ccK_V2/view?usp=drive_link">Slides</a><br><a href="https://www.menti.com/altn98ny9d6h">Menti</a></p></td><td><p><a href="https://ai2050-day3.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1cYVGrrTQFhK4sh-6aoNjlKQ_zkcEVOfE/view?usp=drive_link">Slides</a><br><a href="https://www.menti.com/alypgk7nwtd5">Menti</a></p></td><td>Slides</td></tr><tr><td>Breakout</td><td><p><a href="https://ai2050-day1.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1vmBo_DVdcE0JSMckWH7lftz47KrLX3iO/view?usp=drive_link">Slides</a></p><p><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-1">Guide</a></p></td><td><p><a href="https://hub.ersilia.io/">App</a></p><p><a href="https://drive.google.com/file/d/10XBA9e26r63JQoRn4uI1CTerfMuxE_gF/view?usp=drive_link">Slides</a></p><p><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-2">Guide</a></p></td><td><p><a href="https://ai2050-day3.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/17yDfWLr0dA0NfHrRTQR5cGrgGIhaUgz5/view?usp=drive_link">Slides</a><br><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-3">Guide</a></p></td><td></td></tr></tbody></table>
+<table><thead><tr><th width="148">Activity</th><th>Session 1</th><th>Session 2</th><th>Session 3</th><th>Session 4</th></tr></thead><tbody><tr><td>Keynote</td><td><p><a href="https://drive.google.com/file/d/1d0N9ZjtvPR8mV__1SBQoqVec8M0_qV_U/view?usp=drive_link">Slides A</a></p><p><a href="https://drive.google.com/file/d/1jGoEApS8Ngce5QlBJUAqJkgBHGGfQVy4/view?usp=drive_link">Slides B</a></p><p><a href="https://drive.google.com/file/d/1H2ULtuFXutHjHtqDBYCu_noqffWU7JHN/view?usp=drive_link">Slides C</a><br><a href="https://www.menti.com/alsc5obgc7z6">Menti</a></p></td><td><a href="https://drive.google.com/file/d/1sFIf2qv-5A8GtqAWOISs9Zbn5nLp9KK7/view?usp=drive_link">Slides A</a><br><a href="https://drive.google.com/file/d/1COlQgWbPQOoGClX_H2bVvvvxPKxcnZWJ/view?usp=drive_link">Slides B</a></td><td><p>Slides A</p><p><a href="https://ai2050-day2-z2w9u.ondigitalocean.app/">App A</a></p><p><a href="https://ai2050-day2.streamlit.app/">App B</a></p></td><td>Slides A<br><a href="https://drive.google.com/file/d/1qA9syRAHM7trE1gexJNFs5qMFa1hNM1N/view?usp=drive_link">Slides B</a></td></tr><tr><td>Skills development</td><td><a href="https://ai2050-day1.streamlit.app/">App</a><br><a href="https://drive.google.com/file/d/1_dSLrTAkWYqYGDfwxI6cl_ZySOR31ESf/view?usp=drive_link">Slides</a><br><a href="https://www.menti.com/alfgx5p5x3qq">Menti</a></td><td><p><a href="https://ai2050-day2.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1hmovb3B5K5KbptTpCR2yQQCKv8ccK_V2/view?usp=drive_link">Slides</a><br><a href="https://www.menti.com/altn98ny9d6h">Menti</a></p></td><td><p><a href="https://hub.ersilia.io/">App</a></p><p>Slides<br><a href="https://www.menti.com/alypgk7nwtd5">Menti</a></p></td><td><a href="https://ai2050-day3.streamlit.app/">App</a></td></tr><tr><td>Breakout</td><td><p><a href="https://ai2050-day1.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1vmBo_DVdcE0JSMckWH7lftz47KrLX3iO/view?usp=drive_link">Slides</a></p><p><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-1">Guide</a></p></td><td><p><a href="https://hub.ersilia.io/">App</a></p><p><a href="https://drive.google.com/file/d/10XBA9e26r63JQoRn4uI1CTerfMuxE_gF/view?usp=drive_link">Slides</a></p><p><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-2">Guide</a></p></td><td><p><a href="https://ai2050-dd-day3b.streamlit.app/">App</a></p><p>Slides<br><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-2">Guide</a></p></td><td></td></tr></tbody></table>
 
 {% hint style="warning" %}
 After the course, the apps will remain active on StreamlitCloud and also available for local deployment from GitHub. Please keep in mind that these are apps built for the course, and might not be suitable to apply directly to a research project. Contact Ersilia for more!
@@ -152,19 +152,21 @@ Model information can be found in the metadata of the model available through Er
 
 **Molecule selection**
 
-Use the predicted values to select the 10 molecules that you would take for experimental testing if you had to choose. To that end, you can think of:
+Next, let's use the models we have discussed to run some predictios!
 
-* What are the most important activities you want to optimize
-* What are strict no-go points
-* What are activities that are easiest to optimize at lead stage
+1. Download the compound library corresponding to your groups from [here](https://drive.google.com/drive/folders/121MigvZot9Dx0SCgw9cmGUseENDXkqjP?usp=drive_link).
+2. Go to the [Ersilia GUI](https://hub.ersilia.io/) and run evaluations.
+3. Download all CSV files into a working directory. In case a model evaluation fails, feel free to download precalculations from [here](https://drive.google.com/drive/folders/1yrQfvWExZCMWTfWN6vYIgEcRVe2eT2ZH?usp=drive_link).
+4. Use [this simple app](https://ai2050-dd-day3b.streamlit.app/) to merge your CSV files or, alternatively, use Excel to concatenate the CSV files.
+5. Open the downloaded Excel file and use the Legends tab to learn more about each column.&#x20;
+6. Select up to 5 compounds, based on bioactivity, ADME and toxicity profiles.
+7. Make a short slide deck. Use this template:
+   * Model relevance and why: did you use all models? Which ones or which columns from each model do you consider more relevant?
+   * Overview of the screening results. Were the results as expected?
+   * Selected compounds and rationale. Which compounds did you choose, and why? Did you identify an optimal compound? What would you do next?
+8. Present! Send your slides to [miquel@ersilia.io](mailto:miquel@ersilia.io). Name your file: ai\_workshop\_green.pptx, ai\_workshop\_yellow.pptx, etc.
 
-Finally, prepare a short presentation for the rest of the participants. This should cover:
-
-* Which models did you choose and why
-* What selection strategy did you decide
-* Which were your selected molecules
-
-**Deliverable:** list of top 10 candidates
+**Deliverable:** list of top 5 candidates
 
 {% hint style="success" %}
 Extension: if you finish the proposed activity, have a look at what else is available in the [Ersilia Model Hub](https://ersilia.io/model-hub) and what would you like to see deployed online!
