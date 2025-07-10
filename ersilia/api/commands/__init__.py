@@ -1,5 +1,3 @@
-import functools
-
 from ... import __version__, logger
 
 

@@ -16,12 +16,12 @@ def _fetch(mf, model_id):
 
     Returns
     -------
-    Function: The fetch command function to be used by the CLI and for testing in the pytest.
+    Function: The fetch command function to be used by the API. 
     Str: Confirmation message on success or warning message on failure.
-
+    
     Raises
     -------
-    RuntimeError: If both BentoML and FastAPI are used togehter.
+    RuntimeError: If both BentoML and FastAPI are used togehter. 
 
     """
     res = asyncio.run(mf.fetch(model_id))
