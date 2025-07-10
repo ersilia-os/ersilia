@@ -1,13 +1,16 @@
 import json
-import tempfile
 
 from ... import ModelBase
 from ...core.session import Session
 from ...io.input import ExampleGenerator
-from .. echo import echo
+from ..echo import echo
 
 """Create example command"""
-def example(model, file_name, simple = True, random = True, n_samples = 5, deterministic = False): #model, file_name, simple, random, n_samples = 5, deterministic = False
+
+
+def example(
+    model, file_name, simple=True, random=True, n_samples=5, deterministic=False
+):  # model, file_name, simple, random, n_samples = 5, deterministic = False
     if model is not None:
         model_id = ModelBase(model).model_id
     else:
@@ -43,7 +46,7 @@ def example(model, file_name, simple = True, random = True, n_samples = 5, deter
         )
     return example
 
-    #if model is not None:
+    # if model is not None:
     #     model_id = ModelBase(model).model_id
     # else:
     #     session = Session(config_json=None)

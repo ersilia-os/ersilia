@@ -1,9 +1,9 @@
-from ... import ErsiliaModel
+from ... import ErsiliaModel, logger
 from ...store.utils import OutputSource
 from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
-from ... import __version__, logger
-from .. echo import echo
+from ..echo import echo
+
 
 def serve(
     model: str,
@@ -38,7 +38,7 @@ def serve(
         logger.set_verbosity(1)
     else:
         logger.set_verbosity(0)
-        
+
     # recommended value 0.2-0.7
     if max_cache_memory_frac is not None:
         if not (0.2 <= max_cache_memory_frac <= 0.7):
@@ -92,9 +92,7 @@ def serve(
         for api in apis:
             if api != "run":
                 additional_apis.append(api)
-    echo(
-            ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"
-        )
+    echo(":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green")
     echo("")
     echo("   URL: {0}".format(mdl.url), fg="yellow")
     if str(mdl.pid) != "-1":
@@ -163,7 +161,7 @@ def serve(
     # if track:
     #     print(f"\033[92m   - Enabled ({tracking_use_case})\033[0m")
     # else:
-    #     print("\033[91m   - Disabled\033[0m") 
+    #     print("\033[91m   - Disabled\033[0m")
 
     # return {
     #     "Model ID": mdl.model_id,

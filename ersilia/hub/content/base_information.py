@@ -1019,7 +1019,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_publication is None:
             self._publication = None
-        elif str(new_publication).lower() == "none" or str(new_publication).lower() == "null":
+        elif (
+            str(new_publication).lower() == "none"
+            or str(new_publication).lower() == "null"
+        ):
             self._publication = None
         else:
             if not self._is_valid_url(new_publication):
@@ -1122,7 +1125,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_source_code is None:
             self._source_code = None
-        elif str(new_source_code).lower() == "none" or str(new_source_code).lower() == "null":
+        elif (
+            str(new_source_code).lower() == "none"
+            or str(new_source_code).lower() == "null"
+        ):
             self._source_code = None
         else:
             if not self._is_valid_url(new_source_code):
@@ -1258,7 +1264,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_dockerhub_url is None:
             self._dockerhub = None
-        elif str(new_dockerhub_url).lower() == "none" or str(new_dockerhub_url).lower() == "null":
+        elif (
+            str(new_dockerhub_url).lower() == "none"
+            or str(new_dockerhub_url).lower() == "null"
+        ):
             self._dockerhub = None
         else:
             if not new_dockerhub_url.startswith("https://hub.docker.com/r/ersiliaos/"):
@@ -1294,7 +1303,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_docker_architecture is None:
             self._docker_architecture = None
-        elif str(new_docker_architecture).lower() == "none" or str(new_docker_architecture).lower() == "null":
+        elif (
+            str(new_docker_architecture).lower() == "none"
+            or str(new_docker_architecture).lower() == "null"
+        ):
             self._docker_architecture = None
         else:
             new_docker_architecture = self._serialize_to_list_if_necessary(
@@ -1688,7 +1700,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_contributor is None:
             self._contributor = None
-        elif str(new_contributor).lower() == "none" or str(new_contributor).lower() == "null":
+        elif (
+            str(new_contributor).lower() == "none"
+            or str(new_contributor).lower() == "null"
+        ):
             self._contributor = None
         else:
             if not isinstance(new_contributor, str) or not new_contributor.strip():
@@ -1720,7 +1735,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_deployment is None:
             self._deployment = None
-        elif str(new_deployment).lower() == "none" or str(new_deployment).lower() == "null":
+        elif (
+            str(new_deployment).lower() == "none"
+            or str(new_deployment).lower() == "null"
+        ):
             self._deployment = None
         else:
             new_deployment = self._serialize_to_list_if_necessary(new_deployment)
