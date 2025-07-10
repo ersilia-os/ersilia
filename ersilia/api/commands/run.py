@@ -1,19 +1,16 @@
-import json
-import tempfile
-import sys
 import os
+import sys
+import tempfile
 
 import pandas as pd
 
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
-from ...utils.terminal import is_quoted_list
 from ..echo import echo
 
 
 def validate_input_output_types(input, output):
-    if not (isinstance(input, list)) or (isinstance(input, str) and input.endswith(".csv")): 
+    if not (isinstance(input, list)) or (isinstance(input, str) and input.endswith(".csv")):
         echo(
             "Input format invalid. Please provide a string, list, and or .csv input instead.",
             fg="red",
@@ -57,7 +54,7 @@ def run(model_id, input, output, batch_size=100):
             fg="red",
         )
         return
-   
+
     if type(input) == str or isinstance(input, list):
         input_df = pd.DataFrame({"input": input})
         input_file = tempfile.NamedTemporaryFile(mode="w+t", encoding="utf-8", suffix=".csv", delete=False)
@@ -65,7 +62,7 @@ def run(model_id, input, output, batch_size=100):
         input_file.flush()
     if output is None:
         output_path = os.path.join(os.getcwd(), "output_results.csv")
-    else: 
+    else:
         output_path = str(output)
     mdl = ErsiliaModel(
                 model_id,
@@ -75,7 +72,7 @@ def run(model_id, input, output, batch_size=100):
     )
     if type(input) == str or isinstance(input, list):
         os.remove(input_file)
-    
+
     mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
     #result = mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
 
