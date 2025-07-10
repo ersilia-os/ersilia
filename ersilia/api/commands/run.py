@@ -29,26 +29,24 @@ def validate_input_output_types(input, output):
             bold=True,
         )
         sys.exit(1)
-    # if output is None:
-    #     echo(
-    #         "Please specify a valid output types which are .csv, .h5 or .json",
-    #         fg="red",
-    #         bold=True,
-    #     )
-    #     sys.exit(1)
 
-
-# input is list
 def run(model_id, input, output, batch_size=100):
-    # Runs the current model on a list of SMILES strings and
-    # returns the prediction as a pandas data frame.
+    """
+    Runs the current model on a list of SMILES strings and
+    returns the prediction as a pandas data frame.
 
-    #   Args:
-    # 		input - a list of SMILES strings
-    # 		batch_size - number of SMILES to process per batch
+    Args
+    ----
+    input: a list or a path to a CSV file containing SMILES strings.
+    batch_size: number of SMILES to process per batch
+    
+    Returns
+    -------
+    function
+        The run command function to be used by the API.
+        A pandas df with the predictions.
 
-    # 	Returns:
-    # 		A pandas df with the predictions
+    """
     validate_input_output_types(input,output)
     session = Session(config_json=None)
     model_id = session.current_model_id()
@@ -59,7 +57,7 @@ def run(model_id, input, output, batch_size=100):
             fg="red",
         )
         return
-    # Input is a string or list of SMILEs
+   
     if type(input) == str or isinstance(input, list):
         input_df = pd.DataFrame({"input": input})
         input_file = tempfile.NamedTemporaryFile(mode="w+t", encoding="utf-8", suffix=".csv", delete=False)
@@ -82,12 +80,3 @@ def run(model_id, input, output, batch_size=100):
     print(
         f"✅ The output successfully generated in {output_path} file!",
     )
-
-    # output_path.seek(0)
-
-    # Return as dataframe
-    # return pd.read_csv(output)
-    #   return pd.read_csv(output_file.name)
-    # Input is a file
-    # if isinstance(input, (str, os.PathLike)) and str(input).lower().endswith("csv") and os.path.isfile(obj):
-        # check formatting?
