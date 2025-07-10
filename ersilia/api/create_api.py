@@ -2,7 +2,7 @@ from .commands import close, delete, example, fetch, info, run, serve
 
 
 class ErsiliaAPI:
-     """
+    """
     Python API wrapper for interacting with Ersilia Model Hub models.
 
     This class provides a programmatic interface to run, serve, fetch, and manage
@@ -46,12 +46,11 @@ class ErsiliaAPI:
     Usage Example
     -------------
     >>> from ersilia.api.create_api import ErsiliaAPI
-        molecular_weight = ErsiliaAPI("eos3b5e")
-        molecular_weight.fetch()
-        molecular_weight.serve()
-        with molecular_weight as model:
-            model.info()
-    >>>    
+    >>> molecular_weight = ErsiliaAPI("eos3b5e")
+    >>> molecular_weight.fetch()
+    >>> molecular_weight.serve()
+    >>> with molecular_weight as model:
+    >>>     model.info() 
     """
     def __init__(self, model_id):
         self.model_id = model_id
