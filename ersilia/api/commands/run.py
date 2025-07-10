@@ -10,7 +10,9 @@ from ..echo import echo
 
 
 def validate_input_output_types(input, output):
-    if not (isinstance(input, list)) or (isinstance(input, str) and input.endswith(".csv")):
+    if not (isinstance(input, list)) or (
+        isinstance(input, str) and input.endswith(".csv")
+    ):
         echo(
             "Input format invalid. Please provide a string, list, and or .csv input instead.",
             fg="red",
@@ -27,6 +29,7 @@ def validate_input_output_types(input, output):
         )
         sys.exit(1)
 
+
 def run(model_id, input, output, batch_size=100):
     """
     Runs the current model on a list of SMILES strings and
@@ -36,15 +39,15 @@ def run(model_id, input, output, batch_size=100):
     ----
     input: a list or a path to a CSV file containing SMILES strings.
     batch_size: number of SMILES to process per batch
-    
+
     Returns
     -------
-    function
-        The run command function to be used by the API.
-        A pandas df with the predictions.
+    Str:    The path to the output file if the output successfully generated..
+    #     The run command function to be used by the API.
+    #     A pandas df with the predictions.
 
     """
-    validate_input_output_types(input,output)
+    validate_input_output_types(input, output)
     session = Session(config_json=None)
     model_id = session.current_model_id()
     service_class = session.current_service_class()
@@ -57,7 +60,9 @@ def run(model_id, input, output, batch_size=100):
 
     if type(input) == str or isinstance(input, list):
         input_df = pd.DataFrame({"input": input})
-        input_file = tempfile.NamedTemporaryFile(mode="w+t", encoding="utf-8", suffix=".csv", delete=False)
+        input_file = tempfile.NamedTemporaryFile(
+            mode="w+t", encoding="utf-8", suffix=".csv", delete=False
+        )
         input_df.to_csv(input_file.name, index=False)
         input_file.flush()
     if output is None:
@@ -65,14 +70,14 @@ def run(model_id, input, output, batch_size=100):
     else:
         output_path = str(output)
     mdl = ErsiliaModel(
-                model_id,
-                output_source=output_path,
-                service_class=service_class,
-                config_json=None,
+        model_id,
+        output_source=output_path,
+        service_class=service_class,
+        config_json=None,
     )
     mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
-    #result = mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
-    
+    # result = mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
+
     if type(input) == str or isinstance(input, list):
         os.remove(input_file.name)
 

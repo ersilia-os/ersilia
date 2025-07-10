@@ -52,6 +52,7 @@ class ErsiliaAPI:
     >>> with molecular_weight as model:
     >>>     model.info()
     """
+
     def __init__(self, model_id):
         self.model_id = model_id
 
@@ -135,7 +136,7 @@ class ErsiliaAPI:
         input: a list or a path to a CSV file containing SMILES strings.
         output: path to the output file where predictions will be saved.
         batch_size: number of SMILES to process per batch
-        
+
         Returns
         -------
         function
@@ -146,12 +147,64 @@ class ErsiliaAPI:
         print(run.run(self.model_id, input, output, batch_size))
 
     def close(self):
+        """
+        This command closes the current session of the served model and cleans up any associated resources.
+
+        Args
+        -------
+            model_id (str): ID of the model to delete.
+
+        Returns
+        -------
+            str: Confirmation message on success or warning message on failure.
+
+        Raises
+        -------
+            RuntimeError: If no model was served in the current session.
+        """
         close.close(self.model_id)
 
     def info(self):
+        """
+        Provides information about a specified model.
+
+        This command allows users to get detailed information about a current active session,
+        including information about Model Identifiers, Code and Parameters, Docker Hub link and Architectures.
+
+        Args
+        -------
+        model_id (str): ID of the model to delete.
+
+        Returns
+        -------
+        function: The info command function to be used by the API.
+        str: Confirmation message on success or warning message on failure.
+
+        Raises
+        -------
+        RuntimeError: If no model was served in the current session.
+        """
         info.info(self.model_id)
 
     def example(self, file_name, simple, random, n_samples, deterministic):
+        """
+        This command can sample inputs for a given model.
+
+        Args
+        -------
+        model: The model ID to be served. Can either be the eos identifier or the slug identifier.
+        file_name: File name where the examples should be saved.
+        simple: Simple inputs only contain the SMILES, while complete inputs also include InChIKey and the molecule's name.
+        random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.
+        n_samples: Specify the number of example inputs to generate for the given model.
+        deterministic: Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.
+
+        Returns
+        -------
+        Function: The exmaple command function to be used by the API.
+        Str: Error message if no model was served in the current session.
+
+        """
         print(
             example.example(
                 self.model_id, file_name, simple, random, n_samples, deterministic
@@ -159,6 +212,18 @@ class ErsiliaAPI:
         )
 
     def delete(self):
+        """
+        Deletes a specified model from local storage.
+
+        Args:
+            model_id (str): ID of the model to delete.
+
+        Returns:
+            str: Confirmation message on success or warning message on failure.
+
+        Raises:
+            RuntimeError: If the model cannot be deleted.
+        """
         delete.delete(self.model_id, verbose=False)
 
     def __enter__(self):

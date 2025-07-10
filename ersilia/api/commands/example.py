@@ -6,7 +6,9 @@ from ...io.input import ExampleGenerator
 from ..echo import echo
 
 
-def example(model, file_name, simple=True, random=True, n_samples=5, deterministic=False):
+def example(
+    model, file_name, simple=True, random=True, n_samples=5, deterministic=False
+):
     """
     This command can sample inputs for a given model.
 
@@ -60,4 +62,3 @@ def example(model, file_name, simple=True, random=True, n_samples=5, determinist
             deterministic=deterministic,
         )
     return example
-

@@ -36,7 +36,9 @@ def run_cmd():
     """
 
     def validate_input_output_types(input, output):
-        if (type(input) == str and not input.endswith(".csv")) or not isinstance(input, list)):
+        if (type(input) == str and not input.endswith(".csv")) or is_quoted_list(
+            json.dumps(input)
+        ):
             echo(
                 "String and list input types are not allowed in Ersilia. Please a csv input instead",
                 fg="red",
