@@ -1,10 +1,9 @@
-from ... import ModelBase
-from ...hub.content.catalog import ModelCatalog
+from ... import logger
 from ...hub.delete.delete import ModelFullDeleter
-from ... import __version__, logger
-from .. echo import echo
+from ..echo import echo
 
-#from ...deletion import ModelFullDeleter  # adjust import as needed
+# from ...deletion import ModelFullDeleter  # adjust import as needed
+
 
 def delete(model_id: str, verbose=False):
     """
@@ -26,18 +25,18 @@ def delete(model_id: str, verbose=False):
 
     md = ModelFullDeleter()
     can_delete, reason = md.can_be_deleted(model_id)
-    #can_delete is bool, reason is message
+    # can_delete is bool, reason is message
 
     if can_delete:
         echo("Deleting model {0}".format(model_id))
         md.delete(model_id)
         echo(
-                ":collision: Model {0} deleted successfully!".format(model_id),
-                fg="green",
-            )
+            ":collision: Model {0} deleted successfully!".format(model_id),
+            fg="green",
+        )
     else:
         echo(
-                f":person_tipping_hand: {reason}".format(model_id),
-                fg="yellow",
-            )
+            f":person_tipping_hand: {reason}".format(model_id),
+            fg="yellow",
+        )
     return

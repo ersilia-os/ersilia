@@ -1,7 +1,7 @@
 from ... import ErsiliaModel
 from ...core.session import Session
 from ...hub.content.information import InformationDisplayer
-from .. import echo
+
 
 def info(model_id):
     """
@@ -19,10 +19,10 @@ def info(model_id):
     function: The info command function to be used by the API.
     str: Confirmation message on success or warning message on failure.
 
+    Raises
+    -------
+    RuntimeError: If no model was served in the current session.
     """
-    # Provides information about the current model.
-
-    # Displays info using the InformationDisplayer class
     session = Session(config_json=None)
     service_class = session.current_service_class()
     if model_id is None:
