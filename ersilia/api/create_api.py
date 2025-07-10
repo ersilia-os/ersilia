@@ -35,8 +35,8 @@ class ErsiliaAPI:
             verbose=False,
         )
 
-    def run(self, input, batch_size):
-        print(run.run(self.model_id, input, batch_size))
+    def run(self, input, output, batch_size):
+        print(run.run(self.model_id, input, output, batch_size))
 
     def close(self):
         close.close(self.model_id)
