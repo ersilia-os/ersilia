@@ -54,5 +54,9 @@ class ErsiliaAPI:
     def delete(self):
         delete.delete(self.model_id, verbose=False)
 
+    def __enter__(self):
+        self.serve()
+        return self
+
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
