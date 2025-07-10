@@ -5,7 +5,7 @@ molecular_weight.fetch()
 molecular_weight.serve()
 
 with molecular_weight as model:
-    model.info() 
+    model.info()
 # input = ["CCCCO", "C", "CC"]
 # mdl.run(input, output="output_results.csv", batch_size=100)
 # mdl.info()

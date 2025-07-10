@@ -38,9 +38,9 @@ def serve(
 
     Raises
     -------
-        RuntimeError: If the model/URL is not valid or not found, 
+        RuntimeError: If the model/URL is not valid or not found,
         or if the maximum cache memory fraction is outside of the recommended range.
-    
+
     """
     if verbose:
         logger.set_verbosity(1)
@@ -121,4 +121,3 @@ def serve(
         echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
     else:
         echo("   - Disabled", fg="red")
-    

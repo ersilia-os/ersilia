@@ -7,7 +7,7 @@ def info(model_id):
     """
     Provides information about a specified model.
 
-    This command allows users to get detailed information about a current active session, 
+    This command allows users to get detailed information about a current active session,
     including information about Model Identifiers, Code and Parameters, Docker Hub link and Architectures.
 
     Args

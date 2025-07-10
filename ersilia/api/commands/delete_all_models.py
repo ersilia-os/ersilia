@@ -1,4 +1,3 @@
-
 # Adjust the import paths as needed based on your project structure
 from ersilia.hub.content.catalog import ModelCatalog
 from ersilia.hub.delete.delete import ModelFullDeleter
