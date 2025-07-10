@@ -6,7 +6,7 @@ class ErsiliaAPI:
     Python API wrapper for interacting with Ersilia Model Hub models.
 
     This class provides a programmatic interface to run, serve, fetch, and manage
-    machine learning models from the Ersilia Model Hub. It wraps the existing CLI-based 
+    machine learning models from the Ersilia Model Hub. It wraps the existing CLI-based
     functionality in a clean Pythonic interface and supports use in context managers.
 
     Parameters
@@ -18,7 +18,7 @@ class ErsiliaAPI:
     -------
     fetch():
         Downloads the specified model and its dependencies from DockerHub.
-        
+
     serve():
         Serves the specified model locally to prepare for inference.
 
@@ -50,12 +50,27 @@ class ErsiliaAPI:
     >>> molecular_weight.fetch()
     >>> molecular_weight.serve()
     >>> with molecular_weight as model:
-    >>>     model.info() 
+    >>>     model.info()
     """
     def __init__(self, model_id):
         self.model_id = model_id
 
     def fetch(self):
+        """
+        Fetches an Ersilia model to run it locally.
+
+        This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc...).
+
+        Returns
+        -------
+        Function: The fetch command function to be used by the API.
+        Str: Confirmation message on success or warning message on failure.
+
+        Raises
+        -------
+        RuntimeError: If both BentoML and FastAPI are used together.
+
+        """
         fetch.fetch(
             model=self.model_id,
             overwrite=True,
@@ -72,6 +87,31 @@ class ErsiliaAPI:
         )
 
     def serve(self):
+        """
+        Serves a specified model as an API.
+
+        Args
+        -------
+            model: The model ID to be served. Can either be the eos identifier or the slug identifier.
+            port: The port to use when creating a model server. If unspecified, Ersilia looks for empty ports to use on the user's system.
+            track: Whether the model's runs should be tracked to monitor model and system performance.
+            tracking_use_case: If --track is true, this command allows specification of the tracking use case. Current options are: local, hosted, self-service and test.
+            enable_local_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.
+            local_cache_only: Specifies to fetch stored model results from local cache. The local caching system is powered by Redis.
+            cloud_cache_only: Specifies to fetch stored model results from cloud cache. This allows to fetch model precalculated results in csv file in Ersilia model output format.
+            cache_only: Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.
+            max_cache_memory_frac: Sets the maximum fraction of memory to use by Redis for caching. Recommended value 0.2-0.7.
+
+        Returns
+        -------
+            Model ID, URL, SRV, Session, SRV, Session, Caching Mode Status, Local Cache Status, Tracking Status
+
+        Raises
+        -------
+            RuntimeError: If the model/URL is not valid or not found,
+            or if the maximum cache memory fraction is outside of the recommended range.
+
+        """
         serve.serve(
             self.model_id,
             port=None,
@@ -86,6 +126,23 @@ class ErsiliaAPI:
         )
 
     def run(self, input, output, batch_size):
+        """
+        Runs the current model on a list of SMILES strings and
+        returns the prediction as a pandas data frame.
+
+        Args
+        ----
+        input: a list or a path to a CSV file containing SMILES strings.
+        output: path to the output file where predictions will be saved.
+        batch_size: number of SMILES to process per batch
+        
+        Returns
+        -------
+        function
+            The run command function to be used by the API.
+            A pandas df with the predictions.
+
+        """
         print(run.run(self.model_id, input, output, batch_size))
 
     def close(self):
