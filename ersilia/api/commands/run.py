@@ -13,29 +13,29 @@ from ..echo import echo
 
 
 def validate_input_output_types(input, output):
-        if (not type(input) == str or not input.endswith(".csv") or not is_quoted_list(json.dumps(input))):
-            echo(
-                "Input format invalid. Please provide a string, list, and or .csv input instead.",
-                fg="red",
-                bold=True,
-            )
-            sys.exit(1)
-        if output is not None and not any(
-            [output.endswith(ext) for ext in (".csv", ".h5", ".json")]
-        ):
-            echo(
-                "This output type is not allowed in Ersilia. A valid output types are .csv, .h5 or .json",
-                fg="red",
-                bold=True,
-            )
-            sys.exit(1)
-        if output is None:
-            echo(
-                "Please specify a valid output types which are .csv, .h5 or .json",
-                fg="red",
-                bold=True,
-            )
-            sys.exit(1)
+    if not (isinstance(input, list)) or (isinstance(input, str) and input.endswith(".csv")): 
+        echo(
+            "Input format invalid. Please provide a string, list, and or .csv input instead.",
+            fg="red",
+            bold=True,
+        )
+        sys.exit(1)
+    if output is not None and not any(
+        [output.endswith(ext) for ext in (".csv", ".h5", ".json")]
+    ):
+        echo(
+            "This output type is not allowed in Ersilia. A valid output types are .csv, .h5 or .json",
+            fg="red",
+            bold=True,
+        )
+        sys.exit(1)
+    # if output is None:
+    #     echo(
+    #         "Please specify a valid output types which are .csv, .h5 or .json",
+    #         fg="red",
+    #         bold=True,
+    #     )
+    #     sys.exit(1)
 
 
 # input is list
