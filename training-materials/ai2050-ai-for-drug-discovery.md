@@ -220,15 +220,15 @@ Once you have made your decision, you can calculate your desired enpoints for al
 Explore results on two levels:
 
 1. **General level:** Assess whether wishlist molecules have high predicted activities (as desirable) and acceptable ADMET properties.
-2. **Individual level:** Select 3-5 molecules and discuss whether they are good leads.
+2. **Individual level:** Select up to 10 molecules and discuss whether they are good leads.
 
 {% hint style="success" %}
-Send your selected 3-5 compounds to [miquel@ersilia.io](mailto:miquel@ersilia.io). The title of your email should be "AI2050 Group N". Just copy-paste the SMILES strings of the molecules in the e-mail text.
+Send your selected compounds to [miquel@ersilia.io](mailto:miquel@ersilia.io). The title of your email should be "AI2050 Group Color". Just copy-paste the SMILES strings of the molecules in the e-mail text.
 {% endhint %}
 
-#### Final step: Prepare a presentation
+#### Final step: be ready to discuss!
 
-Prepare a short presentation for the rest of the participants. The presentation should cover the following:
+We will discuss our selection criteria together. Be ready to answer the following questions:
 
 * What seed molecule did you choose and why?
 * Which sampler models did you find most useful?
