@@ -154,7 +154,7 @@ input = [
 ]
 # predict
 mdl.run(input, output=None, batch_size=3)
-# Allow user to specify an input/output file or use python object
+# Pass the input for the model as a .csv file with only one column with header or a list of SMILES compounds
 # Input = list --> pandas data frame (numpy array as next step)
 # Specify the batch size for generating model predictions. By default, Ersilia works with batch size of 100 inputs.
 
