@@ -156,7 +156,8 @@ input = [
 mdl.run(input, output=None, batch_size=3)
 # Allow user to specify an input/output file or use python object
 # Input = list --> pandas data frame (numpy array as next step)
-# Batch size is 
+# Specify the batch size for generating model predictions. By default, Ersilia works with batch size of 100 inputs.
+
 ```
 
 To **close** the model:
