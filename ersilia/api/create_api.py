@@ -87,7 +87,7 @@ class ErsiliaAPI:
             verbose=False,
         )
 
-    def serve(self):
+    def serve(self, verbose=False):
         """
         Serves a specified model as an API.
 
