@@ -130,6 +130,7 @@ Models can be fetched from the Ersilia Model Hub, served, and run as a Python pa
 <pre class="language-python"><code class="lang-python"># import main class
 from ersilia.api.create_api import ErsiliaAPI
 <strong># instantiate the model(ex: Retrosynthetic Accessibility Score)
+</strong><strong># name the model(ex : mdl_retro)
 </strong>mdl_retro = ErsiliaModel("eos2r5a")
 </code></pre>
 
@@ -137,10 +138,10 @@ Then, you can perform the same actions as in the CLI. To fetch and serve:
 
 ```python
 # fetch model
-mdl.fetch()
+mdl_retro.fetch()
 
 #serve model
-mdl.serve()
+mdl_retro.serve()
 ```
 
 To make **predictions** for Halicin and Ibuprofen:
@@ -152,18 +153,37 @@ input = [
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 ]
 # predict
-mdl.run(input, output=None, batch_size=3)
+mdl_retro.run(input, output=None, batch_size=3)
 # Pass the input for the model as a .csv file with only one column with header or a list of SMILES compounds
 # Flexibility to specify file path for desired output file or automatically create an output file in the current directory
 # Specify the batch size for generating model predictions. By default, Ersilia works with batch size of 100 inputs.
 
 ```
 
+To sample inputs for a given model, use the **example** command.&#x20;
+
+```python
+mdl_retro.example()
+```
+
+To get detailed information about a current active session, use the **info** command.&#x20;
+
+```python
+mdl_retro.info()
+```
+
 To **close** the model:
 
 ```python
 # close model
-mdl.close()
+mdl_retro.close()
+```
+
+To **delete** the model:
+
+```python
+# delete model
+mdl_retro.delete()
 ```
 
 ### Using the `with` statement
@@ -173,7 +193,7 @@ A more concise way to run prediction would be to use the `with` clause:
 ```python
 # use with statement
 # this allows for automatic serving and closing of an already fetched model
-with mdl as model:
+with mdl_retro as model:
     model.info()
     input = [
     "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
