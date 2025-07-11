@@ -153,7 +153,7 @@ input = [
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 ]
 # predict
-mdl_retro.run(input, output=None, batch_size=3)
+mdl_retro.run(input, output=None, batch_size=100)
 # Pass the input for the model as a .csv file with only one column with header or a list of SMILES compounds
 # Flexibility to specify file path for desired output file or automatically create an output file in the current directory
 # Specify the batch size for generating model predictions. By default, Ersilia works with batch size of 100 inputs.
@@ -162,9 +162,15 @@ mdl_retro.run(input, output=None, batch_size=3)
 
 To sample inputs for a given model, use the **example** command.&#x20;
 
-```python
-mdl_retro.example()
-```
+<pre class="language-python"><code class="lang-python">mdl_retro.example("example_filename", True, True, 5, False)
+# Parameters: 
+# mdl.example(file_name, simple, random, n_samples, deterministic)
+# file_name: str (File name where the examples should be saved.)
+<strong># simple: bool (Simple inputs only contain the SMILES, while complete inputs also include InChIKey and the molecule's name.)
+</strong># random: bool(If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.
+# n_samples: int(Specify the number of example inputs to generate for the given model.)
+# deterministic: bool (Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.)
+</code></pre>
 
 To get detailed information about a current active session, use the **info** command.&#x20;
 
@@ -199,5 +205,5 @@ with mdl_retro as model:
     "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
     ]
-    model.run(input, output=None, batch_size=3)
+    model.run(input, output=None, batch_size=100)
 ```
