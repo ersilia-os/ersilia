@@ -1,4 +1,5 @@
-from ... import __version__, logger
+from ... import __version__ as __version__
+from ... import logger
 
 
 def ersilia_ali(verbose):
