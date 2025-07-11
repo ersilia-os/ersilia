@@ -125,19 +125,22 @@ ersilia delete eos2r5a
 
 ## As a Python package
 
-Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called `ErsiliaModel`:
+Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called `ErsiliaAPI`:
 
 ```python
 # import main class
-from ersilia import ErsiliaModel
-# instantiate the model
-mdl = ErsiliaModel("retrosynthetic-accessibility")
+from ersilia.api.create_api import ErsiliaAPI
+# instantiate the model(ex: Retrosynthetic Accessibility Score)
+mdl = ErsiliaModel("eos2r5a")
 ```
 
-Then, you can perform the same actions as in the CLI. To **serve**:
+Then, you can perform the same actions as in the CLI. To fetch and serve:
 
 ```python
-# serve model
+# fetch model
+mdl.fetch()
+
+#serve model
 mdl.serve()
 ```
 
@@ -150,7 +153,10 @@ input = [
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 ]
 # predict
-mdl.run(input, output='./output.csv')
+mdl.run(input, output=None, batch_size=3)
+# Allow user to specify an input/output file or use python object
+# Input = list --> pandas data frame (numpy array as next step)
+# Batch size is 
 ```
 
 To **close** the model:
@@ -166,6 +172,7 @@ A more concise way to run prediction would be to use the `with` clause:
 
 ```python
 # use with statement
-with ErsiliaModel("retrosynthetic-accessibility") as mdl:
-    mdl.run(input, output='./output.csv')
+# this allows for automatic closing of model
+with mdl as model:
+    model.info()
 ```
