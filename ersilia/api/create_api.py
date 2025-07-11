@@ -56,7 +56,7 @@ class ErsiliaAPI:
     def __init__(self, model_id):
         self.model_id = model_id
 
-    def fetch(self):
+    def fetch(self, verbose=False):
         """
         Fetches an Ersilia model to run it locally.
 
