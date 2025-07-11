@@ -123,7 +123,7 @@ ersilia delete retrosynthetic-accessibility
 ersilia delete eos2r5a
 ```
 
-## As a Python package
+## As a Python package(Python API)
 
 Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called `ErsiliaAPI`:
 
