@@ -134,14 +134,14 @@ from ersilia.api.create_api import ErsiliaAPI
 </strong>mdl_retro = ErsiliaModel("eos2r5a")
 </code></pre>
 
-Then, you can perform the same actions as in the CLI. To fetch and serve:
+Then, you can perform the same actions as in the CLI. Specify preference for verbosity of status messages (automatically succinct). To fetch and serve:
 
 ```python
 # fetch model
-mdl_retro.fetch()
+mdl_retro.fetch(verbose=False)
 
 #serve model
-mdl_retro.serve()
+mdl_retro.serve(verbose=False)
 ```
 
 To make **predictions** for Halicin and Ibuprofen:
