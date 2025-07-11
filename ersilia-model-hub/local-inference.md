@@ -172,7 +172,12 @@ A more concise way to run prediction would be to use the `with` clause:
 
 ```python
 # use with statement
-# this allows for automatic closing of model
+# this allows for automatic serving and closing of an already fetched model
 with mdl as model:
     model.info()
+    input = [
+    "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
+    "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+    ]
+    model.run(input, output=None, batch_size=3)
 ```
