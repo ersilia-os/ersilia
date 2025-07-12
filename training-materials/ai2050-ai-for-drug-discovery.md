@@ -15,7 +15,7 @@ Each day is organised in four main activities:
 
 ### Course Contents <a href="#course-contents" id="course-contents"></a>
 
-<table><thead><tr><th width="148">Activity</th><th>Session 1</th><th>Session 2</th><th>Session 3</th><th>Session 4</th></tr></thead><tbody><tr><td>Keynote</td><td><p><a href="https://drive.google.com/file/d/1d0N9ZjtvPR8mV__1SBQoqVec8M0_qV_U/view?usp=drive_link">Slides A</a></p><p><a href="https://drive.google.com/file/d/1jGoEApS8Ngce5QlBJUAqJkgBHGGfQVy4/view?usp=drive_link">Slides B</a></p><p><a href="https://drive.google.com/file/d/1H2ULtuFXutHjHtqDBYCu_noqffWU7JHN/view?usp=drive_link">Slides C</a><br><a href="https://www.menti.com/alsc5obgc7z6">Menti</a></p></td><td><a href="https://drive.google.com/file/d/1sFIf2qv-5A8GtqAWOISs9Zbn5nLp9KK7/view?usp=drive_link">Slides A</a><br><a href="https://drive.google.com/file/d/1COlQgWbPQOoGClX_H2bVvvvxPKxcnZWJ/view?usp=drive_link">Slides B</a></td><td><p><a href="https://drive.google.com/file/d/1BsVSpAINfdeeDVtkkhgyThSCqBoYeIly/view?usp=drive_link">Slides A</a></p><p><a href="https://ai2050-day2.streamlit.app/">App</a></p></td><td><a href="https://drive.google.com/file/d/1WK1HqQJAI9_lTm_COr7ubNgViGGSgKZX/view?usp=drive_link">Slides A</a><br><a href="https://drive.google.com/file/d/1qA9syRAHM7trE1gexJNFs5qMFa1hNM1N/view?usp=drive_link">Slides B</a></td></tr><tr><td>Skills development</td><td><a href="https://ai2050-day1.streamlit.app/">App</a><br><a href="https://drive.google.com/file/d/1_dSLrTAkWYqYGDfwxI6cl_ZySOR31ESf/view?usp=drive_link">Slides</a><br><a href="https://www.menti.com/alfgx5p5x3qq">Menti</a></td><td><p><a href="https://ai2050-day2.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1hmovb3B5K5KbptTpCR2yQQCKv8ccK_V2/view?usp=drive_link">Slides</a><br><a href="https://www.menti.com/altn98ny9d6h">Menti</a></p></td><td><p><a href="https://hub.ersilia.io/">App</a></p><p><a href="https://drive.google.com/file/d/1Feey7uHwe5b1vLIgF2TQwFPwc15Oc1My/view?usp=drive_link">Slides</a><br><a href="https://www.menti.com/alypgk7nwtd5">Menti</a></p></td><td><a href="https://ai2050-day3.streamlit.app/">App</a><br><a href="https://ai2050-dd-yellow.streamlit.app/">App Yellow</a><br><a href="https://ai2050-dd-green.streamlit.app/">App Green<br></a><a href="https://ai2050-dd-brown.streamlit.app/">App Brown</a><br><a href="https://ai2050-dd-blue.streamlit.app/">App Blue</a><br><a href="https://ai2050-dd-purple.streamlit.app/">App Purple</a></td></tr><tr><td>Breakout</td><td><p><a href="https://ai2050-day1.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1vmBo_DVdcE0JSMckWH7lftz47KrLX3iO/view?usp=drive_link">Slides</a></p><p><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-1">Guide</a></p></td><td><p><a href="https://hub.ersilia.io/">App</a></p><p><a href="https://drive.google.com/file/d/10XBA9e26r63JQoRn4uI1CTerfMuxE_gF/view?usp=drive_link">Slides</a></p><p><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-2">Guide</a></p></td><td><p><a href="https://ai2050-dd-day3b.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1AFJfLxyBwFn8cEaPuoZXUuvsn1aEwn_X/view?usp=drive_link">Slides</a><br><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-2">Guide</a></p></td><td></td></tr></tbody></table>
+<table><thead><tr><th width="148">Activity</th><th>Session 1</th><th>Session 2</th><th>Session 3</th><th>Session 4</th></tr></thead><tbody><tr><td>Keynote</td><td><p><a href="https://drive.google.com/file/d/1d0N9ZjtvPR8mV__1SBQoqVec8M0_qV_U/view?usp=drive_link">Slides A</a></p><p><a href="https://drive.google.com/file/d/1jGoEApS8Ngce5QlBJUAqJkgBHGGfQVy4/view?usp=drive_link">Slides B</a></p><p><a href="https://drive.google.com/file/d/1H2ULtuFXutHjHtqDBYCu_noqffWU7JHN/view?usp=drive_link">Slides C</a><br></p></td><td><a href="https://drive.google.com/file/d/1sFIf2qv-5A8GtqAWOISs9Zbn5nLp9KK7/view?usp=drive_link">Slides A</a><br><a href="https://drive.google.com/file/d/1COlQgWbPQOoGClX_H2bVvvvxPKxcnZWJ/view?usp=drive_link">Slides B</a></td><td><p><a href="https://drive.google.com/file/d/1BsVSpAINfdeeDVtkkhgyThSCqBoYeIly/view?usp=drive_link">Slides A</a></p><p><a href="https://ai2050-day2.streamlit.app/">App</a></p></td><td><a href="https://drive.google.com/file/d/1WK1HqQJAI9_lTm_COr7ubNgViGGSgKZX/view?usp=drive_link">Slides A</a><br><a href="https://drive.google.com/file/d/1qA9syRAHM7trE1gexJNFs5qMFa1hNM1N/view?usp=drive_link">Slides B</a></td></tr><tr><td>Skills development</td><td><a href="https://ai2050-day1.streamlit.app/">App</a><br><a href="https://drive.google.com/file/d/1_dSLrTAkWYqYGDfwxI6cl_ZySOR31ESf/view?usp=drive_link">Slides</a></td><td><a href="https://drive.google.com/file/d/1hmovb3B5K5KbptTpCR2yQQCKv8ccK_V2/view?usp=drive_link">Slides</a></td><td><p><a href="https://hub.ersilia.io/">App</a></p><p><a href="https://drive.google.com/file/d/1Feey7uHwe5b1vLIgF2TQwFPwc15Oc1My/view?usp=drive_link">Slides</a></p></td><td><a href="https://ai2050-day3.streamlit.app/">App</a><br></td></tr><tr><td>Breakout</td><td><p><a href="https://ai2050-day1.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1vmBo_DVdcE0JSMckWH7lftz47KrLX3iO/view?usp=drive_link">Slides</a></p><p><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-1">Guide</a></p></td><td><p><a href="https://drive.google.com/file/d/10XBA9e26r63JQoRn4uI1CTerfMuxE_gF/view?usp=drive_link">Slides</a></p><p><a href="https://drive.google.com/drive/folders/1Fs_jYG_jh1g19P2T2wV7UBbg0lec1yHb?usp=drive_link">Publications</a></p><p><a href="ai2050-ai-for-drug-discovery.md#breakout-session-day-2">Guide</a></p></td><td><p><a href="https://ai2050-dd-day3b.streamlit.app/">App</a></p><p><a href="https://drive.google.com/file/d/1AFJfLxyBwFn8cEaPuoZXUuvsn1aEwn_X/view?usp=drive_link">Slides</a><br><a href="ai2050-ai-for-drug-discovery.md#models">Guide</a></p></td><td><a href="https://drive.google.com/file/d/1feaLu8--M19L9a5gyjZpyHIQ-OoujM8Z/view?usp=drive_link">Reflection</a></td></tr></tbody></table>
 
 {% hint style="warning" %}
 After the course, the apps will remain active on StreamlitCloud and also available for local deployment from GitHub. Please keep in mind that these are apps built for the course, and might not be suitable to apply directly to a research project. Contact Ersilia for more!
@@ -26,7 +26,8 @@ After the course, the apps will remain active on StreamlitCloud and also availab
 In case you need further information to follow the course, be sure to check the following:
 
 * Ersilia Model Hub: list of all [available models](https://ersilia.io/model-hub).
-* Ersilia Model Hub: [self-service](https://github.com/ersilia-os/ersilia-self-service) on GitHub (requires a GitHub account).
+* Ersilia Model Hub: [self-service](https://github.com/ersilia-os/ersilia-self-service) on GitHub (requires a GitHub account, allows to run online predictions for all models).
+* Ersilia Model Hub: fast online [deployment](https://hub.ersilia.io/) for selected models.
 * Ersilia Model Hub: [local installation](https://github.com/ersilia-os/ersilia) documentation (only expert users).
 * [Publications](https://drive.google.com/drive/folders/1lSan_efMH-mOVz41HM-aNvAqyIHcQ0Fr?usp=sharing) referred to during the workshop.
 * [Datasets](https://drive.google.com/drive/folders/1FVd05NeUf_zJXD-OlSyinmOi0lOcLdrr?usp=sharing) required for the workshop.
@@ -111,7 +112,7 @@ In this activity, we will replicate the work described in Liu et al, 2023, where
 During the skills development session, we have done a deep dive into ML model building using the _A.baumannii_ model as an example. Now, you have to download the list of compounds available in the Drug Repurposing Hub and continue the "virtual screening" similar to the original author's work. To that end, we suggest running predictions against _A.baumannii_ activity and a few accessory models available through Ersilia to select the best candidates. In short, the steps to follow are:
 
 1. Download the Drug Repurposing Hub data for your group from this [link](https://drive.google.com/drive/folders/121MigvZot9Dx0SCgw9cmGUseENDXkqjP?usp=drive_link).
-2. Look at the pre-selected [Ersilia Model Hub](https://ersilia.io/model-hub) models available online (eos3804, eos4e40, eos43at, eos9ei3, eos7d58, eos9yui).
+2. Look at the pre-selected [Ersilia Model Hub](https://ersilia.io/model-hub) models available online in [our platform](https://hub.ersilia.io/).
 3. Select which models would be relevant to your exercise and why, and take notes on model interpretation, expected results, priority level etc.
 4. [Run predictions](https://hub.ersilia.io/) for the Drug Repurposing Hub molecules using the selected models.&#x20;
 5. Select the best molecule candidates based on your defined filters of activity, ADME properties and other considerations.
@@ -120,7 +121,7 @@ During the skills development session, we have done a deep dive into ML model bu
 To simplify the exercise, we have prepared 5 subsets of data from the Drug Repurposing Hub. Each group should use its assigned dataset only
 {% endhint %}
 
-#### Models <a href="#models" id="models"></a>
+#### Task 1: Model selection <a href="#models" id="models"></a>
 
 In order to limit the exercise, please limit your screening to the following models:
 
@@ -138,19 +139,19 @@ For each model, think about the following questions:
 * What is the interpretation of the model outcome?
 * What cut-off, if any, we should use for that particular model?
 
-**Deliverable:** fill in the following [excel table](https://docs.google.com/spreadsheets/d/1Yq39mA3Xy2u7JqdwPHgEHfe2AEPziPHr_ztQAnN-JQg/edit?usp=sharing) and send it to gemma\[at]ersilia.io
-
 In addition, think about the following concepts:
 
 * Does the outcome of the model make sense? If it does not make sense, perhaps we have the wrong interpretation of the model output.
 * Is the cut-off I have selected too stringent (i.e, I am losing too many molecules and I should be more permissive?)
 * Is this model very relevant for the current dataset (i.e, is malaria activity equally important as natural product likeness?)
 
+**Deliverable:** fill in the following [excel table](https://docs.google.com/spreadsheets/d/1Yq39mA3Xy2u7JqdwPHgEHfe2AEPziPHr_ztQAnN-JQg/edit?usp=sharing) and send it to gemma\[at]ersilia.io
+
 {% hint style="info" %}
 Model information can be found in the metadata of the model available through Ersilia's GitHub repository, but it's best to read the original publication. Publications are available in [this folder](https://drive.google.com/drive/folders/1Fs_jYG_jh1g19P2T2wV7UBbg0lec1yHb) with highlighted sections to facilitate model understanding.
 {% endhint %}
 
-**Molecule selection**
+#### **Task 2: Molecule prioritization**
 
 Next, let's use the models we have discussed to run some predictios!
 
