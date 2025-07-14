@@ -17,7 +17,7 @@ from .actions.setup import SetupChecker
 from .actions.sniff_fastapi import ModelSniffer
 from .actions.template_resolver import TemplateResolver
 from .register.register import ModelRegisterer
-
+from ...cli.echo import echo
 
 class ModelFetcherFromFastAPI(ErsiliaBase):
     """
@@ -70,6 +70,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         self.force_from_s3 = force_from_s3
 
     def _setup_check(self):
+        echo(Checks the setup requirements for the model to be installed and run)
         sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
         sc.check()
 

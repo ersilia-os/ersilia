@@ -81,6 +81,5 @@ def run(model_id, input, output, batch_size=100):
     if type(input) == str or isinstance(input, list):
         os.remove(input_file.name)
 
-    print(
-        f"✅ The output successfully generated in {output_path} file!",
-    )
+    echo(f":check_mark_button: The output successfully generated in {output_path} file!", fg="green", bold=True)
+
