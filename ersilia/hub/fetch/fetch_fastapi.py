@@ -17,7 +17,7 @@ from .actions.setup import SetupChecker
 from .actions.sniff_fastapi import ModelSniffer
 from .actions.template_resolver import TemplateResolver
 from .register.register import ModelRegisterer
-from ...cli.echo import echo
+from ...utils.echo import echo
 
 class ModelFetcherFromFastAPI(ErsiliaBase):
     """
@@ -70,20 +70,21 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         self.force_from_s3 = force_from_s3
 
     def _setup_check(self):
+        echo("Checking setup requirements for the model to be installed and run")
         sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
         sc.check()
-        echo("Checking setup requirements for the model to be installed and run")
 
     def _prepare(self):
+        echo("Preparing the model by deleting existing data if necessary")
         mp = ModelPreparer(
             model_id=self.model_id,
             overwrite=self.overwrite,
             config_json=self.config_json,
         )
         mp.prepare()
-        echo("Preparing the model by deleting existing data if necessary")
 
     def _get(self):
+        echo(f"Get the model repository and parameters.")
         mg = ModelGetter(
             model_id=self.model_id,
             repo_path=self.repo_path,
@@ -92,48 +93,48 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
             force_from_s3=self.force_from_s3,
         )
         mg.get()
-        echo("Get the model repository and parameters.")
 
     def _pack(self):
+        echo(f"Get the model repository and parameters.")
         mp = ModelPacker(
             model_id=self.model_id, mode=self.mode, config_json=self.config_json
         )
         mp.pack()
-        echo("Packing the model using FastAPI.")
 
     def _content(self):
+        echo(f"Getting model card of the model.")
         cg = CardGetter(self.model_id, self.config_json)
         cg.get()
-        echo("Getting model card of the model.")
 
     def _check(self):
+        echo(f"Checking that the autoservice works.")
         mc = ModelChecker(self.model_id, self.config_json)
         mc.check()
-        echo("Checking that the autoservice works.")
 
     def _sniff(self):
+        echo(f"Infering the structure of the model by reading the columns file.")
         sn = ModelSniffer(self.model_id, self.config_json)
         sn.sniff()
-        echo("Infering the structure of the model by reading the columns file.")
 
     def _inform(self):
+        echo(f"Writing information to a JSON file and adding API info for bentoml models.")
         mi = ModelInformer(self.model_id, self.config_json)
         mi.inform()
-        echo("Writing information to a JSON file and adding API info for bentoml models.")
 
     def _success(self):
+        echo(f"Register the model based on its source.")
         done = {DONE_TAG: True}
         status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         with open(status_file, "w") as f:
             json.dump(done, f, indent=4)
         mr = ModelRegisterer(self.model_id, config_json=self.config_json)
         mr.register(is_from_dockerhub=False)
-        echo("Register the model based on its source.")
 
     def _fetch(self, model_id: str):
         start = timer()
         self.model_id = model_id
         self._setup_check()
+        echo(f"Checking setup requirements for the model to be installed and run")
         self._prepare()
         self._get()
         self._pack()
