@@ -84,7 +84,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mp.prepare()
 
     def _get(self):
-        echo(f"Get the model repository and parameters.")
+        echo(f"Getting the model repository and parameters.")
         mg = ModelGetter(
             model_id=self.model_id,
             repo_path=self.repo_path,
@@ -95,7 +95,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mg.get()
 
     def _pack(self):
-        echo(f"Get the model repository and parameters.")
+        echo(f"Packing the FastAPI")
         mp = ModelPacker(
             model_id=self.model_id, mode=self.mode, config_json=self.config_json
         )
