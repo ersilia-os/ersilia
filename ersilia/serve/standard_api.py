@@ -539,6 +539,7 @@ class StandardCSVRunApi(ErsiliaBase):
         for i in range(0, total, batch_size):
             batch = input_data[i : i + batch_size]
             st = time.perf_counter()
+            echo(f"Running batch {i+1}")
             batch = [d["input"] for d in batch]
             # TODO @Abel: This is a hack to make the API work with the current implementation.
             # However, the params need to be parametrized properly in the API, including the save_cache, cache_only, min_workers and max_workers
@@ -554,6 +555,9 @@ class StandardCSVRunApi(ErsiliaBase):
             response = requests.post(url, params=params, headers=headers, json=batch)
             et = time.perf_counter()
             self.logger.info(
+                f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
+            )
+            echo(
                 f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
             )
             if response.status_code == 200:
