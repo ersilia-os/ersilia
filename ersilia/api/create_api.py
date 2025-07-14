@@ -123,7 +123,7 @@ class ErsiliaAPI:
             cloud_cache_only=False,
             cache_only=False,
             max_cache_memory_frac=None,
-            verbose=False,
+            verbose=verbose,
         )
 
     def run(self, input, output, batch_size):
