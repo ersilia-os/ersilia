@@ -1,7 +1,7 @@
 from ersilia.api.create_api import ErsiliaAPI
 
-mdl = ErsiliaAPI("eos3b5e")
-mdl.delete()
+mdl = ErsiliaAPI("eos74km")
+mdl.fetch()
 #molecular_weight = ErsiliaAPI("eos3b5e")
 # molecular_weight.fetch()
 # mdl.serve(verbose=True)
