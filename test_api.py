@@ -1,7 +1,7 @@
 from ersilia.api.create_api import ErsiliaAPI
 
 molecular_weight = ErsiliaAPI("eos3b5e")
-molecular_weight.fetch(verbose=True)
+molecular_weight.fetch(verbose=False)
 # molecular_weight.serve()
 
 # with molecular_weight as model:
@@ -11,4 +11,5 @@ molecular_weight.fetch(verbose=True)
 # mdl.info()
 # mdl.example("example_output_pw", True, True, 5, False)
 # mdl.close()
+molecular_weight.delete()
 molecular_weight.delete()
