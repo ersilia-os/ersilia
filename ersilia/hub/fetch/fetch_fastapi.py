@@ -70,9 +70,9 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         self.force_from_s3 = force_from_s3
 
     def _setup_check(self):
-        echo(Checks the setup requirements for the model to be installed and run)
         sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
         sc.check()
+        echo("Checking setup requirements for the model to be installed and run")
 
     def _prepare(self):
         mp = ModelPreparer(
@@ -81,6 +81,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
             config_json=self.config_json,
         )
         mp.prepare()
+        echo("Preparing the model by deleting existing data if necessary")
 
     def _get(self):
         mg = ModelGetter(
@@ -91,28 +92,34 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
             force_from_s3=self.force_from_s3,
         )
         mg.get()
+        echo("Get the model repository and parameters.")
 
     def _pack(self):
         mp = ModelPacker(
             model_id=self.model_id, mode=self.mode, config_json=self.config_json
         )
         mp.pack()
+        echo("Packing the model using FastAPI.")
 
     def _content(self):
         cg = CardGetter(self.model_id, self.config_json)
         cg.get()
+        echo("Getting model card of the model.")
 
     def _check(self):
         mc = ModelChecker(self.model_id, self.config_json)
         mc.check()
+        echo("Checking that the autoservice works.")
 
     def _sniff(self):
         sn = ModelSniffer(self.model_id, self.config_json)
         sn.sniff()
+        echo("Infering the structure of the model by reading the columns file.")
 
     def _inform(self):
         mi = ModelInformer(self.model_id, self.config_json)
         mi.inform()
+        echo("Writing information to a JSON file and adding API info for bentoml models.")
 
     def _success(self):
         done = {DONE_TAG: True}
@@ -121,6 +128,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
             json.dump(done, f, indent=4)
         mr = ModelRegisterer(self.model_id, config_json=self.config_json)
         mr.register(is_from_dockerhub=False)
+        echo("Register the model based on its source.")
 
     def _fetch(self, model_id: str):
         start = timer()
