@@ -52,7 +52,7 @@ def run(model_id, input, output, batch_size=100):
     model_id = session.current_model_id()
     service_class = session.current_service_class()
     if model_id is None:
-        print(
+        echo(
             "No model seems to be served. Please run 'ersilia serve ...' before.",
             fg="red",
         )

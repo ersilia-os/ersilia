@@ -60,8 +60,6 @@ def test_delete_all_models(mock_deleter, mock_catalog):
 @patch("ersilia.hub.content.catalog.ModelCatalog")
 @patch("ersilia.cli.echo")
 def test_no_models_available(mock_echo, mock_catalog):
-    runner = CliRunner()
-
     mock_catalog_instance = MagicMock()
     mock_catalog_instance.local.return_value = None
     mock_catalog.return_value = mock_catalog_instance
