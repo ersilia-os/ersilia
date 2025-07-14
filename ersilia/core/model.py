@@ -39,7 +39,7 @@ from .base import ErsiliaBase
 from .modelbase import ModelBase
 from .session import Session
 from .tracking import RunTracker
-# from ..cli import echo
+from ersilia.utils.echo import echo
 
 try:
     import pandas as pd
@@ -794,8 +794,7 @@ class ErsiliaModel(ErsiliaBase):
                 model_id=self.model_id, config_json=self.config_json, use_case=use_case
             )
         self.logger.info("Starting runner")
-        # echo("Starting runner")
-
+        echo("Starting runner")
         # TODO The logic should be in a try except else finally block
         standard_status_ok = False
         self.logger.debug("Trying standard API")

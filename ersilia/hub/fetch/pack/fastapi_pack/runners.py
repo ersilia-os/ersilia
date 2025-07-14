@@ -9,7 +9,6 @@ from .....utils.docker import SimpleDockerfileParser
 from .....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
 from .....utils.terminal import run_command
 from . import BasePack
-from cli.echo import echo
 
 
 class SystemPack(BasePack):
