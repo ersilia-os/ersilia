@@ -84,7 +84,7 @@ class ErsiliaAPI:
             with_fastapi=True,
             with_bentoml=None,
             hosted_url=None,
-            verbose=False,
+            verbose=verbose,
         )
 
     def serve(self, verbose=False):
