@@ -211,7 +211,7 @@ class ErsiliaAPI:
             )
         )
 
-    def delete(self):
+    def delete(self, verbose=False):
         """
         Deletes a specified model from local storage.
 
@@ -224,7 +224,7 @@ class ErsiliaAPI:
         Raises:
             RuntimeError: If the model cannot be deleted.
         """
-        delete.delete(self.model_id, verbose=False)
+        delete.delete(self.model_id, verbose)
 
     def __enter__(self):
         self.serve()
