@@ -9,6 +9,7 @@ from .....utils.docker import SimpleDockerfileParser
 from .....utils.exceptions_utils.fetch_exceptions import CondaEnvironmentExistsError
 from .....utils.terminal import run_command
 from . import BasePack
+from cli.echo import echo
 
 
 class SystemPack(BasePack):
@@ -153,6 +154,7 @@ class CondaPack(BasePack):
         This method initiates the packing process for the model within a Conda environment.
         """
         self.logger.debug("Packing model with Conda")
+        echo("hello")
         self._run()
 
 

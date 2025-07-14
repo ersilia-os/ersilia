@@ -4,6 +4,7 @@ import nest_asyncio
 
 from ... import ModelBase, logger
 from ...hub.fetch.fetch import ModelFetcher
+from ..echo import echo
 
 nest_asyncio.apply()
 
@@ -54,7 +55,10 @@ def fetch(
     else:
         mdl = ModelBase(model_id_or_slug=model)
     model_id = mdl.model_id
-    print(f"\033[34m⬇️ Fetching model {model_id}: {mdl.slug}\033[0m")
+    echo(
+            ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
+            fg="blue",
+        )
     mf = ModelFetcher(
         repo_path=from_dir,
         overwrite=overwrite,
@@ -71,8 +75,12 @@ def fetch(
     fetch_result = _fetch(mf, model_id)
 
     if fetch_result.fetch_success:
-        print(f"\033[32m👍Model {model_id} fetched successfully!\033[0m")
+        echo(
+                ":thumbs_up: Model {0} fetched successfully!".format(model_id),
+                fg="green",
+            )
     else:
-        print(
-            f"\033[31m👎 Model {model_id} failed to fetch! {fetch_result.reason}\033[0m"
-        )
+        echo(
+                f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
+                fg="red",
+            )
