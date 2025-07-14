@@ -39,7 +39,7 @@ from .base import ErsiliaBase
 from .modelbase import ModelBase
 from .session import Session
 from .tracking import RunTracker
-from ersilia.utils.echo import echo
+from ..utils.echo import echo
 
 try:
     import pandas as pd

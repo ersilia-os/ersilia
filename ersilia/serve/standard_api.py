@@ -20,6 +20,7 @@ from ..default import (
 from ..io.output import GenericOutputAdapter
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
+from ..utils.echo import echo
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -530,6 +531,7 @@ class StandardCSVRunApi(ErsiliaBase):
         )
         ft = time.perf_counter()
         self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")
+        echo(f"Output is being generated within: {ft - st:.5f} seconds")
         return output
 
     def _fetch_result(self, input_data, url, batch_size):
