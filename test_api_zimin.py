@@ -1,7 +1,7 @@
 from ersilia.api.create_api import ErsiliaAPI
 
 mdl = ErsiliaAPI("eos3b5e")
-mdl.fetch()
+mdl.delete()
 #molecular_weight = ErsiliaAPI("eos3b5e")
 # molecular_weight.fetch()
 # mdl.serve(verbose=True)
@@ -13,3 +13,4 @@ mdl.fetch()
 # input = ["CCCCO", "CCO", "CCCN"]
 # df = mdl.run(input, 100)
 # mdl.close()
+#mdl.delete()
