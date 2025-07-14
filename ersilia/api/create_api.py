@@ -144,7 +144,7 @@ class ErsiliaAPI:
             A pandas df with the predictions.
 
         """
-        print(run.run(self.model_id, input, output, batch_size))
+        run.run(self.model_id, input, output, batch_size)
 
     def close(self):
         """
