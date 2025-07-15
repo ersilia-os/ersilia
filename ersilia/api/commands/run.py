@@ -10,11 +10,26 @@ from ..echo import echo
 
 
 def validate_input_output_types(input, output):
-    if not (isinstance(input, list)) or (
-        isinstance(input, str) and input.endswith(".csv")
+    """
+    Validates that 'input' is either a Python list or a path to a .csv file,
+    and that 'output' (if provided) ends with a valid extension.
+    """
+    if not (
+        isinstance(input, list)
+    or (isinstance(input, str) and input.lower().endswith(".csv"))
     ):
         echo(
-            "Input format invalid. Please provide a string, list, and or .csv input instead.",
+            "Input format invalid. Please provide a list of SMILEs or a .csv path.",
+            fg="red",
+            bold=True,
+        )
+        sys.exit(1)
+    
+    if output is not None and not any(
+        output.lower().endswith(ext) for ext in (".csv", ".h5", ".json")
+    ):
+        echo(
+            "This output type is not allowed in Ersilia. A valid output types are .csv, .h5 or .json",
             fg="red",
             bold=True,
         )
