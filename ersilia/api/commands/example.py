@@ -1,3 +1,4 @@
+import csv
 import json
 
 from ... import ModelBase
@@ -10,13 +11,13 @@ def example(
     model, file_name, simple=True, random=True, n_samples=5, deterministic=False
 ):
     """
-    This command can sample inputs for a given model.
+    This command can sample inputs for a given model and save them as a CSV file.
 
     Args
     -------
-    model: The model ID to be served. Can either be the eos identifier or the slug identifier.
-    file_name: File name where the examples should be saved.
-    simple: Simple inputs only contain the SMILES, while complete inputs also include InChIKey and the molecule's name.
+    model: The model ID to be served. Can either be the eos identifier or slug.
+    file_name: Path where the CSV examples should be saved. Must end with .csv.
+    simple: If True, only SMILES strings are returned. If False, outputs include InChiKey and name.
     random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.
     n_samples: Specify the number of example inputs to generate for the given model.
     deterministic: Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.
@@ -28,7 +29,7 @@ def example(
 
 
     """
-    if model is not None:
+    if model:
         model_id = ModelBase(model).model_id
     else:
         session = Session(config_json=None)
@@ -39,26 +40,34 @@ def example(
             fg="red",
         )
         return
-    eg = ExampleGenerator(model_id=model_id)
-    if file_name is None:
+    if not file_name or not file_name.endswith('.csv'):
         echo(
-            json.dumps(
-                eg.example(
-                    n_samples,
-                    file_name,
-                    simple,
-                    try_predefined=not random,
-                    deterministic=deterministic,
-                ),
-                indent=4,
-            )
+            "Please provide a valid CSV filename ending with .csv",
+            fg="red",
+            bold=True
         )
+        return
+    eg = ExampleGenerator(model_id=model_id)
+    examples = eg.example(
+        n_samples,
+        file_name=None,
+        simple=simple,
+        try_predefined=not random,
+        deterministic=deterministic,
+    )
+    if simple:
+        header = ['smiles']
+        rows = [[sm] for sm in examples]
+
     else:
-        eg.example(
-            n_samples,
-            file_name,
-            simple,
-            try_predefined=not random,
-            deterministic=deterministic,
-        )
+        header = ['smiles', 'inchikey', 'name']
+        rows = [[ex.get('smiles', ''), ex.get('inchikey', ''), ex.get('name', '')] for ex in examples]
+    try:
+        with open(file_name, mode='w', newline='', encoding='utf-8') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(header)
+            writer.writerows(rows)
+            echo(f":check_mark_button: Examples successfully saved to {file_name}", fg="green", bold=True)
+    except Exception as e:
+        echo(f"Failed to write examples to CSV: {str(e)}", fg="red", bold=True)
     return example

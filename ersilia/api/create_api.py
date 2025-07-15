@@ -205,11 +205,9 @@ class ErsiliaAPI:
         Str: Error message if no model was served in the current session.
 
         """
-        print(
-            example.example(
+        example.example(
                 self.model_id, file_name, simple, random, n_samples, deterministic
             )
-        )
 
     def delete(self, verbose=False):
         """
