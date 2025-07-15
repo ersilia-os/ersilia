@@ -108,7 +108,7 @@ def run(model_id, input, output, batch_size=100):
 
     echo(f":check_mark_button: The output successfully generated in {output_path} file!", fg="green", bold=True)
 
-    if output is None:
-        return pd.read_csv(output_path)
+    # if output is None:
+    #     return pd.read_csv(output_path)
     return output_path
 
