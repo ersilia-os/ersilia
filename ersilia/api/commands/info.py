@@ -12,7 +12,7 @@ def info(model_id):
 
     Args
     -------
-    model_id (str): ID of the model to delete.
+    model_id (str): ID of the model.
 
     Returns
     -------
