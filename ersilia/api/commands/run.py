@@ -1,8 +1,8 @@
 import os
 import sys
 import tempfile
-
 import pandas as pd
+import types
 
 from ... import ErsiliaModel
 from ...core.session import Session
@@ -75,21 +75,16 @@ def run(model_id, input, output, batch_size=100):
     temp_input = None
     if isinstance(input, list):
         # Write list to a temporary CSV
-        input_df = pd.DataFrame({"input": input})
-        input_file = tempfile.NamedTemporaryFile(
-            mode="w+t", encoding="utf-8", suffix=".csv", delete=False
-        )
-        input_df.to_csv(input_file.name, index=False)
-        input_file.flush()
+        df_input = pd.DataFrame({"input": input})
+        temp_input = tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False)
+        df_input.to_csv(temp_input.name, index=False)
+        temp_input.flush()
         input_path = temp_input.name
     else:
         # already a CSV file
         input_path = input
 
-    if output is None:
-        output_path = os.path.join(os.getcwd(), "output_results.csv")
-    else:
-        output_path = str(output)
+    output_path = output or os.path.join(os.getcwd(), "output_results.csv")
     
     mdl = ErsiliaModel(
         model_id,
@@ -99,13 +94,16 @@ def run(model_id, input, output, batch_size=100):
     )
     mdl.run(input=input_path, output=output_path, batch_size=batch_size)
 
-    if output.endswith(".csv"):
-        df = pd.read_csv(output, usecols=[0,1])
-        df.to_csv(output, index=False)
+    if output.lower().endswith(".csv") and os.path.exists(output_path):
+        try:
+            df_out = pd.read_csv(output, usecols=[0,1])
+            df_out.to_csv(output, index=False)
+        except Exception as e:
+            echo(f"⚠️ Warning: cannot trim output CSV: {e}", fg="yellow")
 
     if temp_input is not None:
         try:
-            os.remove(input_file.name)
+            os.remove(temp_input.name)
         except OSError:
             pass
 
