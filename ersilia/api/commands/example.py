@@ -34,12 +34,14 @@ def example(
     else:
         session = Session(config_json=None)
         model_id = session.current_model_id()
+
     if not model_id:
         echo(
             "No model found. Please specify a model or serve a model in the current shell.",
             fg="red",
         )
         return
+    
     if not file_name or not file_name.endswith('.csv'):
         echo(
             "Please provide a valid CSV filename ending with .csv",
@@ -47,6 +49,7 @@ def example(
             bold=True
         )
         return
+    
     eg = ExampleGenerator(model_id=model_id)
     examples = eg.example(
         n_samples,
@@ -55,12 +58,13 @@ def example(
         try_predefined=not random,
         deterministic=deterministic,
     )
+
     if simple:
-        header = ['smiles']
+        header = ['input']
         rows = [[sm] for sm in examples]
 
     else:
-        header = ['smiles', 'inchikey', 'name']
+        header = ['input', 'inchikey', 'name']
         rows = [[ex.get('smiles', ''), ex.get('inchikey', ''), ex.get('name', '')] for ex in examples]
     try:
         with open(file_name, mode='w', newline='', encoding='utf-8') as csvfile:
@@ -70,4 +74,3 @@ def example(
             echo(f":check_mark_button: Examples successfully saved to {file_name}", fg="green", bold=True)
     except Exception as e:
         echo(f"Failed to write examples to CSV: {str(e)}", fg="red", bold=True)
-    return example
