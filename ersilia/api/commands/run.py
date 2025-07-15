@@ -98,7 +98,10 @@ def run(model_id, input, output, batch_size=100):
         config_json=None,
     )
     mdl.run(input=input_path, output=output_path, batch_size=batch_size)
-    # result = mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
+
+    if output.endswith(".csv"):
+        df = pd.read_csv(output, usecols=[0,1])
+        df.to_csv(output, index=False)
 
     if temp_input is not None:
         try:
