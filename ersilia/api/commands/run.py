@@ -72,29 +72,43 @@ def run(model_id, input, output, batch_size=100):
             fg="red",
         )
         return
-
-    if type(input) == str or isinstance(input, list):
+    temp_input = None
+    if isinstance(input, list):
+        # Write list to a temporary CSV
         input_df = pd.DataFrame({"input": input})
         input_file = tempfile.NamedTemporaryFile(
             mode="w+t", encoding="utf-8", suffix=".csv", delete=False
         )
         input_df.to_csv(input_file.name, index=False)
         input_file.flush()
+        input_path = temp_input.name
+    else:
+        # already a CSV file
+        input_path = input
+
     if output is None:
         output_path = os.path.join(os.getcwd(), "output_results.csv")
     else:
         output_path = str(output)
+    
     mdl = ErsiliaModel(
         model_id,
         output_source=output_path,
         service_class=service_class,
         config_json=None,
     )
-    mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
+    mdl.run(input=input_path, output=output_path, batch_size=batch_size)
     # result = mdl.run(input=input_file.name, output=output_path, batch_size=batch_size)
 
-    if type(input) == str or isinstance(input, list):
-        os.remove(input_file.name)
+    if temp_input is not None:
+        try:
+            os.remove(input_file.name)
+        except OSError:
+            pass
 
     echo(f":check_mark_button: The output successfully generated in {output_path} file!", fg="green", bold=True)
+
+    if output is None:
+        return pd.read_csv(output_path)
+    return output_path
 
