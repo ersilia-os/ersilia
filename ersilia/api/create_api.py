@@ -190,7 +190,7 @@ class ErsiliaAPI:
         """
         return info.info(self.model_id)
 
-    def example(self, file_name, simple, random, n_samples, deterministic):
+    def example(self, simple, random, n_samples, deterministic):
         """
         This command can sample inputs for a given model.
 
@@ -210,8 +210,7 @@ class ErsiliaAPI:
 
         """
         example.example(
-                self.model_id, simple, random, n_samples, deterministic
-            )
+                self.model_id, simple, random, n_samples, deterministic)
 
     def delete(self, verbose=False):
         """
