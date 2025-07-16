@@ -94,9 +94,9 @@ def run(model_id, input, output, batch_size=100):
     )
     mdl.run(input=input_path, output=output_path, batch_size=batch_size)
 
-    if output.lower().endswith(".csv") and os.path.exists(output_path):
+    if output_path.lower().endswith(".csv") and os.path.exists(output_path):
         try:
-            df_out = pd.read_csv(output, usecols=[0,1])
+            df_out = pd.read_csv(output, usecols=[0,2])
             df_out.to_csv(output, index=False)
         except Exception as e:
             echo(f"⚠️ Warning: cannot trim output CSV: {e}", fg="yellow")
@@ -109,7 +109,4 @@ def run(model_id, input, output, batch_size=100):
 
     echo(f":check_mark_button: The output successfully generated in {output_path} file!", fg="green", bold=True)
 
-    # if output is None:
-    #     return pd.read_csv(output_path)
     return output_path
-
