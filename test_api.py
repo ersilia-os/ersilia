@@ -1,7 +1,7 @@
 from ersilia.api.create_api import ErsiliaAPI
 
-molecular_weight = ErsiliaAPI("eos3b5e")
-# molecular_weight.fetch(verbose=False)
+molecular_weight = ErsiliaAPI("eos3b5e", verbose=False)
+# molecular_weight.fetch()
 # molecular_weight.serve()
 
 input = ["CCCCO", "C", "CC"]
