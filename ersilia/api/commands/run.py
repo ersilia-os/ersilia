@@ -86,7 +86,7 @@ def run(model_id, input, output, batch_size=100):
     mdl.run(input=input_path, output=output_source, batch_size=batch_size)
 
     if output_source.lower().endswith(".csv") and os.path.exists(output_source):
-            df = pd.read_csv(output_source)
+        df = pd.read_csv(output_source)
     else:
        echo("Output generated but not in CSV format.", fg="yellow")
 
