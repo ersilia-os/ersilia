@@ -679,6 +679,15 @@
                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_last_packaging_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Last Packaging Date&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_model_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Model Size&quot;</span>
@@ -783,6 +792,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_image_size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Image Size&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_env_size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Environment Size&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_model_model_size</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Model Directory Size&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_packaging_date</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="s2">&quot;Last Packaging Date&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_check</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_model_computational_performance_one</span><span class="p">,</span>
             <span class="n">data</span><span class="p">,</span>
@@ -1284,6 +1294,7 @@
         <span class="n">total_rows</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
             <span class="n">missing_cols</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
                 <span class="n">total_rows</span> <span class="o">+=</span> <span class="mi">1</span>

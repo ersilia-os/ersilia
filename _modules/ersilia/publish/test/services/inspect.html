@@ -499,7 +499,6 @@
                 <span class="n">DOCKERFILE_FILE</span>
             <span class="p">)</span>
             <span class="n">yml_content</span><span class="p">,</span> <span class="n">yml_error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_file_content</span><span class="p">(</span><span class="n">INSTALL_YAML_FILE</span><span class="p">)</span>
-
             <span class="k">if</span> <span class="n">dockerfile_content</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">yml_content</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
                     <span class="kc">False</span><span class="p">,</span>
@@ -509,7 +508,6 @@
                 <span class="p">)</span>
 
             <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
-
             <span class="k">if</span> <span class="n">dockerfile_content</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">dockerfile_errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_dockerfile</span><span class="p">(</span><span class="n">dockerfile_content</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">dockerfile_errors</span><span class="p">:</span>

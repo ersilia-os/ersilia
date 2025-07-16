@@ -426,9 +426,7 @@
 <span class="sd">            The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="n">repo_path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">PACK_METHOD_BENTOML</span>
-        <span class="k">elif</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">resolver</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span></div>
@@ -507,19 +505,12 @@
 <span class="sd">        ValueError</span>
 <span class="sd">            If the model type is unsupported.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model_type</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">get_model_type</span><span class="p">(</span>
-            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">BENTOML_FILES</span>
-        <span class="k">elif</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">from_dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dir</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS_TMP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">ERSILIAPACK_BACK_FILES</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">ERSILIAPACK_FILES</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">from_dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dir</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS_TMP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">ERSILIAPACK_BACK_FILES</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span></div>
+            <span class="k">return</span> <span class="n">ERSILIAPACK_FILES</span></div>
+
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_check</span><span class="p">(</span>
