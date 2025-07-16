@@ -80,7 +80,7 @@ Before opening the first PR to add the model to Ersilia, the contributor must ma
 
 **Status:** at model incorproation, the status is In Progress. This will automatically be moved to Ready once it is fully incorporated. Do not modify it.
 
-**Deployment:** the model is available only for local inference (Local) or also online inference (online) in Ersilia's servers. Note the difference with the actual Model Source. A model whose source is Local can still be deployed Online. This field is a list with only Local and/or Online as accepted values.
+**Deployment:** the model is available only for local inference (Local) or also online inference (Online) in Ersilia's servers. Note the difference with the actual Model Source. A model whose source is Local can still be deployed Online. This field is a list with only Local and/or Online as accepted values.
 
 **Source:** whether the model runs locally (Local; in your computer if fetched locally, or on an Ersilia cloud for online deployed models) or Online (posts predictions to a server **external** to Ersilia). Note we cannot guarantee privacy of your predictions or input SMILES for Online models. This field is a string with only one accepted value.
 
@@ -90,23 +90,23 @@ Before opening the first PR to add the model to Ersilia, the contributor must ma
 
 **Subtask:** more granular task description. Annotation models can be `Property calculation or prediction` or `Activity prediction`. Representation models can be `Featurization` or `Projection` and Sampling models can be `Similarity` search or `Generation`. This field is a string with only one accepted value.
 
-**Input**: data type required by the model. Currently all Ersilia models accept only Compound as input. This field is a string with only one accepted value.
+**Input**: data type required by the model. Currently all Ersilia models accept only `Compound` as input. This field is a string with only one accepted value.
 
-**Input dimension:** data format required by the model. Currently all Ersilia models accept only One (in numeric, 1) as input dimension. This does not mean we cannot pass a list of inputs to the model, but the predictions are done on one input, not a combination of them.  This field is an integer with only one accepted value.
+**Input dimension:** data format required by the model. Currently all Ersilia models accept only One (in numeric, `1`) as input dimension. This does not mean we cannot pass a list of inputs to the model, but the predictions are done on one input, not a combination of them.  This field is an integer with only one accepted value.
 
-**Output:** data type outputted by the model.  The only accepted output formats are: `Boolean`, `Compound`, `Descriptor`, `Distance`, `Experimental value`, `Image`, `Other value`, `Probability`, `Protein`, `Score`, `Text`. This field is a string with only one accepted value.
+**Output:** data type outputted by the model.  The only accepted output formats are: `Score` (for example a probability), `Value` (an experimental value, a molecular descriptor, a calculated property...) `Compound` (a new compound), `Text` (natural language text, for example a description). This field is a list.
 
 **Output Dimension:** similar to the input dimension, what is the length of the output per each input? . This field is an integer with only one accepted value.
 
-**Output Consistency:** the model produces always the same prediction given the same molecule (Fixed) or not (Variable). Most QSAR models are Fixed, with the exception of Generative models. This field is a string with only one accepted value.
+**Output Consistency:** the model produces always the same prediction given the same molecule (`Fixed`) or not (`Variable`). Most QSAR models are Fixed, with the exception of Generative models. This field is a string with only one accepted value.
 
 **Interpretation:** provide a brief description of how to interpret the model results. For example, in the case of a binary classification model for antimalarial activity based on experimental IC50, indicate the experimental settings (time of incubation, strain of parasite...) and the selected cut-off for the classification. This field is a single string.
 
-**Biomedical area:** the pertinent area of research or disease targeted. More than one can be selected from the same model, for example ADMET and Malaria, if both are relevant. Any can be used when the model could be applied to all fields of disease (for example a featuriser). This field is a list of strings.
+**Biomedical area:** the pertinent area of research or disease targeted. More than one can be selected from the same model, for example ADMET and Malaria, if both are relevant. `Any` can be used when the model could be applied to all fields of disease (for example a featuriser). This field is a list of strings.
 
-**Target organism:** if existing, the pathogen the model is related to, for example _Plasmodium falciparum,_ or organism in case of ADMET, for example _Mus musculus_ or _Homo sapiens._ If the model is unrelated to any organism, select Not applicable. This field is a list of strings.
+**Target organism:** if existing, the pathogen the model is related to, for example _Plasmodium falciparum,_ or organism in case of ADMET, for example _Mus musculus_ or _Homo sapiens._ If the model is unrelated to any organism, select `Any`. This field is a list of strings.
 
-**Publication type:** peer reviewed, preprint or other. Most Ersilia models are peer-reviewed, and only on exception "other" is accepted. This field is a string with only one accepted value.
+**Publication type:** peer reviewed, preprint or other. Most Ersilia models are peer-reviewed, and only on exception "Other" is accepted. This field is a string with only one accepted value.
 
 **Publication year:** year of publication of the original model. This field is an integer with only one accepted value.
 
@@ -126,7 +126,7 @@ Once a PR successfuly passes the tests, Ersilia will run a series of workflows t
 
 **S3:** URL of the model zipped and stored in AWS as a backend
 
-**DockerHub:** URL of the Docker image of the model, part of Ersilia's orgainzation Docker Community.
+**DockerHub:** URL of the Docker image of the model, part of Ersilia's organization Docker Community.
 
 **Docker Architecture:** list of the docker architectures available for the model, in most cases both AMD64 and ARM64 are available but in some models one of the two backends is not available. (specially relevant to MacOS users)
 
@@ -137,6 +137,8 @@ Once a PR successfuly passes the tests, Ersilia will run a series of workflows t
 **Image Size:** size of the Docker image of the model, in MB.
 
 **Computational Performance 1,2,3,4 and 5:** fields storing the time required to run 1 , 10, 100, 1000 and 10000 inputs through the model, in seconds.&#x20;
+
+**Last Packaging Date**: date when the model was last packaged and uploaded to DockerHub. This is a string with the format YYYY-MM-DD
 
 {% hint style="info" %}
 To learn more about how those fields are filled in, go to the [Developers CI/CD](../developer-docs/#ci-cd-workflows-and-testing) section.
