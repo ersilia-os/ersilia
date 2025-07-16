@@ -65,15 +65,6 @@ class DescriptionBaseInformationError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
-class ModeBaseInformationError(ErsiliaError):
-    def __init__(self):
-        self.message = "Wrong Ersilia mode"
-        self.hints = "Only one of the following modes is allowed: {}".format(
-            ", ".join(_read_default_fields("Mode"))
-        )
-        ErsiliaError.__init__(self, self.message, self.hints)
-
-
 class SourceBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong source information"
@@ -149,24 +140,6 @@ class OutputBaseInformationError(ErsiliaError):
         self.message = "Wrong Ersilia output"
         self.hints = "Only one of the following outputs is allowed: {}".format(
             ", ".join(_read_default_fields("Output"))
-        )
-        ErsiliaError.__init__(self, self.message, self.hints)
-
-
-class OutputTypeBaseInformationError(ErsiliaError):
-    def __init__(self):
-        self.message = "Wrong Ersilia output type"
-        self.hints = "Only output types allowed: {}. More than one output type can be added in list format".format(
-            ", ".join(_read_default_fields("Output Type"))
-        )
-        ErsiliaError.__init__(self, self.message, self.hints)
-
-
-class OutputShapeBaseInformationError(ErsiliaError):
-    def __init__(self):
-        self.message = "Wrong Ersilia output shape"
-        self.hints = "Only one of the following output shapes is allowed: {}".format(
-            ", ".join(_read_default_fields("Output Shape"))
         )
         ErsiliaError.__init__(self, self.message, self.hints)
 
