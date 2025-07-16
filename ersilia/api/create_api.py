@@ -55,6 +55,9 @@ class ErsiliaAPI:
 
     def __init__(self, model_id):
         self.model_id = model_id
+        self._url = None
+        self.session = None
+        self.SRV = None
 
     def fetch(self, verbose=False):
         """
@@ -113,7 +116,7 @@ class ErsiliaAPI:
             or if the maximum cache memory fraction is outside of the recommended range.
 
         """
-        serve.serve(
+        self._url, self.session, self.SRV = serve.serve(
             self.model_id,
             port=None,
             track=False,
@@ -126,7 +129,7 @@ class ErsiliaAPI:
             verbose=verbose,
         )
 
-    def run(self, input, output, batch_size):
+    def run(self, input, batch_size):
         """
         Runs the current model on a list of SMILES strings and
         returns the prediction as a pandas data frame.
@@ -144,7 +147,7 @@ class ErsiliaAPI:
             A pandas df with the predictions.
 
         """
-        run.run(self.model_id, input, output, batch_size)
+        run.run(self.model_id, input, batch_size)
 
     def close(self):
         """
@@ -163,6 +166,7 @@ class ErsiliaAPI:
             RuntimeError: If no model was served in the current session.
         """
         close.close(self.model_id)
+        self._url = None
 
     def info(self):
         """
