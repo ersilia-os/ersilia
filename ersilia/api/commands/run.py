@@ -9,7 +9,7 @@ from ...core.session import Session
 from ..echo import echo
 
 
-def validate_input_output_types(input, output):
+def validate_input_type(input):
     """
     Validates that 'input' is either a Python list or a path to a .csv file,
     and that 'output' (if provided) ends with a valid extension.
@@ -21,19 +21,9 @@ def validate_input_output_types(input, output):
             bold=True,
         )
         sys.exit(1)
-    
-    if output is not None and not any(
-        output.lower().endswith(ext) for ext in (".csv", ".h5", ".json")
-    ):
-        echo(
-            "This output type is not allowed in Ersilia. A valid output types are .csv, .h5 or .json",
-            fg="red",
-            bold=True,
-        )
-        sys.exit(1)
 
 
-def run(model_id, input, output, batch_size=100):
+def run(model_id, input, batch_size=100):
     """
     Runs the current model on a list of SMILES strings and
     returns the prediction as a pandas data frame.
@@ -50,11 +40,11 @@ def run(model_id, input, output, batch_size=100):
     #     A pandas df with the predictions.
 
     """
-    validate_input_output_types(input, output)
+    validate_input_type(input)
     session = Session(config_json=None)
     model_id = model_id
     service_class = session.current_service_class()
-    output_source = output or session.current_output_source() or os.path.join(os.getcwd(), "output_results.csv")
+    # output_source = output or session.current_output_source() or os.path.join(os.getcwd(), "output_results.csv")
     
     if model_id is None:
         echo(
@@ -74,21 +64,21 @@ def run(model_id, input, output, batch_size=100):
     else:
         # already a CSV file
         input_path = input
-
-    output_path = output or os.path.join(os.getcwd(), "output_results.csv")
+    output_file = tempfile.NamedTemporaryFile(mode="w+r", suffix=".csv", delete=False)
+    # output_path = output or os.path.join(os.getcwd(), "output_results.csv")
     
     mdl = ErsiliaModel(
         model_id,
-        output_source=output_path,
+        output_source=output_file,
         service_class=service_class,
         config_json=None,
     )
-    mdl.run(input=input_path, output=output_source, batch_size=batch_size)
+    mdl.run(input=input_path, output=output_file, batch_size=batch_size)
 
-    if output_source.lower().endswith(".csv") and os.path.exists(output_source):
-        df = pd.read_csv(output_source)
-    else:
-       echo("Output generated but not in CSV format.", fg="yellow")
+    # if output_source.lower().endswith(".csv") and os.path.exists(output_source):
+    df = pd.read_csv(output_file)
+    # else:
+    #    echo("Output generated but not in CSV format.", fg="yellow")
 
     if cleanup_input:
         try:
@@ -96,6 +86,6 @@ def run(model_id, input, output, batch_size=100):
         except OSError:
             pass
 
-    echo(f":check_mark_button: The output successfully generated in {output_path} file!", fg="green", bold=True)
+    echo(f":check_mark_button: The output successfully generated", fg="green", bold=True)
 
     return df

@@ -51,33 +51,33 @@ def example(
         return
     
     eg = ExampleGenerator(model_id=model_id)
-    examples = eg.example(
+    example = eg.example(
         n_samples,
         file_name=None,
         simple=simple,
         try_predefined=not random,
         deterministic=deterministic,
     )
-    normalized = []
-    for item in examples:
-        if isinstance(item, str):
-            normalized.append(item)
-        elif isinstance(item, dict):
-            smi = item.get('input') or item.get('smiles')
-            if smi:
-                normalized.append(smi)
-        else:
-            normalized.append(str(item))
-    header = ['input']
-    rows = [[sm] for sm in normalized]
+    # normalized = []
+    # for item in examples:
+    #     if isinstance(item, str):
+    #         normalized.append(item)
+    #     elif isinstance(item, dict):
+    #         smi = item.get('input') or item.get('smiles')
+    #         if smi:
+    #             normalized.append(smi)
+    #     else:
+    #         normalized.append(str(item))
+    # header = ['input']
+    # rows = [[sm] for sm in normalized]
 
-    try:
-        with open(file_name, mode='w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(header)
-            writer.writerows(rows)
-            echo(f":check_mark_button: Examples successfully saved to {file_name}", fg="green", bold=True)
-    except Exception as e:
-        echo(f"Failed to write examples to CSV: {str(e)}", fg="red", bold=True)
+    # try:
+    #     with open(file_name, mode='w', newline='', encoding='utf-8') as csvfile:
+    #         writer = csv.writer(csvfile)
+    #         writer.writerow(header)
+    #         writer.writerows(rows)
+    #         echo(f":check_mark_button: Examples successfully saved to {file_name}", fg="green", bold=True)
+    # except Exception as e:
+    #     echo(f"Failed to write examples to CSV: {str(e)}", fg="red", bold=True)
     
     return example

@@ -100,26 +100,28 @@ def serve(
         for api in apis:
             if api != "run":
                 additional_apis.append(api)
-    echo(":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green")
-    echo("")
-    echo("   URL: {0}".format(mdl.url), fg="yellow")
-    if str(mdl.pid) != "-1":
-        echo("   PID: {0}".format(mdl.pid), fg="yellow")
-    echo("   SRV: {0}".format(mdl.scl), fg="yellow")
-    echo("   Session: {0}".format(mdl.session._session_dir), fg="yellow")
-    echo("")
-    echo("🔄 Cache fetching mode:", fg="blue")
-    echo(f"   - {cache_status}", fg="red") if cache_status == "Disabled" else echo(
-        f"   - {cache_status}", fg="green"
-    )
-    echo("")
-    echo(":floppy_disk: Local cache:", fg="blue")
-    echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
-        "   - Disabled", fg="red"
-    )
-    echo("")
-    echo(":chart_increasing: Tracking:", fg="blue")
-    if track:
-        echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
-    else:
-        echo("   - Disabled", fg="red")
+    # echo(":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green")
+    # echo("")
+    # echo("   URL: {0}".format(mdl.url), fg="yellow")
+    # if str(mdl.pid) != "-1":
+    #     echo("   PID: {0}".format(mdl.pid), fg="yellow")
+    # echo("   SRV: {0}".format(mdl.scl), fg="yellow")
+    # echo("   Session: {0}".format(mdl.session._session_dir), fg="yellow")
+    # echo("")
+    # echo("🔄 Cache fetching mode:", fg="blue")
+    # echo(f"   - {cache_status}", fg="red") if cache_status == "Disabled" else echo(
+    #     f"   - {cache_status}", fg="green"
+    # )
+    # echo("")
+    # echo(":floppy_disk: Local cache:", fg="blue")
+    # echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
+    #     "   - Disabled", fg="red"
+    # )
+    # echo("")
+    # echo(":chart_increasing: Tracking:", fg="blue")
+    # if track:
+    #     echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
+    # else:
+    #     echo("   - Disabled", fg="red")
+
+    return mdl.url, mdl.session._session_dir, mdl.scl
