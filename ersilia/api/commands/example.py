@@ -1,5 +1,6 @@
-import csv
-import json
+import pandas as pd
+import tempfile
+import os
 
 from ... import ModelBase
 from ...core.session import Session
@@ -8,7 +9,7 @@ from ..echo import echo
 
 
 def example(
-    model, file_name, simple=True, random=True, n_samples=5, deterministic=False
+    model, simple=True, random=True, n_samples=5, deterministic=False
 ):
     """
     This command can sample inputs for a given model and save them as a CSV file.
@@ -42,18 +43,18 @@ def example(
         )
         return
     
-    if not file_name or not file_name.endswith('.csv'):
-        echo(
-            "Please provide a valid CSV filename ending with .csv",
-            fg="red",
-            bold=True
-        )
-        return
-    
+    # if not file_name or not file_name.endswith('.csv'):
+    #     echo(
+    #         "Please provide a valid CSV filename ending with .csv",
+    #         fg="red",
+    #         bold=True
+    #     )
+    #     return
+    output_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False)
     eg = ExampleGenerator(model_id=model_id)
     example = eg.example(
         n_samples,
-        file_name=None,
+        file_name=output_file.name,
         simple=simple,
         try_predefined=not random,
         deterministic=deterministic,
@@ -79,5 +80,10 @@ def example(
     #         echo(f":check_mark_button: Examples successfully saved to {file_name}", fg="green", bold=True)
     # except Exception as e:
     #     echo(f"Failed to write examples to CSV: {str(e)}", fg="red", bold=True)
-    
-    return example
+    df = pd.read_csv(output_file.name)
+    try:
+        output_file.close()
+        os.remove(output_file.name)
+    except OSError:
+            pass
+    return df

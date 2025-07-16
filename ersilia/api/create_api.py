@@ -53,13 +53,14 @@ class ErsiliaAPI:
     >>>     model.info()
     """
 
-    def __init__(self, model_id):
+    def __init__(self, model_id, verbose=False):
         self.model_id = model_id
         self._url = None
         self.session = None
         self.SRV = None
+        self.verbose_mode = verbose
 
-    def fetch(self, verbose=False):
+    def fetch(self):
         """
         Fetches an Ersilia model to run it locally.
 
@@ -87,10 +88,10 @@ class ErsiliaAPI:
             with_fastapi=True,
             with_bentoml=None,
             hosted_url=None,
-            verbose=verbose,
+            verbose=self.verbose_mode,
         )
 
-    def serve(self, verbose=False):
+    def serve(self):
         """
         Serves a specified model as an API.
 
@@ -126,7 +127,7 @@ class ErsiliaAPI:
             cloud_cache_only=False,
             cache_only=False,
             max_cache_memory_frac=None,
-            verbose=verbose,
+            verbose=self.verbose_mode,
         )
 
     def run(self, input, batch_size):
@@ -190,7 +191,7 @@ class ErsiliaAPI:
         """
         return info.info(self.model_id)
 
-    def example(self, file_name, simple, random, n_samples, deterministic):
+    def example(self, simple, random, n_samples, deterministic):
         """
         This command can sample inputs for a given model.
 
@@ -210,10 +211,9 @@ class ErsiliaAPI:
 
         """
         example.example(
-                self.model_id, file_name, simple, random, n_samples, deterministic
-            )
+                self.model_id, simple, random, n_samples, deterministic)
 
-    def delete(self, verbose=False):
+    def delete(self):
         """
         Deletes a specified model from local storage.
 
@@ -226,7 +226,7 @@ class ErsiliaAPI:
         Raises:
             RuntimeError: If the model cannot be deleted.
         """
-        delete.delete(self.model_id, verbose)
+        delete.delete(self.model_id, verbose=self.verbose_mode)
 
     def __enter__(self):
         self.serve()
