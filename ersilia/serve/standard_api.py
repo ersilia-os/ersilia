@@ -263,8 +263,7 @@ class StandardCSVRunApi(ErsiliaBase):
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                if self.validate_smiles(row[1]):
-                    json_data += [{"key": row[0], "input": row[1], "text": row[2]}]
+                json_data += [{"key": row[0], "input": row[1], "text": row[2]}]
         return json_data
 
     def serialize_to_json_two_columns(self, input_data):
@@ -286,8 +285,7 @@ class StandardCSVRunApi(ErsiliaBase):
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                if self.validate_smiles(row[1]):
-                    json_data += [{"key": row[0], "input": row[1], "text": row[1]}]
+                json_data += [{"key": row[0], "input": row[1], "text": row[1]}]
         return json_data
 
     def serialize_to_json_one_column(self, input_data):
@@ -309,9 +307,8 @@ class StandardCSVRunApi(ErsiliaBase):
             reader = csv.reader(f)
             next(reader)
             for row in reader:
-                if self.validate_smiles(row[0]):
-                    key = self.encoder.encode(row[0])
-                    json_data += [{"key": key, "input": row[0], "text": row[0]}]
+                key = self.encoder.encode(row[0])
+                json_data += [{"key": key, "input": row[0], "text": row[0]}]
         return json_data
 
     async def async_serialize_to_json_one_column(self, input_data):
@@ -329,7 +326,7 @@ class StandardCSVRunApi(ErsiliaBase):
             The serialized JSON data.
         """
         smiles_list = self.get_list_from_csv(input_data)
-        smiles_list = [smiles for smiles in smiles_list if self.validate_smiles(smiles)]
+        smiles_list = [smiles for smiles in smiles_list]
         json_data = await self.encoder.encode_batch(smiles_list)
         return json_data
 
@@ -354,8 +351,7 @@ class StandardCSVRunApi(ErsiliaBase):
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
                 smiles = row.get(key)
-                if self.validate_smiles(smiles):
-                    smiles_list.append(smiles)
+                smiles_list.append(smiles)
         return smiles_list
 
     def serialize_to_json(self, input_data):
@@ -481,6 +477,28 @@ class StandardCSVRunApi(ErsiliaBase):
     def _serialize_output(self, result, output, model_id, api_name):
         self.generic_adapter._adapt_generic(result, output, model_id, api_name)
 
+    def _post_batch(self, url, input_batch):
+        if not input_batch:
+            return []
+
+        try:
+            response = requests.post(url, json=input_batch)
+
+            self.logger.debug("Status code: {0}".format(response.status_code))
+            response.raise_for_status()
+            result = response.json()
+            return result
+        except Exception as e:
+            self.logger.error(
+                "Error processing batch of size {}: {}".format(len(input_batch), e)
+            )
+            if len(input_batch) == 1:
+                return [None]
+            mid = len(input_batch) // 2
+            left_results = self._post_batch(url, input_batch[:mid])
+            right_results = self._post_batch(url, input_batch[mid:])
+            return left_results + right_results
+
     def post(self, input, output, batch_size, output_source):
         """
         Post input data to the API in batches and get the output data.
@@ -503,7 +521,6 @@ class StandardCSVRunApi(ErsiliaBase):
             Path to the output CSV file if successful, None otherwise.
         """
         input_data = self.serialize_to_json(input)
-
         if OutputSource.is_precalculation_enabled(output_source):
             store = InferenceStoreApi(
                 model_id=self.model_id, output=output, output_source=output_source
@@ -538,24 +555,12 @@ class StandardCSVRunApi(ErsiliaBase):
             batch = input_data[i : i + batch_size]
             st = time.perf_counter()
             batch = [d["input"] for d in batch]
-            # TODO @Abel: This is a hack to make the API work with the current implementation.
-            # However, the params need to be parametrized properly in the API, including the save_cache, cache_only, min_workers and max_workers
-            params = {
-                "orient": "records",
-                "fetch_cache": "true",
-                "save_cache": "true",
-                "cache_only": "false",
-                "min_workers": "1",
-                "max_workers": "12",
-            }
-            headers = {"accept": "application/json", "Content-Type": "application/json"}
-            response = requests.post(url, params=params, headers=headers, json=batch)
-            et = time.perf_counter()
-            self.logger.info(
-                f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
-            )
-            if response.status_code == 200:
-                response = response.json()
+            try:
+                response = self._post_batch(url, batch)
+                et = time.perf_counter()
+                self.logger.info(
+                    f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
+                )
                 if "result" in response:
                     self.logger.warning("Result is in batch")
                     batch_result = response["result"]
@@ -567,9 +572,9 @@ class StandardCSVRunApi(ErsiliaBase):
                 if "meta" in response:
                     self.logger.info("Deleting meta")
                     del response["meta"]
-            else:
+            except:
                 self.logger.error(
-                    f"Batch {i // batch_size + 1} request failed with status: {response.status_code}"
+                    f"Batch {i // batch_size + 1} request failed with status"
                 )
                 return None
         return overall_results, meta
@@ -583,8 +588,14 @@ class StandardCSVRunApi(ErsiliaBase):
             else meta["outcome"]
         )
         for inp, out in zip(input_data, results):
-            _v = list(out.values())
-            _k = list(out.keys()) if "outcome" not in out.keys() else keys
+            if out is not None:
+                _v = list(out.values() if out else out)
+            else:
+                _v = [out]
+            if out is not None:
+                _k = [out.keys()] if "outcome" not in out.keys() else keys
+            else:
+                _k = ["outcome"]
             _output = (
                 {k: v for k, v in zip(_k, _v)}
                 if output.endswith(".json")

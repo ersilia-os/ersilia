@@ -141,7 +141,8 @@ class DataFrame(object):
 
     def write_text(self, file_name: str, delimiter: str = None):
         """
-        Writes the DataFrame to a text file, wrapping any string-valued field in quotes.
+        Writes the DataFrame to a text file, wrapping any string-valued field in quotes,
+        except for the first and second columns, which are never quoted.
         """
         if delimiter is None:
             delimiter = self._get_delimiter(file_name)
@@ -152,12 +153,12 @@ class DataFrame(object):
 
             for row in self.data:
                 out_fields = []
-                for val in row:
+                for idx, val in enumerate(row):
                     if val is None:
                         text = none_str
                     else:
                         text = str(val)
-                        if isinstance(val, str):
+                        if isinstance(val, str) and idx > 1:
                             text = f'"{text}"'
                     out_fields.append(text)
 
