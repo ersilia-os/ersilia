@@ -137,15 +137,6 @@ class InputBaseInformationError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
-class InputShapeBaseInformationError(ErsiliaError):
-    def __init__(self):
-        self.message = "Wrong Ersilia input shape"
-        self.hints = "Only one of the following shapes is allowed: {}".format(
-            ", ".join(_read_default_fields("Input Shape"))
-        )
-        ErsiliaError.__init__(self, self.message, self.hints)
-
-
 class InputDimensionBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong input dimension"

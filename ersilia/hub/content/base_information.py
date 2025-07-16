@@ -26,7 +26,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     IncorporationDateBaseInformationError,
     InputBaseInformationError,
     InputDimensionBaseInformationError,
-    InputShapeBaseInformationError,
     InterpretationBaseInformationError,
     LastPackagingDateBaseInformationError,
     LicenseBaseInformationError,
@@ -96,8 +95,6 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the subtask associated with the model, such as 'activity prediction', or 'featurization'.
         _input : None
             Placeholder for input data specifications, such as 'Compound'.
-        _input_shape : None
-            Placeholder for the shape of the input data.
         _input_dimension: None
             Placeholder for dimensional notes about the input.
         _output : None
@@ -176,7 +173,6 @@ class BaseInformation(ErsiliaBase):
         self._task = None
         self._subtask = None
         self._input = None
-        self._input_shape = None
         self._input_dimension = None
         self._output = None
         self._output_type = None
@@ -555,39 +551,6 @@ class BaseInformation(ErsiliaBase):
             if inp not in self._read_default_fields("Input"):
                 raise InputBaseInformationError
         self._input = new_input
-
-    @property
-    def input_shape(self):
-        """
-        Get the model input shape.
-
-        Returns
-        -------
-        str
-            The model input shape.
-        """
-        return self._input_shape
-
-    @input_shape.setter
-    def input_shape(self, new_input_shape):
-        """
-        Set the model input shape.
-
-        Parameters
-        ----------
-        new_input_shape : str
-            The new model input shape.
-
-        Raises
-        ------
-        InputShapeBaseInformationError
-            If the input shape is not valid.
-        """
-        if new_input_shape is None:
-            new_input_shape = "Single"
-        if new_input_shape not in self._read_default_fields("Input Shape"):
-            raise InputShapeBaseInformationError
-        self._input_shape = new_input_shape
 
     @property
     def input_dimension(self):
