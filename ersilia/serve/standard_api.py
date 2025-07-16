@@ -244,49 +244,6 @@ class StandardCSVRunApi(ErsiliaBase):
             self.logger.error(f"Could not determine header from file {file}")
             return None
 
-    def parse_smiles_list(self, input_data):
-        """
-        Parse a list of SMILES strings.
-
-        Parameters
-        ----------
-        input_data : list
-            List of SMILES strings.
-
-        Returns
-        -------
-        list
-            List of dictionaries containing encoded SMILES strings.
-        """
-        if not input_data or all(not s.strip() for s in input_data):
-            raise ValueError(
-                "The list of SMILES strings is empty or contains only empty strings."
-            )
-        return [
-            {"key": self.encoder.encode(smiles), "input": smiles, "text": smiles}
-            for smiles in input_data
-            if self.validate_smiles(smiles)
-        ]
-
-    def parse_smiles_string(self, input):
-        """
-        Parse a single SMILES string.
-
-        Parameters
-        ----------
-        input : str
-            A SMILES string.
-
-        Returns
-        -------
-        list
-            List containing a dictionary with the encoded SMILES string.
-        """
-        if not self.validate_smiles(input):
-            raise ValueError("The SMILES string is invalid.")
-        key = self.encoder.encode(input)
-        return [{"key": key, "input": input, "text": input}]
-
     def serialize_to_json_three_columns(self, input_data):
         """
         Serialize data to JSON with three columns.
@@ -403,17 +360,17 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def serialize_to_json(self, input_data):
         """
-        Serialize input data to JSON format.
+            Serialize input data to JSON format.
 
-        Parameters
+            Parameters
         ----------
-        input_data : str | list
-            Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+            input_data : str | list
+                Input data which can be a file path, a SMILES string, or a list of SMILES strings.
 
-        Returns
-        -------
-        list
-            List of dictionaries containing serialized input data.
+            Returns
+            -------
+            list
+                List of dictionaries containing serialized input data.
         """
         if isinstance(input_data, str) and os.path.isfile(input_data):
             with open(input_data, "r") as f:
@@ -433,10 +390,6 @@ class StandardCSVRunApi(ErsiliaBase):
                     "More than three columns found in input! This is not standard."
                 )
                 return None
-        elif isinstance(input_data, str):
-            return self.parse_smiles_string(input_data)
-        elif isinstance(input_data, list):
-            return self.parse_smiles_list(input_data)
         else:
             raise ValueError(
                 "Input must be either a file path (string), a SMILES string, or a list of SMILES strings."

@@ -271,15 +271,6 @@ class RunnerService:
                             ClickInterface(),
                         )
                         return _completed_status
-                    else:
-                        rmse_perc = round(rmse * 100, 2)
-                        _completed_status.append(
-                            (
-                                f"RMSE-{column}",
-                                f"RMSE <= 10%: {rmse_perc}%",
-                                str(STATUS_CONFIGS.PASSED),
-                            )
-                        )
 
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(

@@ -318,6 +318,7 @@ def apply_rules(command, description, config, std_out):
         "serve": "serve_rule",
         "close": "close_rule",
         "run": "run_rule",
+        "test": "test_rule",
     }
 
     try:

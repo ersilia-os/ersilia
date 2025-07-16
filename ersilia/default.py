@@ -237,20 +237,3 @@ def bashrc_cli_snippet(overwrite=True):
         f.write(text)
     with open(fn, "a+") as f:
         f.write(snippet)
-
-
-OUTPUT_DATASTRUCTURE = {
-    "Single": lambda x: isinstance(x, list) and len(x) == 1,
-    "List": lambda x: isinstance(x, list)
-    and len(x) > 1
-    and all(isinstance(item, (str, int, float)) for item in x),
-    "Flexible List": lambda x: isinstance(x, list)
-    and all(isinstance(item, (str, int, float)) for item in x),
-    "Matrix": lambda x: isinstance(x, list)
-    and all(
-        isinstance(row, list)
-        and all(isinstance(item, (str, int, float)) for item in row)
-        for row in x
-    ),
-    "Serializable Object": lambda x: isinstance(x, dict),
-}
