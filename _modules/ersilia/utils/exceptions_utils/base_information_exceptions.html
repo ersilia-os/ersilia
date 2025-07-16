@@ -402,18 +402,6 @@
 
 
 
-<div class="viewcode-block" id="ModeBaseInformationError">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.ModeBaseInformationError">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ModeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia mode&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following modes is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Mode&quot;</span><span class="p">))</span>
-        <span class="p">)</span>
-        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="SourceBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.SourceBaseInformationError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SourceBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
@@ -498,18 +486,6 @@
 
 
 
-<div class="viewcode-block" id="InputShapeBaseInformationError">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.InputShapeBaseInformationError">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">InputShapeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia input shape&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following shapes is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Input Shape&quot;</span><span class="p">))</span>
-        <span class="p">)</span>
-        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="InputDimensionBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.InputDimensionBaseInformationError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InputDimensionBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
@@ -527,30 +503,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia output&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following outputs is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output&quot;</span><span class="p">))</span>
-        <span class="p">)</span>
-        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="OutputTypeBaseInformationError">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.OutputTypeBaseInformationError">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">OutputTypeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia output type&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only output types allowed: </span><span class="si">{}</span><span class="s2">. More than one output type can be added in list format&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Type&quot;</span><span class="p">))</span>
-        <span class="p">)</span>
-        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="OutputShapeBaseInformationError">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.OutputShapeBaseInformationError">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">OutputShapeBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia output shape&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Only one of the following output shapes is allowed: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_read_default_fields</span><span class="p">(</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">))</span>
         <span class="p">)</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
@@ -765,6 +717,7 @@
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
+
 <div class="viewcode-block" id="LastPackagingDateBaseInformationError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.LastPackagingDateBaseInformationError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LastPackagingDateBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
@@ -772,6 +725,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Last Packaging Date field error&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Last Packaging Date must be a valid ISO date&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="InterpretationBaseInformationError">
