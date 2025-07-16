@@ -3,6 +3,7 @@ import json
 from ...hub.content.card import ModelCard
 from ...hub.content.catalog import ModelCatalog
 from ... import ErsiliaModel, logger
+from ..echo import echo
 
 
 def catalog_cmd():
@@ -61,7 +62,7 @@ def catalog_cmd():
             logger.set_verbosity(0)
 
         if card and not model:
-            click.echo("❌ Error: --card option requires a model ID", err=True)
+            echo(" Error: --card option requires a model ID", err=True)
             return None
 
         if card and model:
@@ -70,18 +71,18 @@ def catalog_cmd():
                 model_metadata = mc.get(model, as_json=True)
 
                 if not model_metadata:
-                    click.echo(f"❌ Error: No metadata found for model ID '{model}'", err=True)
+                    echo(f" Error: No metadata found for model ID '{model}'", err=True)
                     return None
 
                 if as_json:
-                    click.echo(json.dumps(model_metadata, indent=2))
+                    echo(json.dumps(model_metadata, indent=2))
                     return model_metadata
                 else:
-                    click.echo(str(model_metadata))
+                    echo(str(model_metadata))
                     return model_metadata
 
             except Exception as e:
-                click.echo(f"❌ Error fetching model metadata: {e}", err=True)
+                echo(f"Error fetching model metadata: {e}", err=True)
                 return None
 
         else:
@@ -92,8 +93,8 @@ def catalog_cmd():
             else:
                 catalog_table = mc.local()
                 if not catalog_table.data:
-                    click.echo(
-                        "⚠️ No local models available. Please fetch a model by running 'ersilia fetch'",
+                    echo(
+                        " No local models available. Please fetch a model by running 'ersilia fetch'",
                         err=True,
                     )
                     return None
@@ -102,11 +103,11 @@ def catalog_cmd():
                 catalog = (
                     catalog_table.as_json() if as_json else catalog_table.as_table()
                 )
-                click.echo(catalog)
+                echo(catalog)
                 return catalog
             else:
                 catalog_table.write(file_name)
-                click.echo(f"📁 Catalog written to {file_name}")
+                echo(f"📁 Catalog written to {file_name}")
                 return None
 
     return catalog
