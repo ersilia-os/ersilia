@@ -28,6 +28,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     InputDimensionBaseInformationError,
     InputShapeBaseInformationError,
     InterpretationBaseInformationError,
+    LastPackagingDateBaseInformationError,
     LicenseBaseInformationError,
     ModeBaseInformationError,
     ModelSizeMbBaseInformationError,
@@ -50,7 +51,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     TargetOrganismBaseInformationError,
     TaskBaseInformationError,
     TitleBaseInformationError,
-    LastPackagingDateBaseInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
 
@@ -1734,7 +1734,7 @@ class BaseInformation(ErsiliaBase):
                 if nt not in self._read_default_fields("Deployment"):
                     raise DeploymentBaseInformationError
             self._deployment = new_deployment
-    
+
     @property
     def last_packaging_date(self):
         """
