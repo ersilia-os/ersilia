@@ -29,4 +29,5 @@ def info(model_id):
         raise RuntimeError("No model was served")
     mdl = ErsiliaModel(model_id, service_class=service_class)
     info = mdl.info()
-    InformationDisplayer(info).echo()
+    # InformationDisplayer(info).echo()
+    return info

@@ -184,7 +184,7 @@ class ErsiliaAPI:
         -------
         RuntimeError: If no model was served in the current session.
         """
-        info.info(self.model_id)
+        return info.info(self.model_id)
 
     def example(self, file_name, simple, random, n_samples, deterministic):
         """
