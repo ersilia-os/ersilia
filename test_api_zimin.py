@@ -1,9 +1,13 @@
-from ersilia.api import ErsiliaAPI
+from ersilia.api import ErsiliaModel, ErsiliaHub
 
-mdl = ErsiliaAPI("eos9p4a") # drug-likeness
-mdl.delete()
-mdl.fetch()
-mdl.serve()
+# mdl = ErsiliaModel("eos9p4a") # drug-likeness
+# mdl.delete()
+# mdl.fetch()
+# mdl.serve()
+
+Hub = ErsiliaHub()
+Hub.catalog()
+
 #mdl.info()
 # input = ["CCCCO", "C", "CC"]
 # df = mdl.run(input, output="output_results.csv", batch_size=100)

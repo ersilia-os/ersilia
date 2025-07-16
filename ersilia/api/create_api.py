@@ -1,4 +1,4 @@
-from .commands import close, delete, example, fetch, info, run, serve
+from .commands import close, delete, example, fetch, info, run, serve, catalog
 
 
 class ErsiliaModel:
@@ -240,4 +240,5 @@ class ErsiliaHub:
     def __init__(self, verbose=False):
         self.verbose_mode = verbose
 
-    def catalog(self, verbose=self.verbose_mode):
+    def catalog(self):
+        catalog.catalog()
