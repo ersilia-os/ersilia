@@ -325,7 +325,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.hubdata.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonModelsInterface</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span> <span class="n">TableConstants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span> <span class="n">TableConstants</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...tools.bentoml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelIdentifier</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
@@ -630,7 +630,7 @@
 <span class="sd">        List models available in AirTable Ersilia Model Hub base.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">webbrowser</span><span class="p">:</span>
-            <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;https://airtable.com/shrUcrUnd7jB9ChZV&quot;</span><span class="p">)</span>  <span class="c1"># TODO Hardcoded</span></div>
+            <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">model_cards</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
