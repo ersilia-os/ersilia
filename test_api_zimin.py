@@ -1,4 +1,4 @@
-from ersilia.api.create_api import ErsiliaAPI
+from ersilia.api import ErsiliaAPI
 
 mdl = ErsiliaAPI("eos9p4a") # drug-likeness
 mdl.delete()
