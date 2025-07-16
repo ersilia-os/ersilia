@@ -8,7 +8,7 @@ from ..echo import echo
 
 
 def example(
-    model, file_name, simple=True, random=True, n_samples=5, deterministic=False
+    model, simple=True, random=True, n_samples=5, deterministic=False
 ):
     """
     This command can sample inputs for a given model and save them as a CSV file.

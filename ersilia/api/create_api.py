@@ -210,7 +210,7 @@ class ErsiliaAPI:
 
         """
         example.example(
-                self.model_id, file_name, simple, random, n_samples, deterministic
+                self.model_id, simple, random, n_samples, deterministic
             )
 
     def delete(self, verbose=False):
