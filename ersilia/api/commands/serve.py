@@ -43,6 +43,7 @@ def serve(
 
     """
     echo("Serving model. This process may take some time...", fg="blue")
+    
     if verbose:
         logger.set_verbosity(1)
     else:
