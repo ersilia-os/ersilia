@@ -4,7 +4,7 @@ mdl = ErsiliaAPI("eos9p4a") # drug-likeness
 mdl.delete()
 mdl.fetch()
 mdl.serve()
-mdl.info()
+#mdl.info()
 # input = ["CCCCO", "C", "CC"]
 # df = mdl.run(input, output="output_results.csv", batch_size=100)
 #molecular_weight = ErsiliaAPI("eos3b5e")
