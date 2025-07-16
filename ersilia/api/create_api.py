@@ -1,7 +1,7 @@
 from .commands import close, delete, example, fetch, info, run, serve
 
 
-class ErsiliaAPI:
+class ErsiliaModel:
     """
     Python API wrapper for interacting with Ersilia Model Hub models.
 
@@ -234,3 +234,10 @@ class ErsiliaAPI:
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.close()
+
+
+class ErsiliaHub:
+    def __init__(self, verbose=False):
+        self.verbose_mode = verbose
+
+    def catalog(self, verbose=self.verbose_mode):
