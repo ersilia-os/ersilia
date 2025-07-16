@@ -329,6 +329,11 @@ class IncorporationDateBaseInformationError(ErsiliaError):
         self.hints = "Incorporation Date must be a valid ISO date"
         ErsiliaError.__init__(self, self.message, self.hints)
 
+class LastPackagingDateBaseInformationError(ErsiliaError):
+    def __init__(self):
+        self.message = "Last Packaging Date field error"
+        self.hints = "Last Packaging Date must be a valid ISO date"
+        ErsiliaError.__init__(self, self.message, self.hints)
 
 class InterpretationBaseInformationError(ErsiliaError):
     def __init__(self):

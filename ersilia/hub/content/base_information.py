@@ -50,6 +50,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     TargetOrganismBaseInformationError,
     TaskBaseInformationError,
     TitleBaseInformationError,
+    LastPackagingDateBaseInformationError,
 )
 from ...utils.identifiers.model import ModelIdentifier
 
@@ -161,6 +162,8 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the method used to pack the model.
         _deployment: None
             Placeholder for the deployment method used
+        _last_packaging_date: None
+            Placeholder for the packaging date
         """
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self._github = None
@@ -206,6 +209,7 @@ class BaseInformation(ErsiliaBase):
         self._computational_performance_five = None
         self._pack_method = None
         self._deployment = None
+        self._last_packaging_date = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -1730,6 +1734,43 @@ class BaseInformation(ErsiliaBase):
                 if nt not in self._read_default_fields("Deployment"):
                     raise DeploymentBaseInformationError
             self._deployment = new_deployment
+    
+    @property
+    def last_packaging_date(self):
+        """
+        Get the model packaging date.
+
+        Returns
+        -------
+        str
+            The model packaging date.
+        """
+        return self._last_packaging_date
+
+    @last_packaging_date.setter
+    def last_packaging_date(self, new_last_packaging_date):
+        """
+        Set the model packaging date.
+
+        Parameters
+        ----------
+        last_packaging_date : str
+            The model packaging date.
+        """
+        if new_last_packaging_date is None:
+            self._last_packaging_date = None
+        else:
+            new_last_packaging_date = str(new_last_packaging_date)
+            new_last_packaging_date = new_last_packaging_date.replace("'", "")
+            new_last_packaging_date = new_last_packaging_date.replace('"', "")
+            if (
+                new_last_packaging_date
+                != datetime.datetime.fromisoformat(new_last_packaging_date)
+                .date()
+                .isoformat()
+            ):
+                raise LastPackagingDateBaseInformationError
+            self._last_packaging_date = new_last_packaging_date
 
     def as_dict(self):
         """
@@ -1781,6 +1822,7 @@ class BaseInformation(ErsiliaBase):
             "Computational Performance 4": self.computational_performance_four,
             "Computational Performance 5": self.computational_performance_five,
             "Deployment": self.deployment,
+            "Last Packaging Date": self.last_packaging_date,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1851,3 +1893,4 @@ class BaseInformation(ErsiliaBase):
             data,
         )
         self._assign("deployment", "Deployment", data)
+        self._assign("last_packaging_date", "Last Packaging Date", data)
