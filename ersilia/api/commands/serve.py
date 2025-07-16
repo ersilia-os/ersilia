@@ -42,6 +42,7 @@ def serve(
         or if the maximum cache memory fraction is outside of the recommended range.
 
     """
+    echo("Serving model. This process may take some time...", fg="blue")
     if verbose:
         logger.set_verbosity(1)
     else:
