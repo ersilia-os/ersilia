@@ -11,7 +11,7 @@ from ersilia.utils.terminal import run_command
 from readme_formatter import ReadmeFormatter
 
 GITHUB_ORG = "ersilia-os"
-AIRTABLE_MODEL_HUB_BASE_ID = "appR6ZwgLgG8RTdoU" #TODO THIS IS THE REANNOTATION ID
+AIRTABLE_MODEL_HUB_BASE_ID = "appR6ZwgLgG8RTdoU"
 AIRTABLE_MODEL_HUB_TABLE_NAME = "Models"
 AIRTABLE_MAX_ROWS = 100000
 AIRTABLE_PAGE_SIZE = 100

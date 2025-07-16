@@ -6,8 +6,8 @@ import boto3
 import requests
 from botocore.exceptions import ClientError, NoCredentialsError
 
-AIRTABLE_MODEL_HUB_BASE_ID = "appR6ZwgLgG8RTdoU" #TODO THIS IS THE REANNOTATION ID
-AIRTABLE_TABLE_ID = "tblAfOWRbA7bI1VTB" #TODO THIS IS THE REANNOTATION ID
+AIRTABLE_MODEL_HUB_BASE_ID = "appR6ZwgLgG8RTdoU"
+AIRTABLE_TABLE_ID = "tblAfOWRbA7bI1VTB"
 AWS_ACCOUNT_REGION = "eu-central-1"
 ERSILIA_MODEL_HUB_S3_BUCKET = "ersilia-model-hub"
 
@@ -48,10 +48,10 @@ def convert_airtable_to_json(
         s3.put_object(
             Body=models_json,
             Bucket=ERSILIA_MODEL_HUB_S3_BUCKET,
-            Key="models_reannotated.json",
+            Key="models.json",
             ACL="public-read",
         )
-        print("file models_reannotated.json uploaded")
+        print("file models.json uploaded")
     except NoCredentialsError:
         logging.error("Unable to upload data to AWS: Credentials not found")
     except ClientError as e:
