@@ -1,12 +1,13 @@
 from ersilia.api import ErsiliaModel, ErsiliaHub
 
-# mdl = ErsiliaModel("eos9p4a") # drug-likeness
+mdl = ErsiliaModel("eos9p4a") # drug-likeness
+mdl.delete()
+mdl.is_fetched()
 # mdl.delete()
-# mdl.fetch()
 # mdl.serve()
 
-Hub = ErsiliaHub()
-Hub.catalog()
+# Hub = ErsiliaHub()
+# Hub.catalog()
 
 #mdl.info()
 # input = ["CCCCO", "C", "CC"]

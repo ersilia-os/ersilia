@@ -20,9 +20,9 @@ def _fetch(mf, model_id):
     Function: The fetch command function to be used by the API.
     Str: Confirmation message on success or warning message on failure.
 
-    Raises
-    -------
-    RuntimeError: If both BentoML and FastAPI are used together.
+    # Raises
+    # -------
+    # RuntimeError: If both BentoML and FastAPI are used together.
 
     """
     res = asyncio.run(mf.fetch(model_id))
@@ -39,17 +39,13 @@ def fetch(
     from_s3,
     from_hosted,
     hosted_url,
-    with_bentoml,
-    with_fastapi,
     verbose,
 ):
     if verbose:
         logger.set_verbosity(1)
     else:
         logger.set_verbosity(0)
-
-    if with_bentoml and with_fastapi:
-        raise Exception("Cannot use both BentoML and FastAPI")
+        
     if from_dir is not None:
         mdl = ModelBase(repo_path=from_dir)
     else:
@@ -67,8 +63,6 @@ def fetch(
         force_from_dockerhub=from_dockerhub,
         img_version=version,
         force_from_hosted=from_hosted,
-        force_with_bentoml=with_bentoml,
-        force_with_fastapi=with_fastapi,
         hosted_url=hosted_url,
         local_dir=from_dir,
     )
@@ -79,8 +73,11 @@ def fetch(
                 ":thumbs_up: Model {0} fetched successfully!".format(model_id),
                 fg="green",
             )
+        is_fetched = True
+        
     else:
         echo(
                 f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
                 fg="red",
             )
+        return False

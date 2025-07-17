@@ -1,5 +1,6 @@
 from .commands import close, delete, example, fetch, info, run, serve, catalog
-
+from .echo import echo
+from pathlib import Path
 
 class ErsiliaModel:
     """
@@ -59,6 +60,7 @@ class ErsiliaModel:
         self.session = None
         self.SRV = None
         self.verbose_mode = verbose
+        self._fetched_flag = False
 
     def fetch(self):
         """
@@ -85,11 +87,10 @@ class ErsiliaModel:
             version="latest",
             from_s3=False,
             from_hosted=False,
-            with_fastapi=True,
-            with_bentoml=None,
             hosted_url=None,
             verbose=self.verbose_mode,
         )
+        self._fetched_flag = True
 
     def serve(self):
         """
@@ -227,7 +228,30 @@ class ErsiliaModel:
             RuntimeError: If the model cannot be deleted.
         """
         delete.delete(self.model_id, verbose=self.verbose_mode)
+    
 
+    def is_fetched(self):
+        """
+        Checks whether the model has been successfully fetched.
+
+        Returns
+        -------
+        bool
+            True if the model is present locally, False otherwise.
+        """
+        if self._fetched_flag:
+            echo(f"✅ Model {self.model_id} is already fetched.", fg="green")
+        else:
+            echo(f" Model {self.model_id} is not already fetched. Fetch the model before serving.", fg="red")
+
+        # Fallback: check if model files exist
+        # model_path = Path.home() / ".ersilia" / "models" / self.model_id
+        # if model_path.exists() and any(model_path.iterdir()):
+        #     echo(f"✅ Model {self.model_id} is present on disk.", fg="green")
+        #     return True
+
+        # echo(f"⚠️  Model {self.model_id} is not fetched yet.", fg="yellow")
+        # return False
     def __enter__(self):
         self.serve()
         return self
