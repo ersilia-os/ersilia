@@ -1,14 +1,21 @@
 from ersilia.api import ErsiliaHub, ErsiliaModel
 
 mdl = ErsiliaModel("eos9p4a") # drug-likeness
-#mdl.is_docker()
+mdl.is_fetched()
+mdl.fetch()
+mdl.serve()
+# mdl.is_docker()
 # mdl.delete()
 # mdl.is_fetched()
 # mdl.delete()
 # mdl.serve()
+input = ["CCCCO", "C", "CC"]
+df = mdl.run(input, batch_size=100)
+df.to_csv("TESTRUN.csv", index=False)
 
-Hub = ErsiliaHub()
-Hub.catalog()
+# Hub = ErsiliaHub()
+# df = Hub.catalog()
+# print(df)
 
 #mdl.info()
 # input = ["CCCCO", "C", "CC"]
