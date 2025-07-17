@@ -3,7 +3,7 @@ import pytest
 
 from ersilia.api.commands.fetch import fetch
 from ersilia.hub.fetch.fetch import FetchResult
-from ersilia.utils.logging import logger 
+from ersilia.utils.logging import logger
 
 MODEL_ID = "eos3b5e"
 SLUG = "molecular-weight" #chat addition
@@ -31,7 +31,7 @@ def test_fetch_api_success(mock_model_fetcher, mock_model_base):
     ✅ Test successful fetch using the API function.
     """
 
-    result = fetch_api(
+    result = fetch(
         model=MODEL_ID,
         overwrite=True,
         from_dir=None,
@@ -45,7 +45,7 @@ def test_fetch_api_success(mock_model_fetcher, mock_model_base):
     )
 
     # Log output for visibility during test runs
-    logger.info("Fetch result: %s", result)
+    logger.info(f"✅ Fetch succeeded: {mock_model_fetcher.return_value.reason}")
 
     # Assert result is success
     assert result is not False
@@ -76,7 +76,7 @@ def test_fetch_api_failure():
 
         mock_fetch.return_value = FetchResult(False, reason)
 
-        result = fetch_api(
+        result = fetch(
             model=model_id,
             overwrite=True,
             from_dir=None,
@@ -89,8 +89,7 @@ def test_fetch_api_failure():
             verbose=True,
         )
 
-        # Log the reason for failure
-        logger.warning("Fetch failed: %s", reason)
+        logger.warning(f"❌ Fetch failed: {mock_fetch.return_value.reason}")
 
         # Assert the result signals failure
         assert result is False
