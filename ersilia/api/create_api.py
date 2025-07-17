@@ -1,6 +1,6 @@
 from .commands import close, delete, example, fetch, info, run, serve, catalog
 from .echo import echo
-from pathlib import Path
+import subprocess
 
 class ErsiliaModel:
     """
@@ -236,22 +236,34 @@ class ErsiliaModel:
 
         Returns
         -------
-        bool
-            True if the model is present locally, False otherwise.
+        Echo Message indicating fetch status.
         """
         if self._fetched_flag:
             echo(f"✅ Model {self.model_id} is already fetched.", fg="green")
         else:
-            echo(f" Model {self.model_id} is NOT already fetched. Fetch the model before serving.", fg="yellow")
+            echo(f"💁Model {self.model_id} is NOT already fetched. Fetch the model before serving.", fg="yellow")
 
-        # Fallback: check if model files exist
-        # model_path = Path.home() / ".ersilia" / "models" / self.model_id
-        # if model_path.exists() and any(model_path.iterdir()):
-        #     echo(f"✅ Model {self.model_id} is present on disk.", fg="green")
-        #     return True
+    
+    def is_docker(self):
+        """
+        Checks if Docker is running locally by calling `docker info`.
 
-        # echo(f"⚠️  Model {self.model_id} is not fetched yet.", fg="yellow")
-        # return False
+        Returns
+        -------
+        bool
+            True if Docker is running, False otherwise.
+        """
+        try:
+            subprocess.run(
+                ["docker", "info"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=True,
+            )
+            echo("✅ Docker is running locally.", fg="green")
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            echo("❌ Docker is NOT running locally. Please start Docker to use Ersilia models.", fg="red")
+        
     def __enter__(self):
         self.serve()
         return self
@@ -265,4 +277,10 @@ class ErsiliaHub:
         self.verbose_mode = verbose
 
     def catalog(self):
+        """
+        API-compatible version of the catalog command with echo-based output.
+        Returns
+        -------
+            A list of [identifier, slug] pairs and a table or JSON string of the catalog
+        """
         catalog.catalog()

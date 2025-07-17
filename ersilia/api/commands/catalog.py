@@ -53,8 +53,7 @@ def catalog(
 
         Returns
         -------
-        str or dict or None
-            Catalog data or model metadata, or None if written to file or silenced.
+        A list of [identifier, slug] pairs and a table or JSON string of the catalog
         """
         if verbose:
             logger.set_verbosity(1)
@@ -108,5 +107,11 @@ def catalog(
                 catalog_table.write(file_name)
                 echo(f"📁 Catalog written to {file_name}")
                 return None
+            
+            id_slug_list = [
+            [row["Identifier"], row["Slug"]]
+            for row in catalog_table.data
+            if "Identifier" in row and "Slug" in row
+            ]
 
-        return catalog
+        return catalog, id_slug_list
