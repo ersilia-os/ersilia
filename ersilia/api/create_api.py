@@ -149,7 +149,7 @@ class ErsiliaModel:
             A pandas df with the predictions.
 
         """
-        run.run(self.model_id, input, batch_size)
+        return run.run(self.model_id, input, batch_size)
 
     def close(self):
         """
@@ -211,7 +211,7 @@ class ErsiliaModel:
         Str: Error message if no model was served in the current session.
 
         """
-        example.example(
+        return example.example(
                 self.model_id, simple, random, n_samples, deterministic)
 
     def delete(self):
