@@ -615,6 +615,8 @@ class RunnerService:
             results.append(docker_check)
             echo_exceptions("Dependencies are not pinned properly. System is exiting!", ClickInterface())
             return results, 1
+        else:
+            results.append(docker_check)
         return results
 
     def _perform_surface_check(self):

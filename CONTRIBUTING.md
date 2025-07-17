@@ -62,7 +62,7 @@ Once you have identified an issue to tackle, follow the next steps:
 
 * Support already existing contributors with comments on the issues they might be tackling
 * Create new issues for bug reports or feature enhancements using the appropriate templates (even if the issue is out of scope for you, it might be a good job for another contributor)
-* Suggest new models to the Ersilia Model Hub using an issue or via our online [form](https://airtable.com/shrmEcwwxpb21TEVw)
+* Suggest new models to the Ersilia Model Hub using an issue
 * Documentation-related enhancements are very welcome, please work on them by opening a new issue
 
 ## I still have questions ❓

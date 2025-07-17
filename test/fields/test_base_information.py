@@ -18,11 +18,10 @@ def valid_data(): #This is an example of NEW Metadata
     data.slug = "molecular-weight"
     data.biomedical_area = "Any"
     data.input = ["Compound"]
-    data.input_shape = "Single"
-    data.task = "Regression"
-    data.output = "Other value"
-    data.output_type = ["Float"]
-    data.interpretation = "This is a regression model."
+    data.task = "Annotation"
+    data.subtask = "Activity prediction"
+    data.output = "Value"
+    data.interpretation = "This is a dummy model"
     data.computational_performance_one = 10.11
     data.computational_performance_two = 14.12
     data.computational_performance_three = 50.45

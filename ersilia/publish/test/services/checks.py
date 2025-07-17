@@ -380,6 +380,15 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+    
+    def _last_packaging_date(self, data):
+        key = "Last Packaging Date"
+        self.logger.debug(f"Checking {key}  field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
 
     def _check_model_model_size(self, data):
         key = "Model Size"
@@ -505,6 +514,7 @@ class CheckService:
         self._run_check(self._check_model_image_size, data, "Model Image Size")
         self._run_check(self._check_model_env_size, data, "Model Environment Size")
         self._run_check(self._check_model_model_size, data, "Model Directory Size")
+        self._run_check(self._last_packaging_date, data, "Last Packaging Date")
         self._run_check(
             self._check_model_computational_performance_one,
             data,
@@ -990,6 +1000,7 @@ class CheckService:
         total_rows = 0
         with open(path, newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
+            next(reader)
             missing_cols = []
             for i, row in enumerate(reader):
                 total_rows += 1

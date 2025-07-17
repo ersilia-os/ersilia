@@ -26,16 +26,13 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     IncorporationDateBaseInformationError,
     InputBaseInformationError,
     InputDimensionBaseInformationError,
-    InputShapeBaseInformationError,
     InterpretationBaseInformationError,
+    LastPackagingDateBaseInformationError,
     LicenseBaseInformationError,
-    ModeBaseInformationError,
     ModelSizeMbBaseInformationError,
     OutputBaseInformationError,
     OutputConsistencyBaseInformationError,
     OutputDimensionBaseInformationError,
-    OutputShapeBaseInformationError,
-    OutputTypeBaseInformationError,
     PublicationBaseInformationError,
     PublicationTypeBaseInformationError,
     PublicationYearBaseInformationError,
@@ -87,24 +84,16 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the model’s title.
         _description : None
             Placeholder for a description of the model.
-        _mode : None
-            Placeholder for the training mode, one of 'retrained', 'pretrained', 'in-house', or 'online'.
         _task : None
             Placeholder for the primary task associated with the model, such as 'classification', or 'regression'.
         _subtask : None
             Placeholder for the subtask associated with the model, such as 'activity prediction', or 'featurization'.
         _input : None
             Placeholder for input data specifications, such as 'Compound'.
-        _input_shape : None
-            Placeholder for the shape of the input data.
         _input_dimension: None
             Placeholder for dimensional notes about the input.
         _output : None
             Placeholder for output data specifications, such as 'Probability', or 'Compound'.
-        _output_type : None
-            Placeholder for the type of output data.
-        _output_shape : None
-            Placeholder for the shape of the output data.
         _output_dimension : None
             Placeholder for dimensional notes about the output.
         _output_consistency : None
@@ -161,6 +150,8 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the method used to pack the model.
         _deployment: None
             Placeholder for the deployment method used
+        _last_packaging_date: None
+            Placeholder for the packaging date
         """
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self._github = None
@@ -169,15 +160,11 @@ class BaseInformation(ErsiliaBase):
         self._status = None
         self._title = None
         self._description = None
-        self._mode = None
         self._task = None
         self._subtask = None
         self._input = None
-        self._input_shape = None
         self._input_dimension = None
         self._output = None
-        self._output_type = None
-        self._output_shape = None
         self._output_dimension = None
         self._output_consistency = None
         self._interpretation = None
@@ -206,6 +193,7 @@ class BaseInformation(ErsiliaBase):
         self._computational_performance_five = None
         self._pack_method = None
         self._deployment = None
+        self._last_packaging_date = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -422,40 +410,6 @@ class BaseInformation(ErsiliaBase):
         self._description = new_description
 
     @property
-    def mode(self):
-        """
-        Get the model mode.
-
-        Returns
-        -------
-        str
-            The model mode.
-        """
-        return self._mode
-
-    @mode.setter
-    def mode(self, new_mode):
-        """
-        Set the model mode.
-
-        Parameters
-        ----------
-        new_mode : str
-            The new model mode.
-
-        Raises
-        ------
-        ModeBaseInformationError
-            If the mode is not valid.
-        """
-        if new_mode is None:
-            self._mode = None
-        elif new_mode not in self._read_default_fields("Mode"):
-            raise ModeBaseInformationError
-        else:
-            self._mode = new_mode
-
-    @property
     def source(self):
         """
         Get the model source.
@@ -551,39 +505,6 @@ class BaseInformation(ErsiliaBase):
             if inp not in self._read_default_fields("Input"):
                 raise InputBaseInformationError
         self._input = new_input
-
-    @property
-    def input_shape(self):
-        """
-        Get the model input shape.
-
-        Returns
-        -------
-        str
-            The model input shape.
-        """
-        return self._input_shape
-
-    @input_shape.setter
-    def input_shape(self, new_input_shape):
-        """
-        Set the model input shape.
-
-        Parameters
-        ----------
-        new_input_shape : str
-            The new model input shape.
-
-        Raises
-        ------
-        InputShapeBaseInformationError
-            If the input shape is not valid.
-        """
-        if new_input_shape is None:
-            new_input_shape = "Single"
-        if new_input_shape not in self._read_default_fields("Input Shape"):
-            raise InputShapeBaseInformationError
-        self._input_shape = new_input_shape
 
     @property
     def input_dimension(self):
@@ -789,79 +710,6 @@ class BaseInformation(ErsiliaBase):
         self._output = new_output
 
     @property
-    def output_type(self):
-        """
-        Get the model output type.
-
-        Returns
-        -------
-        list
-            The model output type.
-        """
-        return self._output_type
-
-    @output_type.setter
-    def output_type(self, new_output_type):
-        """
-        Set the model output type.
-
-        Parameters
-        ----------
-        new_output_type : list or str
-            The new model output type.
-
-        Raises
-        ------
-        OutputTypeBaseInformationError
-            If the output type is not valid.
-        """
-        if new_output_type is None:
-            self._output_type = None  # TODO change for column information
-        elif type(new_output_type) is str:
-            new_output_type = self._serialize_to_list_if_necessary(new_output_type)
-            default_output_type = self._read_default_fields("Output Type")
-            for no in new_output_type:
-                if no not in default_output_type:
-                    raise OutputTypeBaseInformationError
-        else:
-            self._output_type = new_output_type
-
-    @property
-    def output_shape(self):
-        """
-        Get the model output shape.
-
-        Returns
-        -------
-        str
-            The model output shape.
-        """
-        return self._output_shape
-
-    @output_shape.setter
-    def output_shape(self, new_output_shape):
-        """
-        Set the model output shape.
-
-        Parameters
-        ----------
-        new_output_shape : str
-            The new model output shape.
-
-        Raises
-        ------
-        OutputShapeBaseInformationError
-            If the output shape is not valid.
-        """
-        default_output_shape = self._read_default_fields("Output Shape")
-        if new_output_shape is None:
-            self._output_shape = None
-        elif new_output_shape not in default_output_shape:
-            raise OutputShapeBaseInformationError
-        else:
-            self._output_shape = new_output_shape
-
-    @property
     def output_dimension(self):
         """
         Get the model output dimension.
@@ -1019,7 +867,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_publication is None:
             self._publication = None
-        elif str(new_publication).lower() == "none" or str(new_publication).lower() == "null":
+        elif (
+            str(new_publication).lower() == "none"
+            or str(new_publication).lower() == "null"
+        ):
             self._publication = None
         else:
             if not self._is_valid_url(new_publication):
@@ -1122,7 +973,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_source_code is None:
             self._source_code = None
-        elif str(new_source_code).lower() == "none" or str(new_source_code).lower() == "null":
+        elif (
+            str(new_source_code).lower() == "none"
+            or str(new_source_code).lower() == "null"
+        ):
             self._source_code = None
         else:
             if not self._is_valid_url(new_source_code):
@@ -1258,7 +1112,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_dockerhub_url is None:
             self._dockerhub = None
-        elif str(new_dockerhub_url).lower() == "none" or str(new_dockerhub_url).lower() == "null":
+        elif (
+            str(new_dockerhub_url).lower() == "none"
+            or str(new_dockerhub_url).lower() == "null"
+        ):
             self._dockerhub = None
         else:
             if not new_dockerhub_url.startswith("https://hub.docker.com/r/ersiliaos/"):
@@ -1294,7 +1151,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_docker_architecture is None:
             self._docker_architecture = None
-        elif str(new_docker_architecture).lower() == "none" or str(new_docker_architecture).lower() == "null":
+        elif (
+            str(new_docker_architecture).lower() == "none"
+            or str(new_docker_architecture).lower() == "null"
+        ):
             self._docker_architecture = None
         else:
             new_docker_architecture = self._serialize_to_list_if_necessary(
@@ -1688,7 +1548,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_contributor is None:
             self._contributor = None
-        elif str(new_contributor).lower() == "none" or str(new_contributor).lower() == "null":
+        elif (
+            str(new_contributor).lower() == "none"
+            or str(new_contributor).lower() == "null"
+        ):
             self._contributor = None
         else:
             if not isinstance(new_contributor, str) or not new_contributor.strip():
@@ -1720,7 +1583,10 @@ class BaseInformation(ErsiliaBase):
         """
         if new_deployment is None:
             self._deployment = None
-        elif str(new_deployment).lower() == "none" or str(new_deployment).lower() == "null":
+        elif (
+            str(new_deployment).lower() == "none"
+            or str(new_deployment).lower() == "null"
+        ):
             self._deployment = None
         else:
             new_deployment = self._serialize_to_list_if_necessary(new_deployment)
@@ -1730,6 +1596,43 @@ class BaseInformation(ErsiliaBase):
                 if nt not in self._read_default_fields("Deployment"):
                     raise DeploymentBaseInformationError
             self._deployment = new_deployment
+
+    @property
+    def last_packaging_date(self):
+        """
+        Get the model packaging date.
+
+        Returns
+        -------
+        str
+            The model packaging date.
+        """
+        return self._last_packaging_date
+
+    @last_packaging_date.setter
+    def last_packaging_date(self, new_last_packaging_date):
+        """
+        Set the model packaging date.
+
+        Parameters
+        ----------
+        last_packaging_date : str
+            The model packaging date.
+        """
+        if new_last_packaging_date is None:
+            self._last_packaging_date = None
+        else:
+            new_last_packaging_date = str(new_last_packaging_date)
+            new_last_packaging_date = new_last_packaging_date.replace("'", "")
+            new_last_packaging_date = new_last_packaging_date.replace('"', "")
+            if (
+                new_last_packaging_date
+                != datetime.datetime.fromisoformat(new_last_packaging_date)
+                .date()
+                .isoformat()
+            ):
+                raise LastPackagingDateBaseInformationError
+            self._last_packaging_date = new_last_packaging_date
 
     def as_dict(self):
         """
@@ -1746,7 +1649,6 @@ class BaseInformation(ErsiliaBase):
             "Status": self.status,
             "Title": self.title,
             "Description": self.description,
-            "Mode": self.mode,
             "Source": self.source,
             "Source Type": self.source_type,
             "Input": self.input,
@@ -1756,8 +1658,6 @@ class BaseInformation(ErsiliaBase):
             "Biomedical Area": self.biomedical_area,
             "Target Organism": self.target_organism,
             "Output": self.output,
-            "Output Type": self.output_type,
-            "Output Shape": self.output_shape,
             "Output Dimension": self.output_dimension,
             "Output Consistency": self.output_consistency,
             "Interpretation": self.interpretation,
@@ -1781,6 +1681,7 @@ class BaseInformation(ErsiliaBase):
             "Computational Performance 4": self.computational_performance_four,
             "Computational Performance 5": self.computational_performance_five,
             "Deployment": self.deployment,
+            "Last Packaging Date": self.last_packaging_date,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1802,7 +1703,6 @@ class BaseInformation(ErsiliaBase):
         self._assign("status", "Status", data)
         self._assign("title", "Title", data)
         self._assign("description", "Description", data)
-        self._assign("mode", "Mode", data)
         self._assign("source", "Source", data)
         self._assign("source_type", "Source Type", data)
         self._assign("input", "Input", data)
@@ -1812,8 +1712,6 @@ class BaseInformation(ErsiliaBase):
         self._assign("biomedical_area", "Biomedical Area", data)
         self._assign("target_organism", "Target Organism", data)
         self._assign("output", "Output", data)
-        self._assign("output_type", "Output Type", data)
-        self._assign("output_shape", "Output Shape", data)
         self._assign("output_dimension", "Output Dimension", data)
         self._assign("output_consistency", "Output Consistency", data)
         self._assign("interpretation", "Interpretation", data)
@@ -1851,3 +1749,4 @@ class BaseInformation(ErsiliaBase):
             data,
         )
         self._assign("deployment", "Deployment", data)
+        self._assign("last_packaging_date", "Last Packaging Date", data)

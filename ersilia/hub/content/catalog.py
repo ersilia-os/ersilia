@@ -6,7 +6,7 @@ import os
 
 from ... import ErsiliaBase
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...default import MODEL_SOURCE_FILE, TableConstants
+from ...default import AIRTABLE_MODEL_HUB_VIEW_URL, MODEL_SOURCE_FILE, TableConstants
 from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.identifiers.model import ModelIdentifier
 from ...utils.terminal import run_command
@@ -289,7 +289,7 @@ class ModelCatalog(ErsiliaBase):
         List models available in AirTable Ersilia Model Hub base.
         """
         if webbrowser:
-            webbrowser.open("https://airtable.com/shrUcrUnd7jB9ChZV")  # TODO Hardcoded
+            webbrowser.open(AIRTABLE_MODEL_HUB_VIEW_URL)
 
     def _get_catalog(self, columns: list, model_cards: list):
         R = []
