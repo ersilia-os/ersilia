@@ -281,6 +281,8 @@ class ErsiliaHub:
         API-compatible version of the catalog command with echo-based output.
         Returns
         -------
-            A list of [identifier, slug] pairs and a table or JSON string of the catalog
+        pandas.DataFrame
+            A DataFrame containing the last two columns of the model catalog.
+            Also prints the full catalog as a table or JSON to the terminal, depending on `as_json`.
         """
         catalog.catalog()

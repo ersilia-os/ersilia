@@ -4,6 +4,8 @@ from ...hub.content.card import ModelCard
 from ...hub.content.catalog import ModelCatalog
 from ... import ErsiliaModel, logger
 from ..echo import echo
+import pandas as pd
+
 
 
 # def catalog_cmd():
@@ -53,7 +55,9 @@ def catalog(
 
         Returns
         -------
-        A list of [identifier, slug] pairs and a table or JSON string of the catalog
+        pandas.DataFrame
+        A DataFrame containing the last two columns of the model catalog.
+        Also prints the full catalog as a table or JSON to the terminal, depending on `as_json`.
         """
         if verbose:
             logger.set_verbosity(1)
@@ -97,21 +101,23 @@ def catalog(
                         err=True,
                     )
                     return None
-
+            
             if file_name is None:
                 catalog = (
                     catalog_table.as_json() if as_json else catalog_table.as_table()
                 )
-                echo(catalog)
+
             else:
                 catalog_table.write(file_name)
                 echo(f"📁 Catalog written to {file_name}")
                 return None
             
-            id_slug_list = [
-            [row["Identifier"], row["Slug"]]
-            for row in catalog_table.data
-            if "Identifier" in row and "Slug" in row
-            ]
+            try:
+                df = pd.DataFrame(catalog_table.data)
+                if df.shape[1] >= 2:
+                    df = df.iloc[:, -2:] 
+            except Exception as e:
+                echo(f"❌ Could not convert catalog to DataFrame: {e}", err=True)
 
-        return catalog, id_slug_list
+        echo(catalog)
+        return df
