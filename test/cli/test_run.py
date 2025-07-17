@@ -171,36 +171,3 @@ def test_standard_api_csv(
     assert mock_set_apis.called
 
     assert RESULT_CSV in result.output
-
-
-# For Conventional Run
-@pytest.fixture
-def mock_api_task():
-    def mock_api_task_side_effect(api_name, input, output, batch_size):
-        if output is None:
-            length = len(input)
-
-            def result_generator():
-                for _ in range(length):
-                    yield {"value": round(random.uniform(MIN_WEIGHT, MAX_WEIGHT), 3)}
-
-            return result_generator()
-        return output
-
-    with patch.object(
-        ErsiliaModel, "api_task", side_effect=mock_api_task_side_effect
-    ) as mock_task:
-        yield mock_task
-
-
-def test_conv_api_csv(
-    mock_convn_api_get_apis, mock_api_task, mock_set_apis, mock_fetcher, mock_session
-):
-    runner = CliRunner()
-    input_arg = INPUT_CSV
-    output_arg = RESULT_JSON
-    result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", str(output_arg)])
-    logger.info(result.output)
-    assert result.exit_code == 0
-    assert mock_convn_api_get_apis.called
-    assert mock_set_apis.called

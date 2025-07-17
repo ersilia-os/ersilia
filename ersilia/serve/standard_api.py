@@ -614,14 +614,6 @@ class StandardCSVRunApi(ErsiliaBase):
         dict_keys_type = type({}.keys())
         return any(isinstance(x, dict_keys_type) for x in lst)
 
-    def _fill_none_with_keys(self, lst):
-        keys = ()
-        for item in lst:
-            if isinstance(item, dict):
-                keys = item.keys()
-                break
-        return [item if item is not None else {k: None for k in keys} for item in lst]
-
     def _same_row_count(self, inputs, results, include_header=False):
         def cnt(f):
             with open(f, newline="") as fp:
