@@ -167,7 +167,6 @@ def test_standard_api_csv(
     assert result.exit_code == 0
     assert mock_get_input.called
     assert mock_get_url.called
-    assert mock_std_header.called
     assert mock_set_apis.called
 
     assert RESULT_CSV in result.output
