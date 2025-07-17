@@ -43,7 +43,7 @@ def serve(
 
     """
     echo("Serving model. This process may take some time...", fg="blue")
-    
+
     if verbose:
         logger.set_verbosity(1)
     else:
@@ -100,7 +100,7 @@ def serve(
         for api in apis:
             if api != "run":
                 additional_apis.append(api)
-    # echo(":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green")
+    echo(":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green")
     # echo("")
     # echo("   URL: {0}".format(mdl.url), fg="yellow")
     # if str(mdl.pid) != "-1":
@@ -123,5 +123,8 @@ def serve(
     #     echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
     # else:
     #     echo("   - Disabled", fg="red")
-
+    echo(
+                ":thumbs_up: Model {0} served successfully!".format(model),
+                fg="green",
+            )
     return mdl.url, mdl.session._session_dir, mdl.scl

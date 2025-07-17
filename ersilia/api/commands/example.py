@@ -1,6 +1,7 @@
-import pandas as pd
-import tempfile
 import os
+import tempfile
+
+import pandas as pd
 
 from ... import ModelBase
 from ...core.session import Session
@@ -42,7 +43,7 @@ def example(
             fg="red",
         )
         return
-    
+
     # if not file_name or not file_name.endswith('.csv'):
     #     echo(
     #         "Please provide a valid CSV filename ending with .csv",

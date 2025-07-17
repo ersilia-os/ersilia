@@ -1,6 +1,8 @@
-from .commands import close, delete, example, fetch, info, run, serve, catalog
-from .echo import echo
 import subprocess
+
+from .commands import catalog, close, delete, example, fetch, info, run, serve
+from .echo import echo
+
 
 class ErsiliaModel:
     """
@@ -228,7 +230,7 @@ class ErsiliaModel:
             RuntimeError: If the model cannot be deleted.
         """
         delete.delete(self.model_id, verbose=self.verbose_mode)
-    
+
 
     def is_fetched(self):
         """
@@ -243,7 +245,7 @@ class ErsiliaModel:
         else:
             echo(f"💁Model {self.model_id} is NOT already fetched. Fetch the model before serving.", fg="yellow")
 
-    
+
     def is_docker(self):
         """
         Checks if Docker is running locally by calling `docker info`.
@@ -263,7 +265,7 @@ class ErsiliaModel:
             echo("✅ Docker is running locally.", fg="green")
         except (subprocess.CalledProcessError, FileNotFoundError):
             echo("❌ Docker is NOT running locally. Please start Docker to use Ersilia models.", fg="red")
-        
+
     def __enter__(self):
         self.serve()
         return self

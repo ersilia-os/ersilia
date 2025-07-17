@@ -6,6 +6,7 @@ from datetime import timedelta
 from timeit import default_timer as timer
 
 from ... import ErsiliaBase
+from ...utils.echo import echo
 from . import DONE_TAG, STATUS_FILE
 from .actions.check import ModelChecker
 from .actions.content import CardGetter
@@ -17,7 +18,7 @@ from .actions.setup import SetupChecker
 from .actions.sniff_fastapi import ModelSniffer
 from .actions.template_resolver import TemplateResolver
 from .register.register import ModelRegisterer
-from ...utils.echo import echo
+
 
 class ModelFetcherFromFastAPI(ErsiliaBase):
     """
@@ -84,7 +85,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mp.prepare()
 
     def _get(self):
-        echo(f"Getting the model repository and parameters.")
+        echo("Getting the model repository and parameters.")
         mg = ModelGetter(
             model_id=self.model_id,
             repo_path=self.repo_path,
@@ -95,34 +96,34 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mg.get()
 
     def _pack(self):
-        echo(f"Packing the FastAPI")
+        echo("Packing the FastAPI")
         mp = ModelPacker(
             model_id=self.model_id, mode=self.mode, config_json=self.config_json
         )
         mp.pack()
 
     def _content(self):
-        echo(f"Getting model card of the model.")
+        echo("Getting model card of the model.")
         cg = CardGetter(self.model_id, self.config_json)
         cg.get()
 
     def _check(self):
-        echo(f"Checking that the autoservice works.")
+        echo("Checking that the autoservice works.")
         mc = ModelChecker(self.model_id, self.config_json)
         mc.check()
 
     def _sniff(self):
-        echo(f"Infering the structure of the model by reading the columns file.")
+        echo("Infering the structure of the model by reading the columns file.")
         sn = ModelSniffer(self.model_id, self.config_json)
         sn.sniff()
 
     def _inform(self):
-        echo(f"Writing information to a JSON file and adding API info for bentoml models.")
+        echo("Writing information to a JSON file and adding API info for bentoml models.")
         mi = ModelInformer(self.model_id, self.config_json)
         mi.inform()
 
     def _success(self):
-        echo(f"Register the model based on its source.")
+        echo("Register the model based on its source.")
         done = {DONE_TAG: True}
         status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         with open(status_file, "w") as f:
@@ -134,7 +135,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         start = timer()
         self.model_id = model_id
         self._setup_check()
-        echo(f"Checking setup requirements for the model to be installed and run")
+        echo("Checking setup requirements for the model to be installed and run")
         self._prepare()
         self._get()
         self._pack()

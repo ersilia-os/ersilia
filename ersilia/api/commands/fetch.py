@@ -45,7 +45,7 @@ def fetch(
         logger.set_verbosity(1)
     else:
         logger.set_verbosity(0)
-        
+
     if from_dir is not None:
         mdl = ModelBase(repo_path=from_dir)
     else:
@@ -74,7 +74,7 @@ def fetch(
                 fg="green",
             )
         is_fetched = True
-        
+
     else:
         echo(
                 f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",

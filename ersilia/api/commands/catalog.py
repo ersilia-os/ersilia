@@ -1,10 +1,9 @@
 import json
 
+from ... import logger
 from ...hub.content.card import ModelCard
 from ...hub.content.catalog import ModelCatalog
-from ... import ErsiliaModel, logger
 from ..echo import echo
-
 
 # def catalog_cmd():
 #     """
@@ -107,7 +106,7 @@ def catalog(
                 catalog_table.write(file_name)
                 echo(f"📁 Catalog written to {file_name}")
                 return None
-            
+
             id_slug_list = [
             [row["Identifier"], row["Slug"]]
             for row in catalog_table.data

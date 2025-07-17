@@ -1,71 +1,52 @@
-from unittest.mock import MagicMock, patch
 import pytest
+from unittest.mock import MagicMock, patch
 
-from ersilia.api.create_api import ErsiliaAPI
-from ersilia.hub.delete.delete import ModelFullDeleter
+# from ersilia.api import ErsiliaAPI
+import ersilia.api.commands.delete as delete_mod
 
-MODEL = "eos3b5e"
-DUMMY_MODEL = ["eosxxxx"]
+MODEL_ID = "eos3b5e"
+REASON = "model is in use and cannot be deleted"
 
+@patch.object(delete_mod, "logger")
+@patch.object(delete_mod, "echo")
+@patch.object(delete_mod, "ModelFullDeleter")
+def test_delete_success(mock_deleter_cls, mock_echo, mock_logger):
+    # Arrange: can_be_deleted returns True
+    mock_md = MagicMock()
+    mock_md.can_be_deleted.return_value = (True, "")
+    mock_deleter_cls.return_value = mock_md
 
-@pytest.fixture
-def can_be_deleted():
-    with patch.object(
-        ModelFullDeleter, "can_be_deleted", return_value=(True, "")
-    ) as can_be_deleted:
-        yield can_be_deleted
+    # Act: call with verbose=False (default)
+    delete_mod.delete(MODEL_ID)
 
+    # Assert: verbosity was set to 0
+    mock_logger.set_verbosity.assert_called_once_with(0)
+    # Assert: can_be_deleted was called with our model_id
+    mock_md.can_be_deleted.assert_called_once_with(MODEL_ID)
+    # Assert: deletion path: echo “Deleting…”, then md.delete(), then success echo
+    mock_echo.assert_any_call(f"Deleting model {MODEL_ID}")
+    mock_md.delete.assert_called_once_with(MODEL_ID)
+    mock_echo.assert_any_call(
+        f":collision: Model {MODEL_ID} deleted successfully!", fg="green"
+    )
 
-@patch("ersilia.ModelBase")
-@patch("ersilia.hub.delete.delete.ModelFullDeleter")
-@patch("ersilia.cli.echo")
-def test_delete_specific_model(mock_deleter, mock_modelbase, can_be_deleted):
-    mock_modelbase_instance = MagicMock()
-    mock_modelbase_instance.model_id = MODEL  #
-    mock_modelbase.return_value = mock_modelbase_instance
+@patch.object(delete_mod, "logger")
+@patch.object(delete_mod, "echo")
+@patch.object(delete_mod, "ModelFullDeleter")
+def test_delete_failure(mock_deleter_cls, mock_echo, mock_logger):
+    # Arrange: can_be_deleted returns False with a reason
+    mock_md = MagicMock()
+    mock_md.can_be_deleted.return_value = (False, REASON)
+    mock_deleter_cls.return_value = mock_md
 
-    mock_deleter_instance = MagicMock()
-    mock_deleter_instance.can_be_deleted.return_value = (True, "")
-    mock_deleter_instance.delete.return_value = None
-    mock_deleter.return_value = mock_deleter_instance
+    # Act: call with verbose=True
+    delete_mod.delete(MODEL_ID, verbose=True)
 
-    api = ErsiliaAPI(MODEL)
-    result = api.delete()
-
-    mock_deleter_instance.delete.assert_called_once()
-    assert result is None or result == "Deleted", "API did not behave as expected."
-
-
-@patch("ersilia.hub.content.catalog.ModelCatalog")
-@patch("ersilia.hub.delete.delete.ModelFullDeleter")
-@patch("ersilia.cli.echo")
-def test_delete_all_models(mock_deleter, mock_catalog):
-    mock_catalog_instance = MagicMock()
-    mock_catalog_instance.local.return_value.data = [[MODEL], [DUMMY_MODEL]]
-    mock_catalog_instance.local.return_value.columns = ["Identifier"]
-    mock_catalog.return_value = mock_catalog_instance
-
-    mock_deleter_instance = MagicMock()
-    mock_deleter_instance.can_be_deleted.return_value = (True, "")
-    mock_deleter_instance.delete.return_value = None
-    mock_deleter.return_value = mock_deleter_instance
-
-    for model_id in [MODEL, DUMMY_MODEL]:
-        api = ErsiliaAPI(model_id)
-        api.delete()
-
-    assert mock_deleter_instance.delete.call_count == 2
-
-
-@patch("ersilia.hub.content.catalog.ModelCatalog")
-@patch("ersilia.cli.echo")
-def test_no_models_available(mock_echo, mock_catalog):
-    mock_catalog_instance = MagicMock()
-    mock_catalog_instance.local.return_value = None
-    mock_catalog.return_value = mock_catalog_instance
-
-    result = runner.invoke(delete(), ["delete", "--all"])
-
-    assert (
-        result.exit_code == 0
-    ), f"Unexpected exit code: {result.exit_code}. Output: {result.output}"
+    # Assert: verbosity was set to 1
+    mock_logger.set_verbosity.assert_called_once_with(1)
+    # Assert: can_be_deleted was called correctly
+    mock_md.can_be_deleted.assert_called_once_with(MODEL_ID)
+    # Assert: delete() was NOT called
+    mock_md.delete.assert_not_called()
+    # Assert: echo was called once with the reason
+    mock_echo.assert_called_once_with(f":person_tipping_hand: {REASON}", fg="yellow")

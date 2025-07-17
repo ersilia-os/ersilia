@@ -29,6 +29,7 @@ from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
+from ..utils.echo import echo
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
@@ -39,7 +40,6 @@ from .base import ErsiliaBase
 from .modelbase import ModelBase
 from .session import Session
 from .tracking import RunTracker
-from ..utils.echo import echo
 
 try:
     import pandas as pd

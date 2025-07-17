@@ -1,4 +1,4 @@
-from ersilia.api import ErsiliaModel, ErsiliaHub
+from ersilia.api import ErsiliaHub, ErsiliaModel
 
 mdl = ErsiliaModel("eos9p4a") # drug-likeness
 #mdl.is_docker()

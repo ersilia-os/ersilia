@@ -1,6 +1,5 @@
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...hub.content.information import InformationDisplayer
 
 
 def info(model_id):
