@@ -56,13 +56,13 @@ class ErsiliaModel:
 
     def __init__(self, model_id, verbose=False):
         self.model_id = model_id
+        self.verbose_mode = verbose
         self._url = None
         self.session = None
         self.SRV = None
-        self.verbose_mode = verbose
         self._fetched_flag = False
 
-    def fetch(self):
+    def fetch(self, verbose=None):
         """
         Fetches an Ersilia model to run it locally.
 
@@ -88,11 +88,11 @@ class ErsiliaModel:
             from_s3=False,
             from_hosted=False,
             hosted_url=None,
-            verbose=self.verbose_mode,
+            verbose_flag = self.verbose_mode or verbose,
         )
         self._fetched_flag = True
 
-    def serve(self):
+    def serve(self, verbose=None):
         """
         Serves a specified model as an API.
 
@@ -128,7 +128,7 @@ class ErsiliaModel:
             cloud_cache_only=False,
             cache_only=False,
             max_cache_memory_frac=None,
-            verbose=self.verbose_mode,
+            verbose_falg =self.verbose_mode or verbose,
         )
 
     def run(self, input, batch_size):
