@@ -242,7 +242,7 @@ class ErsiliaModel:
         if self._fetched_flag:
             echo(f"✅ Model {self.model_id} is already fetched.", fg="green")
         else:
-            echo(f" Model {self.model_id} is not already fetched. Fetch the model before serving.", fg="red")
+            echo(f" Model {self.model_id} is NOT already fetched. Fetch the model before serving.", fg="yellow")
 
         # Fallback: check if model files exist
         # model_path = Path.home() / ".ersilia" / "models" / self.model_id
