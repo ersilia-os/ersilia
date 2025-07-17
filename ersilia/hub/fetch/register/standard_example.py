@@ -133,3 +133,4 @@ class ModelStandardExample(ErsiliaBase):
                             f"Empty value at row {row_num}, column {col_idx}. The model is not correctly working!"
                         )
                         return False
+                return True
