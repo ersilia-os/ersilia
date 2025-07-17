@@ -92,7 +92,6 @@ class ErsiliaModel:
             hosted_url=None,
             verbose_flag = self.verbose_mode or verbose,
         )
-        self._fetched_flag = True
 
     def serve(self, verbose=None):
         """
@@ -275,6 +274,7 @@ class ErsiliaModel:
 
 
 class ErsiliaHub:
+    # TODO: add docstring
     def __init__(self, verbose=False):
         self.verbose_mode = verbose
 
