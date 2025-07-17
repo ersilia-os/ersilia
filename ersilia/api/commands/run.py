@@ -57,7 +57,6 @@ def run(model_id, input, batch_size=100):
     if isinstance(input, list):
         # Write list to a temporary CSV
         cleanup_input = True
-        df_input = pd.DataFrame({"input": input})
         temp_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False)
         pd.DataFrame({"input": input}).to_csv(temp_file.name, index=False)
         input_path = temp_file.name

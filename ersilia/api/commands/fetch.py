@@ -73,7 +73,7 @@ def fetch(
                 ":thumbs_up: Model {0} fetched successfully!".format(model_id),
                 fg="green",
             )
-        is_fetched = True
+        return True
 
     else:
         echo(

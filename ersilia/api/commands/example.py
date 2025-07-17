@@ -53,7 +53,7 @@ def example(
     #     return
     output_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False)
     eg = ExampleGenerator(model_id=model_id)
-    example = eg.example(
+    eg.example(
         n_samples,
         file_name=output_file.name,
         simple=simple,

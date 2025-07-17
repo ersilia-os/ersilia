@@ -80,7 +80,7 @@ class ErsiliaModel:
         RuntimeError: If both BentoML and FastAPI are used together.
 
         """
-        fetch.fetch(
+        self._fetched_flag = fetch.fetch(
             model=self.model_id,
             overwrite=True,
             from_dir=None,

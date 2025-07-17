@@ -1,6 +1,5 @@
 from ... import ErsiliaModel, logger
 from ...store.utils import OutputSource
-from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from ..echo import echo
 
@@ -56,19 +55,15 @@ def serve(
             )
 
     output_source = None
-    cache_status = "Disabled"
 
     if local_cache_only:
         output_source = OutputSource.LOCAL_ONLY
         enable_local_cache = True
-        cache_status = "Local only"
     if cloud_cache_only:
         output_source = OutputSource.CLOUD_ONLY
-        cache_status = "Cloud only"
     if cache_only:
         output_source = OutputSource.CACHE_ONLY
         enable_local_cache = True
-        cache_status = "Hybrid (local & cloud)"
 
     mdl = ErsiliaModel(
         model,
@@ -77,8 +72,6 @@ def serve(
         cache=enable_local_cache,
         maxmemory=max_cache_memory_frac,
     )
-
-    redis_setup = SetupRedis(enable_local_cache, max_cache_memory_frac)
 
     if not mdl.is_valid():
         raise RuntimeError(f"Model {mdl.model_id} is not valid or not found.")

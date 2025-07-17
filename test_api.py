@@ -1,4 +1,4 @@
-from ersilia.api import ErsiliaModel, ErsiliaHub
+from ersilia.api import ErsiliaModel
 
 molecular_weight = ErsiliaModel("eos3b5e", verbose=False)
 # molecular_weight.fetch()
