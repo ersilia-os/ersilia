@@ -1,5 +1,4 @@
 import datetime
-import os
 
 import validators
 
@@ -18,13 +17,6 @@ class BaseInformationValidator:
     def is_valid_url(u: str) -> bool:
         r = validators.url(u)
         return False if isinstance(r, ValidationFailure) else bool(r)
-
-    @staticmethod
-    def read_list(field_name: str) -> list[str]:
-        root = os.path.dirname(__file__)
-        fn = field_name.lower().replace(" ", "_") + ".txt"
-        with open(os.path.join(root, "metadata", fn), "r") as f:
-            return [line.strip() for line in f if line.strip()]
 
     @staticmethod
     def is_numeric(x) -> bool:
