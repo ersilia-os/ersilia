@@ -128,7 +128,7 @@ ersilia delete eos2r5a
 Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called `ErsiliaAPI`:
 
 <pre class="language-python"><code class="lang-python"># import main class
-from ersilia.api import ErsiliaModel, ErsiliaHub
+from ersilia.api import ErsiliaModel
 <strong># instantiate the model(ex: Retrosynthetic Accessibility Score)
 </strong><strong># name the model(ex : mdl_retro)
 </strong>mdl_retro = ErsiliaModel("eos2r5a")
@@ -144,6 +144,18 @@ mdl_retro.fetch(verbose=False)
 mdl_retro.serve(verbose=False)
 ```
 
+To check if a model is fetched, use **is\_fetched:**
+
+```python
+mdl_retro.is_fetched()
+```
+
+To check if a docker is running locally, use **is\_docker:**
+
+```
+// Some code
+```
+
 To make **predictions** for Halicin and Ibuprofen:
 
 ```python
@@ -153,7 +165,7 @@ input = [
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 ]
 # predict
-mdl_retro.run(input, output=None, batch_size=100)
+mdl_retro.run(input, batch_size=100)
 # Pass the input for the model as a .csv file with only one column with header or a list of SMILES compounds
 # Flexibility to specify file path for desired output file or automatically create an output file in the current directory
 # Specify the batch size for generating model predictions. By default, Ersilia works with batch size of 100 inputs.
@@ -162,7 +174,10 @@ mdl_retro.run(input, output=None, batch_size=100)
 
 To sample inputs for a given model, use the **example** command.&#x20;
 
-<pre class="language-python"><code class="lang-python">mdl_retro.example("example_filename", True, True, 5, False)
+<pre class="language-python"><code class="lang-python">example = molecular_weight.example(True, True, 10, False)
+#example command returns a data frame
+#to convert to a csv
+example.to_csv(example_file.csv) 
 # Parameters: 
 # mdl.example(file_name, simple, random, n_samples, deterministic)
 # file_name: str (File name where the examples should be saved.)
@@ -197,7 +212,7 @@ mdl_retro.delete()
 A more concise way to run prediction would be to use the `with` clause:
 
 <pre class="language-python"><code class="lang-python">mdl.fetch()
-input = input = [
+input = [
     "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
     ]
@@ -205,12 +220,26 @@ input = input = [
 # As opposed to the following:
 mdl.serve()
 mdl.info()
-mdl.run(input, output=None, batch_size=100)
-model.close
-<strong>
+mdl.run(input, batch_size=100)
+<strong>model.close()
+</strong><strong>
 </strong><strong># use with statement
 </strong># this allows for automatic serving and closing of an already fetched model
 with mdl_retro as model:
     model.info()
-    model.run(input, output=None, batch_size=100)
+    model.run(input, batch_size=100)
 </code></pre>
+
+### Using the `catalog` command
+
+This command allows users to access a catalog of models available either locally or in the model hub.
+
+```python
+# to use this command, import the ErsiliaHub class. 
+from ersilia.api import ErsiliaHub
+
+Hub = ErsiliaHub()
+df = Hub.catalog()
+#to convert data frame to csv file
+df.to_csv(catalog_file.csv)
+```
