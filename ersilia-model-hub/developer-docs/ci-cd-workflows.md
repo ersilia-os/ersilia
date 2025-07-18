@@ -31,15 +31,6 @@ These workflows ensure that we push quality code to [Ersilia](https://github.com
 
 ### Packaging
 
-#### Creating Docker image of Ersilia's CLI
-
-* Objective: Package Ersilia into an image to use as a base image to containerise individual models using BentoML.
-* Workflow name: Upload Ersilia base image to DockerHub
-* Workflow file: [ersilia-base-image-to-dockerhub.yml](https://github.com/ersilia-os/ersilia/blob/master/.github/workflows/ersilia-base-image-to-dockerhub.yml)
-* Runs on: when code is pushed on to the `master` branch ro when a new release is created from Ersilia at the beginning of each month (more on this below)
-* Jobs:
-  * `upload_ersilia_base_to_dockerhub` builds two versions of the Ersilia image,  a lighter version tagged as _`ersiliaos/base-multistage-condapack` ,_ and a legacy bloated version tagged as _`ersiliaos/base-legacy-bentoml` ._&#x20;
-
 #### Ersilia Release
 
 * Objective: Distribute Ersilia as source, as a Docker image, as a PyPI package, and as a conda-forge package.&#x20;
@@ -51,7 +42,7 @@ These workflows ensure that we push quality code to [Ersilia](https://github.com
   * `gh-release` Utilizing the tag created in the previous job, a GitHub release is created. The GitHub CLI is used to automatically create this release and utilize the commit history from the `master` branch to generate release notes.
   * `pypi-release` Finally, we utilize the release artifacts created from the GitHub release job of the workflow to publish a new version of Ersilia on the Python Packaging Index (PyPI).
   * The completion of this release workflow triggers the Docker build workflow mentioned above.
-  * `Conda-Forge Release` Ersilia is released on conda-forge using by way of updating its [feedstock](https://github.com/conda-forge/ersilia-feedstock) maintained within the conda-forge organization on GitHub. Upon the creation of a new GitHub release, an automated pull request is created in this feedstock repository which is then manually reviewed and merged by an Ersilia maintainer.
+* `Conda-Forge Release` Ersilia is released on conda-forge using by way of updating its [feedstock](https://github.com/conda-forge/ersilia-feedstock) maintained within the conda-forge organization on GitHub. Upon the creation of a new PyPi release, an automated pull request is created in this feedstock repository which is then manually reviewed and merged by an Ersilia maintainer. Currently an update from `Redis` to `Redis-py` in the `meta.yaml` is needed for conda to install the package properly.
 
 ### Community
 

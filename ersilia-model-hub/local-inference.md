@@ -128,7 +128,7 @@ ersilia delete eos2r5a
 Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called `ErsiliaAPI`:
 
 <pre class="language-python"><code class="lang-python"># import main class
-from ersilia.api.create_api import ErsiliaAPI
+from ersilia.api import ErsiliaModel, ErsiliaHub
 <strong># instantiate the model(ex: Retrosynthetic Accessibility Score)
 </strong><strong># name the model(ex : mdl_retro)
 </strong>mdl_retro = ErsiliaModel("eos2r5a")
