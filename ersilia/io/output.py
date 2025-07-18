@@ -141,7 +141,8 @@ class DataFrame(object):
 
     def write_text(self, file_name: str, delimiter: str = None):
         """
-        Writes the DataFrame to a text file, wrapping any string-valued field in quotes.
+        Writes the DataFrame to a text file, wrapping any string-valued field in quotes,
+        except for the first and second columns, which are never quoted.
         """
         if delimiter is None:
             delimiter = self._get_delimiter(file_name)
@@ -152,12 +153,12 @@ class DataFrame(object):
 
             for row in self.data:
                 out_fields = []
-                for val in row:
+                for idx, val in enumerate(row):
                     if val is None:
                         text = none_str
                     else:
                         text = str(val)
-                        if isinstance(val, str):
+                        if isinstance(val, str) and idx > 1:
                             text = f'"{text}"'
                     out_fields.append(text)
 
@@ -574,54 +575,50 @@ class GenericOutputAdapter(ResponseRefactor):
         output_keys = None
         expanded_keys = None
         self.dtypes = None
+        try:
+            for r in result_list:
+                inp = r["input"]
+                out = r["output"]
 
-        for r in result_list:
-            inp = r["input"]
-            out = r["output"]
-
-            if output_shape == "Flexible List":
-                self.logger.warning("Flexible List found")
-                vals = [json.dumps(out)]
-                expanded_keys = ["outcome"]
-            else:
-                if output_keys is None:
-                    output_keys = list(out.keys())
-                vals = [out[k] for k in output_keys]
-
-                if self.dtypes is None:
-                    self.dtypes = [self.__pure_dtype(k) for k in output_keys]
-
-                if expanded_keys is None:
-                    self.logger.warning(
-                        f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
-                    )
-                    expanded_keys = schema_keys or self.__expand_output_keys(
-                        vals, output_keys
-                    )
-                    self.logger.info(f"Expanded output keys: {str(expanded_keys)[:10]}")
-
-                if not any(self.dtypes):
-                    guessed_dtype = self._guess_pure_dtype_if_absent(vals)
-                    if len(output_keys) == 1:
-                        self.dtypes = [guessed_dtype]
-
-                if dtype_obj is not None:
-                    dt_obj = dtype_obj
-                    dim = output_dim
-                    vals = self._cast_values_from_github_metadata(vals, dtype_obj)
+                if output_shape == "Flexible List":
+                    self.logger.warning("Flexible List found")
+                    vals = [json.dumps(out)]
+                    expanded_keys = ["outcome"]
                 else:
-                    dim = len(self.dtypes)
-                    dt_obj = self._convert_pure_dtype_to_obj(self.dtypes)
-                    vals = self.__cast_values(vals, self.dtypes, output_keys)
+                    if output_keys is None:
+                        output_keys = list(out.keys())
+                        if "outcome" in output_keys:
+                            output_keys = (
+                                schema_keys if schema_keys is not None else output_keys
+                            )
+                    vals = [out[k] for k in output_keys]
+                    if expanded_keys is None:
+                        self.logger.warning(
+                            f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
+                        )
+                        expanded_keys = schema_keys
+                        self.logger.info(
+                            f"Expanded output keys: {str(expanded_keys)[:10]}"
+                        )
 
-            vals = vals[0] if isinstance(vals[0], list) else vals
-            row = [inp["key"], inp["input"]] + vals
-            rows.append(row)
+                    if dtype_obj is not None:
+                        dt_obj = dtype_obj
+                        dim = output_dim
+                        vals = self._cast_values_from_github_metadata(vals, dtype_obj)
+                    else:
+                        dim = len(self.dtypes)
+                        dt_obj = self._convert_pure_dtype_to_obj(self.dtypes)
+                        vals = self.__cast_values(vals, self.dtypes, output_keys)
 
-        columns = ["key", "input"] + (
-            expanded_keys if expanded_keys is not None else output_keys
-        )
-        return DataFrame(data=rows, columns=columns, dtype=dt_obj, dim=dim)
+                vals = vals[0] if isinstance(vals[0], list) else vals
+                row = [inp["key"], inp["input"]] + vals
+                rows.append(row)
+            columns = ["key", "input"] + (
+                expanded_keys if expanded_keys is not None else output_keys
+            )
+            return DataFrame(data=rows, columns=columns, dtype=dt_obj, dim=dim)
+        except Exception as e:
+            raise RuntimeError(e)
 
     def meta(self) -> dict:
         """
@@ -728,7 +725,6 @@ class GenericOutputAdapter(ResponseRefactor):
             extension = None
         self.logger.debug(f"Extension: {extension}")
         df = self._to_dataframe(result, model_id)
-        self.logger.info("After df")
         delimiters = {"csv": ",", "tsv": "\t"}
         if extension in ["tsv", "csv"]:
             df.write(output, delimiter=delimiters[extension])

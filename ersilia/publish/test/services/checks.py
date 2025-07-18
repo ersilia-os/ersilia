@@ -22,7 +22,7 @@ from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.hdf5 import Hdf5DataLoader
 from ....utils.exceptions_utils.base_information_exceptions import _read_default_fields
 from ....store.utils import echo_exceptions, ClickInterface
-
+from....hub.content.base_information_validator import BaseInformationValidator
 class CheckService:
     """
     Service for performing various checks on the model.
@@ -80,10 +80,6 @@ class CheckService:
         self.original_smiles_list = []
         self.check_results = ios.check_results
         self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
-        # Field defaults
-        self.valid_tasks = set(_read_default_fields("Task"))
-        self.valid_model_outputs = set(_read_default_fields("Output"))
-        self.valid_model_inputs = set(_read_default_fields("Input"))
 
     def _get_output_consistency(self):
         if self.dir is not None:
@@ -114,29 +110,53 @@ class CheckService:
         self.logger.debug("Checking model slug...")
         if not data["Slug"]:
             raise texc.EmptyField("slug")
+        
+        if not BaseInformationValidator().validate_slug(data["Slug"]):
+            raise texc.EmptyField("slug")
 
     def _check_model_description(self, data):
         self.logger.debug("Checking model description...")
+
+        if not BaseInformationValidator().validate_description(data["Description"]):
+            raise texc.EmptyField("Description")
+        
         if not data["Description"]:
             raise texc.EmptyField("Description")
 
     def _check_model_tag(self, data):
         self.logger.debug("Checking model tag...")
+
+        if not BaseInformationValidator().validate_tag(data["Tag"]):
+            raise texc.EmptyField("Tag")
+        
         if not data["Tag"]:
             raise texc.EmptyField("Tag")
 
     def _check_model_source_code(self, data):
         self.logger.debug("Checking model source code...")
-        if not data["Source Code"]:
-            raise texc.EmptyField("Source Code")
+        key = "Source Code"
+        if not BaseInformationValidator().validate_output(data[key]):
+            raise texc.EmptyField(key)
+        
+        if not data[key]:
+            raise texc.EmptyField(key)
 
     def _check_model_source_title(self, data):
         self.logger.debug("Checking model title...")
+
+        if not BaseInformationValidator().validate_description(data["Title"]):
+            raise texc.EmptyField("Title")
+        
         if not data["Title"]:
             raise texc.EmptyField("Title")
 
     def _check_model_status(self, data):
         self.logger.debug("Checking model status...")
+        key = "Status"
+
+        if not BaseInformationValidator().validate_status(data[key]):
+            raise texc.EmptyField(key)
+        
         if not data["Status"]:
             raise texc.EmptyField("Status")
 
@@ -148,11 +168,18 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+        
+        if not BaseInformationValidator().validate_contributor(data[key]):
+            raise texc.EmptyField(key)
 
     def _check_model_interpret(self, data):
         self.logger.debug("Checking model interpretation...")
-        if not data["Interpretation"]:
-            raise texc.EmptyField("Interpretation")
+        key = "Interpretation"
+        if not data[key]:
+            raise texc.EmptyField(key)
+    
+        if not BaseInformationValidator().validate_interpretation(data[key]):
+            raise texc.EmptyField(key)
 
     def _check_model_dockerhub_url(self, data):
         key = "DockerHub"
@@ -163,6 +190,9 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
 
+        if not BaseInformationValidator().validate_dockerhub(data[key]):
+            raise texc.EmptyField(key)
+        
     def _check_model_s3_url(self, data):
         key = "S3"
         self.logger.debug(f"Checking {key} URL field..")
@@ -171,6 +201,9 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+        
+        if not BaseInformationValidator().validate_s3(data[key]):
+            raise texc.EmptyField(key)
 
     def _check_model_arch(self, data):
         key = "Docker Architecture"
@@ -180,6 +213,9 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+        
+        if not BaseInformationValidator().validate_docker_architecture(data[key]):
+            raise texc.EmptyField(key)
 
     def _check_model_publication(self, data):
         key = "Publication"
@@ -188,81 +224,30 @@ class CheckService:
             if not data[key]:
                 raise texc.EmptyField(key)
 
+        if not BaseInformationValidator().validate_publication(data[key]):
+            raise texc.EmptyField(key)
+
     def _check_model_task(self, data):
         self.logger.debug("Checking model task...")
-        raw_tasks = data.get("Task")
-        if isinstance(raw_tasks, str):
-            tasks = [task.strip() for task in raw_tasks.split(",") if task.strip()]
-        elif isinstance(raw_tasks, list):
-            tasks = [
-                task.strip()
-                for task in raw_tasks
-                if isinstance(task, str) and task.strip()
-            ]
-        else:
-            raise texc.InvalidEntry("Task")
+        key = "Task"
 
-        if not tasks:
-            raise texc.InvalidEntry("Task")
-
-        invalid_tasks = [task for task in tasks if task not in self.valid_tasks]
-        if invalid_tasks:
-            raise texc.InvalidEntry("Task")
-
-        self.logger.debug("All tasks are valid.")
+        if not BaseInformationValidator().validate_task(data[key]):
+            raise texc.EmptyField(key)
 
     def _check_model_output(self, data):
         self.logger.debug("Checking model output...")
-        raw_outputs = data.get("Output")
-        if isinstance(raw_outputs, str):
-            outputs = [
-                output.strip() for output in raw_outputs.split(",") if output.strip()
-            ]
-        elif isinstance(raw_outputs, list):
-            outputs = [
-                output.strip()
-                for output in raw_outputs
-                if isinstance(output, str) and output.strip()
-            ]
-        else:
-            raise texc.InvalidEntry("Output")
+        key = "Output"
+        if not BaseInformationValidator().validate_output(data[key]):
+            raise texc.EmptyField(key)
 
-        if not outputs:
-            raise texc.InvalidEntry("Output")
-
-        invalid_outputs = [
-            output for output in outputs if output not in self.valid_model_outputs
-        ]
-        if invalid_outputs:
-            raise texc.InvalidEntry("Output")
 
         self.logger.debug("All outputs are valid.")
 
     def _check_model_input(self, data):
         self.logger.debug("Checking model input")
-
-        model_input = data.get("Input")
-        if isinstance(model_input, str):
-            model_input = [
-                input.strip() for input in model_input.split(",") if input.strip()
-            ]
-        elif isinstance(model_input, list):
-            model_input = [
-                input.strip()
-                for input in model_input
-                if isinstance(input, str) and input.strip()
-            ]
-        else:
-            raise texc.InvalidEntry("Input")
-
-        if not model_input:
-            raise texc.InvalidEntry("Output")
-
-        invalid_inputs = [
-            input for input in model_input if input not in self.valid_model_inputs
-        ]
-        if invalid_inputs:
-            raise texc.InvalidEntry("Input")
+        key = "Input"
+        if not BaseInformationValidator().validate_input(data[key]):
+            raise texc.EmptyField(key)
 
         self.logger.debug("All Inputs are valid.")
 
@@ -284,35 +269,56 @@ class CheckService:
     def _check_model_source(self, data):
         key = "Source"
         self.logger.debug(f"Checking {key}  field..")
+
+        if not BaseInformationValidator().validate_source(data[key]):
+            raise texc.EmptyField(key)
+        
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_source_type(self, data):
         key = "Source Type"
+
+        if not BaseInformationValidator().validate_source_type(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_sub_tasks(self, data):
         key = "Subtask"
+    
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_input_dim(self, data):
         key = "Input Dimension"
+
+        if not BaseInformationValidator().validate_input_dimension(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_target_organism(self, data):
         key = "Target Organism"
+
+        if not BaseInformationValidator().validate_target_organism(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_biomedical_area(self, data):
         key = "Biomedical Area"
+
+        if not BaseInformationValidator().validate_biomedical_area(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
@@ -320,17 +326,29 @@ class CheckService:
     def _check_model_output_dim(self, data):
         key = "Output Dimension"
         self.logger.debug(f"Checking {key}  field..")
+
+        if not BaseInformationValidator().validate_output_dimension(data[key]):
+            raise texc.EmptyField(key)
+        
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_output_consistency(self, data):
         key = "Output Consistency"
+
+        if not BaseInformationValidator().validate_output_consistency(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_contribution_date(self, data):
         key = "Incorporation Date"
+
+        if not BaseInformationValidator().validate_incorporation_date(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -340,6 +358,10 @@ class CheckService:
 
     def _check_model_image_size(self, data):
         key = "Image Size"
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -349,6 +371,9 @@ class CheckService:
 
     def _check_model_env_size(self, data):
         key = "Environment Size"
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -367,6 +392,9 @@ class CheckService:
 
     def _check_model_model_size(self, data):
         key = "Model Size"
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -376,6 +404,10 @@ class CheckService:
 
     def _check_model_computational_performance_one(self, data):
         key = "Computational Performance 1"
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -385,6 +417,10 @@ class CheckService:
 
     def _check_model_computational_performance_two(self, data):
         key = "Computational Performance 2"
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -394,6 +430,10 @@ class CheckService:
 
     def _check_model_computational_performance_three(self, data):
         key = "Computational Performance 3"
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -402,6 +442,10 @@ class CheckService:
             raise texc.EmptyKey(key)
     def _check_model_computational_performance_four(self, data):
         key = "Computational Performance 4"
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -411,6 +455,10 @@ class CheckService:
         
     def _check_model_computational_performance_five(self, data):
         key = "Computational Performance 5"
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:

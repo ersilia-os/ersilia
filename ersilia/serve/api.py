@@ -107,7 +107,6 @@ class Api(ErsiliaBase):
     def _post_batch(self, url, input_batch):
         if not input_batch:
             return []
-
         try:
             response = requests.post(url, json=input_batch)
 

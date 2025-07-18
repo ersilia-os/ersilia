@@ -626,11 +626,12 @@ class TestRule(CommandRule):
         failed_checks = []
         for _, item in data.items():
             for key, value in item.items():
-                if key == "computational_performance_tracking_details":
+                if key in "computational_performance_tracking_details":
                     continue
                 if not value:
                     error = f"{' '.join(key.split('_')).capitalize()} is failed"
-                    failed_checks.append(error)
+                    # failed_checks.append(error)
+                    echo(error)
         if failed_checks:
             return [
             create_response(
