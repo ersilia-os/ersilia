@@ -1,119 +1,98 @@
 import json
+import pandas as pd
 
 from ... import logger
 from ...hub.content.card import ModelCard
 from ...hub.content.catalog import ModelCatalog
 from ..echo import echo
-import pandas as pd
 
-
-# def catalog_cmd():
-#     """
-#     Creates the catalog command for the API.
-
-#     This command allows users to list a catalog of models available either locally or in the model hub.
-#     It provides options to display the catalog in various formats(such as tables by default or json), show more detailed information,
-#     and view model cards for specific models.
-
-#     Returns
-#     -------
-#     function
-#         The catalog command function to be used by the API and for testing in the pytest.
-
-#     """
 
 def catalog(
-        hub=False,
-        file_name=None,
-        browser=False,
-        more=False,
-        card=False,
-        model=None,
-        as_json=False,
-        verbose=False,
+    hub=False,
+    file_name=None,
+    browser=False,
+    more=False,
+    card=False,
+    model=None,
+    as_json=False,
+    verbose=False,
 ):
-        """
-        API-compatible version of the catalog command with echo-based output.
+    """
+    API-compatible version of the catalog command with echo-based output.
 
-        Parameters
-        ----------
-        hub : bool
-            If True, fetch the catalog from the hub.
-        file_name : str or None
-            If specified, write the catalog to this file.
-        browser : bool
-            Unused in current version; reserved for future.
-        more : bool
-            If True, show more detail in catalog.
-        card : bool
-            If True, display the model card for a given model.
-        model : str or None
-            The model ID for which to display metadata.
-        as_json : bool
-            If True, return JSON output instead of a formatted table.
+    Parameters
+    ----------
+    hub : bool
+        If True, fetch the catalog from the hub.
+    file_name : str or None
+        If specified, write the catalog to this file.
+    browser : bool
+        Unused in current version; reserved for future.
+    more : bool
+        If True, show more detail in catalog.
+    card : bool
+        If True, display the model card for a given model.
+    model : str or None
+        The model ID for which to display metadata.
+    as_json : bool
+        If True, return JSON output instead of a formatted table.
+    verbose : bool
+        If True, enable verbose logging.
 
-        Returns
-        -------
-        pandas.DataFrame
-        A DataFrame containing the last two columns of the model catalog.
-        Also prints the full catalog as a table or JSON to the terminal, depending on `as_json`.
-        """
-        if verbose:
-            logger.set_verbosity(1)
-        else:
-            logger.set_verbosity(0)
+    Returns
+    -------
+    pandas.DataFrame or dict or None
+        A DataFrame of the last two catalog columns (for non-card mode),
+        the model card metadata as dict (for card mode),
+        or None on failure.
+    """
+    logger.set_verbosity(1 if verbose else 0)
 
-        if card and not model:
-            echo(" Error: --card option requires a model ID", err=True)
+    if card:
+        if not model:
+            echo("❌ Error: --card option requires a model ID", fg="red", bold=True)
+            return None
+        try:
+            mc = ModelCard()
+            metadata = mc.get(model, as_json=True)
+
+            if not metadata:
+                echo(f"❌ Error: No metadata found for model ID '{model}'", fg="red", bold=True)
+                return None
+
+            if as_json:
+                echo(json.dumps(metadata, indent=2))
+            else:
+                echo(str(metadata))
+            return metadata
+
+        except Exception as e:
+            echo(f"❌ Error fetching model metadata: {e}", fg="red", bold=True)
             return None
 
-        if card and model:
-            try:
-                mc = ModelCard()
-                model_metadata = mc.get(model, as_json=True)
+    # Not in card mode → fetch catalog
+    catalog_obj = ModelCatalog(less=not more)
+    try:
+        catalog_table = catalog_obj.hub() if hub else catalog_obj.local()
+    except Exception as e:
+        echo(f"❌ Error loading catalog: {e}", fg="red", bold=True)
+        return None
 
-                if not model_metadata:
-                    echo(f" Error: No metadata found for model ID '{model}'", err=True)
-                    return None
+    if not catalog_table.data:
+        echo("⚠️ No local models found. Try `ersilia fetch` to download a model.", fg="yellow")
+        return None
 
-                if as_json:
-                    echo(json.dumps(model_metadata, indent=2))
-                    return model_metadata
-                else:
-                    echo(str(model_metadata))
-                    return model_metadata
+    # Print to terminal
+    output = catalog_table.as_json() if as_json else catalog_table.as_table()
+    echo(output)
 
-            except Exception as e:
-                echo(f"Error fetching model metadata: {e}", err=True)
-                return None
+    # Save to file if requested (but do NOT return early)
+    if file_name:
+        catalog_table.write(file_name)
+        echo(f"📁 Catalog written to {file_name}", fg="green")
 
-        else:
-            mc = ModelCatalog(less=not more)
-
-            if hub:
-                catalog_table = mc.hub()
-            else:
-                catalog_table = mc.local()
-                if not catalog_table.data:
-                    echo(
-                        " No local models available. Please fetch a model by running 'ersilia fetch'",
-                        err=True,
-                    )
-                    return None
-            
-            if file_name is None:
-                catalog = (
-                    catalog_table.as_json() if as_json else catalog_table.as_table()
-                )
-
-            else:
-                catalog_table.write(file_name)
-                echo(f"📁 Catalog written to {file_name}")
-                return None
-            
-            df = pd.DataFrame(catalog_table.data)
-            if df.shape[1] >= 2:
-                df = df.iloc[:, -2:] 
-
-        echo(catalog)
-        return df
+    # Return last two columns as DataFrame
+    df = pd.DataFrame(catalog_table.data)
+    if df.shape[1] >= 2:
+        df = df.iloc[:, -2:]
+    return df

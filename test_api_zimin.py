@@ -12,15 +12,15 @@ mdl = ErsiliaModel("eos9p4a") # drug-likeness
 # input = ["CCCCO", "C", "CC"]
 # df = mdl.run(input, batch_size=100)
 # df.to_csv("TESTRUN.csv", index=False)
-molecular_weight = ErsiliaModel("eos3b5e", verbose=False)
-molecular_weight.fetch()
-molecular_weight.serve()
+# molecular_weight = ErsiliaModel("eos3b5e", verbose=False)
+# molecular_weight.fetch()
+# molecular_weight.serve()
 # molecular_weight.fetch()
 # molecular_weight.serve()
 
-input = ["CCCCO", "C", "CC"]
-df = molecular_weight.run(input, batch_size=100)
-print(df)
+# input = ["CCCCO", "C", "CC"]
+# df = molecular_weight.run(input, batch_size=100)
+# print(df)
 
 Hub = ErsiliaHub()
 df = Hub.catalog()
