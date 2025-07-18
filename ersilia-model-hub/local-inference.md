@@ -153,7 +153,7 @@ mdl_retro.is_fetched()
 To check if a docker is running locally, use **is\_docker:**
 
 ```
-// Some code
+mdl_retro.is_docker()
 ```
 
 To make **predictions** for Halicin and Ibuprofen:
