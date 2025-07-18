@@ -1,5 +1,6 @@
 from ... import ErsiliaModel, logger
 from ...store.utils import OutputSource
+from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from ..echo import echo
 
@@ -14,7 +15,7 @@ def serve(
     cloud_cache_only: bool = False,
     cache_only: bool = False,
     max_cache_memory_frac: float = None,
-    verbose: bool = False,
+    verbose_flag: bool = False,
 ):
     """
     Serves a specified model as an API.
@@ -42,8 +43,8 @@ def serve(
 
     """
     echo("Serving model. This process may take some time...", fg="blue")
-
-    if verbose:
+    
+    if verbose_flag:
         logger.set_verbosity(1)
     else:
         logger.set_verbosity(0)
@@ -55,15 +56,19 @@ def serve(
             )
 
     output_source = None
+    cache_status = "Disabled"
 
     if local_cache_only:
         output_source = OutputSource.LOCAL_ONLY
         enable_local_cache = True
+        cache_status = "Local only"
     if cloud_cache_only:
         output_source = OutputSource.CLOUD_ONLY
+        cache_status = "Cloud only"
     if cache_only:
         output_source = OutputSource.CACHE_ONLY
         enable_local_cache = True
+        cache_status = "Hybrid (local & cloud)"
 
     mdl = ErsiliaModel(
         model,
@@ -72,6 +77,8 @@ def serve(
         cache=enable_local_cache,
         maxmemory=max_cache_memory_frac,
     )
+
+    redis_setup = SetupRedis(enable_local_cache, max_cache_memory_frac)
 
     if not mdl.is_valid():
         raise RuntimeError(f"Model {mdl.model_id} is not valid or not found.")
@@ -93,31 +100,5 @@ def serve(
         for api in apis:
             if api != "run":
                 additional_apis.append(api)
-    echo(":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green")
-    # echo("")
-    # echo("   URL: {0}".format(mdl.url), fg="yellow")
-    # if str(mdl.pid) != "-1":
-    #     echo("   PID: {0}".format(mdl.pid), fg="yellow")
-    # echo("   SRV: {0}".format(mdl.scl), fg="yellow")
-    # echo("   Session: {0}".format(mdl.session._session_dir), fg="yellow")
-    # echo("")
-    # echo("🔄 Cache fetching mode:", fg="blue")
-    # echo(f"   - {cache_status}", fg="red") if cache_status == "Disabled" else echo(
-    #     f"   - {cache_status}", fg="green"
-    # )
-    # echo("")
-    # echo(":floppy_disk: Local cache:", fg="blue")
-    # echo("   - Enabled", fg="green") if redis_setup._is_amenable()[0] else echo(
-    #     "   - Disabled", fg="red"
-    # )
-    # echo("")
-    # echo(":chart_increasing: Tracking:", fg="blue")
-    # if track:
-    #     echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
-    # else:
-    #     echo("   - Disabled", fg="red")
-    echo(
-                ":thumbs_up: Model {0} served successfully!".format(model),
-                fg="green",
-            )
+    
     return mdl.url, mdl.session._session_dir, mdl.scl

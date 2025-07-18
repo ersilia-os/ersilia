@@ -129,7 +129,7 @@ class ErsiliaModel:
             cloud_cache_only=False,
             cache_only=False,
             max_cache_memory_frac=None,
-            verbose_falg =self.verbose_mode or verbose,
+            verbose_flag =self.verbose_mode or verbose,
         )
 
     def run(self, input, batch_size):

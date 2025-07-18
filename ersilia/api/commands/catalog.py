@@ -110,22 +110,10 @@ def catalog(
                 catalog_table.write(file_name)
                 echo(f"📁 Catalog written to {file_name}")
                 return None
-<<<<<<< HEAD
-
-            id_slug_list = [
-            [row["Identifier"], row["Slug"]]
-            for row in catalog_table.data
-            if "Identifier" in row and "Slug" in row
-            ]
-=======
             
-            try:
-                df = pd.DataFrame(catalog_table.data)
-                if df.shape[1] >= 2:
-                    df = df.iloc[:, -2:] 
-            except Exception as e:
-                echo(f"❌ Could not convert catalog to DataFrame: {e}", err=True)
->>>>>>> f8a9148ffdab0d2147254c1d3fd1b17d00979d2b
+            df = pd.DataFrame(catalog_table.data)
+            if df.shape[1] >= 2:
+                df = df.iloc[:, -2:] 
 
         echo(catalog)
         return df

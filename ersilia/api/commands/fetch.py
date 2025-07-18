@@ -39,9 +39,9 @@ def fetch(
     from_s3,
     from_hosted,
     hosted_url,
-    verbose,
+    verbose_flag,
 ):
-    if verbose:
+    if verbose_flag:
         logger.set_verbosity(1)
     else:
         logger.set_verbosity(0)
@@ -73,7 +73,7 @@ def fetch(
                 ":thumbs_up: Model {0} fetched successfully!".format(model_id),
                 fg="green",
             )
-        return True
+        is_fetched = True
 
     else:
         echo(
@@ -81,3 +81,4 @@ def fetch(
                 fg="red",
             )
         return False
+
