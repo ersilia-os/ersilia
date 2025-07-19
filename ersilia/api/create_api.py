@@ -274,7 +274,16 @@ class ErsiliaModel:
 
 
 class ErsiliaHub:
-    # TODO: add docstring
+    '''
+    This class enables users to browse and retrieve information about all models
+    available in the Ersilia Hub. It is designed for general catalog-level operations
+    and is not tied to any specific model instance. Use this class when you want to
+    explore the hub, list available models,
+
+    Typical usage includes listing the model catalog via the `catalog()` method,
+    which mirrors the CLI behavior but returns a structured DataFrame for programmatic use.
+
+    '''
     def __init__(self, verbose=False):
         self.verbose_mode = verbose
 

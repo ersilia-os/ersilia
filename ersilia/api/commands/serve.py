@@ -43,7 +43,7 @@ def serve(
 
     """
     echo("Serving model. This process may take some time...", fg="blue")
-    
+
     if verbose_flag:
         logger.set_verbosity(1)
     else:
@@ -56,19 +56,15 @@ def serve(
             )
 
     output_source = None
-    cache_status = "Disabled"
 
     if local_cache_only:
         output_source = OutputSource.LOCAL_ONLY
         enable_local_cache = True
-        cache_status = "Local only"
     if cloud_cache_only:
         output_source = OutputSource.CLOUD_ONLY
-        cache_status = "Cloud only"
     if cache_only:
         output_source = OutputSource.CACHE_ONLY
         enable_local_cache = True
-        cache_status = "Hybrid (local & cloud)"
 
     mdl = ErsiliaModel(
         model,
@@ -78,7 +74,7 @@ def serve(
         maxmemory=max_cache_memory_frac,
     )
 
-    redis_setup = SetupRedis(enable_local_cache, max_cache_memory_frac)
+    SetupRedis(enable_local_cache, max_cache_memory_frac)
 
     if not mdl.is_valid():
         raise RuntimeError(f"Model {mdl.model_id} is not valid or not found.")
@@ -100,5 +96,5 @@ def serve(
         for api in apis:
             if api != "run":
                 additional_apis.append(api)
-    
+
     return mdl.url, mdl.session._session_dir, mdl.scl
