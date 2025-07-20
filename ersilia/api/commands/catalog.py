@@ -21,6 +21,10 @@ def catalog(
     """
     API-compatible version of the catalog command with echo-based output.
 
+    This command allows users to list a catalog of models available either locally or in the model hub.
+    It provides options to display the catalog in various formats(such as tables by default or json), show more detailed information,
+    and view model cards for specific models.
+
     Parameters
     ----------
     hub : bool
@@ -52,14 +56,14 @@ def catalog(
     if card:
         if not model:
             echo("❌ Error: --card option requires a model ID", fg="red", bold=True)
-            return None
+            # return None
         try:
             mc = ModelCard()
             metadata = mc.get(model, as_json=True)
 
             if not metadata:
                 echo(f"❌ Error: No metadata found for model ID '{model}'", fg="red", bold=True)
-                return None
+                # return None
 
             if as_json:
                 echo(json.dumps(metadata, indent=2))
@@ -69,7 +73,7 @@ def catalog(
 
         except Exception as e:
             echo(f"❌ Error fetching model metadata: {e}", fg="red", bold=True)
-            return None
+            # return None
 
     # Not in card mode → fetch catalog
     catalog_obj = ModelCatalog(less=not more)
@@ -77,23 +81,24 @@ def catalog(
         catalog_table = catalog_obj.hub() if hub else catalog_obj.local()
     except Exception as e:
         echo(f"❌ Error loading catalog: {e}", fg="red", bold=True)
-        return None
+        # return None
 
     if not catalog_table.data:
         echo("⚠️ No local models found. Try `ersilia fetch` to download a model.", fg="yellow")
-        return None
-
-    # Print to terminal
-    output = catalog_table.as_json() if as_json else catalog_table.as_table()
-    echo(output)
+        # return None
 
     # Save to file if requested (but do NOT return early)
     if file_name:
         catalog_table.write(file_name)
         echo(f"📁 Catalog written to {file_name}", fg="green")
 
+    # Print to terminal
+    output = catalog_table.as_json() if as_json else catalog_table.as_table()
+    echo(output)
+
     # Return last two columns as DataFrame
     df = pd.DataFrame(catalog_table.data)
-    if df.shape[1] >= 2:
-        df = df.iloc[:, -2:]
+    # if df.shape[1] >= 2:
+    #     df = df.iloc[:, -2:]
+
     return df
