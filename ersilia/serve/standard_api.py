@@ -420,62 +420,6 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.debug("It seems amenable for standard run")
         return True
 
-    def serialize_to_csv(self, input_data, result, output_data):
-        """
-        Serialize input data and result to a CSV file.
-
-        Parameters
-        ----------
-        input_data : list
-            List of dictionaries containing input data.
-        result : list or dict
-            List (or nested dict) of dictionaries containing result data.
-        output_data : str
-            Path to the output CSV file.
-
-        Returns
-        -------
-        str
-            Path to the output CSV file.
-        """
-        if isinstance(result, dict):
-            if list(result.keys()) != self.header:
-                result = result[next(iter(result))]
-                if (
-                    isinstance(result[0], dict)
-                    and list(result[0].keys()) != self.header
-                ):
-                    result = [next(iter(item.values())) for item in result]
-
-        assert len(input_data) == len(result)
-
-        header_sub = self.header
-        rows = []
-
-        for i_d, r_d in zip(input_data, result):
-            row = [i_d["key"], i_d["input"]]
-            if isinstance(r_d, dict):
-                get_val = lambda i, k: r_d[k]
-            elif isinstance(r_d, list):
-                get_val = lambda i, k: r_d[i]
-            else:
-                get_val = lambda i, k: r_d
-
-            for i, k in enumerate(header_sub):
-                v = get_val(i, k)
-                if isinstance(v, list):
-                    row.extend(v)
-                else:
-                    row.append(v)
-            rows.append(row)
-
-        with open(output_data, "w", newline="") as f:
-            writer = csv.writer(f)
-            writer.writerow(self.header)
-            writer.writerows(rows)
-
-        return output_data
-
     def _serialize_output(self, result, output, model_id, api_name):
         self.generic_adapter._adapt_generic(result, output, model_id, api_name)
 
@@ -579,7 +523,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 overall_results.extend(batch_result)
 
             else:
-                overall_results.append(response)
+                overall_results.extend(response)
 
             if "meta" in response:
                 self.logger.info("Deleting meta")
@@ -587,6 +531,8 @@ class StandardCSVRunApi(ErsiliaBase):
         return overall_results, meta
 
     def _standardize_output(self, input_data, results, output, meta):
+        results = [res for res in results]
+
         _results = []
         key = "outcome" if meta is None else meta["outcome"][0]
         keys = (
@@ -594,13 +540,17 @@ class StandardCSVRunApi(ErsiliaBase):
             if "outcome" in key or (meta is not None and len(meta["outcome"]) == 1)
             else meta["outcome"]
         )
-        for inp, out in zip(input_data, results[0]):
+        for inp, out in zip(input_data, results):
             if out is not None:
-                _v = list(out.values() if out else out)
+                _v = list(out.values() if not isinstance(out, list) else out)
             else:
                 _v = [out] * len(self.header) if self.header is not None else [out]
             if out is not None:
-                _k = [out.keys()] if "outcome" not in out.keys() else keys
+                _k = (
+                    [out.keys() if not isinstance(out, list) else out]
+                    if (not isinstance(out, list) and "outcome" not in out.keys())
+                    else keys
+                )
             else:
                 _k = self.header if self.header is not None else keys
 
