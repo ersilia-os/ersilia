@@ -345,22 +345,19 @@ class CheckService:
 
     def _check_model_contribution_date(self, data):
         key = "Incorporation Date"
+        
+        self.logger.debug(f"Checking {key}  field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
 
         if not BaseInformationValidator().validate_incorporation_date(data[key]):
             raise texc.EmptyField(key)
-        
-        self.logger.debug(f"Checking {key}  field..")
-        if key in data:
-            if not data[key]:
-                raise texc.EmptyField(key)
-        else:
-            raise texc.EmptyKey(key)
 
     def _check_model_image_size(self, data):
         key = "Image Size"
-
-        if not BaseInformationValidator().is_numeric(data[key]):
-            raise texc.EmptyField(key)
         
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -369,10 +366,11 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
 
-    def _check_model_env_size(self, data):
-        key = "Environment Size"
         if not BaseInformationValidator().is_numeric(data[key]):
             raise texc.EmptyField(key)
+
+    def _check_model_env_size(self, data):
+        key = "Environment Size"
         
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -381,6 +379,9 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
     
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+
     def _last_packaging_date(self, data):
         key = "Last Packaging Date"
         self.logger.debug(f"Checking {key}  field..")
@@ -392,8 +393,6 @@ class CheckService:
 
     def _check_model_model_size(self, data):
         key = "Model Size"
-        if not BaseInformationValidator().is_numeric(data[key]):
-            raise texc.EmptyField(key)
 
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -401,12 +400,12 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
 
     def _check_model_computational_performance_one(self, data):
         key = "Computational Performance 1"
-
-        if not BaseInformationValidator().is_numeric(data[key]):
-            raise texc.EmptyField(key)
         
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -414,12 +413,12 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+        
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
 
     def _check_model_computational_performance_two(self, data):
         key = "Computational Performance 2"
-
-        if not BaseInformationValidator().is_numeric(data[key]):
-            raise texc.EmptyField(key)
         
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -427,12 +426,12 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
 
     def _check_model_computational_performance_three(self, data):
         key = "Computational Performance 3"
-
-        if not BaseInformationValidator().is_numeric(data[key]):
-            raise texc.EmptyField(key)
         
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -440,11 +439,12 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+        
     def _check_model_computational_performance_four(self, data):
         key = "Computational Performance 4"
-
-        if not BaseInformationValidator().is_numeric(data[key]):
-            raise texc.EmptyField(key)
         
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -453,11 +453,11 @@ class CheckService:
         else:
             raise texc.EmptyKey(key)
         
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
+
     def _check_model_computational_performance_five(self, data):
         key = "Computational Performance 5"
-
-        if not BaseInformationValidator().is_numeric(data[key]):
-            raise texc.EmptyField(key)
         
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
@@ -465,6 +465,9 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
+
+        if not BaseInformationValidator().is_numeric(data[key]):
+            raise texc.EmptyField(key)
 
 
     def check_information(self):
