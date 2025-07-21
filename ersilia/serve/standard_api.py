@@ -449,33 +449,6 @@ class StandardCSVRunApi(ErsiliaBase):
             right_results = self._post_batch(url, input_batch[mid:])
             return left_results + right_results
 
-    def _post_batch(self, url, input_batch):
-        if not input_batch:
-            return []
-
-        try:
-            response = requests.post(url, json=input_batch)
-
-            self.logger.debug("Status code: {0}".format(response.status_code))
-            response.raise_for_status()
-            result = response.json()
-            return result
-        except Exception as e:
-            self.logger.error(
-                "Error processing batch of size {}: {}".format(len(input_batch), e)
-            )
-            if len(input_batch) == 1:
-                if self.header is not None:
-                    empty_values = [None] * len(self.header)
-                    empty_values = [{k: v for k in self.header for v in empty_values}]
-                    return empty_values
-                else:
-                    return [None]
-            mid = len(input_batch) // 2
-            left_results = self._post_batch(url, input_batch[:mid])
-            right_results = self._post_batch(url, input_batch[mid:])
-            return left_results + right_results
-
     def post(self, input, output, batch_size, output_source):
         """
         Post input data to the API in batches and get the output data.

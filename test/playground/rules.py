@@ -630,7 +630,7 @@ class TestRule(CommandRule):
                     continue
                 if not value:
                     error = f"{' '.join(key.split('_')).capitalize()} is failed"
-                    # failed_checks.append(error)
+                    failed_checks.append(error)
                     echo(error)
         if failed_checks:
             return [

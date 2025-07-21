@@ -135,7 +135,7 @@ class CheckService:
     def _check_model_source_code(self, data):
         self.logger.debug("Checking model source code...")
         key = "Source Code"
-        if not BaseInformationValidator().validate_output(data[key]):
+        if not BaseInformationValidator().validate_source_code(data[key]):
             raise texc.EmptyField(key)
         
         if not data[key]:
@@ -144,7 +144,7 @@ class CheckService:
     def _check_model_source_title(self, data):
         self.logger.debug("Checking model title...")
 
-        if not BaseInformationValidator().validate_description(data["Title"]):
+        if not BaseInformationValidator().validate_title(data["Title"]):
             raise texc.EmptyField("Title")
         
         if not data["Title"]:
