@@ -1,4 +1,5 @@
 import datetime
+import os
 
 import validators
 
@@ -13,6 +14,15 @@ from ...utils.identifiers.model import ModelIdentifier
 
 
 class BaseInformationValidator:
+    @staticmethod
+    def _read_default_fields(field):
+        root = os.path.dirname(os.path.abspath(__file__))
+        filename = field.lower().replace(" ", "_")
+        file_path = os.path.join(root, "metadata", filename + ".txt")
+        with open(file_path, "r") as f:
+            valid_field = f.read().split("\n")
+        return valid_field
+
     @staticmethod
     def is_valid_url(u: str) -> bool:
         r = validators.url(u)
@@ -53,7 +63,7 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_status(cls, s) -> bool:
-        return s in cls.read_list("Status")
+        return s in cls._read_default_fields("Status")
 
     @classmethod
     def validate_title(cls, t) -> bool:
@@ -65,23 +75,23 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_mode(cls, m) -> bool:
-        return m is None or m in cls.read_list("Mode")
+        return m is None or m in cls._read_default_fields("Mode")
 
     @classmethod
     def validate_source(cls, s) -> bool:
-        return s in cls.read_list("Source")
+        return s in cls._read_default_fields("Source")
 
     @classmethod
     def validate_source_type(cls, st) -> bool:
-        return st in cls.read_list("Source Type")
+        return st in cls._read_default_fields("Source Type")
 
     @classmethod
     def validate_input(cls, inp) -> bool:
-        return all(i in cls.read_list("Input") for i in cls.to_list(inp))
+        return all(i in cls._read_default_fields("Input") for i in cls.to_list(inp))
 
     @classmethod
     def validate_input_shape(cls, shp) -> bool:
-        return shp is None or shp in cls.read_list("Input Shape")
+        return shp is None or shp in cls._read_default_fields("Input Shape")
 
     @classmethod
     def validate_input_dimension(cls, d) -> bool:
@@ -89,33 +99,37 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_task(cls, t) -> bool:
-        return isinstance(t, str) and t in cls.read_list("Task")
+        return isinstance(t, str) and t in cls._read_default_fields("Task")
 
     @classmethod
     def validate_subtask(cls, st) -> bool:
-        return isinstance(st, str) and st in cls.read_list("Subtask")
+        return isinstance(st, str) and st in cls._read_default_fields("Subtask")
 
     @classmethod
     def validate_biomedical_area(cls, ba) -> bool:
-        return all(v in cls.read_list("Biomedical Area") for v in cls.to_list(ba))
+        return all(
+            v in cls._read_default_fields("Biomedical Area") for v in cls.to_list(ba)
+        )
 
     @classmethod
     def validate_target_organism(cls, to) -> bool:
-        return all(v in cls.read_list("Target Organism") for v in cls.to_list(to))
+        return all(
+            v in cls._read_default_fields("Target Organism") for v in cls.to_list(to)
+        )
 
     @classmethod
     def validate_output(cls, o) -> bool:
-        return all(v in cls.read_list("Output") for v in cls.to_list(o))
+        return all(v in cls._read_default_fields("Output") for v in cls.to_list(o))
 
     @classmethod
     def validate_output_type(cls, ot) -> bool:
         return ot is None or all(
-            v in cls.read_list("Output Type") for v in cls.to_list(ot)
+            v in cls._read_default_fields("Output Type") for v in cls.to_list(ot)
         )
 
     @classmethod
     def validate_output_shape(cls, osz) -> bool:
-        return osz is None or osz in cls.read_list("Output Shape")
+        return osz is None or osz in cls._read_default_fields("Output Shape")
 
     @classmethod
     def validate_output_dimension(cls, d) -> bool:
@@ -123,7 +137,7 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_output_consistency(cls, c) -> bool:
-        return c in cls.read_list("Output Consistency")
+        return c in cls._read_default_fields("Output Consistency")
 
     @classmethod
     def validate_interpretation(cls, it) -> bool:
@@ -131,7 +145,7 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_tag(cls, tg) -> bool:
-        return all(v in cls.read_list("Tag") for v in cls.to_list(tg))
+        return all(v in cls._read_default_fields("Tag") for v in cls.to_list(tg))
 
     @classmethod
     def validate_publication(cls, url) -> bool:
@@ -139,7 +153,7 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_publication_type(cls, pt) -> bool:
-        return pt in cls.read_list("Publication Type")
+        return pt in cls._read_default_fields("Publication Type")
 
     @classmethod
     def validate_publication_year(cls, y) -> bool:
@@ -152,7 +166,7 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_license(cls, lic) -> bool:
-        return lic in cls.read_list("License")
+        return lic in cls._read_default_fields("License")
 
     @classmethod
     def validate_contributor(cls, c) -> bool:
@@ -175,7 +189,8 @@ class BaseInformationValidator:
     @classmethod
     def validate_docker_architecture(cls, arch) -> bool:
         return all(
-            v in cls.read_list("Docker Architecture") for v in cls.to_list(arch or [])
+            v in cls._read_default_fields("Docker Architecture")
+            for v in cls.to_list(arch or [])
         )
 
     @classmethod
@@ -202,7 +217,9 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_deployment(cls, dep) -> bool:
-        return all(v in cls.read_list("Deployment") for v in cls.to_list(dep or []))
+        return all(
+            v in cls._read_default_fields("Deployment") for v in cls.to_list(dep or [])
+        )
 
     @classmethod
     def validate_both_identifiers(cls, ident, slug) -> bool:
