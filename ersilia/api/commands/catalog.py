@@ -1,8 +1,7 @@
-import json
 import io
+import json
 
 import pandas as pd
-import io
 
 from ... import logger
 from ...hub.content.card import ModelCard
