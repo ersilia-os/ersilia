@@ -1,4 +1,5 @@
 import json
+import io
 
 import pandas as pd
 import io
@@ -101,5 +102,5 @@ def catalog(
     # df = pd.DataFrame(catalog_table)
     # if df.shape[1] >= 2:
     #     df = df.iloc[:, -2:]
-    df = pd.read_json(catalog_table.as_json())
-    return df
+    df = pd.read_json(io.StringIO(catalog_table.as_json()))
+    return df.iloc[:, [1, 2]] if df.shape[1] >= 2 else df
