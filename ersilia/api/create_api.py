@@ -229,6 +229,7 @@ class ErsiliaModel:
             RuntimeError: If the model cannot be deleted.
         """
         delete.delete(self.model_id, verbose=self.verbose_mode)
+        self.is_fetched = False
 
 
     def is_fetched(self):

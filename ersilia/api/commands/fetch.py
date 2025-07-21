@@ -74,11 +74,15 @@ def fetch(
                 fg="green",
             )
         return True
-
+    if fetch_result.reason == "Model already exists on your system. If you want to fetch it again, please delete the existing model first.":
+        echo(":thumbs_up: Model {0} is already fetched successfully!".format(model_id),
+                fg="green",)
+        return True
     else:
         echo(
                 f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
                 fg="red",
             )
+        echo(fetch_result.reason)
         return False
 
