@@ -805,33 +805,6 @@
             <span class="n">right_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_batch</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">input_batch</span><span class="p">[</span><span class="n">mid</span><span class="p">:])</span>
             <span class="k">return</span> <span class="n">left_results</span> <span class="o">+</span> <span class="n">right_results</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_post_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">input_batch</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_batch</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[]</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">input_batch</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Status code: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">))</span>
-            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">result</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Error processing batch of size </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_batch</span><span class="p">),</span> <span class="n">e</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">empty_values</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
-                    <span class="n">empty_values</span> <span class="o">=</span> <span class="p">[{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">empty_values</span><span class="p">}]</span>
-                    <span class="k">return</span> <span class="n">empty_values</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
-            <span class="n">mid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_batch</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-            <span class="n">left_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_batch</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">input_batch</span><span class="p">[:</span><span class="n">mid</span><span class="p">])</span>
-            <span class="n">right_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_batch</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">input_batch</span><span class="p">[</span><span class="n">mid</span><span class="p">:])</span>
-            <span class="k">return</span> <span class="n">left_results</span> <span class="o">+</span> <span class="n">right_results</span>
-
 <div class="viewcode-block" id="StandardCSVRunApi.post">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.post">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">output_source</span><span class="p">):</span>

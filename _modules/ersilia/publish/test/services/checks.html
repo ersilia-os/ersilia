@@ -458,7 +458,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_source_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking model source code...&quot;</span><span class="p">)</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Source Code&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_output</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_source_code</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
@@ -467,7 +467,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_source_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking model title...&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_description</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_title</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;Title&quot;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]:</span>
