@@ -98,8 +98,8 @@ def catalog(
     echo(output)
 
     # Return last two columns as DataFrame
-    # df = pd.DataFrame(catalog_table.as_table())
+    # df = pd.DataFrame(catalog_table)
     # if df.shape[1] >= 2:
     #     df = df.iloc[:, -2:]
-    df = pd.read_csv(io.StringIO(output), sep=r"\s*\|\s*", engine="python", skiprows=1, skipinitialspace=True)
+    df = pd.read_json(catalog_table.as_json())
     return df
