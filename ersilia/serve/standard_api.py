@@ -429,7 +429,6 @@ class StandardCSVRunApi(ErsiliaBase):
 
         try:
             response = requests.post(url, json=input_batch)
-
             self.logger.debug("Status code: {0}".format(response.status_code))
             response.raise_for_status()
             result = response.json()
