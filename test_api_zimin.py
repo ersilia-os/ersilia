@@ -1,4 +1,4 @@
-from ersilia.api import ErsiliaHub, ErsiliaModel
+from ersilia.api import ErsiliaModel
 
 mdl = ErsiliaModel("eos9p4a") # drug-likeness
 # mdl.is_fetched()
