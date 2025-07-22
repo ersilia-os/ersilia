@@ -74,6 +74,10 @@ class ReadmeFormatter():
         if "Incorporation Date" in d:
             text += "This model was incorporated on {0}.\n".format(d.get("Incorporation Date"))
         text += "\n"
+        if "Last Packaging Date" in d:
+            text = text.rstrip("\n")
+            text += "Last packaged on {0}.\n".format(d.get("Last Packaging Date"))
+        text += "\n"
 
         # Information section
         text += "## Information\n"
@@ -165,8 +169,6 @@ class ReadmeFormatter():
             text += "- **Docker Architecture:** {0}\n".format(", ".join(["`{0}`".format(x) for x in d.get("Docker Architecture")]))
         if d.get("S3"):
             text += "- **S3 Storage**: [{0}]({0})\n".format(d.get("S3"))
-        if d.get("Host URL"):
-            text += "- **Host URL**: [{0}]({0})\n".format(d.get("Host URL"))
         text += "\n"
 
         # Resource Consumption
