@@ -40,7 +40,7 @@ def test_fetch_api_success(mock_model_fetcher, mock_model_base):
         from_s3=False,
         from_hosted=False,
         hosted_url=None,
-        verbose=True,
+        verbose_flag=True,
     )
 
     logger.info(f"✅ Fetch succeeded: {mock_model_fetcher.return_value.reason}")
@@ -77,7 +77,7 @@ def test_fetch_api_failure():
                 from_s3=False,
                 from_hosted=False,
                 hosted_url=None,
-                verbose=True,
+                verbose_flag=True,
             )
 
         logger.warning(f"❌ Fetch failed: {mock_fetch.return_value.reason}")
