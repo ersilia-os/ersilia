@@ -539,7 +539,7 @@ class StandardCSVRunApi(ErsiliaBase):
         for i in range(0, total, batch_size):
             batch = input_data[i : i + batch_size]
             st = time.perf_counter()
-            echo(f"Running batch {i+1}")
+            echo(f"Running batch {i // batch_size + 1}")
             batch = [d["input"] for d in batch]
             # TODO @Abel: This is a hack to make the API work with the current implementation.
             # However, the params need to be parametrized properly in the API, including the save_cache, cache_only, min_workers and max_workers
