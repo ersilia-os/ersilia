@@ -22,8 +22,8 @@ class OriginalModelFinder:
     def _find_url_using_s3_models_json(self, model_id):
         for mdl in self.items():
             if mdl["Identifier"] == model_id:
-                if "Host URL" in mdl:
-                    return mdl["Host URL"]
+                if "S3" in mdl:
+                    return mdl["S3"]
                 else:
                     return None
         return None
@@ -46,8 +46,8 @@ class OptimizedModelFinder:
         model = self.models_cache.get(model_id)
 
         if model:
-            if "Host URL" in model:
-                return model["Host URL"]
+            if "S3" in model:
+                return model["S3"]
             else:
                 return None
         return None
@@ -62,7 +62,7 @@ def original_finder():
 def actual_url():
     data = ji.items()
     URL = next(
-        (item["Host URL"] for item in data if item["Identifier"] == MODEL_ID), None
+        (item["S3"] for item in data if item["Identifier"] == MODEL_ID), None
     )
     return URL
 

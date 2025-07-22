@@ -103,9 +103,7 @@ class IOService:
             The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).
         """
         resolver = TemplateResolver(model_id=model_id, repo_path=repo_path)
-        if resolver.is_bentoml():
-            return PACK_METHOD_BENTOML
-        elif resolver.is_fastapi():
+        if resolver.is_fastapi():
             return PACK_METHOD_FASTAPI
         else:
             return None
@@ -175,19 +173,12 @@ class IOService:
         ValueError
             If the model type is unsupported.
         """
-        model_type = IOService.get_model_type(
-            model_id=self.model_id, repo_path=self.dir
-        )
-        if model_type == PACK_METHOD_BENTOML:
-            return BENTOML_FILES
-        elif model_type == PACK_METHOD_FASTAPI:
-            path = os.path.join(self.from_dir, METADATA_JSON_FILE) if self.from_dir else os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE)
-            if os.path.exists(path):
-                return ERSILIAPACK_BACK_FILES
-            else:
-                return ERSILIAPACK_FILES
+        path = os.path.join(self.from_dir, METADATA_JSON_FILE) if self.from_dir else os.path.join(EOS_TMP, self.model_id, METADATA_JSON_FILE)
+        if os.path.exists(path):
+            return ERSILIAPACK_BACK_FILES
         else:
-            return None
+            return ERSILIAPACK_FILES
+
 
     def _run_check(
         self, check_function, data, check_name: str, additional_info=None
