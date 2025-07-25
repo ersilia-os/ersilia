@@ -488,7 +488,7 @@ class StandardCSVRunApi(ErsiliaBase):
         results, meta = self._fetch_result(input_data, url, batch_size)
         self.logger.info("The server has responded")
         self.logger.info("Standardizing output...")
-        results = self._standardize_output(input_data, results, output, meta)
+        results = self._standardize_output(input_data, results, meta)
         et = time.perf_counter()
         self.logger.info(f"All batches processed in {et - st:.4f} seconds")
 
@@ -529,35 +529,48 @@ class StandardCSVRunApi(ErsiliaBase):
                 del response["meta"]
         return overall_results, meta
 
-    def _standardize_output(self, input_data, results, output, meta):
-        results = [res for res in results]
+    def _normalize_values(self, out):
+        if isinstance(out, list):
+            return out
+        if out is None:
+            return [None] * len(self.header) if self.header else [None]
+        return list(out.values())
 
-        _results = []
-        key = "outcome" if meta is None else meta["outcome"][0]
-        keys = (
-            [key]
-            if "outcome" in key or (meta is not None and len(meta["outcome"]) == 1)
-            else meta["outcome"]
-        )
+    def _select_key_candidates(self, out, default_keys):
+        if out is None:
+            return self.header or default_keys
+        if isinstance(out, dict) and "outcome" not in out:
+            return list(out.keys())
+        return default_keys
+
+    def _standardize_output(self, input_data, results, meta):
+        results = list(results)
+        default_keys = self._generate_default_keys(meta)
+
+        standardized = []
         for inp, out in zip(input_data, results):
-            if out is not None:
-                _v = list(out.values() if not isinstance(out, list) else out)
-            else:
-                _v = [out] * len(self.header) if self.header is not None else [out]
-            if out is not None:
-                _k = (
-                    [out.keys() if not isinstance(out, list) else out]
-                    if (not isinstance(out, list) and "outcome" not in out.keys())
-                    else keys
-                )
-            else:
-                _k = self.header if self.header is not None else keys
+            values = self._normalize_values(out)
+            key_candidates = self._select_key_candidates(out, default_keys)
+            keys_flat = (
+                list(key_candidates[0])
+                if self._contains_dict_keys(key_candidates)
+                else key_candidates
+            )
+            standardized.append({"input": inp, "output": dict(zip(keys_flat, values))})
+        return standardized
 
-            has_dict_keys = self._contains_dict_keys(_k)
-            key_ = list(_k[0]) if has_dict_keys else _k
-            _output = {k: v for k, v in zip(key_, _v)}
-            _results.append({"input": inp, "output": _output})
-        return _results
+    def _generate_default_keys(self, meta):
+        if meta is None:
+            return ["outcome"]
+
+        outcomes = meta.get("outcome", [])
+        if not outcomes:
+            return ["outcome"]
+
+        if len(outcomes) == 1 or "outcome" in outcomes[0]:
+            return [outcomes[0]]
+
+        return outcomes
 
     def _contains_dict_keys(self, lst):
         dict_keys_type = type({}.keys())
