@@ -63,7 +63,7 @@ def run(model_id, input, batch_size=100):
     else:
         # already a CSV file
         input_path = input
-    output_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".pkl", delete=False)
+    output_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False)
     # output_path = output or os.path.join(os.getcwd(), "output_results.csv")
 
     mdl = ErsiliaModel(
