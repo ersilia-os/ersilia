@@ -1,6 +1,7 @@
 import os
 import sys
 import tempfile
+import types
 
 import pandas as pd
 
@@ -95,8 +96,18 @@ def run(model_id, input, output, batch_size=100):
         config_json=None,
     )
     try:
-        mdl.run(input=input_path, output=output, batch_size=batch_size)
+        result = mdl.run(input=input_path, output=output, batch_size=batch_size)
+        iter_values = []
+        if isinstance(result, types.GeneratorType):
+            for result in mdl.run(
+                input=input, output=output, batch_size=batch_size
+            ):
+                if result is not None:
+                    iter_values.append(result)
         echo(f"✅ The output was successfully generated at {output}!", fg="green", bold=True)
+        # if not os.path.exists(output) or os.path.getsize(output) == 0:
+        #     echo(f"❌ Output file {output} is empty or missing.", fg="red")
+        #     raise ValueError(f"Output file {output} is empty or missing.")
         df = load_output_to_df(output)
     except UnprocessableInputError as e:
         echo(f"❌ Error: {e.message}", fg="red")
