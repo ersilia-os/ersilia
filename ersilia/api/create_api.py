@@ -150,7 +150,7 @@ class ErsiliaModel:
             A pandas df with the predictions.
 
         """
-        return run.run(self.model_id, input, output, batch_size)
+        run.run(self.model_id, input, output, batch_size)
 
     def close(self):
         """

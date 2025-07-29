@@ -67,7 +67,7 @@ def run(model_id, input, output, batch_size=100):
     validate_input_output_types(input, output)
     session = Session(config_json=None)
     service_class = session.current_service_class()
-    # output_source = output or session.current_output_source() or os.path.join(os.getcwd(), "output_results.csv")
+    output_source = session.current_output_source()
 
     if model_id is None:
         echo(
@@ -91,7 +91,7 @@ def run(model_id, input, output, batch_size=100):
 
     mdl = ErsiliaModel(
         model_id,
-        output_source=output,
+        output_source=output_source,
         service_class=service_class,
         config_json=None,
     )
@@ -108,7 +108,7 @@ def run(model_id, input, output, batch_size=100):
         # if not os.path.exists(output) or os.path.getsize(output) == 0:
         #     echo(f"❌ Output file {output} is empty or missing.", fg="red")
         #     raise ValueError(f"Output file {output} is empty or missing.")
-        df = load_output_to_df(output)
+        # df = load_output_to_df(output)
     except UnprocessableInputError as e:
         echo(f"❌ Error: {e.message}", fg="red")
         echo(f"💡 {e.hints}")
@@ -123,4 +123,4 @@ def run(model_id, input, output, batch_size=100):
             except OSError:
                 pass
 
-    return df
+    # return df
