@@ -132,7 +132,7 @@ class ErsiliaModel:
             verbose_flag =self.verbose_mode or verbose,
         )
 
-    def run(self, input, batch_size):
+    def run(self, input, output=None, batch_size=1000):
         """
         Runs the current model on a list of SMILES strings and
         returns the prediction as a pandas data frame.
@@ -150,7 +150,7 @@ class ErsiliaModel:
             A pandas df with the predictions.
 
         """
-        return run.run(self.model_id, input, batch_size)
+        return run.run(self.model_id, input, output, batch_size)
 
     def close(self):
         """
