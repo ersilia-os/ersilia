@@ -521,7 +521,9 @@ class StandardCSVRunApi(ErsiliaBase):
             echo(
                 f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
             )
-            if response.status_code == 200:
+            if type(response) is list:
+                overall_results.extend(response)
+            elif response.status_code == 200:
                 response = response.json()
                 if "result" in response:
                     self.logger.warning("Result is in batch")

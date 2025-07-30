@@ -1,6 +1,7 @@
 import os
 import sys
 import tempfile
+import subprocess
 import types
 
 import pandas as pd
@@ -66,9 +67,12 @@ def run(model_id, input, output, batch_size=100):
     """
     validate_input_output_types(input, output)
     session = Session(config_json=None)
-    model_id = session.current_model_id()
     service_class = session.current_service_class()
     output_source = session.current_output_source()
+    print(f"Session: {session._session_dir}")
+    print(f"Model id: {model_id}")
+    print(f"Service class: {service_class}")
+    print(f"Output source: {output_source}")
 
     if model_id is None:
         echo(
@@ -96,25 +100,33 @@ def run(model_id, input, output, batch_size=100):
         service_class=service_class,
         config_json=None,
     )
-    try:
-        mdl.run(input=input_path, output=output, batch_size=batch_size)
-        echo(f"✅ The output was successfully generated at {output}!", fg="green", bold=True)
+    print(output)
+    result = mdl.run(input=input_path, output=output, batch_size=batch_size)
+    print(f"Result: {result}")
+    iter_values = []
+    if isinstance(result, types.GeneratorType):
+        for result in mdl.run(
+            input=input, output=output, batch_size=batch_size
+        ):
+            if result is not None:
+                iter_values.append(result)
+    echo(f"✅ The output was successfully generated at {output}!", fg="green", bold=True)
         # if not os.path.exists(output) or os.path.getsize(output) == 0:
         #     echo(f"❌ Output file {output} is empty or missing.", fg="red")
         #     raise ValueError(f"Output file {output} is empty or missing.")
         # df = load_output_to_df(output)
-    except UnprocessableInputError as e:
-        echo(f"❌ Error: {e.message}", fg="red")
-        echo(f"💡 {e.hints}")
-        # if output and os.path.exists(output):
-        #     os.remove(output)
-        raise e
+    # except UnprocessableInputError as e:
+    #     echo(f"❌ Error: {e.message}", fg="red")
+    #     echo(f"💡 {e.hints}")
+    #     # if output and os.path.exists(output):
+    #     #     os.remove(output)
+    #     raise e
 
-    finally:
-        if cleanup_input:
-            try:
-                os.remove(input_path)
-            except OSError:
-                pass
+    #finally:
+    if cleanup_input:
+        try:
+            os.remove(input_path)
+        except OSError:
+            pass
 
     # return df
