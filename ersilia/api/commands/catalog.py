@@ -63,7 +63,11 @@ def catalog(
             metadata = mc.get(model, as_json=True)
 
             if not metadata:
-                echo(f"❌ Error: No metadata found for model ID '{model}'", fg="red", bold=True)
+                echo(
+                    f"❌ Error: No metadata found for model ID '{model}'",
+                    fg="red",
+                    bold=True,
+                )
                 # return None
 
             if as_json:
@@ -85,7 +89,10 @@ def catalog(
         # return None
 
     if not catalog_table.data:
-        echo("⚠️ No local models found. Try `ersilia fetch` to download a model.", fg="yellow")
+        echo(
+            "⚠️ No local models found. Try `ersilia fetch` to download a model.",
+            fg="yellow",
+        )
         # return None
 
     # Save to file if requested (but do NOT return early)

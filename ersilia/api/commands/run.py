@@ -1,14 +1,12 @@
 import os
 import sys
 import tempfile
-import subprocess
 import types
 
 import pandas as pd
 
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ..echo import echo
 
 
@@ -17,18 +15,26 @@ def validate_input_output_types(input, output):
     Validates that 'input' is either a Python list or a path to a .csv file,
     and that 'output' (if provided) ends with a valid extension.
     """
-    if not (isinstance(input, list) or (isinstance(input, str) and input.lower().endswith(".csv"))):
+    if not (
+        isinstance(input, list)
+        or (isinstance(input, str) and input.lower().endswith(".csv"))
+    ):
         echo(
             "Input format invalid. Please provide a list of SMILEs or a .csv path.",
-            fg="red", bold=True,
+            fg="red",
+            bold=True,
         )
         sys.exit(1)
-    if (output is not None and not any(output.endswith(ext) for ext in (".csv", ".h5", ".json"))):
+    if output is not None and not any(
+        output.endswith(ext) for ext in (".csv", ".h5", ".json")
+    ):
         echo(
             "Invalid output type. Valid types are: .csv, .h5, or .json",
-            fg="red", bold=True,
+            fg="red",
+            bold=True,
         )
         sys.exit(1)
+
 
 def load_output_to_df(output):
     """
@@ -46,6 +52,7 @@ def load_output_to_df(output):
     except Exception as e:
         echo(f"❌ Failed to load output file {output}: {e}", fg="red")
         raise
+
 
 def run(model_id, input, output, batch_size=100):
     """
@@ -100,33 +107,22 @@ def run(model_id, input, output, batch_size=100):
         service_class=service_class,
         config_json=None,
     )
-    print(output)
     result = mdl.run(input=input_path, output=output, batch_size=batch_size)
-    print(f"Result: {result}")
     iter_values = []
     if isinstance(result, types.GeneratorType):
-        for result in mdl.run(
-            input=input, output=output, batch_size=batch_size
-        ):
+        for result in mdl.run(input=input, output=output, batch_size=batch_size):
             if result is not None:
                 iter_values.append(result)
-    echo(f"✅ The output was successfully generated at {output}!", fg="green", bold=True)
-        # if not os.path.exists(output) or os.path.getsize(output) == 0:
-        #     echo(f"❌ Output file {output} is empty or missing.", fg="red")
-        #     raise ValueError(f"Output file {output} is empty or missing.")
-        # df = load_output_to_df(output)
-    # except UnprocessableInputError as e:
-    #     echo(f"❌ Error: {e.message}", fg="red")
-    #     echo(f"💡 {e.hints}")
-    #     # if output and os.path.exists(output):
-    #     #     os.remove(output)
-    #     raise e
+    echo(
+        f"✅ The output was successfully generated at {output}!", fg="green", bold=True
+    )
+    df = pd.read_csv(output)
 
-    #finally:
+    # finally:
     if cleanup_input:
         try:
             os.remove(input_path)
         except OSError:
             pass
 
-    # return df
+    return df

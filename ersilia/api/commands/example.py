@@ -9,9 +9,7 @@ from ...io.input import ExampleGenerator
 from ..echo import echo
 
 
-def example(
-    model, simple=True, random=True, n_samples=5, deterministic=False
-):
+def example(model, simple=True, random=True, n_samples=5, deterministic=False):
     """
     This command can sample inputs for a given model and save them as a CSV file.
 
@@ -86,5 +84,5 @@ def example(
         output_file.close()
         os.remove(output_file.name)
     except OSError:
-            pass
+        pass
     return df

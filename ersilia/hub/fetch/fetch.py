@@ -242,12 +242,18 @@ class ModelFetcher(ErsiliaBase):
 
     async def _fetch_from_dockerhub(self, model_id: str):
         self.logger.debug("Fetching from DockerHub")
-        echo("Initiating fetch from DockerHub — this process may take some time...", fg="blue")
+        echo(
+            "Initiating fetch from DockerHub — this process may take some time...",
+            fg="blue",
+        )
         await self.model_dockerhub_fetcher.fetch(model_id=model_id)
 
     def _fetch_from_hosted(self, model_id: str):
         self.logger.debug("Fetching from hosted")
-        echo("Initiating fetch from hosted — this process may take some time...", fg="blue")
+        echo(
+            "Initiating fetch from hosted — this process may take some time...",
+            fg="blue",
+        )
         self.model_hosted_fetcher.fetch(model_id=model_id)
         self.logger.debug("Fetching from hosted done")
         echo("Fetching from hosted done", fg="blue")
@@ -322,7 +328,7 @@ class ModelFetcher(ErsiliaBase):
         if not self.exists(model_id):
             self.logger.info("Model doesn't exist on your system, fetching it now.")
             echo("Model doesn't exist on your system, fetching it now.", fg="blue")
-            self.logger.debug("Starting fetching procedure") #should I echo this?
+            self.logger.debug("Starting fetching procedure")  # should I echo this?
             do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
@@ -355,7 +361,10 @@ class ModelFetcher(ErsiliaBase):
             self.logger.info(
                 "Model already exists on your system. If you want to fetch it again, please delete it first."
             )
-            echo("Model already exists on your system. If you want to fetch it again, please delete it first.", fg="red")
+            echo(
+                "Model already exists on your system. If you want to fetch it again, please delete it first.",
+                fg="red",
+            )
             return FetchResult(
                 fetch_success=False,
                 reason="Model already exists on your system. If you want to fetch it again, please delete the existing model first.",

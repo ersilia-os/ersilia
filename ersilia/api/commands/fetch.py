@@ -52,9 +52,9 @@ def fetch(
         mdl = ModelBase(model_id_or_slug=model)
     model_id = mdl.model_id
     echo(
-            ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
-            fg="blue",
-        )
+        ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
+        fg="blue",
+    )
     mf = ModelFetcher(
         repo_path=from_dir,
         overwrite=overwrite,
@@ -70,19 +70,23 @@ def fetch(
 
     if fetch_result.fetch_success:
         echo(
-                ":thumbs_up: Model {0} fetched successfully!".format(model_id),
-                fg="green",
-            )
+            ":thumbs_up: Model {0} fetched successfully!".format(model_id),
+            fg="green",
+        )
         return True
-    if fetch_result.reason == "Model already exists on your system. If you want to fetch it again, please delete the existing model first.":
-        echo(":thumbs_up: Model {0} is already fetched successfully!".format(model_id),
-                fg="green",)
+    if (
+        fetch_result.reason
+        == "Model already exists on your system. If you want to fetch it again, please delete the existing model first."
+    ):
+        echo(
+            ":thumbs_up: Model {0} is already fetched successfully!".format(model_id),
+            fg="green",
+        )
         return True
     else:
         echo(
-                f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
-                fg="red",
-            )
+            f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
+            fg="red",
+        )
         echo(fetch_result.reason)
         return False
-

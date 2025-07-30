@@ -90,7 +90,7 @@ class ErsiliaAPIModel:
             from_s3=False,
             from_hosted=False,
             hosted_url=None,
-            verbose_flag = self.verbose_mode or verbose,
+            verbose_flag=self.verbose_mode or verbose,
         )
 
     def serve(self, verbose=None):
@@ -129,7 +129,7 @@ class ErsiliaAPIModel:
             cloud_cache_only=False,
             cache_only=False,
             max_cache_memory_frac=None,
-            verbose_flag =self.verbose_mode or verbose,
+            verbose_flag=self.verbose_mode or verbose,
         )
 
     def run(self, input, output=None, batch_size=1000):
@@ -150,7 +150,7 @@ class ErsiliaAPIModel:
             A pandas df with the predictions.
 
         """
-        run.run(self.model_id, input, output, batch_size)
+        return run.run(self.model_id, input, output, batch_size)
 
     def close(self):
         """
@@ -212,8 +212,7 @@ class ErsiliaAPIModel:
         Str: Error message if no model was served in the current session.
 
         """
-        return example.example(
-                self.model_id, simple, random, n_samples, deterministic)
+        return example.example(self.model_id, simple, random, n_samples, deterministic)
 
     def delete(self):
         """
@@ -231,7 +230,6 @@ class ErsiliaAPIModel:
         delete.delete(self.model_id, verbose=self.verbose_mode)
         self.is_fetched = False
 
-
     def is_fetched(self):
         """
         Checks whether the model has been successfully fetched.
@@ -243,8 +241,10 @@ class ErsiliaAPIModel:
         if self._fetched_flag:
             echo(f"✅ Model {self.model_id} is already fetched.", fg="green")
         else:
-            echo(f"💁Model {self.model_id} is NOT already fetched. Fetch the model before serving.", fg="yellow")
-
+            echo(
+                f"💁Model {self.model_id} is NOT already fetched. Fetch the model before serving.",
+                fg="yellow",
+            )
 
     def is_docker(self):
         """
@@ -264,7 +264,10 @@ class ErsiliaAPIModel:
             )
             echo("✅ Docker is running locally.", fg="green")
         except (subprocess.CalledProcessError, FileNotFoundError):
-            echo("❌ Docker is NOT running locally. Please start Docker to use Ersilia models.", fg="red")
+            echo(
+                "❌ Docker is NOT running locally. Please start Docker to use Ersilia models.",
+                fg="red",
+            )
 
     def __enter__(self):
         self.serve()
@@ -275,7 +278,7 @@ class ErsiliaAPIModel:
 
 
 class ErsiliaHub:
-    '''
+    """
     This class enables users to browse and retrieve information about all models
     available in the Ersilia Hub. It is designed for general catalog-level operations
     and is not tied to any specific model instance. Use this class when you want to
@@ -284,7 +287,8 @@ class ErsiliaHub:
     Typical usage includes listing the model catalog via the `catalog()` method,
     which mirrors the CLI behavior but returns a structured DataFrame for programmatic use.
 
-    '''
+    """
+
     def __init__(self, verbose=False):
         self.verbose_mode = verbose
 

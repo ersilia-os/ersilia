@@ -88,7 +88,7 @@ def run_cmd():
                 fg="red",
             )
             return
-        
+
         mdl = ErsiliaModel(
             model_id,
             output_source=output_source,
