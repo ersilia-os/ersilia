@@ -66,6 +66,7 @@ def run(model_id, input, output, batch_size=100):
     """
     validate_input_output_types(input, output)
     session = Session(config_json=None)
+    model_id = session.current_model_id()
     service_class = session.current_service_class()
     output_source = session.current_output_source()
 
@@ -96,14 +97,7 @@ def run(model_id, input, output, batch_size=100):
         config_json=None,
     )
     try:
-        result = mdl.run(input=input_path, output=output, batch_size=batch_size)
-        iter_values = []
-        if isinstance(result, types.GeneratorType):
-            for result in mdl.run(
-                input=input, output=output, batch_size=batch_size
-            ):
-                if result is not None:
-                    iter_values.append(result)
+        mdl.run(input=input_path, output=output, batch_size=batch_size)
         echo(f"✅ The output was successfully generated at {output}!", fg="green", bold=True)
         # if not os.path.exists(output) or os.path.getsize(output) == 0:
         #     echo(f"❌ Output file {output} is empty or missing.", fg="red")
@@ -112,8 +106,8 @@ def run(model_id, input, output, batch_size=100):
     except UnprocessableInputError as e:
         echo(f"❌ Error: {e.message}", fg="red")
         echo(f"💡 {e.hints}")
-        if output and os.path.exists(output):
-            os.remove(output)
+        # if output and os.path.exists(output):
+        #     os.remove(output)
         raise e
 
     finally:

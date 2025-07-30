@@ -1,6 +1,6 @@
-from ersilia.api import ErsiliaModel
+from ersilia.api import ErsiliaAPIModel
 
-mordred = ErsiliaModel("eos78ao")
+mordred = ErsiliaAPIModel("eos78ao")
 # mordred.fetch()
-# mordred.serve()
+mordred.serve()
 df = mordred.run(input="drugbank_input5.csv", output="drugbank_output32.csv", batch_size=100)
