@@ -47,8 +47,6 @@ def test_serve_success(
     inst.is_valid.assert_called_once()
     inst.serve.assert_called_once_with(track_runs=None)
     mock_register.assert_called_once_with(MODEL, SESSION_DIR)
-    # mock_echo.assert_any_call(f":rocket: Serving model {MODEL}: {SLUG}", fg="green")
-    # mock_echo.assert_any_call(f":thumbs_up: Model {MODEL} served successfully!", fg="green")
     assert result == (URL, SESSION_DIR, SCL)
 
 
