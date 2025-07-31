@@ -1,4 +1,4 @@
-# API
+# Ersilia API
 Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called ErsiliaAPI.
 
 To use the API, create a file or open a jupyter notebook. 
