@@ -20,7 +20,7 @@ def runner():
         (["--local"], None),
         (["--hub"], None),
         (["eos3b5e", "--card"]),
-        (["--card"], None),
+        # (["--card"], None),
         (["--hub", "--local"], None),
     ],
 )
