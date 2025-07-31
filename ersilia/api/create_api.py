@@ -4,7 +4,7 @@ from .commands import catalog, close, delete, example, fetch, info, run, serve
 from .echo import echo
 
 
-class ErsiliaModel:
+class ErsiliaAPIModel:
     """
     Python API wrapper for interacting with Ersilia Model Hub models.
 
