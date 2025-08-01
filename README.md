@@ -10,7 +10,6 @@
 [![DOI](https://zenodo.org/badge/277068989.svg)](https://zenodo.org/badge/latestdoi/277068989)
 [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-
 ## Table of Contents
 
 1. [Project Description](https://github.com/ersilia-os/ersilia#project-description)
