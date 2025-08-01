@@ -1,5 +1,6 @@
 <div id="top"></div>
-<img src="https://raw.githubusercontent.com/ersilia-os/ersilia/master/assets/Ersilia_Plum.png" height="70">
+<div style="text-align: center;">
+<img src="https://raw.githubusercontent.com/ersilia-os/ersilia/master/assets/Ersilia_Plum_2.png" height="90">
 
 # 💊 Welcome to the Ersilia Model Hub!
 
