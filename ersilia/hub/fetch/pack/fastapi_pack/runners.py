@@ -130,6 +130,7 @@ class CondaPack(BasePack):
         return env
 
     def _run(self):
+        # echo("test")
         env = self._setup()
         self.logger.debug("Using environment {0}".format(env))
         dest_dir = self._model_path(self.model_id)

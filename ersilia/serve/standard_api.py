@@ -20,6 +20,7 @@ from ..default import (
 from ..io.output import GenericOutputAdapter
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
+from ..utils.echo import echo
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -502,6 +503,7 @@ class StandardCSVRunApi(ErsiliaBase):
             )
         ft = time.perf_counter()
         self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")
+        echo(f"Output is being generated within: {ft - st:.5f} seconds")
         return output
 
     def _fetch_result(self, input_data, url, batch_size):
@@ -509,12 +511,27 @@ class StandardCSVRunApi(ErsiliaBase):
         for i in range(0, total, batch_size):
             batch = input_data[i : i + batch_size]
             st = time.perf_counter()
+            echo(f"Running batch {i // batch_size + 1}")
             batch = [d["input"] for d in batch]
             response = self._post_batch(url, batch)
             et = time.perf_counter()
             self.logger.info(
                 f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
             )
+            echo(
+                f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
+            )
+            if type(response) is list:
+                overall_results.extend(response)
+            elif response.status_code == 200:
+                response = response.json()
+                if "result" in response:
+                    self.logger.warning("Result is in batch")
+                    batch_result = response["result"]
+                    meta = response["meta"] if "meta" in response else meta
+                    overall_results.extend(batch_result)
+                else:
+                    overall_results.extend(response)
             if "result" in response:
                 self.logger.warning("Result is in batch")
                 batch_result = response["result"]

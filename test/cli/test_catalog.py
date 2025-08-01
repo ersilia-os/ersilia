@@ -17,7 +17,7 @@ def runner():
 @pytest.mark.parametrize(
     "options, model",
     [
-        (["--hub"], None),
+        (["--hub"], None)
     ],
 )
 def test_catalog_command(

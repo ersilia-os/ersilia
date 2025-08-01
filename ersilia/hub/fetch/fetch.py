@@ -14,6 +14,7 @@ from ...hub.delete.delete import ModelFullDeleter
 from ...hub.fetch.actions.template_resolver import TemplateResolver
 from ...setup.requirements import check_bentoml
 from ...tools.bentoml.exceptions import BentoMLException
+from ...utils.echo import echo
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithBentoML,
     NotInstallableWithFastAPI,
@@ -107,6 +108,7 @@ class ModelFetcher(ErsiliaBase):
         self.repo_path = repo_path
         if self.mode == "docker":
             self.logger.debug("When packing mode is docker, dockerization is mandatory")
+            echo("When packing mode is docker, dockerization is mandatory", fg="blue")
             dockerize = True
         self.do_docker = dockerize
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
@@ -133,6 +135,7 @@ class ModelFetcher(ErsiliaBase):
         self.local_dir = local_dir
 
         self.logger.debug("Getting model source")
+        echo("Getting model source", fg="blue")
         sources = {
             self.force_from_github: "GitHub",
             self.force_from_s3: "Amazon S3",
@@ -159,6 +162,7 @@ class ModelFetcher(ErsiliaBase):
     @throw_ersilia_exception()
     def _fetch_from_fastapi(self):
         self.logger.debug("Fetching using Ersilia Pack (FastAPI)")
+        echo("Fetching using Ersilia Pack (FastAPI)", fg="blue")
         fetch = importlib.import_module("ersilia.hub.fetch.fetch_fastapi")
         mf = fetch.ModelFetcherFromFastAPI(
             config_json=self.config_json,
@@ -173,11 +177,13 @@ class ModelFetcher(ErsiliaBase):
             mf.fetch(model_id=self.model_id)
         else:
             self.logger.debug("Not installable with FastAPI")
+            echo("Not installable with FastAPI", fg="red")
             raise NotInstallableWithFastAPI(model_id=self.model_id)
 
     @throw_ersilia_exception()
     def _fetch_from_bentoml(self):
         self.logger.debug("Fetching using BentoML")
+        echo("Fetching using BentoML", fg="blue")
         self.check_bentoml()
 
         fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
@@ -220,6 +226,7 @@ class ModelFetcher(ErsiliaBase):
             return
         else:
             self.logger.debug("Deciding fetcher (BentoML or FastAPI)")
+            echo("Deciding fetcher (BentoML or FastAPI)", fg="blue")
             fetcher_type = self._decide_fetcher(model_id)
             if fetcher_type == PACK_METHOD_FASTAPI:
                 self._fetch_from_fastapi()
@@ -227,6 +234,7 @@ class ModelFetcher(ErsiliaBase):
                 self._fetch_from_bentoml()
 
         self.logger.debug("Model already exists in your local, skipping fetching")
+        echo("Model already exists in your local, skipping fetching", fg="blue")
 
     def _standard_csv_example(self, model_id: str):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
@@ -234,12 +242,21 @@ class ModelFetcher(ErsiliaBase):
 
     async def _fetch_from_dockerhub(self, model_id: str):
         self.logger.debug("Fetching from DockerHub")
+        echo(
+            "Initiating fetch from DockerHub — this process may take some time...",
+            fg="blue",
+        )
         await self.model_dockerhub_fetcher.fetch(model_id=model_id)
 
     def _fetch_from_hosted(self, model_id: str):
         self.logger.debug("Fetching from hosted")
+        echo(
+            "Initiating fetch from hosted — this process may take some time...",
+            fg="blue",
+        )
         self.model_hosted_fetcher.fetch(model_id=model_id)
         self.logger.debug("Fetching from hosted done")
+        echo("Fetching from hosted done", fg="blue")
 
     def _decide_if_use_dockerhub(self, model_id: str) -> bool:
         if self.repo_path is not None:
@@ -254,12 +271,15 @@ class ModelFetcher(ErsiliaBase):
             return False
         if not self.is_docker_installed:
             self.logger.debug("Docker Engine is not installed on your system.")
+            echo("Docker Engine is not installed on your system.", fg="red")
             return False
         if not self.is_docker_active:
             self.logger.info("Docker is not active in your local")
+            echo("Docker is not active in your local", fg="red")
             return False
         if not self.ji.identifier_exists(model_id=model_id):
             self.logger.info("Docker image of this model doesn't seem to be available")
+            echo("Docker image of this model doesn't seem to be available", fg="red")
             return False
         return True
 
@@ -274,6 +294,7 @@ class ModelFetcher(ErsiliaBase):
             return False
         if not self.model_hosted_fetcher.is_available(model_id=model_id):
             self.logger.debug("There is no hosted URL available for this model")
+            echo("There is no hosted URL available for this model", fg="red")
             return False
         if self.force_from_hosted:
             return True
@@ -306,7 +327,8 @@ class ModelFetcher(ErsiliaBase):
     async def _fetch(self, model_id: str) -> FetchResult:
         if not self.exists(model_id):
             self.logger.info("Model doesn't exist on your system, fetching it now.")
-            self.logger.debug("Starting fetching procedure")
+            echo("Model doesn't exist on your system, fetching it now.", fg="blue")
+            self.logger.debug("Starting fetching procedure")  # should I echo this?
             do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
@@ -322,19 +344,26 @@ class ModelFetcher(ErsiliaBase):
             do_hosted = self._decide_if_use_hosted(model_id=model_id)
             if do_hosted:
                 self.logger.debug("Fetching from hosted")
+                echo("Fetching from hosted", fg="blue")
                 self._fetch_from_hosted(model_id=model_id)
                 return FetchResult(
                     fetch_success=True, reason="Model fetched successfully"
                 )
             if self.overwrite is None:
                 self.logger.debug("Overwriting")
+                echo("Overwriting", fg="blue")
                 self.overwrite = True
             self.logger.debug("Fetching in your system, not from DockerHub")
+            echo("Fetching in your system, not from DockerHub", fg="blue")
             self._fetch_not_from_dockerhub(model_id=model_id)
             return FetchResult(fetch_success=True, reason="Model fetched successfully")
         else:
             self.logger.info(
                 "Model already exists on your system. If you want to fetch it again, please delete it first."
+            )
+            echo(
+                "Model already exists on your system. If you want to fetch it again, please delete it first.",
+                fg="red",
             )
             return FetchResult(
                 fetch_success=False,
@@ -369,6 +398,7 @@ class ModelFetcher(ErsiliaBase):
 
             self._standard_csv_example(model_id)
             self.logger.debug("Writing model source to file")
+            echo("Writing model source to file", fg="blue")
             model_source_file = os.path.join(
                 self._model_path(model_id), MODEL_SOURCE_FILE
             )
@@ -376,6 +406,7 @@ class ModelFetcher(ErsiliaBase):
                 os.makedirs(self._model_path(model_id), exist_ok=True)
             except OSError as error:
                 self.logger.error(f"Error during folder creation: {error}")
+                echo(f"Error during folder creation: {error}", fg="red")
             with open(model_source_file, "w") as f:
                 f.write(self.model_source)
 
@@ -383,6 +414,7 @@ class ModelFetcher(ErsiliaBase):
 
         except (StandardModelExampleError, BentoMLException) as err:
             self.logger.debug(f"{type(err).__name__} occurred: {str(err)}")
+            echo(f"{type(err).__name__} occurred: {str(err)}", fg="red")
             do_delete = yes_no_input(
                 "Do you want to delete the model artifacts? [Y/n]",
                 default_answer="Y",
@@ -392,6 +424,10 @@ class ModelFetcher(ErsiliaBase):
                 md.delete(model_id)
                 self.logger.info(
                     f"✅ Model '{model_id}' artifacts have been successfully deleted."
+                )
+                echo(
+                    f"✅ Model '{model_id}' artifacts have been successfully deleted.",
+                    fg="green",
                 )
 
             reason = (

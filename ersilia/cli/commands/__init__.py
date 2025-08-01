@@ -2,7 +2,8 @@ import functools
 
 import click
 
-from ... import __version__, logger
+from ... import __version__ as __version__
+from ... import logger
 from ..echo import Silencer
 
 
