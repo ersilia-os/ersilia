@@ -2,8 +2,7 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/ersilia-os/ersilia/master/assets/Ersilia_Plum_2.png" height="160" alt="Ersilia logo">
 </p>
-</div>
-# 💊 Welcome to the Ersilia Model Hub!
+<h2 align="center"> 💊 Welcome to the Ersilia Model Hub!</h2>
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/uk/fundraiser/charity/4145012) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![PyPI version fury.io](https://badge.fury.io/py/ersilia.svg)](https://pypi.python.org/pypi/ersilia/) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/ersilia.svg)](https://anaconda.org/conda-forge/ersilia) [![Python 3.8](https://img.shields.io/pypi/pyversions/ersilia
