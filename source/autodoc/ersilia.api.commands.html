@@ -1,0 +1,671 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="ersilia.app package" href="ersilia.app.html" /><link rel="prev" title="ersilia.api package" href="ersilia.api.html" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+        <title>ersilia.api.commands package - Ersilia documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Ersilia  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">Ersilia  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">API documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="ersilia.html">ersilia package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of ersilia package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current has-children"><a class="reference internal" href="ersilia.api.html">ersilia.api package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of ersilia.api package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">ersilia.api.commands package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of ersilia.app package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.fastapi.html">ersilia.app.fastapi package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.streamlit.html">ersilia.app.streamlit package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of ersilia.cli package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.cli.commands.html">ersilia.cli.commands package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of ersilia.cli.commands package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.cli.commands.utils.html">ersilia.cli.commands.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of ersilia.db package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.disk.html">ersilia.db.disk package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.environments.html">ersilia.db.environments package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.hubdata.html">ersilia.db.hubdata package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of ersilia.hub package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.bundle.html">ersilia.hub.bundle package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.content.html">ersilia.hub.content package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.delete.html">ersilia.hub.delete package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.hub.fetch.html">ersilia.hub.fetch package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of ersilia.hub.fetch package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.actions.html">ersilia.hub.fetch.actions package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.lazy_fetchers.html">ersilia.hub.fetch.lazy_fetchers package</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="ersilia.hub.fetch.pack.html">ersilia.hub.fetch.pack package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of ersilia.hub.fetch.pack package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html">ersilia.hub.fetch.pack.bentoml_pack package</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html">ersilia.hub.fetch.pack.fastapi_pack package</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.register.html">ersilia.hub.fetch.register package</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.pull.html">ersilia.hub.pull package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of ersilia.io package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.readers.html">ersilia.io.readers package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.io.types.html">ersilia.io.types package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.io.types package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.io.types.examples.html">ersilia.io.types.examples package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of ersilia.serve package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.environment.html">ersilia.serve.environment package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of ersilia.setup package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html">ersilia.setup.requirements package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.utils.html">ersilia.setup.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of ersilia.tools package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of ersilia.tools.bentoml package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of ersilia.utils package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../_sources/source/autodoc/ersilia.api.commands.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="ersilia-api-commands-package">
+<h1>ersilia.api.commands package<a class="headerlink" href="#ersilia-api-commands-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-ersilia.api.commands.catalog">
+<span id="ersilia-api-commands-catalog-module"></span><h2>ersilia.api.commands.catalog module<a class="headerlink" href="#module-ersilia.api.commands.catalog" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.catalog.catalog">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.catalog.</span></span><span class="sig-name descname"><span class="pre">catalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">more</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/catalog.html#catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.catalog.catalog" title="Link to this definition">¶</a></dt>
+<dd><p>API-compatible version of the catalog command with echo-based output.</p>
+<p>This command allows users to list a catalog of models available either locally or in the model hub.
+It provides options to display the catalog in various formats(such as tables by default or json), show more detailed information,
+and view model cards for specific models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hub</strong> (<em>bool</em>) – If True, fetch the catalog from the hub.</p></li>
+<li><p><strong>file_name</strong> (<em>str</em><em> or </em><em>None</em>) – If specified, write the catalog to this file.</p></li>
+<li><p><strong>browser</strong> (<em>bool</em>) – Unused in current version; reserved for future.</p></li>
+<li><p><strong>more</strong> (<em>bool</em>) – If True, show more detail in catalog.</p></li>
+<li><p><strong>card</strong> (<em>bool</em>) – If True, display the model card for a given model.</p></li>
+<li><p><strong>model</strong> (<em>str</em><em> or </em><em>None</em>) – The model ID for which to display metadata.</p></li>
+<li><p><strong>as_json</strong> (<em>bool</em>) – If True, return JSON output instead of a formatted table.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – If True, enable verbose logging.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DataFrame of the last two catalog columns (for non-card mode),
+the model card metadata as dict (for card mode),
+or None on failure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame or dict or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api.commands.close">
+<span id="ersilia-api-commands-close-module"></span><h2>ersilia.api.commands.close module<a class="headerlink" href="#module-ersilia.api.commands.close" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.close.close">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.close.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/close.html#close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.close.close" title="Link to this definition">¶</a></dt>
+<dd><p>This command closes the current session of the served model and cleans up any associated resources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>str</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Confirmation message on success or warning message on failure.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api.commands.delete">
+<span id="ersilia-api-commands-delete-module"></span><h2>ersilia.api.commands.delete module<a class="headerlink" href="#module-ersilia.api.commands.delete" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.delete.delete">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.delete.</span></span><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/delete.html#delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.delete.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a specified model from local storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – ID of the model to delete.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message on success or warning message on failure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the model cannot be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api.commands.example">
+<span id="ersilia-api-commands-example-module"></span><h2>ersilia.api.commands.example module<a class="headerlink" href="#module-ersilia.api.commands.example" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.example.example">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.example.</span></span><span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/example.html#example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.example.example" title="Link to this definition">¶</a></dt>
+<dd><p>This command can sample inputs for a given model and save them as a CSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>slug.</em>)</p></li>
+<li><p><strong>file_name</strong> (<em>Path where the CSV examples should be saved. Must end with .csv.</em>)</p></li>
+<li><p><strong>simple</strong> (<em>If True</em><em>, </em><em>only SMILES strings are returned. If False</em><em>, </em><em>outputs include InChiKey and name.</em>)</p></li>
+<li><p><strong>random</strong> (<em>If the model source contains an example input file</em><em>, </em><em>when the predefined flag is set</em><em>, </em><em>then inputs are sampled from that file. Only the number</em><em> of </em><em>samples present in the file are returned</em><em>, </em><em>especially if --n_samples is greater than that number. By default</em><em>, </em><em>Ersilia samples inputs randomly.</em>)</p></li>
+<li><p><strong>n_samples</strong> (<em>Specify the number</em><em> of </em><em>example inputs to generate for the given model.</em>)</p></li>
+<li><p><strong>deterministic</strong> (<em>Used to generate examples data deterministically instead</em><em> of </em><em>random sampling. This allows when every time you run with example command with this flag you get the same types</em><em> of </em><em>examples.</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Function</strong> (<em>The exmaple command function to be used by the API.</em>)</p></li>
+<li><p><strong>Str</strong> (<em>Error message if no model was served in the current session.</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api.commands.fetch">
+<span id="ersilia-api-commands-fetch-module"></span><h2>ersilia.api.commands.fetch module<a class="headerlink" href="#module-ersilia.api.commands.fetch" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.fetch.fetch">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.fetch.</span></span><span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dockerhub</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_s3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_hosted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hosted_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_flag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/fetch.html#fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.fetch.fetch" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-ersilia.api.commands.info">
+<span id="ersilia-api-commands-info-module"></span><h2>ersilia.api.commands.info module<a class="headerlink" href="#module-ersilia.api.commands.info" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.info.info">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.info.</span></span><span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/info.html#info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.info.info" title="Link to this definition">¶</a></dt>
+<dd><p>Provides information about a specified model.</p>
+<p>This command allows users to get detailed information about a current active session,
+including information about Model Identifiers, Code and Parameters, Docker Hub link and Architectures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>function</strong> (<em>The info command function to be used by the API.</em>)</p></li>
+<li><p><strong>str</strong> (<em>Confirmation message on success or warning message on failure.</em>)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api.commands.run">
+<span id="ersilia-api-commands-run-module"></span><h2>ersilia.api.commands.run module<a class="headerlink" href="#module-ersilia.api.commands.run" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.run.load_output_to_df">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">load_output_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#load_output_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.load_output_to_df" title="Link to this definition">¶</a></dt>
+<dd><p>Loads model output from file to pandas DataFrame based on extension.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.run.run">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the current model on a list of SMILES strings and
+returns the prediction as a pandas data frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>a list</em><em> or </em><em>a path to a CSV file containing SMILES strings.</em>)</p></li>
+<li><p><strong>output</strong> (<em>path to save the output</em><em> (</em><em>must end with .csv</em><em>, </em><em>.json</em><em>, or </em><em>.h5</em><em>)</em>)</p></li>
+<li><p><strong>batch_size</strong> (<em>number</em><em> of </em><em>SMILES to process per batch</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Str</strong> (<em>The path to the output file if the output successfully generated..</em>)</p></li>
+<li><p><em>#     The run command function to be used by the API.</em></p></li>
+<li><p><em>#     A pandas df with the predictions.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.run.validate_input_output_types">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">validate_input_output_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#validate_input_output_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.validate_input_output_types" title="Link to this definition">¶</a></dt>
+<dd><p>Validates that ‘input’ is either a Python list or a path to a .csv file,
+and that ‘output’ (if provided) ends with a valid extension.</p>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api.commands.serve">
+<span id="ersilia-api-commands-serve-module"></span><h2>ersilia.api.commands.serve module<a class="headerlink" href="#module-ersilia.api.commands.serve" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.serve.serve">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.serve.</span></span><span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_use_case</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'local'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_local_cache</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_cache_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cloud_cache_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_cache_memory_frac</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_flag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/serve.html#serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.serve.serve" title="Link to this definition">¶</a></dt>
+<dd><p>Serves a specified model as an API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>the slug identifier.</em>)</p></li>
+<li><p><strong>port</strong> (<em>The port to use when creating a model server. If unspecified</em><em>, </em><em>Ersilia looks for empty ports to use on the user's system.</em>)</p></li>
+<li><p><strong>track</strong> (<em>Whether the model's runs should be tracked to monitor model and system performance.</em>)</p></li>
+<li><p><strong>tracking_use_case</strong> (<em>If --track is true</em><em>, </em><em>this command allows specification</em><em> of </em><em>the tracking use case. Current options are: local</em><em>, </em><em>hosted</em><em>, </em><em>self-service and test.</em>)</p></li>
+<li><p><strong>enable_local_cache</strong> (<em>Toggle Redis-based local caching on</em><em> or </em><em>off. If enabled</em><em>, </em><em>the results from model APIs will be cached for 7 days.</em>)</p></li>
+<li><p><strong>local_cache_only</strong> (<em>Specifies to fetch stored model results from local cache. The local caching system is powered by Redis.</em>)</p></li>
+<li><p><strong>cloud_cache_only</strong> (<em>Specifies to fetch stored model results from cloud cache. This allows to fetch model precalculated results in csv file in Ersilia model output format.</em>)</p></li>
+<li><p><strong>cache_only</strong> (<em>Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.</em>)</p></li>
+<li><p><strong>max_cache_memory_frac</strong> (<em>Sets the maximum fraction</em><em> of </em><em>memory to use by Redis for caching. Recommended value 0.2-0.7.</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Model ID, URL, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, Caching Mode Status, Local Cache Status, Tracking Status</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the model/URL is not valid or not found,:</p></li>
+<li><p><strong>or if the maximum cache memory fraction is outside</strong><strong> of </strong><strong>the recommended range.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api.commands">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.api.commands" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.ersilia_ali">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.</span></span><span class="sig-name descname"><span class="pre">ersilia_ali</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands.html#ersilia_ali"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.ersilia_ali" title="Link to this definition">¶</a></dt>
+<dd><p>🦠 Welcome to Ersilia! 💊</p>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="ersilia.app.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">ersilia.app package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="ersilia.api.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">ersilia.api package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Ersilia Open Source Initiative
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ersilia.api.commands package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.catalog">ersilia.api.commands.catalog module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.catalog.catalog"><code class="docutils literal notranslate"><span class="pre">catalog()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.close">ersilia.api.commands.close module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.close.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.delete">ersilia.api.commands.delete module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.delete.delete"><code class="docutils literal notranslate"><span class="pre">delete()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.example">ersilia.api.commands.example module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.example.example"><code class="docutils literal notranslate"><span class="pre">example()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.fetch">ersilia.api.commands.fetch module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.fetch.fetch"><code class="docutils literal notranslate"><span class="pre">fetch()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.info">ersilia.api.commands.info module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.info.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.run">ersilia.api.commands.run module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.run.load_output_to_df"><code class="docutils literal notranslate"><span class="pre">load_output_to_df()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.commands.run.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.commands.run.validate_input_output_types"><code class="docutils literal notranslate"><span class="pre">validate_input_output_types()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.serve">ersilia.api.commands.serve module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.serve.serve"><code class="docutils literal notranslate"><span class="pre">serve()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.commands">Module contents</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.ersilia_ali"><code class="docutils literal notranslate"><span class="pre">ersilia_ali()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

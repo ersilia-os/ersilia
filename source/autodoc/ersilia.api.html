@@ -1,0 +1,1241 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="ersilia.api.commands package" href="ersilia.api.commands.html" /><link rel="prev" title="ersilia package" href="ersilia.html" />
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.07.19 -->
+        <title>ersilia.api package - Ersilia documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=25af2a20" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #2b2b2b;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Ersilia  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">Ersilia  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">API documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="ersilia.html">ersilia package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of ersilia package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current has-children current-page"><a class="current reference internal" href="#">ersilia.api package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of ersilia.api package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.api.commands.html">ersilia.api.commands package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of ersilia.app package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.fastapi.html">ersilia.app.fastapi package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.app.streamlit.html">ersilia.app.streamlit package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.cli.html">ersilia.cli package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of ersilia.cli package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.cli.commands.html">ersilia.cli.commands package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of ersilia.cli.commands package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.cli.commands.utils.html">ersilia.cli.commands.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.core.html">ersilia.core package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.db.html">ersilia.db package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of ersilia.db package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.disk.html">ersilia.db.disk package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.environments.html">ersilia.db.environments package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.db.hubdata.html">ersilia.db.hubdata package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.hub.html">ersilia.hub package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of ersilia.hub package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.bundle.html">ersilia.hub.bundle package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.content.html">ersilia.hub.content package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.delete.html">ersilia.hub.delete package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.hub.fetch.html">ersilia.hub.fetch package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of ersilia.hub.fetch package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.actions.html">ersilia.hub.fetch.actions package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.lazy_fetchers.html">ersilia.hub.fetch.lazy_fetchers package</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="ersilia.hub.fetch.pack.html">ersilia.hub.fetch.pack package</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of ersilia.hub.fetch.pack package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="ersilia.hub.fetch.pack.bentoml_pack.html">ersilia.hub.fetch.pack.bentoml_pack package</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ersilia.hub.fetch.pack.fastapi_pack.html">ersilia.hub.fetch.pack.fastapi_pack package</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.hub.fetch.register.html">ersilia.hub.fetch.register package</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.hub.pull.html">ersilia.hub.pull package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.io.html">ersilia.io package</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of ersilia.io package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.io.readers.html">ersilia.io.readers package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.io.types.html">ersilia.io.types package</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of ersilia.io.types package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.io.types.examples.html">ersilia.io.types.examples package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.publish.html">ersilia.publish package</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of ersilia.publish package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.publish.test.html">ersilia.publish.test package</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle navigation of ersilia.publish.test package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.serve.html">ersilia.serve package</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle navigation of ersilia.serve package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.environment.html">ersilia.serve.environment package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.setup.html">ersilia.setup package</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle navigation of ersilia.setup package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.requirements.html">ersilia.setup.requirements package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.setup.utils.html">ersilia.setup.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><div class="visually-hidden">Toggle navigation of ersilia.tools package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><div class="visually-hidden">Toggle navigation of ersilia.tools.bentoml package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><div class="visually-hidden">Toggle navigation of ersilia.utils package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../../_sources/source/autodoc/ersilia.api.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="ersilia-api-package">
+<h1>ersilia.api package<a class="headerlink" href="#ersilia-api-package" title="Link to this heading">¶</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ersilia.api.commands.html">ersilia.api.commands package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands.catalog">ersilia.api.commands.catalog module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.catalog.catalog"><code class="docutils literal notranslate"><span class="pre">catalog()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands.close">ersilia.api.commands.close module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.close.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands.delete">ersilia.api.commands.delete module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.delete.delete"><code class="docutils literal notranslate"><span class="pre">delete()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands.example">ersilia.api.commands.example module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.example.example"><code class="docutils literal notranslate"><span class="pre">example()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands.fetch">ersilia.api.commands.fetch module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.fetch.fetch"><code class="docutils literal notranslate"><span class="pre">fetch()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands.info">ersilia.api.commands.info module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.info.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands.run">ersilia.api.commands.run module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.run.load_output_to_df"><code class="docutils literal notranslate"><span class="pre">load_output_to_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.run.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.run.validate_input_output_types"><code class="docutils literal notranslate"><span class="pre">validate_input_output_types()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands.serve">ersilia.api.commands.serve module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.serve.serve"><code class="docutils literal notranslate"><span class="pre">serve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ersilia.api.commands.html#module-ersilia.api.commands">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.api.commands.html#ersilia.api.commands.ersilia_ali"><code class="docutils literal notranslate"><span class="pre">ersilia_ali()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-ersilia.api.create_api">
+<span id="ersilia-api-create-api-module"></span><h2>ersilia.api.create_api module<a class="headerlink" href="#module-ersilia.api.create_api" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.api.create_api.</span></span><span class="sig-name descname"><span class="pre">ErsiliaAPIModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Python API wrapper for interacting with Ersilia Model Hub models.</p>
+<p>This class provides a programmatic interface to run, serve, fetch, and manage
+machine learning models from the Ersilia Model Hub. It wraps the existing CLI-based
+functionality in a clean Pythonic interface and supports use in context managers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The unique identifier of the model to be managed and executed.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">fetch():</span></span></dt>
+<dd><p>Downloads the specified model and its dependencies from DockerHub.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">serve():</span></span></dt>
+<dd><p>Serves the specified model locally to prepare for inference.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run(input,</span> <span class="pre">output,</span> <span class="pre">batch_size):</span></span></dt>
+<dd><p>Runs the model on the given input and writes predictions to the output file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">close():</span></span></dt>
+<dd><p>Terminates the model server and cleans up associated resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">info():</span></span></dt>
+<dd><p>Prints metadata and technical details about the specified model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">example(file_name,</span> <span class="pre">simple,</span> <span class="pre">random,</span> <span class="pre">n_samples,</span> <span class="pre">deterministic):</span></span></dt>
+<dd><p>Generates example input files for the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">delete():</span></span></dt>
+<dd><p>Deletes the specified model and its local artifacts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__enter__():</span></span></dt>
+<dd><p>Context manager entry — automatically serves the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__exit__(exc_type,</span> <span class="pre">exc_value,</span> <span class="pre">traceback):</span></span></dt>
+<dd><p>Context manager exit — automatically closes the served model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Usage</span> <span class="pre">Example</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-------------</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">from</span> <span class="pre">ersilia.api.create_api</span> <span class="pre">import</span> <span class="pre">ErsiliaAPI</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">molecular_weight</span> <span class="pre">=</span> <span class="pre">ErsiliaAPI(&quot;eos3b5e&quot;)</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">molecular_weight.fetch()</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">molecular_weight.serve()</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">with</span> <span class="pre">molecular_weight</span> <span class="pre">as</span> <span class="pre">model:</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span>&#160;&#160;&#160;&#160; <span class="pre">model.info()</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.close" title="Link to this definition">¶</a></dt>
+<dd><p>This command closes the current session of the served model and cleans up any associated resources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>str</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Confirmation message on success or warning message on failure.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a specified model from local storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – ID of the model to delete.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message on success or warning message on failure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the model cannot be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.example">
+<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.example" title="Link to this definition">¶</a></dt>
+<dd><p>This command can sample inputs for a given model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>the slug identifier.</em>)</p></li>
+<li><p><strong>file_name</strong> (<em>File name where the examples should be saved.</em>)</p></li>
+<li><p><strong>simple</strong> (<em>Simple inputs only contain the SMILES</em><em>, </em><em>while complete inputs also include InChIKey and the molecule's name.</em>)</p></li>
+<li><p><strong>random</strong> (<em>If the model source contains an example input file</em><em>, </em><em>when the predefined flag is set</em><em>, </em><em>then inputs are sampled from that file. Only the number</em><em> of </em><em>samples present in the file are returned</em><em>, </em><em>especially if --n_samples is greater than that number. By default</em><em>, </em><em>Ersilia samples inputs randomly.</em>)</p></li>
+<li><p><strong>n_samples</strong> (<em>Specify the number</em><em> of </em><em>example inputs to generate for the given model.</em>)</p></li>
+<li><p><strong>deterministic</strong> (<em>Used to generate examples data deterministically instead</em><em> of </em><em>random sampling. This allows when every time you run with example command with this flag you get the same types</em><em> of </em><em>examples.</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Function</strong> (<em>The exmaple command function to be used by the API.</em>)</p></li>
+<li><p><strong>Str</strong> (<em>Error message if no model was served in the current session.</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.fetch">
+<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.fetch" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches an Ersilia model to run it locally.</p>
+<p>This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc…).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>Function</strong> (<em>The fetch command function to be used by the API.</em>)</p></li>
+<li><p><strong>Str</strong> (<em>Confirmation message on success or warning message on failure.</em>)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If both BentoML and FastAPI are used together.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.info" title="Link to this definition">¶</a></dt>
+<dd><p>Provides information about a specified model.</p>
+<p>This command allows users to get detailed information about a current active session,
+including information about Model Identifiers, Code and Parameters, Docker Hub link and Architectures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>function</strong> (<em>The info command function to be used by the API.</em>)</p></li>
+<li><p><strong>str</strong> (<em>Confirmation message on success or warning message on failure.</em>)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.is_docker">
+<span class="sig-name descname"><span class="pre">is_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.is_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.is_docker" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if Docker is running locally by calling <cite>docker info</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if Docker is running, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.is_fetched">
+<span class="sig-name descname"><span class="pre">is_fetched</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.is_fetched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.is_fetched" title="Link to this definition">¶</a></dt>
+<dd><p>Checks whether the model has been successfully fetched.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Echo Message indicating fetch status.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the current model on a list of SMILES strings and
+returns the prediction as a pandas data frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>a list</em><em> or </em><em>a path to a CSV file containing SMILES strings.</em>)</p></li>
+<li><p><strong>output</strong> (<em>path to the output file where predictions will be saved.</em>)</p></li>
+<li><p><strong>batch_size</strong> (<em>number</em><em> of </em><em>SMILES to process per batch</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The run command function to be used by the API.
+A pandas df with the predictions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.serve">
+<span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.serve" title="Link to this definition">¶</a></dt>
+<dd><p>Serves a specified model as an API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>the slug identifier.</em>)</p></li>
+<li><p><strong>port</strong> (<em>The port to use when creating a model server. If unspecified</em><em>, </em><em>Ersilia looks for empty ports to use on the user's system.</em>)</p></li>
+<li><p><strong>track</strong> (<em>Whether the model's runs should be tracked to monitor model and system performance.</em>)</p></li>
+<li><p><strong>tracking_use_case</strong> (<em>If --track is true</em><em>, </em><em>this command allows specification</em><em> of </em><em>the tracking use case. Current options are: local</em><em>, </em><em>hosted</em><em>, </em><em>self-service and test.</em>)</p></li>
+<li><p><strong>enable_local_cache</strong> (<em>Toggle Redis-based local caching on</em><em> or </em><em>off. If enabled</em><em>, </em><em>the results from model APIs will be cached for 7 days.</em>)</p></li>
+<li><p><strong>local_cache_only</strong> (<em>Specifies to fetch stored model results from local cache. The local caching system is powered by Redis.</em>)</p></li>
+<li><p><strong>cloud_cache_only</strong> (<em>Specifies to fetch stored model results from cloud cache. This allows to fetch model precalculated results in csv file in Ersilia model output format.</em>)</p></li>
+<li><p><strong>cache_only</strong> (<em>Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.</em>)</p></li>
+<li><p><strong>max_cache_memory_frac</strong> (<em>Sets the maximum fraction</em><em> of </em><em>memory to use by Redis for caching. Recommended value 0.2-0.7.</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Model ID, URL, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, Caching Mode Status, Local Cache Status, Tracking Status</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the model/URL is not valid or not found,:</p></li>
+<li><p><strong>or if the maximum cache memory fraction is outside</strong><strong> of </strong><strong>the recommended range.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaHub">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.api.create_api.</span></span><span class="sig-name descname"><span class="pre">ErsiliaHub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaHub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaHub" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class enables users to browse and retrieve information about all models
+available in the Ersilia Hub. It is designed for general catalog-level operations
+and is not tied to any specific model instance. Use this class when you want to
+explore the hub, list available models,</p>
+<p>Typical usage includes listing the model catalog via the <cite>catalog()</cite> method,
+which mirrors the CLI behavior but returns a structured DataFrame for programmatic use.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaHub.catalog">
+<span class="sig-name descname"><span class="pre">catalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaHub.catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaHub.catalog" title="Link to this definition">¶</a></dt>
+<dd><p>API-compatible version of the catalog command with echo-based output.
+:returns: A DataFrame containing the last two columns of the model catalog.</p>
+<blockquote>
+<div><p>Also prints the full catalog as a table or JSON to the terminal, depending on <cite>as_json</cite>.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api.echo">
+<span id="ersilia-api-echo-module"></span><h2>ersilia.api.echo module<a class="headerlink" href="#module-ersilia.api.echo" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.api.echo.Silencer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.api.echo.</span></span><span class="sig-name descname"><span class="pre">Silencer</span></span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.echo.Silencer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to manage the silencing of CLI output.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.api.echo.Silencer.silence_file">
+<span class="sig-name descname"><span class="pre">silence_file</span></span><a class="headerlink" href="#ersilia.api.echo.Silencer.silence_file" title="Link to this definition">¶</a></dt>
+<dd><p>Path to the silence file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.echo.Silencer.is_silence">
+<span class="sig-name descname"><span class="pre">is_silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.is_silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.echo.Silencer.is_silence" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the CLI output is silenced.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.echo.Silencer.speak">
+<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.echo.Silencer.speak" title="Link to this definition">¶</a></dt>
+<dd><p>Enables CLI output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.echo.Silencer.silence">
+<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.echo.Silencer.silence" title="Link to this definition">¶</a></dt>
+<dd><p>Disables CLI output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">is_silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.is_silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the CLI output is silenced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the CLI output is silenced, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<dd><p>Disables CLI output.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<dd><p>Enables CLI output.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.echo.echo">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.echo.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.echo.echo" title="Link to this definition">¶</a></dt>
+<dd><p>Prints styled text to the CLI, optionally with emojis, unless silenced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – The text to be printed.</p></li>
+<li><p><strong>**styles</strong> (<em>dict</em>) – Additional styling options for the text.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ersilia.api">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.api" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.api.</span></span><span class="sig-name descname"><span class="pre">ErsiliaAPIModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Python API wrapper for interacting with Ersilia Model Hub models.</p>
+<p>This class provides a programmatic interface to run, serve, fetch, and manage
+machine learning models from the Ersilia Model Hub. It wraps the existing CLI-based
+functionality in a clean Pythonic interface and supports use in context managers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The unique identifier of the model to be managed and executed.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">fetch():</span></span></dt>
+<dd><p>Downloads the specified model and its dependencies from DockerHub.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">serve():</span></span></dt>
+<dd><p>Serves the specified model locally to prepare for inference.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run(input,</span> <span class="pre">output,</span> <span class="pre">batch_size):</span></span></dt>
+<dd><p>Runs the model on the given input and writes predictions to the output file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">close():</span></span></dt>
+<dd><p>Terminates the model server and cleans up associated resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">info():</span></span></dt>
+<dd><p>Prints metadata and technical details about the specified model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">example(file_name,</span> <span class="pre">simple,</span> <span class="pre">random,</span> <span class="pre">n_samples,</span> <span class="pre">deterministic):</span></span></dt>
+<dd><p>Generates example input files for the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">delete():</span></span></dt>
+<dd><p>Deletes the specified model and its local artifacts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__enter__():</span></span></dt>
+<dd><p>Context manager entry — automatically serves the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__exit__(exc_type,</span> <span class="pre">exc_value,</span> <span class="pre">traceback):</span></span></dt>
+<dd><p>Context manager exit — automatically closes the served model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Usage</span> <span class="pre">Example</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">-------------</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">from</span> <span class="pre">ersilia.api.create_api</span> <span class="pre">import</span> <span class="pre">ErsiliaAPI</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">molecular_weight</span> <span class="pre">=</span> <span class="pre">ErsiliaAPI(&quot;eos3b5e&quot;)</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">molecular_weight.fetch()</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">molecular_weight.serve()</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">with</span> <span class="pre">molecular_weight</span> <span class="pre">as</span> <span class="pre">model:</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span>&#160;&#160;&#160;&#160; <span class="pre">model.info()</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.close" title="Link to this definition">¶</a></dt>
+<dd><p>This command closes the current session of the served model and cleans up any associated resources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>str</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Confirmation message on success or warning message on failure.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes a specified model from local storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – ID of the model to delete.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Confirmation message on success or warning message on failure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the model cannot be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.example">
+<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.example" title="Link to this definition">¶</a></dt>
+<dd><p>This command can sample inputs for a given model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>the slug identifier.</em>)</p></li>
+<li><p><strong>file_name</strong> (<em>File name where the examples should be saved.</em>)</p></li>
+<li><p><strong>simple</strong> (<em>Simple inputs only contain the SMILES</em><em>, </em><em>while complete inputs also include InChIKey and the molecule's name.</em>)</p></li>
+<li><p><strong>random</strong> (<em>If the model source contains an example input file</em><em>, </em><em>when the predefined flag is set</em><em>, </em><em>then inputs are sampled from that file. Only the number</em><em> of </em><em>samples present in the file are returned</em><em>, </em><em>especially if --n_samples is greater than that number. By default</em><em>, </em><em>Ersilia samples inputs randomly.</em>)</p></li>
+<li><p><strong>n_samples</strong> (<em>Specify the number</em><em> of </em><em>example inputs to generate for the given model.</em>)</p></li>
+<li><p><strong>deterministic</strong> (<em>Used to generate examples data deterministically instead</em><em> of </em><em>random sampling. This allows when every time you run with example command with this flag you get the same types</em><em> of </em><em>examples.</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Function</strong> (<em>The exmaple command function to be used by the API.</em>)</p></li>
+<li><p><strong>Str</strong> (<em>Error message if no model was served in the current session.</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.fetch">
+<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.fetch" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches an Ersilia model to run it locally.</p>
+<p>This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc…).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>Function</strong> (<em>The fetch command function to be used by the API.</em>)</p></li>
+<li><p><strong>Str</strong> (<em>Confirmation message on success or warning message on failure.</em>)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If both BentoML and FastAPI are used together.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.info" title="Link to this definition">¶</a></dt>
+<dd><p>Provides information about a specified model.</p>
+<p>This command allows users to get detailed information about a current active session,
+including information about Model Identifiers, Code and Parameters, Docker Hub link and Architectures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>function</strong> (<em>The info command function to be used by the API.</em>)</p></li>
+<li><p><strong>str</strong> (<em>Confirmation message on success or warning message on failure.</em>)</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.is_docker">
+<span class="sig-name descname"><span class="pre">is_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.is_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.is_docker" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if Docker is running locally by calling <cite>docker info</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if Docker is running, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.is_fetched">
+<span class="sig-name descname"><span class="pre">is_fetched</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.is_fetched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.is_fetched" title="Link to this definition">¶</a></dt>
+<dd><p>Checks whether the model has been successfully fetched.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Echo Message indicating fetch status.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the current model on a list of SMILES strings and
+returns the prediction as a pandas data frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>a list</em><em> or </em><em>a path to a CSV file containing SMILES strings.</em>)</p></li>
+<li><p><strong>output</strong> (<em>path to the output file where predictions will be saved.</em>)</p></li>
+<li><p><strong>batch_size</strong> (<em>number</em><em> of </em><em>SMILES to process per batch</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The run command function to be used by the API.
+A pandas df with the predictions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaAPIModel.serve">
+<span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaAPIModel.serve" title="Link to this definition">¶</a></dt>
+<dd><p>Serves a specified model as an API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>the slug identifier.</em>)</p></li>
+<li><p><strong>port</strong> (<em>The port to use when creating a model server. If unspecified</em><em>, </em><em>Ersilia looks for empty ports to use on the user's system.</em>)</p></li>
+<li><p><strong>track</strong> (<em>Whether the model's runs should be tracked to monitor model and system performance.</em>)</p></li>
+<li><p><strong>tracking_use_case</strong> (<em>If --track is true</em><em>, </em><em>this command allows specification</em><em> of </em><em>the tracking use case. Current options are: local</em><em>, </em><em>hosted</em><em>, </em><em>self-service and test.</em>)</p></li>
+<li><p><strong>enable_local_cache</strong> (<em>Toggle Redis-based local caching on</em><em> or </em><em>off. If enabled</em><em>, </em><em>the results from model APIs will be cached for 7 days.</em>)</p></li>
+<li><p><strong>local_cache_only</strong> (<em>Specifies to fetch stored model results from local cache. The local caching system is powered by Redis.</em>)</p></li>
+<li><p><strong>cloud_cache_only</strong> (<em>Specifies to fetch stored model results from cloud cache. This allows to fetch model precalculated results in csv file in Ersilia model output format.</em>)</p></li>
+<li><p><strong>cache_only</strong> (<em>Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.</em>)</p></li>
+<li><p><strong>max_cache_memory_frac</strong> (<em>Sets the maximum fraction</em><em> of </em><em>memory to use by Redis for caching. Recommended value 0.2-0.7.</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Model ID, URL, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, Caching Mode Status, Local Cache Status, Tracking Status</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the model/URL is not valid or not found,:</p></li>
+<li><p><strong>or if the maximum cache memory fraction is outside</strong><strong> of </strong><strong>the recommended range.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaHub">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.api.</span></span><span class="sig-name descname"><span class="pre">ErsiliaHub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaHub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaHub" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class enables users to browse and retrieve information about all models
+available in the Ersilia Hub. It is designed for general catalog-level operations
+and is not tied to any specific model instance. Use this class when you want to
+explore the hub, list available models,</p>
+<p>Typical usage includes listing the model catalog via the <cite>catalog()</cite> method,
+which mirrors the CLI behavior but returns a structured DataFrame for programmatic use.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.api.ErsiliaHub.catalog">
+<span class="sig-name descname"><span class="pre">catalog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaHub.catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaHub.catalog" title="Link to this definition">¶</a></dt>
+<dd><p>API-compatible version of the catalog command with echo-based output.
+:returns: A DataFrame containing the last two columns of the model catalog.</p>
+<blockquote>
+<div><p>Also prints the full catalog as a table or JSON to the terminal, depending on <cite>as_json</cite>.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="ersilia.api.commands.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">ersilia.api.commands package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="ersilia.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">ersilia package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Ersilia Open Source Initiative
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ersilia.api package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-ersilia.api.create_api">ersilia.api.create_api module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.close"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.close()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.delete"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.delete()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.example"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.example()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.fetch"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.fetch()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.info"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.info()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.is_docker"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.is_docker()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.is_fetched"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.is_fetched()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.run"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.run()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaAPIModel.serve"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.serve()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaHub"><code class="docutils literal notranslate"><span class="pre">ErsiliaHub</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.api.create_api.ErsiliaHub.catalog"><code class="docutils literal notranslate"><span class="pre">ErsiliaHub.catalog()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api.echo">ersilia.api.echo module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.echo.Silencer"><code class="docutils literal notranslate"><span class="pre">Silencer</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.api.echo.Silencer.silence_file"><code class="docutils literal notranslate"><span class="pre">Silencer.silence_file</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.echo.Silencer.is_silence"><code class="docutils literal notranslate"><span class="pre">Silencer.is_silence()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.echo.Silencer.speak"><code class="docutils literal notranslate"><span class="pre">Silencer.speak()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.echo.Silencer.silence"><code class="docutils literal notranslate"><span class="pre">Silencer.silence()</span></code></a></li>
+<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Silencer.is_silence()</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Silencer.silence()</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">Silencer.speak()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.api.echo.echo"><code class="docutils literal notranslate"><span class="pre">echo()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-ersilia.api">Module contents</a><ul>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.close"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.close()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.delete"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.delete()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.example"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.example()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.fetch"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.fetch()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.info"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.info()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.is_docker"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.is_docker()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.is_fetched"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.is_fetched()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.run"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.run()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaAPIModel.serve"><code class="docutils literal notranslate"><span class="pre">ErsiliaAPIModel.serve()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaHub"><code class="docutils literal notranslate"><span class="pre">ErsiliaHub</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.api.ErsiliaHub.catalog"><code class="docutils literal notranslate"><span class="pre">ErsiliaHub.catalog()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
