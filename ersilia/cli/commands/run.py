@@ -77,6 +77,11 @@ def run_cmd():
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         output_source = session.current_output_source()
+        print(f"Session: {session._session_dir}")
+        print(f"Model id: {model_id}")
+        print(f"Service class: {service_class}")
+        print(f"Output source: {output_source}")
+
         if model_id is None:
             echo(
                 "No model seems to be served. Please run 'ersilia serve ...' before.",
@@ -91,7 +96,9 @@ def run_cmd():
             config_json=None,
         )
         try:
+            print(output)
             result = mdl.run(input=input, output=output, batch_size=batch_size)
+            print(f"Result: {result}")
             iter_values = []
             if isinstance(result, types.GeneratorType):
                 for result in mdl.run(
