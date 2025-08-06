@@ -4,9 +4,8 @@ Models can be fetched from the Ersilia Model Hub, served, and run as a Python pa
 To use the API, create a file or open a jupyter notebook. 
 
 # Import the Class
-<pre> ```python 
-from ersilia.api import ErsiliaModel
-``` </pre>
+<pre> ```python from ersilia.api import ErsiliaModel ``` </pre>
+
 # Instantiate the model(ex: Retrosynthetic Accessibility Score)
 mdl_retro = ErsiliaModel("eos2r5a")
 
