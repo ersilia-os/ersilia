@@ -5,7 +5,7 @@ Models can be fetched from the Ersilia Model Hub, served, and run as a Python pa
 To use the API, create a file or open a jupyter notebook. 
 
 ## Import the Class
-<pre> from ersilia.api import ErsiliaAPIModel  </pre>
+<pre> from ersilia.api.create_api import ErsiliaAPIModel </pre>
 
 Then, you can perform the same actions as in the CLI. Specify preference for the verbosity of status messages (automatically succinct). 
 
