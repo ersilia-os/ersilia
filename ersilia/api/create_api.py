@@ -8,6 +8,7 @@ from .commands import (
     fetch,
     info,
     is_fetched,
+    is_fetched_z,
     run,
     serve,
 )
@@ -247,6 +248,16 @@ class ErsiliaAPIModel:
         Echo Message indicating fetch status.
         """
         return is_fetched.is_fetched(self.model_id)
+    
+    def is_fetched_z(self):
+        """
+        Checks whether the model has been successfully fetched.
+
+        Returns
+        -------
+        Echo Message indicating fetch status.
+        """
+        return is_fetched_z.is_fetched(self.model_id)
 
     def is_docker(self):
         """
