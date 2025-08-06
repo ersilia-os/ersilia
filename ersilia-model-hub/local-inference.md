@@ -125,16 +125,16 @@ ersilia delete eos2r5a
 
 ## As a Python package(Python API)
 
-Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called `ErsiliaAPI`:
+Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called `ErsiliaAPIModel`:
 
 <pre class="language-python"><code class="lang-python"># import main class
-from ersilia.api import ErsiliaModel
+from ersilia.api import ErsiliaAPIModel
 <strong># instantiate the model(ex: Retrosynthetic Accessibility Score)
 </strong><strong># name the model(ex : mdl_retro)
 </strong>mdl_retro = ErsiliaModel("eos2r5a")
 </code></pre>
 
-Then, you can perform the same actions as in the CLI. Specify preference for verbosity of status messages (automatically succinct). To fetch and serve:
+Then, you can perform the same actions as in the CLI. Specify preference for the verbosity of status messages (automatically succinct). To fetch and serve:
 
 ```python
 # fetch model
@@ -221,7 +221,7 @@ input = [
 mdl.serve()
 mdl.info()
 mdl.run(input, batch_size=100)
-<strong>model.close()
+<strong>mdl.close()
 </strong><strong>
 </strong><strong># use with statement
 </strong># this allows for automatic serving and closing of an already fetched model
@@ -235,10 +235,11 @@ with mdl_retro as model:
 This command allows users to access a catalog of models available either locally or in the model hub.
 
 ```python
-# to use this command, import the ErsiliaHub class. 
-from ersilia.api import ErsiliaHub
+# to use this command, import the ErsiliaCatalog class
+from ersilia.api import ErsiliaCatalog
 
-Hub = ErsiliaHub()
+#instantiate the class
+Hub = ErsiliaCatalog()
 df = Hub.catalog()
 #to convert data frame to csv file
 df.to_csv(catalog_file.csv)
