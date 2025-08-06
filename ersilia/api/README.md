@@ -1,15 +1,15 @@
 # Ersilia API
 
-Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called ErsiliaAPI.
+Models can be fetched from the Ersilia Model Hub, served, and run as a Python package. The main class is called ErsiliaAPIModel.
 
 To use the API, create a file or open a jupyter notebook. 
 
 ## Import the Class
-<pre> ```python from ersilia.api import ErsiliaModel ``` </pre>
+<pre> from ersilia.api import ErsiliaAPIModel ``` </pre>
 
 ## Instantiate the model(ex: Retrosynthetic Accessibility Score)
 <pre>
-mdl_retro = ErsiliaModel("eos2r5a")
+mdl_retro = ErsiliaAPIModel("eos2r5a")
 </pre>
 
 ## Fetch model
@@ -70,9 +70,9 @@ with mdl_retro as model:
 
 ## Ersilia Hub Class/Catolog Command
 <pre>
-from ersilia.api import ErsiliaHub
+from ersilia.api import ErsiliaCatalog
 
-Hub = ErsiliaHub()
+Hub = ErsiliaCatalog()
 df = Hub.catalog()
 </pre>
 ### to convert data frame to csv file

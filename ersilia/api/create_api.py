@@ -277,7 +277,7 @@ class ErsiliaAPIModel:
         self.close()
 
 
-class ErsiliaHub:
+class ErsiliaCatalog:
     """
     This class enables users to browse and retrieve information about all models
     available in the Ersilia Hub. It is designed for general catalog-level operations
