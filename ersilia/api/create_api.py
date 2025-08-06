@@ -1,6 +1,16 @@
 import subprocess
 
-from .commands import catalog, close, delete, example, fetch, info, run, serve
+from .commands import (
+    catalog,
+    close,
+    delete,
+    example,
+    fetch,
+    info,
+    is_fetched,
+    run,
+    serve,
+)
 from .echo import echo
 
 
@@ -62,7 +72,6 @@ class ErsiliaAPIModel:
         self._url = None
         self.session = None
         self.SRV = None
-        self._fetched_flag = False
 
     def fetch(self, verbose=None):
         """
@@ -80,7 +89,7 @@ class ErsiliaAPIModel:
         RuntimeError: If both BentoML and FastAPI are used together.
 
         """
-        self._fetched_flag = fetch.fetch(
+        fetch.fetch(
             model=self.model_id,
             overwrite=True,
             from_dir=None,
@@ -132,7 +141,7 @@ class ErsiliaAPIModel:
             verbose_flag=self.verbose_mode or verbose,
         )
 
-    def run(self, input, output=None, batch_size=1000):
+    def run(self, input, output, batch_size=1000):
         """
         Runs the current model on a list of SMILES strings and
         returns the prediction as a pandas data frame.
@@ -228,7 +237,6 @@ class ErsiliaAPIModel:
             RuntimeError: If the model cannot be deleted.
         """
         delete.delete(self.model_id, verbose=self.verbose_mode)
-        self.is_fetched = False
 
     def is_fetched(self):
         """
@@ -238,13 +246,7 @@ class ErsiliaAPIModel:
         -------
         Echo Message indicating fetch status.
         """
-        if self._fetched_flag:
-            echo(f"✅ Model {self.model_id} is already fetched.", fg="green")
-        else:
-            echo(
-                f"💁Model {self.model_id} is NOT already fetched. Fetch the model before serving.",
-                fg="yellow",
-            )
+        return is_fetched.is_fetched(self.model_id)
 
     def is_docker(self):
         """

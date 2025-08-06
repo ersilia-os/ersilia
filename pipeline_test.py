@@ -1,7 +1,6 @@
-from ersilia.api import ErsiliaModel
+from ersilia.api import ErsiliaCatalog, ErsiliaModel
 
 mordred = ErsiliaModel("eos78ao")
-# mordred.fetch()
-# mordred.serve()
-df = mordred.run("new_compounds.csv")
-print(df)
+print(mordred.is_fetched())
+catalog_obj = ErsiliaCatalog()
+catalog_obj.catalog()
