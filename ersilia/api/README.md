@@ -5,7 +5,9 @@ Models can be fetched from the Ersilia Model Hub, served, and run as a Python pa
 To use the API, create a file or open a jupyter notebook. 
 
 ## Import the Class
-<pre> from ersilia.api import ErsiliaAPIModel ``` </pre>
+<pre> from ersilia.api import ErsiliaAPIModel  </pre>
+
+Then, you can perform the same actions as in the CLI. Specify preference for the verbosity of status messages (automatically succinct). 
 
 ## Instantiate the model(ex: Retrosynthetic Accessibility Score)
 <pre>
@@ -26,6 +28,11 @@ mdl_retro.serve(verbose=False)
 <pre>
 mdl_retro.is_fetched()
 </pre>
+
+## Check Docker Status
+To check if a docker is running locally, use is_docker command:
+<pre> mdl_retro.is_docker() </pre>
+
 
 ## Check Docker Status
 <pre>
@@ -62,20 +69,19 @@ mdl_retro.delete()
 </pre>
 
 ## With statement: Automatic Serving and Closing
+A more concise way to run prediction would be to use the with clause:
 <pre>
 with mdl_retro as model:
     model.info()
     model.run(input, batch_size=100)
 </pre>
 
-## Ersilia Hub Class/Catolog Command
+## Ersilia Hub Class/Catalog Command
+This command allows users to access a catalog of models available either locally or in the model hub. 
+In order to use the catalog command, import the class Ersilia Catalog. 
 <pre>
 from ersilia.api import ErsiliaCatalog
 
 Hub = ErsiliaCatalog()
 df = Hub.catalog()
-</pre>
-### to convert data frame to csv file
-<pre>
-df.to_csv(catalog_file.csv)
 </pre>
