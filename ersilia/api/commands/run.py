@@ -12,8 +12,19 @@ from ..echo import echo
 
 def validate_input_output_types(input, output):
     """
-    Validates that 'input' is either a Python list or a path to a .csv file,
-    and that 'output' (if provided) ends with a valid extension.
+    Validate that the provided input and output parameters are of supported types.
+
+    Parameters
+    ----------
+    input : list of str or str
+        A list of SMILES strings or a filepath pointing to a CSV file (.csv) containing SMILES with 'input' header
+    output : str or None
+        Optional filepath for saving the model output. If provided, must end with one of: .csv, .json, .h5
+
+    Raises
+    ------
+        If 'input' is neither a list nor a .csv filepath, or if 'output' (when not None) does not end with a supported
+        extension.
     """
     if not (
         isinstance(input, list)
@@ -36,50 +47,38 @@ def validate_input_output_types(input, output):
         sys.exit(1)
 
 
-def load_output_to_df(output):
+def run(model_id, input, output=None, batch_size=100):
     """
-    Loads model output from file to pandas DataFrame based on extension.
-    """
-    try:
-        if output.endswith(".csv"):
-            return pd.read_csv(output)
-        elif output.endswith(".json"):
-            return pd.read_json(output)
-        elif output.endswith(".h5"):
-            return pd.read_hdf(output)
-        else:
-            raise ValueError(f"Unsupported output format: {output}")
-    except Exception as e:
-        echo(f"❌ Failed to load output file {output}: {e}", fg="red")
-        raise
+    Runs the current model on SMILES inouts, optionall saving the results to a file and always returning
+    a DataFarme.
 
-
-def run(model_id, input, output, batch_size=100):
-    """
-    Runs the current model on a list of SMILES strings and
-    returns the prediction as a pandas data frame.
-
-    Args
+    Parameters
     ----
-    input: a list or a path to a CSV file containing SMILES strings.
-    output: path to save the output (must end with .csv, .json, or .h5)
-    batch_size: number of SMILES to process per batch
+    model_id : str
+        Identifier of the Ersilia model to invoke.
+    input: list of str or str
+        A list of SMILES strings or a filepath to a CSV file (.csv) containing SMILES
+    output: str, optional
+        Filepath to save the model predictions, Supported extensions: .csv, .json, .h5
+        If None, a temporary CSV file will be generated and cleaned up after loading.
+    batch_size: int, default=100
+        Number of SMILES to process per batch
 
     Returns
     -------
-    Str:    The path to the output file if the output successfully generated..
-    #     The run command function to be used by the API.
-    #     A pandas df with the predictions.
+    pandas.DataFrame
+        DataFrame containing the model's prediction results.
+
+    Raises
+    ------
+    SystemExit
+        If input or output validation fails.
 
     """
     validate_input_output_types(input, output)
     session = Session(config_json=None)
     service_class = session.current_service_class()
     output_source = session.current_output_source()
-    print(f"Session: {session._session_dir}")
-    print(f"Model id: {model_id}")
-    print(f"Service class: {service_class}")
-    print(f"Output source: {output_source}")
 
     if model_id is None:
         echo(
@@ -89,18 +88,26 @@ def run(model_id, input, output, batch_size=100):
         return
 
     cleanup_input = False
+    cleanup_output = False
+    # Prepare input filepath
     if isinstance(input, list):
-        # Write list to a temporary CSV
         cleanup_input = True
         temp_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False)
         pd.DataFrame({"input": input}).to_csv(temp_file.name, index=False)
         input_path = temp_file.name
     else:
-        # already a CSV file
         input_path = input
-    # output_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False)
-    # output_path = output or os.path.join(os.getcwd(), "output_results.csv")
 
+    # Prepare output filepath
+    if output == None:
+        cleanup_output = True
+        temp_file_output = tempfile.NamedTemporaryFile(
+            mode="w+", suffix=".csv", delete=False
+        )
+        output_path = temp_file_output.name
+        output = output_path
+
+    # Run the model
     mdl = ErsiliaModel(
         model_id,
         output_source=output_source,
@@ -113,15 +120,26 @@ def run(model_id, input, output, batch_size=100):
         for result in mdl.run(input=input, output=output, batch_size=batch_size):
             if result is not None:
                 iter_values.append(result)
-    echo(
-        f"✅ The output was successfully generated at {output}!", fg="green", bold=True
-    )
+
+    # Notify the user on persistent output
+    if not cleanup_output:
+        echo(
+            f"✅ The output was successfully generated at {output}!",
+            fg="green",
+            bold=True,
+        )
+    # Load results into DataFrame
     df = pd.read_csv(output)
 
-    # finally:
+    # Clean up temporary files
     if cleanup_input:
         try:
             os.remove(input_path)
+        except OSError:
+            pass
+    if cleanup_output:
+        try:
+            os.remove(output_path)
         except OSError:
             pass
 
