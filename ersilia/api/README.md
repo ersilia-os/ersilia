@@ -5,56 +5,56 @@ To use the API, create a file or open a jupyter notebook.
 
 # Import the Class
 <pre> from ersilia.api import ErsiliaModel </pre>
-hello test
+
 # Instantiate the model(ex: Retrosynthetic Accessibility Score)
-mdl_retro = ErsiliaModel("eos2r5a")
+<pre> mdl_retro = ErsiliaModel("eos2r5a") </pre>
 
 # Fetch model
-mdl_retro.fetch(verbose=False)
+</pre> mdl_retro.fetch(verbose=False) </pre>
 
 # Serve model
-mdl_retro.serve(verbose=False)
+</pre> mdl_retro.serve(verbose=False) </pre>
 
 # Check Fetched Status
-mdl_retro.is_fetched()
+</pre> mdl_retro.is_fetched() </pre>
 
 # Check Docker Status
-mdl_retro.is_docker()
+</pre> mdl_retro.is_docker() </pre>
 
 
 # Run Model
-input = [
+</pre> input = [
     "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 ]
-mdl_retro.run(input, batch_size=100) 
+mdl_retro.run(input, batch_size=100) </pre>
 
 # Example Command
-example = molecular_weight.example(True, True, 10, False)
+</pre> example = molecular_weight.example(True, True, 10, False) </pre>
  
 
 # Info Command
-mdl_retro.info()
+</pre> mdl_retro.info() </pre>
 
 
 # Close Model
-mdl_retro.close()
+</pre> mdl_retro.close() </pre>
 
 
 # Delete Model
-mdl_retro.delete()
+</pre> mdl_retro.delete() </pre>
 
 
 # With statement: Automatic Serving and Closing
-with mdl_retro as model:
+</pre> with mdl_retro as model:
     model.info()
-    model.run(input, batch_size=100)
+    model.run(input, batch_size=100) </pre>
 
 
 # Ersilia Hub Class/Catolog Command
-from ersilia.api import ErsiliaHub
+</pre> from ersilia.api import ErsiliaHub
 
 Hub = ErsiliaHub()
 df = Hub.catalog()
 #to convert data frame to csv file
-df.to_csv(catalog_file.csv)
+df.to_csv(catalog_file.csv) </pre>
