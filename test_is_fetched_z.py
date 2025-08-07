@@ -1,5 +1,5 @@
-from ersilia.api.create_api import ErsiliaAPIModel
+from ersilia.api import ErsiliaModel
 
-mdl_retro = ErsiliaAPIModel("eos2r5a")
-mdl_retro.delete()
-mdl_retro.is_fetched_z()
+mdl_retro = ErsiliaModel("eos2r5a")
+# mdl_retro.fetch()
+print(mdl_retro.is_fetched())
