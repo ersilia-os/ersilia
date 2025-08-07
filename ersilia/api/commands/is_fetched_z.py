@@ -23,22 +23,26 @@ def is_fetched(model_id: str) -> bool:
         return False
 
     if not catalog_table.data:
-        echo(f"❌No models are fetched locally", fg="red", bold=True)
+        echo("❌No models are fetched locally", fg="red", bold=True)
         return False
-    
+
     # Check if "Identifier" column exists in the catalog table
     if "Identifier" not in catalog_table.columns:
-        echo(f"❌Unexpected catalog structure: 'Identifier' column not found", fg="red", bold=True)
+        echo(
+            "❌Unexpected catalog structure: 'Identifier' column not found",
+            fg="red",
+            bold=True,
+        )
         return False
-    
+
     # Get the index of the Identifier column
     identifier_idx = catalog_table.columns.index("Identifier")
-    
+
     # Check if the model_id exists in the Identifier column
     for row in catalog_table.data:
         if row[identifier_idx] == model_id:
             echo(f"✅ Model {model_id} is fetched", fg="green", bold=True)
             return True
-    
+
     echo(f"❌Model {model_id} is not fetched", fg="red", bold=True)
     return False

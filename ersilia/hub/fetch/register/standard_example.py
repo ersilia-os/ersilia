@@ -115,7 +115,7 @@ class ModelStandardExample(ErsiliaBase):
             self.logger.info(f"Run log: {open(run_log).read()}")
         else:
             self.logger.warning(f"Run log file {run_log} was not created")
-        
+
         self._check_file_exists(output_csv=output_csv)
         is_fetched_successfully = self._validate_csv(output_csv)
         self.logger.debug("Removing log file: {0}".format(run_log))
