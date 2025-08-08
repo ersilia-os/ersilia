@@ -174,7 +174,7 @@ mdl_retro.run(input, batch_size=100)
 
 To sample inputs for a given model, use the **example** command.&#x20;
 
-<pre class="language-python"><code class="lang-python">example = molecular_weight.example(True, True, 10, False)
+<pre class="language-python"><code class="lang-python">example = mdl_retro.example(True, True, 10, False)
 #example command returns a data frame
 #to convert to a csv
 example.to_csv(example_file.csv) 
