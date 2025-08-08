@@ -211,20 +211,20 @@ mdl_retro.delete()
 
 A more concise way to run prediction would be to use the `with` clause:
 
-<pre class="language-python"><code class="lang-python">mdl.fetch()
-input = [
+<pre class="language-python"><code class="lang-python"># Workflow: not using with statement
+<strong>mdl_retro.fetch()
+</strong>input = [
     "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
     ]
-
-# As opposed to the following:
-mdl.serve()
-mdl.info()
-mdl.run(input, batch_size=100)
-<strong>mdl.close()
+mdl_retro.serve()
+mdl_retro.info()
+mdl_retro.run(input, batch_size=100)
+<strong>mdl_retro.close()
 </strong><strong>
-</strong><strong># use with statement
-</strong># this allows for automatic serving and closing of an already fetched model
+</strong><strong># Using the with statment: 
+</strong># automatic serving and closing of an already fetched model
+mdl_retro.fetch()
 with mdl_retro as model:
     model.info()
     model.run(input, batch_size=100)
