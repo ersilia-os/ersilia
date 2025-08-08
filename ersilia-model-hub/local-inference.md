@@ -211,18 +211,18 @@ mdl_retro.delete()
 
 A more concise way to run prediction would be to use the `with` clause:
 
-<pre class="language-python"><code class="lang-python"># Workflow: not using with statement
+<pre class="language-python"><code class="lang-python"># example workflow: not using the with statement
 <strong>mdl_retro.fetch()
-</strong>input = [
+</strong>mdl_retro.serve()
+input = [
     "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
     ]
-mdl_retro.serve()
 mdl_retro.info()
 mdl_retro.run(input, batch_size=100)
 <strong>mdl_retro.close()
 </strong><strong>
-</strong><strong># Using the with statment: 
+</strong><strong># using the with statement: 
 </strong># automatic serving and closing of an already fetched model
 mdl_retro.fetch()
 with mdl_retro as model:
@@ -238,9 +238,10 @@ This command allows users to access a catalog of models available either locally
 # to use this command, import the ErsiliaCatalog class
 from ersilia.api.create_api import ErsiliaCatalog
 
-#instantiate the class
+# instantiate the class
 Hub = ErsiliaCatalog()
-df = Hub.catalog()
-#to convert data frame to csv file
+df = Hub.catalog(hub=False)  # default: shows models fetched locally
+df = Hub.catalog(hub=True)  # shows models from hub 
+# to convert data frame to csv file
 df.to_csv(catalog_file.csv)
 ```
