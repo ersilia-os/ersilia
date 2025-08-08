@@ -83,5 +83,7 @@ In order to use the catalog command, import the class Ersilia Catalog.
 from ersilia.api import ErsiliaCatalog
 
 Hub = ErsiliaCatalog()
-df = Hub.catalog()
+df = Hub.catalog()  # Default: shows local catalog
+df = Hub.catalog(hub=True)  # Shows hub catalog
+df = Hub.catalog(hub=False)  # Shows local catalog (default)
 </pre>

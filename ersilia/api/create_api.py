@@ -294,13 +294,43 @@ class ErsiliaCatalog:
     def __init__(self, verbose=False):
         self.verbose_mode = verbose
 
-    def catalog(self):
+    def catalog(self, hub=False, file_name=None, browser=False, more=False, card=False, model=None, as_json=False, verbose=False):
         """
         API-compatible version of the catalog command with echo-based output.
+        
+        Parameters
+        ----------
+        hub : bool, default=False
+            If True, fetch the catalog from the hub.
+            If False, fetch the catalog from the local directory.
+        file_name : str or None, default=None
+            If specified, write the catalog to this file.
+        browser : bool, default=False
+            Unused in current version; reserved for future.
+        more : bool, default=False
+            If True, show more detail in catalog.
+        card : bool, default=False
+            If True, display the model card for a given model.
+        model : str or None, default=None
+            The model ID for which to display metadata.
+        as_json : bool, default=False
+            If True, return JSON output instead of a formatted table.
+        verbose : bool, default=False
+            If True, enable verbose logging.
+            
         Returns
         -------
-        pandas.DataFrame
+        pandas.DataFrame or dict or None
             A DataFrame containing the last two columns of the model catalog.
             Also prints the full catalog as a table or JSON to the terminal, depending on `as_json`.
         """
-        return catalog.catalog()
+        return catalog.catalog(
+            hub=hub,
+            file_name=file_name,
+            browser=browser,
+            more=more,
+            card=card,
+            model=model,
+            as_json=as_json,
+            verbose=verbose
+        )
