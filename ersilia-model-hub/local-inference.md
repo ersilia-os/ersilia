@@ -131,7 +131,7 @@ Models can be fetched from the Ersilia Model Hub, served, and run as a Python pa
 from ersilia.api.create_api import ErsiliaAPIModel
 <strong># instantiate the model(ex: Retrosynthetic Accessibility Score)
 </strong><strong># name the model(ex : mdl_retro)
-</strong>mdl_retro = ErsiliaModel("eos2r5a")
+</strong>mdl_retro = ErsiliaAPIModel("eos2r5a")
 </code></pre>
 
 Then, you can perform the same actions as in the CLI. Specify preference for the verbosity of status messages (automatically succinct). To fetch and serve:
