@@ -13,6 +13,12 @@ Then, you can perform the same actions as in the CLI. Specify preference for the
 <pre>
 mdl_retro = ErsiliaAPIModel("eos2r5a")
 </pre>
+=======
+# Import the Class
+<pre> ```python from ersilia.api import ErsiliaModel ``` </pre>
+
+# Instantiate the model(ex: Retrosynthetic Accessibility Score)
+mdl_retro = ErsiliaModel("eos2r5a")
 
 ## Fetch model
 <pre>
