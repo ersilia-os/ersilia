@@ -11,7 +11,7 @@ Then, you can perform the same actions as in the CLI. Specify preference for the
 
 ## Instantiate the model(ex: Retrosynthetic Accessibility Score)
 <pre>
-mdl_retro = ErsiliaAPIModel("eos2r5a")
+mdl_retro = ErsiliaAPIModel('eos2r5a')
 </pre>
 
 ## Fetch model
@@ -36,8 +36,8 @@ To check if a docker is running locally, use is_docker command:
 ## Run Model
 <pre>
 input = [
-    "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
-    "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+    'C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]',
+    'CC(C)CC1=CC=C(C=C1)C(C)C(=O)O'
 ]
 df = mdl_retro.run(input, None, batch_size=100)
 print(df)
@@ -45,7 +45,7 @@ print(df)
 
 Alternatively, you can input a CSV file instead of a list. 
 <pre>
-mdl_retro.run("molecules.csv", "output.csv", 100)
+mdl_retro.run('molecules.csv', 'output.csv', 100)
 </pre>
 
 ## Example Command
@@ -69,11 +69,11 @@ mdl_retro.delete()
 </pre>
 
 ## With statement: Automatic Serving and Closing
-A more concise way to run prediction would be to use the with clause:
+A more concise way to run models would be to use the with clause:
 <pre>
 with mdl_retro as model:
     model.info()
-    model.run(input, batch_size=100)
+    model.run(input, 'output.csv', batch_size=100)
 </pre>
 
 ## Ersilia Hub Class/Catalog Command
