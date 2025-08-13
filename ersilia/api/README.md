@@ -39,16 +39,13 @@ input = [
     "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
     "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
 ]
-mdl_retro.run(input, batch_size=100)
+df = mdl_retro.run(input, None, batch_size=100)
+print(df)
 </pre>
 
-Alternatively, you can input CSV files. 
+Alternatively, you can input a CSV file instead of a list. 
 <pre>
-input = [
-    "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
-    "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
-]
-mdl_retro.run(input, batch_size=100)
+mdl_retro.run("molecules.csv", "output.csv", 100)
 </pre>
 
 ## Example Command
