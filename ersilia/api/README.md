@@ -33,13 +33,16 @@ mdl_retro.is_fetched()
 To check if a docker is running locally, use is_docker command:
 <pre> mdl_retro.is_docker() </pre>
 
-
-## Check Docker Status
+## Run Model
 <pre>
-mdl_retro.is_docker()
+input = [
+    "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
+    "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O"
+]
+mdl_retro.run(input, batch_size=100)
 </pre>
 
-## Run Model
+Alternatively, you can input CSV files. 
 <pre>
 input = [
     "C1=C(SC(=N1)SC2=NN=C(S2)N)[N+](=O)[O-]",
