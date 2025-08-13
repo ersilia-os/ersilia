@@ -294,10 +294,19 @@ class ErsiliaCatalog:
     def __init__(self, verbose=False):
         self.verbose_mode = verbose
 
-    def catalog(self, hub=False, file_name=None, browser=False, more=False, card=False, model=None, as_json=False, verbose=False):
+    def catalog(
+        self,
+        hub=False,
+        file_name=None,
+        browser=False,
+        more=False,
+        card=False,
+        model=None,
+        as_json=False,
+        verbose=False,
+    ):
         """
         API-compatible version of the catalog command with echo-based output.
-        
         Parameters
         ----------
         hub : bool, default=False
@@ -317,7 +326,6 @@ class ErsiliaCatalog:
             If True, return JSON output instead of a formatted table.
         verbose : bool, default=False
             If True, enable verbose logging.
-            
         Returns
         -------
         pandas.DataFrame or dict or None
@@ -332,5 +340,5 @@ class ErsiliaCatalog:
             card=card,
             model=model,
             as_json=as_json,
-            verbose=verbose
+            verbose=verbose,
         )
