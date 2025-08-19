@@ -473,34 +473,51 @@ including information about Model Identifiers, Code and Parameters, Docker Hub l
 </dd></dl>
 
 </section>
+<section id="module-ersilia.api.commands.is_fetched">
+<span id="ersilia-api-commands-is-fetched-module"></span><h2>ersilia.api.commands.is_fetched module<a class="headerlink" href="#module-ersilia.api.commands.is_fetched" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.api.commands.is_fetched.is_fetched">
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.is_fetched.</span></span><span class="sig-name descname"><span class="pre">is_fetched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/ersilia/api/commands/is_fetched.html#is_fetched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.is_fetched.is_fetched" title="Link to this definition">¶</a></dt>
+<dd><p>Check whether a given Ersilia model ID has been fetched locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The identifier of the model to check</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if ‘model_id’ exists in the local catalog (i.e., has been fetched), False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-ersilia.api.commands.run">
 <span id="ersilia-api-commands-run-module"></span><h2>ersilia.api.commands.run module<a class="headerlink" href="#module-ersilia.api.commands.run" title="Link to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="ersilia.api.commands.run.load_output_to_df">
-<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">load_output_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#load_output_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.load_output_to_df" title="Link to this definition">¶</a></dt>
-<dd><p>Loads model output from file to pandas DataFrame based on extension.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.api.commands.run.run">
-<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.run" title="Link to this definition">¶</a></dt>
-<dd><p>Runs the current model on a list of SMILES strings and
-returns the prediction as a pandas data frame.</p>
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the current model on SMILES inouts, optionall saving the results to a file and always returning
+a DataFarme.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>a list</em><em> or </em><em>a path to a CSV file containing SMILES strings.</em>)</p></li>
-<li><p><strong>output</strong> (<em>path to save the output</em><em> (</em><em>must end with .csv</em><em>, </em><em>.json</em><em>, or </em><em>.h5</em><em>)</em>)</p></li>
-<li><p><strong>batch_size</strong> (<em>number</em><em> of </em><em>SMILES to process per batch</em>)</p></li>
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the Ersilia model to invoke.</p></li>
+<li><p><strong>input</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>str</em>) – A list of SMILES strings or a filepath to a CSV file (.csv) containing SMILES</p></li>
+<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save the model predictions, Supported extensions: .csv, .json, .h5
+If None, a temporary CSV file will be generated and cleaned up after loading.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>default=100</em>) – Number of SMILES to process per batch</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><strong>Str</strong> (<em>The path to the output file if the output successfully generated..</em>)</p></li>
-<li><p><em>#     The run command function to be used by the API.</em></p></li>
-<li><p><em>#     A pandas df with the predictions.</em></p></li>
-</ul>
-</p>
+<dd class="field-even"><p>DataFrame containing the model’s prediction results.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>SystemExit</strong> – If input or output validation fails.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -508,8 +525,21 @@ returns the prediction as a pandas data frame.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.api.commands.run.validate_input_output_types">
 <span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">validate_input_output_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#validate_input_output_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.validate_input_output_types" title="Link to this definition">¶</a></dt>
-<dd><p>Validates that ‘input’ is either a Python list or a path to a .csv file,
-and that ‘output’ (if provided) ends with a valid extension.</p>
+<dd><p>Validate that the provided input and output parameters are of supported types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>str</em>) – A list of SMILES strings or a filepath pointing to a CSV file (.csv) containing SMILES with ‘input’ header</p></li>
+<li><p><strong>output</strong> (<em>str</em><em> or </em><em>None</em>) – Optional filepath for saving the model output. If provided, must end with one of: .csv, .json, .h5</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>If 'input' is neither a list nor a .csv filepath</strong><strong>, or </strong><strong>if 'output'</strong><strong> (</strong><strong>when not None</strong><strong>) </strong><strong>does not end with a supported</strong> – </p></li>
+<li><p><strong>extension.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -638,8 +668,11 @@ and that ‘output’ (if provided) ends with a valid extension.</p>
 <li><a class="reference internal" href="#ersilia.api.commands.info.info"><code class="docutils literal notranslate"><span class="pre">info()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-ersilia.api.commands.is_fetched">ersilia.api.commands.is_fetched module</a><ul>
+<li><a class="reference internal" href="#ersilia.api.commands.is_fetched.is_fetched"><code class="docutils literal notranslate"><span class="pre">is_fetched()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ersilia.api.commands.run">ersilia.api.commands.run module</a><ul>
-<li><a class="reference internal" href="#ersilia.api.commands.run.load_output_to_df"><code class="docutils literal notranslate"><span class="pre">load_output_to_df()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.api.commands.run.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.api.commands.run.validate_input_output_types"><code class="docutils literal notranslate"><span class="pre">validate_input_output_types()</span></code></a></li>
 </ul>

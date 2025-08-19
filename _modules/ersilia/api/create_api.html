@@ -322,7 +322,17 @@
           <h1>Source code for ersilia.api.create_api</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.commands</span><span class="w"> </span><span class="kn">import</span> <span class="n">catalog</span><span class="p">,</span> <span class="n">close</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">fetch</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="n">serve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.commands</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">catalog</span><span class="p">,</span>
+    <span class="n">close</span><span class="p">,</span>
+    <span class="n">delete</span><span class="p">,</span>
+    <span class="n">example</span><span class="p">,</span>
+    <span class="n">fetch</span><span class="p">,</span>
+    <span class="n">info</span><span class="p">,</span>
+    <span class="n">is_fetched</span><span class="p">,</span>
+    <span class="n">run</span><span class="p">,</span>
+    <span class="n">serve</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 
 
@@ -386,7 +396,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SRV</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fetched_flag</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="ErsiliaAPIModel.fetch">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.fetch">[docs]</a>
@@ -406,7 +415,7 @@
 <span class="sd">        RuntimeError: If both BentoML and FastAPI are used together.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_fetched_flag</span> <span class="o">=</span> <span class="n">fetch</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
+        <span class="n">fetch</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">from_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -464,7 +473,7 @@
 
 <div class="viewcode-block" id="ErsiliaAPIModel.run">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.run">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the current model on a list of SMILES strings and</span>
 <span class="sd">        returns the prediction as a pandas data frame.</span>
@@ -571,8 +580,7 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            RuntimeError: If the model cannot be deleted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">delete</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">False</span></div>
+        <span class="n">delete</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ErsiliaAPIModel.is_fetched">
@@ -585,13 +593,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        Echo Message indicating fetch status.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetched_flag</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is already fetched.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;💁Model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> is NOT already fetched. Fetch the model before serving.&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">is_fetched</span><span class="o">.</span><span class="n">is_fetched</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ErsiliaAPIModel.is_docker">
@@ -629,9 +631,9 @@
 
 
 
-<div class="viewcode-block" id="ErsiliaHub">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaHub">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaHub</span><span class="p">:</span>
+<div class="viewcode-block" id="ErsiliaCatalog">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaCatalog">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaCatalog</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class enables users to browse and retrieve information about all models</span>
 <span class="sd">    available in the Ersilia Hub. It is designed for general catalog-level operations</span>
@@ -646,18 +648,56 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span> <span class="o">=</span> <span class="n">verbose</span>
 
-<div class="viewcode-block" id="ErsiliaHub.catalog">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaHub.catalog">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">catalog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ErsiliaCatalog.catalog">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaCatalog.catalog">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">catalog</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">browser</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">more</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">card</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">as_json</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        API-compatible version of the catalog command with echo-based output.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        hub : bool, default=False</span>
+<span class="sd">            If True, fetch the catalog from the hub.</span>
+<span class="sd">            If False, fetch the catalog from the local directory.</span>
+<span class="sd">        file_name : str or None, default=None</span>
+<span class="sd">            If specified, write the catalog to this file.</span>
+<span class="sd">        browser : bool, default=False</span>
+<span class="sd">            Unused in current version; reserved for future.</span>
+<span class="sd">        more : bool, default=False</span>
+<span class="sd">            If True, show more detail in catalog.</span>
+<span class="sd">        card : bool, default=False</span>
+<span class="sd">            If True, display the model card for a given model.</span>
+<span class="sd">        model : str or None, default=None</span>
+<span class="sd">            The model ID for which to display metadata.</span>
+<span class="sd">        as_json : bool, default=False</span>
+<span class="sd">            If True, return JSON output instead of a formatted table.</span>
+<span class="sd">        verbose : bool, default=False</span>
+<span class="sd">            If True, enable verbose logging.</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        pandas.DataFrame</span>
+<span class="sd">        pandas.DataFrame or dict or None</span>
 <span class="sd">            A DataFrame containing the last two columns of the model catalog.</span>
 <span class="sd">            Also prints the full catalog as a table or JSON to the terminal, depending on `as_json`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">catalog</span><span class="o">.</span><span class="n">catalog</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="n">catalog</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span>
+            <span class="n">hub</span><span class="o">=</span><span class="n">hub</span><span class="p">,</span>
+            <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
+            <span class="n">browser</span><span class="o">=</span><span class="n">browser</span><span class="p">,</span>
+            <span class="n">more</span><span class="o">=</span><span class="n">more</span><span class="p">,</span>
+            <span class="n">card</span><span class="o">=</span><span class="n">card</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">as_json</span><span class="o">=</span><span class="n">as_json</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span></div>
 </div>
 
 </pre></div>
