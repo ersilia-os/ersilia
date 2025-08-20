@@ -24,7 +24,7 @@ GITHUB_ERSILIA_REPO = "ersilia"
 ERSILIA_MODEL_HUB_S3_BUCKET = "ersilia-model-hub"
 ERSILIA_MODELS_S3_BUCKET = "ersilia-models"
 ERSILIA_MODELS_ZIP_S3_BUCKET = "ersilia-models-zipped"
-MODELS_JSON = "models_reannotated.json"
+MODELS_JSON = "models.json"
 CONFIG_JSON = "config.json"
 CREDENTIALS_JSON = "credentials.json"
 INSTALL_STATUS_FILE = ".install.status"
@@ -133,7 +133,7 @@ REDIS_IMAGE = "redis:latest"
 REDIS_HOST = "localhost"
 ERSILIA_WEB_URL = "https://ersilia.io"
 ERSILIA_MODEL_HUB_URL = "https://ersilia.io/model-hub"
-AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/shrNc3sTtTA3QeEZu"
+AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/appR6ZwgLgG8RTdoU/shr7scXQV3UYqnM6Q"
 S3_BUCKET_URL = "https://ersilia-models.s3.eu-central-1.amazonaws.com"
 S3_BUCKET_URL_ZIP = "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com"
 INFERENCE_STORE_API_URL = (
@@ -237,20 +237,3 @@ def bashrc_cli_snippet(overwrite=True):
         f.write(text)
     with open(fn, "a+") as f:
         f.write(snippet)
-
-
-OUTPUT_DATASTRUCTURE = {
-    "Single": lambda x: isinstance(x, list) and len(x) == 1,
-    "List": lambda x: isinstance(x, list)
-    and len(x) > 1
-    and all(isinstance(item, (str, int, float)) for item in x),
-    "Flexible List": lambda x: isinstance(x, list)
-    and all(isinstance(item, (str, int, float)) for item in x),
-    "Matrix": lambda x: isinstance(x, list)
-    and all(
-        isinstance(row, list)
-        and all(isinstance(item, (str, int, float)) for item in row)
-        for row in x
-    ),
-    "Serializable Object": lambda x: isinstance(x, dict),
-}

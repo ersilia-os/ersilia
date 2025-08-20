@@ -271,15 +271,6 @@ class RunnerService:
                             ClickInterface(),
                         )
                         return _completed_status
-                    else:
-                        rmse_perc = round(rmse * 100, 2)
-                        _completed_status.append(
-                            (
-                                f"RMSE-{column}",
-                                f"RMSE <= 10%: {rmse_perc}%",
-                                str(STATUS_CONFIGS.PASSED),
-                            )
-                        )
 
                 elif all(isinstance(val, str) for val in bv + ev):
                     if not all(
@@ -624,6 +615,8 @@ class RunnerService:
             results.append(docker_check)
             echo_exceptions("Dependencies are not pinned properly. System is exiting!", ClickInterface())
             return results, 1
+        else:
+            results.append(docker_check)
         return results
 
     def _perform_surface_check(self):

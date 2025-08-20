@@ -170,7 +170,6 @@ class ModelInspector:
                 DOCKERFILE_FILE
             )
             yml_content, yml_error = self._get_file_content(INSTALL_YAML_FILE)
-
             if dockerfile_content is None and yml_content is None:
                 return Result(
                     False,
@@ -180,7 +179,6 @@ class ModelInspector:
                 )
 
             errors = []
-
             if dockerfile_content is not None:
                 dockerfile_errors = self._validate_dockerfile(dockerfile_content)
                 if dockerfile_errors:
@@ -522,7 +520,7 @@ class ModelInspector:
             cmd = (
                 f"ersilia serve {self.model} --disable-local-cache && "
                 f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} -d && "
-                f"ersilia run -i {Options.DEEP_INPUT.value} && ersilia close"
+                f"ersilia run -i {Options.DEEP_INPUT.value} -o {Options.DEEP_OUTPUT.value}&& ersilia close"
             )
             if timeout:
                 return Result(

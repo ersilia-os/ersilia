@@ -44,6 +44,7 @@ class ResponseName(Enum):
     DOCKER_IMAGE_NOT_EXIST = "Docker Image Not Existss"
     CONDA_ENV_NOT_EXISTS = "Conda venv not exists"
     SESSION_FILES_NOT_EXIST = "Session files not exist"
+    TEST_COMMAND_CHECKS_FAILED = "Test command checks"
     CATALOG_JSON_CONTENT_VALID = "Catalog json content is valid"
     CATALOG_TXT_FILE_CONTENT_VALID = "Catalog txt file content is valid"
     CATALOG_LOCAL_MODEL_COUNT_VALID = (
@@ -607,6 +608,45 @@ class ExampleRule(CommandRule):
     def _get_predefined(self, flag):
         return "-p" in flag or "--predefined" in flag
 
+
+@register_rule("test_rule")
+class TestRule(CommandRule):
+    def __init__(self):
+        self.current_session_dir = get_session_dir()
+
+    def check(self, command, config, std_out):
+        model = config["models"]["single"]
+        return self._check_status(model)
+        
+
+    def _check_status(self, model):
+        file = f"{model}-test.json"
+        with open(file, "r") as f:
+            data = json.load(f)
+        failed_checks = []
+        for _, item in data.items():
+            for key, value in item.items():
+                if key in "computational_performance_tracking_details":
+                    continue
+                if not value:
+                    error = f"{' '.join(key.split('_')).capitalize()} is failed"
+                    failed_checks.append(error)
+                    echo(error)
+        if failed_checks:
+            return [
+            create_response(
+                name=ResponseName.TEST_COMMAND_CHECKS_FAILED,
+                status=False,
+                detail=failed_checks,
+            )
+        ]
+        return [
+            create_response(
+                name=ResponseName.TEST_COMMAND_CHECKS_FAILED,
+                status=True,
+                detail=f"All test command checks passed",
+            )
+        ]
 
 def get_rule(rule_name, *args, **kwargs):
     rule_class = RULE_REGISTRY.get(rule_name)

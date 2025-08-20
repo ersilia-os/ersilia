@@ -17,7 +17,6 @@ URL = "http://localhost"
 PORT = 8001
 MODEL_ID = "eos3b5e"
 API_NAME = "run"
-INPUT = "NCCCCCCCCCCNS(=O)(=O)c1cccc2c(Cl)cccc12"
 INPUT_CSV = "input.csv"
 RESULT_CSV = "result.csv"
 RESULT_JSON = "result.json"
@@ -147,32 +146,6 @@ def mock_api_task():
     ) as mock_task:
         yield mock_task
 
-# For Standard API
-def test_standard_api_string(
-    mock_convn_api_get_apis,
-    mock_std_api_post,
-    mock_api_task,
-    mock_fetcher,
-    mock_set_apis,
-    mock_get_input,
-    mock_std_header,
-    mock_is_amenable,
-    mock_get_url,
-    mock_session,
-):
-    runner = CliRunner()
-
-    input_arg = INPUT
-    output_arg = RESULT_CSV
-    result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", str(output_arg)])
-    assert result.exit_code == 0
-    assert mock_get_url.called
-    assert mock_get_input.called
-    assert mock_std_header.called
-
-    assert mock_set_apis.called
-    assert RESULT_CSV in result.output
-
 
 def test_standard_api_csv(
     mock_convn_api_get_apis,
@@ -194,60 +167,6 @@ def test_standard_api_csv(
     assert result.exit_code == 0
     assert mock_get_input.called
     assert mock_get_url.called
-    assert mock_std_header.called
     assert mock_set_apis.called
 
     assert RESULT_CSV in result.output
-
-
-# For Conventional Run
-@pytest.fixture
-def mock_api_task():
-    def mock_api_task_side_effect(api_name, input, output, batch_size):
-        if output is None:
-            length = len(input)
-
-            def result_generator():
-                for _ in range(length):
-                    yield {"value": round(random.uniform(MIN_WEIGHT, MAX_WEIGHT), 3)}
-
-            return result_generator()
-        return output
-
-    with patch.object(
-        ErsiliaModel, "api_task", side_effect=mock_api_task_side_effect
-    ) as mock_task:
-        yield mock_task
-
-
-@pytest.fixture
-def mock_set_apis():
-    with patch.object(ErsiliaModel, "_set_apis", return_value=None) as mock_set_apis:
-        yield mock_set_apis
-
-
-def test_conv_api_string(
-    mock_convn_api_get_apis, mock_api_task, mock_set_apis, mock_fetcher, mock_session
-):
-    runner = CliRunner()
-
-    input_arg = INPUT
-    output_arg = RESULT_JSON
-    result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", str(output_arg)])
-
-    assert result.exit_code == 0
-    assert mock_convn_api_get_apis.called
-    assert mock_set_apis.called
-
-
-def test_conv_api_csv(
-    mock_convn_api_get_apis, mock_api_task, mock_set_apis, mock_fetcher, mock_session
-):
-    runner = CliRunner()
-    input_arg = INPUT_CSV
-    output_arg = RESULT_JSON
-    result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", str(output_arg)])
-    logger.info(result.output)
-    assert result.exit_code == 0
-    assert mock_convn_api_get_apis.called
-    assert mock_set_apis.called

@@ -6,6 +6,7 @@ from datetime import timedelta
 from timeit import default_timer as timer
 
 from ... import ErsiliaBase
+from ...utils.echo import echo
 from . import DONE_TAG, STATUS_FILE
 from .actions.check import ModelChecker
 from .actions.content import CardGetter
@@ -70,10 +71,12 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         self.force_from_s3 = force_from_s3
 
     def _setup_check(self):
+        echo("Checking setup requirements for the model to be installed and run")
         sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
         sc.check()
 
     def _prepare(self):
+        echo("Preparing the model by deleting existing data if necessary")
         mp = ModelPreparer(
             model_id=self.model_id,
             overwrite=self.overwrite,
@@ -82,6 +85,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mp.prepare()
 
     def _get(self):
+        echo("Getting the model repository and parameters.")
         mg = ModelGetter(
             model_id=self.model_id,
             repo_path=self.repo_path,
@@ -92,28 +96,36 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mg.get()
 
     def _pack(self):
+        echo("Packing the FastAPI")
         mp = ModelPacker(
             model_id=self.model_id, mode=self.mode, config_json=self.config_json
         )
         mp.pack()
 
     def _content(self):
+        echo("Getting model card of the model.")
         cg = CardGetter(self.model_id, self.config_json)
         cg.get()
 
     def _check(self):
+        echo("Checking that the autoservice works.")
         mc = ModelChecker(self.model_id, self.config_json)
         mc.check()
 
     def _sniff(self):
+        echo("Infering the structure of the model by reading the columns file.")
         sn = ModelSniffer(self.model_id, self.config_json)
         sn.sniff()
 
     def _inform(self):
+        echo(
+            "Writing information to a JSON file and adding API info for bentoml models."
+        )
         mi = ModelInformer(self.model_id, self.config_json)
         mi.inform()
 
     def _success(self):
+        echo("Register the model based on its source.")
         done = {DONE_TAG: True}
         status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         with open(status_file, "w") as f:
@@ -125,6 +137,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         start = timer()
         self.model_id = model_id
         self._setup_check()
+        echo("Checking setup requirements for the model to be installed and run")
         self._prepare()
         self._get()
         self._pack()

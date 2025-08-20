@@ -1,6 +1,8 @@
 import csv
 import os
 
+from click import echo
+
 from .... import ErsiliaBase, throw_ersilia_exception
 from ....default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
@@ -108,7 +110,33 @@ class ModelStandardExample(ErsiliaBase):
             self.logger.debug("The environment name is {0}".format(env_name))
             SimpleConda().run_commandlines(env_name, commands)
 
-        self.logger.info(f"Run log: {open(run_log).read()}")
+        # Check if log file exists before trying to read it
+        if os.path.exists(run_log):
+            self.logger.info(f"Run log: {open(run_log).read()}")
+        else:
+            self.logger.warning(f"Run log file {run_log} was not created")
+
         self._check_file_exists(output_csv=output_csv)
+        is_fetched_successfully = self._validate_csv(output_csv)
         self.logger.debug("Removing log file: {0}".format(run_log))
-        os.remove(run_log)
+        if os.path.exists(run_log):
+            os.remove(run_log)
+        if not is_fetched_successfully:
+            echo("The model is getting deleted due to it produced all empty values!")
+            run_command(f"ersilia -v delete {self.model_id}")
+
+    def _validate_csv(self, path):
+        with open(path, newline="", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            for row_num, row in enumerate(reader, start=1):
+                if len(row) < 3:
+                    echo(f"Row {row_num} has fewer than 3 columns: {row}")
+                    return False
+
+                for col_idx, cell in enumerate(row[2:], start=3):
+                    if cell.strip() == "":
+                        echo(
+                            f"Empty value at row {row_num}, column {col_idx}. The model is not correctly working!"
+                        )
+                        return False
+                return True

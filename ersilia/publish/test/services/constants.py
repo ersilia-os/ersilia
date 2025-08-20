@@ -25,6 +25,7 @@ class Options(Enum):
     NUM_SAMPLES = 5
     BASE = "base"
     DEEP_INPUT = "deep_input.csv"
+    DEEP_OUTPUT = "deep_output.csv"
     OUTPUT_CSV = "result.csv"
     EXAMPLE_CSV = "example.csv"
     INPUT_CSV = "input.csv"

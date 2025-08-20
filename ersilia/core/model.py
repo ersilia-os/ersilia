@@ -29,6 +29,7 @@ from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
+from ..utils.echo import echo
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
@@ -793,12 +794,11 @@ class ErsiliaModel(ErsiliaBase):
                 model_id=self.model_id, config_json=self.config_json, use_case=use_case
             )
         self.logger.info("Starting runner")
-
+        echo("Starting runner")
         # TODO The logic should be in a try except else finally block
-        standard_status_ok = False
         self.logger.debug("Trying standard API")
         try:
-            result, standard_status_ok = self._standard_run(
+            result, _ = self._standard_run(
                 input=input, output=output, batch_size=batch_size
             )
         except Exception as e:
@@ -806,19 +806,7 @@ class ErsiliaModel(ErsiliaBase):
                 "Standard run did not work with exception {0}".format(e)
             )
             result = None
-            standard_status_ok = False
-            self.logger.debug("We will try conventional run.")
 
-        if not standard_status_ok:
-            self.logger.debug("Trying conventional run")
-            if track_run:
-                self.logger.error(
-                    "With conventional runner tracker will not be enabled. Disable tracking at serve time if you want to proceed."
-                )
-                raise TrackingNotSupportedError()
-            result = self._run(input=input, output=output, batch_size=batch_size)
-
-        # Collect metrics sampled during run if tracking is enabled
         if track_run:
             self.logger.debug("Collecting metrics")
             model_info = self.info()
