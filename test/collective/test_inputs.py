@@ -6,8 +6,6 @@ from ersilia.io.input import GenericInputAdapter
 root = os.path.abspath(os.path.dirname(__file__))
 inputs_path = os.path.abspath(os.path.join(root, "..", "inputs"))
 sys.path.append(inputs_path)
-from ..inputs.compound_list import smiles_list as compound_list_input
-from ..inputs.compound_lists import smiles_lists as compound_lists_input
 from ..inputs.compound_single import smiles as compound_single_input
 from ..inputs.compound_singles import smiles as compound_singles_input
 
