@@ -143,7 +143,7 @@ def get_commands_all(model_id, config):
             f"{cmd.__name__}: Model id not required{flag_description}",
         )
 
-    tmp_file = "tmp_example.csv")
+    tmp_file = "tmp_example.csv"
 
     data = {
         "fetch": build_command(
