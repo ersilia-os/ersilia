@@ -145,8 +145,9 @@ def get_commands_all(model_id, config):
             f"{cmd.__name__}: Model id not required{flag_description}",
         )
 
-    tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
-    tmp_file = os.path.join(tmp_folder, "example.csv")
+    #tmp_folder = tempfile.mkdtemp(prefix="ersilia-")
+    #tmp_file = os.path.join(tmp_folder, "example.csv")
+    tmp_file = "example.csv"
 
     data = {
         "fetch": build_command(
@@ -163,7 +164,7 @@ def get_commands_all(model_id, config):
         "test": build_command(test_cmd, flag_key="test", model_id=model_id),
     }
 
-    shutil.rmtree(tmp_folder)
+    #shutil.rmtree(tmp_folder)
 
     return data
 

@@ -706,7 +706,10 @@ class ErsiliaModel(ErsiliaBase):
         self.logger.debug("Closing session {0}".format(self.session._session_dir))
         self.logger.debug("Stopping service")
         self.autoservice.close()
+        self.logger.debug("Service stopped")
+        self.logger.debug("Closing session")
         self.session.close()
+        self.logger.debug("Session closed")
 
     def get_apis(self):
         """
