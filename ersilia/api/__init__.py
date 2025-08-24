@@ -1,4 +1,4 @@
-from .create_api import ErsiliaAPIModel as ErsiliaModel
-from .create_api import ErsiliaCatalog
+from .create_api import Model
+from .create_api import Catalog
 
-__all__ = ["ErsiliaCatalog", "ErsiliaModel"]
+__all__ = ["Catalog", "Model"]

@@ -19,7 +19,7 @@ def example_cmd():
     )
     @click.argument("model", required=False, default=None, type=click.STRING)
     @click.option("--n_samples", "-n", default=5, type=click.INT)
-    @click.option("--file_name", "-f", default=None, type=click.STRING)
+    @click.option("--file_name", "-f", required=True, type=click.STRING)
     @click.option(
         "--mode",
         "-m",
@@ -43,22 +43,10 @@ def example_cmd():
             )
             return
         eg = ExampleGenerator(model_id=model_id)
-        if file_name is None:
-            echo(
-                json.dumps(
-                    eg.example(
-                        n_samples,
-                        file_name,
-                        mode=mode,
-                    ),
-                    indent=4,
-                )
-            )
-        else:
-            eg.example(
-                n_samples,
-                file_name,
-                mode=mode,
-            )
+        eg.example(
+            n_samples,
+            file_name,
+            mode=mode,
+        )
 
     return example

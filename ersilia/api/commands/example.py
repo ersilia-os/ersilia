@@ -9,19 +9,14 @@ from ...io.input import ExampleGenerator
 from ..echo import echo
 
 
-def example(model, simple=True, random=True, n_samples=5, deterministic=False):
+def example(n_samples, mode):
     """
     This command can sample inputs for a given model and save them as a CSV file.
 
     Args
     -------
-    model: The model ID to be served. Can either be the eos identifier or slug.
-    file_name: Path where the CSV examples should be saved. Must end with .csv.
-    simple: If True, only input strings are returned. If False, outputs include key and input.
-    random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.
     n_samples: Specify the number of example inputs to generate for the given model.
-    deterministic: Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.
-
+    mode: random, deterministic or predefined
     Returns
     -------
     Function: The exmaple command function to be used by the API.
@@ -29,15 +24,12 @@ def example(model, simple=True, random=True, n_samples=5, deterministic=False):
 
 
     """
-    if model:
-        model_id = ModelBase(model).model_id
-    else:
-        session = Session(config_json=None)
-        model_id = session.current_model_id()
+    session = Session(config_json=None)
+    model_id = session.current_model_id()
 
     if not model_id:
         echo(
-            "No model found. Please specify a model or serve a model in the current shell.",
+            "No model found. Please serve a model in the current shell.",
             fg="red",
         )
         return
@@ -47,9 +39,7 @@ def example(model, simple=True, random=True, n_samples=5, deterministic=False):
     eg.example(
         n_samples,
         file_name=output_file.name,
-        simple=simple,
-        try_predefined=not random,
-        deterministic=deterministic,
+        mode=mode
     )
     df = pd.read_csv(output_file.name)
     try:
@@ -57,4 +47,4 @@ def example(model, simple=True, random=True, n_samples=5, deterministic=False):
         os.remove(output_file.name)
     except OSError:
         pass
-    return df
+    return df["input"].tolist()

@@ -172,7 +172,7 @@ class ErsiliaModel(ErsiliaBase):
                     "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
                         self.model_id
                     ),
-                    default_answer="Y",
+                    default_answer="n",
                 )
             except:
                 self.logger.debug("Unable to capture user input. Fetching anyway.")
@@ -182,6 +182,8 @@ class ErsiliaModel(ErsiliaBase):
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
                 asyncio.run(mf.fetch(self.model_id))
+            else:
+                raise Exception("Model is not fetched, please fetch the model before serving it.")
 
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
@@ -918,21 +920,19 @@ class ErsiliaModel(ErsiliaBase):
         ) as f:
             return json.load(f)
 
-    def example(self, n_samples, file_name=None, simple=True):
+    def example(self, n_samples, file_name):
         """
         Generate example data for the model.
 
         This method generates example data for the model using the specified number of samples.
-        The generated data can be saved to a file if a file name is provided.
+        The generated data is saved in the provided file name.
 
         Parameters
         ----------
         n_samples : int
             The number of samples to generate.
-        file_name : str, optional
-            The file name to save the examples, by default None.
-        simple : bool, optional
-            Whether to generate simple examples, by default True.
+        file_name : str
+            The file name to save the examples
 
         Returns
         -------
@@ -940,7 +940,7 @@ class ErsiliaModel(ErsiliaBase):
             The generated example data(path, list of inputs etc...).
         """
         eg = ExampleGenerator(model_id=self.model_id, config_json=self.config_json)
-        return eg.example(n_samples=n_samples, file_name=file_name, simple=simple)
+        return eg.example(n_samples=n_samples, file_name=file_name)
 
     def info(self):
         """
