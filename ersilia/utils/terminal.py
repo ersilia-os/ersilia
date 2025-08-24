@@ -1,14 +1,15 @@
+import hashlib
 import json
 import os
 import re
-import psutil
 import shutil
 import subprocess
 import sys
-import hashlib
 import time
 import uuid
 from pathlib import Path
+
+import psutil
 
 try:
     from inputimeout import TimeoutOccurred, inputimeout
@@ -18,10 +19,9 @@ except:
 
 from collections import namedtuple
 
+from ..default import STATE_DIRECTORY, VERBOSE_FILE
 from ..utils.logging import make_temp_dir
 from ..utils.session import get_session_dir
-
-from ..default import VERBOSE_FILE, STATE_DIRECTORY
 
 
 def is_quiet():
@@ -196,7 +196,9 @@ def get_terminal_session_id(state_dir=STATE_DIRECTORY):
     # 2) Persist/lookup the ID
     if state_dir is None:
         # XDG-ish default, works on macOS/Linux. Falls back to ~/.local/state
-        state_root = os.environ.get("XDG_STATE_HOME") or str(Path.home() / ".local" / "state")
+        state_root = os.environ.get("XDG_STATE_HOME") or str(
+            Path.home() / ".local" / "state"
+        )
         state_dir = os.path.join(state_root, "terminal-session-ids")
     os.makedirs(state_dir, exist_ok=True)
 
@@ -229,9 +231,10 @@ def get_terminal_session_id(state_dir=STATE_DIRECTORY):
 
 
 def is_terminal_session_alive(term_id, state_dir=STATE_DIRECTORY):
-    
     if state_dir is None:
-        state_root = os.environ.get("XDG_STATE_HOME") or str(Path.home() / ".local" / "state")
+        state_root = os.environ.get("XDG_STATE_HOME") or str(
+            Path.home() / ".local" / "state"
+        )
         state_dir = os.path.join(state_root, "terminal-session-ids")
 
     index_path = os.path.join(state_dir, "index.json")
@@ -262,3 +265,22 @@ def is_terminal_session_alive(term_id, state_dir=STATE_DIRECTORY):
         except Exception:
             continue
     return False
+
+
+def prune_dead_sessions(index, state_dir=STATE_DIRECTORY):
+    alive = {}
+    for key, entry in index.items():
+        tty, sid = entry["tty"], entry["sid"]
+
+        if os.path.exists(tty):
+            for proc in psutil.process_iter(attrs=["pid"]):
+                try:
+                    if os.getsid(proc.info["pid"]) == sid:
+                        alive[key] = entry
+                        break
+                except Exception:
+                    continue
+
+    index_path = os.path.join(state_dir, "index.json")
+    with open(index_path, "w") as f:
+        json.dump(alive, f, indent=2)
