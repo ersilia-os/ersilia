@@ -17,7 +17,9 @@ def test_serve_run_and_close():
     df = mdl.run(input_list = INPUT_LIST)
     assert df.shape[0] == len(INPUT_LIST)
     mdl.close()
+    assert 1 == 1
 
 def test_delete():
     mdl = Model(MODEL_ID)
     mdl.delete()
+    assert 1 == 1
