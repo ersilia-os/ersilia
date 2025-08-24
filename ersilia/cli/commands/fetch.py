@@ -127,7 +127,7 @@ def fetch_cmd():
             fg="blue",
         )
 
-        if any(from_dir, from_github, from_s3, from_hosted):
+        if any([from_dir, from_github, from_s3, from_hosted]):
             from_dockerhub = False
 
         mf = ModelFetcher(
