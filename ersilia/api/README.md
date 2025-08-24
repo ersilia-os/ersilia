@@ -80,10 +80,9 @@ with mdl_retro as model:
 This command allows users to access a catalog of models available either locally or in the model hub. 
 In order to use the catalog command, import the class Ersilia Catalog. 
 <pre>
-from ersilia.api import ErsiliaCatalog
+from ersilia.api import Catalog
 
-Hub = ErsiliaCatalog()
-df = Hub.catalog()  # Default: shows local catalog
-df = Hub.catalog(hub=True)  # Shows hub catalog
-df = Hub.catalog(hub=False)  # Shows local catalog (default)
+cat = Catalog()
+df = cat.catalog(hub=True)  # Shows hub catalog
+df = cat.catalog(hub=False)  # Shows local catalog (default)
 </pre>

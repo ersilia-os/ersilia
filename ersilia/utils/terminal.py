@@ -191,11 +191,9 @@ def get_terminal_session_id(state_dir=STATE_DIRECTORY):
         sid = os.getsid(os.getpid())
 
     key_plain = f"{tty}|sid:{sid}"
-    key = hashlib.sha1(key_plain.encode()).hexdigest()  # compact stable key
+    key = hashlib.sha1(key_plain.encode()).hexdigest()
 
-    # 2) Persist/lookup the ID
     if state_dir is None:
-        # XDG-ish default, works on macOS/Linux. Falls back to ~/.local/state
         state_root = os.environ.get("XDG_STATE_HOME") or str(
             Path.home() / ".local" / "state"
         )
@@ -213,7 +211,6 @@ def get_terminal_session_id(state_dir=STATE_DIRECTORY):
     if entry:
         return entry["id"]
 
-    # New session => mint a new ID and record minimal metadata
     term_id = str(uuid.uuid4())
     index[key] = {
         "id": term_id,
@@ -221,7 +218,6 @@ def get_terminal_session_id(state_dir=STATE_DIRECTORY):
         "sid": sid,
         "created": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
     }
-    # Best-effort write (atomic-ish)
     tmp = index_path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(index, f, indent=2)
@@ -245,7 +241,7 @@ def is_terminal_session_alive(term_id, state_dir=STATE_DIRECTORY):
         return False
 
     entry = None
-    for key, val in index.items():
+    for _, val in index.items():
         if val["id"] == term_id:
             entry = val
             break
@@ -267,7 +263,20 @@ def is_terminal_session_alive(term_id, state_dir=STATE_DIRECTORY):
     return False
 
 
-def prune_dead_sessions(index, state_dir=STATE_DIRECTORY):
+def prune_dead_terminal_index(state_dir=STATE_DIRECTORY):
+    if state_dir is None:
+        state_root = os.environ.get("XDG_STATE_HOME") or str(
+            Path.home() / ".local" / "state"
+        )
+        state_dir = os.path.join(state_root, "terminal-session-ids")
+
+    index_path = os.path.join(state_dir, "index.json")
+    try:
+        with open(index_path, "r", encoding="utf-8") as f:
+            index = json.load(f)
+    except FileNotFoundError:
+        return False
+
     alive = {}
     for key, entry in index.items():
         tty, sid = entry["tty"], entry["sid"]
@@ -284,3 +293,33 @@ def prune_dead_sessions(index, state_dir=STATE_DIRECTORY):
     index_path = os.path.join(state_dir, "index.json")
     with open(index_path, "w") as f:
         json.dump(alive, f, indent=2)
+
+
+def get_alive_sessions(state_dir=STATE_DIRECTORY):
+    if state_dir is None:
+        state_root = os.environ.get("XDG_STATE_HOME") or str(
+            Path.home() / ".local" / "state"
+        )
+        state_dir = os.path.join(state_root, "terminal-session-ids")
+
+    index_path = os.path.join(state_dir, "index.json")
+    try:
+        with open(index_path, "r", encoding="utf-8") as f:
+            index = json.load(f)
+    except FileNotFoundError:
+        return []
+
+    alive = {}
+    for key, entry in index.items():
+        tty, sid = entry["tty"], entry["sid"]
+
+        if os.path.exists(tty):
+            for proc in psutil.process_iter(attrs=["pid"]):
+                try:
+                    if os.getsid(proc.info["pid"]) == sid:
+                        alive[key] = entry
+                        break
+                except Exception:
+                    continue
+
+    return alive
