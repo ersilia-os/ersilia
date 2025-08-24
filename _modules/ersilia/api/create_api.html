@@ -475,14 +475,14 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Runs the current model on a list of SMILES strings and</span>
+<span class="sd">        Runs the current model on a list of input strings and</span>
 <span class="sd">        returns the prediction as a pandas data frame.</span>
 
 <span class="sd">        Args</span>
 <span class="sd">        ----</span>
-<span class="sd">        input: a list or a path to a CSV file containing SMILES strings.</span>
+<span class="sd">        input: a list or a path to a CSV file containing input strings.</span>
 <span class="sd">        output: path to the output file where predictions will be saved.</span>
-<span class="sd">        batch_size: number of SMILES to process per batch</span>
+<span class="sd">        batch_size: number of input strings to process per batch</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -551,7 +551,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        model: The model ID to be served. Can either be the eos identifier or the slug identifier.</span>
 <span class="sd">        file_name: File name where the examples should be saved.</span>
-<span class="sd">        simple: Simple inputs only contain the SMILES, while complete inputs also include InChIKey and the molecule&#39;s name.</span>
+<span class="sd">        simple: Simple inputs only contain the input column, while complete inputs also include key and the input.</span>
 <span class="sd">        random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.</span>
 <span class="sd">        n_samples: Specify the number of example inputs to generate for the given model.</span>
 <span class="sd">        deterministic: Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.</span>

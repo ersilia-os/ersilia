@@ -341,7 +341,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    input : list of str or str</span>
-<span class="sd">        A list of SMILES strings or a filepath pointing to a CSV file (.csv) containing SMILES with &#39;input&#39; header</span>
+<span class="sd">        A list of input strings or a filepath pointing to a CSV file (.csv) containing inputs with &#39;input&#39; header</span>
 <span class="sd">    output : str or None</span>
 <span class="sd">        Optional filepath for saving the model output. If provided, must end with one of: .csv, .json, .h5</span>
 
@@ -355,7 +355,7 @@
         <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">))</span>
     <span class="p">):</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;Input format invalid. Please provide a list of SMILEs or a .csv path.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Input format invalid. Please provide a list of inputs or a .csv path.&quot;</span><span class="p">,</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
             <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
@@ -376,7 +376,7 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.api.commands.html#ersilia.api.commands.run.run">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Runs the current model on SMILES inouts, optionall saving the results to a file and always returning</span>
+<span class="sd">    Runs the current model on input strings, optionall saving the results to a file and always returning</span>
 <span class="sd">    a DataFarme.</span>
 
 <span class="sd">    Parameters</span>
@@ -384,12 +384,12 @@
 <span class="sd">    model_id : str</span>
 <span class="sd">        Identifier of the Ersilia model to invoke.</span>
 <span class="sd">    input: list of str or str</span>
-<span class="sd">        A list of SMILES strings or a filepath to a CSV file (.csv) containing SMILES</span>
+<span class="sd">        A list of input strings or a filepath to a CSV file (.csv) containing inputs</span>
 <span class="sd">    output: str, optional</span>
 <span class="sd">        Filepath to save the model predictions, Supported extensions: .csv, .json, .h5</span>
 <span class="sd">        If None, a temporary CSV file will be generated and cleaned up after loading.</span>
 <span class="sd">    batch_size: int, default=100</span>
-<span class="sd">        Number of SMILES to process per batch</span>
+<span class="sd">        Number of input rows to process per batch</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>

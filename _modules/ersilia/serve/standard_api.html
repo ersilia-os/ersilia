@@ -377,9 +377,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;You are running the app with a standard runner. Beware that this runner does not do as many checks on the input as the conventional runner: use it at your own risk.&quot;</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;You are running the app with a standard runner.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="c1"># TODO WHY? Why can&#39;t we init with a cleaner url?</span>
         <span class="k">if</span> <span class="n">url</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;/&quot;</span><span class="p">:</span>
@@ -400,7 +398,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_field_from_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="s2">&quot;Input Shape&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is the input type: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_type</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_identifier_object_by_input_type</span><span class="p">()</span>
-        <span class="c1"># TODO This whole validate_smiles thing can go away since we already handle this in the encoder</span>
+        <span class="c1"># TODO This whole validate_data thing can go away since we already handle this in the encoder</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generic_adapter</span> <span class="o">=</span> <span class="n">GenericOutputAdapter</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_expected_output_header</span><span class="p">()</span>
@@ -586,56 +584,6 @@
             <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_three_columns">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_three_columns">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">serialize_to_json_three_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Serialize data to JSON with three columns.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        input_data : str</span>
-<span class="sd">            The input data file path.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        list</span>
-<span class="sd">            The serialized JSON data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">json_data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-                <span class="n">json_data</span> <span class="o">+=</span> <span class="p">[{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]}]</span>
-        <span class="k">return</span> <span class="n">json_data</span></div>
-
-
-<div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_two_columns">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_two_columns">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">serialize_to_json_two_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Serialize data to JSON with two columns.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        input_data : str</span>
-<span class="sd">            The input data file path.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        list</span>
-<span class="sd">            The serialized JSON data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">json_data</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-                <span class="n">json_data</span> <span class="o">+=</span> <span class="p">[{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]}]</span>
-        <span class="k">return</span> <span class="n">json_data</span></div>
-
-
 <div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json_one_column">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json_one_column">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">serialize_to_json_one_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">):</span>
@@ -678,9 +626,9 @@
 <span class="sd">        list</span>
 <span class="sd">            The serialized JSON data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">smiles_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_list_from_csv</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
-        <span class="n">smiles_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">smiles</span> <span class="k">for</span> <span class="n">smiles</span> <span class="ow">in</span> <span class="n">smiles_list</span><span class="p">]</span>
-        <span class="n">json_data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">encode_batch</span><span class="p">(</span><span class="n">smiles_list</span><span class="p">)</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_list_from_csv</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
+        <span class="n">json_data</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">encode_batch</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">json_data</span></div>
 
 
@@ -700,15 +648,15 @@
 <span class="sd">        list</span>
 <span class="sd">            The list of data from the CSV file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">smiles_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
             <span class="n">header</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">fieldnames</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
-                <span class="n">smiles</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                <span class="n">smiles_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">smiles_list</span></div>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data_list</span></div>
 
 
 <div class="viewcode-block" id="StandardCSVRunApi.serialize_to_json">
@@ -720,7 +668,7 @@
 <span class="sd">            Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">            input_data : str | list</span>
-<span class="sd">                Input data which can be a file path, a SMILES string, or a list of SMILES strings.</span>
+<span class="sd">                Input data which can be a file path, an input string, or a list of input strings.</span>
 
 <span class="sd">            Returns</span>
 <span class="sd">            -------</span>
@@ -734,20 +682,13 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;One column found in input&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">async_serialize_to_json_one_column</span><span class="p">(</span><span class="n">input_data</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Two columns found in input&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_to_json_two_columns</span><span class="p">(</span><span class="n">input_data</span><span class="o">=</span><span class="n">input_data</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Three columns found in input&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">serialize_to_json_three_columns</span><span class="p">(</span><span class="n">input_data</span><span class="o">=</span><span class="n">input_data</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="s2">&quot;More than three columns found in input! This is not standard.&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;More than one column found in input! This is not standard.&quot;</span>
                 <span class="p">)</span>
-                <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Input must be either a file path (string), a SMILES string, or a list of SMILES strings.&quot;</span>
+                <span class="s2">&quot;Input must be either a file path (string), a input string, or a list of input strings.&quot;</span>
             <span class="p">)</span></div>
 
 
@@ -820,7 +761,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        input : str | list</span>
-<span class="sd">            Input data which can be a file path, a SMILES string, or a list of SMILES strings.</span>
+<span class="sd">            Input data which can be a file path, a input string, or a list of input strings.</span>
 <span class="sd">        output : str</span>
 <span class="sd">            Path to the output CSV file.</span>
 <span class="sd">        batch_size : int</span>
@@ -861,7 +802,7 @@
         <span class="n">matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_same_row_count</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">matchs</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad smiles!&quot;</span>
+                <span class="s2">&quot;Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad inputs!&quot;</span>
             <span class="p">)</span>
         <span class="n">ft</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output is being generated within: </span><span class="si">{</span><span class="n">ft</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>

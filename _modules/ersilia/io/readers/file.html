@@ -326,9 +326,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">HEADER_INDICATORS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShape</span><span class="p">,</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShape</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
 
 <span class="n">MIN_COLUMN_VALIDITY</span> <span class="o">=</span> <span class="mf">0.8</span>
 <span class="n">FLATTENED_EVIDENCE</span> <span class="o">=</span> <span class="mf">0.2</span>
@@ -625,7 +624,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_column_delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_delimiter</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Expected number: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_number</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Entity is list: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entity_is_list</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">header_indicators</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">HEADER_INDICATORS</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_delimiter_by_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
@@ -764,9 +762,9 @@
                             <span class="bp">self</span><span class="o">.</span><span class="n">matching</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
-                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="s2">&quot;Too many columns in the input file. Maximum number of columns is 2 (input and key).&quot;</span>
+                        <span class="s2">&quot;Too many columns in the input file. Maximum number of columns is 1.&quot;</span>
                     <span class="p">)</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">sniff_line_limit</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping sniffer for resolving column types&quot;</span><span class="p">)</span>
@@ -844,24 +842,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">has_header</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check if the file has a header.</span>
-
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
-<span class="sd">            True if the file has a header, False otherwise.</span>
+<span class="sd">            True always.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Has header is not None&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolve_columns</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_delimiter</span><span class="p">)</span>
-            <span class="n">candidate_header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Candidate header is </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">candidate_header</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidate_header</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_indicators</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_header</span></div>
 
 
@@ -878,18 +868,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_header</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Has header </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_header</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Schema </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matching</span><span class="p">))</span>
         <span class="nb">input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matching</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
         <span class="k">assert</span> <span class="nb">input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_delimiter</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
-                <span class="n">h</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">h</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                     <span class="n">l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
@@ -1010,16 +996,6 @@
             <span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">filter_by_column_validity</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_standardizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_single</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
-            <span class="n">expected_number</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">filter_by_column_validity</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_standardizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_list</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
-            <span class="n">expected_number</span> <span class="o">=</span> <span class="mi">2</span>
-            <span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">filter_by_column_validity</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_standardizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_pair_of_lists</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">src_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">src_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_path</span><span class="p">)</span>
         <span class="n">BaseTabularFile</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -1044,59 +1020,6 @@
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_standardize_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Standardizing input list&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_single_input</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This seems to be a single input!&quot;</span><span class="p">)</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="n">r</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="p">[[</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_string_delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">R</span><span class="p">)]]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;More than one input has been found&quot;</span><span class="p">)</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
-                <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_column_delimiter</span><span class="p">)</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;input_0&quot;</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">R</span><span class="p">:</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_standardize_pair_of_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Standardizing input pair of lists&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_single_input</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This seems to be a single input!&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_flattened</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;But it is flattened&quot;</span><span class="p">)</span>
-                <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
-                    <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Not flattened. Flattening now!&quot;</span><span class="p">)</span>
-                <span class="n">R_0</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="n">R_1</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                        <span class="n">R_0</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-                    <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                        <span class="n">R_1</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-                <span class="n">R</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="p">[</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">dst_string_delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">R_0</span><span class="p">),</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">dst_string_delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">R_1</span><span class="p">),</span>
-                    <span class="p">]</span>
-                <span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;More than one input has been found&quot;</span><span class="p">)</span>
-
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing standardized input to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">))</span>
-            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_column_delimiter</span><span class="p">)</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;input_0&quot;</span><span class="p">,</span> <span class="s2">&quot;input_1&quot;</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">R</span><span class="p">:</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-
 <div class="viewcode-block" id="TabularFileShapeStandardizer.standardize">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileShapeStandardizer.standardize">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">standardize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1108,11 +1031,7 @@
 <span class="sd">        None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeSingle</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_single</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_list</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_pair_of_lists</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_single</span><span class="p">()</span></div>
 </div>
 
 
@@ -1283,10 +1202,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span> <span class="o">=</span> <span class="n">IO</span><span class="o">.</span><span class="n">string_delimiter</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeSingle</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser_single</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser_list</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datum_parser_pair_of_lists</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_standardize</span><span class="p">()</span>
         <span class="n">StandardTabularFileReader</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dst_path</span><span class="p">)</span>
 
@@ -1302,12 +1217,6 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_datum_parser_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_datum_parser_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_datum_parser_pair_of_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="p">),</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="p">)]</span>
 
 <div class="viewcode-block" id="TabularFileReader.read">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.readers.html#ersilia.io.readers.file.TabularFileReader.read">[docs]</a>
@@ -1447,12 +1356,6 @@
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeSingle</span><span class="p">:</span>
             <span class="n">expected_number</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
-            <span class="n">expected_number</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
-            <span class="n">expected_number</span> <span class="o">=</span> <span class="mi">2</span>
-            <span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">BaseJsonFile</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">src_path</span><span class="p">,</span>

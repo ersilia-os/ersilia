@@ -541,7 +541,7 @@ functionality in a clean Pythonic interface and supports use in context managers
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>the slug identifier.</em>)</p></li>
 <li><p><strong>file_name</strong> (<em>File name where the examples should be saved.</em>)</p></li>
-<li><p><strong>simple</strong> (<em>Simple inputs only contain the SMILES</em><em>, </em><em>while complete inputs also include InChIKey and the molecule's name.</em>)</p></li>
+<li><p><strong>simple</strong> (<em>Simple inputs only contain the input column</em><em>, </em><em>while complete inputs also include key and the input.</em>)</p></li>
 <li><p><strong>random</strong> (<em>If the model source contains an example input file</em><em>, </em><em>when the predefined flag is set</em><em>, </em><em>then inputs are sampled from that file. Only the number</em><em> of </em><em>samples present in the file are returned</em><em>, </em><em>especially if --n_samples is greater than that number. By default</em><em>, </em><em>Ersilia samples inputs randomly.</em>)</p></li>
 <li><p><strong>n_samples</strong> (<em>Specify the number</em><em> of </em><em>example inputs to generate for the given model.</em>)</p></li>
 <li><p><strong>deterministic</strong> (<em>Used to generate examples data deterministically instead</em><em> of </em><em>random sampling. This allows when every time you run with example command with this flag you get the same types</em><em> of </em><em>examples.</em>)</p></li>
@@ -627,14 +627,14 @@ including information about Model Identifiers, Code and Parameters, Docker Hub l
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.api.create_api.ErsiliaAPIModel.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#ErsiliaAPIModel.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.ErsiliaAPIModel.run" title="Link to this definition">¶</a></dt>
-<dd><p>Runs the current model on a list of SMILES strings and
+<dd><p>Runs the current model on a list of input strings and
 returns the prediction as a pandas data frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>a list</em><em> or </em><em>a path to a CSV file containing SMILES strings.</em>)</p></li>
+<li><p><strong>input</strong> (<em>a list</em><em> or </em><em>a path to a CSV file containing input strings.</em>)</p></li>
 <li><p><strong>output</strong> (<em>path to the output file where predictions will be saved.</em>)</p></li>
-<li><p><strong>batch_size</strong> (<em>number</em><em> of </em><em>SMILES to process per batch</em>)</p></li>
+<li><p><strong>batch_size</strong> (<em>number</em><em> of </em><em>input strings to process per batch</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

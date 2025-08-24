@@ -885,7 +885,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">merge_shards</span><span class="p">(</span>
         <span class="n">shards</span><span class="p">,</span>
         <span class="n">header</span><span class="p">,</span>
-        <span class="n">smiles_list</span><span class="p">,</span>
+        <span class="n">input_list</span><span class="p">,</span>
         <span class="n">output_path</span><span class="p">,</span>
         <span class="n">downloader</span><span class="p">,</span>
         <span class="n">click_iface</span><span class="p">,</span>
@@ -893,7 +893,7 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Download, decompress, and concatenate multiple CSV shards into a single file.</span>
-<span class="sd">        If `smiles_list` is non-empty, reorder the rows to match its order;</span>
+<span class="sd">        If `input_list` is non-empty, reorder the rows to match its order;</span>
 <span class="sd">        otherwise, just merge them sequentially.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -916,7 +916,7 @@
             <span class="sa">f</span><span class="s2">&quot;⬇ Total download size: </span><span class="si">{</span><span class="n">total_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> KB&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">smiles_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_list</span><span class="p">:</span>
             <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
                 <span class="s2">&quot;⬇ No reorder list provided; merging sequentially&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span>
             <span class="p">)</span>
@@ -974,7 +974,7 @@
         <span class="n">col_idx</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
 
         <span class="n">normalized</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">smiles_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>

@@ -710,6 +710,14 @@
             <span class="k">if</span> <span class="n">card</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">mc</span> <span class="o">=</span> <span class="n">MetadataCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
                 <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">card</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;Model not available locally. Looking for metadata online...&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                <span class="n">card</span> <span class="o">=</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">card</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span></div>

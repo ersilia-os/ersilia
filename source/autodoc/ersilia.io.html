@@ -622,15 +622,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.io.input.ExampleGenerator.example">
-<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_predefined</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#ExampleGenerator.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.input.ExampleGenerator.example" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#ExampleGenerator.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.input.ExampleGenerator.example" title="Link to this definition">¶</a></dt>
 <dd><p>Generate example data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_samples</strong> (<em>int</em>) – Number of samples to generate.</p></li>
 <li><p><strong>file_name</strong> (<em>str</em>) – File name to save the examples.</p></li>
-<li><p><strong>simple</strong> (<em>bool</em>) – Whether to generate simple examples.</p></li>
-<li><p><strong>try_predefined</strong> (<em>bool</em>) – Whether to try predefined examples first.</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Mode for generating examples. Can be “predefined”, “deterministic”, or “random”.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -644,14 +643,13 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.io.input.ExampleGenerator.fixed_example">
-<span class="sig-name descname"><span class="pre">fixed_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#ExampleGenerator.fixed_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.input.ExampleGenerator.fixed_example" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fixed_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#ExampleGenerator.fixed_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.input.ExampleGenerator.fixed_example" title="Link to this definition">¶</a></dt>
 <dd><p>Generate deterministic example data. Samples same types of examples for each any sampling.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_samples</strong> (<em>int</em>) – Number of samples to generate.</p></li>
 <li><p><strong>file_name</strong> (<em>str</em>) – File name to save the examples.</p></li>
-<li><p><strong>simple</strong> (<em>bool</em>) – Whether to generate simple examples.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -682,14 +680,13 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.io.input.ExampleGenerator.random_example">
-<span class="sig-name descname"><span class="pre">random_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#ExampleGenerator.random_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.input.ExampleGenerator.random_example" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">random_example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/input.html#ExampleGenerator.random_example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.input.ExampleGenerator.random_example" title="Link to this definition">¶</a></dt>
 <dd><p>Generate random example data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_samples</strong> (<em>int</em>) – Number of samples to generate.</p></li>
 <li><p><strong>file_name</strong> (<em>str</em>) – File name to save the examples.</p></li>
-<li><p><strong>simple</strong> (<em>bool</em>) – Whether to generate simple examples.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1237,7 +1234,7 @@ This class produces a summary of the results, counting inputs, output dimensions
 <p>A class used to determine the input shape.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>input_shape</strong> (<em>str</em><em> or </em><em>None</em>) – The input shape type. Can be ‘single’, ‘list’, or ‘pair of lists’. If None, defaults to ‘Single’.</p>
+<dd class="field-odd"><p><strong>input_shape</strong> (<em>str</em><em> or </em><em>None</em>) – The input shape type. Can only be ‘single’. If None, defaults to ‘Single’.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -1260,20 +1257,6 @@ This class produces a summary of the results, counting inputs, output dimensions
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.io.shape.InputShapeList">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.io.shape.</span></span><span class="sig-name descname"><span class="pre">InputShapeList</span></span><a class="reference internal" href="../../_modules/ersilia/io/shape.html#InputShapeList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.shape.InputShapeList" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A class representing a list input shape.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.io.shape.InputShapePairOfLists">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.io.shape.</span></span><span class="sig-name descname"><span class="pre">InputShapePairOfLists</span></span><a class="reference internal" href="../../_modules/ersilia/io/shape.html#InputShapePairOfLists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.shape.InputShapePairOfLists" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A class representing a pair of lists input shape.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1452,8 +1435,6 @@ This class produces a summary of the results, counting inputs, output dimensions
 <li><a class="reference internal" href="#ersilia.io.shape.InputShape.get"><code class="docutils literal notranslate"><span class="pre">InputShape.get()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#ersilia.io.shape.InputShapeList"><code class="docutils literal notranslate"><span class="pre">InputShapeList</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.io.shape.InputShapePairOfLists"><code class="docutils literal notranslate"><span class="pre">InputShapePairOfLists</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.shape.InputShapeSingle"><code class="docutils literal notranslate"><span class="pre">InputShapeSingle</span></code></a></li>
 </ul>
 </li>

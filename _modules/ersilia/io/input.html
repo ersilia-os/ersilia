@@ -335,7 +335,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">NullModelIdentifierError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.readers.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonFileReader</span><span class="p">,</span> <span class="n">TabularFileReader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.readers.pyinput</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyInputReader</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShape</span><span class="p">,</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShape</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
 
 
 <div class="viewcode-block" id="BaseIOGetter">
@@ -615,6 +615,9 @@
 <span class="sd">            Adapted data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adapter</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;HERE&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;HERE DONE&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">d</span></div>
 
@@ -667,14 +670,8 @@
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">input_shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">string_delimiter</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_force_simple</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeSingle</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_flatten</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_single</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_force_simple</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_flatten</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_list</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_flatten</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flatten_pair_of_lists</span>
 
 <div class="viewcode-block" id="ExampleGenerator.test">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.test">[docs]</a>
@@ -692,7 +689,7 @@
 
 <div class="viewcode-block" id="ExampleGenerator.random_example">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.random_example">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">random_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">random_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate random example data.</span>
 
@@ -702,18 +699,13 @@
 <span class="sd">            Number of samples to generate.</span>
 <span class="sd">        file_name : str</span>
 <span class="sd">            File name to save the examples.</span>
-<span class="sd">        simple : bool</span>
-<span class="sd">            Whether to generate simple examples.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list or None</span>
 <span class="sd">            List of example data or None if saved to file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_simple</span><span class="p">:</span>
-            <span class="n">simple</span> <span class="o">=</span> <span class="n">simple</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">simple</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">simple</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
             <span class="k">if</span> <span class="n">simple</span><span class="p">:</span>
@@ -743,7 +735,7 @@
 
 <div class="viewcode-block" id="ExampleGenerator.fixed_example">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.fixed_example">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fixed_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fixed_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate deterministic example data. Samples same types of examples for each any sampling.</span>
 
@@ -753,18 +745,13 @@
 <span class="sd">            Number of samples to generate.</span>
 <span class="sd">        file_name : str</span>
 <span class="sd">            File name to save the examples.</span>
-<span class="sd">        simple : bool</span>
-<span class="sd">            Whether to generate simple examples.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list or None</span>
 <span class="sd">            List of example data or None if saved to file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_force_simple</span><span class="p">:</span>
-            <span class="n">simple</span> <span class="o">=</span> <span class="n">simple</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">simple</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">simple</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">IO</span><span class="o">.</span><span class="n">example_fixed</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
             <span class="k">if</span> <span class="n">simple</span><span class="p">:</span>
@@ -820,7 +807,7 @@
 
 <div class="viewcode-block" id="ExampleGenerator.example">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.input.ExampleGenerator.example">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="p">,</span> <span class="n">try_predefined</span><span class="p">,</span> <span class="n">deterministic</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate example data.</span>
 
@@ -830,16 +817,22 @@
 <span class="sd">            Number of samples to generate.</span>
 <span class="sd">        file_name : str</span>
 <span class="sd">            File name to save the examples.</span>
-<span class="sd">        simple : bool</span>
-<span class="sd">            Whether to generate simple examples.</span>
-<span class="sd">        try_predefined : bool</span>
-<span class="sd">            Whether to try predefined examples first.</span>
+<span class="sd">        mode : str</span>
+<span class="sd">            Mode for generating examples. Can be &quot;predefined&quot;, &quot;deterministic&quot;, or &quot;random&quot;.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list or str</span>
 <span class="sd">            List of example data or file content if saved to file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;predefined&quot;</span><span class="p">:</span>
+            <span class="n">try_predefined</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">try_predefined</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;deterministic&quot;</span><span class="p">:</span>
+            <span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">deterministic</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">predefined_available</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">try_predefined</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying with predefined input&quot;</span><span class="p">)</span>
@@ -854,19 +847,14 @@
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sampling input not randomly but in deterministic manner&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_example</span><span class="p">(</span>
-                <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="n">simple</span>
-            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">try_predefined</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">predefined_available</span><span class="p">:</span>
-                <span class="n">secho</span><span class="p">(</span>
-                    <span class="s2">&quot;No predefined examples found for the model. Generating random examples.&quot;</span><span class="p">,</span>
-                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s2">&quot;No predefined examples found for the model. Generating random examples.&quot;</span>
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Randomly sampling input&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_example</span><span class="p">(</span>
-                <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="n">simple</span>
-            <span class="p">)</span></div>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span></div>
 
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
@@ -900,16 +888,7 @@
             <span class="k">return</span> <span class="s2">&quot;,&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_flatten_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">datum</span><span class="p">]</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_flatten_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datum</span><span class="p">)]</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_flatten_pair_of_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datum</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_string_delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datum</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-        <span class="p">]</span></div>
+        <span class="k">return</span> <span class="p">[</span><span class="n">datum</span><span class="p">]</span></div>
 
 </pre></div>
         </article>

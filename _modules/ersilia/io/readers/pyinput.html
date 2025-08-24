@@ -320,7 +320,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.io.readers.pyinput</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">..shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">..shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShapeSingle</span>
 
 
 <div class="viewcode-block" id="PyInputReader">
@@ -343,12 +343,6 @@
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeSingle</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expected_number</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">expected_number</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">expected_number</span> <span class="o">=</span> <span class="mi">2</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">entity_is_list</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_datum</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_undict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>

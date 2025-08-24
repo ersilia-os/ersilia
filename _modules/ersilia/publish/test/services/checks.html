@@ -401,7 +401,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">_generate_table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_file_requirements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">get_file_requirements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">ios</span><span class="o">.</span><span class="n">console</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span> <span class="o">=</span> <span class="n">ios</span><span class="o">.</span><span class="n">check_results</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
 
@@ -566,7 +566,6 @@
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Output&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_output</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;All outputs are valid.&quot;</span><span class="p">)</span>
 
@@ -930,8 +929,8 @@
         <span class="p">)</span></div>
 
     
-    <span class="k">def</span><span class="w"> </span><span class="nf">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_smiles</span><span class="p">,</span> <span class="n">output_smiles</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">input_smiles</span> <span class="o">==</span> <span class="n">output_smiles</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">input_data</span> <span class="o">==</span> <span class="n">output_data</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">):</span>
         
@@ -957,8 +956,8 @@
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                 <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-                <span class="n">output_smiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
-                <span class="n">is_order_matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span><span class="p">,</span> <span class="n">output_smiles</span><span class="p">)</span>
+                <span class="n">output_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+                <span class="n">is_order_matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span><span class="p">,</span> <span class="n">output_data</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_order_matchs</span><span class="p">:</span>
                     <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Inputs and outputs order does not match!&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">is_fixed</span><span class="p">:</span>
@@ -995,7 +994,7 @@
                 <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
             <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_get_original_smiles_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp_type</span><span class="p">,</span> <span class="n">inp_data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_original_data_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp_type</span><span class="p">,</span> <span class="n">inp_data</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">inp_type</span> <span class="o">==</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">inp_data</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">inp_type</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
@@ -1020,7 +1019,7 @@
         <span class="k">for</span> <span class="n">inp_type</span> <span class="ow">in</span> <span class="n">Options</span><span class="o">.</span><span class="n">INPUT_TYPES_TEST</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">output_file</span> <span class="ow">in</span> <span class="n">Options</span><span class="o">.</span><span class="n">OUTPUT_FILES_TEST</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
                 <span class="n">inp_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_inputs</span><span class="p">(</span><span class="n">inp_type</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_original_smiles_list</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_original_data_list</span><span class="p">(</span>
                     <span class="n">inp_type</span><span class="p">,</span> <span class="n">inp_data</span>
                 <span class="p">)</span>
                 <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inp_data</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
@@ -1034,7 +1033,7 @@
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.validate_file_content">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">input_type</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Validate output file content and check input SMILES match.</span>
+<span class="sd">        Validate output file content and check input data match.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">check_json</span><span class="p">():</span>
@@ -1060,10 +1059,10 @@
                 <span class="n">_validate_item</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
 
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">output_smiles</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">output_data</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
                         <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">item</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-                            <span class="n">output_smiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+                            <span class="n">output_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                                 <span class="s2">&quot;Missing &#39;input&#39; structure in JSON item&quot;</span>
@@ -1071,11 +1070,11 @@
                             <span class="k">break</span>
 
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Matching the input SMILES in JSON file: </span><span class="si">{</span><span class="n">output_smiles</span><span class="si">}</span><span class="s2"> and original smiles: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Matching the input data in JSON file: </span><span class="si">{</span><span class="n">output_data</span><span class="si">}</span><span class="s2"> and original data: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="p">)</span>
 
-                    <span class="n">total_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_smiles</span><span class="p">)</span>
-                    <span class="n">null_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">smile</span> <span class="ow">in</span> <span class="n">output_smiles</span> <span class="k">if</span> <span class="n">smile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="n">total_outputs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_data</span><span class="p">)</span>
+                    <span class="n">null_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">output_data</span> <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
                     <span class="n">null_percentage</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="p">(</span><span class="n">null_count</span> <span class="o">/</span> <span class="n">total_outputs</span><span class="p">)</span> <span class="k">if</span> <span class="n">total_outputs</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
                     <span class="p">)</span>
@@ -1086,25 +1085,25 @@
                                 <span class="s2">&quot;Null output percentage exceeds 25</span><span class="si">% f</span><span class="s2">or variable output consistency.&quot;</span>
                             <span class="p">)</span>
 
-                        <span class="n">non_null_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">output_smiles</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+                        <span class="n">non_null_output</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">output_data</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
                         <span class="n">non_null_expected</span> <span class="o">=</span> <span class="p">[</span>
-                            <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                            <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                         <span class="p">]</span>
                         <span class="k">if</span> <span class="n">non_null_output</span> <span class="o">!=</span> <span class="n">non_null_expected</span><span class="p">:</span>
                             <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                                <span class="s2">&quot;Non-null input SMILES mismatch or order incorrect in JSON.&quot;</span>
+                                <span class="s2">&quot;Non-null input data mismatch or order incorrect in JSON.&quot;</span>
                             <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">null_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                             <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                                 <span class="s2">&quot;Null outputs found in fixed output consistency.&quot;</span>
                             <span class="p">)</span>
-                        <span class="k">elif</span> <span class="n">output_smiles</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span><span class="p">:</span>
+                        <span class="k">elif</span> <span class="n">output_data</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span><span class="p">:</span>
                             <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                                <span class="s2">&quot;Input SMILES mismatch or order incorrect in JSON.&quot;</span>
+                                <span class="s2">&quot;Input data mismatch or order incorrect in JSON.&quot;</span>
                             <span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error checking SMILES in JSON: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error checking data in JSON: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">error_details</span><span class="p">:</span>
                     <span class="k">return</span> <span class="p">(</span>
@@ -1168,10 +1167,10 @@
                     <span class="kc">None</span><span class="p">,</span>
                 <span class="p">)</span>
                 
-                <span class="n">output_smiles</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">output_data</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">loader</span><span class="o">.</span><span class="n">inputs</span><span class="p">]</span> <span class="k">if</span> <span class="n">loader</span><span class="o">.</span><span class="n">inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
                 <span class="p">)</span>
-                <span class="n">is_order_matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span><span class="p">,</span> <span class="n">output_smiles</span><span class="p">)</span>
+                <span class="n">is_order_matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span><span class="p">,</span> <span class="n">output_data</span><span class="p">)</span>
                 
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_order_matchs</span><span class="p">:</span>
                     <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Order Mis match happens&quot;</span><span class="p">)</span>
@@ -1536,9 +1535,9 @@
 
         <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output1_path</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
         <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output2_path</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_original_smiles_list</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_original_data_list</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
         <span class="n">check_status_one</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_csv</span><span class="p">(</span><span class="n">output1_path</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">original_smiles_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_original_smiles_list</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_original_data_list</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
         <span class="n">check_status_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_csv</span><span class="p">(</span><span class="n">output2_path</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span>
         <span class="n">_completed_status</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">check_status_one</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)</span> <span class="ow">or</span> <span class="n">check_status_two</span><span class="p">[</span>

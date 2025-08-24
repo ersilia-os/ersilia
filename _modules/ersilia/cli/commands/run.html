@@ -321,7 +321,6 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands.run</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
 
@@ -329,7 +328,6 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.api_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnprocessableInputError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_quoted_list</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
@@ -419,28 +417,17 @@
             <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span>
             <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">iter_values</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                    <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
-                <span class="p">):</span>
-                    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">iter_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;✅ The output successfully generated in </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2"> file!&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
-                <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="n">UnprocessableInputError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Error: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;💡 </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">hints</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">output</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-            <span class="k">return</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">iter_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">iter_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;✅ Output successfully written in </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2"> file!&quot;</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">run</span></div>
 

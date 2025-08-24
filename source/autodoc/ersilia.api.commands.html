@@ -422,7 +422,7 @@ or None on failure.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>slug.</em>)</p></li>
 <li><p><strong>file_name</strong> (<em>Path where the CSV examples should be saved. Must end with .csv.</em>)</p></li>
-<li><p><strong>simple</strong> (<em>If True</em><em>, </em><em>only SMILES strings are returned. If False</em><em>, </em><em>outputs include InChiKey and name.</em>)</p></li>
+<li><p><strong>simple</strong> (<em>If True</em><em>, </em><em>only input strings are returned. If False</em><em>, </em><em>outputs include key and input.</em>)</p></li>
 <li><p><strong>random</strong> (<em>If the model source contains an example input file</em><em>, </em><em>when the predefined flag is set</em><em>, </em><em>then inputs are sampled from that file. Only the number</em><em> of </em><em>samples present in the file are returned</em><em>, </em><em>especially if --n_samples is greater than that number. By default</em><em>, </em><em>Ersilia samples inputs randomly.</em>)</p></li>
 <li><p><strong>n_samples</strong> (<em>Specify the number</em><em> of </em><em>example inputs to generate for the given model.</em>)</p></li>
 <li><p><strong>deterministic</strong> (<em>Used to generate examples data deterministically instead</em><em> of </em><em>random sampling. This allows when every time you run with example command with this flag you get the same types</em><em> of </em><em>examples.</em>)</p></li>
@@ -498,16 +498,16 @@ including information about Model Identifiers, Code and Parameters, Docker Hub l
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.api.commands.run.run">
 <span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.run" title="Link to this definition">¶</a></dt>
-<dd><p>Runs the current model on SMILES inouts, optionall saving the results to a file and always returning
+<dd><p>Runs the current model on input strings, optionall saving the results to a file and always returning
 a DataFarme.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the Ersilia model to invoke.</p></li>
-<li><p><strong>input</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>str</em>) – A list of SMILES strings or a filepath to a CSV file (.csv) containing SMILES</p></li>
+<li><p><strong>input</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>str</em>) – A list of input strings or a filepath to a CSV file (.csv) containing inputs</p></li>
 <li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save the model predictions, Supported extensions: .csv, .json, .h5
 If None, a temporary CSV file will be generated and cleaned up after loading.</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>default=100</em>) – Number of SMILES to process per batch</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>default=100</em>) – Number of input rows to process per batch</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -529,7 +529,7 @@ If None, a temporary CSV file will be generated and cleaned up after loading.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>str</em>) – A list of SMILES strings or a filepath pointing to a CSV file (.csv) containing SMILES with ‘input’ header</p></li>
+<li><p><strong>input</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>str</em>) – A list of input strings or a filepath pointing to a CSV file (.csv) containing inputs with ‘input’ header</p></li>
 <li><p><strong>output</strong> (<em>str</em><em> or </em><em>None</em>) – Optional filepath for saving the model output. If provided, must end with one of: .csv, .json, .h5</p></li>
 </ul>
 </dd>

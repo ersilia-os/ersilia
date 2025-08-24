@@ -327,7 +327,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.arbitrary</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArbitraryIdentifier</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShapeList</span><span class="p">,</span> <span class="n">InputShapePairOfLists</span><span class="p">,</span> <span class="n">InputShapeSingle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..shape</span><span class="w"> </span><span class="kn">import</span> <span class="n">InputShapeSingle</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">EXAMPLES_FOLDER</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">text</span> <span class="k">as</span> <span class="n">test_examples</span>
 
@@ -362,24 +362,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_example</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_example_single</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_single</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_test</span> <span class="o">=</span> <span class="n">test_examples</span><span class="o">.</span><span class="n">input_shape_single_text</span>
-
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapeList</span><span class="p">:</span>
-            <span class="c1"># TODO</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Input shape list for text is not available in Ersilia yet!&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">Exception</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;InputShapeList shape: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_example</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_example_list</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_list</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_test</span> <span class="o">=</span> <span class="n">test_examples</span><span class="o">.</span><span class="n">input_shape_list_text</span>
-
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_shape</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InputShapePairOfLists</span><span class="p">:</span>
-            <span class="c1"># TODO</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Input shape pair of list for text is not available in Ersilia yet!&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">Exception</span>
 
 <div class="viewcode-block" id="IO.setup">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.io.types.html#ersilia.io.types.text.IO.setup">[docs]</a>

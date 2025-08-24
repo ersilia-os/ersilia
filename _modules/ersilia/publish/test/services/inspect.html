@@ -862,37 +862,37 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_run_performance_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> --disable-local-cache &amp;&amp; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;ersilia example -n </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> --simple -f </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_INPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> -d &amp;&amp; &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;ersilia run -i </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_INPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> -o </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_OUTPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&amp;&amp; ersilia close&quot;</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                    <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="o">-</span><span class="mf">1.00</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="p">),</span> <span class="n">timeout</span>   
-            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                    <span class="n">cmd</span><span class="p">,</span>
-                    <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">timeout</span><span class="o">=</span><span class="n">TIMEOUT_SECONDS</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="o">-</span><span class="mf">1.00</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="p">),</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Something happened when running the deep check!&quot;</span>
-            <span class="p">),</span> <span class="kc">False</span>
-            <span class="n">execution_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> --disable-local-cache &amp;&amp; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ersilia example -n </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> -f </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_INPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> -m deterministic &amp;&amp; &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ersilia run -i </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_INPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> -o </span><span class="si">{</span><span class="n">Options</span><span class="o">.</span><span class="n">DEEP_OUTPUT</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&amp;&amp; ersilia close&quot;</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
-                <span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="n">execution_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="p">),</span> <span class="kc">False</span></div>
+                <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="o">-</span><span class="mf">1.00</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">),</span> <span class="n">timeout</span>   
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="n">cmd</span><span class="p">,</span>
+                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="n">TIMEOUT_SECONDS</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="o">-</span><span class="mf">1.00</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Something happened when running the deep check!&quot;</span>
+        <span class="p">),</span> <span class="kc">False</span>
+        <span class="n">execution_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="p">(</span>
+            <span class="kc">True</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> predictions executed in </span><span class="si">{</span><span class="n">execution_time</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds. </span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">),</span> <span class="kc">False</span></div>
 
 
 
