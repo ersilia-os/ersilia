@@ -143,14 +143,14 @@ class ErsiliaAPIModel:
 
     def run(self, input, output, batch_size=1000):
         """
-        Runs the current model on a list of SMILES strings and
+        Runs the current model on a list of input strings and
         returns the prediction as a pandas data frame.
 
         Args
         ----
-        input: a list or a path to a CSV file containing SMILES strings.
+        input: a list or a path to a CSV file containing input strings.
         output: path to the output file where predictions will be saved.
-        batch_size: number of SMILES to process per batch
+        batch_size: number of input strings to process per batch
 
         Returns
         -------
@@ -210,7 +210,7 @@ class ErsiliaAPIModel:
         -------
         model: The model ID to be served. Can either be the eos identifier or the slug identifier.
         file_name: File name where the examples should be saved.
-        simple: Simple inputs only contain the SMILES, while complete inputs also include InChIKey and the molecule's name.
+        simple: Simple inputs only contain the input column, while complete inputs also include key and the input.
         random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.
         n_samples: Specify the number of example inputs to generate for the given model.
         deterministic: Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.

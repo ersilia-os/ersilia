@@ -17,7 +17,7 @@ def example(model, simple=True, random=True, n_samples=5, deterministic=False):
     -------
     model: The model ID to be served. Can either be the eos identifier or slug.
     file_name: Path where the CSV examples should be saved. Must end with .csv.
-    simple: If True, only SMILES strings are returned. If False, outputs include InChiKey and name.
+    simple: If True, only input strings are returned. If False, outputs include key and input.
     random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.
     n_samples: Specify the number of example inputs to generate for the given model.
     deterministic: Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.
@@ -42,13 +42,6 @@ def example(model, simple=True, random=True, n_samples=5, deterministic=False):
         )
         return
 
-    # if not file_name or not file_name.endswith('.csv'):
-    #     echo(
-    #         "Please provide a valid CSV filename ending with .csv",
-    #         fg="red",
-    #         bold=True
-    #     )
-    #     return
     output_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False)
     eg = ExampleGenerator(model_id=model_id)
     eg.example(
@@ -58,27 +51,6 @@ def example(model, simple=True, random=True, n_samples=5, deterministic=False):
         try_predefined=not random,
         deterministic=deterministic,
     )
-    # normalized = []
-    # for item in examples:
-    #     if isinstance(item, str):
-    #         normalized.append(item)
-    #     elif isinstance(item, dict):
-    #         smi = item.get('input') or item.get('smiles')
-    #         if smi:
-    #             normalized.append(smi)
-    #     else:
-    #         normalized.append(str(item))
-    # header = ['input']
-    # rows = [[sm] for sm in normalized]
-
-    # try:
-    #     with open(file_name, mode='w', newline='', encoding='utf-8') as csvfile:
-    #         writer = csv.writer(csvfile)
-    #         writer.writerow(header)
-    #         writer.writerows(rows)
-    #         echo(f":check_mark_button: Examples successfully saved to {file_name}", fg="green", bold=True)
-    # except Exception as e:
-    #     echo(f"Failed to write examples to CSV: {str(e)}", fg="red", bold=True)
     df = pd.read_csv(output_file.name)
     try:
         output_file.close()

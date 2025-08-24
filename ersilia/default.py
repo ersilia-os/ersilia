@@ -52,11 +52,9 @@ EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 
 PREDEFINED_EXAMPLE_INPUT_FILES = [
     "model/framework/examples/run_input.csv",
-    "model/framework/examples/input.csv",
 ]
 
 PREDEFINED_EXAMPLE_OUTPUT_FILES = [
-    "model/framework/examples/output.csv",
     "model/framework/examples/run_output.csv",
 ]
 
@@ -118,12 +116,6 @@ H5_DATA_FILE = "data.h5"
 REDIS_SERVER = "redis://redis:6379"
 # Other
 FEATURE_MERGE_PATTERN = "---"
-HEADER_INDICATORS = [
-    "key",
-    "input",
-    "smiles",
-    "compound",
-]  # TODO This list can be expanded. It is simply to detect headers easily.
 
 # URLS
 REDIS_EXPIRATION = 3600 * 24 * 7

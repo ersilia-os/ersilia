@@ -53,9 +53,7 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def __init__(self, model_id, url, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-        self.logger.info(
-            "You are running the app with a standard runner. Beware that this runner does not do as many checks on the input as the conventional runner: use it at your own risk."
-        )
+        self.logger.info("You are running the app with a standard runner.")
         self.model_id = model_id
         # TODO WHY? Why can't we init with a cleaner url?
         if url[-1] == "/":
@@ -76,7 +74,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.input_shape = self._read_field_from_metadata(metadata, "Input Shape")
         self.logger.debug("This is the input type: {0}".format(self.input_type))
         self.encoder = self.get_identifier_object_by_input_type()
-        # TODO This whole validate_smiles thing can go away since we already handle this in the encoder
+        # TODO This whole validate_data thing can go away since we already handle this in the encoder
         self.generic_adapter = GenericOutputAdapter(model_id=self.model_id)
 
         self.header = self.get_expected_output_header()
@@ -247,50 +245,6 @@ class StandardCSVRunApi(ErsiliaBase):
             self.logger.error(f"Could not determine header from file {file}")
             return None
 
-    def serialize_to_json_three_columns(self, input_data):
-        """
-        Serialize data to JSON with three columns.
-
-        Parameters
-        ----------
-        input_data : str
-            The input data file path.
-
-        Returns
-        -------
-        list
-            The serialized JSON data.
-        """
-        json_data = []
-        with open(input_data, "r") as f:
-            reader = csv.reader(f)
-            next(reader)
-            for row in reader:
-                json_data += [{"key": row[0], "input": row[1], "text": row[2]}]
-        return json_data
-
-    def serialize_to_json_two_columns(self, input_data):
-        """
-        Serialize data to JSON with two columns.
-
-        Parameters
-        ----------
-        input_data : str
-            The input data file path.
-
-        Returns
-        -------
-        list
-            The serialized JSON data.
-        """
-        json_data = []
-        with open(input_data, "r") as f:
-            reader = csv.reader(f)
-            next(reader)
-            for row in reader:
-                json_data += [{"key": row[0], "input": row[1], "text": row[1]}]
-        return json_data
-
     def serialize_to_json_one_column(self, input_data):
         """
         Serialize data to JSON with one column.
@@ -328,9 +282,9 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The serialized JSON data.
         """
-        smiles_list = self.get_list_from_csv(input_data)
-        smiles_list = [smiles for smiles in smiles_list]
-        json_data = await self.encoder.encode_batch(smiles_list)
+        data_list = self.get_list_from_csv(input_data)
+        data_list = [data for data in data_list]
+        json_data = await self.encoder.encode_batch(data_list)
         return json_data
 
     def get_list_from_csv(self, input_data):
@@ -347,15 +301,15 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The list of data from the CSV file.
         """
-        smiles_list = []
+        data_list = []
         with open(input_data, mode="r") as file:
             reader = csv.DictReader(file)
             header = reader.fieldnames
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
-                smiles = row.get(key)
-                smiles_list.append(smiles)
-        return smiles_list
+                data = row.get(key)
+                data_list.append(data)
+        return data_list
 
     def serialize_to_json(self, input_data):
         """
@@ -364,7 +318,7 @@ class StandardCSVRunApi(ErsiliaBase):
             Parameters
         ----------
             input_data : str | list
-                Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+                Input data which can be a file path, an input string, or a list of input strings.
 
             Returns
             -------
@@ -378,20 +332,13 @@ class StandardCSVRunApi(ErsiliaBase):
             if len(h) == 1:
                 self.logger.debug("One column found in input")
                 return asyncio.run(self.async_serialize_to_json_one_column(input_data))
-            elif len(h) == 2:
-                self.logger.debug("Two columns found in input")
-                return self.serialize_to_json_two_columns(input_data=input_data)
-            elif len(h) == 3:
-                self.logger.debug("Three columns found in input")
-                return self.serialize_to_json_three_columns(input_data=input_data)
             else:
-                self.logger.info(
-                    "More than three columns found in input! This is not standard."
+                raise ValueError(
+                    "More than one column found in input! This is not standard."
                 )
-                return None
         else:
             raise ValueError(
-                "Input must be either a file path (string), a SMILES string, or a list of SMILES strings."
+                "Input must be either a file path (string), a input string, or a list of input strings."
             )
 
     def is_amenable(self, output):
@@ -458,7 +405,7 @@ class StandardCSVRunApi(ErsiliaBase):
         Parameters
         ----------
         input : str | list
-            Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+            Input data which can be a file path, a input string, or a list of input strings.
         output : str
             Path to the output CSV file.
         batch_size : int
@@ -499,7 +446,7 @@ class StandardCSVRunApi(ErsiliaBase):
         matchs = self._same_row_count(input, results)
         if not matchs:
             raise Exception(
-                "Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad smiles!"
+                "Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad inputs!"
             )
         ft = time.perf_counter()
         self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")

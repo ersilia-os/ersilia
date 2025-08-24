@@ -357,6 +357,14 @@ class LocalCard(ErsiliaBase):
             if card is None:
                 mc = MetadataCard(config_json=self.config_json)
                 card = mc.get(model_id)
+            if card is None:
+                self.logger.debug(
+                    "Model not available locally. Looking for metadata online..."
+                )
+                return
+            keys = card.keys()
+            if "card" in keys:
+                card = card["card"]
             return card
         else:
             return

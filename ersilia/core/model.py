@@ -754,8 +754,6 @@ class ErsiliaModel(ErsiliaBase):
         Run the model with the given input and output.
 
         This method executes the model using the provided input and output parameters.
-        It first tries to run the model using the standard API, and if that fails, it falls back to
-        the conventional run method. It also tracks the run if the track_run flag is set.
 
         Parameters
         ----------
@@ -795,17 +793,14 @@ class ErsiliaModel(ErsiliaBase):
             )
         self.logger.info("Starting runner")
         echo("Starting runner")
-        # TODO The logic should be in a try except else finally block
         self.logger.debug("Trying standard API")
         try:
             result, _ = self._standard_run(
                 input=input, output=output, batch_size=batch_size
             )
         except Exception as e:
-            self.logger.warning(
-                "Standard run did not work with exception {0}".format(e)
-            )
-            result = None
+            self.logger.error("Standard run did not work with exception {0}".format(e))
+            raise e
 
         if track_run:
             self.logger.debug("Collecting metrics")
@@ -942,7 +937,7 @@ class ErsiliaModel(ErsiliaBase):
         Returns
         -------
         Any
-            The generated example data(path, list of smiles etc...).
+            The generated example data(path, list of inputs etc...).
         """
         eg = ExampleGenerator(model_id=self.model_id, config_json=self.config_json)
         return eg.example(n_samples=n_samples, file_name=file_name, simple=simple)

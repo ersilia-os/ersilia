@@ -4,9 +4,8 @@ import json
 import os
 
 from ... import logger
-from ...default import HEADER_INDICATORS
 from ...utils.logging import make_temp_dir
-from ..shape import InputShape, InputShapeList, InputShapePairOfLists, InputShapeSingle
+from ..shape import InputShape, InputShapeSingle
 
 MIN_COLUMN_VALIDITY = 0.8
 FLATTENED_EVIDENCE = 0.2
@@ -259,7 +258,6 @@ class BaseTabularFile(object):
         self._column_delimiter = self.get_delimiter()
         self.logger.debug("Expected number: {0}".format(self.expected_number))
         self.logger.debug("Entity is list: {0}".format(self.entity_is_list))
-        self.header_indicators = set(HEADER_INDICATORS)
 
     def _get_delimiter_by_extension(self):
         if self.path.endswith(".csv"):
@@ -384,9 +382,9 @@ class BaseTabularFile(object):
                             self.matching
                         )
                     )
-                if len(r) > 2:
+                else:
                     raise Exception(
-                        "Too many columns in the input file. Maximum number of columns is 2 (input and key)."
+                        "Too many columns in the input file. Maximum number of columns is 1."
                     )
                 if i > self.sniff_line_limit:
                     self.logger.debug("Stopping sniffer for resolving column types")
@@ -461,24 +459,16 @@ class BaseTabularFile(object):
     def has_header(self):
         """
         Check if the file has a header.
-
         Returns
         -------
         bool
-            True if the file has a header, False otherwise.
+            True always.
         """
         if self._has_header is not None:
             self.logger.debug("Has header is not None")
             return self._has_header
         self.resolve_columns()
-        with open(self.path, "r") as f:
-            reader = csv.reader(f, delimiter=self._column_delimiter)
-            candidate_header = next(reader)
-            self.logger.debug("Candidate header is {0}".format(candidate_header))
-        self._has_header = False
-        for c in candidate_header:
-            if c.lower() in self.header_indicators:
-                self._has_header = True
+        self._has_header = True
         return self._has_header
 
     def read_input_columns(self):
@@ -492,18 +482,14 @@ class BaseTabularFile(object):
         """
         if self._data is not None:
             return self._data
-        header = self.has_header()
-        self.logger.debug("Has header {0}".format(header))
+        self.has_header()
         self.logger.debug("Schema {0}".format(self.matching))
         input = self.matching["input"]
         assert input is not None
         with open(self.path, "r") as f:
             R = []
             reader = csv.reader(f, delimiter=self._column_delimiter)
-            if header:
-                h = next(reader)
-            else:
-                h = None
+            h = next(reader)
             if h is not None and len(h) == 1:
                 for l in reader:
                     l = self._column_delimiter.join(l)
@@ -614,16 +600,6 @@ class TabularFileShapeStandardizer(BaseTabularFile):
             entity_is_list = False
             filter_by_column_validity = True
             self._standardizer = self._standardize_single
-        if type(self.input_shape) is InputShapeList:
-            expected_number = 1
-            entity_is_list = True
-            filter_by_column_validity = True
-            self._standardizer = self._standardize_list
-        if type(self.input_shape) is InputShapePairOfLists:
-            expected_number = 2
-            entity_is_list = True
-            filter_by_column_validity = False
-            self._standardizer = self._standardize_pair_of_lists
         self.src_path = os.path.abspath(src_path)
         self.dst_path = os.path.abspath(dst_path)
         BaseTabularFile.__init__(
@@ -648,59 +624,6 @@ class TabularFileShapeStandardizer(BaseTabularFile):
             for r in self._data:
                 writer.writerow(r)
 
-    def _standardize_list(self):
-        self.logger.debug("Standardizing input list")
-        if self.is_single_input():
-            self.logger.debug("This seems to be a single input!")
-            R = []
-            for r in self._data:
-                R += r
-            R = [[self.dst_string_delimiter.join(R)]]
-        else:
-            self.logger.debug("More than one input has been found")
-            R = []
-            for r in self._data:
-                R += [r]
-        with open(self.dst_path, "w") as f:
-            writer = csv.writer(f, delimiter=self.dst_column_delimiter)
-            writer.writerow(["input_0"])
-            for r in R:
-                writer.writerow(r)
-
-    def _standardize_pair_of_lists(self):
-        self.logger.debug("Standardizing input pair of lists")
-        if self.is_single_input():
-            self.logger.debug("This seems to be a single input!")
-            if self.is_flattened():
-                self.logger.debug("But it is flattened")
-                R = []
-                for r in self._data:
-                    R += [r]
-            else:
-                self.logger.debug("Not flattened. Flattening now!")
-                R_0 = []
-                R_1 = []
-                for r in self._data:
-                    if r[0]:
-                        R_0 += [r[0]]
-                    if r[1]:
-                        R_1 += [r[1]]
-                R = [
-                    [
-                        self.dst_string_delimiter.join(R_0),
-                        self.dst_string_delimiter.join(R_1),
-                    ]
-                ]
-        else:
-            self.logger.debug("More than one input has been found")
-
-        with open(self.dst_path, "w") as f:
-            self.logger.debug("Writing standardized input to {0}".format(self.dst_path))
-            writer = csv.writer(f, delimiter=self.dst_column_delimiter)
-            writer.writerow(["input_0", "input_1"])
-            for r in R:
-                writer.writerow(r)
-
     def standardize(self):
         """
         Standardize the shape of the tabular file.
@@ -711,10 +634,6 @@ class TabularFileShapeStandardizer(BaseTabularFile):
         """
         if type(self.input_shape) is InputShapeSingle:
             self._standardize_single()
-        if type(self.input_shape) is InputShapeList:
-            self._standardize_list()
-        if type(self.input_shape) is InputShapePairOfLists:
-            self._standardize_pair_of_lists()
 
 
 class StandardTabularFileReader(BatchCacher):
@@ -863,10 +782,6 @@ class TabularFileReader(StandardTabularFileReader):
         self._string_delimiter = IO.string_delimiter()
         if type(self.input_shape) is InputShapeSingle:
             self._datum_parser = self._datum_parser_single
-        if type(self.input_shape) is InputShapeList:
-            self._datum_parser = self._datum_parser_list
-        if type(self.input_shape) is InputShapePairOfLists:
-            self._datum_parser = self._datum_parser_pair_of_lists
         self._standardize()
         StandardTabularFileReader.__init__(self, path=self.dst_path)
 
@@ -882,12 +797,6 @@ class TabularFileReader(StandardTabularFileReader):
 
     def _datum_parser_single(self, r):
         return r[0]
-
-    def _datum_parser_list(self, r):
-        return r[0].split(self._string_delimiter)
-
-    def _datum_parser_pair_of_lists(self, r):
-        return [r[0].split(self._string_delimiter), r[1].split(self._string_delimiter)]
 
     def read(self):
         """
@@ -1012,12 +921,6 @@ class JsonFileShapeStandardizer(BaseJsonFile):
         if type(self.input_shape) is InputShapeSingle:
             expected_number = 1
             entity_is_list = False
-        if type(self.input_shape) is InputShapeList:
-            expected_number = 1
-            entity_is_list = True
-        if type(self.input_shape) is InputShapePairOfLists:
-            expected_number = 2
-            entity_is_list = True
         BaseJsonFile.__init__(
             self,
             path=self.src_path,

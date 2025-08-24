@@ -17,11 +17,6 @@ try:
 except ModuleNotFoundError:
     webbrowser = None
 
-try:
-    from github import Github
-except ModuleNotFoundError:
-    Github = None
-
 
 class CatalogTable(object):
     """
@@ -194,7 +189,7 @@ class CatalogTable(object):
             if file_name.endswith(".tsv"):
                 delimiter = "\t"
             else:
-                delimiter = ","  # Default to CSV always
+                delimiter = ","
             writer = csv.writer(f, delimiter=delimiter)
             writer.writerow(self.columns)
             for r in self.data:
@@ -226,8 +221,7 @@ class ModelCatalog(ErsiliaBase):
     MORE_FIELDS = LESS_FIELDS + [
         "Title",
         "Task",
-        "Output",
-        "Output Shape",
+        "Output Dimension",
     ]
 
     def __init__(self, config_json=None, less=True):
@@ -265,8 +259,8 @@ class ModelCatalog(ErsiliaBase):
     def _get_input(self, card):
         return self._get_item(card, "input")[0]
 
-    def _get_output(self, card):
-        return self._get_item(card, "output")[0]
+    def _get_output_dimension(self, card):
+        return self._get_item(card, "output_dimension")
 
     def _get_model_source(self, card):
         model_id = self._get_item(card, "identifier")
@@ -306,12 +300,10 @@ class ModelCatalog(ErsiliaBase):
             idx += 1
             r = [idx]
             for field in columns[1:]:
-                if field == "Model Source":
+                if field == "Fetched From":
                     r += [self._get_model_source(card)]
                 else:
                     r += [self._get_item(card, field)]
-            # Sort R by Identifier
-
             R += [r]
         R = sorted(R, key=lambda x: x[0])
         return CatalogTable(data=R, columns=columns)
@@ -334,7 +326,7 @@ class ModelCatalog(ErsiliaBase):
             The catalog table containing the models available locally.
         """
         mc = ModelCard()
-        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS + ["Model Source"]
+        columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS + ["Fetched From"]
         cards = []
         for model_id in os.listdir(self._bundles_dir):
             if not self._is_eos(model_id):

@@ -5,7 +5,7 @@ import random
 
 from ... import logger
 from ...utils.identifiers.arbitrary import ArbitraryIdentifier
-from ..shape import InputShapeList, InputShapePairOfLists, InputShapeSingle
+from ..shape import InputShapeSingle
 from . import EXAMPLES_FOLDER
 from .examples import text as test_examples
 
@@ -38,24 +38,6 @@ class IO(object):
             self._example = self._example_single
             self._parser = self._parse_single
             self._test = test_examples.input_shape_single_text
-
-        if type(self.input_shape) is InputShapeList:
-            # TODO
-            self.logger.warning(
-                "Input shape list for text is not available in Ersilia yet!"
-            )
-            raise Exception
-            self.logger.debug("InputShapeList shape: {0}".format(self.input_shape.name))
-            self._example = self._example_list
-            self._parser = self._parse_list
-            self._test = test_examples.input_shape_list_text
-
-        if type(self.input_shape) is InputShapePairOfLists:
-            # TODO
-            self.logger.warning(
-                "Input shape pair of list for text is not available in Ersilia yet!"
-            )
-            raise Exception
 
     def setup(self):
         """

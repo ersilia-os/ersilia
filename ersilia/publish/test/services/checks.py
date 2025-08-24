@@ -77,7 +77,7 @@ class CheckService:
         self._generate_table = self.ios._generate_table
         self.get_file_requirements = self.ios.get_file_requirements
         self.console = ios.console
-        self.original_smiles_list = []
+        self.original_data_list = []
         self.check_results = ios.check_results
         self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
 
@@ -239,7 +239,6 @@ class CheckService:
         key = "Output"
         if not BaseInformationValidator().validate_output(data[key]):
             raise texc.EmptyField(key)
-
 
         self.logger.debug("All outputs are valid.")
 
@@ -594,8 +593,8 @@ class CheckService:
             else text[:max_length] + "..."
         )
     
-    def _input_matchs_output_order(self, input_smiles, output_smiles):
-        return input_smiles == output_smiles
+    def _input_matchs_output_order(self, input_data, output_data):
+        return input_data == output_data
     
     def _check_csv(self, file_path, input_type="list"):
         
@@ -621,8 +620,8 @@ class CheckService:
             with open(file_path, "r") as f:
                 reader = csv.DictReader(f)
                 rows = list(reader)
-                output_smiles = [row.get("input") or row.get("smiles") for row in rows]
-                is_order_matchs = self._input_matchs_output_order(self.original_smiles_list, output_smiles)
+                output_data = [row.get("input") or row.get("smiles") for row in rows]
+                is_order_matchs = self._input_matchs_output_order(self.original_data_list, output_data)
                 if not is_order_matchs:
                     error_details.append("Inputs and outputs order does not match!")
             if is_fixed:
@@ -659,7 +658,7 @@ class CheckService:
                 str(STATUS_CONFIGS.FAILED),
             )
 
-    def _get_original_smiles_list(self, inp_type, inp_data):
+    def _get_original_data_list(self, inp_type, inp_data):
         if inp_type == "str":
             return [inp_data]
         elif inp_type == "list":
@@ -682,7 +681,7 @@ class CheckService:
         for inp_type in Options.INPUT_TYPES_TEST.value:
             for output_file in Options.OUTPUT_FILES_TEST.value:
                 inp_data = self.get_inputs(inp_type)
-                self.original_smiles_list = self._get_original_smiles_list(
+                self.original_data_list = self._get_original_data_list(
                     inp_type, inp_data
                 )
                 run_model(inputs=inp_data, output=output_file, batch=100)
@@ -693,7 +692,7 @@ class CheckService:
 
     def validate_file_content(self, file_path, input_type):
         """
-        Validate output file content and check input SMILES match.
+        Validate output file content and check input data match.
         """
 
         def check_json():
@@ -719,10 +718,10 @@ class CheckService:
                 _validate_item(content)
 
                 try:
-                    output_smiles = []
+                    output_data = []
                     for item in content:
                         if "input" in item and isinstance(item["input"], dict):
-                            output_smiles.append(item["input"].get("input", None))
+                            output_data.append(item["input"].get("input", None))
                         else:
                             error_details.append(
                                 "Missing 'input' structure in JSON item"
@@ -730,11 +729,11 @@ class CheckService:
                             break
 
                     self.logger.info(
-                        f"Matching the input SMILES in JSON file: {output_smiles} and original smiles: {self.original_smiles_list}"
+                        f"Matching the input data in JSON file: {output_data} and original data: {self.original_data_list}"
                     )
 
-                    total_outputs = len(output_smiles)
-                    null_count = sum(1 for smile in output_smiles if smile is None)
+                    total_outputs = len(output_data)
+                    null_count = sum(1 for data in output_data if data is None)
                     null_percentage = (
                         (null_count / total_outputs) if total_outputs > 0 else 0
                     )
@@ -745,25 +744,25 @@ class CheckService:
                                 "Null output percentage exceeds 25% for variable output consistency."
                             )
 
-                        non_null_output = [s for s in output_smiles if s is not None]
+                        non_null_output = [s for s in output_data if s is not None]
                         non_null_expected = [
-                            s for s in self.original_smiles_list if s is not None
+                            s for s in self.original_data_list if s is not None
                         ]
                         if non_null_output != non_null_expected:
                             error_details.append(
-                                "Non-null input SMILES mismatch or order incorrect in JSON."
+                                "Non-null input data mismatch or order incorrect in JSON."
                             )
                     else:
                         if null_count > 0:
                             error_details.append(
                                 "Null outputs found in fixed output consistency."
                             )
-                        elif output_smiles != self.original_smiles_list:
+                        elif output_data != self.original_data_list:
                             error_details.append(
-                                "Input SMILES mismatch or order incorrect in JSON."
+                                "Input data mismatch or order incorrect in JSON."
                             )
                 except Exception as e:
-                    error_details.append(f"Error checking SMILES in JSON: {str(e)}")
+                    error_details.append(f"Error checking data in JSON: {str(e)}")
 
                 if error_details:
                     return (
@@ -827,10 +826,10 @@ class CheckService:
                     None,
                 )
                 
-                output_smiles = (
+                output_data = (
                     [s for s in loader.inputs] if loader.inputs is not None else []
                 )
-                is_order_matchs = self._input_matchs_output_order(self.original_smiles_list, output_smiles)
+                is_order_matchs = self._input_matchs_output_order(self.original_data_list, output_data)
                 
                 if not is_order_matchs:
                     error_details.append("Order Mis match happens")
@@ -1183,9 +1182,9 @@ class CheckService:
 
         run_model(inputs=input, output=output1_path, batch=100)
         run_model(inputs=input, output=output2_path, batch=100)
-        self.original_smiles_list = self._get_original_smiles_list("csv", input)
+        self.original_data_list = self._get_original_data_list("csv", input)
         check_status_one = self._check_csv(output1_path, input_type="csv")
-        self.original_smiles_list = self._get_original_smiles_list("csv", input)
+        self.original_data_list = self._get_original_data_list("csv", input)
         check_status_two = self._check_csv(output2_path, input_type="csv")
         _completed_status = []
         if check_status_one[-1] == str(STATUS_CONFIGS.FAILED) or check_status_two[

@@ -92,7 +92,7 @@ class ModelStandardExample(ErsiliaBase):
         self.logger.debug(output_csv)
         commands = [
             "ersilia serve {0} --disable-local-cache".format(self.model_id),
-            "ersilia example -n 3 -f {0} --simple".format(input_csv),
+            "ersilia example -n 3 -f {0}".format(input_csv),
             "ersilia -v run -i {0} -o {1} > {2} 2>&1".format(
                 input_csv, output_csv, run_log
             ),

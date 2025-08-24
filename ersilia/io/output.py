@@ -593,11 +593,11 @@ class GenericOutputAdapter(ResponseRefactor):
                             )
                     vals = [out[k] for k in output_keys]
                     if expanded_keys is None:
-                        self.logger.warning(
+                        self.logger.debug(
                             f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
                         )
                         expanded_keys = schema_keys
-                        self.logger.info(
+                        self.logger.debug(
                             f"Expanded output keys: {str(expanded_keys)[:10]}"
                         )
 

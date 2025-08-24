@@ -13,7 +13,7 @@ from ..hub.content.card import ModelCard
 from ..utils.exceptions_utils.exceptions import NullModelIdentifierError
 from .readers.file import JsonFileReader, TabularFileReader
 from .readers.pyinput import PyInputReader
-from .shape import InputShape, InputShapeList, InputShapePairOfLists, InputShapeSingle
+from .shape import InputShape, InputShapeSingle
 
 
 class BaseIOGetter(ErsiliaBase):
@@ -277,6 +277,9 @@ class GenericInputAdapter(object):
             Adapted data.
         """
         data = self.adapter.adapt(inp)
+        print("HERE")
+        print(data)
+        print("HERE DONE")
         for d in data:
             yield d
 
@@ -322,14 +325,8 @@ class ExampleGenerator(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.input_shape = self.IO.input_shape
         self._string_delimiter = self.IO.string_delimiter()
-        self._force_simple = True
         if type(self.input_shape) is InputShapeSingle:
             self._flatten = self._flatten_single
-            self._force_simple = False
-        if type(self.input_shape) is InputShapeList:
-            self._flatten = self._flatten_list
-        if type(self.input_shape) is InputShapePairOfLists:
-            self._flatten = self._flatten_pair_of_lists
 
     def test(self):
         """
@@ -342,7 +339,7 @@ class ExampleGenerator(ErsiliaBase):
         """
         return self.IO.test()
 
-    def random_example(self, n_samples, file_name, simple):
+    def random_example(self, n_samples, file_name):
         """
         Generate random example data.
 
@@ -352,18 +349,13 @@ class ExampleGenerator(ErsiliaBase):
             Number of samples to generate.
         file_name : str
             File name to save the examples.
-        simple : bool
-            Whether to generate simple examples.
 
         Returns
         -------
         list or None
             List of example data or None if saved to file.
         """
-        if not self._force_simple:
-            simple = simple
-        else:
-            simple = True
+        simple = True
         if file_name is None:
             data = [v for v in self.IO.example(n_samples)]
             if simple:
@@ -390,7 +382,7 @@ class ExampleGenerator(ErsiliaBase):
                         for v in self.IO.example(n_samples):
                             writer.writerow([v["key"], v["input"], v["text"]])
 
-    def fixed_example(self, n_samples, file_name, simple):
+    def fixed_example(self, n_samples, file_name):
         """
         Generate deterministic example data. Samples same types of examples for each any sampling.
 
@@ -400,18 +392,13 @@ class ExampleGenerator(ErsiliaBase):
             Number of samples to generate.
         file_name : str
             File name to save the examples.
-        simple : bool
-            Whether to generate simple examples.
 
         Returns
         -------
         list or None
             List of example data or None if saved to file.
         """
-        if not self._force_simple:
-            simple = simple
-        else:
-            simple = True
+        simple = True
         if file_name is None:
             data = [v for v in self.IO.example_fixed(n_samples)]
             if simple:
@@ -461,7 +448,7 @@ class ExampleGenerator(ErsiliaBase):
             else:
                 return False
 
-    def example(self, n_samples, file_name, simple, try_predefined, deterministic):
+    def example(self, n_samples, file_name, mode):
         """
         Generate example data.
 
@@ -471,16 +458,22 @@ class ExampleGenerator(ErsiliaBase):
             Number of samples to generate.
         file_name : str
             File name to save the examples.
-        simple : bool
-            Whether to generate simple examples.
-        try_predefined : bool
-            Whether to try predefined examples first.
+        mode : str
+            Mode for generating examples. Can be "predefined", "deterministic", or "random".
 
         Returns
         -------
         list or str
             List of example data or file content if saved to file.
         """
+        if mode.lower() == "predefined":
+            try_predefined = True
+        else:
+            try_predefined = False
+        if mode.lower() == "deterministic":
+            deterministic = True
+        else:
+            deterministic = False
         predefined_available = False
         if try_predefined is True and file_name is not None:
             self.logger.debug("Trying with predefined input")
@@ -495,19 +488,14 @@ class ExampleGenerator(ErsiliaBase):
                 fg="green",
             )
             self.logger.debug("Sampling input not randomly but in deterministic manner")
-            return self.fixed_example(
-                n_samples=n_samples, file_name=file_name, simple=simple
-            )
+            return self.fixed_example(n_samples=n_samples, file_name=file_name)
         else:
             if try_predefined and not predefined_available:
-                secho(
-                    "No predefined examples found for the model. Generating random examples.",
-                    fg="yellow",
+                self.logger.info(
+                    "No predefined examples found for the model. Generating random examples."
                 )
             self.logger.debug("Randomly sampling input")
-            return self.random_example(
-                n_samples=n_samples, file_name=file_name, simple=simple
-            )
+            return self.random_example(n_samples=n_samples, file_name=file_name)
 
     @throw_ersilia_exception()
     def check_model_id(self, model_id):
@@ -541,12 +529,3 @@ class ExampleGenerator(ErsiliaBase):
 
     def _flatten_single(self, datum):
         return [datum]
-
-    def _flatten_list(self, datum):
-        return [self._string_delimiter.join(datum)]
-
-    def _flatten_pair_of_lists(self, datum):
-        return [
-            self._string_delimiter.join(datum[0]),
-            self._string_delimiter.join(datum[1]),
-        ]

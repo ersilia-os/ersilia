@@ -134,8 +134,8 @@ class Api(ErsiliaBase):
         results = self._post_batch(url, input)
 
         combined_results = []
-        for compound, res in zip(input, results):
-            combined_results.append({"input": compound, "output": res})
+        for inp, res in zip(input, results):
+            combined_results.append({"input": inp, "output": res})
 
         result_json = json.dumps(combined_results, indent=4)
         return self.__result_returner(result_json, output)

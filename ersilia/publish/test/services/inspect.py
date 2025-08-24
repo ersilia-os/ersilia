@@ -517,37 +517,37 @@ class ModelInspector:
 
 
     def _run_performance_check(self, n, timeout):
-            cmd = (
-                f"ersilia serve {self.model} --disable-local-cache && "
-                f"ersilia example -n {n} --simple -f {Options.DEEP_INPUT.value} -d && "
-                f"ersilia run -i {Options.DEEP_INPUT.value} -o {Options.DEEP_OUTPUT.value}&& ersilia close"
-            )
-            if timeout:
-                return Result(
-                    False, f"{n} predictions executed in {-1.00} seconds. \n"
-                ), timeout   
-            start_time = time.time()
-            try:
-                process = subprocess.run(
-                    cmd,
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    timeout=TIMEOUT_SECONDS,
-                )
-            except subprocess.TimeoutExpired as e:
-                return Result(
-                False, f"{n} predictions executed in {-1.00} seconds. \n"
-            ), True
-            if process.returncode != 0:
-                return Result(
-                False, "Something happened when running the deep check!"
-            ), False
-            execution_time = time.time() - start_time
+        cmd = (
+            f"ersilia serve {self.model} --disable-local-cache && "
+            f"ersilia example -n {n} -f {Options.DEEP_INPUT.value} -m deterministic && "
+            f"ersilia run -i {Options.DEEP_INPUT.value} -o {Options.DEEP_OUTPUT.value}&& ersilia close"
+        )
+        if timeout:
             return Result(
-                True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
-            ), False
+                False, f"{n} predictions executed in {-1.00} seconds. \n"
+            ), timeout   
+        start_time = time.time()
+        try:
+            process = subprocess.run(
+                cmd,
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=TIMEOUT_SECONDS,
+            )
+        except subprocess.TimeoutExpired as e:
+            return Result(
+            False, f"{n} predictions executed in {-1.00} seconds. \n"
+        ), True
+        if process.returncode != 0:
+            return Result(
+            False, "Something happened when running the deep check!"
+        ), False
+        execution_time = time.time() - start_time
+        return Result(
+            True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
+        ), False
 
 
 class CheckStrategy:
