@@ -382,9 +382,9 @@ class BaseTabularFile(object):
                             self.matching
                         )
                     )
-                if len(r) > 2:
+                else:
                     raise Exception(
-                        "Too many columns in the input file. Maximum number of columns is 2 (input and key)."
+                        "Too many columns in the input file. Maximum number of columns is 1."
                     )
                 if i > self.sniff_line_limit:
                     self.logger.debug("Stopping sniffer for resolving column types")

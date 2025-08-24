@@ -32,25 +32,3 @@ def test_compound_singles():
     d_json = [d for d in adapter.adapt_one_by_one(inp_json)]
     d_py = [d for d in adapter.adapt_one_by_one(inp_py)]
     assert d_csv == d_json == d_py
-
-
-def test_compound_list():
-    adapter = GenericInputAdapter(input_type="compound", input_shape="list")
-    inp_csv = os.path.abspath(os.path.join(inputs_path, "compound_list.csv"))
-    inp_json = os.path.abspath(os.path.join(inputs_path, "compound_list.json"))
-    inp_py = compound_list_input
-    d_csv = [d for d in adapter.adapt_one_by_one(inp_csv)]
-    d_json = [d for d in adapter.adapt_one_by_one(inp_json)]
-    d_py = [d for d in adapter.adapt_one_by_one(inp_py)]
-    assert d_csv == d_json == d_py
-
-
-def test_compound_lists():
-    adapter = GenericInputAdapter(input_type="compound", input_shape="list")
-    inp_csv = os.path.abspath(os.path.join(inputs_path, "compound_lists.csv"))
-    inp_json = os.path.abspath(os.path.join(inputs_path, "compound_lists.json"))
-    inp_py = compound_lists_input
-    d_csv = [d for d in adapter.adapt_one_by_one(inp_csv)]
-    d_json = [d for d in adapter.adapt_one_by_one(inp_json)]
-    d_py = [d for d in adapter.adapt_one_by_one(inp_py)]
-    assert d_csv == d_json == d_py

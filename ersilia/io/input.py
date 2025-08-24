@@ -322,10 +322,8 @@ class ExampleGenerator(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.input_shape = self.IO.input_shape
         self._string_delimiter = self.IO.string_delimiter()
-        self._force_simple = True
         if type(self.input_shape) is InputShapeSingle:
             self._flatten = self._flatten_single
-            self._force_simple = False
         if type(self.input_shape) is InputShapeList:
             self._flatten = self._flatten_list
         if type(self.input_shape) is InputShapePairOfLists:
@@ -342,7 +340,7 @@ class ExampleGenerator(ErsiliaBase):
         """
         return self.IO.test()
 
-    def random_example(self, n_samples, file_name, simple):
+    def random_example(self, n_samples, file_name):
         """
         Generate random example data.
 
@@ -352,18 +350,13 @@ class ExampleGenerator(ErsiliaBase):
             Number of samples to generate.
         file_name : str
             File name to save the examples.
-        simple : bool
-            Whether to generate simple examples.
 
         Returns
         -------
         list or None
             List of example data or None if saved to file.
         """
-        if not self._force_simple:
-            simple = simple
-        else:
-            simple = True
+        simple = True
         if file_name is None:
             data = [v for v in self.IO.example(n_samples)]
             if simple:
@@ -390,7 +383,7 @@ class ExampleGenerator(ErsiliaBase):
                         for v in self.IO.example(n_samples):
                             writer.writerow([v["key"], v["input"], v["text"]])
 
-    def fixed_example(self, n_samples, file_name, simple):
+    def fixed_example(self, n_samples, file_name):
         """
         Generate deterministic example data. Samples same types of examples for each any sampling.
 
@@ -400,18 +393,13 @@ class ExampleGenerator(ErsiliaBase):
             Number of samples to generate.
         file_name : str
             File name to save the examples.
-        simple : bool
-            Whether to generate simple examples.
 
         Returns
         -------
         list or None
             List of example data or None if saved to file.
         """
-        if not self._force_simple:
-            simple = simple
-        else:
-            simple = True
+        simple = True
         if file_name is None:
             data = [v for v in self.IO.example_fixed(n_samples)]
             if simple:
@@ -461,7 +449,7 @@ class ExampleGenerator(ErsiliaBase):
             else:
                 return False
 
-    def example(self, n_samples, file_name, simple, try_predefined, deterministic):
+    def example(self, n_samples, file_name, try_predefined, deterministic):
         """
         Generate example data.
 
@@ -471,8 +459,6 @@ class ExampleGenerator(ErsiliaBase):
             Number of samples to generate.
         file_name : str
             File name to save the examples.
-        simple : bool
-            Whether to generate simple examples.
         try_predefined : bool
             Whether to try predefined examples first.
 
@@ -495,9 +481,7 @@ class ExampleGenerator(ErsiliaBase):
                 fg="green",
             )
             self.logger.debug("Sampling input not randomly but in deterministic manner")
-            return self.fixed_example(
-                n_samples=n_samples, file_name=file_name, simple=simple
-            )
+            return self.fixed_example(n_samples=n_samples, file_name=file_name)
         else:
             if try_predefined and not predefined_available:
                 secho(
@@ -505,9 +489,7 @@ class ExampleGenerator(ErsiliaBase):
                     fg="yellow",
                 )
             self.logger.debug("Randomly sampling input")
-            return self.random_example(
-                n_samples=n_samples, file_name=file_name, simple=simple
-            )
+            return self.random_example(n_samples=n_samples, file_name=file_name)
 
     @throw_ersilia_exception()
     def check_model_id(self, model_id):
