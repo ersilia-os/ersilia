@@ -277,8 +277,8 @@ class RunRule(CommandRule):
             fg="yellow",
             bold=True,
         )
-        self.check_service.original_input_list = (
-            self.check_service._get_original_input_list(inp_type, input_data)
+        self.check_service.original_data_list = (
+            self.check_service._get_original_data_list(inp_type, input_data)
         )
         res = self.check_service.validate_file_content(output_files, inp_type)
         if res[-1] == str(STATUS_CONFIGS.PASSED):
