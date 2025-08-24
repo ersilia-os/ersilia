@@ -7,6 +7,7 @@ import requests
 import subprocess
 import click
 import traceback
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from ersilia.default import EOS_PLAYGROUND
@@ -143,7 +144,8 @@ def get_commands_all(model_id, config):
             f"{cmd.__name__}: Model id not required{flag_description}",
         )
 
-    tmp_file = "tmp_example.csv"
+    tmp_dir = tempfile.mktemp(prefix="ersilia-")
+    tmp_file = os.path.join(tmp_dir, "example.csv")
 
     data = {
         "fetch": build_command(
@@ -159,8 +161,6 @@ def get_commands_all(model_id, config):
         ),
         "test": build_command(test_cmd, flag_key="test", model_id=model_id),
     }
-
-    os.remove(tmp_file)
 
     return data
 
