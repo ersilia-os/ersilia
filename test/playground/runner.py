@@ -64,6 +64,3 @@ class NoxRunner:
 
     def test_serve_multiple_models(self):
         self.add_session("test_serve_multiple_models")
-
-    def test_conventional_run(self):
-        self.add_session("test_conventional_run")

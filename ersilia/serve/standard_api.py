@@ -53,9 +53,7 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def __init__(self, model_id, url, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-        self.logger.info(
-            "You are running the app with a standard runner. Beware that this runner does not do as many checks on the input as the conventional runner: use it at your own risk."
-        )
+        self.logger.info("You are running the app with a standard runner.")
         self.model_id = model_id
         # TODO WHY? Why can't we init with a cleaner url?
         if url[-1] == "/":

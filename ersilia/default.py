@@ -52,11 +52,9 @@ EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME = "example_standard_output.csv"
 
 PREDEFINED_EXAMPLE_INPUT_FILES = [
     "model/framework/examples/run_input.csv",
-    "model/framework/examples/input.csv",
 ]
 
 PREDEFINED_EXAMPLE_OUTPUT_FILES = [
-    "model/framework/examples/output.csv",
     "model/framework/examples/run_output.csv",
 ]
 

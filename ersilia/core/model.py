@@ -754,8 +754,6 @@ class ErsiliaModel(ErsiliaBase):
         Run the model with the given input and output.
 
         This method executes the model using the provided input and output parameters.
-        It first tries to run the model using the standard API, and if that fails, it falls back to
-        the conventional run method. It also tracks the run if the track_run flag is set.
 
         Parameters
         ----------
