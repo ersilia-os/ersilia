@@ -155,7 +155,7 @@ def get_commands_all(model_id, config):
         "serve": build_command(serve_cmd, flag_key="serve", model_id=model_id),
         "run": build_command(run_cmd, flag_key="run"),
         "catalog": build_command(catalog_cmd, flag_key="catalog"),
-        "example": build_command(example_cmd, extra_args={"file_name": tmp_file}, flag_key="example"),
+        "example": build_command(example_cmd, extra_args=["--file_name", tmp_file], flag_key="example"),
         "close": build_command(close_cmd),
         "delete": build_command(
             delete_cmd, flag_key="delete", model_id=model_id
