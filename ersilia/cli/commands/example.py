@@ -20,9 +20,15 @@ def example_cmd():
     @click.argument("model", required=False, default=None, type=click.STRING)
     @click.option("--n_samples", "-n", default=5, type=click.INT)
     @click.option("--file_name", "-f", default=None, type=click.STRING)
-    @click.option("--random/--predefined", "-r/-p", default=True)
-    @click.option("--deterministic", "-d", default=False, is_flag=True)
-    def example(model, n_samples, file_name, random, deterministic):
+    @click.option(
+        "--mode",
+        "-m",
+        type=click.Choice(["random", "predefined", "deterministic"], case_sensitive=False),
+        default="random",
+        show_default=True,
+        help="Choose how examples are generated (random, predefined or deterministic)."
+    )
+    def example(model, n_samples, file_name, mode):
         if model is not None:
             model_id = ModelBase(model).model_id
         else:
@@ -41,8 +47,7 @@ def example_cmd():
                     eg.example(
                         n_samples,
                         file_name,
-                        try_predefined=not random,
-                        deterministic=deterministic,
+                        mode=mode,
                     ),
                     indent=4,
                 )
@@ -51,8 +56,7 @@ def example_cmd():
             eg.example(
                 n_samples,
                 file_name,
-                try_predefined=not random,
-                deterministic=deterministic,
+                mode=mode,
             )
 
     return example

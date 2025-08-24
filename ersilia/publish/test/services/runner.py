@@ -190,7 +190,7 @@ class RunnerService:
         n_samples: int,
         file_name: str = None,
         simple: bool = True,
-        try_predefined: bool = False,
+        mode: str = "random",
     ):
         """
         Generate example input samples for the model.
@@ -203,8 +203,8 @@ class RunnerService:
             Name of the file to save the samples.
         simple : bool, optional
             Flag indicating whether to generate simple samples.
-        try_predefined : bool, optional
-            Flag indicating whether to try predefined samples.
+        mode : str, optional
+            Mode for generating samples. Can be "predefined", "deterministic", or "random" (default = "random").
 
         Returns
         -------
@@ -215,7 +215,7 @@ class RunnerService:
             n_samples=n_samples,
             file_name=file_name,
             simple=simple,
-            try_predefined=try_predefined,
+            mode=mode,
         )
         return examples
 

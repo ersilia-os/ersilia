@@ -452,7 +452,7 @@ class ExampleGenerator(ErsiliaBase):
             else:
                 return False
 
-    def example(self, n_samples, file_name, try_predefined, deterministic):
+    def example(self, n_samples, file_name, mode):
         """
         Generate example data.
 
@@ -462,14 +462,22 @@ class ExampleGenerator(ErsiliaBase):
             Number of samples to generate.
         file_name : str
             File name to save the examples.
-        try_predefined : bool
-            Whether to try predefined examples first.
+        mode : str
+            Mode for generating examples. Can be "predefined", "deterministic", or "random".
 
         Returns
         -------
         list or str
             List of example data or file content if saved to file.
         """
+        if mode.lower() == "predefined":
+            try_predefined = True
+        else:
+            try_predefined = False
+        if mode.lower() == "deterministic":
+            deterministic = True
+        else:
+            deterministic = False
         predefined_available = False
         if try_predefined is True and file_name is not None:
             self.logger.debug("Trying with predefined input")
@@ -487,9 +495,8 @@ class ExampleGenerator(ErsiliaBase):
             return self.fixed_example(n_samples=n_samples, file_name=file_name)
         else:
             if try_predefined and not predefined_available:
-                secho(
-                    "No predefined examples found for the model. Generating random examples.",
-                    fg="yellow",
+                self.logger.info(
+                    "No predefined examples found for the model. Generating random examples."
                 )
             self.logger.debug("Randomly sampling input")
             return self.random_example(n_samples=n_samples, file_name=file_name)
