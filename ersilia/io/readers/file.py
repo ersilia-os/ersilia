@@ -456,6 +456,21 @@ class BaseTabularFile(object):
             assert len(key) == len(input)
         self.matching = {"input": input, "key": key}
 
+    def has_header(self):
+        """
+        Check if the file has a header.
+        Returns
+        -------
+        bool
+            True always.
+        """
+        if self._has_header is not None:
+            self.logger.debug("Has header is not None")
+            return self._has_header
+        self.resolve_columns()
+        self._has_header = True
+        return self._has_header
+
     def read_input_columns(self):
         """
         Read the input columns from the file.
@@ -467,6 +482,7 @@ class BaseTabularFile(object):
         """
         if self._data is not None:
             return self._data
+        self.has_header()
         self.logger.debug("Schema {0}".format(self.matching))
         input = self.matching["input"]
         assert input is not None

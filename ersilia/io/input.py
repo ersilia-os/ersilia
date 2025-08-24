@@ -277,6 +277,9 @@ class GenericInputAdapter(object):
             Adapted data.
         """
         data = self.adapter.adapt(inp)
+        print("HERE")
+        print(data)
+        print("HERE DONE")
         for d in data:
             yield d
 
