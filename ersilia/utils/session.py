@@ -126,6 +126,28 @@ def remove_session_dir(session_name):
                     shutil.rmtree(item_path)
             except Exception as e:
                 raise ValueError(f"Error deleting {item_path}: {e}")
+    try:
+        shutil.rmtree(session_dir)
+    except Exception as e:
+        raise ValueError(f"Error deleting {session_dir}: {e}")
+
+
+def prune_empty_session_dirs():
+    """
+    Prune session directories that seem to be empty, meaning they don't contain any serving data or logs.
+    """
+    for session_name in os.listdir(SESSIONS_DIR):
+        session_dir = os.path.join(SESSIONS_DIR, session_name)
+        do_prune = True
+        for fn in os.listdir(session_dir):
+            if fn.endswith(".pid"):
+                do_prune = False
+                break
+            if fn.endswith(".log"):
+                do_prune = False
+                break
+        if do_prune:
+            remove_session_dir(session_name)
 
 
 def determine_orphaned_session():
@@ -158,8 +180,8 @@ def remove_orphaned_sessions():
     for session in orphaned_sessions:
         try:
             remove_session_dir(session)
-        except PermissionError:  # TODO Is there a better way to handle this?
-            pass  # TODO we should at least log this somehow
+        except PermissionError:
+            pass
 
 
 def get_session_id():

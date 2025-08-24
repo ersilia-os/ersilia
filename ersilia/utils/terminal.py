@@ -1,15 +1,10 @@
-import hashlib
 import json
 import os
 import re
 import shutil
 import subprocess
 import sys
-import time
-import uuid
-from pathlib import Path
-
-import psutil
+from collections import namedtuple
 
 try:
     from inputimeout import TimeoutOccurred, inputimeout
@@ -17,9 +12,7 @@ except:
     inputimeout = None
     TimeoutOccurred = None
 
-from collections import namedtuple
-
-from ..default import STATE_DIRECTORY, VERBOSE_FILE
+from ..default import VERBOSE_FILE
 from ..utils.logging import make_temp_dir
 from ..utils.session import get_session_dir
 
@@ -177,149 +170,3 @@ def yes_no_input(prompt, default_answer, timeout=5):
 def is_quoted_list(s: str) -> bool:
     pattern = r"^(['\"])\[.*\]\1$"
     return bool(re.match(pattern, s))
-
-
-def get_terminal_session_id(state_dir=STATE_DIRECTORY):
-    try:
-        tty = os.ttyname(0)
-    except Exception:
-        tty = "notty"
-
-    try:
-        sid = os.getsid(0)
-    except Exception:
-        sid = os.getsid(os.getpid())
-
-    key_plain = f"{tty}|sid:{sid}"
-    key = hashlib.sha1(key_plain.encode()).hexdigest()
-
-    if state_dir is None:
-        state_root = os.environ.get("XDG_STATE_HOME") or str(
-            Path.home() / ".local" / "state"
-        )
-        state_dir = os.path.join(state_root, "terminal-session-ids")
-    os.makedirs(state_dir, exist_ok=True)
-
-    index_path = os.path.join(state_dir, "index.json")
-    try:
-        with open(index_path, "r", encoding="utf-8") as f:
-            index = json.load(f)
-    except FileNotFoundError:
-        index = {}
-
-    entry = index.get(key)
-    if entry:
-        return entry["id"]
-
-    term_id = str(uuid.uuid4())
-    index[key] = {
-        "id": term_id,
-        "tty": tty,
-        "sid": sid,
-        "created": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-    }
-    tmp = index_path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
-        json.dump(index, f, indent=2)
-    os.replace(tmp, index_path)
-
-    return term_id
-
-
-def is_terminal_session_alive(term_id, state_dir=STATE_DIRECTORY):
-    if state_dir is None:
-        state_root = os.environ.get("XDG_STATE_HOME") or str(
-            Path.home() / ".local" / "state"
-        )
-        state_dir = os.path.join(state_root, "terminal-session-ids")
-
-    index_path = os.path.join(state_dir, "index.json")
-    try:
-        with open(index_path, "r", encoding="utf-8") as f:
-            index = json.load(f)
-    except FileNotFoundError:
-        return False
-
-    entry = None
-    for _, val in index.items():
-        if val["id"] == term_id:
-            entry = val
-            break
-
-    if not entry:
-        return False
-
-    tty, sid = entry["tty"], entry["sid"]
-
-    if not os.path.exists(tty):
-        return False
-
-    for proc in psutil.process_iter(attrs=["pid"]):
-        try:
-            if os.getsid(proc.info["pid"]) == sid:
-                return True
-        except Exception:
-            continue
-    return False
-
-
-def prune_dead_terminal_index(state_dir=STATE_DIRECTORY):
-    if state_dir is None:
-        state_root = os.environ.get("XDG_STATE_HOME") or str(
-            Path.home() / ".local" / "state"
-        )
-        state_dir = os.path.join(state_root, "terminal-session-ids")
-
-    index_path = os.path.join(state_dir, "index.json")
-    try:
-        with open(index_path, "r", encoding="utf-8") as f:
-            index = json.load(f)
-    except FileNotFoundError:
-        return False
-
-    alive = {}
-    for key, entry in index.items():
-        tty, sid = entry["tty"], entry["sid"]
-
-        if os.path.exists(tty):
-            for proc in psutil.process_iter(attrs=["pid"]):
-                try:
-                    if os.getsid(proc.info["pid"]) == sid:
-                        alive[key] = entry
-                        break
-                except Exception:
-                    continue
-
-    index_path = os.path.join(state_dir, "index.json")
-    with open(index_path, "w") as f:
-        json.dump(alive, f, indent=2)
-
-
-def get_alive_sessions(state_dir=STATE_DIRECTORY):
-    if state_dir is None:
-        state_root = os.environ.get("XDG_STATE_HOME") or str(
-            Path.home() / ".local" / "state"
-        )
-        state_dir = os.path.join(state_root, "terminal-session-ids")
-
-    index_path = os.path.join(state_dir, "index.json")
-    try:
-        with open(index_path, "r", encoding="utf-8") as f:
-            index = json.load(f)
-    except FileNotFoundError:
-        return []
-
-    alive = {}
-    for key, entry in index.items():
-        tty, sid = entry["tty"], entry["sid"]
-
-        if os.path.exists(tty):
-            for proc in psutil.process_iter(attrs=["pid"]):
-                try:
-                    if os.getsid(proc.info["pid"]) == sid:
-                        alive[key] = entry
-                        break
-                except Exception:
-                    continue
-
-    return alive

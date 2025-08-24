@@ -110,9 +110,6 @@ LOGGING_FILE = "console.log"
 CURRENT_LOGGING_FILE = "current.log"
 SILENCE_FILE = ".silence.json"
 VERBOSE_FILE = ".verbose.json"
-STATE_DIRECTORY = os.path.join(EOS, "state")
-if not os.path.exists(STATE_DIRECTORY):
-    os.makedirs(STATE_DIRECTORY, exist_ok=True)
 
 H5_EXTENSION = ".h5"
 H5_DATA_FILE = "data.h5"
