@@ -126,7 +126,7 @@ def fetch_cmd():
             ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
             fg="blue",
         )
-        
+
         if any(from_dir, from_github, from_s3, from_hosted):
             from_dockerhub = False
 
