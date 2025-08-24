@@ -183,7 +183,9 @@ class ErsiliaModel(ErsiliaBase):
                 )
                 asyncio.run(mf.fetch(self.model_id))
             else:
-                raise Exception("Model is not fetched, please fetch the model before serving it.")
+                raise Exception(
+                    "Model is not fetched, please fetch the model before serving it."
+                )
 
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json

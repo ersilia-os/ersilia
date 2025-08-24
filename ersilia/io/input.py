@@ -3,7 +3,6 @@ import importlib
 import itertools
 import json
 import os
-import shutil
 
 from click import secho
 

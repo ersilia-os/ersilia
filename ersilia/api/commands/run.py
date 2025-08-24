@@ -1,5 +1,4 @@
 import os
-import sys
 import tempfile
 import types
 
@@ -8,6 +7,7 @@ import pandas as pd
 from ... import ErsiliaModel
 from ...core.session import Session
 from ..echo import echo
+
 
 def run(model_id, input_list, batch_size=100):
     """
@@ -72,7 +72,9 @@ def run(model_id, input_list, batch_size=100):
     result = mdl.run(input=input_path, output=output_path, batch_size=batch_size)
     iter_values = []
     if isinstance(result, types.GeneratorType):
-        for result in mdl.run(input=input_list, output=output_path, batch_size=batch_size):
+        for result in mdl.run(
+            input=input_list, output=output_path, batch_size=batch_size
+        ):
             if result is not None:
                 iter_values.append(result)
 

@@ -1,4 +1,3 @@
-from .create_api import Model
-from .create_api import Catalog
+from .create_api import Catalog, Model
 
 __all__ = ["Catalog", "Model"]

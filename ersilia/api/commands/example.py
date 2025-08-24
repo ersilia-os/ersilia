@@ -3,7 +3,6 @@ import tempfile
 
 import pandas as pd
 
-from ... import ModelBase
 from ...core.session import Session
 from ...io.input import ExampleGenerator
 from ..echo import echo
@@ -36,11 +35,7 @@ def example(n_samples, mode):
 
     output_file = tempfile.NamedTemporaryFile(mode="w+", suffix=".csv", delete=False)
     eg = ExampleGenerator(model_id=model_id)
-    eg.example(
-        n_samples,
-        file_name=output_file.name,
-        mode=mode
-    )
+    eg.example(n_samples, file_name=output_file.name, mode=mode)
     df = pd.read_csv(output_file.name)
     try:
         output_file.close()
