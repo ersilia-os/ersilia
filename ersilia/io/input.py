@@ -13,7 +13,7 @@ from ..hub.content.card import ModelCard
 from ..utils.exceptions_utils.exceptions import NullModelIdentifierError
 from .readers.file import JsonFileReader, TabularFileReader
 from .readers.pyinput import PyInputReader
-from .shape import InputShape, InputShapeList, InputShapePairOfLists, InputShapeSingle
+from .shape import InputShape, InputShapeSingle
 
 
 class BaseIOGetter(ErsiliaBase):
@@ -327,10 +327,6 @@ class ExampleGenerator(ErsiliaBase):
         self._string_delimiter = self.IO.string_delimiter()
         if type(self.input_shape) is InputShapeSingle:
             self._flatten = self._flatten_single
-        if type(self.input_shape) is InputShapeList:
-            self._flatten = self._flatten_list
-        if type(self.input_shape) is InputShapePairOfLists:
-            self._flatten = self._flatten_pair_of_lists
 
     def test(self):
         """
@@ -533,12 +529,3 @@ class ExampleGenerator(ErsiliaBase):
 
     def _flatten_single(self, datum):
         return [datum]
-
-    def _flatten_list(self, datum):
-        return [self._string_delimiter.join(datum)]
-
-    def _flatten_pair_of_lists(self, datum):
-        return [
-            self._string_delimiter.join(datum[0]),
-            self._string_delimiter.join(datum[1]),
-        ]

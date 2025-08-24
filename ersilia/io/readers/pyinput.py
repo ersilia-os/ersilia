@@ -1,4 +1,4 @@
-from ..shape import InputShapeList, InputShapePairOfLists, InputShapeSingle
+from ..shape import InputShapeSingle
 
 
 class PyInputReader(object):
@@ -19,12 +19,6 @@ class PyInputReader(object):
         if type(self.input_shape) is InputShapeSingle:
             self.expected_number = 1
             self.entity_is_list = False
-        if type(self.input_shape) is InputShapeList:
-            self.expected_number = 1
-            self.entity_is_list = True
-        if type(self.input_shape) is InputShapePairOfLists:
-            self.expected_number = 2
-            self.entity_is_list = True
         self._data = self._extract_datum(input)
 
     def _undict(self, inp):

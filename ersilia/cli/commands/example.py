@@ -23,10 +23,12 @@ def example_cmd():
     @click.option(
         "--mode",
         "-m",
-        type=click.Choice(["random", "predefined", "deterministic"], case_sensitive=False),
+        type=click.Choice(
+            ["random", "predefined", "deterministic"], case_sensitive=False
+        ),
         default="random",
         show_default=True,
-        help="Choose how examples are generated (random, predefined or deterministic)."
+        help="Choose how examples are generated (random, predefined or deterministic).",
     )
     def example(model, n_samples, file_name, mode):
         if model is not None:

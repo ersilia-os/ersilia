@@ -5,7 +5,7 @@ import random
 from ... import logger
 from ...utils.identifiers.arbitrary import ArbitraryIdentifier
 from ...utils.identifiers.compound import CompoundIdentifier
-from ..shape import InputShapeList, InputShapePairOfLists, InputShapeSingle
+from ..shape import InputShapeSingle
 from . import EXAMPLES_FOLDER
 from .examples import compound as test_examples
 
@@ -50,18 +50,6 @@ class IO(object):
             self._example_fixed = self._example_single_fixed
             self._parser = self._parse_single
             self._test = test_examples.input_shape_single
-        if type(self.input_shape) is InputShapeList:
-            self.logger.debug("InputShapeList shape: {0}".format(self.input_shape.name))
-            self._example = self._example_list
-            self._parser = self._parse_list
-            self._test = test_examples.input_shape_list
-        if type(self.input_shape) is InputShapePairOfLists:
-            self.logger.debug(
-                "InputShapePairOfLists shape: {0}".format(self.input_shape.name)
-            )
-            self._example = self._example_pair_of_lists
-            self._parser = self._parse_pair_of_lists
-            self._test = test_examples.input_shape_pair_of_lists
 
     def setup(self):
         """
@@ -235,36 +223,6 @@ class IO(object):
         for d in D:
             yield d
 
-    def _example_list(self, n_samples):
-        D = []
-        for _ in range(n_samples):
-            D_ = self._sample_example_singlets(10)
-            input = [x["input"] for x in D_]
-            text = self.string_delimiter().join(input)
-            key = self.arbitrary_identifier.encode(text)
-            D += [{"key": key, "input": input, "text": text}]
-        for d in D:
-            yield d
-
-    def _example_pair_of_lists(self, n_samples):
-        D = []
-        for _ in range(n_samples):
-            D_0 = self._sample_example_singlets(10)
-            D_1 = self._sample_example_singlets(10)
-            input_0 = [x["input"] for x in D_0]
-            input_1 = [x["input"] for x in D_1]
-            input = [input_0, input_1]
-            text = self.column_delimiter().join(
-                [
-                    self.string_delimiter().join(input_0),
-                    self.string_delimiter().join(input_1),
-                ]
-            )
-            key = self.arbitrary_identifier.encode(text)
-            D += [{"key": key, "input": input, "text": text}]
-        for d in D:
-            yield d
-
     def _parse_dict(self, datum):
         if "key" in datum:
             key = datum["key"]
@@ -298,19 +256,3 @@ class IO(object):
 
     def _parse_single(self, datum):
         return self._parse_text(datum)
-
-    def _parse_list(self, datum):
-        inp = datum
-        text = self.string_delimiter().join(inp)
-        key = self.arbitrary_identifier.encode(text)
-        result = {"key": key, "input": inp, "text": text}
-        return result
-
-    def _parse_pair_of_lists(self, datum):
-        inp = datum
-        text = self.column_delimiter().join(
-            [self.string_delimiter().join(inp[0]), self.string_delimiter().join(inp[1])]
-        )
-        key = self.arbitrary_identifier.encode(text)
-        result = {"key": key, "input": inp, "text": text}
-        return result
