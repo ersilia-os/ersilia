@@ -100,11 +100,11 @@ def get_random_samples(config, filename="inp-000.csv"):
         lines = f.readlines()
 
     data = [line.strip().split(",") for line in lines[1:]]
-    smiles_list = [row[1] for row in data if len(row) > 1]
-    smiles_list = smiles_list[500:]
+    input_list = [row[1] for row in data if len(row) > 1]
+    input_list = input_list[500:]
     
-    valid_smiles = [smile for smile in smiles_list]
-    sampled = valid_smiles[:num_samples]
+    valid_input = [inp for inp in input_list]
+    sampled = valid_input[:num_samples]
 
     with open(input_file, "w", encoding="utf-8") as f:
         f.write("input\n")

@@ -942,7 +942,7 @@ class ErsiliaModel(ErsiliaBase):
         Returns
         -------
         Any
-            The generated example data(path, list of smiles etc...).
+            The generated example data(path, list of inputs etc...).
         """
         eg = ExampleGenerator(model_id=self.model_id, config_json=self.config_json)
         return eg.example(n_samples=n_samples, file_name=file_name, simple=simple)

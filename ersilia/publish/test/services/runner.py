@@ -451,8 +451,8 @@ class RunnerService:
                         )
                     )
                 ]
-            self.checkup_service.original_smiles_list = (
-                self.checkup_service._get_original_smiles_list("csv", input_file_path)
+            self.checkup_service.original_data_list = (
+                self.checkup_service._get_original_data_list("csv", input_file_path)
             )
             check_status = self.checkup_service._check_csv(
                 output_path, input_type="csv"

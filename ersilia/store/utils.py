@@ -463,7 +463,7 @@ class FileManager:
     def merge_shards(
         shards,
         header,
-        smiles_list,
+        input_list,
         output_path,
         downloader,
         click_iface,
@@ -471,7 +471,7 @@ class FileManager:
     ):
         """
         Download, decompress, and concatenate multiple CSV shards into a single file.
-        If `smiles_list` is non-empty, reorder the rows to match its order;
+        If `input_list` is non-empty, reorder the rows to match its order;
         otherwise, just merge them sequentially.
 
         """
@@ -494,7 +494,7 @@ class FileManager:
             f"⬇ Total download size: {total_size / 1024:.1f} KB", fg="blue"
         )
 
-        if not smiles_list:
+        if not input_list:
             click_iface.echo(
                 "⬇ No reorder list provided; merging sequentially", fg="blue"
             )
@@ -552,7 +552,7 @@ class FileManager:
         col_idx = header.index("input")
 
         normalized = []
-        for item in smiles_list:
+        for item in input_list:
             if isinstance(item, str):
                 normalized.append(item)
             elif isinstance(item, dict) and "input" in item:

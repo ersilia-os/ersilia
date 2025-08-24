@@ -17,7 +17,7 @@ def validate_input_output_types(input, output):
     Parameters
     ----------
     input : list of str or str
-        A list of SMILES strings or a filepath pointing to a CSV file (.csv) containing SMILES with 'input' header
+        A list of input strings or a filepath pointing to a CSV file (.csv) containing inputs with 'input' header
     output : str or None
         Optional filepath for saving the model output. If provided, must end with one of: .csv, .json, .h5
 
@@ -31,7 +31,7 @@ def validate_input_output_types(input, output):
         or (isinstance(input, str) and input.lower().endswith(".csv"))
     ):
         echo(
-            "Input format invalid. Please provide a list of SMILEs or a .csv path.",
+            "Input format invalid. Please provide a list of inputs or a .csv path.",
             fg="red",
             bold=True,
         )
@@ -49,7 +49,7 @@ def validate_input_output_types(input, output):
 
 def run(model_id, input, output=None, batch_size=100):
     """
-    Runs the current model on SMILES inouts, optionall saving the results to a file and always returning
+    Runs the current model on input strings, optionall saving the results to a file and always returning
     a DataFarme.
 
     Parameters
@@ -57,12 +57,12 @@ def run(model_id, input, output=None, batch_size=100):
     model_id : str
         Identifier of the Ersilia model to invoke.
     input: list of str or str
-        A list of SMILES strings or a filepath to a CSV file (.csv) containing SMILES
+        A list of input strings or a filepath to a CSV file (.csv) containing inputs
     output: str, optional
         Filepath to save the model predictions, Supported extensions: .csv, .json, .h5
         If None, a temporary CSV file will be generated and cleaned up after loading.
     batch_size: int, default=100
-        Number of SMILES to process per batch
+        Number of input rows to process per batch
 
     Returns
     -------

@@ -76,7 +76,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.input_shape = self._read_field_from_metadata(metadata, "Input Shape")
         self.logger.debug("This is the input type: {0}".format(self.input_type))
         self.encoder = self.get_identifier_object_by_input_type()
-        # TODO This whole validate_smiles thing can go away since we already handle this in the encoder
+        # TODO This whole validate_data thing can go away since we already handle this in the encoder
         self.generic_adapter = GenericOutputAdapter(model_id=self.model_id)
 
         self.header = self.get_expected_output_header()
@@ -328,9 +328,9 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The serialized JSON data.
         """
-        smiles_list = self.get_list_from_csv(input_data)
-        smiles_list = [smiles for smiles in smiles_list]
-        json_data = await self.encoder.encode_batch(smiles_list)
+        data_list = self.get_list_from_csv(input_data)
+        data_list = [data for data in data_list]
+        json_data = await self.encoder.encode_batch(data_list)
         return json_data
 
     def get_list_from_csv(self, input_data):
@@ -347,15 +347,15 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The list of data from the CSV file.
         """
-        smiles_list = []
+        data_list = []
         with open(input_data, mode="r") as file:
             reader = csv.DictReader(file)
             header = reader.fieldnames
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
-                smiles = row.get(key)
-                smiles_list.append(smiles)
-        return smiles_list
+                data = row.get(key)
+                data_list.append(data)
+        return data_list
 
     def serialize_to_json(self, input_data):
         """
@@ -364,7 +364,7 @@ class StandardCSVRunApi(ErsiliaBase):
             Parameters
         ----------
             input_data : str | list
-                Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+                Input data which can be a file path, an input string, or a list of input strings.
 
             Returns
             -------
@@ -391,7 +391,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 return None
         else:
             raise ValueError(
-                "Input must be either a file path (string), a SMILES string, or a list of SMILES strings."
+                "Input must be either a file path (string), a input string, or a list of input strings."
             )
 
     def is_amenable(self, output):
@@ -458,7 +458,7 @@ class StandardCSVRunApi(ErsiliaBase):
         Parameters
         ----------
         input : str | list
-            Input data which can be a file path, a SMILES string, or a list of SMILES strings.
+            Input data which can be a file path, a input string, or a list of input strings.
         output : str
             Path to the output CSV file.
         batch_size : int
@@ -499,7 +499,7 @@ class StandardCSVRunApi(ErsiliaBase):
         matchs = self._same_row_count(input, results)
         if not matchs:
             raise Exception(
-                "Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad smiles!"
+                "Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad inputs!"
             )
         ft = time.perf_counter()
         self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")

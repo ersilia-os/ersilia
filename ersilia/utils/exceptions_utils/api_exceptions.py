@@ -25,7 +25,7 @@ class UnprocessableInputError(ErsiliaError):
             "No output file will be created.\n"
             "- Check your input data format and content\n"
             "- Ensure chemical structures/identifiers are valid\n"
-            "- Verify input matches the model's requirements(valid SMILES)"
+            "- Verify input matches the model's requirements"
         )
         super().__init__(self.message, self.hints)
 
