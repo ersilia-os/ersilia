@@ -2,7 +2,7 @@ from unittest.mock import patch, ANY
 import pytest
 import pandas as pd
 
-from ersilia.api.create_api import ErsiliaCatalog
+from ersilia.api import Catalog
 from ersilia.api.commands.catalog import catalog
 
 
@@ -19,7 +19,7 @@ def mock_catalog():
 
 
 def test_ersilia_catalog_hub_true(mock_catalog):
-    catalog_obj = ErsiliaCatalog()
+    catalog_obj = Catalog()
     result = catalog_obj.catalog(hub=True)
     mock_catalog.assert_called_once_with(
         hub=True,
@@ -30,7 +30,7 @@ def test_ersilia_catalog_hub_true(mock_catalog):
 
 
 def test_ersilia_catalog_hub_false(mock_catalog):
-    catalog_obj = ErsiliaCatalog()
+    catalog_obj = Catalog()
     result = catalog_obj.catalog(hub=False)
     mock_catalog.assert_called_once_with(
         hub=False,
@@ -41,7 +41,7 @@ def test_ersilia_catalog_hub_false(mock_catalog):
 
 
 def test_ersilia_catalog_default(mock_catalog):
-    catalog_obj = ErsiliaCatalog()
+    catalog_obj = Catalog()
     result = catalog_obj.catalog()
     mock_catalog.assert_called_once_with(
         hub=False,  # default
