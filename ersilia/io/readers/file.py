@@ -4,7 +4,6 @@ import json
 import os
 
 from ... import logger
-from ...default import HEADER_INDICATORS
 from ...utils.logging import make_temp_dir
 from ..shape import InputShape, InputShapeList, InputShapePairOfLists, InputShapeSingle
 
@@ -259,7 +258,6 @@ class BaseTabularFile(object):
         self._column_delimiter = self.get_delimiter()
         self.logger.debug("Expected number: {0}".format(self.expected_number))
         self.logger.debug("Entity is list: {0}".format(self.entity_is_list))
-        self.header_indicators = set(HEADER_INDICATORS)
 
     def _get_delimiter_by_extension(self):
         if self.path.endswith(".csv"):
@@ -458,29 +456,6 @@ class BaseTabularFile(object):
             assert len(key) == len(input)
         self.matching = {"input": input, "key": key}
 
-    def has_header(self):
-        """
-        Check if the file has a header.
-
-        Returns
-        -------
-        bool
-            True if the file has a header, False otherwise.
-        """
-        if self._has_header is not None:
-            self.logger.debug("Has header is not None")
-            return self._has_header
-        self.resolve_columns()
-        with open(self.path, "r") as f:
-            reader = csv.reader(f, delimiter=self._column_delimiter)
-            candidate_header = next(reader)
-            self.logger.debug("Candidate header is {0}".format(candidate_header))
-        self._has_header = False
-        for c in candidate_header:
-            if c.lower() in self.header_indicators:
-                self._has_header = True
-        return self._has_header
-
     def read_input_columns(self):
         """
         Read the input columns from the file.
@@ -492,18 +467,13 @@ class BaseTabularFile(object):
         """
         if self._data is not None:
             return self._data
-        header = self.has_header()
-        self.logger.debug("Has header {0}".format(header))
         self.logger.debug("Schema {0}".format(self.matching))
         input = self.matching["input"]
         assert input is not None
         with open(self.path, "r") as f:
             R = []
             reader = csv.reader(f, delimiter=self._column_delimiter)
-            if header:
-                h = next(reader)
-            else:
-                h = None
+            h = next(reader)
             if h is not None and len(h) == 1:
                 for l in reader:
                     l = self._column_delimiter.join(l)

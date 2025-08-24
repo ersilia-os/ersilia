@@ -247,50 +247,6 @@ class StandardCSVRunApi(ErsiliaBase):
             self.logger.error(f"Could not determine header from file {file}")
             return None
 
-    def serialize_to_json_three_columns(self, input_data):
-        """
-        Serialize data to JSON with three columns.
-
-        Parameters
-        ----------
-        input_data : str
-            The input data file path.
-
-        Returns
-        -------
-        list
-            The serialized JSON data.
-        """
-        json_data = []
-        with open(input_data, "r") as f:
-            reader = csv.reader(f)
-            next(reader)
-            for row in reader:
-                json_data += [{"key": row[0], "input": row[1], "text": row[2]}]
-        return json_data
-
-    def serialize_to_json_two_columns(self, input_data):
-        """
-        Serialize data to JSON with two columns.
-
-        Parameters
-        ----------
-        input_data : str
-            The input data file path.
-
-        Returns
-        -------
-        list
-            The serialized JSON data.
-        """
-        json_data = []
-        with open(input_data, "r") as f:
-            reader = csv.reader(f)
-            next(reader)
-            for row in reader:
-                json_data += [{"key": row[0], "input": row[1], "text": row[1]}]
-        return json_data
-
     def serialize_to_json_one_column(self, input_data):
         """
         Serialize data to JSON with one column.
@@ -378,17 +334,10 @@ class StandardCSVRunApi(ErsiliaBase):
             if len(h) == 1:
                 self.logger.debug("One column found in input")
                 return asyncio.run(self.async_serialize_to_json_one_column(input_data))
-            elif len(h) == 2:
-                self.logger.debug("Two columns found in input")
-                return self.serialize_to_json_two_columns(input_data=input_data)
-            elif len(h) == 3:
-                self.logger.debug("Three columns found in input")
-                return self.serialize_to_json_three_columns(input_data=input_data)
             else:
-                self.logger.info(
-                    "More than three columns found in input! This is not standard."
+                raise ValueError(
+                    "More than one column found in input! This is not standard."
                 )
-                return None
         else:
             raise ValueError(
                 "Input must be either a file path (string), a input string, or a list of input strings."

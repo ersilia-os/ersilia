@@ -1,5 +1,4 @@
 import json
-import os
 import sys
 import types
 
@@ -7,7 +6,6 @@ import click
 
 from ... import ErsiliaModel
 from ...core.session import Session
-from ...utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ...utils.terminal import is_quoted_list
 from .. import echo
 from . import ersilia_cli
@@ -95,27 +93,16 @@ def run_cmd():
             service_class=service_class,
             config_json=None,
         )
-        try:
-            print(output)
-            result = mdl.run(input=input, output=output, batch_size=batch_size)
-            print(f"Result: {result}")
-            iter_values = []
-            if isinstance(result, types.GeneratorType):
-                for result in mdl.run(
-                    input=input, output=output, batch_size=batch_size
-                ):
-                    if result is not None:
-                        iter_values.append(result)
-            echo(
-                f"✅ The output successfully generated in {output} file!",
-                fg="green",
-                bold=True,
-            )
-        except UnprocessableInputError as e:
-            echo(f"❌ Error: {e.message}", fg="red")
-            echo(f"💡 {e.hints}")
-            if output and os.path.exists(output):
-                os.remove(output)
-            return
+        result = mdl.run(input=input, output=output, batch_size=batch_size)
+        iter_values = []
+        if isinstance(result, types.GeneratorType):
+            for result in mdl.run(input=input, output=output, batch_size=batch_size):
+                if result is not None:
+                    iter_values.append(result)
+        echo(
+            f"✅ Output successfully written in {output} file!",
+            fg="green",
+            bold=False,
+        )
 
     return run

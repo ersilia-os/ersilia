@@ -795,17 +795,14 @@ class ErsiliaModel(ErsiliaBase):
             )
         self.logger.info("Starting runner")
         echo("Starting runner")
-        # TODO The logic should be in a try except else finally block
         self.logger.debug("Trying standard API")
         try:
             result, _ = self._standard_run(
                 input=input, output=output, batch_size=batch_size
             )
         except Exception as e:
-            self.logger.warning(
-                "Standard run did not work with exception {0}".format(e)
-            )
-            result = None
+            self.logger.error("Standard run did not work with exception {0}".format(e))
+            raise e
 
         if track_run:
             self.logger.debug("Collecting metrics")

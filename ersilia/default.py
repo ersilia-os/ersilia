@@ -118,12 +118,6 @@ H5_DATA_FILE = "data.h5"
 REDIS_SERVER = "redis://redis:6379"
 # Other
 FEATURE_MERGE_PATTERN = "---"
-HEADER_INDICATORS = [
-    "key",
-    "input",
-    "smiles",
-    "compound",
-]  # TODO This list can be expanded. It is simply to detect headers easily.
 
 # URLS
 REDIS_EXPIRATION = 3600 * 24 * 7
