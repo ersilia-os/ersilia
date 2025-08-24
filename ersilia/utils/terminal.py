@@ -1,9 +1,14 @@
 import json
 import os
 import re
+import psutil
 import shutil
 import subprocess
 import sys
+import hashlib
+import time
+import uuid
+from pathlib import Path
 
 try:
     from inputimeout import TimeoutOccurred, inputimeout
@@ -13,9 +18,10 @@ except:
 
 from collections import namedtuple
 
-from ..default import VERBOSE_FILE
 from ..utils.logging import make_temp_dir
 from ..utils.session import get_session_dir
+
+from ..default import VERBOSE_FILE, STATE_DIRECTORY
 
 
 def is_quiet():
@@ -171,3 +177,88 @@ def yes_no_input(prompt, default_answer, timeout=5):
 def is_quoted_list(s: str) -> bool:
     pattern = r"^(['\"])\[.*\]\1$"
     return bool(re.match(pattern, s))
+
+
+def get_terminal_session_id(state_dir=STATE_DIRECTORY):
+    try:
+        tty = os.ttyname(0)
+    except Exception:
+        tty = "notty"
+
+    try:
+        sid = os.getsid(0)
+    except Exception:
+        sid = os.getsid(os.getpid())
+
+    key_plain = f"{tty}|sid:{sid}"
+    key = hashlib.sha1(key_plain.encode()).hexdigest()  # compact stable key
+
+    # 2) Persist/lookup the ID
+    if state_dir is None:
+        # XDG-ish default, works on macOS/Linux. Falls back to ~/.local/state
+        state_root = os.environ.get("XDG_STATE_HOME") or str(Path.home() / ".local" / "state")
+        state_dir = os.path.join(state_root, "terminal-session-ids")
+    os.makedirs(state_dir, exist_ok=True)
+
+    index_path = os.path.join(state_dir, "index.json")
+    try:
+        with open(index_path, "r", encoding="utf-8") as f:
+            index = json.load(f)
+    except FileNotFoundError:
+        index = {}
+
+    entry = index.get(key)
+    if entry:
+        return entry["id"]
+
+    # New session => mint a new ID and record minimal metadata
+    term_id = str(uuid.uuid4())
+    index[key] = {
+        "id": term_id,
+        "tty": tty,
+        "sid": sid,
+        "created": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+    }
+    # Best-effort write (atomic-ish)
+    tmp = index_path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(index, f, indent=2)
+    os.replace(tmp, index_path)
+
+    return term_id
+
+
+def is_terminal_session_alive(term_id, state_dir=STATE_DIRECTORY):
+    
+    if state_dir is None:
+        state_root = os.environ.get("XDG_STATE_HOME") or str(Path.home() / ".local" / "state")
+        state_dir = os.path.join(state_root, "terminal-session-ids")
+
+    index_path = os.path.join(state_dir, "index.json")
+    try:
+        with open(index_path, "r", encoding="utf-8") as f:
+            index = json.load(f)
+    except FileNotFoundError:
+        return False
+
+    entry = None
+    for key, val in index.items():
+        if val["id"] == term_id:
+            entry = val
+            break
+
+    if not entry:
+        return False
+
+    tty, sid = entry["tty"], entry["sid"]
+
+    if not os.path.exists(tty):
+        return False
+
+    for proc in psutil.process_iter(attrs=["pid"]):
+        try:
+            if os.getsid(proc.info["pid"]) == sid:
+                return True
+        except Exception:
+            continue
+    return False
