@@ -142,3 +142,7 @@ def test_command(model, command_name):
             f"Command '{command_name}' for model ID {model} exceeded max \
                 runtime of {max_runtime_minutes} minutes"
         )
+
+    if "example" in command_name:
+        if os.path.exists("tmp_example.csv"):
+            os.remove("tmp_example.csv")

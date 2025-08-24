@@ -4,7 +4,7 @@ import time
 import uuid
 
 from ..default import SESSION_JSON
-from ..utils.session import get_session_dir
+from ..utils.session import get_session_dir, prune_empty_session_dirs
 from .base import ErsiliaBase
 
 
@@ -25,6 +25,7 @@ class Session(ErsiliaBase):
 
     def __init__(self, config_json):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        prune_empty_session_dirs()
         self._session_dir = get_session_dir()
         self.session_file = os.path.join(self._session_dir, SESSION_JSON)
 

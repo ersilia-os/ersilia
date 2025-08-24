@@ -3,7 +3,6 @@ import importlib
 import itertools
 import json
 import os
-import shutil
 
 from click import secho
 
@@ -277,9 +276,6 @@ class GenericInputAdapter(object):
             Adapted data.
         """
         data = self.adapter.adapt(inp)
-        print("HERE")
-        print(data)
-        print("HERE DONE")
         for d in data:
             yield d
 
@@ -352,35 +348,21 @@ class ExampleGenerator(ErsiliaBase):
 
         Returns
         -------
-        list or None
-            List of example data or None if saved to file.
+        None
         """
-        simple = True
-        if file_name is None:
-            data = [v for v in self.IO.example(n_samples)]
-            if simple:
+        extension = file_name.split(".")[-1]
+        if extension == "json":
+            with open(file_name, "w") as f:
+                data = [v for v in self.IO.example(n_samples)]
                 data = [{"input": d["input"]} for d in data]
-            return data
+                json.dump(data, f, indent=4)
         else:
-            extension = file_name.split(".")[-1]
-            if extension == "json":
-                with open(file_name, "w") as f:
-                    data = [v for v in self.IO.example(n_samples)]
-                    if simple:
-                        data = [{"input": d["input"]} for d in data]
-                    json.dump(data, f, indent=4)
-            else:
-                delimiter = self._get_delimiter(file_name)
-                with open(file_name, "w", newline="") as f:
-                    writer = csv.writer(f, delimiter=delimiter)
-                    if simple:
-                        writer.writerow(["input"])
-                        for v in self.IO.example(n_samples):
-                            writer.writerow(self._flatten(v["input"]))
-                    else:
-                        writer.writerow(["key", "input", "text"])
-                        for v in self.IO.example(n_samples):
-                            writer.writerow([v["key"], v["input"], v["text"]])
+            delimiter = self._get_delimiter(file_name)
+            with open(file_name, "w", newline="") as f:
+                writer = csv.writer(f, delimiter=delimiter)
+                writer.writerow(["input"])
+                for v in self.IO.example(n_samples):
+                    writer.writerow(self._flatten(v["input"]))
 
     def fixed_example(self, n_samples, file_name):
         """
@@ -395,35 +377,21 @@ class ExampleGenerator(ErsiliaBase):
 
         Returns
         -------
-        list or None
-            List of example data or None if saved to file.
+        None
         """
-        simple = True
-        if file_name is None:
-            data = [v for v in self.IO.example_fixed(n_samples)]
-            if simple:
+        extension = file_name.split(".")[-1]
+        if extension == "json":
+            with open(file_name, "w") as f:
+                data = [v for v in self.IO.example_fixed(n_samples)]
                 data = [{"input": d["input"]} for d in data]
-            return data
+                json.dump(data, f, indent=4)
         else:
-            extension = file_name.split(".")[-1]
-            if extension == "json":
-                with open(file_name, "w") as f:
-                    data = [v for v in self.IO.example_fixed(n_samples)]
-                    if simple:
-                        data = [{"input": d["input"]} for d in data]
-                    json.dump(data, f, indent=4)
-            else:
-                delimiter = self._get_delimiter(file_name)
-                with open(file_name, "w", newline="") as f:
-                    writer = csv.writer(f, delimiter=delimiter)
-                    if simple:
-                        writer.writerow(["input"])
-                        for v in self.IO.example_fixed(n_samples):
-                            writer.writerow(self._flatten(v["input"]))
-                    else:
-                        writer.writerow(["key", "input", "text"])
-                        for v in self.IO.example_fixed(n_samples):
-                            writer.writerow([v["key"], v["input"], v["text"]])
+            delimiter = self._get_delimiter(file_name)
+            with open(file_name, "w", newline="") as f:
+                writer = csv.writer(f, delimiter=delimiter)
+                writer.writerow(["input"])
+                for v in self.IO.example_fixed(n_samples):
+                    writer.writerow(self._flatten(v["input"]))
 
     def predefined_example(self, file_name):
         """
@@ -443,7 +411,17 @@ class ExampleGenerator(ErsiliaBase):
         for pf in PREDEFINED_EXAMPLE_FILES:
             example_file = os.path.join(dest_folder, pf)
             if os.path.exists(example_file):
-                shutil.copy(example_file, file_name)
+                data = []
+                with open(example_file, "r") as f:
+                    reader = csv.reader(f)
+                    next(reader)
+                    for r in reader:
+                        data += [r[0]]
+                with open(file_name, "w") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["input"])
+                    for r in data:
+                        writer.writerow([r])
                 return True
             else:
                 return False
@@ -475,7 +453,7 @@ class ExampleGenerator(ErsiliaBase):
         else:
             deterministic = False
         predefined_available = False
-        if try_predefined is True and file_name is not None:
+        if try_predefined is True:
             self.logger.debug("Trying with predefined input")
             predefined_available = self.predefined_example(file_name)
 

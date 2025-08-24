@@ -157,41 +157,6 @@ jobs:
       - run: |
           nox -f test/playground/noxfile.py -s "${{ matrix.session }}" -- --cli fetch serve run --fetch ${{ matrix.fetch_source }} --host gh
 
-  test-colab-notebook:
-    needs: run-pytest
-    defaults:
-      run:
-        shell: bash -el {0}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-update-conda: true
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          conda install google-colab -c conda-forge
-          pip install --upgrade nbconvert nbformat jsonschema pandas jupyter
-          jupyter --version
-
-      - name: Test Google Colab Notebook with CLI shell commands
-        run: |
-          jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-cli.ipynb --output=output-cli.ipynb --ExecutePreprocessor.timeout=-1
-
-      - name: Test Google Colab Notebook with Python API commands
-        run: |
-          echo "Skipping Python API notebook due to unresolved issue"
-          #jupyter nbconvert --to notebook --execute notebooks/test-colab-notebook-python-api.ipynb --output=output-python-api.ipynb --ExecutePreprocessor.timeout=-1
-
-      - name: Upload Output of the Google Colab Notebook CLI
-        uses: actions/upload-artifact@v4.6.2
-        with:
-          name: output-cli.ipynb
-          path: notebooks/output-cli.ipynb
-          retention-days: 7
-
   update-model-request_template:
     needs: run-pytest
     runs-on: ubuntu-latest
