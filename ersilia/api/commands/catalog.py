@@ -96,5 +96,8 @@ def catalog(
         echo(f"📁 Catalog written to {file_name}", fg="green")
 
     df = pd.read_json(io.StringIO(catalog_table.as_json()))
-    df = df.drop(columns=["Index"])
-    return df
+    if df.shape[0] > 0:
+        df = df.drop(columns=["Index"])
+        return df
+    else:
+        return None
