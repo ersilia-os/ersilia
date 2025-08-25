@@ -70,7 +70,7 @@ jobs:
           conda install gh -c conda-forge
           python -m pip install -e .[test]
 
-      - name: Run Default Default
+      - name: Run default CLI test
         run: |
           nox -f test/playground/noxfile.py -s execute -p 3.12
 

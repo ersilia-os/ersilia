@@ -10,13 +10,12 @@ import requests
 
 from .. import ErsiliaBase
 from ..default import (
-    API_SCHEMA_FILE,
     DEFAULT_API_NAME,
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
     INFORMATION_FILE,
-    PREDEFINED_EXAMPLE_OUTPUT_FILES,
 )
+from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
@@ -71,23 +70,17 @@ class StandardCSVRunApi(ErsiliaBase):
         )
         metadata = self._read_information_file()
         self.input_type = self._read_field_from_metadata(metadata, "Input")
-        self.input_shape = self._read_field_from_metadata(metadata, "Input Shape")
+        self.input_shape = "Single"
         self.logger.debug("This is the input type: {0}".format(self.input_type))
         self.encoder = self.get_identifier_object_by_input_type()
-        # TODO This whole validate_data thing can go away since we already handle this in the encoder
-        self.generic_adapter = GenericOutputAdapter(model_id=self.model_id)
 
-        self.header = self.get_expected_output_header()
-        if self.header is not None:
-            self.logger.debug(
-                "This is the expected header (max 10): {0}".format(self.header[:10])
-            )
-        else:
-            schema_keys, _, _, _, _ = self.generic_adapter._resolve_schema_metadata(
-                model_id
-            )
-            self.header = schema_keys
-            self.logger.debug("Expected header could not be determined from file")
+        self.columns_info = ColumnsInformation(
+            model_id=model_id, api_name=DEFAULT_API_NAME
+        ).load()
+        self.input_header = self.get_input_header()
+        self.output_header = self.get_output_header()
+
+        self.generic_adapter = GenericOutputAdapter(model_id, self.columns_info)
 
     def _read_information_file(self):
         try:
@@ -154,9 +147,8 @@ class StandardCSVRunApi(ErsiliaBase):
         bool
             True if the input type is standardizable, False otherwise.
         """
-        if self.input_type and self.input_shape:
-            if self.input_type[0] == "Compound" and self.input_shape == "Single":
-                return True
+        if self.input_type[0] == "Compound":
+            return True
         return False
 
     def is_output_type_standardizable(self):
@@ -168,18 +160,9 @@ class StandardCSVRunApi(ErsiliaBase):
         bool
             True if the output type is standardizable, False otherwise.
         """
-        api_schema_file_path = os.path.join(self.path, API_SCHEMA_FILE)
-        try:
-            with open(api_schema_file_path, "r") as f:
-                api_schema = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return False
-
-        meta = api_schema.get(DEFAULT_API_NAME)
-        if not meta or len(meta.get("output", {})) != 1:
-            return False
-
-        return True
+        if len(self.columns_info["name"]) > 0:
+            return True
+        return False
 
     def is_output_csv_file(self, output_data):
         """
@@ -201,49 +184,27 @@ class StandardCSVRunApi(ErsiliaBase):
             return False
         return True
 
-    def get_expected_output_header(self):
+    def get_input_header(self):
         """
-        Calculate the expected output header from the predefined example files or the standard output file.
+        Get the input header.
+
+        Returns
+        -------
+        list | None
+            The input header as a list of column names, or None if the header could not be determined.
+        """
+        return ["key", "input"]
+
+    def get_output_header(self):
+        """
+        Get the header from the columns file.
 
         Returns
         -------
         List | None
            Returns the header which is a list of column names, or None if the header could not be determined.
         """
-        file = None
-        for pf in PREDEFINED_EXAMPLE_OUTPUT_FILES:
-            if os.path.exists(os.path.join(self.path, pf)):
-                file = os.path.join(self.path, pf)
-                self.logger.debug(
-                    f"Determining header from predefined example output file: {pf}"
-                )
-                break
-
-        if file is None:
-            return None
-
-        if not file and os.path.exists(self.standard_output_csv):
-            file = self.standard_output_csv
-            self.logger.debug(
-                f"Determining header from standard output file: {self.standard_output_csv}"
-            )
-
-        try:
-            with open(file, "r") as f:
-                reader = csv.reader(f)
-                header = next(reader)
-                if (
-                    header[0:2]
-                    != [
-                        "key",
-                        "input",
-                    ]
-                ):  # Slicing doesn't raise an error even if the list does not have 2 elements
-                    header = ["key", "input"] + header
-            return header
-        except (FileNotFoundError, StopIteration):
-            self.logger.error(f"Could not determine header from file {file}")
-            return None
+        return self.columns_info.get("name", None)
 
     def serialize_to_json_one_column(self, input_data):
         """
@@ -369,7 +330,9 @@ class StandardCSVRunApi(ErsiliaBase):
         return True
 
     def _serialize_output(self, result, output, model_id, api_name):
+        self.logger.debug("Serializing output with generic adapter")
         self.generic_adapter._adapt_generic(result, output, model_id, api_name)
+        self.logger.debug("Output serialized with generic adapter")
 
     def _post_batch(self, url, input_batch):
         if not input_batch:
@@ -437,12 +400,15 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.info("The server has responded")
         self.logger.info("Standardizing output...")
         results = self._standardize_output(input_data, results, meta)
+        self.logger.debug(f"Results (chunked string): {results}"[:200])
         et = time.perf_counter()
         self.logger.info(f"All batches processed in {et - st:.4f} seconds")
-
+        self.logger.debug("Serializing output...")
         self._serialize_output(
             json.dumps(results), output, self.model_id, self.api_name
         )
+        self.logger.debug("Output serialized")
+        self.logger.debug("Checking same row counts")
         matchs = self._same_row_count(input, results)
         if not matchs:
             raise Exception(

@@ -69,7 +69,7 @@ def mock_get_input():
 @pytest.fixture
 def mock_std_header():
     with patch.object(
-        StandardCSVRunApi, "get_expected_output_header", return_value=HEADER
+        StandardCSVRunApi, "get_output_header", return_value=HEADER
     ) as mock_method:
         yield mock_method
 

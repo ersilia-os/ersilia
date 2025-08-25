@@ -417,7 +417,7 @@ class ModelFetcher(ErsiliaBase):
             echo(f"{type(err).__name__} occurred: {str(err)}", fg="red")
             do_delete = yes_no_input(
                 "Do you want to delete the model artifacts? [Y/n]",
-                default_answer="Y",
+                default_answer="n",
             )
             if do_delete:
                 md = ModelFullDeleter(overwrite=False)

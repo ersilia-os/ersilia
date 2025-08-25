@@ -126,10 +126,10 @@ def remove_session_dir(session_name):
                     shutil.rmtree(item_path)
             except Exception as e:
                 raise ValueError(f"Error deleting {item_path}: {e}")
-    try:
-        shutil.rmtree(session_dir)
-    except Exception as e:
-        raise ValueError(f"Error deleting {session_dir}: {e}")
+        try:
+            shutil.rmtree(session_dir)
+        except Exception as e:
+            raise ValueError(f"Error deleting {session_dir}: {e}")
 
 
 def prune_empty_session_dirs():

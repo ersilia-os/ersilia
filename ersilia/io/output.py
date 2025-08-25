@@ -1,28 +1,19 @@
 import collections
-import csv
 import json
 import os
 import random
-import time
-from io import StringIO
 
 import numpy as np
-import requests
 
 from .. import ErsiliaBase
-from ..db.hubdata.interfaces import JsonModelsInterface
 from ..default import (
     FEATURE_MERGE_PATTERN,
-    GITHUB_CONTENT_URL,
-    PACK_METHOD_FASTAPI,
-    PREDEFINED_COLUMN_FILE,
 )
 from ..serve.schema import ApiSchema
 from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..utils.logging import make_temp_dir
 from .dataframe import Dataframe
-from .pure import PureDataTyper
 from .readers.file import FileTyper
 
 
@@ -36,6 +27,10 @@ class DataFrame(object):
         The data of the DataFrame.
     columns : list
         The column names of the DataFrame.
+    dtype : any
+        Data type for the output part of the data
+    dim: int
+        The number of dimensions of the data.
 
     Methods
     -------
@@ -342,17 +337,31 @@ class GenericOutputAdapter(ResponseRefactor):
         Adapts the output based on the result and model.
     """
 
-    def __init__(self, model_id: str = None, config_json: dict = None):
+    def __init__(
+        self, model_id: str = None, columns_info: dict = None, config_json: dict = None
+    ):
         ResponseRefactor.__init__(self, config_json=config_json)
-        self.api_schema = None
-        self._schema = None
-        self._array_types = set(
-            ["array", "numeric_array", "string_array", "mixed_array"]
-        )
         self.model_id = model_id
-        self.was_fast_api = (
-            self._resolve_pack_method_source(self.model_id) == PACK_METHOD_FASTAPI
-        )
+        self.columns_info = columns_info
+        self.input_columns = ["key", "input"]
+        self.output_columns = self.columns_info["name"]
+        self.output_dtype = self._get_output_dtype()
+
+    def _get_output_dtype(self):
+        dtypes = sorted(set(self.columns_info["type"]))
+        if dtypes == ["string"]:
+            return str
+        elif dtypes == ["float"]:
+            return float
+        elif dtypes == ["integer"]:
+            return int
+        else:
+            return float
+
+    def _try_serialize_str_to_json(self, data):
+        if self._is_string(data):
+            return json.loads(data)
+        return data
 
     @staticmethod
     def _is_string(output: any) -> bool:
@@ -374,267 +383,27 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             return False
 
-    def __pure_dtype(self, k: str) -> str:
-        t = self._schema[k]["type"]
-        return t
+    def _to_dataframe(self, result: dict) -> DataFrame:
+        result = self._try_serialize_str_to_json(result)
+        input_data = collections.defaultdict(list)
+        output_data = collections.defaultdict(list)
+        for r in result:
+            for c in self.input_columns:
+                input_data[c] += [r["input"][c]]
+            for c in self.output_columns:
+                output_data[c] += [self.output_dtype(r["output"][c])]
+        data = []
+        columns = self.input_columns + self.output_columns
+        dtype = self.output_dtype
 
-    def __array_shape(self, k: str) -> int:
-        s = self._schema[k]["shape"]
-        return s[0]  # TODO work with tensors
-
-    def __meta_by_key(self, k: str) -> dict:
-        return self._schema[k]["meta"]
-
-    def __cast_values(self, vals: list, dtypes: list, output_keys: list) -> list:
-        v = []
-        for v_, t_, k_ in zip(vals, dtypes, output_keys):
-            if t_ in self._array_types:
-                if v_ is None:
-                    v_ = [None] * self.__array_shape(k_)
-                v += v_
-            else:
-                v += [v_]
-        return v
-
-    def _guess_pure_dtype_if_absent(self, vals: list) -> str:
-        pdt = PureDataTyper(vals, model_id=self.model_id)
-        dtype = pdt.get_type()
-        self.logger.debug("Guessed pure datatype: {0}".format(dtype))
-        if dtype is None:
-            return None
-        else:
-            return dtype["type"]
-
-    def _convert_dimension_to_shape(self, shape):
-        return "Single" if shape == 1 else "List"
-
-    def _fetch_schema_from_github(self):
-        st = time.perf_counter()
-        try:
-            response = requests.get(
-                f"{GITHUB_CONTENT_URL}/{self.model_id}/main/{PREDEFINED_COLUMN_FILE}"
-            )
-        except requests.RequestException:
-            self.logger.warning("Couldn't fetch column name from github!")
-            return None
-
-        csv_data = StringIO(response.text)
-        reader = csv.DictReader(csv_data)
-
-        if "name" not in reader.fieldnames:
-            self.logger.warning(
-                "Couldn't fetch column name from github. Column name not found."
-            )
-            return None
-
-        if "type" not in reader.fieldnames:
-            self.logger.warning(
-                "Couldn't fetch data type from github. Column name not found."
-            )
-            return None
-
-        rows = list(reader)
-        col_name = [row["name"] for row in rows if row["name"]]
-        col_dtype = [row["type"] for row in rows if row["type"]]
-        shape = len(col_dtype)
-        if len(col_name) == 0 and len(col_dtype) == 0:
-            return None
-        et = time.perf_counter()
-        self.logger.info(f"Column metadata fetched in {et - st:.2} seconds!")
-        return col_name, col_dtype, shape
-
-    def _get_dtype(self, type_str):
-        type_map = {
-            "integer": int,
-            "float": float,
-            "string": str,
-        }
-        return type_map.get(type_str)
-
-    def _get_dtype_obj(self, dtypes):
-        unique_dtypes = list(set(dtypes))
-        dtype = "float" if "float" in unique_dtypes else unique_dtypes[0]
-        return self._get_dtype(dtype)
-
-    def _sinlge_cast(self, val, dtype):
-        if not isinstance(val, list) and val is not None:
-            return dtype(val)
-        if not isinstance(val, list) and val is None:
-            return val
-        out = [dtype(v) if (v is not None and v != "") else None for v in val]
-        return out
-
-    def _cast_values_from_github_metadata(self, values, dtype):
-        return [self._sinlge_cast(val, dtype) for val in values]
-
-    def __expand_output_keys(self, vals: list, output_keys: list) -> list:
-        output_keys_expanded = []
-
-        if len(output_keys) == 1:
-            merge_key = False
-        else:
-            merge_key = True
-        current_pure_dtype = {}
-        for key_index, val_out in enumerate(zip(vals, output_keys)):
-            v, ok = val_out
-            self.logger.debug("Data: {0}".format(ok))
-            self.logger.debug("Values: {0}".format(str(v)[:100]))
-            m = self.__meta_by_key(ok)
-            if ok not in current_pure_dtype:
-                self.logger.debug("Getting pure dtype for {0}".format(ok))
-                if self.dtypes is not None:
-                    t = self.dtypes[key_index]
-                else:
-                    t = self.__pure_dtype(ok)
-                self.logger.debug("This is the pure datatype: {0}".format(t))
-                if t is None:
-                    t = self._guess_pure_dtype_if_absent(v)
-                    self.logger.debug("Guessed absent pure datatype: {0}".format(t))
-                current_pure_dtype[ok] = t
-            else:
-                t = current_pure_dtype[ok]
-            self.logger.debug("Datatype: {0}".format(t))
-            if t in self._array_types:
-                self.logger.debug(
-                    "Datatype has been matched: {0} over {1}".format(
-                        t, self._array_types
-                    )
-                )
-                assert m is not None
-                if v is not None:
-                    if len(m) > len(v):
-                        self.logger.debug(
-                            "Metadata {0} is longer than values {1}".format(
-                                len(m), len(v)
-                            )
-                        )
-                        v = list(v) + [None] * (len(m) - len(v))
-                    assert len(m) == len(v)
-                if merge_key:
-                    self.logger.debug("Merge key is {0}".format(merge_key))
-                    output_keys_expanded += [
-                        "{0}{1}{2}".format(ok, FEATURE_MERGE_PATTERN, m_) for m_ in m
-                    ]
-                else:
-                    self.logger.debug("No merge key")
-                    # Log a truncated version of the array for better clarity
-                    # Check if v is a large array and truncate its output
-
-                    output_keys_expanded += ["{0}".format(m_) for m_ in m]
-            else:
-                output_keys_expanded += [ok]
-        return output_keys_expanded
-
-    def _get_outputshape_from_s3_models_json(self, model_id: str) -> str:
-        s3_models_interface = JsonModelsInterface(config_json=self.config_json)
-        output_shape = None
-        for mdl in s3_models_interface.items():
-            _model_id = mdl["Identifier"]
-            try:
-                if _model_id == model_id:
-                    output_shape = mdl["Output Shape"]
-            except KeyError:
-                self.logger.warning("The Output Shape key is missing")
-        return output_shape
-
-    def _get_outputshape(self, model_id: str) -> str:
-        output_shape = self._get_outputshape_from_s3_models_json(model_id)
-        if output_shape is None:
-            self.logger.warning("Output shape not found")
-            output_shape = " "
-        return output_shape
-
-    def _convert_pure_dtype_to_obj(self, dtypes):
-        if "numeric_array" in dtypes or "numeric" in dtypes:
-            return self._get_dtype_obj(["float"])
-        if "numeric_string" in dtypes or "string" in dtypes:
-            return self._get_dtype_obj(["string"])
-
-    def _resolve_schema_metadata(self, model_id: str):
-        metadata = self._fetch_schema_from_github()
-        if metadata:
-            schema_keys, schema_dtypes, output_dim = metadata
-            output_shape = self._convert_dimension_to_shape(output_dim)
-        else:
-            schema_keys, schema_dtypes, output_dim = None, None, None
-            output_shape = self._get_outputshape(model_id)
-
-        dtype_obj = (
-            self._get_dtype_obj(schema_dtypes) if schema_dtypes is not None else None
-        )
-        return schema_keys, output_shape, dtype_obj, schema_dtypes, output_dim
-
-    def _to_dataframe(self, result: dict, model_id: str) -> DataFrame:
-        schema_keys, output_shape, dtype_obj, _, output_dim = (
-            self._resolve_schema_metadata(model_id)
-        )
-
-        result_list = json.loads(result) if isinstance(result, str) else result
-
-        rows = []
-        output_keys = None
-        expanded_keys = None
-        self.dtypes = None
-        try:
-            for r in result_list:
-                inp = r["input"]
-                out = r["output"]
-
-                if output_shape == "Flexible List":
-                    self.logger.warning("Flexible List found")
-                    vals = [json.dumps(out)]
-                    expanded_keys = ["outcome"]
-                else:
-                    if output_keys is None:
-                        output_keys = list(out.keys())
-                        if "outcome" in output_keys:
-                            output_keys = (
-                                schema_keys if schema_keys is not None else output_keys
-                            )
-                    vals = [out[k] for k in output_keys]
-                    if expanded_keys is None:
-                        self.logger.debug(
-                            f"Output key not expanded: val {str(vals)[:10]} and {str(output_keys)[:10]}"
-                        )
-                        expanded_keys = schema_keys
-                        self.logger.debug(
-                            f"Expanded output keys: {str(expanded_keys)[:10]}"
-                        )
-
-                    if dtype_obj is not None:
-                        dt_obj = dtype_obj
-                        dim = output_dim
-                        vals = self._cast_values_from_github_metadata(vals, dtype_obj)
-                    else:
-                        dim = len(self.dtypes)
-                        dt_obj = self._convert_pure_dtype_to_obj(self.dtypes)
-                        vals = self.__cast_values(vals, self.dtypes, output_keys)
-
-                vals = vals[0] if isinstance(vals[0], list) else vals
-                row = [inp["key"], inp["input"]] + vals
-                rows.append(row)
-            columns = ["key", "input"] + (
-                expanded_keys if expanded_keys is not None else output_keys
-            )
-            return DataFrame(data=rows, columns=columns, dtype=dt_obj, dim=dim)
-        except Exception as e:
-            raise RuntimeError(e)
-
-    def meta(self) -> dict:
-        """
-        Gets the meta information.
-
-        Returns
-        -------
-        dict
-            The meta information.
-        """
-        if self._meta is None:
-            self.logger.error(
-                "Meta not available, run some adapations first and it will be inferred atomatically"
-            )
-        else:
-            return self._meta
+        R = []
+        for c in self.input_columns:
+            R += [input_data[c]]
+        for c in self.output_columns:
+            R += [output_data[c]]
+        data = list(map(list, zip(*R)))
+        df = DataFrame(data=data, columns=columns, dtype=dtype, dim=len(columns))
+        return df
 
     def merge(self, subfiles: list, output_file: str):
         """
@@ -671,47 +440,18 @@ class GenericOutputAdapter(ResponseRefactor):
                     use_header = False
 
     def _adapt_generic(
-        self, result: dict, output: str, model_id: str = None, api_name: str = None
-    ) -> dict:
-        if model_id is not None and api_name is not None and self.api_schema is None:
-            self.api_schema = ApiSchema(model_id=model_id, config_json=self.config_json)
-        if self.api_schema is not None:
-            if self.api_schema.isfile():
-                self._schema = self.api_schema.get_output_by_api(api_name)
-        else:
-            self.api_schema = None
-        if output is not None and self._schema is None:
-            raise Exception("Schema not available")
-        if self._has_extension(output, "json"):
-            data = json.loads(result)
-            with open(output, "w") as f:
-                json.dump(data, f, indent=4)
-        if self._has_extension(output, "csv"):
-            df = self._to_dataframe(result, model_id)
-            df.write(output)
-        if self._has_extension(output, "tsv"):
-            df = self._to_dataframe(result, model_id)
-            df.write(output, delimiter="\t")
-        if self._has_extension(output, "h5"):
-            df = self._to_dataframe(result, model_id)
-            df.write(output)
-        self.logger.debug("Returning result")
-        return result
-
-    def _adapt_when_fastapi_was_used(
         self, result: str, output: str, model_id: str = None, api_name: str = None
     ) -> dict:
         if api_name != "run":
             self.logger.debug("Api was not run")
-            return None
+            raise Exception(
+                "Only 'run' api is supported for now... Please open an issue if you feel Ersilia needs to add"
+            )
         if model_id is None:
             self.logger.debug("Model ID is None")
-            return None
+            pass
         if output is None:
             self.logger.debug("Output is None")
-            return None
-        if not self.was_fast_api:
-            self.logger.debug("Was not FastAPI")
             return None
         if self._has_extension(output, "csv"):
             extension = "csv"
@@ -724,7 +464,7 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             extension = None
         self.logger.debug(f"Extension: {extension}")
-        df = self._to_dataframe(result, model_id)
+        df = self._to_dataframe(result)
         delimiters = {"csv": ",", "tsv": "\t"}
         if extension in ["tsv", "csv"]:
             df.write(output, delimiter=delimiters[extension])
@@ -760,15 +500,8 @@ class GenericOutputAdapter(ResponseRefactor):
         dict
             The adapted result.
         """
-        adapted_result = self._adapt_when_fastapi_was_used(
-            result, output, model_id, api_name
-        )
-        if adapted_result is None:
-            self.logger.debug("Adapting generic")
-            return self._adapt_generic(result, output, model_id, api_name)
-        else:
-            self.logger.debug("Adapting non-generic")
-            return adapted_result
+        adapted_result = self._adapt_generic(result, output, model_id, api_name)
+        return adapted_result
 
 
 class DictlistDataframeConverter(GenericOutputAdapter):
