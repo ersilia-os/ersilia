@@ -448,7 +448,7 @@ class SimpleDocker(object):
         cmd = 'docker exec -i %s bash -c "%s"' % (name, cmd)
         run_command(cmd)
 
-    def exec(self, cmd, org, img, tag, name):
+    def exec(self, cmd, org, img, tag, name, kill=True):
         """
         Execute a command in a Docker container and then kill the container.
 
@@ -467,7 +467,11 @@ class SimpleDocker(object):
         """
         name = self.run(org, img, tag, name=name)
         self.exec_container(name, cmd)
-        self.kill(name)
+        if kill:
+            self.kill(name)
+            return
+        else:
+            return name
 
     def container_peak(self, model_id):
         """

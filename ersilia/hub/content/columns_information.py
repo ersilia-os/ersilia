@@ -1,7 +1,5 @@
 import csv
 import os
-import tempfile
-from urllib.request import urlopen
 
 from ... import ErsiliaBase
 
@@ -84,28 +82,6 @@ class ColumnsInformation(ErsiliaBase):
         file_name = os.path.join(self._model_path(self.model_id), self.relative_path)
         return self._get_columns_information_from_file(file_name)
 
-    def _get_columns_information_from_github(self):
-        org = "ersilia-os"
-        branch = "main"
-        url = "https://raw.githubusercontent.org/{0}/{1}/{2}/{3}".format(
-            org, self.model_id, branch, self.relative_path
-        )
-        tmp_dir = tempfile.mkdtemp(prefix="ersilia-")
-        file_name = os.path.join(tmp_dir, "columns.csv")
-        try:
-            with urlopen(url) as response:
-                data = response.read()
-            with open(file_name, "wb") as f:
-                f.write(data)
-        except Exception as e:
-            self.logger.debug(
-                "Explicit columns data for {0} API does not exist in GitHub".format(
-                    self.api_name
-                )
-            )
-            self.logger.warning(f"Warning: {e}")
-            return None
-
     def _validate_columns_data(self, data):
         for d in data["name"]:
             if d[0].lower() != d[0]:
@@ -147,8 +123,6 @@ class ColumnsInformation(ErsiliaBase):
         """
         data = self._get_columns_information_from_local()
         if data is None:
-            data = self._get_columns_information_from_github()
-        if data is None:
-            return None
+            raise Exception("Columns information not found locally")
         self._validate_columns_data(data)
         return data
