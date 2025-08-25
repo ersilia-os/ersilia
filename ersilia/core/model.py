@@ -154,8 +154,10 @@ class ErsiliaModel(ErsiliaBase):
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
 
-        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
-            model
+        assert self._is_valid, (
+            "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+                model
+            )
         )
         self.config_json = config_json
         self.model_id = mdl.model_id
@@ -291,9 +293,9 @@ class ErsiliaModel(ErsiliaBase):
     def _get_url(self):
         model_id = self.model_id
         tmp_file = tmp_pid_file(model_id)
-        assert os.path.exists(
-            tmp_file
-        ), "Process ID file does not exist. Please serve the model first!"
+        assert os.path.exists(tmp_file), (
+            "Process ID file does not exist. Please serve the model first!"
+        )
         with open(tmp_file, "r") as f:
             for l in f:
                 url = l.rstrip().split()[1]
@@ -303,9 +305,9 @@ class ErsiliaModel(ErsiliaBase):
         url = self._get_url()
         if api_name is None:
             api_names = self.autoservice.get_apis()
-            assert (
-                len(api_names) == 1
-            ), "More than one API found, please specificy api_name"
+            assert len(api_names) == 1, (
+                "More than one API found, please specificy api_name"
+            )
             api_name = api_names[0]
         api = Api(
             model_id=self.model_id,
@@ -339,9 +341,9 @@ class ErsiliaModel(ErsiliaBase):
             The result of each API call.
         """
         for result in api.post(input=input, output=output, batch_size=batch_size):
-            assert (
-                result is not None
-            ), "Something went wrong. Please contact us at hello@ersila.io"
+            assert result is not None, (
+                "Something went wrong. Please contact us at hello@ersila.io"
+            )
             yield result
 
     def _api_runner_return(self, api: Api, input: str, output: str, batch_size: int):
