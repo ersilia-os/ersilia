@@ -47,6 +47,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     TargetOrganismBaseInformationError,
     TaskBaseInformationError,
     TitleBaseInformationError,
+    ReleaseBaseInformationError
 )
 from ...utils.identifiers.model import ModelIdentifier
 
@@ -152,6 +153,8 @@ class BaseInformation(ErsiliaBase):
             Placeholder for the deployment method used
         _last_packaging_date: None
             Placeholder for the packaging date
+        _release: None
+            Placeholder for the release version
         """
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self._github = None
@@ -194,6 +197,7 @@ class BaseInformation(ErsiliaBase):
         self._pack_method = None
         self._deployment = None
         self._last_packaging_date = None
+        self._release = None
 
     def _is_valid_url(self, url_string: str) -> bool:
         result = validators.url(url_string)
@@ -1633,6 +1637,40 @@ class BaseInformation(ErsiliaBase):
             ):
                 raise LastPackagingDateBaseInformationError
             self._last_packaging_date = new_last_packaging_date
+    
+    @property
+    def release(self):
+        """
+        Get the model release.
+
+        Returns
+        -------
+        str
+            Release version in semantic format.
+        """
+        return self._release
+
+    @release.setter
+    def release(self, new_release):
+        """
+        Set the model release.
+
+        Parameters
+        ----------
+        release : str
+            Release version in semantic format.
+        """
+        if new_release is None:
+            self._release = None
+        elif (
+            str(new_release).lower() == "none"
+            or str(new_release).lower() == "null"
+        ):
+            self._release = None
+        else:
+            if not isinstance(new_release, str) or not new_release.strip():
+                raise ReleaseBaseInformationError
+            self._release = new_release
 
     def as_dict(self):
         """
@@ -1682,6 +1720,7 @@ class BaseInformation(ErsiliaBase):
             "Computational Performance 5": self.computational_performance_five,
             "Deployment": self.deployment,
             "Last Packaging Date": self.last_packaging_date,
+            "Release": self.release
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data
@@ -1750,3 +1789,4 @@ class BaseInformation(ErsiliaBase):
         )
         self._assign("deployment", "Deployment", data)
         self._assign("last_packaging_date", "Last Packaging Date", data)
+        self._assign("release", "Release", data)
