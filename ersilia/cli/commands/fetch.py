@@ -63,25 +63,25 @@ def fetch_cmd():
         help="Fetch fetch directly from GitHub",
     )
     @click.option(
+        "--from_s3", is_flag=True, default=False, help="Force fetch from AWS S3 bucket"
+    )
+    @click.option(
         "--from_dockerhub",
         is_flag=True,
-        default=False,
+        default=True,
         help="Force fetch from DockerHub",
-    )
-    @click.option(
-        "--version",
-        default=None,
-        type=click.STRING,
-        help="Version of the model to fetch, when fetching a model from DockerHub",
-    )
-    @click.option(
-        "--from_s3", is_flag=True, default=False, help="Force fetch from AWS S3 bucket"
     )
     @click.option(
         "--from_hosted",
         is_flag=True,
         default=False,
         help="Force fetch from hosted service. This only creates a basic folder structure for the model, the model is not actually downloaded.",
+    )
+    @click.option(
+        "--version",
+        default=None,
+        type=click.STRING,
+        help="Version of the model to fetch, when fetching a model from DockerHub",
     )
     @click.option(
         "--hosted_url",
@@ -126,6 +126,10 @@ def fetch_cmd():
             ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
             fg="blue",
         )
+
+        if any([from_dir, from_github, from_s3, from_hosted]):
+            from_dockerhub = False
+
         mf = ModelFetcher(
             repo_path=from_dir,
             overwrite=overwrite,

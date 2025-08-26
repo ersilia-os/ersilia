@@ -118,9 +118,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         sn.sniff()
 
     def _inform(self):
-        echo(
-            "Writing information to a JSON file and adding API info for bentoml models."
-        )
+        echo("Writing information to a JSON file and adding API information.")
         mi = ModelInformer(self.model_id, self.config_json)
         mi.inform()
 

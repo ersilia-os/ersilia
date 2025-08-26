@@ -8,7 +8,6 @@ try:
 except ImportError:
     from validators import ValidationError as ValidationFailure
 
-
 from ... import ErsiliaBase
 from ...utils.exceptions_utils.base_information_exceptions import (
     BiomedicalAreaBaseInformationError,
@@ -36,6 +35,7 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     PublicationBaseInformationError,
     PublicationTypeBaseInformationError,
     PublicationYearBaseInformationError,
+    ReleaseBaseInformationError,
     S3BaseInformationError,
     SlugBaseInformationError,
     SourceBaseInformationError,
@@ -47,7 +47,6 @@ from ...utils.exceptions_utils.base_information_exceptions import (
     TargetOrganismBaseInformationError,
     TaskBaseInformationError,
     TitleBaseInformationError,
-    ReleaseBaseInformationError
 )
 from ...utils.identifiers.model import ModelIdentifier
 
@@ -1637,7 +1636,7 @@ class BaseInformation(ErsiliaBase):
             ):
                 raise LastPackagingDateBaseInformationError
             self._last_packaging_date = new_last_packaging_date
-    
+
     @property
     def release(self):
         """
@@ -1662,10 +1661,7 @@ class BaseInformation(ErsiliaBase):
         """
         if new_release is None:
             self._release = None
-        elif (
-            str(new_release).lower() == "none"
-            or str(new_release).lower() == "null"
-        ):
+        elif str(new_release).lower() == "none" or str(new_release).lower() == "null":
             self._release = None
         else:
             if not isinstance(new_release, str) or not new_release.strip():
@@ -1720,7 +1716,7 @@ class BaseInformation(ErsiliaBase):
             "Computational Performance 5": self.computational_performance_five,
             "Deployment": self.deployment,
             "Last Packaging Date": self.last_packaging_date,
-            "Release": self.release
+            "Release": self.release,
         }
         data = dict((k, v) for k, v in data.items() if v is not None)
         return data

@@ -4,14 +4,13 @@ import re
 import shutil
 import subprocess
 import sys
+from collections import namedtuple
 
 try:
     from inputimeout import TimeoutOccurred, inputimeout
 except:
     inputimeout = None
     TimeoutOccurred = None
-
-from collections import namedtuple
 
 from ..default import VERBOSE_FILE
 from ..utils.logging import make_temp_dir

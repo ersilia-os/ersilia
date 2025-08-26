@@ -14,7 +14,7 @@ from .commands import (
 from .echo import echo
 
 
-class ErsiliaAPIModel:
+class Model(object):
     """
     Python API wrapper for interacting with Ersilia Model Hub models.
 
@@ -58,8 +58,8 @@ class ErsiliaAPIModel:
 
     Usage Example
     -------------
-    >>> from ersilia.api.create_api import ErsiliaAPI
-    >>> molecular_weight = ErsiliaAPI("eos3b5e")
+    >>> from ersilia.api import Model
+    >>> molecular_weight = Model("eos3b5e")
     >>> molecular_weight.fetch()
     >>> molecular_weight.serve()
     >>> with molecular_weight as model:
@@ -83,10 +83,6 @@ class ErsiliaAPIModel:
         -------
         Function: The fetch command function to be used by the API.
         Str: Confirmation message on success or warning message on failure.
-
-        Raises
-        -------
-        RuntimeError: If both BentoML and FastAPI are used together.
 
         """
         fetch.fetch(
@@ -141,15 +137,14 @@ class ErsiliaAPIModel:
             verbose_flag=self.verbose_mode or verbose,
         )
 
-    def run(self, input, output, batch_size=1000):
+    def run(self, input_list, batch_size=1000):
         """
         Runs the current model on a list of input strings and
-        returns the prediction as a pandas data frame.
+        returns the prediction as a pandas dataframe.
 
         Args
         ----
-        input: a list or a path to a CSV file containing input strings.
-        output: path to the output file where predictions will be saved.
+        input_list: a list containing input strings.
         batch_size: number of input strings to process per batch
 
         Returns
@@ -159,7 +154,7 @@ class ErsiliaAPIModel:
             A pandas df with the predictions.
 
         """
-        return run.run(self.model_id, input, output, batch_size)
+        return run.run(self.model_id, input_list, batch_size)
 
     def close(self):
         """
@@ -202,14 +197,13 @@ class ErsiliaAPIModel:
         """
         return info.info(self.model_id)
 
-    def example(self, simple, random, n_samples, deterministic):
+    def example(self, n_samples=5, mode="random"):
         """
         This command can sample inputs for a given model.
 
         Args
         -------
         model: The model ID to be served. Can either be the eos identifier or the slug identifier.
-        file_name: File name where the examples should be saved.
         simple: Simple inputs only contain the input column, while complete inputs also include key and the input.
         random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.
         n_samples: Specify the number of example inputs to generate for the given model.
@@ -221,7 +215,7 @@ class ErsiliaAPIModel:
         Str: Error message if no model was served in the current session.
 
         """
-        return example.example(self.model_id, simple, random, n_samples, deterministic)
+        return example.example(n_samples, mode=mode)
 
     def delete(self):
         """
@@ -248,7 +242,7 @@ class ErsiliaAPIModel:
         """
         return is_fetched.is_fetched(self.model_id)
 
-    def is_docker(self):
+    def _is_docker_running(self):
         """
         Checks if Docker is running locally by calling `docker info`.
 
@@ -279,7 +273,7 @@ class ErsiliaAPIModel:
         self.close()
 
 
-class ErsiliaCatalog:
+class Catalog(object):
     """
     This class enables users to browse and retrieve information about all models
     available in the Ersilia Hub. It is designed for general catalog-level operations
@@ -298,7 +292,6 @@ class ErsiliaCatalog:
         self,
         hub=False,
         file_name=None,
-        browser=False,
         more=False,
         card=False,
         model=None,
@@ -314,8 +307,6 @@ class ErsiliaCatalog:
             If False, fetch the catalog from the local directory.
         file_name : str or None, default=None
             If specified, write the catalog to this file.
-        browser : bool, default=False
-            Unused in current version; reserved for future.
         more : bool, default=False
             If True, show more detail in catalog.
         card : bool, default=False
@@ -335,7 +326,6 @@ class ErsiliaCatalog:
         return catalog.catalog(
             hub=hub,
             file_name=file_name,
-            browser=browser,
             more=more,
             card=card,
             model=model,

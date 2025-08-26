@@ -525,6 +525,7 @@ class ModelFullDeleter(ErsiliaBase):
         """
         mdl_session = get_model_session(model_id)
         if mdl_session:
+            self.logger.debug("Removing session {0}".format(mdl_session))
             remove_session_dir(mdl_session)
             deregister_model_session(model_id)
         needs_delete = self._needs_delete(model_id)

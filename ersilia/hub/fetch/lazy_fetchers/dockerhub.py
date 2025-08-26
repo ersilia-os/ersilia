@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import urllib.request
 
 from .... import EOS, ErsiliaBase, throw_ersilia_exception
 from ....default import (
@@ -236,7 +237,11 @@ class ModelDockerHubFetcher(ErsiliaBase):
         model_id : str
             ID of the model.
         """
-        self.logger.debug("Copying information file from model container")
+        self.logger.debug(
+            "Copying information file from model container: {0}".format(
+                INFORMATION_FILE
+            )
+        )
         await self._copy_from_image_to_local(model_id, INFORMATION_FILE)
 
     async def copy_metadata(self, model_id: str):
@@ -248,7 +253,11 @@ class ModelDockerHubFetcher(ErsiliaBase):
         model_id : str
             ID of the model.
         """
-        self.logger.debug("Copying api_schema_file file from model container")
+        self.logger.debug(
+            "Copying api_schema_file file from model container: {0}".format(
+                API_SCHEMA_FILE
+            )
+        )
         await self._copy_from_image_to_local(model_id, API_SCHEMA_FILE)
 
     async def copy_status(self, model_id: str):
@@ -260,7 +269,9 @@ class ModelDockerHubFetcher(ErsiliaBase):
         model_id : str
             ID of the model.
         """
-        self.logger.debug("Copying status file from model container")
+        self.logger.debug(
+            "Copying status file from model container: {0}".format(STATUS_FILE)
+        )
         await self._copy_from_image_to_local(model_id, STATUS_FILE)
 
     async def copy_example_if_available(self, model_id: str):
@@ -273,7 +284,34 @@ class ModelDockerHubFetcher(ErsiliaBase):
             ID of the model.
         """
         for pf in PREDEFINED_EXAMPLE_FILES:
+            self.logger.debug(
+                "Copying example file from model container: {0}".format(pf)
+            )
             await self._copy_from_image_to_local(model_id, pf)
+
+    def copy_columns(self, model_id: str):
+        """
+        Copy columns file from the model container.
+
+        Parameters
+        ----------
+        model_id : str
+            ID of the model.
+        """
+        # TODO The columns file is not available in the docker container. We need to run the following:
+        # cmd_inside_docker = "cp $(echo bundles/*/*/model/framework/columns/run_columns.csv | head -n1) model/columns/run_columns.csv"
+        # For now, we simply download the columns file from GitHub. Note that this may not be 100% safe.
+        dest_path = os.path.join(self._model_path(model_id), "model/framework/columns")
+        if not os.path.exists(dest_path):
+            os.makedirs(dest_path)
+        columns_file_url = f"https://raw.githubusercontent.com/ersilia-os/{model_id}/main/model/framework/columns/run_columns.csv"
+        columns_file_path = os.path.join(dest_path, "run_columns.csv")
+        self.logger.debug(f"Downloading columns file from: {columns_file_url}")
+        try:
+            urllib.request.urlretrieve(columns_file_url, columns_file_path)
+            self.logger.debug(f"Columns file downloaded to: {columns_file_path}")
+        except Exception as e:
+            self.logger.error(f"Failed to download columns file: {e}")
 
     async def modify_information(self, model_id: str):
         """
@@ -327,3 +365,4 @@ class ModelDockerHubFetcher(ErsiliaBase):
             self.copy_status(model_id),
             self.copy_example_if_available(model_id),
         )
+        self.copy_columns(model_id)

@@ -307,6 +307,7 @@ class InterpretationBaseInformationError(ErsiliaError):
         self.hints = "Interpretation must be a string of 10 to 300 chars"
         ErsiliaError.__init__(self, self.hints)
 
+
 class DeploymentBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong deployment option"
@@ -314,6 +315,7 @@ class DeploymentBaseInformationError(ErsiliaError):
             ", ".join(_read_default_fields("Deployment"))
         )
         ErsiliaError.__init__(self, self.message, self.hints)
+
 
 class ReleaseBaseInformationError(ErsiliaError):
     def __init__(self):
