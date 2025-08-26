@@ -325,7 +325,6 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...io.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
@@ -333,19 +332,14 @@
 
 <div class="viewcode-block" id="example">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.api.commands.html#ersilia.api.commands.example.example">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This command can sample inputs for a given model and save them as a CSV file.</span>
 
 <span class="sd">    Args</span>
 <span class="sd">    -------</span>
-<span class="sd">    model: The model ID to be served. Can either be the eos identifier or slug.</span>
-<span class="sd">    file_name: Path where the CSV examples should be saved. Must end with .csv.</span>
-<span class="sd">    simple: If True, only input strings are returned. If False, outputs include key and input.</span>
-<span class="sd">    random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.</span>
 <span class="sd">    n_samples: Specify the number of example inputs to generate for the given model.</span>
-<span class="sd">    deterministic: Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.</span>
-
+<span class="sd">    mode: random, deterministic or predefined</span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    Function: The exmaple command function to be used by the API.</span>
@@ -353,35 +347,26 @@
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">model</span><span class="p">:</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">model_id</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;No model found. Please specify a model or serve a model in the current shell.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;No model found. Please serve a model in the current shell.&quot;</span><span class="p">,</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span>
 
     <span class="n">output_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
-    <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span>
-        <span class="n">n_samples</span><span class="p">,</span>
-        <span class="n">file_name</span><span class="o">=</span><span class="n">output_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">simple</span><span class="o">=</span><span class="n">simple</span><span class="p">,</span>
-        <span class="n">try_predefined</span><span class="o">=</span><span class="ow">not</span> <span class="n">random</span><span class="p">,</span>
-        <span class="n">deterministic</span><span class="o">=</span><span class="n">deterministic</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">output_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">output_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">output_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">output_file</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
         <span class="k">pass</span>
-    <span class="k">return</span> <span class="n">df</span></div>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
 
 </pre></div>
         </article>

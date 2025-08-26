@@ -336,7 +336,6 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">catalog</span><span class="p">(</span>
     <span class="n">hub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">browser</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">more</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">card</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -356,8 +355,6 @@
 <span class="sd">        If True, fetch the catalog from the hub.</span>
 <span class="sd">    file_name : str or None</span>
 <span class="sd">        If specified, write the catalog to this file.</span>
-<span class="sd">    browser : bool</span>
-<span class="sd">        Unused in current version; reserved for future.</span>
 <span class="sd">    more : bool</span>
 <span class="sd">        If True, show more detail in catalog.</span>
 <span class="sd">    card : bool</span>
@@ -410,30 +407,24 @@
         <span class="n">catalog_table</span> <span class="o">=</span> <span class="n">catalog_obj</span><span class="o">.</span><span class="n">hub</span><span class="p">()</span> <span class="k">if</span> <span class="n">hub</span> <span class="k">else</span> <span class="n">catalog_obj</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ Error loading catalog: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># return None</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
             <span class="s2">&quot;⚠️ No local models found. Try `ersilia fetch` to download a model.&quot;</span><span class="p">,</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># return None</span>
 
     <span class="c1"># Save to file if requested (but do NOT return early)</span>
     <span class="k">if</span> <span class="n">file_name</span><span class="p">:</span>
         <span class="n">catalog_table</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📁 Catalog written to </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
 
-    <span class="c1"># Print to terminal</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">as_json</span><span class="p">()</span> <span class="k">if</span> <span class="n">as_json</span> <span class="k">else</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">as_table</span><span class="p">()</span>
-    <span class="n">echo</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-
-    <span class="c1"># Return last two columns as DataFrame</span>
-    <span class="c1"># df = pd.DataFrame(catalog_table)</span>
-    <span class="c1"># if df.shape[1] &gt;= 2:</span>
-    <span class="c1">#     df = df.iloc[:, -2:]</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">catalog_table</span><span class="o">.</span><span class="n">as_json</span><span class="p">()))</span>
-    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span> <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">df</span></div>
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Index&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">df</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 </pre></div>
         </article>

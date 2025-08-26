@@ -335,7 +335,7 @@
 <span id="ersilia-api-commands-catalog-module"></span><h2>ersilia.api.commands.catalog module<a class="headerlink" href="#module-ersilia.api.commands.catalog" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.api.commands.catalog.catalog">
-<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.catalog.</span></span><span class="sig-name descname"><span class="pre">catalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">more</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/catalog.html#catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.catalog.catalog" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.catalog.</span></span><span class="sig-name descname"><span class="pre">catalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">more</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">card</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/catalog.html#catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.catalog.catalog" title="Link to this definition">¶</a></dt>
 <dd><p>API-compatible version of the catalog command with echo-based output.</p>
 <p>This command allows users to list a catalog of models available either locally or in the model hub.
 It provides options to display the catalog in various formats(such as tables by default or json), show more detailed information,
@@ -345,7 +345,6 @@ and view model cards for specific models.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>hub</strong> (<em>bool</em>) – If True, fetch the catalog from the hub.</p></li>
 <li><p><strong>file_name</strong> (<em>str</em><em> or </em><em>None</em>) – If specified, write the catalog to this file.</p></li>
-<li><p><strong>browser</strong> (<em>bool</em>) – Unused in current version; reserved for future.</p></li>
 <li><p><strong>more</strong> (<em>bool</em>) – If True, show more detail in catalog.</p></li>
 <li><p><strong>card</strong> (<em>bool</em>) – If True, display the model card for a given model.</p></li>
 <li><p><strong>model</strong> (<em>str</em><em> or </em><em>None</em>) – The model ID for which to display metadata.</p></li>
@@ -415,17 +414,13 @@ or None on failure.</p>
 <span id="ersilia-api-commands-example-module"></span><h2>ersilia.api.commands.example module<a class="headerlink" href="#module-ersilia.api.commands.example" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.api.commands.example.example">
-<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.example.</span></span><span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">simple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/example.html#example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.example.example" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.example.</span></span><span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/example.html#example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.example.example" title="Link to this definition">¶</a></dt>
 <dd><p>This command can sample inputs for a given model and save them as a CSV file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>The model ID to be served. Can either be the eos identifier</em><em> or </em><em>slug.</em>)</p></li>
-<li><p><strong>file_name</strong> (<em>Path where the CSV examples should be saved. Must end with .csv.</em>)</p></li>
-<li><p><strong>simple</strong> (<em>If True</em><em>, </em><em>only input strings are returned. If False</em><em>, </em><em>outputs include key and input.</em>)</p></li>
-<li><p><strong>random</strong> (<em>If the model source contains an example input file</em><em>, </em><em>when the predefined flag is set</em><em>, </em><em>then inputs are sampled from that file. Only the number</em><em> of </em><em>samples present in the file are returned</em><em>, </em><em>especially if --n_samples is greater than that number. By default</em><em>, </em><em>Ersilia samples inputs randomly.</em>)</p></li>
 <li><p><strong>n_samples</strong> (<em>Specify the number</em><em> of </em><em>example inputs to generate for the given model.</em>)</p></li>
-<li><p><strong>deterministic</strong> (<em>Used to generate examples data deterministically instead</em><em> of </em><em>random sampling. This allows when every time you run with example command with this flag you get the same types</em><em> of </em><em>examples.</em>)</p></li>
+<li><p><strong>mode</strong> (<em>random</em><em>, </em><em>deterministic</em><em> or </em><em>predefined</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -497,7 +492,7 @@ including information about Model Identifiers, Code and Parameters, Docker Hub l
 <span id="ersilia-api-commands-run-module"></span><h2>ersilia.api.commands.run module<a class="headerlink" href="#module-ersilia.api.commands.run" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.api.commands.run.run">
-<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.run" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.run" title="Link to this definition">¶</a></dt>
 <dd><p>Runs the current model on input strings, optionall saving the results to a file and always returning
 a DataFarme.</p>
 <dl class="field-list simple">
@@ -505,8 +500,6 @@ a DataFarme.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the Ersilia model to invoke.</p></li>
 <li><p><strong>input</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>str</em>) – A list of input strings or a filepath to a CSV file (.csv) containing inputs</p></li>
-<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Filepath to save the model predictions, Supported extensions: .csv, .json, .h5
-If None, a temporary CSV file will be generated and cleaned up after loading.</p></li>
 <li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>default=100</em>) – Number of input rows to process per batch</p></li>
 </ul>
 </dd>
@@ -518,26 +511,6 @@ If None, a temporary CSV file will be generated and cleaned up after loading.</p
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>SystemExit</strong> – If input or output validation fails.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ersilia.api.commands.run.validate_input_output_types">
-<span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.run.</span></span><span class="sig-name descname"><span class="pre">validate_input_output_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/run.html#validate_input_output_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.run.validate_input_output_types" title="Link to this definition">¶</a></dt>
-<dd><p>Validate that the provided input and output parameters are of supported types.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>list</em><em> of </em><em>str</em><em> or </em><em>str</em>) – A list of input strings or a filepath pointing to a CSV file (.csv) containing inputs with ‘input’ header</p></li>
-<li><p><strong>output</strong> (<em>str</em><em> or </em><em>None</em>) – Optional filepath for saving the model output. If provided, must end with one of: .csv, .json, .h5</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>If 'input' is neither a list nor a .csv filepath</strong><strong>, or </strong><strong>if 'output'</strong><strong> (</strong><strong>when not None</strong><strong>) </strong><strong>does not end with a supported</strong> – </p></li>
-<li><p><strong>extension.</strong> – </p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -674,7 +647,6 @@ If None, a temporary CSV file will be generated and cleaned up after loading.</p
 </li>
 <li><a class="reference internal" href="#module-ersilia.api.commands.run">ersilia.api.commands.run module</a><ul>
 <li><a class="reference internal" href="#ersilia.api.commands.run.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.commands.run.validate_input_output_types"><code class="docutils literal notranslate"><span class="pre">validate_input_output_types()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.api.commands.serve">ersilia.api.commands.serve module</a><ul>

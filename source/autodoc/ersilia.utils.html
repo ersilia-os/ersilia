@@ -369,6 +369,7 @@
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.PublicationBaseInformationError"><code class="docutils literal notranslate"><span class="pre">PublicationBaseInformationError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.PublicationTypeBaseInformationError"><code class="docutils literal notranslate"><span class="pre">PublicationTypeBaseInformationError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.PublicationYearBaseInformationError"><code class="docutils literal notranslate"><span class="pre">PublicationYearBaseInformationError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.ReleaseBaseInformationError"><code class="docutils literal notranslate"><span class="pre">ReleaseBaseInformationError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.S3BaseInformationError"><code class="docutils literal notranslate"><span class="pre">S3BaseInformationError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.SlugBaseInformationError"><code class="docutils literal notranslate"><span class="pre">SlugBaseInformationError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.base_information_exceptions.SourceBaseInformationError"><code class="docutils literal notranslate"><span class="pre">SourceBaseInformationError</span></code></a></li>
@@ -1388,7 +1389,7 @@ as needed.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.exec">
-<span class="sig-name descname"><span class="pre">exec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.exec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.exec" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">exec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.exec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.exec" title="Link to this definition">¶</a></dt>
 <dd><p>Execute a command in a Docker container and then kill the container.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3024,6 +3025,12 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.prune_empty_session_dirs">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">prune_empty_session_dirs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#prune_empty_session_dirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.prune_empty_session_dirs" title="Link to this definition">¶</a></dt>
+<dd><p>Prune session directories that seem to be empty, meaning they don’t contain any serving data or logs.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.utils.session.register_model_session">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">register_model_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#register_model_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.register_model_session" title="Link to this definition">¶</a></dt>
 <dd><p>Register a model with a session.</p>
@@ -4059,6 +4066,7 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_dir"><code class="docutils literal notranslate"><span class="pre">get_session_dir()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_id"><code class="docutils literal notranslate"><span class="pre">get_session_id()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_uuid"><code class="docutils literal notranslate"><span class="pre">get_session_uuid()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.prune_empty_session_dirs"><code class="docutils literal notranslate"><span class="pre">prune_empty_session_dirs()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.register_model_session"><code class="docutils literal notranslate"><span class="pre">register_model_session()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.remove_orphaned_sessions"><code class="docutils literal notranslate"><span class="pre">remove_orphaned_sessions()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.remove_session_dir"><code class="docutils literal notranslate"><span class="pre">remove_session_dir()</span></code></a></li>

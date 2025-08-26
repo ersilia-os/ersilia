@@ -321,7 +321,6 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.api.commands.run</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
 
@@ -332,49 +331,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 
 
-<div class="viewcode-block" id="validate_input_output_types">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.api.commands.html#ersilia.api.commands.run.validate_input_output_types">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">validate_input_output_types</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate that the provided input and output parameters are of supported types.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    input : list of str or str</span>
-<span class="sd">        A list of input strings or a filepath pointing to a CSV file (.csv) containing inputs with &#39;input&#39; header</span>
-<span class="sd">    output : str or None</span>
-<span class="sd">        Optional filepath for saving the model output. If provided, must end with one of: .csv, .json, .h5</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">        If &#39;input&#39; is neither a list nor a .csv filepath, or if &#39;output&#39; (when not None) does not end with a supported</span>
-<span class="sd">        extension.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
-        <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-        <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">))</span>
-    <span class="p">):</span>
-        <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;Input format invalid. Please provide a list of inputs or a .csv path.&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-            <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
-    <span class="p">):</span>
-        <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;Invalid output type. Valid types are: .csv, .h5, or .json&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-            <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="run">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.api.commands.html#ersilia.api.commands.run.run">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">input_list</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Runs the current model on input strings, optionall saving the results to a file and always returning</span>
 <span class="sd">    a DataFarme.</span>
@@ -385,9 +344,6 @@
 <span class="sd">        Identifier of the Ersilia model to invoke.</span>
 <span class="sd">    input: list of str or str</span>
 <span class="sd">        A list of input strings or a filepath to a CSV file (.csv) containing inputs</span>
-<span class="sd">    output: str, optional</span>
-<span class="sd">        Filepath to save the model predictions, Supported extensions: .csv, .json, .h5</span>
-<span class="sd">        If None, a temporary CSV file will be generated and cleaned up after loading.</span>
 <span class="sd">    batch_size: int, default=100</span>
 <span class="sd">        Number of input rows to process per batch</span>
 
@@ -402,7 +358,6 @@
 <span class="sd">        If input or output validation fails.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">validate_input_output_types</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
     <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
     <span class="n">output_source</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_output_source</span><span class="p">()</span>
@@ -416,23 +371,20 @@
 
     <span class="n">cleanup_input</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">cleanup_output</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="c1"># Prepare input filepath</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">cleanup_input</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">temp_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="nb">input</span><span class="p">})</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">temp_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">input_list</span><span class="p">})</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">temp_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">input_path</span> <span class="o">=</span> <span class="n">temp_file</span><span class="o">.</span><span class="n">name</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">input_path</span> <span class="o">=</span> <span class="nb">input</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Input must be a list&quot;</span><span class="p">)</span>
 
     <span class="c1"># Prepare output filepath</span>
-    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">cleanup_output</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">temp_file_output</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
-            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-        <span class="n">output_path</span> <span class="o">=</span> <span class="n">temp_file_output</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">output_path</span>
+    <span class="n">cleanup_output</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">temp_file_output</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">temp_file_output</span><span class="o">.</span><span class="n">name</span>
 
     <span class="c1"># Run the model</span>
     <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
@@ -441,22 +393,24 @@
         <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">,</span>
         <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
     <span class="n">iter_values</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">mdl</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="nb">input</span><span class="o">=</span><span class="n">input_list</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
+        <span class="p">):</span>
             <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">iter_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="c1"># Notify the user on persistent output</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cleanup_output</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;✅ The output was successfully generated at </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;✅ The output was successfully generated at </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
             <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="c1"># Load results into DataFrame</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
 
     <span class="c1"># Clean up temporary files</span>
     <span class="k">if</span> <span class="n">cleanup_input</span><span class="p">:</span>

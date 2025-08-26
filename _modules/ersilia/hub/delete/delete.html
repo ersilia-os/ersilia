@@ -920,6 +920,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mdl_session</span> <span class="o">=</span> <span class="n">get_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mdl_session</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Removing session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl_session</span><span class="p">))</span>
             <span class="n">remove_session_dir</span><span class="p">(</span><span class="n">mdl_session</span><span class="p">)</span>
             <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">needs_delete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>

@@ -352,7 +352,8 @@
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No model was served&quot;</span><span class="p">)</span>
     <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-    <span class="c1"># InformationDisplayer(info).echo()</span>
+    <span class="k">if</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">info</span></div>
 
 </pre></div>

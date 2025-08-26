@@ -652,11 +652,8 @@
 <li><p><strong>file_name</strong> (<em>str</em>) – File name to save the examples.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of example data or None if saved to file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list or None</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -689,11 +686,8 @@
 <li><p><strong>file_name</strong> (<em>str</em>) – File name to save the examples.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>List of example data or None if saved to file.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list or None</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -807,6 +801,28 @@ convert them into a standard format that can be processed in batches or one by o
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.io.output.DataFrame.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#ersilia.io.output.DataFrame.dtype" title="Link to this definition">¶</a></dt>
+<dd><p>Data type for the output part of the data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.io.output.DataFrame.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#ersilia.io.output.DataFrame.dim" title="Link to this definition">¶</a></dt>
+<dd><p>The number of dimensions of the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -957,7 +973,7 @@ except for the first and second columns, which are never quoted.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.io.output.GenericOutputAdapter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.io.output.</span></span><span class="sig-name descname"><span class="pre">GenericOutputAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#GenericOutputAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.output.GenericOutputAdapter" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.io.output.</span></span><span class="sig-name descname"><span class="pre">GenericOutputAdapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#GenericOutputAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.output.GenericOutputAdapter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#ersilia.io.output.ResponseRefactor" title="ersilia.io.output.ResponseRefactor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResponseRefactor</span></code></a></p>
 <p>A class used to adapt generic outputs.</p>
 <dl class="py attribute">
@@ -1020,20 +1036,6 @@ except for the first and second columns, which are never quoted.</p>
 <li><p><strong>subfiles</strong> (<em>list</em>) – The list of subfiles to merge.</p></li>
 <li><p><strong>output_file</strong> (<em>str</em>) – The name of the output file.</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.io.output.GenericOutputAdapter.meta">
-<span class="sig-name descname"><span class="pre">meta</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../../_modules/ersilia/io/output.html#GenericOutputAdapter.meta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.output.GenericOutputAdapter.meta" title="Link to this definition">¶</a></dt>
-<dd><p>Gets the meta information.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The meta information.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1372,6 +1374,8 @@ This class produces a summary of the results, counting inputs, output dimensions
 <li><a class="reference internal" href="#ersilia.io.output.DataFrame"><code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.io.output.DataFrame.data"><code class="docutils literal notranslate"><span class="pre">DataFrame.data</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.output.DataFrame.columns"><code class="docutils literal notranslate"><span class="pre">DataFrame.columns</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.io.output.DataFrame.dtype"><code class="docutils literal notranslate"><span class="pre">DataFrame.dtype</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.io.output.DataFrame.dim"><code class="docutils literal notranslate"><span class="pre">DataFrame.dim</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.output.DataFrame.decompose"><code class="docutils literal notranslate"><span class="pre">DataFrame.decompose()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.output.DataFrame.write_hdf5"><code class="docutils literal notranslate"><span class="pre">DataFrame.write_hdf5()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.output.DataFrame.write_text"><code class="docutils literal notranslate"><span class="pre">DataFrame.write_text()</span></code></a></li>
@@ -1396,7 +1400,6 @@ This class produces a summary of the results, counting inputs, output dimensions
 <li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.adapt"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.adapt()</span></code></a></li>
 <li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.adapt()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.merge"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.merge()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.meta"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.meta()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.io.output.ResponseRefactor"><code class="docutils literal notranslate"><span class="pre">ResponseRefactor</span></code></a><ul>

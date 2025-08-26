@@ -323,6 +323,7 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">....</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -574,7 +575,11 @@
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Copying information file from model container&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Copying information file from model container: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">INFORMATION_FILE</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_image_to_local</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">INFORMATION_FILE</span><span class="p">)</span></div>
 
 
@@ -589,7 +594,11 @@
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Copying api_schema_file file from model container&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Copying api_schema_file file from model container: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">API_SCHEMA_FILE</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_image_to_local</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">API_SCHEMA_FILE</span><span class="p">)</span></div>
 
 
@@ -604,7 +613,9 @@
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Copying status file from model container&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Copying status file from model container: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">STATUS_FILE</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_image_to_local</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span></div>
 
 
@@ -620,7 +631,37 @@
 <span class="sd">            ID of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">pf</span> <span class="ow">in</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;Copying example file from model container: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_image_to_local</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">pf</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModelDockerHubFetcher.copy_columns">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_columns">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Copy columns file from the model container.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model_id : str</span>
+<span class="sd">            ID of the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO The columns file is not available in the docker container. We need to run the following:</span>
+        <span class="c1"># cmd_inside_docker = &quot;cp $(echo bundles/*/*/model/framework/columns/run_columns.csv | head -n1) model/columns/run_columns.csv&quot;</span>
+        <span class="c1"># For now, we simply download the columns file from GitHub. Note that this may not be 100% safe.</span>
+        <span class="n">dest_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;model/framework/columns&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dest_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dest_path</span><span class="p">)</span>
+        <span class="n">columns_file_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">/main/model/framework/columns/run_columns.csv&quot;</span>
+        <span class="n">columns_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dest_path</span><span class="p">,</span> <span class="s2">&quot;run_columns.csv&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading columns file from: </span><span class="si">{</span><span class="n">columns_file_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">columns_file_url</span><span class="p">,</span> <span class="n">columns_file_path</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Columns file downloaded to: </span><span class="si">{</span><span class="n">columns_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to download columns file: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.modify_information">
@@ -677,7 +718,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">copy_metadata</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">copy_status</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">copy_example_if_available</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_columns</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

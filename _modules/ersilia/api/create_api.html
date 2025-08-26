@@ -336,9 +336,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaAPIModel</span><span class="p">:</span>
+<div class="viewcode-block" id="Model">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Python API wrapper for interacting with Ersilia Model Hub models.</span>
 
@@ -382,8 +382,8 @@
 
 <span class="sd">    Usage Example</span>
 <span class="sd">    -------------</span>
-<span class="sd">    &gt;&gt;&gt; from ersilia.api.create_api import ErsiliaAPI</span>
-<span class="sd">    &gt;&gt;&gt; molecular_weight = ErsiliaAPI(&quot;eos3b5e&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; from ersilia.api import Model</span>
+<span class="sd">    &gt;&gt;&gt; molecular_weight = Model(&quot;eos3b5e&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; molecular_weight.fetch()</span>
 <span class="sd">    &gt;&gt;&gt; molecular_weight.serve()</span>
 <span class="sd">    &gt;&gt;&gt; with molecular_weight as model:</span>
@@ -397,8 +397,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">SRV</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="ErsiliaAPIModel.fetch">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.fetch">[docs]</a>
+<div class="viewcode-block" id="Model.fetch">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.fetch">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetches an Ersilia model to run it locally.</span>
@@ -409,10 +409,6 @@
 <span class="sd">        -------</span>
 <span class="sd">        Function: The fetch command function to be used by the API.</span>
 <span class="sd">        Str: Confirmation message on success or warning message on failure.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        -------</span>
-<span class="sd">        RuntimeError: If both BentoML and FastAPI are used together.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fetch</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
@@ -429,8 +425,8 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel.serve">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.serve">[docs]</a>
+<div class="viewcode-block" id="Model.serve">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.serve">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serves a specified model as an API.</span>
@@ -471,17 +467,16 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel.run">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.run">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.run">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_list</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs the current model on a list of input strings and</span>
-<span class="sd">        returns the prediction as a pandas data frame.</span>
+<span class="sd">        returns the prediction as a pandas dataframe.</span>
 
 <span class="sd">        Args</span>
 <span class="sd">        ----</span>
-<span class="sd">        input: a list or a path to a CSV file containing input strings.</span>
-<span class="sd">        output: path to the output file where predictions will be saved.</span>
+<span class="sd">        input_list: a list containing input strings.</span>
 <span class="sd">        batch_size: number of input strings to process per batch</span>
 
 <span class="sd">        Returns</span>
@@ -491,11 +486,11 @@
 <span class="sd">            A pandas df with the predictions.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">run</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">run</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">input_list</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel.close">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.close">[docs]</a>
+<div class="viewcode-block" id="Model.close">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This command closes the current session of the served model and cleans up any associated resources.</span>
@@ -516,8 +511,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel.info">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.info">[docs]</a>
+<div class="viewcode-block" id="Model.info">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provides information about a specified model.</span>
@@ -541,16 +536,15 @@
         <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel.example">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.example">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simple</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">deterministic</span><span class="p">):</span>
+<div class="viewcode-block" id="Model.example">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.example">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This command can sample inputs for a given model.</span>
 
 <span class="sd">        Args</span>
 <span class="sd">        -------</span>
 <span class="sd">        model: The model ID to be served. Can either be the eos identifier or the slug identifier.</span>
-<span class="sd">        file_name: File name where the examples should be saved.</span>
 <span class="sd">        simple: Simple inputs only contain the input column, while complete inputs also include key and the input.</span>
 <span class="sd">        random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.</span>
 <span class="sd">        n_samples: Specify the number of example inputs to generate for the given model.</span>
@@ -562,11 +556,11 @@
 <span class="sd">        Str: Error message if no model was served in the current session.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">example</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">simple</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">deterministic</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">example</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel.delete">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.delete">[docs]</a>
+<div class="viewcode-block" id="Model.delete">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.delete">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes a specified model from local storage.</span>
@@ -583,8 +577,8 @@
         <span class="n">delete</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel.is_fetched">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.is_fetched">[docs]</a>
+<div class="viewcode-block" id="Model.is_fetched">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.is_fetched">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_fetched</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks whether the model has been successfully fetched.</span>
@@ -596,9 +590,7 @@
         <span class="k">return</span> <span class="n">is_fetched</span><span class="o">.</span><span class="n">is_fetched</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="ErsiliaAPIModel.is_docker">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaAPIModel.is_docker">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_docker_running</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks if Docker is running locally by calling `docker info`.</span>
 
@@ -619,8 +611,7 @@
             <span class="n">echo</span><span class="p">(</span>
                 <span class="s2">&quot;❌ Docker is NOT running locally. Please start Docker to use Ersilia models.&quot;</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-            <span class="p">)</span></div>
-
+            <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
@@ -631,9 +622,9 @@
 
 
 
-<div class="viewcode-block" id="ErsiliaCatalog">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaCatalog">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaCatalog</span><span class="p">:</span>
+<div class="viewcode-block" id="Catalog">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Catalog">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Catalog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class enables users to browse and retrieve information about all models</span>
 <span class="sd">    available in the Ersilia Hub. It is designed for general catalog-level operations</span>
@@ -648,13 +639,12 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span> <span class="o">=</span> <span class="n">verbose</span>
 
-<div class="viewcode-block" id="ErsiliaCatalog.catalog">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.ErsiliaCatalog.catalog">[docs]</a>
+<div class="viewcode-block" id="Catalog.catalog">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Catalog.catalog">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">catalog</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">hub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">browser</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">more</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">card</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -670,8 +660,6 @@
 <span class="sd">            If False, fetch the catalog from the local directory.</span>
 <span class="sd">        file_name : str or None, default=None</span>
 <span class="sd">            If specified, write the catalog to this file.</span>
-<span class="sd">        browser : bool, default=False</span>
-<span class="sd">            Unused in current version; reserved for future.</span>
 <span class="sd">        more : bool, default=False</span>
 <span class="sd">            If True, show more detail in catalog.</span>
 <span class="sd">        card : bool, default=False</span>
@@ -691,7 +679,6 @@
         <span class="k">return</span> <span class="n">catalog</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span>
             <span class="n">hub</span><span class="o">=</span><span class="n">hub</span><span class="p">,</span>
             <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">,</span>
-            <span class="n">browser</span><span class="o">=</span><span class="n">browser</span><span class="p">,</span>
             <span class="n">more</span><span class="o">=</span><span class="n">more</span><span class="p">,</span>
             <span class="n">card</span><span class="o">=</span><span class="n">card</span><span class="p">,</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
