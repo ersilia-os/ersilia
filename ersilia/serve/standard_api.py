@@ -349,9 +349,11 @@ class StandardCSVRunApi(ErsiliaBase):
                 "Error processing batch of size {}: {}".format(len(input_batch), e)
             )
             if len(input_batch) == 1:
-                if self.header is not None:
-                    empty_values = [None] * len(self.header)
-                    empty_values = [{k: v for k in self.header for v in empty_values}]
+                if self.output_header is not None:
+                    empty_values = [None] * len(self.output_header)
+                    empty_values = [
+                        {k: v for k in self.output_header for v in empty_values}
+                    ]
                     return empty_values
                 else:
                     return [None]
@@ -463,12 +465,12 @@ class StandardCSVRunApi(ErsiliaBase):
         if isinstance(out, list):
             return out
         if out is None:
-            return [None] * len(self.header) if self.header else [None]
+            return [None] * len(self.output_header) if self.output_header else [None]
         return list(out.values())
 
     def _select_key_candidates(self, out, default_keys):
         if out is None:
-            return self.header or default_keys
+            return self.output_header or default_keys
         if isinstance(out, dict) and "outcome" not in out:
             return list(out.keys())
         return default_keys
