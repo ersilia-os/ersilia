@@ -228,7 +228,20 @@ class RunnerService:
         RuntimeError
             If there is an error during the subprocess execution or output comparison.
         """
+        def normalize_quotes(obj):
+            def strip_quotes(s: str) -> str:
+                if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
+                    return s[1:-1]
+                return s
+            
+            if isinstance(obj, list):
+                return [strip_quotes(s) for s in obj]
+            elif isinstance(obj, str):
+                return strip_quotes(obj)
+            else:
+                raise TypeError("Input must be a string or a list of strings")
 
+                
         def compute_rmse(y_true, y_pred):
             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(
                 y_true
@@ -272,10 +285,10 @@ class RunnerService:
                         )
                         return _completed_status
 
-                elif all(isinstance(val, str) for val in bv + ev):
+                elif all(isinstance(val, str) for val in bv + normalize_quotes(ev)):
                     if not all(
                         self._compare_string_similarity(a, b, 95)
-                        for a, b in zip(bv, ev)
+                        for a, b in zip(bv, normalize_quotes(ev))
                     ):
                         _completed_status.append(
                             ("String Similarity", "< 95%", str(STATUS_CONFIGS.FAILED))
