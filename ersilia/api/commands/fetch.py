@@ -73,7 +73,7 @@ def fetch(
             ":thumbs_up: Model {0} fetched successfully!".format(model_id),
             fg="green",
         )
-    if (
+    elif (
         fetch_result.reason
         == "Model already exists on your system. If you want to fetch it again, please delete the existing model first."
     ):
