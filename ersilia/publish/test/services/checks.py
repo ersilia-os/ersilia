@@ -467,7 +467,19 @@ class CheckService:
 
         if not BaseInformationValidator().is_numeric(data[key]):
             raise texc.EmptyField(key)
+        
+    def _check_model_release(self, data):
+        key = "Release"
+        
+        self.logger.debug(f"Checking {key}  field..")
+        if key in data:
+            if not data[key]:
+                raise texc.EmptyField(key)
+        else:
+            raise texc.EmptyKey(key)
 
+        if not BaseInformationValidator().is_semver(data[key]):
+            raise texc.EmptyField(key)
 
     def check_information(self):
         """
@@ -541,6 +553,11 @@ class CheckService:
             self._check_model_computational_performance_five,
             data,
             "Model Computational Performance for 10000 input",
+        )
+        self._run_check(
+            self._check_model_release,
+            data,
+            "Model Release Version",
         )
 
     def _duplicate(self, csv_file):
