@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 
 import validators
 
@@ -10,7 +11,17 @@ except ImportError:
 
 from ...utils.identifiers.model import ModelIdentifier
 
-# ruff: noqa: D101, D102
+# ruff: noqa
+
+
+SEMVER_REGEX = re.compile(
+    r"""^
+    (0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)    
+    (?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?     
+    (?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?    
+    $""",
+    re.VERBOSE,
+)
 
 
 class BaseInformationValidator:
@@ -27,6 +38,10 @@ class BaseInformationValidator:
     def is_valid_url(u: str) -> bool:
         r = validators.url(u)
         return False if isinstance(r, ValidationFailure) else bool(r)
+
+    @staticmethod
+    def is_semver(version: str) -> bool:
+        return SEMVER_REGEX.match(version) is not None
 
     @staticmethod
     def is_numeric(x) -> bool:

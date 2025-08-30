@@ -373,6 +373,42 @@ class SimpleDocker(object):
         cmd = "docker rm -f {0}".format(name)
         run_command(cmd)
 
+    async def _cp_col_from_container(self, local_path, org=None, img=None, tag=None):
+        import os
+
+        local_path = os.path.abspath(local_path)
+        if not os.path.exists(local_path):
+            os.makedirs(local_path, exist_ok=True)
+        name = self.run(org, img, tag, name=None)
+
+        find_out = os.path.join(make_temp_dir(prefix="ersilia-"), "find.txt")
+        run_command(
+            "docker exec %s sh -lc \"find / -name 'run_columns.csv' -type f -print -quit\" > %s 2>&1"
+            % (name, find_out)
+        )
+        with open(find_out, "r") as f:
+            found = f.read().strip()
+
+        if "No such container" in found:
+            img_name = "{0}/{1}:{2}".format(org, img, tag)
+            run_command(
+                "docker run --platform linux/amd64 -d --name={0} {1}".format(
+                    name, img_name
+                )
+            )
+            run_command(
+                "docker exec %s sh -lc \"find / -name 'run_columns.csv' -type f -print -quit\" > %s 2>&1"
+                % (name, find_out)
+            )
+            with open(find_out, "r") as f:
+                found = f.read().strip()
+
+        if not found.startswith("/"):
+            raise FileNotFoundError("run_columns.csv not found in container %s" % name)
+
+        tmp_file = os.path.join(make_temp_dir(prefix="ersilia-"), "tmp.txt")
+        run_command("docker cp %s:%s %s &> %s" % (name, found, local_path, tmp_file))
+
     @staticmethod
     def cp_from_container(name, img_path, local_path, org=None, img=None, tag=None):
         """
@@ -382,7 +418,7 @@ class SimpleDocker(object):
         ----------
         name : str
             The container name.
-        img_path : str
+        img_path : strcp_from_image
             The path inside the container.
         local_path : str
             The local path to copy files to.
