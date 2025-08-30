@@ -7,6 +7,7 @@ import yaml
 from ersilia.hub.content.card import BaseInformation, RepoMetadataFile
 from ersilia.utils.logging import make_temp_dir
 from ersilia.utils.terminal import run_command
+from ersilia.utils.logging import logger
 
 from readme_formatter import ReadmeFormatter
 
@@ -39,10 +40,16 @@ class AirtableInterface:
 
     @staticmethod
     def _get_ro_airtable_api_key():
-        r = requests.get(ROK_URL)
-        data = r.json()
-        return data["AIRTABLE_READONLY_API_KEY"]
+        try:
+            r = requests.get(ROK_URL)
+            r.raise_for_status()
+            data = r.json()
+            return data["AIRTABLE_READONLY_API_KEY"]
 
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"Network error while fetching {ROK_URL}: {e}")
+            pass
+    
     def _get_rw_table(self, api_key):
         return self._create_table(api_key=api_key)
 
