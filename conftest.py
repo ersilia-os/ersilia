@@ -72,3 +72,23 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         )
 
     console.print(table)
+
+
+def pytest_collection_modifyitems(config, items):
+    desired = [
+        "test/cli/test_catalog.py",
+        "test/cli/test_close.py",
+        "test/cli/test_fetch.py",
+        "test/cli/test_serve.py",
+        "test/cli/test_run.py",
+        "test/cli/test_delete.py",
+    ]
+    desired = [p.replace("\\", "/") for p in desired]
+    order = {p: i for i, p in enumerate(desired)}
+    original_index = {item: idx for idx, item in enumerate(items)}
+
+    def key(it):
+        file_path = it.nodeid.split("::", 1)[0].replace("\\", "/")
+        return (order.get(file_path, len(desired)), original_index[it])
+
+    items.sort(key=key)
