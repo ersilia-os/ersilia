@@ -14,11 +14,11 @@ from ...utils.identifiers.model import ModelIdentifier
 # ruff: noqa
 
 
-SEMVER_REGEX = re.compile(
+_SEMVER_REGEX = re.compile(
     r"""^
     (0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)    
-    (?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?     
-    (?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?    
+    (?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?   
+    (?:\+([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?   
     $""",
     re.VERBOSE,
 )
@@ -40,8 +40,15 @@ class BaseInformationValidator:
         return False if isinstance(r, ValidationFailure) else bool(r)
 
     @staticmethod
-    def is_semver(version: str) -> bool:
-        return SEMVER_REGEX.match(version) is not None
+    def is_semver(version: str, allow_v_prefix: bool = True) -> bool:
+        if not isinstance(version, str):
+            return False
+        s = version.strip()
+        if allow_v_prefix and s[:1] in ("v", "V"):
+            s = s[1:]
+        if not allow_v_prefix and s != version.strip():
+            return False
+        return _SEMVER_REGEX.match(s) is not None
 
     @staticmethod
     def is_numeric(x) -> bool:
