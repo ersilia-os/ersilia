@@ -399,29 +399,51 @@
 
 <div class="viewcode-block" id="Model.fetch">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.fetch">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">from_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">from_github</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">from_dockerhub</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span><span class="p">,</span>
+        <span class="n">from_s3</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">from_hosted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">hosted_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fetches an Ersilia model to run it locally.</span>
+<span class="sd">        Fetch an Ersilia model to run it locally.</span>
 
-<span class="sd">        This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc...).</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Function: The fetch command function to be used by the API.</span>
-<span class="sd">        Str: Confirmation message on success or warning message on failure.</span>
-
+<span class="sd">        Parameters mirror the CLI:</span>
+<span class="sd">        - overwrite: overwrite existing local copy (default: True)</span>
+<span class="sd">        - from_dir: fetch from a local directory path</span>
+<span class="sd">        - from_github: fetch from GitHub</span>
+<span class="sd">        - from_dockerhub: fetch from DockerHub (if None, inferred)</span>
+<span class="sd">        - version: version tag (default: &quot;latest&quot;)</span>
+<span class="sd">        - from_s3: fetch from S3</span>
+<span class="sd">        - from_hosted: fetch from a hosted URL</span>
+<span class="sd">        - hosted_url: URL to hosted assets (used when from_hosted=True)</span>
+<span class="sd">        - verbose: override for verbose mode</span>
+<span class="sd">        - **kwargs: passthrough for forward compatibility</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># infer default: if no source specified, use DockerHub</span>
+        <span class="k">if</span> <span class="n">from_dockerhub</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">from_dockerhub</span> <span class="o">=</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="n">from_dir</span><span class="p">,</span> <span class="n">from_github</span><span class="p">,</span> <span class="n">from_s3</span><span class="p">,</span> <span class="n">from_hosted</span><span class="p">])</span>
+
         <span class="n">fetch</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
-            <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">from_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">from_github</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">version</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">,</span>
-            <span class="n">from_s3</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">from_hosted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">hosted_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">verbose_flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span> <span class="ow">or</span> <span class="n">verbose</span><span class="p">,</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
+            <span class="n">from_dir</span><span class="o">=</span><span class="n">from_dir</span><span class="p">,</span>
+            <span class="n">from_github</span><span class="o">=</span><span class="n">from_github</span><span class="p">,</span>
+            <span class="n">from_dockerhub</span><span class="o">=</span><span class="n">from_dockerhub</span><span class="p">,</span>
+            <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
+            <span class="n">from_s3</span><span class="o">=</span><span class="n">from_s3</span><span class="p">,</span>
+            <span class="n">from_hosted</span><span class="o">=</span><span class="n">from_hosted</span><span class="p">,</span>
+            <span class="n">hosted_url</span><span class="o">=</span><span class="n">hosted_url</span><span class="p">,</span>
+            <span class="n">verbose_flag</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span> <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">verbose</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
