@@ -358,7 +358,10 @@
     <span class="n">STATUS_CONFIGS</span><span class="p">,</span>
     <span class="n">ERSILIAPACK_BACK_FILES</span><span class="p">,</span>
     <span class="n">ERSILIAPACK_FILES</span><span class="p">,</span>
-    <span class="n">BENTOML_FILES</span><span class="p">,</span>
+    <span class="n">main_required_keys</span><span class="p">,</span>
+    <span class="n">perf_keys</span><span class="p">,</span>
+    <span class="n">dockerhub_size_keys</span><span class="p">,</span>
+    <span class="n">environment_size_keys</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileInstallParser</span><span class="p">,</span> <span class="n">YAMLInstallParser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.setup</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupService</span>
@@ -604,21 +607,43 @@
             <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">return</span> <span class="n">data</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">from_dockerhub</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">fill_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">parent</span><span class="p">,</span> <span class="n">children</span> <span class="ow">in</span> <span class="n">keys</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">parent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">child</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="n">children</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">child</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">parent</span><span class="p">]:</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">parent</span><span class="p">][</span><span class="n">child</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="k">if</span> <span class="n">from_dockerhub</span><span class="p">:</span>
+            <span class="n">size_keys</span> <span class="o">=</span> <span class="n">dockerhub_size_keys</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">size_keys</span> <span class="o">=</span> <span class="n">environment_size_keys</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">fill_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">main_required_keys</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">fill_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size_keys</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">deep</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">fill_keys</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">perf_keys</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="IOService.collect_and_save_json">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.collect_and_save_json">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">collect_and_save_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">collect_and_save_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">from_dockerhub</span><span class="p">,</span> <span class="n">deep</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Helper function to collect JSON results and save them to a file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">aggregated_json</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Json result</span><span class="se">\n</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">aggregated_json</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        <span class="n">aggregated_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_dir_size</span><span class="p">(</span><span class="n">aggregated_json</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_dir_size</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_keys</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">from_dockerhub</span><span class="o">=</span><span class="n">from_dockerhub</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="n">deep</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">aggregated_json</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_create_json_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
