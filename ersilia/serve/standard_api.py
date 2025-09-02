@@ -448,10 +448,6 @@ class StandardCSVRunApi(ErsiliaBase):
             except ValueError:
                 self.logger.error(f"Batch {bidx} returned non-JSON: {resp.text[:200]}")
                 continue
-
-            with open(f"data/raw_eos3b5e_{bidx}.json", "w") as f:
-                json.dump(data, f)
-
             if isinstance(data, list):
                 overall_results.extend(data)
             elif isinstance(data, dict):
@@ -464,8 +460,6 @@ class StandardCSVRunApi(ErsiliaBase):
                     overall_results.append(data)
             else:
                 self.logger.error(f"Unexpected payload type: {type(data).__name__}")
-        with open("data/overall_eos3b5e.json", "w") as f:
-            json.dump(overall_results, f)
 
         return overall_results, meta
 
