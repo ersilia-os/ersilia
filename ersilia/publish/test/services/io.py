@@ -36,7 +36,10 @@ from .constants import (
     STATUS_CONFIGS,
     ERSILIAPACK_BACK_FILES,
     ERSILIAPACK_FILES,
-    BENTOML_FILES,
+    main_required_keys,
+    perf_keys,
+    dockerhub_size_keys,
+    environment_size_keys
 )
 from .parser import DockerfileInstallParser, YAMLInstallParser
 from .setup import SetupService
@@ -268,19 +271,41 @@ class IOService:
             del data[keys[2]]
             return data
         return data
+    
+    def _ensure_keys(self, data, from_dockerhub=False, deep=False):
+        def fill_keys(data, keys):
+            for parent, children in keys.items():
+                if parent not in data:
+                    data[parent] = {}
+                for child, default in children.items():
+                    if child not in data[parent]:
+                        data[parent][child] = default
+            return data
 
-    def collect_and_save_json(self, results, output_file):
+        if from_dockerhub:
+            size_keys = dockerhub_size_keys
+        else:
+            size_keys = environment_size_keys
+
+        data = fill_keys(data, main_required_keys)
+        data = fill_keys(data, size_keys)
+        if deep:
+            data = fill_keys(data, perf_keys)
+        return data
+
+    def collect_and_save_json(self, results, output_file, from_dockerhub, deep):
         """
         Helper function to collect JSON results and save them to a file.
         """
-        aggregated_json = {}
+        data = {}
         for result in results:
             self.logger.info(f"Json result\n: {result}")
-            aggregated_json.update(result)
-        aggregated_json = self._combine_dir_size(aggregated_json)
+            data.update(result)
+        data = self._combine_dir_size(data)
+        data = self._ensure_keys(data=data, from_dockerhub=from_dockerhub, deep=deep)
 
         with open(output_file, "w") as f:
-            json.dump(aggregated_json, f, indent=4)
+            json.dump(data, f, indent=4)
 
     def _create_json_data(self, rows, key):
         def clean_string(s):

@@ -574,7 +574,7 @@ class RunnerService:
 
                 results.append(self._perform_deep_checks())
 
-            self.ios_service.collect_and_save_json(results, self.report_file)
+            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             echo("Model tests and checks completed.", fg="green", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.delete()
@@ -586,7 +586,7 @@ class RunnerService:
                 "Saving report, deleting model and exiting.",
                 fg="yellow", bold=True,
             )
-            self.ios_service.collect_and_save_json(results, self.report_file)
+            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
@@ -595,7 +595,7 @@ class RunnerService:
             tb = traceback.format_exc()
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
-            self.ios_service.collect_and_save_json(results, self.report_file)
+            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
