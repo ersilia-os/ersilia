@@ -257,3 +257,34 @@ BASE_URL = "https://github.com/ersilia-os/"
 RAW_CONTENT_URL = "https://raw.githubusercontent.com/ersilia-os/{model}/main/"
 REPO_API_URL = "https://api.github.com/repos/ersilia-os/{model}/contents"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+
+
+dockerhub_size_keys = {
+    "model_size_check": {"image_size_mb": None, "directory_size_mb": None}
+}
+environment_size_keys = {
+    "model_size_check": {"environment_size_mb": None, "directory_size_mb": None}
+}
+perf_keys = {
+    "computational_performance_summary": {
+        "computational_performance_tracking": False,
+        "computational_performance_tracking_details": {
+            "pred_1": None,
+            "pred_2": None,
+            "pred_3": None,
+            "pred_4": None,
+            "pred_5": None,
+        },
+    }
+}
+main_required_keys = {
+    "model_run_check": {
+        "simple_model_run": False,
+        "simple_model_run_columns": False,
+    },
+    "input_output_check": {"csv_csv": False},
+    "model_output_consistency_check": {"check_consistency_of_model_output": False},
+    "consistency_summary_between_ersilia_and_bash_execution_outputs": {
+        "rmse_mean": False
+    },
+}
