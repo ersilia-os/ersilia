@@ -288,3 +288,15 @@ main_required_keys = {
         "rmse_mean": False
     },
 }
+
+check_keys_order = [
+    "metadata_checks",
+    "model_file_checks",
+    "file_validity_check",
+    "model_size_check",
+    "model_run_check",
+    "input_output_check",
+    "model_output_consistency_check",
+    "consistency_summary_between_ersilia_and_bash_execution_outputs",
+    "computational_performance_summary"
+]

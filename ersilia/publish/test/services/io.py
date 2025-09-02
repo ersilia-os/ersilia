@@ -39,7 +39,8 @@ from .constants import (
     main_required_keys,
     perf_keys,
     dockerhub_size_keys,
-    environment_size_keys
+    environment_size_keys,
+    check_keys_order
 )
 from .parser import DockerfileInstallParser, YAMLInstallParser
 from .setup import SetupService
@@ -301,8 +302,10 @@ class IOService:
         for result in results:
             self.logger.info(f"Json result\n: {result}")
             data.update(result)
-        data = self._combine_dir_size(data)
         data = self._ensure_keys(data=data, from_dockerhub=from_dockerhub, deep=deep)
+        data = self._combine_dir_size(data)
+        data = {k: data[k] for k in check_keys_order if k in data}
+
 
         with open(output_file, "w") as f:
             json.dump(data, f, indent=4)
