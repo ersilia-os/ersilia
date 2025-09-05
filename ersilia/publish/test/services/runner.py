@@ -415,13 +415,16 @@ class RunnerService:
             self.logger.debug("Run script path: {0}".format(run_sh_path))
             self.logger.debug("Output path: {0}".format(output_path))
 
-            bash_script = f"""
-                source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
-                conda activate {self.model_id}
+            bash_script = f"""#!/usr/bin/env bash
+                set -euo pipefail
+
+                echo "Runner arch: $(uname -m)"
+                echo "Using conda prefix: {self._conda_prefix(self._is_base())}"
                 cd {os.path.dirname(run_sh_path)}
-                bash run.sh . {input_file_path} {bash_output_path} > {output_log_path} 2> {error_log_path}
-                conda deactivate
+                conda run -n {self.model_id} bash -lc 'bash ./run.sh . "{input_file_path}" "{bash_output_path}"' \
+                > "{output_log_path}" 2> "{error_log_path}"
                 """
+
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
