@@ -370,7 +370,7 @@ class RunnerService:
                 
         def read_logs(path):
             if not os.path.exists(path):
-                echo_exceptions(f"File not found: {path}", ClickInterface())
+                return "No error detected!"
             with open(path, "r") as file:
                 return file.readlines()
 
@@ -415,13 +415,30 @@ class RunnerService:
             self.logger.debug("Run script path: {0}".format(run_sh_path))
             self.logger.debug("Output path: {0}".format(output_path))
 
-            bash_script = f"""
-                source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
-                conda activate {self.model_id}
-                cd {os.path.dirname(run_sh_path)}
-                bash run.sh . {input_file_path} {bash_output_path} > {output_log_path} 2> {error_log_path}
-                conda deactivate
+            bash_script = f"""#!/usr/bin/env bash
+                set -euo pipefail
+
+                echo "Runner arch: $(uname -m)"
+                echo "Using conda prefix: {self._conda_prefix(self._is_base())}"
+
+                conda run -n {self.model_id} bash -c '
+                set -euo pipefail
+                echo "Inside conda env: $(python -V) - $(which python)"
+                cd "{os.path.dirname(run_sh_path)}"
+                echo "PWD inside conda run: $(pwd)"
+                ls -lah
+                bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+                '
+
+                if [ ! -f "{bash_output_path}" ]; then
+                echo "ERROR: expected output file not found: {bash_output_path}" >&2
+                [ -f "{error_log_path}" ] && echo "==== STDERR ====" && cat "{error_log_path}" || true
+                [ -f "{output_log_path}" ] && echo "==== STDOUT ====" && cat "{output_log_path}" || true
+                exit 1
+                fi
                 """
+
+
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
