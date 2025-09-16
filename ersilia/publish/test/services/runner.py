@@ -420,15 +420,24 @@ class RunnerService:
 
                 echo "Runner arch: $(uname -m)"
                 echo "Using conda prefix: {self._conda_prefix(self._is_base())}"
+                echo "Attempting method 1: source+activate+run.sh"
 
-                conda run -n {self.model_id} bash -c '
-                set -euo pipefail
-                echo "Inside conda env: $(python -V) - $(which python)"
+                if ! (
+                source "{self._conda_prefix(self._is_base())}"/etc/profile.d/conda.sh
+                conda activate "{self.model_id}"
                 cd "{os.path.dirname(run_sh_path)}"
-                echo "PWD inside conda run: $(pwd)"
-                ls -lah
-                bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-                '
+                bash ./run.sh . "{input_file_path}" "{bash_output_path}" > "{output_log_path}" 2> "{error_log_path}"
+                ); then
+                echo "Method 1 failed; falling back to method 2: conda run" >&2
+                conda run -n "{self.model_id}" bash -c '
+                    set -euo pipefail
+                    echo "Inside conda env: $(python -V) - $(which python)"
+                    cd "{os.path.dirname(run_sh_path)}"
+                    echo "PWD inside conda run: $(pwd)"
+                    ls -lah
+                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+                ' > "{output_log_path}" 2> "{error_log_path}"
+                fi
 
                 if [ ! -f "{bash_output_path}" ]; then
                 echo "ERROR: expected output file not found: {bash_output_path}" >&2
@@ -436,9 +445,7 @@ class RunnerService:
                 [ -f "{output_log_path}" ] && echo "==== STDOUT ====" && cat "{output_log_path}" || true
                 exit 1
                 fi
-                """
-
-
+            """
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
