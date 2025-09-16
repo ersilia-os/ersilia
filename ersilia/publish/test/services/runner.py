@@ -418,31 +418,36 @@ class RunnerService:
             bash_script = f"""#!/usr/bin/env bash
                 set -euo pipefail
 
-                echo "Runner arch: $(uname -m)"
-                echo "Using conda prefix: {self._conda_prefix(self._is_base())}"
-                echo "Attempting method 1: source+activate+run.sh"
+                PREFIX="{self._conda_prefix(self._is_base())}"
+                ENVNAME="{self.model_id}"
+                DIR="{os.path.dirname(run_sh_path)}"
+                IN="{input_file_path}"
+                OUT="{bash_output_path}"
+                OUTLOG="{output_log_path}"
+                ERRLOG="{error_log_path}"
 
-                if ! (
-                source "{self._conda_prefix(self._is_base())}"/etc/profile.d/conda.sh
-                conda activate "{self.model_id}"
-                cd "{os.path.dirname(run_sh_path)}"
-                bash ./run.sh . "{input_file_path}" "{bash_output_path}" > "{output_log_path}" 2> "{error_log_path}"
-                ); then
-                echo "Method 1 failed; falling back to method 2: conda run" >&2
-                conda run -n "{self.model_id}" bash -c '
-                    set -euo pipefail
-                    echo "Inside conda env: $(python -V) - $(which python)"
-                    cd "{os.path.dirname(run_sh_path)}"
-                    echo "PWD inside conda run: $(pwd)"
-                    ls -lah
-                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-                ' > "{output_log_path}" 2> "{error_log_path}"
+                echo "Runner arch: $(uname -m)"
+                echo "Using conda prefix: $PREFIX"
+                echo "Target env: $ENVNAME"
+
+                if (
+                source "$PREFIX/etc/profile.d/conda.sh" && \
+                conda activate "$ENVNAME" && \
+                cd "$DIR" && \
+                bash ./run.sh . "$IN" "$OUT" > "$OUTLOG" 2> "$ERRLOG"
+                ) && [ -f "$OUT" ]; then
+                echo "Method 1 (activate+run) succeeded and output exists: $OUT"
+                else
+                echo "Method 1 failed OR output missing; falling back to conda run" >&2
+                export DIR IN OUT
+                conda run -n "$ENVNAME" bash -c 'set -euo pipefail; cd "$DIR"; bash ./run.sh . "$IN" "$OUT"' \
+                    > "$OUTLOG" 2> "$ERRLOG"
                 fi
 
-                if [ ! -f "{bash_output_path}" ]; then
-                echo "ERROR: expected output file not found: {bash_output_path}" >&2
-                [ -f "{error_log_path}" ] && echo "==== STDERR ====" && cat "{error_log_path}" || true
-                [ -f "{output_log_path}" ] && echo "==== STDOUT ====" && cat "{output_log_path}" || true
+                if [ ! -f "$OUT" ]; then
+                echo "ERROR: expected output file not found: $OUT" >&2
+                [ -f "$ERRLOG" ] && echo "==== STDERR ====" && cat "$ERRLOG" || true
+                [ -f "$OUTLOG" ] && echo "==== STDOUT ====" && cat "$OUTLOG" || true
                 exit 1
                 fi
             """
