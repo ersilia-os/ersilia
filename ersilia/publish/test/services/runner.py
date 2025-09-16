@@ -416,40 +416,55 @@ class RunnerService:
             self.logger.debug("Output path: {0}".format(output_path))
 
             bash_script = f"""#!/usr/bin/env bash
-                set -euo pipefail
+                set -Euo pipefail
 
-                PREFIX="{self._conda_prefix(self._is_base())}"
-                ENVNAME="{self.model_id}"
-                DIR="{os.path.dirname(run_sh_path)}"
-                IN="{input_file_path}"
-                OUT="{bash_output_path}"
-                OUTLOG="{output_log_path}"
-                ERRLOG="{error_log_path}"
+                log_out="{output_log_path}"
+                log_err="{error_log_path}"
 
-                echo "Runner arch: $(uname -m)"
-                echo "Using conda prefix: $PREFIX"
-                echo "Target env: $ENVNAME"
+                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+                : > "$log_out"
+                : > "$log_err"
 
-                if (
-                source "$PREFIX/etc/profile.d/conda.sh" && \
-                conda activate "$ENVNAME" && \
-                cd "$DIR" && \
-                bash ./run.sh . "$IN" "$OUT" > "$OUTLOG" 2> "$ERRLOG"
-                ) && [ -f "$OUT" ]; then
-                echo "Method 1 (activate+run) succeeded and output exists: $OUT"
-                else
-                echo "Method 1 failed OR output missing; falling back to conda run" >&2
-                export DIR IN OUT
-                conda run -n "$ENVNAME" bash -c 'set -euo pipefail; cd "$DIR"; bash ./run.sh . "$IN" "$OUT"' \
-                    > "$OUTLOG" 2> "$ERRLOG"
+                echo "Runner arch: $(uname -m)" | tee -a "$log_out"
+                echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
+
+                (
+                set +e
+                conda run -n {self.model_id} bash -c '
+                    set -euo pipefail
+                    echo "Inside conda env: $(python -V) - $(which python)"
+                    cd "{os.path.dirname(run_sh_path)}"
+                    echo "PWD inside conda run: $(pwd)"
+                    ls -lah
+                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+                ' >>"$log_out" 2>>"$log_err"
+                )
+
+                if [ -f "{bash_output_path}" ]; then
+                echo "SUCCESS via conda run" | tee -a "$log_out"
+                exit 0
                 fi
 
-                if [ ! -f "$OUT" ]; then
-                echo "ERROR: expected output file not found: $OUT" >&2
-                [ -f "$ERRLOG" ] && echo "==== STDERR ====" && cat "$ERRLOG" || true
-                [ -f "$OUTLOG" ] && echo "==== STDOUT ====" && cat "$OUTLOG" || true
+                echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
+
+                source "{self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err"
+                conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
+
+                cd "{os.path.dirname(run_sh_path)}"
+                chmod +x ./run.sh || true
+
+                bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
+
+                conda deactivate >>"$log_out" 2>>"$log_err" || true
+
+                if [ ! -f "{bash_output_path}" ]; then
+                echo "ERROR: expected output file not found: {bash_output_path}" >&2
+                [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
+                [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
                 exit 1
                 fi
+
+                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
             """
 
             with open(temp_script_path, "w") as script_file:
