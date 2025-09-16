@@ -756,31 +756,36 @@
             <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#!/usr/bin/env bash</span>
 <span class="s2">                set -euo pipefail</span>
 
-<span class="s2">                echo &quot;Runner arch: $(uname -m)&quot;</span>
-<span class="s2">                echo &quot;Using conda prefix: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                echo &quot;Attempting method 1: source+activate+run.sh&quot;</span>
+<span class="s2">                PREFIX=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                ENVNAME=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                DIR=&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                IN=&quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                OUT=&quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                OUTLOG=&quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                ERRLOG=&quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<span class="s2">                if ! (</span>
-<span class="s2">                source &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;/etc/profile.d/conda.sh</span>
-<span class="s2">                conda activate &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt; &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; 2&gt; &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                ); then</span>
-<span class="s2">                echo &quot;Method 1 failed; falling back to method 2: conda run&quot; &gt;&amp;2</span>
-<span class="s2">                conda run -n &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot; bash -c &#39;</span>
-<span class="s2">                    set -euo pipefail</span>
-<span class="s2">                    echo &quot;Inside conda env: $(python -V) - $(which python)&quot;</span>
-<span class="s2">                    cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                    echo &quot;PWD inside conda run: $(pwd)&quot;</span>
-<span class="s2">                    ls -lah</span>
-<span class="s2">                    bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                &#39; &gt; &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; 2&gt; &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                echo &quot;Runner arch: $(uname -m)&quot;</span>
+<span class="s2">                echo &quot;Using conda prefix: $PREFIX&quot;</span>
+<span class="s2">                echo &quot;Target env: $ENVNAME&quot;</span>
+
+<span class="s2">                if (</span>
+<span class="s2">                source &quot;$PREFIX/etc/profile.d/conda.sh&quot; &amp;&amp; </span><span class="se">\</span>
+<span class="s2">                conda activate &quot;$ENVNAME&quot; &amp;&amp; </span><span class="se">\</span>
+<span class="s2">                cd &quot;$DIR&quot; &amp;&amp; </span><span class="se">\</span>
+<span class="s2">                bash ./run.sh . &quot;$IN&quot; &quot;$OUT&quot; &gt; &quot;$OUTLOG&quot; 2&gt; &quot;$ERRLOG&quot;</span>
+<span class="s2">                ) &amp;&amp; [ -f &quot;$OUT&quot; ]; then</span>
+<span class="s2">                echo &quot;Method 1 (activate+run) succeeded and output exists: $OUT&quot;</span>
+<span class="s2">                else</span>
+<span class="s2">                echo &quot;Method 1 failed OR output missing; falling back to conda run&quot; &gt;&amp;2</span>
+<span class="s2">                export DIR IN OUT</span>
+<span class="s2">                conda run -n &quot;$ENVNAME&quot; bash -c &#39;set -euo pipefail; cd &quot;$DIR&quot;; bash ./run.sh . &quot;$IN&quot; &quot;$OUT&quot;&#39; </span><span class="se">\</span>
+<span class="s2">                    &gt; &quot;$OUTLOG&quot; 2&gt; &quot;$ERRLOG&quot;</span>
 <span class="s2">                fi</span>
 
-<span class="s2">                if [ ! -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">                echo &quot;ERROR: expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&amp;2</span>
-<span class="s2">                [ -f &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDERR ====&quot; &amp;&amp; cat &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; || true</span>
-<span class="s2">                [ -f &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDOUT ====&quot; &amp;&amp; cat &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; || true</span>
+<span class="s2">                if [ ! -f &quot;$OUT&quot; ]; then</span>
+<span class="s2">                echo &quot;ERROR: expected output file not found: $OUT&quot; &gt;&amp;2</span>
+<span class="s2">                [ -f &quot;$ERRLOG&quot; ] &amp;&amp; echo &quot;==== STDERR ====&quot; &amp;&amp; cat &quot;$ERRLOG&quot; || true</span>
+<span class="s2">                [ -f &quot;$OUTLOG&quot; ] &amp;&amp; echo &quot;==== STDOUT ====&quot; &amp;&amp; cat &quot;$OUTLOG&quot; || true</span>
 <span class="s2">                exit 1</span>
 <span class="s2">                fi</span>
 <span class="s2">            &quot;&quot;&quot;</span>
