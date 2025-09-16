@@ -753,30 +753,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Run script path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_path</span><span class="p">))</span>
 
-            <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#!/usr/bin/env bash</span>
-<span class="s2">                set -euo pipefail</span>
-
-<span class="s2">                echo &quot;Runner arch: $(uname -m)&quot;</span>
-<span class="s2">                echo &quot;Using conda prefix: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span>
-
-<span class="s2">                conda run -n </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> bash -c &#39;</span>
-<span class="s2">                set -euo pipefail</span>
-<span class="s2">                echo &quot;Inside conda env: $(python -V) - $(which python)&quot;</span>
-<span class="s2">                cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                echo &quot;PWD inside conda run: $(pwd)&quot;</span>
-<span class="s2">                ls -lah</span>
-<span class="s2">                bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                &#39;</span>
-
-<span class="s2">                if [ ! -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">                echo &quot;ERROR: expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&amp;2</span>
-<span class="s2">                [ -f &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDERR ====&quot; &amp;&amp; cat &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; || true</span>
-<span class="s2">                [ -f &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDOUT ====&quot; &amp;&amp; cat &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; || true</span>
-<span class="s2">                exit 1</span>
-<span class="s2">                fi</span>
+            <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                source </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">/etc/profile.d/conda.sh</span>
+<span class="s2">                conda activate </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span>
+<span class="s2">                cd </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">                bash run.sh . </span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2"> 2&gt; </span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span>
+<span class="s2">                conda deactivate</span>
 <span class="s2">                &quot;&quot;&quot;</span>
-
-
 
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
                 <span class="n">script_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
