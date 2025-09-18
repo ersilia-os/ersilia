@@ -297,12 +297,15 @@ class ModelDockerHubFetcher(ErsiliaBase):
         model_id : str
             ID of the model.
         """
-        dest_path = os.path.join(self._model_path(model_id), "model/framework/columns")
+        self.logger.debug("Copying columns file from model container")
+        dest_path = os.path.join(
+            self._model_path(model_id), "model/framework/columns/run_columns.csv"
+        )
         await self.simple_docker._cp_col_from_container(
             local_path=dest_path,
             img=model_id,
             org=DOCKERHUB_ORG,
-            tag=DOCKERHUB_LATEST_TAG,
+            tag=self.img_tag,
         )
 
     async def modify_information(self, model_id: str):
