@@ -647,12 +647,15 @@
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dest_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;model/framework/columns&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Copying columns file from model container&quot;</span><span class="p">)</span>
+        <span class="n">dest_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;model/framework/columns/run_columns.csv&quot;</span>
+        <span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">_cp_col_from_container</span><span class="p">(</span>
             <span class="n">local_path</span><span class="o">=</span><span class="n">dest_path</span><span class="p">,</span>
             <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
-            <span class="n">tag</span><span class="o">=</span><span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
+            <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
