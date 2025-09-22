@@ -178,6 +178,28 @@ class SimpleDocker(object):
                     img_dict[img] = img
             return img_dict
 
+    def list_eos_images(self):
+        """
+        Get a list of eos-related Docker images.
+
+        Returns
+        -------
+        list
+            A list of Ersilia-related Docker image names.
+        """
+        try:
+            model_ids = []
+            images_dict = self.images()
+            for k, _ in images_dict.items():
+                if DOCKERHUB_ORG in k:
+                    name = k.split(DOCKERHUB_ORG + "/")[-1].split(":")[0]
+                    if name.startswith("eos") and len(name) == 7:
+                        model_ids += [name]
+            return model_ids
+        except Exception:
+            self.logger.warning("Failed to list Docker images. Is Docker running?")
+            return []
+
     def containers(self, only_run):
         """
         Get a dictionary of Docker containers.
@@ -303,6 +325,22 @@ class SimpleDocker(object):
             cmd = "sudo -u {0} udocker rmi {1}".format(
                 DEFAULT_UDOCKER_USERNAME, self._image_name(org, img, tag)
             )
+            run_command(cmd)
+
+    def brute_delete_by_model_id(self, model_id):
+        """
+        Brute force delete a Docker image and containers by model ID.
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+        """
+        images_dict = self.images()
+        for k, _ in images_dict.items():
+            if model_id in k:
+                org, img, tag = self._splitter(k)
+                self.delete(org=org, img=img, tag=tag)
 
     def run(self, org, img, tag, name, memory=None):
         """

@@ -434,6 +434,27 @@ class SimpleConda(CondaUtils):
                 envs += [l.rstrip()]
         return envs
 
+    def list_eos_environments(self):
+        """
+        List all conda environments that start with 'eos' and have a length of 7 characters (i.e. an allowed model ID).
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        list
+            A list of conda environments that start with 'eos' and have a length of 7 characters.
+        """
+        envs = self._env_list()
+        model_ids = []
+        for l in envs:
+            l = l.split(" ")[0].rstrip()
+            if l.startswith("eos") and len(l) == 7:
+                model_ids += [l]
+        return model_ids
+
     def create(self, environment, python_version):
         """
         Create a new conda environment.

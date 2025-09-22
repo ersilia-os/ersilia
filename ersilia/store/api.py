@@ -84,9 +84,9 @@ class InferenceStoreApi(ErsiliaBase):
         self.generic_output_adapter = GenericOutputAdapter(
             model_id=model_id, columns_info=self.col_info
         )
-        assert (
-            self.col_info is not None
-        ), "Model column information can not be fetched from github."
+        assert self.col_info is not None, (
+            "Model column information can not be fetched from github."
+        )
         self.cols = self.col_info["name"]
         self.dtype = self.col_info["type"]
         self.header = ["key", "input"] + self.cols
