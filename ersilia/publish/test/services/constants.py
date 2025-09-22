@@ -27,6 +27,7 @@ class Options(Enum):
     DEEP_INPUT = "deep_input.csv"
     DEEP_OUTPUT = "deep_output.csv"
     OUTPUT_CSV = "result.csv"
+    ASYNC_OUTPUT_CSV = "async.csv"
     EXAMPLE_CSV = "example.csv"
     INPUT_CSV = "input.csv"
     OUTPUT1_CSV = "output1.csv"
@@ -114,6 +115,7 @@ class Checks(Enum):
     COLUMN_CHECK_SUCCESS = "Columns coincides with run_columns"
     COLUMN_CHECK_FAILURE = "Columns not coincide with run_columns"
     SIMPLE_MODEL_RUN = "Simple Model Run"
+    SIMPLE_MODEL_RUN_ASYNC = "Async Simple Model Run"
     SIMPLE_MODEL_RUN_COLUMNS = "Simple Model Run Columns"
     DEPENDENCY_PINNED = "Checking package versions and file structure"
 
@@ -138,6 +140,7 @@ class TableType(Enum):
 
     INSPECT_SUMMARY = "Inspect Summary"
     MODEL_RUN_CHECK = "Model Run Check"
+    ASNC_MODEL_RUN_CHECK = "Async Model Run Check"
 
 
 @dataclass
@@ -194,6 +197,9 @@ TABLE_CONFIGS = {
     ),
     TableType.MODEL_RUN_CHECK: TableConfig(
         title="\nModel Run Check", headers=["Check", "Details", "Status"]
+    ),
+    TableType.ASNC_MODEL_RUN_CHECK: TableConfig(
+        title="\nAsync Model Run Check", headers=["Check", "Details", "Status"]
     ),
     TableType.FETCH_STATUS_SURFACE: TableConfig(
         title="\nModel Fetching Check", headers=["Check", "Status"]
@@ -282,6 +288,9 @@ main_required_keys = {
         "simple_model_run": False,
         "simple_model_run_columns": False,
     },
+    "async_model_run_check": {
+        "async_simple_model_run": False,
+    },
     "input_output_check": {"csv_csv": False},
     "model_output_consistency_check": {"check_consistency_of_model_output": False},
     "consistency_summary_between_ersilia_and_bash_execution_outputs": {
@@ -295,6 +304,7 @@ check_keys_order = [
     "file_validity_check",
     "model_size_check",
     "model_run_check",
+    "async_model_run_check",
     "input_output_check",
     "model_output_consistency_check",
     "consistency_summary_between_ersilia_and_bash_execution_outputs",
