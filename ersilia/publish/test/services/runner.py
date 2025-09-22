@@ -124,14 +124,28 @@ class RunnerService:
         self.surface = surface
         self.installer = PackageInstaller(self.dir, self.model_id)
 
-    def run_model(self, inputs: list, output: str, batch: int):
+    def serve_model(self):
+        """
+        Serve the model and return the command output.
+
+        Returns
+        -------
+        str
+            The output of the command.
+        """
+
+        cmd = f"ersilia serve {self.model_id} --disable-local-cache"
+        out = run_command(cmd)
+        return out
+    
+    def run_model(self, inputs: str, output: str, batch: int):
         """
         Run the model with the given input and output parameters.
 
         Parameters
         ----------
-        input : list
-            List of input samples.
+        input : str
+            A path to input file
         output : str
             Path to the output file.
         batch : int
@@ -181,7 +195,7 @@ class RunnerService:
             out = run_command(cmd)
             return out
 
-        self.delete()
+        # self.delete()
         out = _fetch(self.model_id, self.logger)
         return out
     
@@ -621,7 +635,7 @@ class RunnerService:
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             echo("Model tests and checks completed.", fg="green", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
-            self.delete()
+            # self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
         except SystemExit as e:
@@ -631,7 +645,7 @@ class RunnerService:
                 fg="yellow", bold=True,
             )
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
-            self.delete()
+            # self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
 
@@ -640,7 +654,7 @@ class RunnerService:
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
-            self.delete()
+            # self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
     def _configure_environment(self):
@@ -709,11 +723,18 @@ class RunnerService:
             )
 
         simple_output = self.checkup_service.check_simple_model_output(self.run_model)
+        simple_output_async = self.checkup_service.check_simple_model_async_output(self.serve_model)
         results.append(
             self._generate_table_from_check(TableType.MODEL_RUN_CHECK, simple_output)
         )
+        results.append(
+            self._generate_table_from_check(TableType.ASNC_MODEL_RUN_CHECK, simple_output_async)
+        )
         if simple_output[0][-1] == str(STATUS_CONFIGS.FAILED):
             echo_exceptions("Model simple run check has problem. System is exiting before proceeding!", ClickInterface())
+            return results, 1
+        if simple_output_async[0][-1] == str(STATUS_CONFIGS.FAILED):
+            echo_exceptions("Model async simple run check has problem. System is exiting before proceeding!", ClickInterface())
             return results, 1
         return results
 

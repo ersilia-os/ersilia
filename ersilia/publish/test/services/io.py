@@ -1,3 +1,5 @@
+import aiohttp
+import asyncio
 import csv
 import docker
 import json
@@ -17,12 +19,10 @@ try:
 except ImportError:
     MISSING_PACKAGES = True
 # ruff: enable
-from typing import List
 from .... import throw_ersilia_exception
 from ....default import (
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
-    PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     EOS_TMP,
     DOCKERHUB_ORG,
@@ -30,6 +30,7 @@ from ....default import (
     PREDEFINED_EXAMPLE_INPUT_FILES,
     INSTALL_YAML_FILE,
     DOCKERFILE_FILE,
+    DEFAULT_ASYNC_API_NAME
 )
 from .constants import (
     Checks,
@@ -508,7 +509,40 @@ class IOService:
         env_size = self.get_conda_env_size()
         env_size = f"{env_size:.2f}"
         return env_size
+    
 
+    async def _submit_smiles_and_get_results(self, input, cmd_out, poll_interval=2):
+        pattern = r"http://[a-zA-Z0-9.-]+:\d+"
+        match = re.search(pattern, cmd_out)
+        url = match.group(0)
+        base_url = f"{url}/{DEFAULT_ASYNC_API_NAME}"
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{base_url}/submit", json=input) as resp:
+                if resp.status != 200:
+                    echo(f"Job submission failed: {await resp.text()}", fg="red")
+                    return []
+                submission = await resp.json()
+                job_id = submission["job_id"]
+
+            while True:
+                async with session.get(f"{base_url}/status/{job_id}") as resp:
+                    status_resp = await resp.json()
+                    status = status_resp["status"]
+                    if status == "completed":
+                        break
+                    elif status == "failed":
+                        return {"error": "Job failed during processing"}
+                    else:
+                        await asyncio.sleep(poll_interval)
+
+            async with session.get(f"{base_url}/result/{job_id}") as resp:
+                if resp.status != 200:
+                    echo(f"Could not retrieve results: {await resp.text()}")
+                    return []
+                return await resp.json()
+
+    def submit_smiles_and_get_results(self, input, cmd_out, poll_interval=2):
+        return asyncio.run(self._submit_smiles_and_get_results(input, cmd_out, poll_interval))
 
 class PackageInstaller:
     def __init__(self, dir_path, model_id):

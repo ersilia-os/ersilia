@@ -10,6 +10,7 @@ from click.exceptions import Abort
 
 from ersilia.core.base import ErsiliaBase
 from ersilia.default import API_BASE, DEFAULT_API_NAME, EOS_TMP, INFERENCE_STORE_API_URL
+from ersilia.hub.content.columns_information import ColumnsInformation
 from ersilia.io.input import GenericInputAdapter
 from ersilia.io.output import GenericOutputAdapter
 from ersilia.store.dump import DumpLocalCache
@@ -77,11 +78,17 @@ class InferenceStoreApi(ErsiliaBase):
         self.request_id = None
         self.dump_local = DumpLocalCache()
         self.fetch_type = "all"
-        self.generic_output_adapter = GenericOutputAdapter(model_id=model_id)
-        self.schema = self.generic_output_adapter._fetch_schema_from_github()
-        assert self.schema is not None, "Model schema can not be fetched from github."
-        self.cols = self.schema[0]
-        self.dtype = self.schema[1]
+        self.col_info = ColumnsInformation(
+            model_id=self.model_id, api_name=DEFAULT_API_NAME
+        ).load()
+        self.generic_output_adapter = GenericOutputAdapter(
+            model_id=model_id, columns_info=self.col_info
+        )
+        assert (
+            self.col_info is not None
+        ), "Model column information can not be fetched from github."
+        self.cols = self.col_info["name"]
+        self.dtype = self.col_info["type"]
         self.header = ["key", "input"] + self.cols
         self.output_path = Path(output) if output else Path(f"{model_id}_precalc.csv")
         self.input_adapter = GenericInputAdapter(model_id=model_id)

@@ -27,6 +27,7 @@ class Options(Enum):
     DEEP_INPUT = "deep_input.csv"
     DEEP_OUTPUT = "deep_output.csv"
     OUTPUT_CSV = "result.csv"
+    ASYNC_OUTPUT_CSV = "async.csv"
     EXAMPLE_CSV = "example.csv"
     INPUT_CSV = "input.csv"
     OUTPUT1_CSV = "output1.csv"
@@ -113,7 +114,8 @@ class Checks(Enum):
     COLUMN_NAME_VALIDITY = "Columns"
     COLUMN_CHECK_SUCCESS = "Columns coincides with run_columns"
     COLUMN_CHECK_FAILURE = "Columns not coincide with run_columns"
-    SIMPLE_MODEL_RUN = "Simple Model Run"
+    SIMPLE_MODEL_RUN = "Async Simple Model Run"
+    SIMPLE_MODEL_RUN_ASYNC = "Async Simple Model Run"
     SIMPLE_MODEL_RUN_COLUMNS = "Simple Model Run Columns"
     DEPENDENCY_PINNED = "Checking package versions and file structure"
 
@@ -138,6 +140,7 @@ class TableType(Enum):
 
     INSPECT_SUMMARY = "Inspect Summary"
     MODEL_RUN_CHECK = "Model Run Check"
+    ASNC_MODEL_RUN_CHECK = "Async Model Run Check"
 
 
 @dataclass
@@ -194,6 +197,9 @@ TABLE_CONFIGS = {
     ),
     TableType.MODEL_RUN_CHECK: TableConfig(
         title="\nModel Run Check", headers=["Check", "Details", "Status"]
+    ),
+    TableType.ASNC_MODEL_RUN_CHECK: TableConfig(
+        title="\nAsync Model Run Check", headers=["Check", "Details", "Status"]
     ),
     TableType.FETCH_STATUS_SURFACE: TableConfig(
         title="\nModel Fetching Check", headers=["Check", "Status"]
