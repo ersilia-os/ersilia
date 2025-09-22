@@ -329,9 +329,15 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.hubdata.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonModelsInterface</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span><span class="p">,</span> <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span> <span class="n">TableConstants</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...tools.bentoml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleConda</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.catalog_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LocalCatalogDestBundleModelsMismatch</span><span class="p">,</span>
+    <span class="n">LocalCatalogIdleModelsInConda</span><span class="p">,</span>
+    <span class="n">LocalCatalogIdleModelsInDocker</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelIdentifier</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.card</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCard</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -524,10 +530,9 @@
 <span class="sd">            The name of the file to write the catalog table to.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">):</span>
-                <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Only .csv files are allowed&quot;</span><span class="p">)</span>
+            <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
@@ -570,6 +575,8 @@
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mi</span> <span class="o">=</span> <span class="n">ModelIdentifier</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="o">=</span> <span class="n">less</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_eos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mi</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
@@ -670,8 +677,29 @@
         <span class="k">return</span> <span class="n">table</span></div>
 
 
-<div class="viewcode-block" id="ModelCatalog.local">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.local">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_ids_in_bundles_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                <span class="n">model_ids</span> <span class="o">+=</span> <span class="p">[</span><span class="n">model_id</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">model_ids</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_ids_in_dest_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                <span class="n">model_ids</span> <span class="o">+=</span> <span class="p">[</span><span class="n">model_id</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">model_ids</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_ids_in_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">list_eos_environments</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">model_ids</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_model_ids_in_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">model_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">list_eos_images</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">model_ids</span>
+
+    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        List models metadata from the local repository.</span>
@@ -684,7 +712,31 @@
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">()</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LESS_FIELDS</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">MORE_FIELDS</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Fetched From&quot;</span><span class="p">]</span>
         <span class="n">cards</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Listing models from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">models_in_bundles</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_ids_in_bundles_dir</span><span class="p">())</span>
+        <span class="n">models_in_dest</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_ids_in_dest_dir</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">models_in_bundles</span> <span class="o">!=</span> <span class="n">models_in_dest</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Models in bundles dir (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">models_in_bundles</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Models in dest dir (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">models_in_dest</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;The two directories are not in sync.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">LocalCatalogDestBundleModelsMismatch</span><span class="p">(</span>
+                <span class="n">models_in_dest</span><span class="p">,</span> <span class="n">models_in_bundles</span>
+            <span class="p">)</span>
+        <span class="n">models_in_conda</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_ids_in_conda</span><span class="p">())</span>
+        <span class="n">idle_models_in_conda</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">models_in_conda</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">models_in_bundles</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idle_models_in_conda</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Idle models in conda envs: </span><span class="si">{</span><span class="n">idle_models_in_conda</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">LocalCatalogIdleModelsInConda</span><span class="p">(</span><span class="n">idle_models_in_conda</span><span class="p">)</span>
+        <span class="n">models_in_docker</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_ids_in_docker</span><span class="p">())</span>
+        <span class="n">idle_models_in_docker</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">models_in_docker</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">models_in_bundles</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">idle_models_in_docker</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Idle models in docker images: </span><span class="si">{</span><span class="n">idle_models_in_docker</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">LocalCatalogIdleModelsInDocker</span><span class="p">(</span><span class="n">idle_models_in_docker</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">models_in_bundles</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_eos</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
                 <span class="k">continue</span>
             <span class="n">card</span> <span class="o">=</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -693,55 +745,6 @@
             <span class="n">cards</span> <span class="o">+=</span> <span class="p">[</span><span class="n">card</span><span class="p">]</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_catalog</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">cards</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">table</span></div>
-
-
-<div class="viewcode-block" id="ModelCatalog.bentoml">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.ModelCatalog.bentoml">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        List models available as BentoServices.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        CatalogTable</span>
-<span class="sd">            The catalog table containing the models available as BentoServices.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">,</span> <span class="n">returncode</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">([</span><span class="s2">&quot;bentoml&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">],</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">BentoMLException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BentoML list failed: </span><span class="si">{</span><span class="n">stderr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-            <span class="c1"># Process stdout to build CatalogTable</span>
-            <span class="n">output_lines</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">output_lines</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[])</span>  <span class="c1"># Return empty table</span>
-
-            <span class="c1"># Extract columns and values</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BENTO_SERVICE&quot;</span><span class="p">,</span> <span class="s2">&quot;AGE&quot;</span><span class="p">,</span> <span class="s2">&quot;APIS&quot;</span><span class="p">,</span> <span class="s2">&quot;ARTIFACTS&quot;</span><span class="p">]</span>
-            <span class="n">header</span> <span class="o">=</span> <span class="n">output_lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">output_lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-
-            <span class="c1"># Parse table data</span>
-            <span class="n">cut_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">header</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]</span>
-            <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
-                <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cut_idxs</span><span class="p">,</span> <span class="n">cut_idxs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">])):</span>
-                    <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">row</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                        <span class="k">if</span> <span class="n">idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                        <span class="k">else</span> <span class="n">row</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                    <span class="p">)</span>
-                <span class="n">R</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">columns</span><span class="p">)</span>
-
-        <span class="k">except</span> <span class="n">BentoMLException</span><span class="p">:</span>
-            <span class="k">raise</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">BentoMLException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to fetch BentoML models: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-</div>
 
 </pre></div>
         </article>

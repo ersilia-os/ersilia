@@ -334,6 +334,27 @@
 <section id="module-ersilia.hub.delete.delete">
 <span id="ersilia-hub-delete-delete-module"></span><h2>ersilia.hub.delete.delete module<a class="headerlink" href="#module-ersilia.hub.delete.delete" title="Link to this heading">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="ersilia.hub.delete.delete.BruteDeleter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.delete.delete.</span></span><span class="sig-name descname"><span class="pre">BruteDeleter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#BruteDeleter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.BruteDeleter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
+<p>Brute deletion of model, once all individual deleters have been run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model to be deleted.</p></li>
+<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.hub.delete.delete.BruteDeleter.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#BruteDeleter.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.BruteDeleter.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes all remaining data related to the model.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="ersilia.hub.delete.delete.ModelBentoDeleter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.hub.delete.delete.</span></span><span class="sig-name descname"><span class="pre">ModelBentoDeleter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/hub/delete/delete.html#ModelBentoDeleter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.hub.delete.delete.ModelBentoDeleter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
@@ -773,6 +794,10 @@
 <li><a class="reference internal" href="#">ersilia.hub.delete package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-ersilia.hub.delete.delete">ersilia.hub.delete.delete module</a><ul>
+<li><a class="reference internal" href="#ersilia.hub.delete.delete.BruteDeleter"><code class="docutils literal notranslate"><span class="pre">BruteDeleter</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.hub.delete.delete.BruteDeleter.delete"><code class="docutils literal notranslate"><span class="pre">BruteDeleter.delete()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelBentoDeleter"><code class="docutils literal notranslate"><span class="pre">ModelBentoDeleter</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelBentoDeleter.delete"><code class="docutils literal notranslate"><span class="pre">ModelBentoDeleter.delete()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.hub.delete.delete.ModelBentoDeleter.clean"><code class="docutils literal notranslate"><span class="pre">ModelBentoDeleter.clean()</span></code></a></li>

@@ -389,6 +389,9 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#module-ersilia.utils.exceptions_utils.catalog_exceptions">ersilia.utils.exceptions_utils.catalog_exceptions module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.catalog_exceptions.CatalogErsiliaError"><code class="docutils literal notranslate"><span class="pre">CatalogErsiliaError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.catalog_exceptions.LocalCatalogDestBundleModelsMismatch"><code class="docutils literal notranslate"><span class="pre">LocalCatalogDestBundleModelsMismatch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.catalog_exceptions.LocalCatalogIdleModelsInConda"><code class="docutils literal notranslate"><span class="pre">LocalCatalogIdleModelsInConda</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.catalog_exceptions.LocalCatalogIdleModelsInDocker"><code class="docutils literal notranslate"><span class="pre">LocalCatalogIdleModelsInDocker</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#module-ersilia.utils.exceptions_utils.clear_exceptions">ersilia.utils.exceptions_utils.clear_exceptions module</a><ul>
@@ -1038,6 +1041,23 @@ as needed.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.conda.SimpleConda.list_eos_environments">
+<span class="sig-name descname"><span class="pre">list_eos_environments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/conda.html#SimpleConda.list_eos_environments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.conda.SimpleConda.list_eos_environments" title="Link to this definition">¶</a></dt>
+<dd><p>List all conda environments that start with ‘eos’ and have a length of 7 characters (i.e. an allowed model ID).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>None</strong></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of conda environments that start with ‘eos’ and have a length of 7 characters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.conda.SimpleConda.run_commandlines">
 <span class="sig-name descname"><span class="pre">run_commandlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ersilia.utils.conda.SimpleConda.run_commandlines" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1281,6 +1301,17 @@ as needed.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.brute_delete_by_model_id">
+<span class="sig-name descname"><span class="pre">brute_delete_by_model_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.brute_delete_by_model_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.brute_delete_by_model_id" title="Link to this definition">¶</a></dt>
+<dd><p>Brute force delete a Docker image and containers by model ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The model identifier.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.build">
 <span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">org</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.build" title="Link to this definition">¶</a></dt>
 <dd><p>Build a Docker image.</p>
@@ -1460,6 +1491,20 @@ as needed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The container name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.list_eos_images">
+<span class="sig-name descname"><span class="pre">list_eos_images</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.list_eos_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.list_eos_images" title="Link to this definition">¶</a></dt>
+<dd><p>Get a list of eos-related Docker images.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of Ersilia-related Docker image names.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3775,6 +3820,7 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.conda.SimpleConda.exists"><code class="docutils literal notranslate"><span class="pre">SimpleConda.exists()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.conda.SimpleConda.export_env_yml"><code class="docutils literal notranslate"><span class="pre">SimpleConda.export_env_yml()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.conda.SimpleConda.get_python_path_env"><code class="docutils literal notranslate"><span class="pre">SimpleConda.get_python_path_env()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.conda.SimpleConda.list_eos_environments"><code class="docutils literal notranslate"><span class="pre">SimpleConda.list_eos_environments()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.conda.SimpleConda.run_commandlines"><code class="docutils literal notranslate"><span class="pre">SimpleConda.run_commandlines()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.conda.SimpleConda.startswith"><code class="docutils literal notranslate"><span class="pre">SimpleConda.startswith()</span></code></a></li>
 </ul>
@@ -3821,6 +3867,7 @@ before the fetch procedure.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker"><code class="docutils literal notranslate"><span class="pre">SimpleDocker</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.brute_delete_by_model_id"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.brute_delete_by_model_id()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.build"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.build()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.cleanup_ersilia_images"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.cleanup_ersilia_images()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.container_peak"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.container_peak()</span></code></a></li>
@@ -3833,6 +3880,7 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.exists"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.exists()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.images"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.images()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.kill"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.kill()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.list_eos_images"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.list_eos_images()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.remove"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.remove()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.run"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.run()</span></code></a></li>
 </ul>

@@ -333,6 +333,63 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="LocalCatalogDestBundleModelsMismatch">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.catalog_exceptions.LocalCatalogDestBundleModelsMismatch">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalCatalogDestBundleModelsMismatch</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dest_model_ids</span><span class="p">,</span> <span class="n">bundle_model_ids</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;The models in the $EOS/dest folder do not match the models in the &quot;</span>
+            <span class="s2">&quot;$EOS/bundles folder. Models in both folders must be the same, &quot;</span>
+            <span class="s2">&quot;otherwise, there may be inconsistencies with the catalog and the &quot;</span>
+            <span class="s2">&quot;management of Ersilia.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;It is possible that this issue is caused by an error at fetching time, &quot;</span>
+            <span class="s2">&quot;which caused a model to be in the dest folder but not in the bundles folder.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;To solve this issue, please delete manually the problematic models.&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Dest models: </span><span class="si">{</span><span class="n">dest_model_ids</span><span class="si">}</span><span class="s2">, Bundle models: </span><span class="si">{</span><span class="n">bundle_model_ids</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Models in dest but not in bundles: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dest_model_ids</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">set</span><span class="p">(</span><span class="n">bundle_model_ids</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Models in bundles but not in dest: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">bundle_model_ids</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">set</span><span class="p">(</span><span class="n">dest_model_ids</span><span class="p">))</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;To solve this issue, please delete manually the problematic models.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="LocalCatalogIdleModelsInConda">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.catalog_exceptions.LocalCatalogIdleModelsInConda">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalCatalogIdleModelsInConda</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idle_model_ids</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;There are idle models in the local catalog that have a conda environment &quot;</span>
+            <span class="s2">&quot;but are not registered in the catalog. This may cause inconsistencies &quot;</span>
+            <span class="s2">&quot;with the catalog and the management of Ersilia.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Idle models with conda env: </span><span class="si">{</span><span class="n">idle_model_ids</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;To solve this issue, please delete manually the problematic models.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="LocalCatalogIdleModelsInDocker">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.catalog_exceptions.LocalCatalogIdleModelsInDocker">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LocalCatalogIdleModelsInDocker</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idle_model_ids</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;There are idle models in the local catalog that have a docker image &quot;</span>
+            <span class="s2">&quot;but are not registered in the catalog. This may cause inconsistencies &quot;</span>
+            <span class="s2">&quot;with the catalog and the management of Ersilia.</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Idle models with docker image: </span><span class="si">{</span><span class="n">idle_model_ids</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;To solve this issue, please delete manually the problematic models.&quot;</span>
+        <span class="p">)</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
 </pre></div>
         </article>
       </div>
