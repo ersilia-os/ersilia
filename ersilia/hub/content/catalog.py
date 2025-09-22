@@ -284,7 +284,7 @@ class ModelCatalog(ErsiliaBase):
         if "Service_class" in card:
             return card["Service_class"]
         return None
-    
+
     def airtable(self):
         """
         List models available in AirTable Ersilia Model Hub base.
