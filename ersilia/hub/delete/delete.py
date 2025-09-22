@@ -10,6 +10,7 @@ from ...db.environments.managers import DockerManager
 from ...db.hubdata.localslugs import SlugDb
 from ...setup.requirements.bentoml_requirement import BentoMLRequirement
 from ...utils.conda import SimpleConda
+from ...utils.docker import SimpleDocker
 from ...utils.environment import Environment
 from ...utils.session import (
     deregister_model_session,
@@ -400,9 +401,7 @@ class ModelDockerDeleter(ErsiliaBase):
             )
         )
         dm = DockerManager(config_json=self.config_json)
-        if (
-            dm.is_active()
-        ):  # TODO This is hacky but is needed by ModelPreparer when model is fetched.
+        if dm.is_active():
             dm.delete_images(model_id)
 
 
@@ -464,6 +463,53 @@ class TmpCleaner(ErsiliaBase):
             os.makedirs(self._tmp_dir)
 
 
+class BruteDeleter(ErsiliaBase):
+    """
+    Brute deletion of model, once all individual deleters have been run.
+
+    Parameters
+    ----------
+    model_id : str
+        Identifier of the model to be deleted.
+    config_json : dict, optional
+        Configuration settings.
+    """
+
+    def __init__(self, config_json=None):
+        ErsiliaBase.__init__(self, config_json=config_json)
+        self.logger.debug("Attempting brute delete")
+        self.conda = SimpleConda(config_json=config_json)
+        self.docker = SimpleDocker()
+
+    def delete(self, model_id):
+        """
+        Deletes all remaining data related to the model.
+        """
+        self.model_id = model_id
+        dest_dir = self._model_path(self.model_id)
+        if os.path.exists(dest_dir):
+            self.logger.info("Removing dest folder {0}".format(dest_dir))
+            rmtree(dest_dir)
+        bundles_dir = os.path.join(self._bundles_dir, self.model_id)
+        if os.path.exists(bundles_dir):
+            self.logger.info("Removing bundles folder {0}".format(bundles_dir))
+            rmtree(bundles_dir)
+        tmp_dir = os.path.join(self._tmp_dir, self.model_id)
+        if os.path.exists(tmp_dir):
+            self.logger.info("Removing tmp folder {0}".format(tmp_dir))
+            rmtree(tmp_dir)
+        conda_model_ids = self.conda.list_eos_environments()
+        if self.model_id in conda_model_ids:
+            self.logger.info("Removing conda environment {0}".format(self.model_id))
+            self.conda.delete(self.model_id)
+        docker_model_ids = self.docker.list_eos_images()
+        if self.model_id in docker_model_ids:
+            self.logger.info(
+                "Removing docker containers related to {0}".format(self.model_id)
+            )
+            self.docker.brute_delete_by_model_id(self.model_id)
+
+
 class ModelFullDeleter(ErsiliaBase):
     """
     Deletes all data related to a model.
@@ -486,6 +532,8 @@ class ModelFullDeleter(ErsiliaBase):
     def __init__(self, config_json=None, overwrite=True):
         self.overwrite = overwrite
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
+        self.conda = SimpleConda(config_json=config_json)
+        self.docker = SimpleDocker()
 
     def _needs_delete(self, model_id: str) -> bool:
         """
@@ -532,6 +580,18 @@ class ModelFullDeleter(ErsiliaBase):
         mc = ModelCard(config_json=self.config_json).get(model_id)
         model_source = ModelCatalog(config_json=self.config_json)._get_model_source(mc)
         dm = DockerManager(config_json=self.config_json)
+        model_ids_in_conda = self.conda.list_eos_environments()
+        if model_id in model_ids_in_conda:
+            return (
+                True,
+                "Model has a conda environment, can be deleted.",
+            )
+        model_ids_in_docker = self.docker.list_eos_images()
+        if model_id in model_ids_in_docker:
+            return (
+                True,
+                "Model has a docker image, can be deleted.",
+            )
         if needs_delete:
             if model_source == "DockerHub" and not dm.is_active():
                 return (
@@ -565,4 +625,5 @@ class ModelFullDeleter(ErsiliaBase):
         ModelPipDeleter(self.config_json).delete(model_id)
         ModelDockerDeleter(self.config_json).delete(model_id)
         ModelFetchedEntryDeleter(self.config_json).delete(model_id)
+        BruteDeleter(self.config_json).delete(model_id)
         self.logger.success("Model {0} deleted successfully".format(model_id))
