@@ -6,7 +6,7 @@ import os
 
 from ... import ErsiliaBase
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...default import MODEL_SOURCE_FILE, TableConstants
+from ...default import AIRTABLE_MODEL_HUB_VIEW_URL, MODEL_SOURCE_FILE, TableConstants
 from ...utils.conda import SimpleConda
 from ...utils.docker import SimpleDocker
 from ...utils.exceptions_utils.catalog_exceptions import (
@@ -17,6 +17,11 @@ from ...utils.exceptions_utils.catalog_exceptions import (
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...utils.identifiers.model import ModelIdentifier
 from .card import ModelCard
+
+try:
+    import webbrowser
+except ModuleNotFoundError:
+    webbrowser = None
 
 
 class CatalogTable(object):
@@ -279,6 +284,13 @@ class ModelCatalog(ErsiliaBase):
         if "Service_class" in card:
             return card["Service_class"]
         return None
+    
+    def airtable(self):
+        """
+        List models available in AirTable Ersilia Model Hub base.
+        """
+        if webbrowser:
+            webbrowser.open(AIRTABLE_MODEL_HUB_VIEW_URL)
 
     def _get_catalog(self, columns: list, model_cards: list):
         R = []
