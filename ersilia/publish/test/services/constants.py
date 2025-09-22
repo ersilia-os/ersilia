@@ -114,7 +114,7 @@ class Checks(Enum):
     COLUMN_NAME_VALIDITY = "Columns"
     COLUMN_CHECK_SUCCESS = "Columns coincides with run_columns"
     COLUMN_CHECK_FAILURE = "Columns not coincide with run_columns"
-    SIMPLE_MODEL_RUN = "Async Simple Model Run"
+    SIMPLE_MODEL_RUN = "Simple Model Run"
     SIMPLE_MODEL_RUN_ASYNC = "Async Simple Model Run"
     SIMPLE_MODEL_RUN_COLUMNS = "Simple Model Run Columns"
     DEPENDENCY_PINNED = "Checking package versions and file structure"
@@ -288,6 +288,9 @@ main_required_keys = {
         "simple_model_run": False,
         "simple_model_run_columns": False,
     },
+    "async_model_run_check": {
+        "async_simple_model_run": False,
+    },
     "input_output_check": {"csv_csv": False},
     "model_output_consistency_check": {"check_consistency_of_model_output": False},
     "consistency_summary_between_ersilia_and_bash_execution_outputs": {
@@ -301,6 +304,7 @@ check_keys_order = [
     "file_validity_check",
     "model_size_check",
     "model_run_check",
+    "async_model_run_check",
     "input_output_check",
     "model_output_consistency_check",
     "consistency_summary_between_ersilia_and_bash_execution_outputs",

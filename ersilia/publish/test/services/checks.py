@@ -1145,7 +1145,6 @@ class CheckService:
 
     def check_simple_model_output(self, run_model):
         input_path = IOService._get_input_file_path(self.dir)
-        print(f"Input path:{input_path}")
         output_path = IOService._get_output_file_path(self.dir)
         run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
         output_consistency = self._get_output_consistency()

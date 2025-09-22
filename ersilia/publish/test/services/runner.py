@@ -635,7 +635,7 @@ class RunnerService:
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             echo("Model tests and checks completed.", fg="green", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
-            # self.delete()
+            self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
         except SystemExit as e:
@@ -645,7 +645,7 @@ class RunnerService:
                 fg="yellow", bold=True,
             )
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
-            # self.delete()
+            self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
 
@@ -654,7 +654,7 @@ class RunnerService:
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
-            # self.delete()
+            self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
     def _configure_environment(self):
