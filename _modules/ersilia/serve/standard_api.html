@@ -770,7 +770,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output serialized&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking same row counts&quot;</span><span class="p">)</span>
-        <span class="n">matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_same_row_count</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+        <span class="n">matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_same_row_count</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">matchs</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="s2">&quot;Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad inputs!&quot;</span>
@@ -870,13 +870,8 @@
         <span class="n">dict_keys_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">({}</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dict_keys_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_same_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">include_header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">cnt</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                <span class="n">n</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">fp</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">n</span> <span class="k">if</span> <span class="n">include_header</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">cnt</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_same_row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

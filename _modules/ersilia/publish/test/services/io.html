@@ -320,7 +320,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.publish.test.services.io</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aiohttp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">docker</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -339,12 +341,10 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">MISSING_PACKAGES</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="c1"># ruff: enable</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">METADATA_JSON_FILE</span><span class="p">,</span>
     <span class="n">METADATA_YAML_FILE</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
     <span class="n">EOS_TMP</span><span class="p">,</span>
     <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
@@ -352,6 +352,7 @@
     <span class="n">PREDEFINED_EXAMPLE_INPUT_FILES</span><span class="p">,</span>
     <span class="n">INSTALL_YAML_FILE</span><span class="p">,</span>
     <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
+    <span class="n">DEFAULT_ASYNC_API_NAME</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Checks</span><span class="p">,</span>
@@ -855,8 +856,44 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">env_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conda_env_size</span><span class="p">()</span>
         <span class="n">env_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env_size</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">env_size</span></div>
+        <span class="k">return</span> <span class="n">env_size</span>
+    
 
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_submit_smiles_and_get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">cmd_out</span><span class="p">,</span> <span class="n">poll_interval</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;http://[a-zA-Z0-9.-]+:\d+&quot;</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">cmd_out</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">base_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">DEFAULT_ASYNC_API_NAME</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/submit&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job submission failed: </span><span class="si">{</span><span class="k">await</span><span class="w"> </span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="p">[]</span>
+                <span class="n">submission</span> <span class="o">=</span> <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="n">job_id</span> <span class="o">=</span> <span class="n">submission</span><span class="p">[</span><span class="s2">&quot;job_id&quot;</span><span class="p">]</span>
+
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/status/</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+                    <span class="n">status_resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="n">status_resp</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;completed&quot;</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;failed&quot;</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Job failed during processing&quot;</span><span class="p">}</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">poll_interval</span><span class="p">)</span>
+
+            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/result/</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not retrieve results: </span><span class="si">{</span><span class="k">await</span><span class="w"> </span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="p">[]</span>
+                <span class="k">return</span> <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+<div class="viewcode-block" id="IOService.submit_smiles_and_get_results">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.submit_smiles_and_get_results">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">submit_smiles_and_get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">cmd_out</span><span class="p">,</span> <span class="n">poll_interval</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_submit_smiles_and_get_results</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">cmd_out</span><span class="p">,</span> <span class="n">poll_interval</span><span class="p">))</span></div>
+</div>
 
 
 <div class="viewcode-block" id="PackageInstaller">

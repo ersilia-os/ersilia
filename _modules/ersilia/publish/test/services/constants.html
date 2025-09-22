@@ -351,6 +351,7 @@
     <span class="n">DEEP_INPUT</span> <span class="o">=</span> <span class="s2">&quot;deep_input.csv&quot;</span>
     <span class="n">DEEP_OUTPUT</span> <span class="o">=</span> <span class="s2">&quot;deep_output.csv&quot;</span>
     <span class="n">OUTPUT_CSV</span> <span class="o">=</span> <span class="s2">&quot;result.csv&quot;</span>
+    <span class="n">ASYNC_OUTPUT_CSV</span> <span class="o">=</span> <span class="s2">&quot;async.csv&quot;</span>
     <span class="n">EXAMPLE_CSV</span> <span class="o">=</span> <span class="s2">&quot;example.csv&quot;</span>
     <span class="n">INPUT_CSV</span> <span class="o">=</span> <span class="s2">&quot;input.csv&quot;</span>
     <span class="n">OUTPUT1_CSV</span> <span class="o">=</span> <span class="s2">&quot;output1.csv&quot;</span>
@@ -444,6 +445,7 @@
     <span class="n">COLUMN_CHECK_SUCCESS</span> <span class="o">=</span> <span class="s2">&quot;Columns coincides with run_columns&quot;</span>
     <span class="n">COLUMN_CHECK_FAILURE</span> <span class="o">=</span> <span class="s2">&quot;Columns not coincide with run_columns&quot;</span>
     <span class="n">SIMPLE_MODEL_RUN</span> <span class="o">=</span> <span class="s2">&quot;Simple Model Run&quot;</span>
+    <span class="n">SIMPLE_MODEL_RUN_ASYNC</span> <span class="o">=</span> <span class="s2">&quot;Async Simple Model Run&quot;</span>
     <span class="n">SIMPLE_MODEL_RUN_COLUMNS</span> <span class="o">=</span> <span class="s2">&quot;Simple Model Run Columns&quot;</span>
     <span class="n">DEPENDENCY_PINNED</span> <span class="o">=</span> <span class="s2">&quot;Checking package versions and file structure&quot;</span></div>
 
@@ -470,7 +472,8 @@
     <span class="n">MODEL_OUTPUT</span> <span class="o">=</span> <span class="s2">&quot;Input Output Check&quot;</span>
 
     <span class="n">INSPECT_SUMMARY</span> <span class="o">=</span> <span class="s2">&quot;Inspect Summary&quot;</span>
-    <span class="n">MODEL_RUN_CHECK</span> <span class="o">=</span> <span class="s2">&quot;Model Run Check&quot;</span></div>
+    <span class="n">MODEL_RUN_CHECK</span> <span class="o">=</span> <span class="s2">&quot;Model Run Check&quot;</span>
+    <span class="n">ASNC_MODEL_RUN_CHECK</span> <span class="o">=</span> <span class="s2">&quot;Async Model Run Check&quot;</span></div>
 
 
 
@@ -531,6 +534,9 @@
     <span class="p">),</span>
     <span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_RUN_CHECK</span><span class="p">:</span> <span class="n">TableConfig</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Model Run Check&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Check&quot;</span><span class="p">,</span> <span class="s2">&quot;Details&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">TableType</span><span class="o">.</span><span class="n">ASNC_MODEL_RUN_CHECK</span><span class="p">:</span> <span class="n">TableConfig</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Async Model Run Check&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Check&quot;</span><span class="p">,</span> <span class="s2">&quot;Details&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">]</span>
     <span class="p">),</span>
     <span class="n">TableType</span><span class="o">.</span><span class="n">FETCH_STATUS_SURFACE</span><span class="p">:</span> <span class="n">TableConfig</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Model Fetching Check&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Check&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">]</span>
@@ -619,6 +625,9 @@
         <span class="s2">&quot;simple_model_run&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
         <span class="s2">&quot;simple_model_run_columns&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">},</span>
+    <span class="s2">&quot;async_model_run_check&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;async_simple_model_run&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
     <span class="s2">&quot;input_output_check&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;csv_csv&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
     <span class="s2">&quot;model_output_consistency_check&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;check_consistency_of_model_output&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
     <span class="s2">&quot;consistency_summary_between_ersilia_and_bash_execution_outputs&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -632,6 +641,7 @@
     <span class="s2">&quot;file_validity_check&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_size_check&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_run_check&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;async_model_run_check&quot;</span><span class="p">,</span>
     <span class="s2">&quot;input_output_check&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_output_consistency_check&quot;</span><span class="p">,</span>
     <span class="s2">&quot;consistency_summary_between_ersilia_and_bash_execution_outputs&quot;</span><span class="p">,</span>

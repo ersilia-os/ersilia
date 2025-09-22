@@ -345,6 +345,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.exceptions_utils.base_information_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">_read_default_fields</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo_exceptions</span><span class="p">,</span> <span class="n">ClickInterface</span>
 <span class="n">from</span><span class="o">....</span><span class="n">hub</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">base_information_validator</span> <span class="kn">import</span><span class="w"> </span><span class="nn">BaseInformationValidator</span>
+
+
+
 <div class="viewcode-block" id="CheckService">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CheckService</span><span class="p">:</span>
@@ -1438,6 +1441,57 @@
                     <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="p">]</span></div>
+
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">_results_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_row_has_missing_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CheckService.check_simple_model_async_output">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_simple_model_async_output">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_simple_model_async_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serve_model</span><span class="p">):</span>
+        <span class="n">input_path</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">_get_input_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">read_csv_values</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">serve_model</span><span class="p">()</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">submit_smiles_and_get_results</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="n">output_consistency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_consistency</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">output_consistency</span> <span class="o">==</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">:</span>
+            <span class="n">is_result_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_are_valid</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_result_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_has_missing_values</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+        <span class="n">_completed_status</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_result_valid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Model output has content problem&quot;</span><span class="p">)</span>
+            <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="n">Checks</span><span class="o">.</span><span class="n">SIMPLE_MODEL_RUN_ASYNC</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="s2">&quot;Async endpoint did not generate valid values&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">_completed_status</span>
+        <span class="n">_completed_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">Checks</span><span class="o">.</span><span class="n">SIMPLE_MODEL_RUN_ASYNC</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="s2">&quot;Async endpoint has valid values&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">_completed_status</span></div>
 
 
 <div class="viewcode-block" id="CheckService.check_simple_model_output">

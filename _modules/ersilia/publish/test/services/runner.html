@@ -448,16 +448,33 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="o">=</span> <span class="n">surface</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">installer</span> <span class="o">=</span> <span class="n">PackageInstaller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
+<div class="viewcode-block" id="RunnerService.serve_model">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.runner.RunnerService.serve_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serve the model and return the command output.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The output of the command.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> --disable-local-cache&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    
 <div class="viewcode-block" id="RunnerService.run_model">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.runner.RunnerService.run_model">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run the model with the given input and output parameters.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        input : list</span>
-<span class="sd">            List of input samples.</span>
+<span class="sd">        input : str</span>
+<span class="sd">            A path to input file</span>
 <span class="sd">        output : str</span>
 <span class="sd">            Path to the output file.</span>
 <span class="sd">        batch : int</span>
@@ -1051,11 +1068,18 @@
             <span class="p">)</span>
 
         <span class="n">simple_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_simple_model_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_model</span><span class="p">)</span>
+        <span class="n">simple_output_async</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_simple_model_async_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">serve_model</span><span class="p">)</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_RUN_CHECK</span><span class="p">,</span> <span class="n">simple_output</span><span class="p">)</span>
         <span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">ASNC_MODEL_RUN_CHECK</span><span class="p">,</span> <span class="n">simple_output_async</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="n">simple_output</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
             <span class="n">echo_exceptions</span><span class="p">(</span><span class="s2">&quot;Model simple run check has problem. System is exiting before proceeding!&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">simple_output_async</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
+            <span class="n">echo_exceptions</span><span class="p">(</span><span class="s2">&quot;Model async simple run check has problem. System is exiting before proceeding!&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
             <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">results</span>
 
