@@ -195,7 +195,7 @@ class RunnerService:
             out = run_command(cmd)
             return out
 
-        # self.delete()
+        self.delete()
         out = _fetch(self.model_id, self.logger)
         return out
     

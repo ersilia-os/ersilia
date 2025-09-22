@@ -411,7 +411,7 @@ class StandardCSVRunApi(ErsiliaBase):
         )
         self.logger.debug("Output serialized")
         self.logger.debug("Checking same row counts")
-        matchs = self._same_row_count(input, results)
+        matchs = self._same_row_count(input_data, results)
         if not matchs:
             raise Exception(
                 "Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad inputs!"
@@ -510,10 +510,5 @@ class StandardCSVRunApi(ErsiliaBase):
         dict_keys_type = type({}.keys())
         return any(isinstance(x, dict_keys_type) for x in lst)
 
-    def _same_row_count(self, inputs, results, include_header=False):
-        def cnt(f):
-            with open(f, newline="") as fp:
-                n = sum(1 for _ in csv.reader(fp))
-            return n if include_header else max(n - 1, 0)
-
-        return cnt(inputs) == len(results)
+    def _same_row_count(self, inputs, results):
+        return len(inputs) == len(results)
