@@ -6,7 +6,12 @@ import os
 
 from ... import ErsiliaBase
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...default import AIRTABLE_MODEL_HUB_VIEW_URL, MODEL_SOURCE_FILE, TableConstants
+from ...default import (
+    AIRTABLE_MODEL_HUB_VIEW_URL,
+    MODEL_SOURCE_FILE,
+    ZAIRACHEM_DIR,
+    TableConstants,
+)
 from ...utils.conda import SimpleConda
 from ...utils.docker import SimpleDocker
 from ...utils.exceptions_utils.catalog_exceptions import (
@@ -347,8 +352,19 @@ class ModelCatalog(ErsiliaBase):
         model_ids = self.conda.list_eos_environments()
         return model_ids
 
+    def _read_zairachem_service_file(self):
+        path = os.path.join(ZAIRACHEM_DIR, "service.txt")
+        if not os.path.exists(path):
+            return None
+        with open(path, "r") as f:
+            models = f.readlines()
+        return [m.strip() for m in models]
+
     def _model_ids_in_docker(self):
+        zairachem_models = self._read_zairachem_service_file()
         model_ids = self.docker.list_eos_images()
+        if zairachem_models is not None:
+            model_ids = [m for m in model_ids if m not in zairachem_models]
         return model_ids
 
     @throw_ersilia_exception()
