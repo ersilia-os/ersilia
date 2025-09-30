@@ -10,6 +10,8 @@ EOS = os.path.join(str(Path.home()), "eos")
 EOS_TMP = os.path.join(EOS, "temp")
 if not os.path.exists(EOS):
     os.makedirs(EOS)
+
+ZAIRACHEM_DIR = os.path.join(str(Path.home()), "zairachem")
 EOS_PLAYGROUND = os.path.join(EOS, "playground")
 ROOT = os.path.dirname(os.path.realpath(__file__))
 BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
