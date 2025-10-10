@@ -1438,17 +1438,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">all</span><span class="p">(</span>
-                <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_row_has_missing_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="CheckService.check_simple_model_async_output">
@@ -1459,11 +1455,7 @@
         <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">serve_model</span><span class="p">()</span>
         <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">submit_smiles_and_get_results</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-        <span class="n">output_consistency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_consistency</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">output_consistency</span> <span class="o">==</span> <span class="s2">&quot;Fixed&quot;</span><span class="p">:</span>
-            <span class="n">is_result_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_are_valid</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">is_result_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_has_missing_values</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
+        <span class="n">is_result_valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_results_are_valid</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
         <span class="n">_completed_status</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_result_valid</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Model output has content problem&quot;</span><span class="p">)</span>
