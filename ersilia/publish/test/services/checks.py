@@ -1099,17 +1099,13 @@ class CheckService:
         if not results:
             return False
         if isinstance(results, dict):
-            return all(v is not None for v in results.values())
+            return any(v is not None for v in results.values())
         elif isinstance(results, list):
-            return all(
-                isinstance(item, dict) and all(v is not None for v in item.values())
+            return any(
+                isinstance(item, dict) and any(v is not None for v in item.values())
                 for item in results
             )
         return False
-
-    def _row_has_missing_values(self, results):
-        values = list(results.values())
-        return any(v is None for v in values) and not all(v is None for v in values)
 
 
     def check_simple_model_async_output(self, serve_model):
@@ -1118,11 +1114,7 @@ class CheckService:
         inputs = [r[0] for r in inputs]
         out = serve_model()
         resp = self.ios.submit_smiles_and_get_results(inputs, out.stdout)
-        output_consistency = self._get_output_consistency()
-        if output_consistency == "Fixed":
-            is_result_valid = self._results_are_valid(resp)
-        else:
-            is_result_valid = self._row_has_missing_values(resp)
+        is_result_valid = self._results_are_valid(resp)
         _completed_status = []
         if not is_result_valid:
             self.logger.error("Model output has content problem")
