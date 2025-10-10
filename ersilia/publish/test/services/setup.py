@@ -4,7 +4,6 @@ import sys
 import warnings
 import zipfile
 from typing import Any
-import warnings
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 
