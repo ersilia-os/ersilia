@@ -244,6 +244,8 @@ class RunnerService:
         """
         def normalize_quotes(obj):
             def strip_quotes(s: str) -> str:
+                if isinstance(s, float) or isinstance(s, int):
+                    return s
                 if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
                     return s[1:-1]
                 return s
@@ -276,6 +278,8 @@ class RunnerService:
                             f"Datatype mismatch for column '{column}' at row {idx}: "
                             f"bash value type={type(b_val).__name__}, "
                             f"ersilia value type={type(e_val).__name__}"
+                            f"bash value={e_val}"
+                            f"ersilia value={e_val}"
                         )
                         echo_exceptions(msg, ClickInterface())
                         return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
