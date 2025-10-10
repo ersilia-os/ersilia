@@ -82,7 +82,7 @@ def echo_uploading_inputs(click_iface):
     )
 
 
-def echo_local_fetched_cache_szie(click_iface, cache_size, none_count):
+def echo_local_fetched_cache_size(click_iface, cache_size, none_count):
     if cache_size != 0:
         click_iface.echo(
             f"{log_prefix()}Found cache size of {cache_size} from local Redis cache. Post processing started!",
