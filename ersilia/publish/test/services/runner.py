@@ -6,7 +6,6 @@ import tempfile
 import traceback
 from pathlib import Path
 from typing import Callable
-import warnings
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 
