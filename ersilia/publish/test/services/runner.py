@@ -768,7 +768,16 @@ class RunnerService:
             if bash_results[0][-1] == str(STATUS_CONFIGS.FAILED):
                 echo_exceptions("Model output is not consistent. System is exiting before proceeding!", ClickInterface())
                 return results, 1
-        return results
+            
+        elif is_online:
+            row1=[(Checks.MODEL_CONSISTENCY.value,"Skipped for Online source",str(STATUS_CONFIGS.SKIPPED))]
+            results.append(self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY,row1))
+
+            row2=[(Checks.RUN_BASH.value,"Skipped for Online source", str(STATUS_CONFIGS.SKIPPED))]
+            results.append(self._generate_table_from_check(TableType.CONSISTENCY_BASH, row2))
+
+
+        return results, 0
         
     def _perform_deep_checks(self):
         performance_data = self.inspector.run(["computational_performance_tracking"])

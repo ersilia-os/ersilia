@@ -79,6 +79,7 @@ class STATUS_CONFIGS(Enum):
     FAILED = ("FAILED", "red", "✘")
     WARNING = ("WARNING", "yellow", "⚠")
     SUCCESS = ("SUCCESS", "green", "★")
+    SKIPPED = ("SKIPPED",'dim', "~")
     NA = ("N/A", "dim", "~")
 
     def __init__(self, label, color, icon):
