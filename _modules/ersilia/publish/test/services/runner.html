@@ -1104,7 +1104,16 @@
             <span class="k">if</span> <span class="n">bash_results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
                 <span class="n">echo_exceptions</span><span class="p">(</span><span class="s2">&quot;Model output is not consistent. System is exiting before proceeding!&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
                 <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">results</span>
+            
+        <span class="k">elif</span> <span class="n">is_online</span><span class="p">:</span>
+            <span class="n">row1</span><span class="o">=</span><span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">MODEL_CONSISTENCY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="s2">&quot;Skipped for Online source&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">SKIPPED</span><span class="p">))]</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">SHALLOW_CHECK_SUMMARY</span><span class="p">,</span><span class="n">row1</span><span class="p">))</span>
+
+            <span class="n">row2</span><span class="o">=</span><span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">RUN_BASH</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="s2">&quot;Skipped for Online source&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">SKIPPED</span><span class="p">))]</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">CONSISTENCY_BASH</span><span class="p">,</span> <span class="n">row2</span><span class="p">))</span>
+
+
+        <span class="k">return</span> <span class="n">results</span><span class="p">,</span> <span class="mi">0</span>
         
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_deep_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">performance_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inspector</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;computational_performance_tracking&quot;</span><span class="p">])</span>
