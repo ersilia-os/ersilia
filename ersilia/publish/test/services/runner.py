@@ -587,8 +587,8 @@ class RunnerService:
         def _process_stage(name, method, echo_prefix=True):
             if echo_prefix:
                 echo(f"Performing {name} checks.", fg="yellow", bold=True)
-
             out = method()
+
             if isinstance(out, tuple) and len(out) == 2:
                 good, _bad = out
                 results.extend(good)
@@ -777,7 +777,7 @@ class RunnerService:
             results.append(self._generate_table_from_check(TableType.CONSISTENCY_BASH, row2))
 
 
-        return results, 0
+        return results
         
     def _perform_deep_checks(self):
         performance_data = self.inspector.run(["computational_performance_tracking"])
