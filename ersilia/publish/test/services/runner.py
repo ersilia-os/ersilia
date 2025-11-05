@@ -440,85 +440,119 @@ class RunnerService:
             self.logger.debug("Conda env prefix: %s", env_prefix)
 
             bash_script = f"""#!/usr/bin/env bash
-            set -Euo pipefail
+                set -Euo pipefail
 
-            log_out="{output_log_path}"
-            log_err="{error_log_path}"
-            bash_output="{bash_output_path}"
-            run_dir="{os.path.dirname(run_sh_path)}"
-            input_csv="{input_file_path}"
-            env_prefix="{env_prefix}"
-            env_python="{env_python}"
-            base_prefix="{base_prefix}"
+                log_out="{output_log_path}"
+                log_err="{error_log_path}"
+                bash_output="{bash_output_path}"
+                run_dir="{os.path.dirname(run_sh_path)}"
+                input_csv="{input_file_path}"
+                env_prefix="{env_prefix}"
+                env_python="{env_python}"
+                base_prefix="{base_prefix}"
 
-            mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-            : > "$log_out"
-            : > "$log_err"
+                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+                : > "$log_out"
+                : > "$log_err"
 
-            echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-            echo "Using env prefix: $env_prefix" | tee -a "$log_out"
+                echo "Runner arch: $(uname -m)" | tee -a "$log_out"
+                echo "Using env prefix: $env_prefix" | tee -a "$log_out"
 
-            # --- Primary path: run script directly under the env via conda run -p
-            (
-            set +e
-            cd "$run_dir"
-            chmod +x ./run.sh || true
-            echo "[primary] conda run -p ..." | tee -a "$log_out"
-            conda run -p "$env_prefix" ./run.sh . "$input_csv" "$bash_output" >>"$log_out" 2>>"$log_err"
-            )
-            if [ -f "$bash_output" ]; then
-            echo "SUCCESS via conda run -p" | tee -a "$log_out"
-            exit 0
-            fi
+                # --- Primary path: run script directly under the env via conda run -p
+                (
+                set +e
+                cd "$run_dir"
+                chmod +x ./run.sh || true
+                echo "[primary] conda run -p ..." | tee -a "$log_out"
+                conda run -p "$env_prefix" ./run.sh . "$input_csv" "$bash_output" >>"$log_out" 2>>"$log_err"
+                )
+                if [ -f "$bash_output" ]; then
+                echo "SUCCESS via conda run -p" | tee -a "$log_out"
+                exit 0
+                fi
 
-            echo "Primary path failed or output missing. Falling back to login-shell activate..." | tee -a "$log_err"
+                echo "Primary path failed or output missing. Falling back to login-shell activate..." | tee -a "$log_err"
 
-            # --- Fallback 1: login shell + source conda.sh + conda activate
-            bash -lc '
-            set -euo pipefail
-            run_dir="{os.path.dirname(run_sh_path)}"
-            input_csv="{input_file_path}"
-            bash_output="{bash_output_path}"
-            base_prefix="{base_prefix}"
-            env_name="{self.model_id}"
+                # --- Fallback 1: login shell + source conda.sh + conda activate
+                bash -lc '
+                set -euo pipefail
+                run_dir="{os.path.dirname(run_sh_path)}"
+                input_csv="{input_file_path}"
+                bash_output="{bash_output_path}"
+                base_prefix="{base_prefix}"
+                env_name="{self.model_id}"
 
-            source "$base_prefix/etc/profile.d/conda.sh"
-            conda activate "$env_name"
+                source "$base_prefix/etc/profile.d/conda.sh"
+                conda activate "$env_name"
 
-            echo "[fallback-1] Inside conda env: $(python -V) - $(which python)"
-            cd "$run_dir"
-            chmod +x ./run.sh || true
-            ./run.sh . "$input_csv" "$bash_output"
-            ' >>"$log_out" 2>>"$log_err" || true
+                echo "[fallback-1] Inside conda env: $(python -V) - $(which python)"
+                cd "$run_dir"
+                chmod +x ./run.sh || true
+                ./run.sh . "$input_csv" "$bash_output"
+                ' >>"$log_out" 2>>"$log_err" || true
 
-            if [ -f "$bash_output" ]; then
-            echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
-            exit 0
-            fi
+                if [ -f "$bash_output" ]; then
+                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
+                exit 0
+                fi
 
-            echo "Fallback-1 failed. Trying absolute interpreter..." | tee -a "$log_err"
+                echo "Fallback-1 failed. Trying absolute interpreter..." | tee -a "$log_err"
 
-            # --- Fallback 2: absolute interpreter (no activation at all)
-            (
-            set +e
-            cd "$run_dir"
-            echo "[fallback-2] Using absolute interpreter: $env_python" | tee -a "$log_out"
-            # If run.sh calls python internally, consider bypassing run.sh entirely:
-            if grep -q "python" ./run.sh 2>/dev/null; then
-                # Replace with direct call to your entry point if feasible; otherwise export PATH
-                export PATH="$env_prefix/bin:$PATH"
-            fi
-            ./run.sh . "$input_csv" "$bash_output" >>"$log_out" 2>>"$log_err"
-            )
-            if [ -f "$bash_output" ]; then
-            echo "SUCCESS via absolute interpreter fallback" | tee -a "$log_out"
-            exit 0
-            fi
+                # If the guessed prefix is missing, try to discover via 'conda info --base'
++                if [ ! -x "$env_prefix_guess/bin/python" ]; then
++                  echo "[prefix] guessed env not found at $env_prefix_guess" | tee -a "$log_out"
++                  if command -v conda >/dev/null 2>&1; then
++                    base="$(conda info --base 2>/dev/null || true)"
++                    if [ -n "$base" ] && [ -d "$base/envs/{self.model_id}" ]; then
++                      env_prefix_guess="$base/envs/{self.model_id}"
++                    fi
++                  fi
++                fi
++
++                if [ ! -x "$env_prefix_guess/bin/python" ]; then
++                  echo "ERROR: conda env python not found (looked for $env_prefix_guess/bin/python)" | tee -a "$log_err"
++                  (conda env list || true) >>"$log_err" 2>&1
++                  exit 1
++                fi
++
++                echo "Using env prefix: $env_prefix_guess" | tee -a "$log_out"
++
++                # Minimal environment: keep HOME only; set PATH/LD_LIBRARY_PATH for the env
++                # Use a login shell (-l) to get standard bash behavior without relying on conda hooks.
++                env -i HOME="$HOME" \
++                  PATH="$env_prefix_guess/bin:/usr/bin:/bin" \
++                  LD_LIBRARY_PATH="$env_prefix_guess/lib" \
++                  PYTHONNOUSERSITE=1 \
++                  bash -lc '
++                    set -Eeuo pipefail
++                    echo "[pure-prefix] python -V: $(python -V) ($(which python))"
++                    cd "'"$run_dir"'"
++                    chmod +x ./run.sh || true
++                    ./run.sh . "'"$input_csv"'" "'"$bash_output"'"
++                  ' >>"$log_out" 2>>"$log_err" || true
++
++                if [ -f "$bash_output" ]; then
++                  echo "SUCCESS via pure-prefix launcher" | tee -a "$log_out"
++                  exit 0
++                fi
++
++                echo "Pure-prefix run.sh execution did not produce output; trying direct Python entry-point..." | tee -a "$log_err"
++
++                # If run.sh internally calls 'python', bypass it and call the main module explicitly.
++                # Adjust the path to your entry point if needed.
++                env -i HOME="$HOME" \
++                  PATH="$env_prefix_guess/bin:/usr/bin:/bin" \
++                  LD_LIBRARY_PATH="$env_prefix_guess/lib" \
++                  PYTHONNOUSERSITE=1 \
++                  "$env_prefix_guess/bin/python" "{os.path.dirname(run_sh_path)}/code/main.py" \
++                    --in "{input_file_path}" --out "{bash_output_path}" \
++                    >>"$log_out" 2>>"$log_err" || true
++
++                if [ -f "$bash_output" ]; then
++                  echo "SUCCESS via direct Python entry-point" | tee -a "$log_out"
++                  exit 0
++                fi
 
-            echo "ERROR: expected output file not found: $bash_output" >&2
-            [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
-            [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
-            exit 1
             """
 
 
