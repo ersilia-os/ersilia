@@ -428,132 +428,63 @@ class RunnerService:
             
             self.installer.install_packages_from_dir()
 
-            base_prefix = self._conda_prefix(self._is_base())
-            env_prefix = os.path.join(base_prefix, "envs", self.model_id)
-            env_python = os.path.join(env_prefix, "bin", "python")
-
-            self.logger.debug("The self.dir is: %s", self.dir)
-            self.logger.debug("Input file path: %s", input_file_path)
-            self.logger.debug("Run script path: %s", run_sh_path)
-            self.logger.debug("Output path: %s", output_path)
-            self.logger.debug("Conda base prefix: %s", base_prefix)
-            self.logger.debug("Conda env prefix: %s", env_prefix)
+            self.logger.debug("The self.dir is: {0}".format(self.dir))
+            self.logger.debug("Input file path: {0}".format(input_file_path))
+            self.logger.debug("Run script path: {0}".format(run_sh_path))
+            self.logger.debug("Output path: {0}".format(output_path))
 
             bash_script = f"""#!/usr/bin/env bash
                 set -Euo pipefail
 
                 log_out="{output_log_path}"
                 log_err="{error_log_path}"
-                bash_output="{bash_output_path}"
-                run_dir="{os.path.dirname(run_sh_path)}"
-                input_csv="{input_file_path}"
-                env_prefix="{env_prefix}"
-                env_python="{env_python}"
-                base_prefix="{base_prefix}"
 
                 mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
                 : > "$log_out"
                 : > "$log_err"
 
                 echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-                echo "Using env prefix: $env_prefix" | tee -a "$log_out"
+                echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
 
-                # --- Primary path: run script directly under the env via conda run -p
                 (
                 set +e
-                cd "$run_dir"
-                chmod +x ./run.sh || true
-                echo "[primary] conda run -p ..." | tee -a "$log_out"
-                conda run -p "$env_prefix" ./run.sh . "$input_csv" "$bash_output" >>"$log_out" 2>>"$log_err"
+                conda run -n {self.model_id} bash -c '
+                    set -euo pipefail
+                    echo "Inside conda env: $(python -V) - $(which python)"
+                    cd "{os.path.dirname(run_sh_path)}"
+                    echo "PWD inside conda run: $(pwd)"
+                    ls -lah
+                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+                ' >>"$log_out" 2>>"$log_err"
                 )
-                if [ -f "$bash_output" ]; then
-                echo "SUCCESS via conda run -p" | tee -a "$log_out"
+
+                if [ -f "{bash_output_path}" ]; then
+                echo "SUCCESS via conda run" | tee -a "$log_out"
                 exit 0
                 fi
 
-                echo "Primary path failed or output missing. Falling back to login-shell activate..." | tee -a "$log_err"
+                echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
 
-                # --- Fallback 1: login shell + source conda.sh + conda activate
-                bash -lc '
-                set -euo pipefail
-                run_dir="{os.path.dirname(run_sh_path)}"
-                input_csv="{input_file_path}"
-                bash_output="{bash_output_path}"
-                base_prefix="{base_prefix}"
-                env_name="{self.model_id}"
+                source "{self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err"
+                conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
 
-                source "$base_prefix/etc/profile.d/conda.sh"
-                conda activate "$env_name"
-
-                echo "[fallback-1] Inside conda env: $(python -V) - $(which python)"
-                cd "$run_dir"
+                cd "{os.path.dirname(run_sh_path)}"
                 chmod +x ./run.sh || true
-                ./run.sh . "$input_csv" "$bash_output"
-                ' >>"$log_out" 2>>"$log_err" || true
 
-                if [ -f "$bash_output" ]; then
-                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
-                exit 0
+                bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
+
+                conda deactivate >>"$log_out" 2>>"$log_err" || true
+
+                if [ ! -f "{bash_output_path}" ]; then
+                echo "ERROR: expected output file not found: {bash_output_path}" >&2
+                [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
+                [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
+                exit 1
                 fi
 
-                echo "Fallback-1 failed. Trying absolute interpreter..." | tee -a "$log_err"
-
-                # If the guessed prefix is missing, try to discover via 'conda info --base'
-+                if [ ! -x "$env_prefix_guess/bin/python" ]; then
-+                  echo "[prefix] guessed env not found at $env_prefix_guess" | tee -a "$log_out"
-+                  if command -v conda >/dev/null 2>&1; then
-+                    base="$(conda info --base 2>/dev/null || true)"
-+                    if [ -n "$base" ] && [ -d "$base/envs/{self.model_id}" ]; then
-+                      env_prefix_guess="$base/envs/{self.model_id}"
-+                    fi
-+                  fi
-+                fi
-+
-+                if [ ! -x "$env_prefix_guess/bin/python" ]; then
-+                  echo "ERROR: conda env python not found (looked for $env_prefix_guess/bin/python)" | tee -a "$log_err"
-+                  (conda env list || true) >>"$log_err" 2>&1
-+                  exit 1
-+                fi
-+
-+                echo "Using env prefix: $env_prefix_guess" | tee -a "$log_out"
-+
-+                # Minimal environment: keep HOME only; set PATH/LD_LIBRARY_PATH for the env
-+                # Use a login shell (-l) to get standard bash behavior without relying on conda hooks.
-+                env -i HOME="$HOME" \
-+                  PATH="$env_prefix_guess/bin:/usr/bin:/bin" \
-+                  LD_LIBRARY_PATH="$env_prefix_guess/lib" \
-+                  PYTHONNOUSERSITE=1 \
-+                  bash -lc '
-+                    set -Eeuo pipefail
-+                    echo "[pure-prefix] python -V: $(python -V) ($(which python))"
-+                    cd "'"$run_dir"'"
-+                    chmod +x ./run.sh || true
-+                    ./run.sh . "'"$input_csv"'" "'"$bash_output"'"
-+                  ' >>"$log_out" 2>>"$log_err" || true
-+
-+                if [ -f "$bash_output" ]; then
-+                  echo "SUCCESS via pure-prefix launcher" | tee -a "$log_out"
-+                  exit 0
-+                fi
-+
-+                echo "Pure-prefix run.sh execution did not produce output; trying direct Python entry-point..." | tee -a "$log_err"
-+
-+                # If run.sh internally calls 'python', bypass it and call the main module explicitly.
-+                # Adjust the path to your entry point if needed.
-+                env -i HOME="$HOME" \
-+                  PATH="$env_prefix_guess/bin:/usr/bin:/bin" \
-+                  LD_LIBRARY_PATH="$env_prefix_guess/lib" \
-+                  PYTHONNOUSERSITE=1 \
-+                  "$env_prefix_guess/bin/python" "{os.path.dirname(run_sh_path)}/code/main.py" \
-+                    --in "{input_file_path}" --out "{bash_output_path}" \
-+                    >>"$log_out" 2>>"$log_err" || true
-+
-+                if [ -f "$bash_output" ]; then
-+                  echo "SUCCESS via direct Python entry-point" | tee -a "$log_out"
-+                  exit 0
-+                fi
-
+                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
             """
+
 
 
             with open(temp_script_path, "w") as script_file:
