@@ -727,7 +727,10 @@ class RunnerService:
                 raise RuntimeError("nox not found in PATH. Install it in the workflow before running tests (e.g., `pip install nox`).")
 
             nox_cmd = [
-                "nox", "-s", "run_model", "--",
+                "nox",
+                "-f", os.path.join("ersilia", "publish", "test", "noxfile.py"),
+                "-s", "run_model",
+                "--",
                 "--env-prefix", env_prefix,
                 "--run-dir", run_dir,
                 "--input", input_file_path,
