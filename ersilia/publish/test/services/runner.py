@@ -444,36 +444,23 @@ class RunnerService:
                 : > "$log_err"
 
                 echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-                echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
 
-                (
-                set +e
-                conda run -n {self.model_id} bash -c '
+                # Prefer explicit prefix if you can compute it; otherwise keep -n {self.model_id}
+                CONDA_EXE_PATH="${{CONDA_EXE:-conda}}"
+
+                echo "Using conda env: {self.model_id}" | tee -a "$log_out"
+
+                # Run directly in conda, with working directory set, no interactive activation.
+                "${{CONDA_EXE_PATH}}" run \
+                --no-capture-output \
+                -n {self.model_id} \
+                bash -lc '
                     set -euo pipefail
-                    echo "Inside conda env: $(python -V) - $(which python)"
                     cd "{os.path.dirname(run_sh_path)}"
-                    echo "PWD inside conda run: $(pwd)"
-                    ls -lah
-                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+                    echo "Inside conda env: $(python -V) - $(which python)"
+                    chmod +x ./run.sh
+                    ./run.sh . "{input_file_path}" "{bash_output_path}"
                 ' >>"$log_out" 2>>"$log_err"
-                )
-
-                if [ -f "{bash_output_path}" ]; then
-                echo "SUCCESS via conda run" | tee -a "$log_out"
-                exit 0
-                fi
-
-                echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
-
-                source "{self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err"
-                conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
-
-                cd "{os.path.dirname(run_sh_path)}"
-                chmod +x ./run.sh || true
-
-                bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
-
-                conda deactivate >>"$log_out" 2>>"$log_err" || true
 
                 if [ ! -f "{bash_output_path}" ]; then
                 echo "ERROR: expected output file not found: {bash_output_path}" >&2
@@ -482,8 +469,9 @@ class RunnerService:
                 exit 1
                 fi
 
-                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
-            """
+                echo "SUCCESS via conda run" | tee -a "$log_out"
+                """
+
 
 
 
