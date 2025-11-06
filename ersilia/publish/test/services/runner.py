@@ -433,42 +433,46 @@ class RunnerService:
             self.logger.debug("Run script path: {0}".format(run_sh_path))
             self.logger.debug("Output path: {0}".format(output_path))
 
+            env_prefix = f"{self._conda_prefix(self._is_base())}/envs/{self.model_id}"
+
             bash_script = f"""#!/usr/bin/env bash
-                set -Euo pipefail
+            set -Euo pipefail
 
-                log_out="{output_log_path}"
-                log_err="{error_log_path}"
+            log_out="{output_log_path}"
+            log_err="{error_log_path}"
 
-                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                : > "$log_out"
-                : > "$log_err"
+            mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+            : > "$log_out"
+            : > "$log_err"
 
-                echo "Runner arch: $(uname -m)" | tee -a "$log_out"
+            echo "Runner arch: $(uname -m)" | tee -a "$log_out"
+            echo "Using conda env prefix: {env_prefix}" | tee -a "$log_out"
 
-                CONDA_EXE_PATH="${{CONDA_EXE:-conda}}"
-                echo "Using conda env: {self.model_id}" | tee -a "$log_out"
+            CONDA_EXE_PATH="${{CONDA_EXE:-conda}}"
 
-                # Run directly in conda, with working directory set, no interactive activation.
-                "${{CONDA_EXE_PATH}}" run \
-                --no-capture-output \
-                -n {self.model_id} \
-                bash -lc '
-                    set -euo pipefail
-                    cd "{os.path.dirname(run_sh_path)}"
-                    echo "Inside conda env: $(python -V) - $(which python)"
-                    chmod +x ./run.sh
-                    ./run.sh . "{input_file_path}" "{bash_output_path}"
-                ' >>"$log_out" 2>>"$log_err"
+            "${{CONDA_EXE_PATH}}" run \
+            --no-capture-output \
+            -p "{env_prefix}" \
+            bash -lc '
+                set -euo pipefail
+                echo "Inside conda env: $(python -V) - $(which python)"
+                echo "CONDA_PREFIX=${{CONDA_PREFIX:-}}"
+                cd "{os.path.dirname(run_sh_path)}"
+                echo "PWD inside conda run: $(pwd)"
+                ls -lah
+                chmod +x ./run.sh
+                bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+            ' >>"$log_out" 2>>"$log_err"
 
-                if [ ! -f "{bash_output_path}" ]; then
-                echo "ERROR: expected output file not found: {bash_output_path}" >&2
-                [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
-                [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
-                exit 1
-                fi
+            if [ ! -f "{bash_output_path}" ]; then
+            echo "ERROR: expected output file not found: {bash_output_path}" >&2
+            [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
+            [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
+            exit 1
+            fi
 
-                echo "SUCCESS via conda run" | tee -a "$log_out"
-                """
+            echo "SUCCESS via conda run" | tee -a "$log_out"
+            """
 
 
             with open(temp_script_path, "w") as script_file:
