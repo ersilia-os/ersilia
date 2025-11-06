@@ -450,10 +450,11 @@ class RunnerService:
 
             CONDA_EXE_PATH="${{CONDA_EXE:-conda}}"
 
+            # IMPORTANT: no login shell (-l). Use plain -c so init files can't auto-activate 'test'.
             "${{CONDA_EXE_PATH}}" run \
             --no-capture-output \
             -p "{env_prefix}" \
-            bash -lc '
+            bash -c '
                 set -euo pipefail
                 echo "Inside conda env: $(python -V) - $(which python)"
                 echo "CONDA_PREFIX=${{CONDA_PREFIX:-}}"
