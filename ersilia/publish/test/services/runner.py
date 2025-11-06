@@ -445,9 +445,7 @@ class RunnerService:
 
                 echo "Runner arch: $(uname -m)" | tee -a "$log_out"
 
-                # Prefer explicit prefix if you can compute it; otherwise keep -n {self.model_id}
                 CONDA_EXE_PATH="${{CONDA_EXE:-conda}}"
-
                 echo "Using conda env: {self.model_id}" | tee -a "$log_out"
 
                 # Run directly in conda, with working directory set, no interactive activation.
@@ -471,8 +469,6 @@ class RunnerService:
 
                 echo "SUCCESS via conda run" | tee -a "$log_out"
                 """
-
-
 
 
             with open(temp_script_path, "w") as script_file:
