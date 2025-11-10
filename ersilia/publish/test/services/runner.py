@@ -780,7 +780,7 @@ class RunnerService:
                 echo "SUCCESS via conda run inside nox" | tee -a "$log_out"
                 """
             else:
-                # Existing behavior including fallback (unchanged from your current version)
+                # Existing behavior including fallback (unchanged from current version)
                 bash_script = f"""#!/usr/bin/env bash
                 set -Euo pipefail
 
