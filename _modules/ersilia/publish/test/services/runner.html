@@ -766,56 +766,88 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_path</span><span class="p">))</span>
 
             <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#!/usr/bin/env bash</span>
-<span class="s2">                set -Euo pipefail</span>
+<span class="s2">            set -Euo pipefail</span>
 
-<span class="s2">                log_out=&quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                log_err=&quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            log_out=&quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            log_err=&quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<span class="s2">                mkdir -p &quot;$(dirname &quot;$log_out&quot;)&quot; &quot;$(dirname &quot;$log_err&quot;)&quot;</span>
-<span class="s2">                : &gt; &quot;$log_out&quot;</span>
-<span class="s2">                : &gt; &quot;$log_err&quot;</span>
+<span class="s2">            mkdir -p &quot;$(dirname &quot;$log_out&quot;)&quot; &quot;$(dirname &quot;$log_err&quot;)&quot;</span>
+<span class="s2">            : &gt; &quot;$log_out&quot;</span>
+<span class="s2">            : &gt; &quot;$log_err&quot;</span>
 
-<span class="s2">                echo &quot;Runner arch: $(uname -m)&quot; | tee -a &quot;$log_out&quot;</span>
-<span class="s2">                echo &quot;Using conda prefix: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">            echo &quot;Runner arch: $(uname -m)&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">            echo &quot;Using conda prefix: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot; | tee -a &quot;$log_out&quot;</span>
 
-<span class="s2">                (</span>
-<span class="s2">                set +e</span>
-<span class="s2">                conda run -n </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> bash -c &#39;</span>
-<span class="s2">                    set -euo pipefail</span>
-<span class="s2">                    echo &quot;Inside conda env: $(python -V) - $(which python)&quot;</span>
-<span class="s2">                    cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                    echo &quot;PWD inside conda run: $(pwd)&quot;</span>
-<span class="s2">                    ls -lah</span>
-<span class="s2">                    bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                &#39; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot;</span>
-<span class="s2">                )</span>
+<span class="s2">            ENV_NAME=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            ENV_PREFIX=&quot;$(conda info --base 2&gt;/dev/null)/envs/$ENV_NAME&quot;</span>
 
-<span class="s2">                if [ -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">                echo &quot;SUCCESS via conda run&quot; | tee -a &quot;$log_out&quot;</span>
-<span class="s2">                exit 0</span>
-<span class="s2">                fi</span>
+<span class="s2">            PRIMARY=(conda run --no-capture-output -n &quot;$ENV_NAME&quot;)</span>
+<span class="s2">            [ -d &quot;$ENV_PREFIX&quot; ] &amp;&amp; PRIMARY=(conda run --no-capture-output --prefix &quot;$ENV_PREFIX&quot;)</span>
 
-<span class="s2">                echo &quot;Primary path failed or output missing. Falling back...&quot; | tee -a &quot;$log_err&quot;</span>
+<span class="s2">            (</span>
+<span class="s2">            set -e</span>
+<span class="s2">            &quot;$</span><span class="se">{{</span><span class="s2">PRIMARY[@]</span><span class="se">}}</span><span class="s2">&quot; bash -lc &#39;</span>
+<span class="s2">            set -euo pipefail</span>
+<span class="s2">            echo &quot;[RUN] Inside conda env: $(python -V) - $(which python)&quot;</span>
+<span class="s2">            cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            echo &quot;[RUN] Ensure deps&quot;</span>
+<span class="s2">            if [ -f requirements.txt ]; then</span>
+<span class="s2">                python -m pip install -U pip wheel</span>
+<span class="s2">                python -m pip install -r requirements.txt</span>
+<span class="s2">            fi</span>
+<span class="s2">            python - &lt;&lt;PY</span>
+<span class="s2">            import importlib.util, sys</span>
+<span class="s2">            sys.exit(0 if importlib.util.find_spec(&quot;molfeat&quot;) else 42)</span>
+<span class="s2">            PY</span>
+<span class="s2">            if [ &quot;$?&quot; -eq 42 ]; then</span>
+<span class="s2">                echo &quot;[RUN] Installing molfeat&quot;</span>
+<span class="s2">                python -m pip install molfeat</span>
+<span class="s2">            fi</span>
+<span class="s2">            echo &quot;[RUN] Executing run.sh&quot;</span>
+<span class="s2">            bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            &#39;</span>
+<span class="s2">            ) &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
 
-<span class="s2">                source &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">/etc/profile.d/conda.sh&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot;</span>
-<span class="s2">                conda activate </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">            if [ -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">            echo &quot;[OK] SUCCESS via conda run&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">            exit 0</span>
+<span class="s2">            fi</span>
 
-<span class="s2">                cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                chmod +x ./run.sh || true</span>
+<span class="s2">            echo &quot;[WARN] Primary path failed, trying fallback&quot; | tee -a &quot;$log_err&quot;</span>
 
-<span class="s2">                bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">            if command -v conda &gt;/dev/null 2&gt;&amp;1; then</span>
+<span class="s2">            eval &quot;$(&quot;$(command -v conda)&quot; shell.bash hook)&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">            conda activate &quot;$ENV_NAME&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">            fi</span>
 
-<span class="s2">                conda deactivate &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">            cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            echo &quot;[RUN] Fallback ensure deps&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">            if [ -f requirements.txt ]; then</span>
+<span class="s2">            python -m pip install -U pip wheel &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">            python -m pip install -r requirements.txt &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">            fi</span>
+<span class="s2">            python - &lt;&lt;&#39;PY&#39; || python -m pip install molfeat &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">            import importlib.util, sys</span>
+<span class="s2">            sys.exit(0 if importlib.util.find_spec(&quot;molfeat&quot;) else 1)</span>
+<span class="s2">            PY</span>
 
-<span class="s2">                if [ ! -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">                echo &quot;ERROR: expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&amp;2</span>
-<span class="s2">                [ -f &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDERR (tail) ====&quot; &amp;&amp; tail -n 500 &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; || echo &quot;No stderr log.&quot;</span>
-<span class="s2">                [ -f &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDOUT (tail) ====&quot; &amp;&amp; tail -n 500 &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; || echo &quot;No stdout log.&quot;</span>
-<span class="s2">                exit 1</span>
-<span class="s2">                fi</span>
+<span class="s2">            chmod +x ./run.sh || true</span>
+<span class="s2">            echo &quot;[RUN] Fallback executing run.sh&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">            bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
 
-<span class="s2">                echo &quot;SUCCESS via conda activate fallback&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">            conda deactivate &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+
+<span class="s2">            if [ ! -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">            echo &quot;[ERR] Expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&amp;2</span>
+<span class="s2">            [ -f &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDERR (tail) ====&quot; &amp;&amp; tail -n 500 &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; || echo &quot;No stderr log.&quot;</span>
+<span class="s2">            [ -f &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDOUT (tail) ====&quot; &amp;&amp; tail -n 500 &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; || echo &quot;No stdout log.&quot;</span>
+<span class="s2">            exit 1</span>
+<span class="s2">            fi</span>
+
+<span class="s2">            echo &quot;[OK] SUCCESS via fallback&quot; | tee -a &quot;$log_out&quot;</span>
 <span class="s2">            &quot;&quot;&quot;</span>
+
+
 
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
                 <span class="n">script_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
