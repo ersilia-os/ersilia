@@ -473,10 +473,22 @@ class RunnerService:
 
             # --- Fix 2: Reset any pre-activated conda environment ---
             eval "$("$(command -v conda)" shell.bash hook)" || true
+
+            echo "[DEBUG] Pre-reset conda environment variables:"
+            echo "  CONDA_PREFIX=${{CONDA_PREFIX:-'(unset)'}}"
+            echo "  CONDA_DEFAULT_ENV=${{CONDA_DEFAULT_ENV:-'(unset)'}}"
+            echo "  CONDA_SHLVL=${{CONDA_SHLVL:-0}}"
+
             while [ "${{CONDA_SHLVL:-0}}" -gt 0 ]; do
             echo "[RESET] Deactivating conda level $CONDA_SHLVL"
             conda deactivate || true
             done
+
+            echo "[DEBUG] Post-deactivate conda variables:"
+            echo "  CONDA_PREFIX=${{CONDA_PREFIX:-'(unset)'}}"
+            echo "  CONDA_DEFAULT_ENV=${{CONDA_DEFAULT_ENV:-'(unset)'}}"
+            echo "  CONDA_SHLVL=${{CONDA_SHLVL:-0}}"
+
             unset CONDA_PREFIX CONDA_DEFAULT_ENV
 
             # --- Run inside the resolved environment cleanly ---
