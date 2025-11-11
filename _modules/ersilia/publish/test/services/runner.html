@@ -563,6 +563,318 @@
         <span class="k">return</span> <span class="n">examples</span></div>
 
 
+    <span class="c1"># def run_bash(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     Run the model using a bash script and compare the outputs for consistency.</span>
+
+    <span class="c1">#     Raises</span>
+    <span class="c1">#     ------</span>
+    <span class="c1">#     RuntimeError</span>
+    <span class="c1">#         If there is an error during the subprocess execution or output comparison.</span>
+    <span class="c1">#     &quot;&quot;&quot;</span>
+    <span class="c1">#     def normalize_quotes(obj):</span>
+    <span class="c1">#         def strip_quotes(s: str) -&gt; str:</span>
+    <span class="c1">#             if isinstance(s, float) or isinstance(s, int):</span>
+    <span class="c1">#                 return s</span>
+    <span class="c1">#             if (s.startswith(&#39;&quot;&#39;) and s.endswith(&#39;&quot;&#39;)) or (s.startswith(&quot;&#39;&quot;) and s.endswith(&quot;&#39;&quot;)):</span>
+    <span class="c1">#                 return s[1:-1]</span>
+    <span class="c1">#             return s</span>
+            
+    <span class="c1">#         if isinstance(obj, list):</span>
+    <span class="c1">#             return [strip_quotes(s) for s in obj]</span>
+    <span class="c1">#         elif isinstance(obj, str):</span>
+    <span class="c1">#             return strip_quotes(obj)</span>
+    <span class="c1">#         else:</span>
+    <span class="c1">#             raise TypeError(&quot;Input must be a string or a list of strings&quot;)</span>
+
+                
+    <span class="c1">#     def compute_rmse(y_true, y_pred):</span>
+    <span class="c1">#         return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(</span>
+    <span class="c1">#             y_true</span>
+    <span class="c1">#         )</span>
+
+    <span class="c1">#     def compare_outputs(bsh_data, ers_data):</span>
+    <span class="c1">#         _completed_status, _rmse = [], []</span>
+    <span class="c1">#         columns = set(bsh_data[0].keys()) &amp; set(ers_data[0].keys())</span>
+    <span class="c1">#         for column in columns:</span>
+    <span class="c1">#             bv = [row[column] for row in bsh_data]</span>
+    <span class="c1">#             ev = [row[column] for row in ers_data]</span>
+
+    <span class="c1">#             for idx, (b_val, e_val) in enumerate(zip(bv, ev), start=1):</span>
+    <span class="c1">#                 if type(b_val) is not type(e_val):</span>
+    <span class="c1">#                     if type(b_val) is int and type(e_val) is float:</span>
+    <span class="c1">#                         continue</span>
+    <span class="c1">#                     msg = (</span>
+    <span class="c1">#                         f&quot;Datatype mismatch for column &#39;{column}&#39; at row {idx}: &quot;</span>
+    <span class="c1">#                         f&quot;bash value type={type(b_val).__name__}, &quot;</span>
+    <span class="c1">#                         f&quot;ersilia value type={type(e_val).__name__}&quot;</span>
+    <span class="c1">#                         f&quot;bash value={e_val}&quot;</span>
+    <span class="c1">#                         f&quot;ersilia value={e_val}&quot;</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#                     echo_exceptions(msg, ClickInterface())</span>
+    <span class="c1">#                     return [(f&quot;Type Check-{column}&quot;, msg, str(STATUS_CONFIGS.FAILED))]</span>
+
+    <span class="c1">#             if all(isinstance(val, (int, float)) for val in bv + ev):</span>
+    <span class="c1">#                 rmse = compute_rmse(bv, ev)</span>
+    <span class="c1">#                 _rmse.append(rmse)</span>
+
+    <span class="c1">#                 if rmse &gt; 0.1:</span>
+    <span class="c1">#                     rmse_perc = round(rmse * 100, 2)</span>
+    <span class="c1">#                     _completed_status.append(</span>
+    <span class="c1">#                         (</span>
+    <span class="c1">#                             f&quot;RMSE-{column}&quot;,</span>
+    <span class="c1">#                             f&quot;RMSE &gt; 10%: {rmse_perc}%&quot;,</span>
+    <span class="c1">#                             str(STATUS_CONFIGS.FAILED),</span>
+    <span class="c1">#                         )</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#                     echo_exceptions(</span>
+    <span class="c1">#                         &quot;Model output is inconsistent between bash and ersilia. Skipped the checks!&quot;,</span>
+    <span class="c1">#                         ClickInterface(),</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#                     return _completed_status</span>
+
+    <span class="c1">#             elif all(isinstance(val, str) for val in bv + normalize_quotes(ev)):</span>
+    <span class="c1">#                 if not all(</span>
+    <span class="c1">#                     self._compare_string_similarity(a, b, 95)</span>
+    <span class="c1">#                     for a, b in zip(bv, normalize_quotes(ev))</span>
+    <span class="c1">#                 ):</span>
+    <span class="c1">#                     _completed_status.append(</span>
+    <span class="c1">#                         (&quot;String Similarity&quot;, &quot;&lt; 95%&quot;, str(STATUS_CONFIGS.FAILED))</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#                     echo_exceptions(</span>
+    <span class="c1">#                         &quot;Model output is inconsistent between bash and ersilia. Skipped the checks!&quot;,</span>
+    <span class="c1">#                         ClickInterface(),</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#                     return _completed_status</span>
+
+    <span class="c1">#                 _completed_status.append(</span>
+    <span class="c1">#                     (&quot;String Similarity&quot;, &quot;&gt; 95%&quot;, str(STATUS_CONFIGS.PASSED))</span>
+    <span class="c1">#                 )</span>
+
+    <span class="c1">#         mean_rmse = sum(_rmse) / len(_rmse) if _rmse else 0</span>
+    <span class="c1">#         mean_rmse_perc = round(mean_rmse * 100, 2)</span>
+    <span class="c1">#         _completed_status.append(</span>
+    <span class="c1">#             (</span>
+    <span class="c1">#                 &quot;RMSE-MEAN&quot;,</span>
+    <span class="c1">#                 f&quot;RMSE &lt; 10% | {mean_rmse_perc}%&quot;,</span>
+    <span class="c1">#                 str(STATUS_CONFIGS.PASSED),</span>
+    <span class="c1">#             )</span>
+    <span class="c1">#         )</span>
+
+    <span class="c1">#         return _completed_status</span>
+
+    <span class="c1">#     def read_csv(path, flag=False):</span>
+    <span class="c1">#         if not os.path.exists(path):</span>
+    <span class="c1">#             echo_exceptions(f&quot;File not found this might be due to error happened when executing the run.sh: {path}&quot;, ClickInterface())</span>
+    <span class="c1">#         try:</span>
+    <span class="c1">#             with open(path, &quot;r&quot;) as file:</span>
+    <span class="c1">#                 self.logger.info(&quot;Reading the lines&quot;)</span>
+    <span class="c1">#                 lines = file.readlines()</span>
+
+    <span class="c1">#             if not lines:</span>
+    <span class="c1">#                 self.logger.error(f&quot;File at {path} is empty.&quot;)</span>
+    <span class="c1">#                 return [], &quot;File is empty&quot;</span>
+
+    <span class="c1">#             headers = lines[0].strip().split(&quot;,&quot;)</span>
+    <span class="c1">#             if flag:</span>
+    <span class="c1">#                 headers = headers[2:]</span>
+
+    <span class="c1">#             data = []</span>
+
+    <span class="c1">#             for line in lines[1:]:</span>
+    <span class="c1">#                 values = line.strip().split(&quot;,&quot;)</span>
+    <span class="c1">#                 values = values[2:] if flag else values</span>
+
+    <span class="c1">#                 def parse(value: str):</span>
+    <span class="c1">#                     if value == &quot;&quot;:</span>
+    <span class="c1">#                         return value</span>
+
+    <span class="c1">#                     try:</span>
+    <span class="c1">#                         i = int(value)</span>
+    <span class="c1">#                         if str(i) == value or (value.startswith((&#39;+&#39;, &#39;-&#39;)) and str(i) == value.lstrip(&#39;+&#39;)):</span>
+    <span class="c1">#                             return i</span>
+    <span class="c1">#                     except ValueError:</span>
+    <span class="c1">#                         pass</span>
+    <span class="c1">#                     try:</span>
+    <span class="c1">#                         f = float(value)</span>
+    <span class="c1">#                         if value.lower() not in (&quot;nan&quot;, &quot;+nan&quot;, &quot;-nan&quot;, &quot;none&quot;, &quot;inf&quot;, &quot;+inf&quot;, &quot;-inf&quot;):</span>
+    <span class="c1">#                             return f</span>
+    <span class="c1">#                     except ValueError:</span>
+    <span class="c1">#                         pass</span>
+
+    <span class="c1">#                     return value</span>
+
+    <span class="c1">#                 try:</span>
+    <span class="c1">#                     _values = [parse(x) for x in values]</span>
+    <span class="c1">#                 except ValueError as e:</span>
+    <span class="c1">#                     return [], f&quot;Invalid value detected in CSV file: {e}&quot;</span>
+
+    <span class="c1">#                 data.append(dict(zip(headers, _values)))</span>
+
+    <span class="c1">#             return data, None</span>
+
+    <span class="c1">#         except Exception as e:</span>
+    <span class="c1">#             echo_exceptions(f&quot;Failed to read CSV from {path}.&quot;, ClickInterface())</span>
+                
+    <span class="c1">#     def read_logs(path):</span>
+    <span class="c1">#         if not os.path.exists(path):</span>
+    <span class="c1">#             return &quot;No error detected!&quot;</span>
+    <span class="c1">#         with open(path, &quot;r&quot;) as file:</span>
+    <span class="c1">#             return file.readlines()</span>
+
+    <span class="c1">#     def rename_col(path, old_col_name=&quot;input&quot;, new_col_name=&quot;smiles&quot;):</span>
+    <span class="c1">#         with open(path, &quot;r&quot;, newline=&quot;&quot;) as infile:</span>
+    <span class="c1">#             reader = csv.reader(infile)</span>
+    <span class="c1">#             rows = list(reader)</span>
+    <span class="c1">#             self.logger.info(f&quot;Rows before rename: {rows}&quot;)</span>
+
+    <span class="c1">#             if rows and old_col_name in rows[0]:</span>
+    <span class="c1">#                 col_index = rows[0].index(old_col_name)</span>
+    <span class="c1">#                 rows[0][col_index] = new_col_name</span>
+
+    <span class="c1">#             with open(path, &quot;w&quot;, newline=&quot;&quot;) as outfile:</span>
+    <span class="c1">#                 writer = csv.writer(outfile)</span>
+    <span class="c1">#                 writer.writerows(rows)</span>
+
+    <span class="c1">#     with tempfile.TemporaryDirectory() as temp_dir:</span>
+    <span class="c1">#         model_path = os.path.join(self.dir)</span>
+    <span class="c1">#         output_path = os.path.join(temp_dir, &quot;ersilia_output.csv&quot;)</span>
+    <span class="c1">#         output_log_path = os.path.join(temp_dir, &quot;output.txt&quot;)</span>
+    <span class="c1">#         error_log_path = os.path.join(temp_dir, &quot;error.txt&quot;)</span>
+    <span class="c1">#         input_file_path = os.path.join(temp_dir, &quot;example_file.csv&quot;)</span>
+    <span class="c1">#         temp_script_path = os.path.join(temp_dir, &quot;script.sh&quot;)</span>
+    <span class="c1">#         bash_output_path = os.path.join(temp_dir, &quot;bash_output.csv&quot;)</span>
+
+    <span class="c1">#         input_file_path = IOService._get_input_file_path(self.dir)</span>
+    <span class="c1">#         rename_col(input_file_path)</span>
+
+    <span class="c1">#         run_sh_path = os.path.abspath(os.path.join(model_path, &quot;model&quot;, &quot;framework&quot;, RUN_FILE))</span>
+    <span class="c1">#         input_file_path = os.path.abspath(input_file_path)</span>
+    <span class="c1">#         if not os.path.exists(run_sh_path):</span>
+    <span class="c1">#             self.logger.warning(</span>
+    <span class="c1">#                 f&quot;{RUN_FILE} not found at {run_sh_path}. Skipping bash run.&quot;</span>
+    <span class="c1">#             )</span>
+    <span class="c1">#             return</span>
+            
+    <span class="c1">#         self.installer.install_packages_from_dir()</span>
+
+    <span class="c1">#         self.logger.debug(&quot;The self.dir is: {0}&quot;.format(self.dir))</span>
+    <span class="c1">#         self.logger.debug(&quot;Input file path: {0}&quot;.format(input_file_path))</span>
+    <span class="c1">#         self.logger.debug(&quot;Run script path: {0}&quot;.format(run_sh_path))</span>
+    <span class="c1">#         self.logger.debug(&quot;Output path: {0}&quot;.format(output_path))</span>
+
+    <span class="c1">#         bash_script = f&quot;&quot;&quot;#!/usr/bin/env bash</span>
+    <span class="c1">#             set -Euo pipefail</span>
+
+    <span class="c1">#             log_out=&quot;{output_log_path}&quot;</span>
+    <span class="c1">#             log_err=&quot;{error_log_path}&quot;</span>
+
+    <span class="c1">#             mkdir -p &quot;$(dirname &quot;$log_out&quot;)&quot; &quot;$(dirname &quot;$log_err&quot;)&quot;</span>
+    <span class="c1">#             : &gt; &quot;$log_out&quot;</span>
+    <span class="c1">#             : &gt; &quot;$log_err&quot;</span>
+
+    <span class="c1">#             echo &quot;Runner arch: $(uname -m)&quot; | tee -a &quot;$log_out&quot;</span>
+    <span class="c1">#             echo &quot;Using conda prefix: {self._conda_prefix(self._is_base())}&quot; | tee -a &quot;$log_out&quot;</span>
+
+    <span class="c1">#             (</span>
+    <span class="c1">#             set +e</span>
+    <span class="c1">#             conda run -n {self.model_id} bash -c &#39;</span>
+    <span class="c1">#                 set -euo pipefail</span>
+    <span class="c1">#                 echo &quot;Inside conda env: $(python -V) - $(which python)&quot;</span>
+    <span class="c1">#                 cd &quot;{os.path.dirname(run_sh_path)}&quot;</span>
+    <span class="c1">#                 echo &quot;PWD inside conda run: $(pwd)&quot;</span>
+    <span class="c1">#                 ls -lah</span>
+    <span class="c1">#                 bash ./run.sh . &quot;{input_file_path}&quot; &quot;{bash_output_path}&quot;</span>
+    <span class="c1">#             &#39; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot;</span>
+    <span class="c1">#             )</span>
+
+    <span class="c1">#             if [ -f &quot;{bash_output_path}&quot; ]; then</span>
+    <span class="c1">#             echo &quot;SUCCESS via conda run&quot; | tee -a &quot;$log_out&quot;</span>
+    <span class="c1">#             exit 0</span>
+    <span class="c1">#             fi</span>
+
+    <span class="c1">#             echo &quot;Primary path failed or output missing. Falling back...&quot; | tee -a &quot;$log_err&quot;</span>
+
+    <span class="c1">#             source &quot;{self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot;</span>
+    <span class="c1">#             conda activate {self.model_id} &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+
+    <span class="c1">#             cd &quot;{os.path.dirname(run_sh_path)}&quot;</span>
+    <span class="c1">#             chmod +x ./run.sh || true</span>
+
+    <span class="c1">#             bash ./run.sh . &quot;{input_file_path}&quot; &quot;{bash_output_path}&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+
+    <span class="c1">#             conda deactivate &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+
+    <span class="c1">#             if [ ! -f &quot;{bash_output_path}&quot; ]; then</span>
+    <span class="c1">#             echo &quot;ERROR: expected output file not found: {bash_output_path}&quot; &gt;&amp;2</span>
+    <span class="c1">#             [ -f &quot;{error_log_path}&quot; ] &amp;&amp; echo &quot;==== STDERR (tail) ====&quot; &amp;&amp; tail -n 500 &quot;{error_log_path}&quot; || echo &quot;No stderr log.&quot;</span>
+    <span class="c1">#             [ -f &quot;{output_log_path}&quot; ] &amp;&amp; echo &quot;==== STDOUT (tail) ====&quot; &amp;&amp; tail -n 500 &quot;{output_log_path}&quot; || echo &quot;No stdout log.&quot;</span>
+    <span class="c1">#             exit 1</span>
+    <span class="c1">#             fi</span>
+
+    <span class="c1">#             echo &quot;SUCCESS via conda activate fallback&quot; | tee -a &quot;$log_out&quot;</span>
+    <span class="c1">#         &quot;&quot;&quot;</span>
+
+    <span class="c1">#         with open(temp_script_path, &quot;w&quot;) as script_file:</span>
+    <span class="c1">#             script_file.write(bash_script)</span>
+
+    <span class="c1">#         self.logger.debug(f&quot;\nRunning bash script: {temp_script_path}\n&quot;)</span>
+    <span class="c1">#         with open(temp_script_path, &quot;r&quot;) as script_file:</span>
+    <span class="c1">#             self.logger.debug(f&quot;Bash script content:\n{script_file.read()}\n&quot;)</span>
+    <span class="c1">#         try:</span>
+    <span class="c1">#             out = run_command([&quot;bash&quot;, temp_script_path])</span>
+    <span class="c1">#             self.logger.debug(f&quot;Bash script output: {out}&quot;)</span>
+    <span class="c1">#             self.logger.debug(&quot;Reading output path&quot;)</span>
+    <span class="c1">#             with open(bash_output_path, &quot;r&quot;) as f:</span>
+    <span class="c1">#                 self.logger.debug(f.read())</span>
+    <span class="c1">#             self.logger.debug(&quot;Done reading output path&quot;)</span>
+    <span class="c1">#             if os.path.exists(output_log_path):</span>
+    <span class="c1">#                 with open(output_log_path, &quot;r&quot;) as f:</span>
+    <span class="c1">#                     data = f.read()</span>
+    <span class="c1">#                     echo(data, fg=&quot;cyan&quot;, bold=True)</span>
+    <span class="c1">#             self.logger.info(f&quot;Bash script subprocess output: {out}&quot;)</span>
+    <span class="c1">#             logs = read_logs(error_log_path)</span>
+    <span class="c1">#             formatted_error = &quot;&quot;.join(logs)</span>
+    <span class="c1">#             if formatted_error:</span>
+    <span class="c1">#                 echo_exceptions(f&quot;Error detected originated from the bash execution: {formatted_error}&quot;, ClickInterface(), bg=None, fg=&quot;red&quot;)</span>
+    <span class="c1">#             bsh_data, _ = read_csv(bash_output_path)</span>
+    <span class="c1">#             self.logger.debug(&quot;Running model for bash data consistency checking&quot;)</span>
+    <span class="c1">#             if not os.path.exists(input_file_path):</span>
+    <span class="c1">#                 raise Exception(&quot;Input file path {0} does not exist&quot;.format(os.path.abspath(input_file_path)))</span>
+    <span class="c1">#             cmd = f&quot;ersilia serve {self.model_id} --disable-local-cache &amp;&amp; ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}&quot;</span>
+    <span class="c1">#             self.logger.debug(f&quot;Running command: {cmd}&quot;)</span>
+    <span class="c1">#             out = run_command(cmd)</span>
+    <span class="c1">#             ers_data, _ = read_csv(output_path, flag=True)</span>
+
+    <span class="c1">#         except Exception as e:</span>
+    <span class="c1">#             return [</span>
+    <span class="c1">#                 (</span>
+    <span class="c1">#                     (</span>
+    <span class="c1">#                         Checks.RUN_BASH.value,</span>
+    <span class="c1">#                         f&quot;Detailed error: {e}&quot;,</span>
+    <span class="c1">#                         str(STATUS_CONFIGS.FAILED),</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#                 )</span>
+    <span class="c1">#             ]</span>
+    <span class="c1">#         self.checkup_service.original_data_list = (</span>
+    <span class="c1">#             self.checkup_service._get_original_data_list(&quot;csv&quot;, input_file_path)</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#         check_status = self.checkup_service._check_csv(</span>
+    <span class="c1">#             output_path, input_type=&quot;csv&quot;</span>
+    <span class="c1">#         )</span>
+    <span class="c1">#         if check_status[-1] == str(STATUS_CONFIGS.FAILED):</span>
+    <span class="c1">#             return [</span>
+    <span class="c1">#                 (</span>
+    <span class="c1">#                     (</span>
+    <span class="c1">#                         Checks.RUN_BASH.value,</span>
+    <span class="c1">#                         check_status[1],</span>
+    <span class="c1">#                         str(STATUS_CONFIGS.FAILED),</span>
+    <span class="c1">#                     )</span>
+    <span class="c1">#                 )</span>
+    <span class="c1">#             ]</span>
+    <span class="c1">#         status = compare_outputs(bsh_data, ers_data)</span>
+    <span class="c1">#         return status</span>
+
 <div class="viewcode-block" id="RunnerService.run_bash">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.runner.RunnerService.run_bash">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run_bash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -581,7 +893,7 @@
                 <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)):</span>
                     <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="k">return</span> <span class="n">s</span>
-            
+
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">[</span><span class="n">strip_quotes</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -589,7 +901,6 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Input must be a string or a list of strings&quot;</span><span class="p">)</span>
 
-                
         <span class="k">def</span><span class="w"> </span><span class="nf">compute_rmse</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">sum</span><span class="p">((</span><span class="n">yt</span> <span class="o">-</span> <span class="n">yp</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">yt</span><span class="p">,</span> <span class="n">yp</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span>
                 <span class="n">y_true</span>
@@ -667,7 +978,10 @@
 
         <span class="k">def</span><span class="w"> </span><span class="nf">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found this might be due to error happened when executing the run.sh: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                <span class="n">echo_exceptions</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;File not found this might be due to error happened when executing the run.sh: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">ClickInterface</span><span class="p">(),</span>
+                <span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading the lines&quot;</span><span class="p">)</span>
@@ -690,20 +1004,29 @@
                     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
                         <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                             <span class="k">return</span> <span class="n">value</span>
-
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span> <span class="ow">or</span> <span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)):</span>
+                            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span> <span class="ow">or</span> <span class="p">(</span>
+                                <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">))</span>
+                                <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">)</span>
+                            <span class="p">):</span>
                                 <span class="k">return</span> <span class="n">i</span>
                         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                             <span class="k">pass</span>
                         <span class="k">try</span><span class="p">:</span>
                             <span class="n">f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;nan&quot;</span><span class="p">,</span> <span class="s2">&quot;+nan&quot;</span><span class="p">,</span> <span class="s2">&quot;-nan&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;inf&quot;</span><span class="p">,</span> <span class="s2">&quot;+inf&quot;</span><span class="p">,</span> <span class="s2">&quot;-inf&quot;</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+                                <span class="s2">&quot;nan&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;+nan&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;-nan&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;none&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;inf&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;+inf&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;-inf&quot;</span><span class="p">,</span>
+                            <span class="p">):</span>
                                 <span class="k">return</span> <span class="n">f</span>
                         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                             <span class="k">pass</span>
-
                         <span class="k">return</span> <span class="n">value</span>
 
                     <span class="k">try</span><span class="p">:</span>
@@ -715,9 +1038,11 @@
 
                 <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="kc">None</span>
 
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to read CSV from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
-                
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">echo_exceptions</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Failed to read CSV from </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">()</span>
+                <span class="p">)</span>
+
         <span class="k">def</span><span class="w"> </span><span class="nf">read_logs</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
                 <span class="k">return</span> <span class="s2">&quot;No error detected!&quot;</span>
@@ -750,100 +1075,188 @@
             <span class="n">input_file_path</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">_get_input_file_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
             <span class="n">rename_col</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span>
 
-            <span class="n">run_sh_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">,</span> <span class="n">RUN_FILE</span><span class="p">))</span>
+            <span class="n">run_sh_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">,</span> <span class="n">RUN_FILE</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">input_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">RUN_FILE</span><span class="si">}</span><span class="s2"> not found at </span><span class="si">{</span><span class="n">run_sh_path</span><span class="si">}</span><span class="s2">. Skipping bash run.&quot;</span>
                 <span class="p">)</span>
                 <span class="k">return</span>
-            
+
             <span class="bp">self</span><span class="o">.</span><span class="n">installer</span><span class="o">.</span><span class="n">install_packages_from_dir</span><span class="p">()</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The self.dir is: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input file path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Run script path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_path</span><span class="p">))</span>
+            <span class="n">conda_exe</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s2">&quot;conda&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">conda_exe</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;conda executable not found in PATH in nox mode&quot;</span><span class="p">)</span>
 
-            <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#!/usr/bin/env bash</span>
-<span class="s2">                set -Euo pipefail</span>
+            <span class="n">run_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span>
+            <span class="n">in_nox</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;ERSILIA_NOX&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
 
-<span class="s2">                log_out=&quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                log_err=&quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
-
-<span class="s2">                mkdir -p &quot;$(dirname &quot;$log_out&quot;)&quot; &quot;$(dirname &quot;$log_err&quot;)&quot;</span>
-<span class="s2">                : &gt; &quot;$log_out&quot;</span>
-<span class="s2">                : &gt; &quot;$log_err&quot;</span>
-
-<span class="s2">                echo &quot;Runner arch: $(uname -m)&quot; | tee -a &quot;$log_out&quot;</span>
-<span class="s2">                echo &quot;Using conda prefix: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot; | tee -a &quot;$log_out&quot;</span>
-
-<span class="s2">                (</span>
-<span class="s2">                set +e</span>
-<span class="s2">                conda run -n </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> bash -c &#39;</span>
-<span class="s2">                    set -euo pipefail</span>
-<span class="s2">                    echo &quot;Inside conda env: $(python -V) - $(which python)&quot;</span>
-<span class="s2">                    cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                    echo &quot;PWD inside conda run: $(pwd)&quot;</span>
-<span class="s2">                    ls -lah</span>
-<span class="s2">                    bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                &#39; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot;</span>
-<span class="s2">                )</span>
-
-<span class="s2">                if [ -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">                echo &quot;SUCCESS via conda run&quot; | tee -a &quot;$log_out&quot;</span>
-<span class="s2">                exit 0</span>
-<span class="s2">                fi</span>
-
-<span class="s2">                echo &quot;Primary path failed or output missing. Falling back...&quot; | tee -a &quot;$log_err&quot;</span>
-
-<span class="s2">                source &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span><span class="si">}</span><span class="s2">/etc/profile.d/conda.sh&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot;</span>
-<span class="s2">                conda activate </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
-
-<span class="s2">                cd &quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                chmod +x ./run.sh || true</span>
-
-<span class="s2">                bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
-
-<span class="s2">                conda deactivate &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
-
-<span class="s2">                if [ ! -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">                echo &quot;ERROR: expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&amp;2</span>
-<span class="s2">                [ -f &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDERR (tail) ====&quot; &amp;&amp; tail -n 500 &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; || echo &quot;No stderr log.&quot;</span>
-<span class="s2">                [ -f &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDOUT (tail) ====&quot; &amp;&amp; tail -n 500 &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; || echo &quot;No stdout log.&quot;</span>
-<span class="s2">                exit 1</span>
-<span class="s2">                fi</span>
-
-<span class="s2">                echo &quot;SUCCESS via conda activate fallback&quot; | tee -a &quot;$log_out&quot;</span>
-<span class="s2">            &quot;&quot;&quot;</span>
-
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
-                <span class="n">script_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running bash script: </span><span class="si">{</span><span class="n">temp_script_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bash script content:</span><span class="se">\n</span><span class="si">{</span><span class="n">script_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">([</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="n">temp_script_path</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bash script output: </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading output path&quot;</span><span class="p">)</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+                <span class="k">if</span> <span class="n">in_nox</span><span class="p">:</span>
+                        <span class="c1"># -------- NOX MODE --------</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;run_bash: ERSILIA_NOX=1, using direct conda run&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;conda exec: </span><span class="si">{</span><span class="n">conda_exe</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                        <span class="n">bash_cmd</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="s2">&quot;set -euo pipefail;&quot;</span>
+                            <span class="sa">f</span><span class="s1">&#39;echo &quot;Inside model env: $(python -V) - $(which python)&quot;;&#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;cd &quot;</span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s1">&quot;;&#39;</span>
+                            <span class="s2">&quot;ls -lah;&quot;</span>
+                            <span class="sa">f</span><span class="s1">&#39;bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s1">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+                        <span class="p">)</span>
+
+                        <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                        <span class="c1"># Important: disable plugins for *conda itself* to avoid the activate/deactivate bug</span>
+                        <span class="n">env</span><span class="p">[</span><span class="s2">&quot;CONDA_NO_PLUGINS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
+
+                        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="n">conda_exe</span><span class="p">,</span>
+                               <span class="s2">&quot;run&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;--no-plugins&quot;</span><span class="p">,</span> 
+                                <span class="s2">&quot;-n&quot;</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+                                <span class="s2">&quot;bash&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;-c&quot;</span><span class="p">,</span>
+                                <span class="n">bash_cmd</span><span class="p">,</span>
+                            <span class="p">],</span>
+                            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                            <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                        <span class="c1"># Mirror run_command-style logging</span>
+                        <span class="n">stdout_str</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="n">stderr_str</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">stdout_str</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">stdout_str</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">stderr_str</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">stderr_str</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;conda run failed with code </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">stderr_str</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">):</span>
+                            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+                            <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># LEGACY MODE: your existing conda_prefix/script.sh + fallback logic</span>
+                    <span class="n">conda_prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conda_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_base</span><span class="p">())</span>
+                    <span class="n">conda_exe</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conda_prefix</span><span class="p">,</span> <span class="s2">&quot;bin&quot;</span><span class="p">,</span> <span class="s2">&quot;conda&quot;</span><span class="p">)</span>
+                    <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#!/usr/bin/env bash</span>
+<span class="s2">                    set -Euo pipefail</span>
+
+<span class="s2">                    log_out=&quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                    log_err=&quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="s2">                    mkdir -p &quot;$(dirname &quot;$log_out&quot;)&quot; &quot;$(dirname &quot;$log_err&quot;)&quot;</span>
+<span class="s2">                    : &gt; &quot;$log_out&quot;</span>
+<span class="s2">                    : &gt; &quot;$log_err&quot;</span>
+
+<span class="s2">                    echo &quot;Runner arch: $(uname -m)&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">                    echo &quot;Using conda prefix: </span><span class="si">{</span><span class="n">conda_prefix</span><span class="si">}</span><span class="s2">&quot; | tee -a &quot;$log_out&quot;</span>
+
+<span class="s2">                    (</span>
+<span class="s2">                    set +e</span>
+<span class="s2">                    &quot;</span><span class="si">{</span><span class="n">conda_exe</span><span class="si">}</span><span class="s2">&quot; run -n </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> bash -c &#39;</span>
+<span class="s2">                        set -euo pipefail</span>
+<span class="s2">                        echo &quot;Inside conda env: $(python -V) - $(which python)&quot;</span>
+<span class="s2">                        cd &quot;</span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                        echo &quot;PWD inside conda run: $(pwd)&quot;</span>
+<span class="s2">                        ls -lah</span>
+<span class="s2">                        bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                    &#39; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot;</span>
+<span class="s2">                    )</span>
+
+<span class="s2">                    if [ -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">                    echo &quot;SUCCESS via conda run&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">                    exit 0</span>
+<span class="s2">                    fi</span>
+
+<span class="s2">                    echo &quot;Primary path failed or output missing. Falling back...&quot; | tee -a &quot;$log_err&quot;</span>
+
+<span class="s2">                    source &quot;</span><span class="si">{</span><span class="n">conda_prefix</span><span class="si">}</span><span class="s2">/etc/profile.d/conda.sh&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+<span class="s2">                    conda activate </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+
+<span class="s2">                    cd &quot;</span><span class="si">{</span><span class="n">run_dir</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                    chmod +x ./run.sh || true</span>
+
+<span class="s2">                    bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+
+<span class="s2">                    conda deactivate &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot; || true</span>
+
+<span class="s2">                    if [ ! -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">                    echo &quot;ERROR: expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&amp;2</span>
+<span class="s2">                    [ -f &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDERR (tail) ====&quot; &amp;&amp; tail -n 500 &quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot; || echo &quot;No stderr log.&quot;</span>
+<span class="s2">                    [ -f &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; ] &amp;&amp; echo &quot;==== STDOUT (tail) ====&quot; &amp;&amp; tail -n 500 &quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot; || echo &quot;No stdout log.&quot;</span>
+<span class="s2">                    exit 1</span>
+<span class="s2">                    fi</span>
+
+<span class="s2">                    echo &quot;SUCCESS via conda activate fallback&quot; | tee -a &quot;$log_out&quot;</span>
+<span class="s2">                    &quot;&quot;&quot;</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
+                        <span class="n">script_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="mo">0o755</span><span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running bash script: </span><span class="si">{</span><span class="n">temp_script_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Bash script content:</span><span class="se">\n</span><span class="si">{</span><span class="n">script_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+                    <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">([</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="n">temp_script_path</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bash script output: </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+                <span class="c1"># -------- Common post-processing (both branches) --------</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading bash output CSV&quot;</span><span class="p">)</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done reading output path&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done reading bash output CSV&quot;</span><span class="p">)</span>
+
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_log_path</span><span class="p">):</span>
                     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_log_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
                         <span class="n">echo</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bash script subprocess output: </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
                 <span class="n">logs</span> <span class="o">=</span> <span class="n">read_logs</span><span class="p">(</span><span class="n">error_log_path</span><span class="p">)</span>
                 <span class="n">formatted_error</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logs</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">formatted_error</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error detected originated from the bash execution: </span><span class="si">{</span><span class="n">formatted_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">(),</span> <span class="n">bg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Error detected originated from the bash execution: </span><span class="si">{</span><span class="n">formatted_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">ClickInterface</span><span class="p">(),</span>
+                        <span class="n">bg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+
                 <span class="n">bsh_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">)</span>
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running model for bash data consistency checking&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Input file path </span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)))</span>
-                <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> --disable-local-cache &amp;&amp; ersilia -v run -i </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span><span class="si">}</span><span class="s2"> -o </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="s2">&quot;Input file path </span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+
+                <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> --disable-local-cache&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot; &amp;&amp; ersilia -v run -i </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span><span class="si">}</span><span class="s2"> -o </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running command: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
                 <span class="n">ers_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -858,6 +1271,7 @@
                         <span class="p">)</span>
                     <span class="p">)</span>
                 <span class="p">]</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">original_data_list</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">_get_original_data_list</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="n">input_file_path</span><span class="p">)</span>
             <span class="p">)</span>
@@ -874,8 +1288,10 @@
                         <span class="p">)</span>
                     <span class="p">)</span>
                 <span class="p">]</span>
+
             <span class="n">status</span> <span class="o">=</span> <span class="n">compare_outputs</span><span class="p">(</span><span class="n">bsh_data</span><span class="p">,</span> <span class="n">ers_data</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">status</span></div>
+
 
 
     <span class="nd">@staticmethod</span>
