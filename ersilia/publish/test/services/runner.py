@@ -546,7 +546,6 @@ class RunnerService:
     #         return status
 
     def run_bash(self):
-
         """
         Run the model using a bash script and compare the outputs for consistency.
 
@@ -756,126 +755,152 @@ class RunnerService:
                 return
 
             self.installer.install_packages_from_dir()
+            import shutil
 
-            # --- Env detection & conda setup ---
-            conda_prefix = self._conda_prefix(self._is_base())
-            conda_exe = os.path.join(conda_prefix, "bin", "conda")
+            conda_exe = shutil.which("conda")
+            if not conda_exe:
+                raise RuntimeError("conda executable not found in PATH in nox mode")
+
             run_dir = os.path.dirname(run_sh_path)
-            in_nox = bool(os.getenv("ERSILIA_NOX") or os.getenv("NOX_SESSION_NAME"))
-
-            if in_nox:
-                # Nox-managed harness: use explicit conda, disable plugins, no fallback.
-                bash_script = f"""#!/usr/bin/env bash
-                set -Euo pipefail
-
-                export CONDA_NO_PLUGINS=true
-
-                log_out="{output_log_path}"
-                log_err="{error_log_path}"
-
-                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                : > "$log_out"
-                : > "$log_err"
-
-                echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-                echo "Running inside nox session: $NOX_SESSION_NAME" | tee -a "$log_out"
-                echo "Using conda from: {conda_exe}" | tee -a "$log_out"
-                echo "Using model env: {self.model_id}" | tee -a "$log_out"
-
-                (
-                set +e
-                "{conda_exe}" run -n {self.model_id} bash -c '
-                    set -euo pipefail
-                    echo "Inside model env: $(python -V) - $(which python)"
-                    cd "{run_dir}"
-                    ls -lah
-                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-                ' >>"$log_out" 2>>"$log_err"
-                )
-
-                if [ ! -f "{bash_output_path}" ]; then
-                echo "ERROR: expected output file not found: {bash_output_path}" | tee -a "$log_err"
-                echo "==== STDERR (tail) ====" && tail -n 200 "$log_err" || true
-                echo "==== STDOUT (tail) ====" && tail -n 200 "$log_out" || true
-                exit 1
-                fi
-
-                echo "SUCCESS via conda run inside nox" | tee -a "$log_out"
-                """
-            else:
-                # Original behavior with explicit conda_exe
-                bash_script = f"""#!/usr/bin/env bash
-                set -Euo pipefail
-
-                log_out="{output_log_path}"
-                log_err="{error_log_path}"
-
-                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                : > "$log_out"
-                : > "$log_err"
-
-                echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-                echo "Using conda prefix: {conda_prefix}" | tee -a "$log_out"
-
-                (
-                set +e
-                "{conda_exe}" run -n {self.model_id} bash -c '
-                    set -euo pipefail
-                    echo "Inside conda env: $(python -V) - $(which python)"
-                    cd "{run_dir}"
-                    echo "PWD inside conda run: $(pwd)"
-                    ls -lah
-                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-                ' >>"$log_out" 2>>"$log_err"
-                )
-
-                if [ -f "{bash_output_path}" ]; then
-                echo "SUCCESS via conda run" | tee -a "$log_out"
-                exit 0
-                fi
-
-                echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
-
-                source "{conda_prefix}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err" || true
-                conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
-
-                cd "{run_dir}"
-                chmod +x ./run.sh || true
-
-                bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
-
-                conda deactivate >>"$log_out" 2>>"$log_err" || true
-
-                if [ ! -f "{bash_output_path}" ]; then
-                echo "ERROR: expected output file not found: {bash_output_path}" >&2
-                [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
-                [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
-                exit 1
-                fi
-
-                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
-                """
-
-            with open(temp_script_path, "w") as script_file:
-                script_file.write(bash_script)
-            os.chmod(temp_script_path, 0o755)
-
-            self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
-            with open(temp_script_path, "r") as script_file:
-                self.logger.debug(f"Bash script content:\n{script_file.read()}\n")
+            in_nox = os.getenv("ERSILIA_NOX") == "1"
 
             try:
-                out = run_command(["bash", temp_script_path])
-                self.logger.debug(f"Bash script output: {out}")
-                self.logger.debug("Reading output path")
+                import subprocess
+                if in_nox:
+                        # -------- NOX MODE --------
+                        self.logger.debug("run_bash: ERSILIA_NOX=1, using direct conda run")
+                        self.logger.debug(f"conda exec: {conda_exe}")
+
+                        bash_cmd = (
+                            "set -euo pipefail;"
+                            f'echo "Inside model env: $(python -V) - $(which python)";'
+                            f'cd "{run_dir}";'
+                            "ls -lah;"
+                            f'bash ./run.sh . "{input_file_path}" "{bash_output_path}"'
+                        )
+
+                        env = os.environ.copy()
+                        # Important: disable plugins for *conda itself* to avoid the activate/deactivate bug
+                        env["CONDA_NO_PLUGINS"] = "true"
+
+                        result = subprocess.run(
+                            [
+                                conda_exe,
+                               "run",
+                                "--no-plugins", 
+                                "-n",
+                                self.model_id,
+                                "bash",
+                                "-c",
+                                bash_cmd,
+                            ],
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            text=True,
+                            env=env,
+                        )
+
+                        # Mirror run_command-style logging
+                        stdout_str = result.stdout.strip()
+                        stderr_str = result.stderr.strip()
+                        if stdout_str:
+                            self.logger.debug(stdout_str)
+                        if stderr_str:
+                            self.logger.debug(stderr_str)
+
+                        if result.returncode != 0:
+                            raise RuntimeError(
+                                f"conda run failed with code {result.returncode}: {stderr_str}"
+                            )
+
+                        if not os.path.exists(bash_output_path):
+                            raise RuntimeError(
+                                f"Expected output file not found: {bash_output_path}"
+                            )
+                else:
+                    # LEGACY MODE: your existing conda_prefix/script.sh + fallback logic
+                    conda_prefix = self._conda_prefix(self._is_base())
+                    conda_exe = os.path.join(conda_prefix, "bin", "conda")
+                    bash_script = f"""#!/usr/bin/env bash
+                    set -Euo pipefail
+
+                    log_out="{output_log_path}"
+                    log_err="{error_log_path}"
+
+                    mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+                    : > "$log_out"
+                    : > "$log_err"
+
+                    echo "Runner arch: $(uname -m)" | tee -a "$log_out"
+                    echo "Using conda prefix: {conda_prefix}" | tee -a "$log_out"
+
+                    (
+                    set +e
+                    "{conda_exe}" run -n {self.model_id} bash -c '
+                        set -euo pipefail
+                        echo "Inside conda env: $(python -V) - $(which python)"
+                        cd "{run_dir}"
+                        echo "PWD inside conda run: $(pwd)"
+                        ls -lah
+                        bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+                    ' >>"$log_out" 2>>"$log_err"
+                    )
+
+                    if [ -f "{bash_output_path}" ]; then
+                    echo "SUCCESS via conda run" | tee -a "$log_out"
+                    exit 0
+                    fi
+
+                    echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
+
+                    source "{conda_prefix}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err" || true
+                    conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
+
+                    cd "{run_dir}"
+                    chmod +x ./run.sh || true
+
+                    bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
+
+                    conda deactivate >>"$log_out" 2>>"$log_err" || true
+
+                    if [ ! -f "{bash_output_path}" ]; then
+                    echo "ERROR: expected output file not found: {bash_output_path}" >&2
+                    [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
+                    [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
+                    exit 1
+                    fi
+
+                    echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
+                    """
+                    with open(temp_script_path, "w") as script_file:
+                        script_file.write(bash_script)
+                    os.chmod(temp_script_path, 0o755)
+
+                    self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
+                    with open(temp_script_path, "r") as script_file:
+                        self.logger.debug(
+                            f"Bash script content:\n{script_file.read()}\n"
+                        )
+
+                    out = run_command(["bash", temp_script_path])
+                    self.logger.debug(f"Bash script output: {out}")
+
+                    if not os.path.exists(bash_output_path):
+                        raise RuntimeError(
+                            f"Expected output file not found: {bash_output_path}"
+                        )
+
+                # -------- Common post-processing (both branches) --------
+                self.logger.debug("Reading bash output CSV")
                 with open(bash_output_path, "r") as f:
                     self.logger.debug(f.read())
-                self.logger.debug("Done reading output path")
+                self.logger.debug("Done reading bash output CSV")
+
                 if os.path.exists(output_log_path):
                     with open(output_log_path, "r") as f:
                         data = f.read()
                         echo(data, fg="cyan", bold=True)
-                self.logger.info(f"Bash script subprocess output: {out}")
+
                 logs = read_logs(error_log_path)
                 formatted_error = "".join(logs)
                 if formatted_error:
@@ -885,7 +910,9 @@ class RunnerService:
                         bg=None,
                         fg="red",
                     )
+
                 bsh_data, _ = read_csv(bash_output_path)
+
                 self.logger.debug("Running model for bash data consistency checking")
                 if not os.path.exists(input_file_path):
                     raise Exception(
@@ -893,6 +920,7 @@ class RunnerService:
                             os.path.abspath(input_file_path)
                         )
                     )
+
                 cmd = (
                     f"ersilia serve {self.model_id} --disable-local-cache"
                     f" && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
@@ -931,6 +959,7 @@ class RunnerService:
 
             status = compare_outputs(bsh_data, ers_data)
             return status
+
 
     @staticmethod
     def _default_env():
