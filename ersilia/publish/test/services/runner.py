@@ -461,7 +461,7 @@ class RunnerService:
             ENV_PREFIX="$BASE/envs/$ENV_NAME"
             fi
 
-            printf 'Resolved prefix: %s\\n' "${{ENV_PREFIX:-'(none)'}}"
+            printf 'Resolved prefix: %s\n' "${{ENV_PREFIX:-'(none)'}}"
 
             if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
             echo "[ERR] conda env not found: $ENV_NAME"
@@ -471,36 +471,27 @@ class RunnerService:
 
             echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
 
-            # --- Fix 2: Reset any pre-activated conda environment ---
+            # Reset any pre-activated conda context
             eval "$("$(command -v conda)" shell.bash hook)" || true
-
-            echo "[DEBUG] Pre-reset conda environment variables:"
+            echo "[DEBUG] Pre-reset:"
             echo "  CONDA_PREFIX=${{CONDA_PREFIX:-'(unset)'}}"
             echo "  CONDA_DEFAULT_ENV=${{CONDA_DEFAULT_ENV:-'(unset)'}}"
             echo "  CONDA_SHLVL=${{CONDA_SHLVL:-0}}"
+            while [ "${{CONDA_SHLVL:-0}}" -gt 0 ]; do conda deactivate || true; done
+            unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER
 
-            while [ "${{CONDA_SHLVL:-0}}" -gt 0 ]; do
-            echo "[RESET] Deactivating conda level $CONDA_SHLVL"
-            conda deactivate || true
-            done
+            # Force the model env tools to the front of PATH
+            export PATH="$ENV_PREFIX/bin:${{BASE:+$BASE/bin:}}/usr/bin:/bin"
+            hash -r
 
-            echo "[DEBUG] Post-deactivate conda variables:"
-            echo "  CONDA_PREFIX=${{CONDA_PREFIX:-'(unset)'}}"
-            echo "  CONDA_DEFAULT_ENV=${{CONDA_DEFAULT_ENV:-'(unset)'}}"
-            echo "  CONDA_SHLVL=${{CONDA_SHLVL:-0}}"
+            echo "[DEBUG] After PATH override:"
+            echo "  which python: $(command -v python || echo '(not found)')"
+            python -V || true
 
-            unset CONDA_PREFIX CONDA_DEFAULT_ENV
-
-            # --- Run inside the resolved environment cleanly ---
-            conda run --no-capture-output --prefix "$ENV_PREFIX" bash -lc '
-            set -euo pipefail
-            echo "[RUN] Using: $(python -V) - $(which python)"
             cd "{os.path.dirname(run_sh_path)}"
             echo "[RUN] Directory: $(pwd)"
-            echo "[RUN] Executing run.sh"
+            echo "[RUN] Executing run.sh with system bash, PATH prefixed to env bin"
             bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-            '
-
             STATUS=$?
 
             if [ "$STATUS" -ne 0 ]; then
@@ -515,7 +506,6 @@ class RunnerService:
             echo "[ERR] Expected output file not found: {bash_output_path}"
             exit 1
             """
-
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
