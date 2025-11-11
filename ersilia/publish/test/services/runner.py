@@ -452,7 +452,9 @@ class RunnerService:
             ENV_PREFIX=""
 
             if command -v conda >/dev/null 2>&1; then
-            ENV_PREFIX="$(conda env list --json 2>/dev/null | python -c 'import json,os,sys; name=sys.argv[1]; data=json.load(sys.stdin); print(next((p for p in data.get(\"envs\", []) if os.path.basename(p)==name), \"\"), end=\"\")' "$ENV_NAME" || true)"
+            ENV_PREFIX="$(
+                conda env list --json 2>/dev/null | python -c 'import json,os,sys; name=sys.argv[1]; data=json.load(sys.stdin); print(next((p for p in data.get("envs", []) if os.path.basename(p)==name), ""))' "$ENV_NAME" || true
+            )"
             fi
 
             if [ -z "$ENV_PREFIX" ] && [ -n "$BASE" ] && [ -d "$BASE/envs/$ENV_NAME" ]; then
@@ -463,19 +465,36 @@ class RunnerService:
 
             if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
             echo "[ERR] conda env not found: $ENV_NAME"
+            echo "[INFO] Available envs:"
+            conda env list || true
             exit 1
             fi
 
             echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
 
-            conda run --no-capture-output --prefix "$ENV_PREFIX" bash -lc '
-            set -euo pipefail
-            echo "[RUN] Using: $(python -V) - $(which python)"
+            if [ -x "$ENV_PREFIX/bin/bash" ]; then
+            echo "[RUN] Executing using env bash: $ENV_PREFIX/bin/bash"
             cd "{os.path.dirname(run_sh_path)}"
             echo "[RUN] Directory: $(pwd)"
             echo "[RUN] Executing run.sh"
-            bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+            "$ENV_PREFIX/bin/bash" ./run.sh . "{input_file_path}" "{bash_output_path}"
+            STATUS=$?
+            else
+            echo "[WARN] Env bash not found, using conda run fallback"
+            conda run --no-capture-output --prefix "$ENV_PREFIX" bash -lc '
+                set -euo pipefail
+                echo "[RUN] Using: $(python -V) - $(which python)"
+                cd "{os.path.dirname(run_sh_path)}"
+                echo "[RUN] Directory: $(pwd)"
+                echo "[RUN] Executing run.sh"
+                bash ./run.sh . "{input_file_path}" "{bash_output_path}"
             '
+            STATUS=$?
+            fi
+
+            if [ "$STATUS" -ne 0 ]; then
+            echo "[ERR] run.sh exited with status $STATUS"
+            fi
 
             if [ -f "{bash_output_path}" ]; then
             echo "[OK] SUCCESS"
