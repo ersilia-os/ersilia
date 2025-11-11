@@ -443,11 +443,12 @@ class IOService:
         """
         try:
             size_output = SetupService.run_command(
-                ["du", "-sm", path],
+                ["/usr/bin/du", "-sm", path],
                 logger=self.logger,
                 capture_output=True,
                 shell=False,
             )
+
             size = float(size_output.split()[0])
             return size
         except Exception as e:
