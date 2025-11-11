@@ -434,56 +434,88 @@ class RunnerService:
             self.logger.debug("Output path: {0}".format(output_path))
 
             bash_script = f"""#!/usr/bin/env bash
-                set -Euo pipefail
+            set -Euo pipefail
 
-                log_out="{output_log_path}"
-                log_err="{error_log_path}"
+            log_out="{output_log_path}"
+            log_err="{error_log_path}"
 
-                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                : > "$log_out"
-                : > "$log_err"
+            mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+            : > "$log_out"
+            : > "$log_err"
 
-                echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-                echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
+            echo "Runner arch: $(uname -m)" | tee -a "$log_out"
+            echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
 
-                (
-                set +e
-                conda run -n {self.model_id} bash -c '
-                    set -euo pipefail
-                    echo "Inside conda env: $(python -V) - $(which python)"
-                    cd "{os.path.dirname(run_sh_path)}"
-                    echo "PWD inside conda run: $(pwd)"
-                    ls -lah
-                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-                ' >>"$log_out" 2>>"$log_err"
-                )
+            ENV_NAME="{self.model_id}"
+            ENV_PREFIX="$(conda info --base 2>/dev/null)/envs/$ENV_NAME"
 
-                if [ -f "{bash_output_path}" ]; then
-                echo "SUCCESS via conda run" | tee -a "$log_out"
-                exit 0
-                fi
+            PRIMARY=(conda run --no-capture-output -n "$ENV_NAME")
+            [ -d "$ENV_PREFIX" ] && PRIMARY=(conda run --no-capture-output --prefix "$ENV_PREFIX")
 
-                echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
+            (
+            set -e
+            "${{PRIMARY[@]}}" bash -lc '
+            set -euo pipefail
+            echo "[RUN] Inside conda env: $(python -V) - $(which python)"
+            cd "{os.path.dirname(run_sh_path)}"
+            echo "[RUN] Ensure deps"
+            if [ -f requirements.txt ]; then
+                python -m pip install -U pip wheel
+                python -m pip install -r requirements.txt
+            fi
+            python - <<PY
+            import importlib.util, sys
+            sys.exit(0 if importlib.util.find_spec("molfeat") else 42)
+            PY
+            if [ "$?" -eq 42 ]; then
+                echo "[RUN] Installing molfeat"
+                python -m pip install molfeat
+            fi
+            echo "[RUN] Executing run.sh"
+            bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+            '
+            ) >>"$log_out" 2>>"$log_err" || true
 
-                source "{self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err"
-                conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
+            if [ -f "{bash_output_path}" ]; then
+            echo "[OK] SUCCESS via conda run" | tee -a "$log_out"
+            exit 0
+            fi
 
-                cd "{os.path.dirname(run_sh_path)}"
-                chmod +x ./run.sh || true
+            echo "[WARN] Primary path failed, trying fallback" | tee -a "$log_err"
 
-                bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
+            if command -v conda >/dev/null 2>&1; then
+            eval "$("$(command -v conda)" shell.bash hook)" >>"$log_out" 2>>"$log_err" || true
+            conda activate "$ENV_NAME" >>"$log_out" 2>>"$log_err" || true
+            fi
 
-                conda deactivate >>"$log_out" 2>>"$log_err" || true
+            cd "{os.path.dirname(run_sh_path)}"
+            echo "[RUN] Fallback ensure deps" | tee -a "$log_out"
+            if [ -f requirements.txt ]; then
+            python -m pip install -U pip wheel >>"$log_out" 2>>"$log_err" || true
+            python -m pip install -r requirements.txt >>"$log_out" 2>>"$log_err" || true
+            fi
+            python - <<'PY' || python -m pip install molfeat >>"$log_out" 2>>"$log_err" || true
+            import importlib.util, sys
+            sys.exit(0 if importlib.util.find_spec("molfeat") else 1)
+            PY
 
-                if [ ! -f "{bash_output_path}" ]; then
-                echo "ERROR: expected output file not found: {bash_output_path}" >&2
-                [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
-                [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
-                exit 1
-                fi
+            chmod +x ./run.sh || true
+            echo "[RUN] Fallback executing run.sh" | tee -a "$log_out"
+            bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
 
-                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
+            conda deactivate >>"$log_out" 2>>"$log_err" || true
+
+            if [ ! -f "{bash_output_path}" ]; then
+            echo "[ERR] Expected output file not found: {bash_output_path}" >&2
+            [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
+            [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
+            exit 1
+            fi
+
+            echo "[OK] SUCCESS via fallback" | tee -a "$log_out"
             """
+
+
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
