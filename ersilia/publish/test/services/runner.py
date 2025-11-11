@@ -233,318 +233,6 @@ class RunnerService:
         )
         return examples
 
-    # def run_bash(self):
-    #     """
-    #     Run the model using a bash script and compare the outputs for consistency.
-
-    #     Raises
-    #     ------
-    #     RuntimeError
-    #         If there is an error during the subprocess execution or output comparison.
-    #     """
-    #     def normalize_quotes(obj):
-    #         def strip_quotes(s: str) -> str:
-    #             if isinstance(s, float) or isinstance(s, int):
-    #                 return s
-    #             if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
-    #                 return s[1:-1]
-    #             return s
-            
-    #         if isinstance(obj, list):
-    #             return [strip_quotes(s) for s in obj]
-    #         elif isinstance(obj, str):
-    #             return strip_quotes(obj)
-    #         else:
-    #             raise TypeError("Input must be a string or a list of strings")
-
-                
-    #     def compute_rmse(y_true, y_pred):
-    #         return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(
-    #             y_true
-    #         )
-
-    #     def compare_outputs(bsh_data, ers_data):
-    #         _completed_status, _rmse = [], []
-    #         columns = set(bsh_data[0].keys()) & set(ers_data[0].keys())
-    #         for column in columns:
-    #             bv = [row[column] for row in bsh_data]
-    #             ev = [row[column] for row in ers_data]
-
-    #             for idx, (b_val, e_val) in enumerate(zip(bv, ev), start=1):
-    #                 if type(b_val) is not type(e_val):
-    #                     if type(b_val) is int and type(e_val) is float:
-    #                         continue
-    #                     msg = (
-    #                         f"Datatype mismatch for column '{column}' at row {idx}: "
-    #                         f"bash value type={type(b_val).__name__}, "
-    #                         f"ersilia value type={type(e_val).__name__}"
-    #                         f"bash value={e_val}"
-    #                         f"ersilia value={e_val}"
-    #                     )
-    #                     echo_exceptions(msg, ClickInterface())
-    #                     return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
-
-    #             if all(isinstance(val, (int, float)) for val in bv + ev):
-    #                 rmse = compute_rmse(bv, ev)
-    #                 _rmse.append(rmse)
-
-    #                 if rmse > 0.1:
-    #                     rmse_perc = round(rmse * 100, 2)
-    #                     _completed_status.append(
-    #                         (
-    #                             f"RMSE-{column}",
-    #                             f"RMSE > 10%: {rmse_perc}%",
-    #                             str(STATUS_CONFIGS.FAILED),
-    #                         )
-    #                     )
-    #                     echo_exceptions(
-    #                         "Model output is inconsistent between bash and ersilia. Skipped the checks!",
-    #                         ClickInterface(),
-    #                     )
-    #                     return _completed_status
-
-    #             elif all(isinstance(val, str) for val in bv + normalize_quotes(ev)):
-    #                 if not all(
-    #                     self._compare_string_similarity(a, b, 95)
-    #                     for a, b in zip(bv, normalize_quotes(ev))
-    #                 ):
-    #                     _completed_status.append(
-    #                         ("String Similarity", "< 95%", str(STATUS_CONFIGS.FAILED))
-    #                     )
-    #                     echo_exceptions(
-    #                         "Model output is inconsistent between bash and ersilia. Skipped the checks!",
-    #                         ClickInterface(),
-    #                     )
-    #                     return _completed_status
-
-    #                 _completed_status.append(
-    #                     ("String Similarity", "> 95%", str(STATUS_CONFIGS.PASSED))
-    #                 )
-
-    #         mean_rmse = sum(_rmse) / len(_rmse) if _rmse else 0
-    #         mean_rmse_perc = round(mean_rmse * 100, 2)
-    #         _completed_status.append(
-    #             (
-    #                 "RMSE-MEAN",
-    #                 f"RMSE < 10% | {mean_rmse_perc}%",
-    #                 str(STATUS_CONFIGS.PASSED),
-    #             )
-    #         )
-
-    #         return _completed_status
-
-    #     def read_csv(path, flag=False):
-    #         if not os.path.exists(path):
-    #             echo_exceptions(f"File not found this might be due to error happened when executing the run.sh: {path}", ClickInterface())
-    #         try:
-    #             with open(path, "r") as file:
-    #                 self.logger.info("Reading the lines")
-    #                 lines = file.readlines()
-
-    #             if not lines:
-    #                 self.logger.error(f"File at {path} is empty.")
-    #                 return [], "File is empty"
-
-    #             headers = lines[0].strip().split(",")
-    #             if flag:
-    #                 headers = headers[2:]
-
-    #             data = []
-
-    #             for line in lines[1:]:
-    #                 values = line.strip().split(",")
-    #                 values = values[2:] if flag else values
-
-    #                 def parse(value: str):
-    #                     if value == "":
-    #                         return value
-
-    #                     try:
-    #                         i = int(value)
-    #                         if str(i) == value or (value.startswith(('+', '-')) and str(i) == value.lstrip('+')):
-    #                             return i
-    #                     except ValueError:
-    #                         pass
-    #                     try:
-    #                         f = float(value)
-    #                         if value.lower() not in ("nan", "+nan", "-nan", "none", "inf", "+inf", "-inf"):
-    #                             return f
-    #                     except ValueError:
-    #                         pass
-
-    #                     return value
-
-    #                 try:
-    #                     _values = [parse(x) for x in values]
-    #                 except ValueError as e:
-    #                     return [], f"Invalid value detected in CSV file: {e}"
-
-    #                 data.append(dict(zip(headers, _values)))
-
-    #             return data, None
-
-    #         except Exception as e:
-    #             echo_exceptions(f"Failed to read CSV from {path}.", ClickInterface())
-                
-    #     def read_logs(path):
-    #         if not os.path.exists(path):
-    #             return "No error detected!"
-    #         with open(path, "r") as file:
-    #             return file.readlines()
-
-    #     def rename_col(path, old_col_name="input", new_col_name="smiles"):
-    #         with open(path, "r", newline="") as infile:
-    #             reader = csv.reader(infile)
-    #             rows = list(reader)
-    #             self.logger.info(f"Rows before rename: {rows}")
-
-    #             if rows and old_col_name in rows[0]:
-    #                 col_index = rows[0].index(old_col_name)
-    #                 rows[0][col_index] = new_col_name
-
-    #             with open(path, "w", newline="") as outfile:
-    #                 writer = csv.writer(outfile)
-    #                 writer.writerows(rows)
-
-    #     with tempfile.TemporaryDirectory() as temp_dir:
-    #         model_path = os.path.join(self.dir)
-    #         output_path = os.path.join(temp_dir, "ersilia_output.csv")
-    #         output_log_path = os.path.join(temp_dir, "output.txt")
-    #         error_log_path = os.path.join(temp_dir, "error.txt")
-    #         input_file_path = os.path.join(temp_dir, "example_file.csv")
-    #         temp_script_path = os.path.join(temp_dir, "script.sh")
-    #         bash_output_path = os.path.join(temp_dir, "bash_output.csv")
-
-    #         input_file_path = IOService._get_input_file_path(self.dir)
-    #         rename_col(input_file_path)
-
-    #         run_sh_path = os.path.abspath(os.path.join(model_path, "model", "framework", RUN_FILE))
-    #         input_file_path = os.path.abspath(input_file_path)
-    #         if not os.path.exists(run_sh_path):
-    #             self.logger.warning(
-    #                 f"{RUN_FILE} not found at {run_sh_path}. Skipping bash run."
-    #             )
-    #             return
-            
-    #         self.installer.install_packages_from_dir()
-
-    #         self.logger.debug("The self.dir is: {0}".format(self.dir))
-    #         self.logger.debug("Input file path: {0}".format(input_file_path))
-    #         self.logger.debug("Run script path: {0}".format(run_sh_path))
-    #         self.logger.debug("Output path: {0}".format(output_path))
-
-    #         bash_script = f"""#!/usr/bin/env bash
-    #             set -Euo pipefail
-
-    #             log_out="{output_log_path}"
-    #             log_err="{error_log_path}"
-
-    #             mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-    #             : > "$log_out"
-    #             : > "$log_err"
-
-    #             echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-    #             echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
-
-    #             (
-    #             set +e
-    #             conda run -n {self.model_id} bash -c '
-    #                 set -euo pipefail
-    #                 echo "Inside conda env: $(python -V) - $(which python)"
-    #                 cd "{os.path.dirname(run_sh_path)}"
-    #                 echo "PWD inside conda run: $(pwd)"
-    #                 ls -lah
-    #                 bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-    #             ' >>"$log_out" 2>>"$log_err"
-    #             )
-
-    #             if [ -f "{bash_output_path}" ]; then
-    #             echo "SUCCESS via conda run" | tee -a "$log_out"
-    #             exit 0
-    #             fi
-
-    #             echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
-
-    #             source "{self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err"
-    #             conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
-
-    #             cd "{os.path.dirname(run_sh_path)}"
-    #             chmod +x ./run.sh || true
-
-    #             bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
-
-    #             conda deactivate >>"$log_out" 2>>"$log_err" || true
-
-    #             if [ ! -f "{bash_output_path}" ]; then
-    #             echo "ERROR: expected output file not found: {bash_output_path}" >&2
-    #             [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
-    #             [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
-    #             exit 1
-    #             fi
-
-    #             echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
-    #         """
-
-    #         with open(temp_script_path, "w") as script_file:
-    #             script_file.write(bash_script)
-
-    #         self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
-    #         with open(temp_script_path, "r") as script_file:
-    #             self.logger.debug(f"Bash script content:\n{script_file.read()}\n")
-    #         try:
-    #             out = run_command(["bash", temp_script_path])
-    #             self.logger.debug(f"Bash script output: {out}")
-    #             self.logger.debug("Reading output path")
-    #             with open(bash_output_path, "r") as f:
-    #                 self.logger.debug(f.read())
-    #             self.logger.debug("Done reading output path")
-    #             if os.path.exists(output_log_path):
-    #                 with open(output_log_path, "r") as f:
-    #                     data = f.read()
-    #                     echo(data, fg="cyan", bold=True)
-    #             self.logger.info(f"Bash script subprocess output: {out}")
-    #             logs = read_logs(error_log_path)
-    #             formatted_error = "".join(logs)
-    #             if formatted_error:
-    #                 echo_exceptions(f"Error detected originated from the bash execution: {formatted_error}", ClickInterface(), bg=None, fg="red")
-    #             bsh_data, _ = read_csv(bash_output_path)
-    #             self.logger.debug("Running model for bash data consistency checking")
-    #             if not os.path.exists(input_file_path):
-    #                 raise Exception("Input file path {0} does not exist".format(os.path.abspath(input_file_path)))
-    #             cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
-    #             self.logger.debug(f"Running command: {cmd}")
-    #             out = run_command(cmd)
-    #             ers_data, _ = read_csv(output_path, flag=True)
-
-    #         except Exception as e:
-    #             return [
-    #                 (
-    #                     (
-    #                         Checks.RUN_BASH.value,
-    #                         f"Detailed error: {e}",
-    #                         str(STATUS_CONFIGS.FAILED),
-    #                     )
-    #                 )
-    #             ]
-    #         self.checkup_service.original_data_list = (
-    #             self.checkup_service._get_original_data_list("csv", input_file_path)
-    #         )
-    #         check_status = self.checkup_service._check_csv(
-    #             output_path, input_type="csv"
-    #         )
-    #         if check_status[-1] == str(STATUS_CONFIGS.FAILED):
-    #             return [
-    #                 (
-    #                     (
-    #                         Checks.RUN_BASH.value,
-    #                         check_status[1],
-    #                         str(STATUS_CONFIGS.FAILED),
-    #                     )
-    #                 )
-    #             ]
-    #         status = compare_outputs(bsh_data, ers_data)
-    #         return status
-
     def run_bash(self):
         """
         Run the model using a bash script and compare the outputs for consistency.
@@ -561,7 +249,7 @@ class RunnerService:
                 if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
                     return s[1:-1]
                 return s
-
+            
             if isinstance(obj, list):
                 return [strip_quotes(s) for s in obj]
             elif isinstance(obj, str):
@@ -569,6 +257,7 @@ class RunnerService:
             else:
                 raise TypeError("Input must be a string or a list of strings")
 
+                
         def compute_rmse(y_true, y_pred):
             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(
                 y_true
@@ -646,10 +335,7 @@ class RunnerService:
 
         def read_csv(path, flag=False):
             if not os.path.exists(path):
-                echo_exceptions(
-                    f"File not found this might be due to error happened when executing the run.sh: {path}",
-                    ClickInterface(),
-                )
+                echo_exceptions(f"File not found this might be due to error happened when executing the run.sh: {path}", ClickInterface())
             try:
                 with open(path, "r") as file:
                     self.logger.info("Reading the lines")
@@ -672,29 +358,20 @@ class RunnerService:
                     def parse(value: str):
                         if value == "":
                             return value
+
                         try:
                             i = int(value)
-                            if str(i) == value or (
-                                value.startswith(("+", "-"))
-                                and str(i) == value.lstrip("+")
-                            ):
+                            if str(i) == value or (value.startswith(('+', '-')) and str(i) == value.lstrip('+')):
                                 return i
                         except ValueError:
                             pass
                         try:
                             f = float(value)
-                            if value.lower() not in (
-                                "nan",
-                                "+nan",
-                                "-nan",
-                                "none",
-                                "inf",
-                                "+inf",
-                                "-inf",
-                            ):
+                            if value.lower() not in ("nan", "+nan", "-nan", "none", "inf", "+inf", "-inf"):
                                 return f
                         except ValueError:
                             pass
+
                         return value
 
                     try:
@@ -706,11 +383,9 @@ class RunnerService:
 
                 return data, None
 
-            except Exception:
-                echo_exceptions(
-                    f"Failed to read CSV from {path}.", ClickInterface()
-                )
-
+            except Exception as e:
+                echo_exceptions(f"Failed to read CSV from {path}.", ClickInterface())
+                
         def read_logs(path):
             if not os.path.exists(path):
                 return "No error detected!"
@@ -743,188 +418,100 @@ class RunnerService:
             input_file_path = IOService._get_input_file_path(self.dir)
             rename_col(input_file_path)
 
-            run_sh_path = os.path.abspath(
-                os.path.join(model_path, "model", "framework", RUN_FILE)
-            )
+            run_sh_path = os.path.abspath(os.path.join(model_path, "model", "framework", RUN_FILE))
             input_file_path = os.path.abspath(input_file_path)
-
             if not os.path.exists(run_sh_path):
                 self.logger.warning(
                     f"{RUN_FILE} not found at {run_sh_path}. Skipping bash run."
                 )
                 return
-
+            
             self.installer.install_packages_from_dir()
-            import shutil
 
-            conda_exe = shutil.which("conda")
-            if not conda_exe:
-                raise RuntimeError("conda executable not found in PATH in nox mode")
+            self.logger.debug("The self.dir is: {0}".format(self.dir))
+            self.logger.debug("Input file path: {0}".format(input_file_path))
+            self.logger.debug("Run script path: {0}".format(run_sh_path))
+            self.logger.debug("Output path: {0}".format(output_path))
 
-            run_dir = os.path.dirname(run_sh_path)
-            in_nox = os.getenv("ERSILIA_NOX") == "1"
+            bash_script = f"""#!/usr/bin/env bash
+                set -Euo pipefail
 
+                log_out="{output_log_path}"
+                log_err="{error_log_path}"
+
+                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+                : > "$log_out"
+                : > "$log_err"
+
+                echo "Runner arch: $(uname -m)" | tee -a "$log_out"
+                echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
+
+                (
+                set +e
+                conda run -n {self.model_id} bash -c '
+                    set -euo pipefail
+                    echo "Inside conda env: $(python -V) - $(which python)"
+                    cd "{os.path.dirname(run_sh_path)}"
+                    echo "PWD inside conda run: $(pwd)"
+                    ls -lah
+                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+                ' >>"$log_out" 2>>"$log_err"
+                )
+
+                if [ -f "{bash_output_path}" ]; then
+                echo "SUCCESS via conda run" | tee -a "$log_out"
+                exit 0
+                fi
+
+                echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
+
+                source "{self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err"
+                conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
+
+                cd "{os.path.dirname(run_sh_path)}"
+                chmod +x ./run.sh || true
+
+                bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
+
+                conda deactivate >>"$log_out" 2>>"$log_err" || true
+
+                if [ ! -f "{bash_output_path}" ]; then
+                echo "ERROR: expected output file not found: {bash_output_path}" >&2
+                [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
+                [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
+                exit 1
+                fi
+
+                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
+            """
+
+            with open(temp_script_path, "w") as script_file:
+                script_file.write(bash_script)
+
+            self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
+            with open(temp_script_path, "r") as script_file:
+                self.logger.debug(f"Bash script content:\n{script_file.read()}\n")
             try:
-                import subprocess
-                if in_nox:
-                        # -------- NOX MODE --------
-                        self.logger.debug("run_bash: ERSILIA_NOX=1, using direct conda run")
-                        self.logger.debug(f"conda exec: {conda_exe}")
-
-                        bash_cmd = (
-                            "set -euo pipefail;"
-                            f'echo "Inside model env: $(python -V) - $(which python)";'
-                            f'cd "{run_dir}";'
-                            "ls -lah;"
-                            f'bash ./run.sh . "{input_file_path}" "{bash_output_path}"'
-                        )
-
-                        env = os.environ.copy()
-                        # Important: disable plugins for *conda itself* to avoid the activate/deactivate bug
-                        env["CONDA_NO_PLUGINS"] = "true"
-
-                        result = subprocess.run(
-                            [
-                                conda_exe,
-                               "run",
-                                "--no-plugins", 
-                                "-n",
-                                self.model_id,
-                                "bash",
-                                "-c",
-                                bash_cmd,
-                            ],
-                            stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            text=True,
-                            env=env,
-                        )
-
-                        # Mirror run_command-style logging
-                        stdout_str = result.stdout.strip()
-                        stderr_str = result.stderr.strip()
-                        if stdout_str:
-                            self.logger.debug(stdout_str)
-                        if stderr_str:
-                            self.logger.debug(stderr_str)
-
-                        if result.returncode != 0:
-                            raise RuntimeError(
-                                f"conda run failed with code {result.returncode}: {stderr_str}"
-                            )
-
-                        if not os.path.exists(bash_output_path):
-                            raise RuntimeError(
-                                f"Expected output file not found: {bash_output_path}"
-                            )
-                else:
-                    # LEGACY MODE: your existing conda_prefix/script.sh + fallback logic
-                    conda_prefix = self._conda_prefix(self._is_base())
-                    conda_exe = os.path.join(conda_prefix, "bin", "conda")
-                    bash_script = f"""#!/usr/bin/env bash
-                    set -Euo pipefail
-
-                    log_out="{output_log_path}"
-                    log_err="{error_log_path}"
-
-                    mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                    : > "$log_out"
-                    : > "$log_err"
-
-                    echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-                    echo "Using conda prefix: {conda_prefix}" | tee -a "$log_out"
-
-                    (
-                    set +e
-                    "{conda_exe}" run -n {self.model_id} bash -c '
-                        set -euo pipefail
-                        echo "Inside conda env: $(python -V) - $(which python)"
-                        cd "{run_dir}"
-                        echo "PWD inside conda run: $(pwd)"
-                        ls -lah
-                        bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-                    ' >>"$log_out" 2>>"$log_err"
-                    )
-
-                    if [ -f "{bash_output_path}" ]; then
-                    echo "SUCCESS via conda run" | tee -a "$log_out"
-                    exit 0
-                    fi
-
-                    echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
-
-                    source "{conda_prefix}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err" || true
-                    conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
-
-                    cd "{run_dir}"
-                    chmod +x ./run.sh || true
-
-                    bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
-
-                    conda deactivate >>"$log_out" 2>>"$log_err" || true
-
-                    if [ ! -f "{bash_output_path}" ]; then
-                    echo "ERROR: expected output file not found: {bash_output_path}" >&2
-                    [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
-                    [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
-                    exit 1
-                    fi
-
-                    echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
-                    """
-                    with open(temp_script_path, "w") as script_file:
-                        script_file.write(bash_script)
-                    os.chmod(temp_script_path, 0o755)
-
-                    self.logger.debug(f"\nRunning bash script: {temp_script_path}\n")
-                    with open(temp_script_path, "r") as script_file:
-                        self.logger.debug(
-                            f"Bash script content:\n{script_file.read()}\n"
-                        )
-
-                    out = run_command(["bash", temp_script_path])
-                    self.logger.debug(f"Bash script output: {out}")
-
-                    if not os.path.exists(bash_output_path):
-                        raise RuntimeError(
-                            f"Expected output file not found: {bash_output_path}"
-                        )
-
-                # -------- Common post-processing (both branches) --------
-                self.logger.debug("Reading bash output CSV")
+                out = run_command(["bash", temp_script_path])
+                self.logger.debug(f"Bash script output: {out}")
+                self.logger.debug("Reading output path")
                 with open(bash_output_path, "r") as f:
                     self.logger.debug(f.read())
-                self.logger.debug("Done reading bash output CSV")
-
+                self.logger.debug("Done reading output path")
                 if os.path.exists(output_log_path):
                     with open(output_log_path, "r") as f:
                         data = f.read()
                         echo(data, fg="cyan", bold=True)
-
+                self.logger.info(f"Bash script subprocess output: {out}")
                 logs = read_logs(error_log_path)
                 formatted_error = "".join(logs)
                 if formatted_error:
-                    echo_exceptions(
-                        f"Error detected originated from the bash execution: {formatted_error}",
-                        ClickInterface(),
-                        bg=None,
-                        fg="red",
-                    )
-
+                    echo_exceptions(f"Error detected originated from the bash execution: {formatted_error}", ClickInterface(), bg=None, fg="red")
                 bsh_data, _ = read_csv(bash_output_path)
-
                 self.logger.debug("Running model for bash data consistency checking")
                 if not os.path.exists(input_file_path):
-                    raise Exception(
-                        "Input file path {0} does not exist".format(
-                            os.path.abspath(input_file_path)
-                        )
-                    )
-
-                cmd = (
-                    f"ersilia serve {self.model_id} --disable-local-cache"
-                    f" && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
-                )
+                    raise Exception("Input file path {0} does not exist".format(os.path.abspath(input_file_path)))
+                cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
                 self.logger.debug(f"Running command: {cmd}")
                 out = run_command(cmd)
                 ers_data, _ = read_csv(output_path, flag=True)
@@ -939,7 +526,6 @@ class RunnerService:
                         )
                     )
                 ]
-
             self.checkup_service.original_data_list = (
                 self.checkup_service._get_original_data_list("csv", input_file_path)
             )
@@ -956,10 +542,8 @@ class RunnerService:
                         )
                     )
                 ]
-
             status = compare_outputs(bsh_data, ers_data)
             return status
-
 
     @staticmethod
     def _default_env():
