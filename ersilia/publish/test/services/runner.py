@@ -440,70 +440,49 @@ class RunnerService:
             log_err="{error_log_path}"
 
             mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-            : > "$log_out"
-            : > "$log_err"
+            : > "$log_out"; : > "$log_err"
 
-            echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-            echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
+            exec > >(tee -a "$log_out") 2> >(tee -a "$log_err" >&2)
+
+            echo "Runner arch: $(uname -m)"
+            echo "Using conda prefix: {self._conda_prefix(self._is_base())}"
 
             ENV_NAME="{self.model_id}"
             ENV_PREFIX="$(conda info --base 2>/dev/null)/envs/$ENV_NAME"
+            if [ -d "$ENV_PREFIX" ]; then
+            TARGET=(conda run --no-capture-output --prefix "$ENV_PREFIX")
+            else
+            TARGET=(conda run --no-capture-output -n "$ENV_NAME")
+            fi
 
-            PRIMARY=(conda run --no-capture-output -n "$ENV_NAME")
-            [ -d "$ENV_PREFIX" ] && PRIMARY=(conda run --no-capture-output --prefix "$ENV_PREFIX")
-
-            (
-            set -e
-            "${{PRIMARY[@]}}" bash -lc '
+            "${{TARGET[@]}}" bash -lc '
             set -euo pipefail
             echo "[RUN] Inside conda env: $(python -V) - $(which python)"
             cd "{os.path.dirname(run_sh_path)}"
-            echo "[RUN] Ensure deps"
-            if [ -f requirements.txt ]; then
-                python -m pip install -U pip wheel
-                python -m pip install -r requirements.txt
-            fi
-            python - <<PY
-            import importlib.util, sys
-            sys.exit(0 if importlib.util.find_spec("molfeat") else 42)
-            PY
-            if [ "$?" -eq 42 ]; then
-                echo "[RUN] Installing molfeat"
-                python -m pip install molfeat
-            fi
+            echo "[RUN] Directory: $(pwd)"
             echo "[RUN] Executing run.sh"
             bash ./run.sh . "{input_file_path}" "{bash_output_path}"
             '
-            ) >>"$log_out" 2>>"$log_err" || true
 
             if [ -f "{bash_output_path}" ]; then
-            echo "[OK] SUCCESS via conda run" | tee -a "$log_out"
+            echo "[OK] SUCCESS via conda run"
             exit 0
             fi
 
-            echo "[WARN] Primary path failed, trying fallback" | tee -a "$log_err"
+            echo "[WARN] Primary path failed, trying fallback"
 
             if command -v conda >/dev/null 2>&1; then
-            eval "$("$(command -v conda)" shell.bash hook)" >>"$log_out" 2>>"$log_err" || true
-            conda activate "$ENV_NAME" >>"$log_out" 2>>"$log_err" || true
+            eval "$("$(command -v conda)" shell.bash hook)" || true
+            conda activate "$ENV_NAME" || true
             fi
 
             cd "{os.path.dirname(run_sh_path)}"
-            echo "[RUN] Fallback ensure deps" | tee -a "$log_out"
-            if [ -f requirements.txt ]; then
-            python -m pip install -U pip wheel >>"$log_out" 2>>"$log_err" || true
-            python -m pip install -r requirements.txt >>"$log_out" 2>>"$log_err" || true
-            fi
-            python - <<'PY' || python -m pip install molfeat >>"$log_out" 2>>"$log_err" || true
-            import importlib.util, sys
-            sys.exit(0 if importlib.util.find_spec("molfeat") else 1)
-            PY
-
             chmod +x ./run.sh || true
-            echo "[RUN] Fallback executing run.sh" | tee -a "$log_out"
-            bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
 
-            conda deactivate >>"$log_out" 2>>"$log_err" || true
+            echo "[RUN] Fallback executing run.sh"
+            bash ./run.sh . "{input_file_path}" "{bash_output_path}" || true
+
+            conda deactivate || true
 
             if [ ! -f "{bash_output_path}" ]; then
             echo "[ERR] Expected output file not found: {bash_output_path}" >&2
@@ -512,8 +491,9 @@ class RunnerService:
             exit 1
             fi
 
-            echo "[OK] SUCCESS via fallback" | tee -a "$log_out"
+            echo "[OK] SUCCESS via fallback"
             """
+
 
 
 
