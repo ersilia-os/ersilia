@@ -461,26 +461,17 @@ class RunnerService:
             ENV_PREFIX="$BASE/envs/$ENV_NAME"
             fi
 
-            printf 'Resolved prefix: %s\\n' "${{ENV_PREFIX:-'(none)'}}"
+            printf 'Resolved prefix: %s\n' "${{ENV_PREFIX:-'(none)'}}"
 
             if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
             echo "[ERR] conda env not found: $ENV_NAME"
-            echo "[INFO] Available envs:"
             conda env list || true
             exit 1
             fi
 
             echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
 
-            if [ -x "$ENV_PREFIX/bin/bash" ]; then
-            echo "[RUN] Executing using env bash: $ENV_PREFIX/bin/bash"
-            cd "{os.path.dirname(run_sh_path)}"
-            echo "[RUN] Directory: $(pwd)"
-            echo "[RUN] Executing run.sh"
-            "$ENV_PREFIX/bin/bash" ./run.sh . "{input_file_path}" "{bash_output_path}"
-            STATUS=$?
-            else
-            echo "[WARN] Env bash not found, using conda run fallback"
+            env -i PATH="$BASE/bin:/usr/bin:/bin" HOME="$HOME" \
             conda run --no-capture-output --prefix "$ENV_PREFIX" bash -lc '
                 set -euo pipefail
                 echo "[RUN] Using: $(python -V) - $(which python)"
@@ -489,8 +480,8 @@ class RunnerService:
                 echo "[RUN] Executing run.sh"
                 bash ./run.sh . "{input_file_path}" "{bash_output_path}"
             '
+
             STATUS=$?
-            fi
 
             if [ "$STATUS" -ne 0 ]; then
             echo "[ERR] run.sh exited with status $STATUS"
@@ -504,6 +495,7 @@ class RunnerService:
             echo "[ERR] Expected output file not found: {bash_output_path}"
             exit 1
             """
+
 
 
             with open(temp_script_path, "w") as script_file:
