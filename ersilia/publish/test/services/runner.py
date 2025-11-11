@@ -461,7 +461,7 @@ class RunnerService:
             ENV_PREFIX="$BASE/envs/$ENV_NAME"
             fi
 
-            printf 'Resolved prefix: %s\n' "${{ENV_PREFIX:-'(none)'}}"
+            printf 'Resolved prefix: %s\\n' "${{ENV_PREFIX:-'(none)'}}"
 
             if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
             echo "[ERR] conda env not found: $ENV_NAME"
@@ -471,16 +471,10 @@ class RunnerService:
 
             echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
 
-            # Reset any pre-activated conda context
             eval "$("$(command -v conda)" shell.bash hook)" || true
-            echo "[DEBUG] Pre-reset:"
-            echo "  CONDA_PREFIX=${{CONDA_PREFIX:-'(unset)'}}"
-            echo "  CONDA_DEFAULT_ENV=${{CONDA_DEFAULT_ENV:-'(unset)'}}"
-            echo "  CONDA_SHLVL=${{CONDA_SHLVL:-0}}"
             while [ "${{CONDA_SHLVL:-0}}" -gt 0 ]; do conda deactivate || true; done
             unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER
 
-            # Force the model env tools to the front of PATH
             export PATH="$ENV_PREFIX/bin:${{BASE:+$BASE/bin:}}/usr/bin:/bin"
             hash -r
 
@@ -491,11 +485,13 @@ class RunnerService:
             cd "{os.path.dirname(run_sh_path)}"
             echo "[RUN] Directory: $(pwd)"
             echo "[RUN] Executing run.sh with system bash, PATH prefixed to env bin"
-            bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-            STATUS=$?
 
-            if [ "$STATUS" -ne 0 ]; then
-            echo "[ERR] run.sh exited with status $STATUS"
+            if ! bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err"; then
+            echo "[ERR] run.sh failed. Displaying captured stderr:"
+            echo "============================================"
+            tail -n 50 "$log_err" || echo "(No stderr output)"
+            echo "============================================"
+            exit 1
             fi
 
             if [ -f "{bash_output_path}" ]; then
@@ -504,6 +500,10 @@ class RunnerService:
             fi
 
             echo "[ERR] Expected output file not found: {bash_output_path}"
+            echo "==== STDERR (tail) ===="
+            tail -n 50 "$log_err" || echo "No stderr log."
+            echo "==== STDOUT (tail) ===="
+            tail -n 50 "$log_out" || echo "No stdout log."
             exit 1
             """
 
