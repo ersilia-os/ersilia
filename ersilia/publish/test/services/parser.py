@@ -47,7 +47,7 @@ class InstallParser:
     pkg, ver = command[1], command[2]
     spec = f"{pkg}=={ver}"
     flags = command[3:]
-    return f"pip install {spec}" + (" " + " ".join(flags) if flags else "")
+    return f"pip install -vvv {spec}" + (" " + " ".join(flags) if flags else "")
 
   def _convert_conda_entry_to_bash(self, command):
     if len(command) >= 4 and command[1] != "install":
@@ -122,8 +122,8 @@ class InstallParser:
   def write_bash_script(self, file_name=None):
     if file_name is None:
       file_name = os.path.splitext(self.file_name)[0] + ".sh"
-      cmds = self._convert_commands_to_bash_script()
-      print(f"COmmands:{cmds}")
+    cmds = self._convert_commands_to_bash_script()
+    print(f"COmmands:{cmds}")
     with open(file_name, "w") as f:
       f.write(cmds)
 
