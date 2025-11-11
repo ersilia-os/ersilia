@@ -26,7 +26,7 @@ def shim_bash(s):
 
 @nox.session(venv_backend='conda', python='3.12', reuse_venv=True)
 def test_model_image(session):
-    model_id = session.posargs[0] if len(session.posargs) >= 1 else "eos3b5e"
+    model_id = session.posargs[0] if len(session.posargs) >= 1 else "eos1ut3"
     version = session.posargs[1] if len(session.posargs) >= 2 else "dev"
     session.env["ERSILIA_NOX"] = "1"
     b = Path(sys.executable).parent
@@ -47,6 +47,7 @@ def test_model_image(session):
     f"{TEMP}/ersilia"
   )
     session.install("-e", f"{TEMP}/ersilia[test]")
+
     if not model_id or not version:
         session.error("MODEL_ID and MODEL_VERSION must be set")
 
