@@ -434,65 +434,58 @@ class RunnerService:
             self.logger.debug("Output path: {0}".format(output_path))
 
             bash_script = f"""#!/usr/bin/env bash
-                set -Euo pipefail
+            set -Euo pipefail
 
-                log_out="{output_log_path}"
-                log_err="{error_log_path}"
-                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                : > "$log_out"; : > "$log_err"
-                exec > >(tee -a "$log_out") 2> >(tee -a "$log_err" >&2)
+            log_out="{output_log_path}"
+            log_err="{error_log_path}"
+            mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+            : > "$log_out"; : > "$log_err"
+            exec > >(tee -a "$log_out") 2> >(tee -a "$log_err" >&2)
 
-                ENV_NAME="{self.model_id}"
+            ENV_NAME="{self.model_id}"
 
-                echo "Runner arch: $(uname -m)"
-                echo "Using conda: $(command -v conda || echo 'not found')"
-                echo "Target env: $ENV_NAME"
+            echo "Runner arch: $(uname -m)"
+            echo "Using conda: $(command -v conda || echo 'not found')"
+            echo "Target env: $ENV_NAME"
 
-                BASE="$(conda info --base 2>/dev/null || true)"
-                ENV_PREFIX=""
-                if command -v conda >/dev/null 2>&1; then
-                ENV_PREFIX="$(conda env list --json 2>/dev/null | python - <<'PY' "$ENV_NAME" || true
-                import json, os, sys
-                name=sys.argv[1]
-                try:
-                    data=json.load(sys.stdin)
-                    for p in data.get("envs", []):
-                        if os.path.basename(p)==name:
-                            print(p); break
-                except Exception: pass
-                PY
-                )"
-                fi
-                if [ -z "$ENV_PREFIX" ] && [ -n "$BASE" ] && [ -d "$BASE/envs/$ENV_NAME" ]; then
-                ENV_PREFIX="$BASE/envs/$ENV_NAME"
-                fi
+            BASE="$(conda info --base 2>/dev/null || true)"
+            ENV_PREFIX=""
 
-                echo "Resolved prefix: $ENV_PREFIX:-"(none)""
+            if command -v conda >/dev/null 2>&1; then
+            ENV_PREFIX="$(conda env list --json 2>/dev/null | python -c 'import json,os,sys; name=sys.argv[1]; data=json.load(sys.stdin); print(next((p for p in data.get(\"envs\", []) if os.path.basename(p)==name), \"\"), end=\"\")' "$ENV_NAME" || true)"
+            fi
 
-                if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
-                echo "[ERR] conda env not found: $ENV_NAME"
-                exit 1
-                fi
+            if [ -z "$ENV_PREFIX" ] && [ -n "$BASE" ] && [ -d "$BASE/envs/$ENV_NAME" ]; then
+            ENV_PREFIX="$BASE/envs/$ENV_NAME"
+            fi
 
-                echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
+            printf 'Resolved prefix: %s\\n' "${{ENV_PREFIX:-'(none)'}}"
 
-                conda run --no-capture-output --prefix "$ENV_PREFIX" bash -lc '
-                set -euo pipefail
-                echo "[RUN] Using: $(python -V) - $(which python)"
-                cd "{os.path.dirname(run_sh_path)}"
-                echo "[RUN] Directory: $(pwd)"
-                echo "[RUN] Executing run.sh"
-                bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-                '
+            if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
+            echo "[ERR] conda env not found: $ENV_NAME"
+            exit 1
+            fi
 
-                if [ -f "{bash_output_path}" ]; then
-                echo "[OK] SUCCESS"
-                exit 0
-                fi
+            echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
 
-                echo "[ERR] Expected output file not found: {bash_output_path}"
-                exit 1
+            conda run --no-capture-output --prefix "$ENV_PREFIX" bash -lc '
+            set -euo pipefail
+            echo "[RUN] Using: $(python -V) - $(which python)"
+            cd "{os.path.dirname(run_sh_path)}"
+            echo "[RUN] Directory: $(pwd)"
+            echo "[RUN] Executing run.sh"
+            bash ./run.sh . "{input_file_path}" "{bash_output_path}"
+            '
+
+            if [ -f "{bash_output_path}" ]; then
+            echo "[OK] SUCCESS"
+            exit 0
+            fi
+
+            echo "[ERR] Expected output file not found: {bash_output_path}"
+            exit 1
             """
+
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
