@@ -1,6 +1,8 @@
 import nox, os, sys
 from pathlib import Path
 
+NOX_PWD = Path(__file__).parent.parent.parent.parent
+print(NOX_PWD)
 ROOT = Path.home() / "eos"
 TEMP = ROOT / "temp"
 TEMP.mkdir(parents=True, exist_ok=True)
@@ -16,12 +18,24 @@ def run(s, *args):
     s.error(f"fail: {cmd}\n{e}")
 
 def shim_bash(s):
-  d = TEMP / "shims"
-  d.mkdir(parents=True, exist_ok=True)
-  p = d / "bash"
-  p.write_text('#!/bin/sh\nexec /bin/sh "$@"\n')
-  os.chmod(p, 0o755)
-  s.env["PATH"] = str(d) + os.pathsep + s.env.get("PATH", "")
+    d = TEMP / "shims"
+    d.mkdir(parents=True, exist_ok=True)
+    p = d / "bash"
+    conda_bin = str(Path(sys.prefix) / "bin")
+    py_bin = str(Path(sys.executable).parent)
+    p.write_text(
+        '#!/bin/sh\n'
+        '# bash shim → /bin/sh with sane PATH\n'
+        f'PATH="{conda_bin}:{py_bin}:/usr/local/bin:/usr/bin:/bin:$PATH"\n'
+        'export PATH\n'
+        'case "$1" in\n'
+        '  -lc) shift; set -- -c "$@" ;;\n'
+        '  -l)  shift ;;\n'
+        'esac\n'
+        'exec /bin/sh "$@"\n'
+    )
+    os.chmod(p, 0o755)
+    s.env["PATH"] = str(d) + os.pathsep + s.env.get("PATH", "")
 
 
 @nox.session(venv_backend='conda', python='3.12', reuse_venv=True)
@@ -33,20 +47,25 @@ def test_model_image(session):
     session.env["PATH"] = str(b) + os.pathsep + session.env.get("PATH", "")
     session.env["PYTHON"] = sys.executable
     session.env["CONDA_PREFIX"] = str(Path(sys.prefix))
-    shim_bash(session)
+    # shim_bash(session)
     print("PATH:", session.env["PATH"])
     print("PYTHON:", session.env["PYTHON"])
     print("CONDA_PREFIX:", session.env["CONDA_PREFIX"])
-    run(
-    session,
-    "git",
-    "clone",
-    "--depth",
-    "1",
-    f"https://github.com/ersilia-os/ersilia.git",
-    f"{TEMP}/ersilia"
-  )
-    session.install("-e", f"{TEMP}/ersilia[test]")
+    try:
+        session.conda_install("git", "git-lfs")
+    except AttributeError:
+        session.run("conda", "install", "-y", "git", "git-lfs", external=True)
+
+#     run(
+#     session,
+#     "git",
+#     "clone",
+#     "--depth",
+#     "1",
+#     f"https://github.com/ersilia-os/ersilia.git",
+#     f"{TEMP}/ersilia"
+#   )
+    session.install("-e", NOX_PWD)
 
     if not model_id or not version:
         session.error("MODEL_ID and MODEL_VERSION must be set")

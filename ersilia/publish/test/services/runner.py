@@ -192,7 +192,7 @@ class RunnerService:
             self.logger.info(f"Fetching the model from: {loc}")
             cmd = " ".join(["ersilia", "-v", "fetch", model_id, *loc])
             self.logger.debug(f"Running fetch command for testing: {cmd}")
-            out = run_command(cmd)
+            out = run_command(cmd, quiet=False)
             return out
 
         self.delete()
@@ -721,6 +721,7 @@ class RunnerService:
         results = []
 
         out = self.fetch()
+        print("fetch out", out)
         if out.returncode != 0:
             status = [(
                     Checks.FETCH_FAILS.value,

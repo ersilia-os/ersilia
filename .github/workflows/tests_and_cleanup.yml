@@ -41,8 +41,9 @@ jobs:
   
       - name: Install dependencies
         run: |
-          conda install -y -c conda-forge git-lfs gh
+          conda install -y -c conda-forge git-lfs gh "numpy<=1.26.4"
           git-lfs install
+          python -m pip install --upgrade pip "poetry-core>=1.8.0"
           python -m pip install -e .[test]
 
       - name: Run pytest

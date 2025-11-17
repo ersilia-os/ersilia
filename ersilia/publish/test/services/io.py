@@ -448,7 +448,7 @@ class IOService:
                 capture_output=True,
                 shell=False,
             )
-
+            print("dir size", size_output)
             size = float(size_output.split()[0])
             return size
         except Exception as e:
