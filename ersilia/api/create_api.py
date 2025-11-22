@@ -130,10 +130,11 @@ class Model(object):
             port: The port to use when creating a model server. If unspecified, Ersilia looks for empty ports to use on the user's system.
             track: Whether the model's runs should be tracked to monitor model and system performance.
             tracking_use_case: If --track is true, this command allows specification of the tracking use case. Current options are: local, hosted, self-service and test.
-            enable_local_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.
-            local_cache_only: Specifies to fetch stored model results from local cache. The local caching system is powered by Redis.
-            cloud_cache_only: Specifies to fetch stored model results from cloud cache. This allows to fetch model precalculated results in csv file in Ersilia model output format.
-            cache_only: Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.
+            enable_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.
+            read_store: Specifies to read from isaura store
+            write_store: Specifies to write from isaura store
+            access: Specifies access level to write to isaura store
+            nearest_neighbors: Specifies nearest neighbor search when reading from isaura store
             max_cache_memory_frac: Sets the maximum fraction of memory to use by Redis for caching. Recommended value 0.2-0.7.
 
         Returns
@@ -151,10 +152,11 @@ class Model(object):
             port=None,
             track=False,
             tracking_use_case="local",
-            enable_local_cache=True,
-            local_cache_only=False,
-            cloud_cache_only=False,
-            cache_only=False,
+            enable_cache=True,
+            read_store=False,
+            write_store=False,
+            access=None,
+            nearest_neighbors=False,
             max_cache_memory_frac=None,
             verbose_flag=self.verbose_mode or verbose,
         )
