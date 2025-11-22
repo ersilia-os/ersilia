@@ -1,4 +1,5 @@
 from ... import ErsiliaModel, logger
+from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from ..echo import echo
 
@@ -8,7 +9,7 @@ def serve(
     port: int = None,
     track: bool = False,
     tracking_use_case: str = "local",
-    enable_cache: bool = True,
+    enable_cache: bool = False,
     read_store: bool = False,
     write_store: bool = False,
     access: bool = None,
@@ -69,6 +70,8 @@ def serve(
 
     if not mdl.is_valid():
         raise RuntimeError(f"Model {mdl.model_id} is not valid or not found.")
+
+    SetupRedis(enable_cache, max_cache_memory_frac)
 
     track_runs = tracking_use_case if track else None
 

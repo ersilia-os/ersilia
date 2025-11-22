@@ -152,7 +152,7 @@ class Model(object):
             port=None,
             track=False,
             tracking_use_case="local",
-            enable_cache=True,
+            enable_cache=False,
             read_store=False,
             write_store=False,
             access=None,
