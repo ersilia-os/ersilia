@@ -1,4 +1,4 @@
-import click
+import rich_click as click
 
 from ... import ModelBase
 from ...core.session import Session

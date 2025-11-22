@@ -75,10 +75,6 @@ def run_cmd():
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         output_source = session.current_output_source()
-        print(f"Session: {session._session_dir}")
-        print(f"Model id: {model_id}")
-        print(f"Service class: {service_class}")
-        print(f"Output source: {output_source}")
 
         if model_id is None:
             echo(

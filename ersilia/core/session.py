@@ -46,6 +46,28 @@ class Session(ErsiliaBase):
         else:
             return data["model_id"]
 
+    def current_store_status(self):
+        """
+        Get the current model ID from the session.
+
+        This method retrieves the current model ID from the session data.
+
+        Returns
+        -------
+        str or None
+            The current model ID, or None if no session data is available.
+        """
+        data = self.get()
+        if data is None:
+            return None
+        else:
+            return (
+                data["read_store"],
+                data["write_store"],
+                data["store_access"],
+                data["nearest_neighbors"],
+            )
+
     def current_identifier(self):
         """
         Get the current identifier from the session.
@@ -129,6 +151,27 @@ class Session(ErsiliaBase):
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
 
+    def register_store_status(
+        self, read_store, write_store, store_access, nearest_neighbors
+    ):
+        """
+        Register the output source in the session.
+
+        This method updates the session data with the provided output source.
+
+        Parameters
+        ----------
+        output_source : str
+            The output source to register.
+        """
+        data = {} if self.get() is None else self.get()
+        data["read_store"] = read_store
+        data["write_store"] = write_store
+        data["store_access"] = store_access
+        data["nearest_neighbors"] = nearest_neighbors
+        with open(self.session_file, "w") as f:
+            json.dump(data, f, indent=4)
+
     def register_tracking_use_case(self, use_case):
         """
         Register the tracking use case in the session.
@@ -194,12 +237,14 @@ class Session(ErsiliaBase):
             Whether to track runs.
         """
         self.logger.debug("Opening session {0}".format(self.session_file))
+        data = self.get()
         session = {
             "model_id": model_id,
             "timestamp": str(time.time()),
             "identifier": str(uuid.uuid4()),
             "track_runs": track_runs,
         }
+        session = session | data if data is not None else session
         with open(self.session_file, "w") as f:
             json.dump(session, f, indent=4)
 

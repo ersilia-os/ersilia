@@ -1,6 +1,6 @@
 import sys
 
-import click
+import rich_click as click
 
 from ...core.session import Session
 from ...store.api import InferenceStoreApi
