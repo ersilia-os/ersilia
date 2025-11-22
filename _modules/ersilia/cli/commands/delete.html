@@ -357,11 +357,13 @@
                 <span class="s2">&quot;:collision: Model </span><span class="si">{0}</span><span class="s2"> deleted successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;:person_tipping_hand: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_delete_all</span><span class="p">():</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to delete all locally available models&quot;&quot;&quot;</span>
@@ -379,17 +381,23 @@
         <span class="k">for</span> <span class="n">model_row</span> <span class="ow">in</span> <span class="n">local_models</span><span class="p">:</span>
             <span class="n">model_id</span> <span class="o">=</span> <span class="n">model_row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-                <span class="n">deleted_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">_delete_model_by_id</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+                    <span class="n">deleted_count</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">echo</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;:warning: Error deleting model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;:thumbs_up: Completed the deletion of </span><span class="si">{</span><span class="n">deleted_count</span><span class="si">}</span><span class="s2"> locally available models!&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">deleted_count</span> <span class="ow">is</span> <span class="nb">len</span><span class="p">(</span><span class="n">local_models</span><span class="p">):</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;:thumbs_up: Completed the deletion of </span><span class="si">{</span><span class="n">deleted_count</span><span class="si">}</span><span class="s2"> locally available models!&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;:thumbs_down: Failed to delete all models. Deleted </span><span class="si">{</span><span class="n">deleted_count</span><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">local_models</span><span class="p">)</span><span class="si">}</span><span class="s2"> models.&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
+            <span class="p">)</span>
 
     <span class="c1"># Example usage:</span>
     <span class="c1"># 1. Delete a specific model: ersilia delete {MODEL}</span>
