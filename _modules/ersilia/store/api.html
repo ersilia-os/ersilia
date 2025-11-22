@@ -337,7 +337,7 @@
     <span class="n">echo_intro</span><span class="p">,</span>
     <span class="n">echo_job_submitted</span><span class="p">,</span>
     <span class="n">echo_job_succeeded</span><span class="p">,</span>
-    <span class="n">echo_local_fetched_cache_szie</span><span class="p">,</span>
+    <span class="n">echo_local_fetched_cache_size</span><span class="p">,</span>
     <span class="n">echo_local_only_empty_cache</span><span class="p">,</span>
     <span class="n">echo_local_sample_warning_</span><span class="p">,</span>
     <span class="n">echo_merged_saved</span><span class="p">,</span>
@@ -467,7 +467,7 @@
             <span class="p">)</span>
             <span class="n">none_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_none_size</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
             <span class="n">cache_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">-</span> <span class="n">none_count</span>
-            <span class="n">echo_local_fetched_cache_szie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">,</span> <span class="n">none_count</span><span class="p">)</span>
+            <span class="n">echo_local_fetched_cache_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">,</span> <span class="n">none_count</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;all&quot;</span>
             <span class="n">echo_redis_job_submitted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Sample size: </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -482,7 +482,7 @@
                 <span class="n">inputs</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span>
             <span class="p">)</span>
             <span class="n">cache_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-            <span class="n">echo_local_fetched_cache_szie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">echo_local_fetched_cache_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">click</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">generic_output_adapter</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_path</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DEFAULT_API_NAME</span>
