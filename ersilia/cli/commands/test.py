@@ -1,4 +1,4 @@
-import click
+import rich_click as click
 
 from ...cli import echo
 from ...publish.test.test import ModelTester

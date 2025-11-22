@@ -1,4 +1,4 @@
-import click
+import rich_click as click
 
 from ...hub.content.card import ModelCard
 from ...hub.content.catalog import ModelCatalog

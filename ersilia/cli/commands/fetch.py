@@ -1,7 +1,7 @@
 import asyncio
 
-import click
 import nest_asyncio
+import rich_click as click
 
 from ... import ModelBase
 from ...hub.fetch.fetch import ModelFetcher
