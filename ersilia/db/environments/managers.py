@@ -253,7 +253,7 @@ class DockerManager(ErsiliaBase):
         if use_cache:
             cache_str = ""
         else:
-            cache_str = "--disable-local-cache"
+            cache_str = "--disable-cache"
         cmdlines += [
             "docker build {0} -t {1}/{2}:{3} .".format(
                 cache_str, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
