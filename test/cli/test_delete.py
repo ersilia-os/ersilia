@@ -62,6 +62,27 @@ def test_delete_all_models(mock_echo, mock_deleter, mock_catalog):
         result.exit_code == 0
     ), f"Unexpected exit code: {result.exit_code}. Output: {result.output}"
 
+@patch("ersilia.hub.content.catalog.ModelCatalog")
+@patch("ersilia.hub.delete.delete.ModelFullDeleter")
+@patch("ersilia.cli.echo")
+def test_delete_all_models_fails_when_can_be_deleted_is_False(mock_echo, mock_deleter, mock_catalog):
+    runner = CliRunner()
+
+    mock_catalog_instance = MagicMock()
+    mock_catalog_instance.local.return_value.data = [[MODEL], [DUMMY_MODEL]]
+    mock_catalog_instance.local.return_value.columns = ["Identifier"]
+    mock_catalog.return_value = mock_catalog_instance
+
+    mock_deleter_instance = MagicMock()
+    mock_deleter_instance.can_be_deleted.return_value = (False, "")
+    mock_deleter.return_value = mock_deleter_instance
+
+    result = runner.invoke(delete_cmd(), ["delete", "--all"])
+
+    assert (
+        result.exit_code == 0
+    ), f"Unexpected exit code: {result.exit_code}. Output: {result.output}"
+
 
 @patch("ersilia.hub.content.catalog.ModelCatalog")
 @patch("ersilia.cli.echo")
