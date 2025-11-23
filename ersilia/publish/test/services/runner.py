@@ -6,7 +6,6 @@ import tempfile
 import traceback
 from pathlib import Path
 from typing import Callable
-import warnings
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 
@@ -192,7 +191,7 @@ class RunnerService:
             self.logger.info(f"Fetching the model from: {loc}")
             cmd = " ".join(["ersilia", "-v", "fetch", model_id, *loc])
             self.logger.debug(f"Running fetch command for testing: {cmd}")
-            out = run_command(cmd)
+            out = run_command(cmd, quiet=False)
             return out
 
         self.delete()
@@ -438,51 +437,74 @@ class RunnerService:
 
                 log_out="{output_log_path}"
                 log_err="{error_log_path}"
-
                 mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                : > "$log_out"
-                : > "$log_err"
+                : > "$log_out"; : > "$log_err"
+                exec > >(tee -a "$log_out") 2> >(tee -a "$log_err" >&2)
 
-                echo "Runner arch: $(uname -m)" | tee -a "$log_out"
-                echo "Using conda prefix: {self._conda_prefix(self._is_base())}" | tee -a "$log_out"
+                ENV_NAME="{self.model_id}"
 
-                (
-                set +e
-                conda run -n {self.model_id} bash -c '
-                    set -euo pipefail
-                    echo "Inside conda env: $(python -V) - $(which python)"
-                    cd "{os.path.dirname(run_sh_path)}"
-                    echo "PWD inside conda run: $(pwd)"
-                    ls -lah
-                    bash ./run.sh . "{input_file_path}" "{bash_output_path}"
-                ' >>"$log_out" 2>>"$log_err"
-                )
+                echo "Runner arch: $(uname -m)"
+                echo "Using conda: $(command -v conda || echo 'not found')"
+                echo "Target env: $ENV_NAME"
 
-                if [ -f "{bash_output_path}" ]; then
-                echo "SUCCESS via conda run" | tee -a "$log_out"
-                exit 0
+                BASE="$(conda info --base 2>/dev/null || true)"
+                ENV_PREFIX=""
+
+                if command -v conda >/dev/null 2>&1; then
+                ENV_PREFIX="$(
+                    conda env list --json 2>/dev/null | python -c 'import json,os,sys; name=sys.argv[1]; data=json.load(sys.stdin); print(next((p for p in data.get("envs", []) if os.path.basename(p)==name), ""))' "$ENV_NAME" || true
+                )"
                 fi
 
-                echo "Primary path failed or output missing. Falling back..." | tee -a "$log_err"
+                if [ -z "$ENV_PREFIX" ] && [ -n "$BASE" ] && [ -d "$BASE/envs/$ENV_NAME" ]; then
+                ENV_PREFIX="$BASE/envs/$ENV_NAME"
+                fi
 
-                source "{self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh" >>"$log_out" 2>>"$log_err"
-                conda activate {self.model_id} >>"$log_out" 2>>"$log_err" || true
+                printf 'Resolved prefix: %s\\n' "${{ENV_PREFIX:-'(none)'}}"
 
-                cd "{os.path.dirname(run_sh_path)}"
-                chmod +x ./run.sh || true
-
-                bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err" || true
-
-                conda deactivate >>"$log_out" 2>>"$log_err" || true
-
-                if [ ! -f "{bash_output_path}" ]; then
-                echo "ERROR: expected output file not found: {bash_output_path}" >&2
-                [ -f "{error_log_path}" ] && echo "==== STDERR (tail) ====" && tail -n 500 "{error_log_path}" || echo "No stderr log."
-                [ -f "{output_log_path}" ] && echo "==== STDOUT (tail) ====" && tail -n 500 "{output_log_path}" || echo "No stdout log."
+                if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
+                echo "[ERR] conda env not found: $ENV_NAME"
+                conda env list || true
                 exit 1
                 fi
 
-                echo "SUCCESS via conda activate fallback" | tee -a "$log_out"
+                echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
+
+                eval "$("$(command -v conda)" shell.bash hook)" || true
+                while [ "${{CONDA_SHLVL:-0}}" -gt 0 ]; do conda deactivate || true; done
+                unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER
+
+                export PATH="$ENV_PREFIX/bin:${{BASE:+$BASE/bin:}}/usr/bin:/bin"
+                hash -r
+
+                echo "[DEBUG] After PATH override:"
+                echo "  which python: $(command -v python || echo '(not found)')"
+                python -V || true
+
+                RUN_DIR="{os.path.dirname(run_sh_path)}"
+                cd "$RUN_DIR"
+                echo "[RUN] Directory: $(pwd)"
+                echo "[RUN] Executing run.sh with env python"
+
+                if ! PYTHON="$ENV_PREFIX/bin/python" bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err"; then
+                echo "[ERR] run.sh failed. Displaying captured stderr:"
+                echo "============================================"
+                tail -n 80 "$log_err" || echo "(No stderr output)"
+                echo "============================================"
+                exit 1
+                fi
+
+                if [ -f "{bash_output_path}" ]; then
+                echo "[OK] SUCCESS"
+                exit 0
+                fi
+
+                echo "[ERR] Expected output file not found: {bash_output_path}"
+                echo "==== STDERR (tail) ===="
+                tail -n 80 "$log_err" || echo "No stderr log."
+                echo "==== STDOUT (tail) ===="
+                tail -n 80 "$log_out" || echo "No stdout log."
+                exit 1
             """
 
             with open(temp_script_path, "w") as script_file:
@@ -698,6 +720,7 @@ class RunnerService:
         results = []
 
         out = self.fetch()
+        print("fetch out", out)
         if out.returncode != 0:
             status = [(
                     Checks.FETCH_FAILS.value,

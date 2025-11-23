@@ -122,8 +122,9 @@ class InstallParser:
   def write_bash_script(self, file_name=None):
     if file_name is None:
       file_name = os.path.splitext(self.file_name)[0] + ".sh"
+    cmds = self._convert_commands_to_bash_script()
     with open(file_name, "w") as f:
-      f.write(self._convert_commands_to_bash_script())
+      f.write(cmds)
 
   def _install_packages(self, file_path):
     cmd = f"bash {file_path}"

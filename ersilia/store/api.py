@@ -24,7 +24,7 @@ from ersilia.store.utils import (
     echo_intro,
     echo_job_submitted,
     echo_job_succeeded,
-    echo_local_fetched_cache_szie,
+    echo_local_fetched_cache_size,
     echo_local_only_empty_cache,
     echo_local_sample_warning_,
     echo_merged_saved,
@@ -149,7 +149,7 @@ class InferenceStoreApi(ErsiliaBase):
             )
             none_count = self._get_none_size(results)
             cache_size = len(inputs) - none_count
-            echo_local_fetched_cache_szie(self.click, cache_size, none_count)
+            echo_local_fetched_cache_size(self.click, cache_size, none_count)
         else:
             ns = self.n_samples if self.n_samples != -1 else "all"
             echo_redis_job_submitted(self.click, f"Sample size: {ns}")
@@ -164,7 +164,7 @@ class InferenceStoreApi(ErsiliaBase):
                 inputs, results, str(self.output_path), None, self.n_samples
             )
             cache_size = len(results)
-            echo_local_fetched_cache_szie(self.click, cache_size, 0)
+            echo_local_fetched_cache_size(self.click, cache_size, 0)
 
         self.generic_output_adapter._adapt_generic(
             json.dumps(results), str(self.output_path), self.model_id, DEFAULT_API_NAME
