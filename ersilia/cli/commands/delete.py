@@ -42,11 +42,13 @@ def delete_cmd():
                 ":collision: Model {0} deleted successfully!".format(model_id),
                 fg="green",
             )
+            return True
         else:
             echo(
                 f":person_tipping_hand: {reason}".format(model_id),
                 fg="yellow",
             )
+            return False
 
     def _delete_all():
         """Function to delete all locally available models"""
@@ -64,17 +66,23 @@ def delete_cmd():
         for model_row in local_models:
             model_id = model_row[idx]
             try:
-                _delete_model_by_id(model_id)
-                deleted_count += 1
+                if _delete_model_by_id(model_id):
+                    deleted_count += 1
             except Exception as e:
                 echo(
                     f":warning: Error deleting model {model_id}: {e}",
                     fg="red",
                 )
-        echo(
-            f":thumbs_up: Completed the deletion of {deleted_count} locally available models!",
-            fg="green",
-        )
+        if deleted_count is len(local_models):
+            echo(
+                f":thumbs_up: Completed the deletion of {deleted_count} locally available models!",
+                fg="green",
+            )
+        else:
+            echo(
+                f":thumbs_down: Failed to delete all models. Deleted {deleted_count} out of {len(local_models)} models.",
+                fg="red"
+            )
 
     # Example usage:
     # 1. Delete a specific model: ersilia delete {MODEL}

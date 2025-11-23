@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4.2.2
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install Ruff
@@ -87,7 +87,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          python-version: "3.10.10"
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
@@ -174,7 +174,7 @@ jobs:
 
       - name: Set up Python
         if: steps.filter.outputs.tag-file == 'true'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 

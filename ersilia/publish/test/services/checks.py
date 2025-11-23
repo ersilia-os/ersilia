@@ -22,7 +22,7 @@ from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.hdf5 import Hdf5DataLoader
 from ....utils.exceptions_utils.base_information_exceptions import _read_default_fields
 from ....store.utils import echo_exceptions, ClickInterface
-from....hub.content.base_information_validator import BaseInformationValidator
+from ....hub.content.base_information_validator import BaseInformationValidator
 
 
 
