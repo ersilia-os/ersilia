@@ -6,10 +6,21 @@ import os
 
 from ... import ErsiliaBase
 from ...db.hubdata.interfaces import JsonModelsInterface
-from ...default import AIRTABLE_MODEL_HUB_VIEW_URL, MODEL_SOURCE_FILE, TableConstants
-from ...tools.bentoml.exceptions import BentoMLException
+from ...default import (
+    AIRTABLE_MODEL_HUB_VIEW_URL,
+    MODEL_SOURCE_FILE,
+    ZAIRACHEM_DIR,
+    TableConstants,
+)
+from ...utils.conda import SimpleConda
+from ...utils.docker import SimpleDocker
+from ...utils.exceptions_utils.catalog_exceptions import (
+    LocalCatalogDestBundleModelsMismatch,
+    LocalCatalogIdleModelsInConda,
+    LocalCatalogIdleModelsInDocker,
+)
+from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...utils.identifiers.model import ModelIdentifier
-from ...utils.terminal import run_command
 from .card import ModelCard
 
 try:
@@ -186,10 +197,9 @@ class CatalogTable(object):
             The name of the file to write the catalog table to.
         """
         with open(file_name, "w") as f:
-            if file_name.endswith(".tsv"):
-                delimiter = "\t"
-            else:
-                delimiter = ","
+            if not file_name.endswith(".csv"):
+                raise Exception("Only .csv files are allowed")
+            delimiter = ","
             writer = csv.writer(f, delimiter=delimiter)
             writer.writerow(self.columns)
             for r in self.data:
@@ -228,6 +238,8 @@ class ModelCatalog(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mi = ModelIdentifier()
         self.less = less
+        self.conda = SimpleConda(config_json=self.config_json)
+        self.docker = SimpleDocker()
 
     def _is_eos(self, s):
         if self.mi.is_valid(s):
@@ -322,6 +334,40 @@ class ModelCatalog(ErsiliaBase):
         table = self._get_catalog(columns, models)
         return table
 
+    def _model_ids_in_bundles_dir(self):
+        model_ids = []
+        for model_id in os.listdir(self._bundles_dir):
+            if self._is_eos(model_id):
+                model_ids += [model_id]
+        return model_ids
+
+    def _model_ids_in_dest_dir(self):
+        model_ids = []
+        for model_id in os.listdir(self._dest_dir):
+            if self._is_eos(model_id):
+                model_ids += [model_id]
+        return model_ids
+
+    def _model_ids_in_conda(self):
+        model_ids = self.conda.list_eos_environments()
+        return model_ids
+
+    def _read_zairachem_service_file(self):
+        path = os.path.join(ZAIRACHEM_DIR, "service.txt")
+        if not os.path.exists(path):
+            return None
+        with open(path, "r") as f:
+            models = f.readlines()
+        return [m.strip() for m in models]
+
+    def _model_ids_in_docker(self):
+        zairachem_models = self._read_zairachem_service_file()
+        model_ids = self.docker.list_eos_images()
+        if zairachem_models is not None:
+            model_ids = [m for m in model_ids if m not in zairachem_models]
+        return model_ids
+
+    @throw_ersilia_exception()
     def local(self) -> CatalogTable:
         """
         List models metadata from the local repository.
@@ -334,7 +380,31 @@ class ModelCatalog(ErsiliaBase):
         mc = ModelCard()
         columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS + ["Fetched From"]
         cards = []
-        for model_id in os.listdir(self._bundles_dir):
+        self.logger.debug(f"Listing models from {self._bundles_dir}")
+        models_in_bundles = sorted(self._model_ids_in_bundles_dir())
+        models_in_dest = sorted(self._model_ids_in_dest_dir())
+        if models_in_bundles != models_in_dest:
+            self.logger.error(
+                f"Models in bundles dir ({self._bundles_dir}): {models_in_bundles}"
+            )
+            self.logger.error(
+                f"Models in dest dir ({self._dest_dir}): {models_in_dest}"
+            )
+            self.logger.error("The two directories are not in sync.")
+            raise LocalCatalogDestBundleModelsMismatch(
+                models_in_dest, models_in_bundles
+            )
+        models_in_conda = sorted(self._model_ids_in_conda())
+        idle_models_in_conda = sorted(set(models_in_conda) - set(models_in_bundles))
+        if len(idle_models_in_conda) > 0:
+            self.logger.error(f"Idle models in conda envs: {idle_models_in_conda}")
+            raise LocalCatalogIdleModelsInConda(idle_models_in_conda)
+        models_in_docker = sorted(self._model_ids_in_docker())
+        idle_models_in_docker = sorted(set(models_in_docker) - set(models_in_bundles))
+        if len(idle_models_in_docker) > 0:
+            self.logger.error(f"Idle models in docker images: {idle_models_in_docker}")
+            raise LocalCatalogIdleModelsInDocker(idle_models_in_docker)
+        for model_id in models_in_bundles:
             if not self._is_eos(model_id):
                 continue
             card = mc.get(model_id)
@@ -343,48 +413,3 @@ class ModelCatalog(ErsiliaBase):
             cards += [card]
         table = self._get_catalog(columns, cards)
         return table
-
-    def bentoml(self) -> CatalogTable:
-        """
-        List models available as BentoServices.
-
-        Returns
-        -------
-        CatalogTable
-            The catalog table containing the models available as BentoServices.
-        """
-        try:
-            stdout, stderr, returncode = run_command(["bentoml", "list"], quiet=True)
-            if returncode != 0:
-                raise BentoMLException(f"BentoML list failed: {stderr}")
-
-            # Process stdout to build CatalogTable
-            output_lines = stdout.split("\n")
-            if not output_lines or len(output_lines) == 1:
-                return CatalogTable(data=[], columns=[])  # Return empty table
-
-            # Extract columns and values
-            columns = ["BENTO_SERVICE", "AGE", "APIS", "ARTIFACTS"]
-            header = output_lines[0]
-            values = output_lines[1:]
-
-            # Parse table data
-            cut_idxs = [header.find(col) for col in columns]
-            R = []
-            for row in values:
-                r = []
-                for i, idx in enumerate(zip(cut_idxs, cut_idxs[1:] + [None])):
-                    r.append(
-                        row[idx[0] : idx[1]].rstrip()
-                        if idx[1]
-                        else row[idx[0] :].rstrip()
-                    )
-                R.append([r[0].split(":")[0]] + r)
-
-            return CatalogTable(data=R, columns=["Identifier"] + columns)
-
-        except BentoMLException:
-            raise
-        except Exception as e:
-            self.logger.error(f"Unexpected error: {str(e)}")
-            raise BentoMLException(f"Failed to fetch BentoML models: {str(e)}")

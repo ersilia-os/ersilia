@@ -10,6 +10,7 @@ from click.exceptions import Abort
 
 from ersilia.core.base import ErsiliaBase
 from ersilia.default import API_BASE, DEFAULT_API_NAME, EOS_TMP, INFERENCE_STORE_API_URL
+from ersilia.hub.content.columns_information import ColumnsInformation
 from ersilia.io.input import GenericInputAdapter
 from ersilia.io.output import GenericOutputAdapter
 from ersilia.store.dump import DumpLocalCache
@@ -23,7 +24,7 @@ from ersilia.store.utils import (
     echo_intro,
     echo_job_submitted,
     echo_job_succeeded,
-    echo_local_fetched_cache_szie,
+    echo_local_fetched_cache_size,
     echo_local_only_empty_cache,
     echo_local_sample_warning_,
     echo_merged_saved,
@@ -77,11 +78,17 @@ class InferenceStoreApi(ErsiliaBase):
         self.request_id = None
         self.dump_local = DumpLocalCache()
         self.fetch_type = "all"
-        self.generic_output_adapter = GenericOutputAdapter(model_id=model_id)
-        self.schema = self.generic_output_adapter._fetch_schema_from_github()
-        assert self.schema is not None, "Model schema can not be fetched from github."
-        self.cols = self.schema[0]
-        self.dtype = self.schema[1]
+        self.col_info = ColumnsInformation(
+            model_id=self.model_id, api_name=DEFAULT_API_NAME
+        ).load()
+        self.generic_output_adapter = GenericOutputAdapter(
+            model_id=model_id, columns_info=self.col_info
+        )
+        assert self.col_info is not None, (
+            "Model column information can not be fetched from github."
+        )
+        self.cols = self.col_info["name"]
+        self.dtype = self.col_info["type"]
         self.header = ["key", "input"] + self.cols
         self.output_path = Path(output) if output else Path(f"{model_id}_precalc.csv")
         self.input_adapter = GenericInputAdapter(model_id=model_id)
@@ -142,7 +149,7 @@ class InferenceStoreApi(ErsiliaBase):
             )
             none_count = self._get_none_size(results)
             cache_size = len(inputs) - none_count
-            echo_local_fetched_cache_szie(self.click, cache_size, none_count)
+            echo_local_fetched_cache_size(self.click, cache_size, none_count)
         else:
             ns = self.n_samples if self.n_samples != -1 else "all"
             echo_redis_job_submitted(self.click, f"Sample size: {ns}")
@@ -157,7 +164,7 @@ class InferenceStoreApi(ErsiliaBase):
                 inputs, results, str(self.output_path), None, self.n_samples
             )
             cache_size = len(results)
-            echo_local_fetched_cache_szie(self.click, cache_size, 0)
+            echo_local_fetched_cache_size(self.click, cache_size, 0)
 
         self.generic_output_adapter._adapt_generic(
             json.dumps(results), str(self.output_path), self.model_id, DEFAULT_API_NAME

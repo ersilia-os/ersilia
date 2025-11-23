@@ -6,7 +6,6 @@ import tempfile
 import traceback
 from pathlib import Path
 from typing import Callable
-import warnings
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher")
 
@@ -124,14 +123,28 @@ class RunnerService:
         self.surface = surface
         self.installer = PackageInstaller(self.dir, self.model_id)
 
-    def run_model(self, inputs: list, output: str, batch: int):
+    def serve_model(self):
+        """
+        Serve the model and return the command output.
+
+        Returns
+        -------
+        str
+            The output of the command.
+        """
+
+        cmd = f"ersilia serve {self.model_id} --disable-local-cache"
+        out = run_command(cmd)
+        return out
+    
+    def run_model(self, inputs: str, output: str, batch: int):
         """
         Run the model with the given input and output parameters.
 
         Parameters
         ----------
-        input : list
-            List of input samples.
+        input : str
+            A path to input file
         output : str
             Path to the output file.
         batch : int
@@ -178,7 +191,7 @@ class RunnerService:
             self.logger.info(f"Fetching the model from: {loc}")
             cmd = " ".join(["ersilia", "-v", "fetch", model_id, *loc])
             self.logger.debug(f"Running fetch command for testing: {cmd}")
-            out = run_command(cmd)
+            out = run_command(cmd, quiet=False)
             return out
 
         self.delete()
@@ -230,6 +243,8 @@ class RunnerService:
         """
         def normalize_quotes(obj):
             def strip_quotes(s: str) -> str:
+                if isinstance(s, float) or isinstance(s, int):
+                    return s
                 if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
                     return s[1:-1]
                 return s
@@ -262,6 +277,8 @@ class RunnerService:
                             f"Datatype mismatch for column '{column}' at row {idx}: "
                             f"bash value type={type(b_val).__name__}, "
                             f"ersilia value type={type(e_val).__name__}"
+                            f"bash value={e_val}"
+                            f"ersilia value={e_val}"
                         )
                         echo_exceptions(msg, ClickInterface())
                         return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
@@ -370,7 +387,7 @@ class RunnerService:
                 
         def read_logs(path):
             if not os.path.exists(path):
-                echo_exceptions(f"File not found: {path}", ClickInterface())
+                return "No error detected!"
             with open(path, "r") as file:
                 return file.readlines()
 
@@ -415,13 +432,80 @@ class RunnerService:
             self.logger.debug("Run script path: {0}".format(run_sh_path))
             self.logger.debug("Output path: {0}".format(output_path))
 
-            bash_script = f"""
-                source {self._conda_prefix(self._is_base())}/etc/profile.d/conda.sh
-                conda activate {self.model_id}
-                cd {os.path.dirname(run_sh_path)}
-                bash run.sh . {input_file_path} {bash_output_path} > {output_log_path} 2> {error_log_path}
-                conda deactivate
-                """
+            bash_script = f"""#!/usr/bin/env bash
+                set -Euo pipefail
+
+                log_out="{output_log_path}"
+                log_err="{error_log_path}"
+                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+                : > "$log_out"; : > "$log_err"
+                exec > >(tee -a "$log_out") 2> >(tee -a "$log_err" >&2)
+
+                ENV_NAME="{self.model_id}"
+
+                echo "Runner arch: $(uname -m)"
+                echo "Using conda: $(command -v conda || echo 'not found')"
+                echo "Target env: $ENV_NAME"
+
+                BASE="$(conda info --base 2>/dev/null || true)"
+                ENV_PREFIX=""
+
+                if command -v conda >/dev/null 2>&1; then
+                ENV_PREFIX="$(
+                    conda env list --json 2>/dev/null | python -c 'import json,os,sys; name=sys.argv[1]; data=json.load(sys.stdin); print(next((p for p in data.get("envs", []) if os.path.basename(p)==name), ""))' "$ENV_NAME" || true
+                )"
+                fi
+
+                if [ -z "$ENV_PREFIX" ] && [ -n "$BASE" ] && [ -d "$BASE/envs/$ENV_NAME" ]; then
+                ENV_PREFIX="$BASE/envs/$ENV_NAME"
+                fi
+
+                printf 'Resolved prefix: %s\\n' "${{ENV_PREFIX:-'(none)'}}"
+
+                if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
+                echo "[ERR] conda env not found: $ENV_NAME"
+                conda env list || true
+                exit 1
+                fi
+
+                echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
+
+                eval "$("$(command -v conda)" shell.bash hook)" || true
+                while [ "${{CONDA_SHLVL:-0}}" -gt 0 ]; do conda deactivate || true; done
+                unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER
+
+                export PATH="$ENV_PREFIX/bin:${{BASE:+$BASE/bin:}}/usr/bin:/bin"
+                hash -r
+
+                echo "[DEBUG] After PATH override:"
+                echo "  which python: $(command -v python || echo '(not found)')"
+                python -V || true
+
+                RUN_DIR="{os.path.dirname(run_sh_path)}"
+                cd "$RUN_DIR"
+                echo "[RUN] Directory: $(pwd)"
+                echo "[RUN] Executing run.sh with env python"
+
+                if ! PYTHON="$ENV_PREFIX/bin/python" bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err"; then
+                echo "[ERR] run.sh failed. Displaying captured stderr:"
+                echo "============================================"
+                tail -n 80 "$log_err" || echo "(No stderr output)"
+                echo "============================================"
+                exit 1
+                fi
+
+                if [ -f "{bash_output_path}" ]; then
+                echo "[OK] SUCCESS"
+                exit 0
+                fi
+
+                echo "[ERR] Expected output file not found: {bash_output_path}"
+                echo "==== STDERR (tail) ===="
+                tail -n 80 "$log_err" || echo "No stderr log."
+                echo "==== STDOUT (tail) ===="
+                tail -n 80 "$log_out" || echo "No stdout log."
+                exit 1
+            """
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
@@ -525,8 +609,8 @@ class RunnerService:
         def _process_stage(name, method, echo_prefix=True):
             if echo_prefix:
                 echo(f"Performing {name} checks.", fg="yellow", bold=True)
-
             out = method()
+
             if isinstance(out, tuple) and len(out) == 2:
                 good, _bad = out
                 results.extend(good)
@@ -574,7 +658,7 @@ class RunnerService:
 
                 results.append(self._perform_deep_checks())
 
-            self.ios_service.collect_and_save_json(results, self.report_file)
+            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             echo("Model tests and checks completed.", fg="green", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.delete()
@@ -586,7 +670,7 @@ class RunnerService:
                 "Saving report, deleting model and exiting.",
                 fg="yellow", bold=True,
             )
-            self.ios_service.collect_and_save_json(results, self.report_file)
+            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
@@ -595,7 +679,7 @@ class RunnerService:
             tb = traceback.format_exc()
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
-            self.ios_service.collect_and_save_json(results, self.report_file)
+            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
@@ -636,6 +720,7 @@ class RunnerService:
         results = []
 
         out = self.fetch()
+        print("fetch out", out)
         if out.returncode != 0:
             status = [(
                     Checks.FETCH_FAILS.value,
@@ -665,11 +750,18 @@ class RunnerService:
             )
 
         simple_output = self.checkup_service.check_simple_model_output(self.run_model)
+        simple_output_async = self.checkup_service.check_simple_model_async_output(self.serve_model)
         results.append(
             self._generate_table_from_check(TableType.MODEL_RUN_CHECK, simple_output)
         )
+        results.append(
+            self._generate_table_from_check(TableType.ASNC_MODEL_RUN_CHECK, simple_output_async)
+        )
         if simple_output[0][-1] == str(STATUS_CONFIGS.FAILED):
             echo_exceptions("Model simple run check has problem. System is exiting before proceeding!", ClickInterface())
+            return results, 1
+        if simple_output_async[0][-1] == str(STATUS_CONFIGS.FAILED):
+            echo_exceptions("Model async simple run check has problem. System is exiting before proceeding!", ClickInterface())
             return results, 1
         return results
 
@@ -699,6 +791,15 @@ class RunnerService:
             if bash_results[0][-1] == str(STATUS_CONFIGS.FAILED):
                 echo_exceptions("Model output is not consistent. System is exiting before proceeding!", ClickInterface())
                 return results, 1
+            
+        else:
+            row1=[(Checks.MODEL_CONSISTENCY.value,"Skipped for Online source or Varible output consistency",str(STATUS_CONFIGS.SKIPPED))]
+            results.append(self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY,row1))
+
+            row2=[(Checks.RUN_BASH.value,"Skipped for Online source or Varible output consistency", str(STATUS_CONFIGS.SKIPPED))]
+            results.append(self._generate_table_from_check(TableType.CONSISTENCY_BASH, row2))
+
+
         return results
         
     def _perform_deep_checks(self):

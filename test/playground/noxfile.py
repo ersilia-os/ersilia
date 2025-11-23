@@ -39,7 +39,7 @@ fetch_flags = (
 flagged_keys = { 
         "fetch": {*fetch_flags},
         "test": {*fetch_flags},
-        "test": {*fetch_flags, "shallow", "deep", "as_json"},
+        "test": {*fetch_flags, "shallow", "deep", "as_json", "version"},
         "delete": {"all"},
         "catalog": {"more", "as-json", "local", "hub", "local"},
         "example": {"simple", "random", "predefined", "complete", "file_name", "n_samples"},

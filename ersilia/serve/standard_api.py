@@ -411,7 +411,7 @@ class StandardCSVRunApi(ErsiliaBase):
         )
         self.logger.debug("Output serialized")
         self.logger.debug("Checking same row counts")
-        matchs = self._same_row_count(input, results)
+        matchs = self._same_row_count(input_data, results)
         if not matchs:
             raise Exception(
                 "Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad inputs!"
@@ -422,43 +422,45 @@ class StandardCSVRunApi(ErsiliaBase):
         return output
 
     def _fetch_result(self, input_data, url, batch_size):
-        total, overall_results, meta = len(input_data), [], None
+        total = len(input_data)
+        overall_results = []
+        meta = None
+
         for i in range(0, total, batch_size):
-            batch = input_data[i : i + batch_size]
+            batch_items = input_data[i : i + batch_size]
+            payload = [d["input"] for d in batch_items]
+
+            bidx = i // batch_size + 1
+            echo(f"Running batch {bidx}")
             st = time.perf_counter()
-            echo(f"Running batch {i // batch_size + 1}")
-            batch = [d["input"] for d in batch]
-            response = self._post_batch(url, batch)
+
+            resp = self._post_batch(url, payload)
+
             et = time.perf_counter()
-            self.logger.info(
-                f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
-            )
-            echo(
-                f"Batch {i // batch_size + 1} response fetched within: {et - st:.4f} seconds"
-            )
-            if type(response) is list:
-                overall_results.extend(response)
-            elif response.status_code == 200:
-                response = response.json()
-                if "result" in response:
-                    self.logger.warning("Result is in batch")
-                    batch_result = response["result"]
-                    meta = response["meta"] if "meta" in response else meta
-                    overall_results.extend(batch_result)
+            msg = f"Batch {bidx} response fetched within: {et - st:.4f} seconds"
+            self.logger.info(msg)
+            echo(msg)
+            try:
+                if isinstance(resp, dict):
+                    data = resp.json()
                 else:
-                    overall_results.extend(response)
-            if "result" in response:
-                self.logger.warning("Result is in batch")
-                batch_result = response["result"]
-                meta = response["meta"] if "meta" in response else meta
-                overall_results.extend(batch_result)
-
+                    data = resp
+            except ValueError:
+                self.logger.error(f"Batch {bidx} returned non-JSON: {resp.text[:200]}")
+                continue
+            if isinstance(data, list):
+                overall_results.extend(data)
+            elif isinstance(data, dict):
+                if "result" in data:
+                    self.logger.warning("Result is in batch")
+                    overall_results.extend(data["result"])
+                    if "meta" in data:
+                        meta = data["meta"]
+                else:
+                    overall_results.append(data)
             else:
-                overall_results.extend(response)
+                self.logger.error(f"Unexpected payload type: {type(data).__name__}")
 
-            if "meta" in response:
-                self.logger.info("Deleting meta")
-                del response["meta"]
         return overall_results, meta
 
     def _normalize_values(self, out):
@@ -508,10 +510,5 @@ class StandardCSVRunApi(ErsiliaBase):
         dict_keys_type = type({}.keys())
         return any(isinstance(x, dict_keys_type) for x in lst)
 
-    def _same_row_count(self, inputs, results, include_header=False):
-        def cnt(f):
-            with open(f, newline="") as fp:
-                n = sum(1 for _ in csv.reader(fp))
-            return n if include_header else max(n - 1, 0)
-
-        return cnt(inputs) == len(results)
+    def _same_row_count(self, inputs, results):
+        return len(inputs) == len(results)

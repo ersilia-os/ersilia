@@ -178,6 +178,28 @@ class SimpleDocker(object):
                     img_dict[img] = img
             return img_dict
 
+    def list_eos_images(self):
+        """
+        Get a list of eos-related Docker images.
+
+        Returns
+        -------
+        list
+            A list of Ersilia-related Docker image names.
+        """
+        try:
+            model_ids = []
+            images_dict = self.images()
+            for k, _ in images_dict.items():
+                if DOCKERHUB_ORG in k:
+                    name = k.split(DOCKERHUB_ORG + "/")[-1].split(":")[0]
+                    if name.startswith("eos") and len(name) == 7:
+                        model_ids += [name]
+            return model_ids
+        except Exception:
+            self.logger.warning("Failed to list Docker images. Is Docker running?")
+            return []
+
     def containers(self, only_run):
         """
         Get a dictionary of Docker containers.
@@ -303,6 +325,22 @@ class SimpleDocker(object):
             cmd = "sudo -u {0} udocker rmi {1}".format(
                 DEFAULT_UDOCKER_USERNAME, self._image_name(org, img, tag)
             )
+            run_command(cmd)
+
+    def brute_delete_by_model_id(self, model_id):
+        """
+        Brute force delete a Docker image and containers by model ID.
+
+        Parameters
+        ----------
+        model_id : str
+            The model identifier.
+        """
+        images_dict = self.images()
+        for k, _ in images_dict.items():
+            if model_id in k:
+                org, img, tag = self._splitter(k)
+                self.delete(org=org, img=img, tag=tag)
 
     def run(self, org, img, tag, name, memory=None):
         """
@@ -374,40 +412,48 @@ class SimpleDocker(object):
         run_command(cmd)
 
     async def _cp_col_from_container(self, local_path, org=None, img=None, tag=None):
-        import os
+        """
+        Copy the run_columns.csv file to from the container
 
-        local_path = os.path.abspath(local_path)
-        if not os.path.exists(local_path):
-            os.makedirs(local_path, exist_ok=True)
-        name = self.run(org, img, tag, name=None)
-
-        find_out = os.path.join(make_temp_dir(prefix="ersilia-"), "find.txt")
-        run_command(
-            "docker exec %s sh -lc \"find / -name 'run_columns.csv' -type f -print -quit\" > %s 2>&1"
-            % (name, find_out)
+        Parameters
+        ----------
+        local_path : str
+            The local path to copy files to.
+        org : str, optional
+            The organization name. Default is None.
+        img : str, optional
+            The image name. Default is None.
+        tag : str, optional
+            The image tag. Default is None.
+        """
+        model_id = img
+        cmd = [
+            "docker",
+            "run",
+            "--rm",
+            "-i",
+            "--entrypoint",
+            "python",
+            "{0}/{1}:{2}".format(org, img, tag),
+            "-c",
+            "import os, json; base='/root/bundles/{0}'; ".format(model_id)
+            + "dirs=[os.path.join(base,d) for d in os.listdir(base) if os.path.isdir(os.path.join(base,d))]; "
+            "print(json.dumps(dirs))",
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        dirs = json.loads(result.stdout)
+        if len(dirs) > 1:
+            raise Exception("More than one version found in the image")
+        img_path = os.path.join(
+            dirs[0], "model", "framework", "columns", "run_columns.csv"
         )
-        with open(find_out, "r") as f:
-            found = f.read().strip()
-
-        if "No such container" in found:
-            img_name = "{0}/{1}:{2}".format(org, img, tag)
-            run_command(
-                "docker run --platform linux/amd64 -d --name={0} {1}".format(
-                    name, img_name
-                )
-            )
-            run_command(
-                "docker exec %s sh -lc \"find / -name 'run_columns.csv' -type f -print -quit\" > %s 2>&1"
-                % (name, find_out)
-            )
-            with open(find_out, "r") as f:
-                found = f.read().strip()
-
-        if not found.startswith("/"):
-            raise FileNotFoundError("run_columns.csv not found in container %s" % name)
-
-        tmp_file = os.path.join(make_temp_dir(prefix="ersilia-"), "tmp.txt")
-        run_command("docker cp %s:%s %s &> %s" % (name, found, local_path, tmp_file))
+        await self.cp_from_image(
+            img_path=img_path,
+            local_path=local_path,
+            org=org,
+            img=img,
+            tag=tag,
+        )
 
     @staticmethod
     def cp_from_container(name, img_path, local_path, org=None, img=None, tag=None):

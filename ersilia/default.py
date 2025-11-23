@@ -10,6 +10,8 @@ EOS = os.path.join(str(Path.home()), "eos")
 EOS_TMP = os.path.join(EOS, "temp")
 if not os.path.exists(EOS):
     os.makedirs(EOS)
+
+ZAIRACHEM_DIR = os.path.join(str(Path.home()), "zairachem")
 EOS_PLAYGROUND = os.path.join(EOS, "playground")
 ROOT = os.path.dirname(os.path.realpath(__file__))
 BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
@@ -35,6 +37,7 @@ DEFAULT_DOCKER_PLATFORM = "linux/amd64"
 DEFAULT_MODEL_ID = "eos0zzz"
 DEFAULT_VENV = "env"
 DEFAULT_API_NAME = "run"
+DEFAULT_ASYNC_API_NAME = "job"
 PACKMODE_FILE = "pack_mode.txt"
 PACKMETHOD_FILE = "pack_method.txt"
 CARD_FILE = "card.json"

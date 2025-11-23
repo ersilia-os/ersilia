@@ -22,7 +22,10 @@ from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.hdf5 import Hdf5DataLoader
 from ....utils.exceptions_utils.base_information_exceptions import _read_default_fields
 from ....store.utils import echo_exceptions, ClickInterface
-from....hub.content.base_information_validator import BaseInformationValidator
+from ....hub.content.base_information_validator import BaseInformationValidator
+
+
+
 class CheckService:
     """
     Service for performing various checks on the model.
@@ -1091,6 +1094,46 @@ class CheckService:
                     str(STATUS_CONFIGS.FAILED),
                 )
             ]
+        
+    def _results_are_valid(self, results):
+        if not results:
+            return False
+        if isinstance(results, dict):
+            return any(v is not None for v in results.values())
+        elif isinstance(results, list):
+            return any(
+                isinstance(item, dict) and any(v is not None for v in item.values())
+                for item in results
+            )
+        return False
+
+
+    def check_simple_model_async_output(self, serve_model):
+        input_path = IOService._get_input_file_path(self.dir)
+        inputs = IOService.read_csv_values(input_path)
+        inputs = [r[0] for r in inputs]
+        out = serve_model()
+        resp = self.ios.submit_smiles_and_get_results(inputs, out.stdout)
+        is_result_valid = self._results_are_valid(resp)
+        _completed_status = []
+        if not is_result_valid:
+            self.logger.error("Model output has content problem")
+            _completed_status.append(
+                (
+                    Checks.SIMPLE_MODEL_RUN_ASYNC.value,
+                    "Async endpoint did not generate valid values",
+                    str(STATUS_CONFIGS.FAILED),
+                )
+            )
+            return _completed_status
+        _completed_status.append(
+            (
+                Checks.SIMPLE_MODEL_RUN_ASYNC.value,
+                "Async endpoint has valid values",
+                str(STATUS_CONFIGS.PASSED),
+            )
+        )
+        return _completed_status
 
     def check_simple_model_output(self, run_model):
         input_path = IOService._get_input_file_path(self.dir)

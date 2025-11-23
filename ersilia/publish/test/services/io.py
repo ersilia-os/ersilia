@@ -1,3 +1,5 @@
+import aiohttp
+import asyncio
 import csv
 import docker
 import json
@@ -17,12 +19,10 @@ try:
 except ImportError:
     MISSING_PACKAGES = True
 # ruff: enable
-from typing import List
 from .... import throw_ersilia_exception
 from ....default import (
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
-    PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     EOS_TMP,
     DOCKERHUB_ORG,
@@ -30,13 +30,18 @@ from ....default import (
     PREDEFINED_EXAMPLE_INPUT_FILES,
     INSTALL_YAML_FILE,
     DOCKERFILE_FILE,
+    DEFAULT_ASYNC_API_NAME
 )
 from .constants import (
     Checks,
     STATUS_CONFIGS,
     ERSILIAPACK_BACK_FILES,
     ERSILIAPACK_FILES,
-    BENTOML_FILES,
+    main_required_keys,
+    perf_keys,
+    dockerhub_size_keys,
+    environment_size_keys,
+    check_keys_order
 )
 from .parser import DockerfileInstallParser, YAMLInstallParser
 from .setup import SetupService
@@ -268,19 +273,43 @@ class IOService:
             del data[keys[2]]
             return data
         return data
+    
+    def _ensure_keys(self, data, from_dockerhub=False, deep=False):
+        def fill_keys(data, keys):
+            for parent, children in keys.items():
+                if parent not in data:
+                    data[parent] = {}
+                for child, default in children.items():
+                    if child not in data[parent]:
+                        data[parent][child] = default
+            return data
 
-    def collect_and_save_json(self, results, output_file):
+        if from_dockerhub:
+            size_keys = dockerhub_size_keys
+        else:
+            size_keys = environment_size_keys
+
+        data = fill_keys(data, main_required_keys)
+        data = fill_keys(data, size_keys)
+        if deep:
+            data = fill_keys(data, perf_keys)
+        return data
+
+    def collect_and_save_json(self, results, output_file, from_dockerhub, deep):
         """
         Helper function to collect JSON results and save them to a file.
         """
-        aggregated_json = {}
+        data = {}
         for result in results:
             self.logger.info(f"Json result\n: {result}")
-            aggregated_json.update(result)
-        aggregated_json = self._combine_dir_size(aggregated_json)
+            data.update(result)
+        data = self._ensure_keys(data=data, from_dockerhub=from_dockerhub, deep=deep)
+        data = self._combine_dir_size(data)
+        data = {k: data[k] for k in check_keys_order if k in data}
+
 
         with open(output_file, "w") as f:
-            json.dump(aggregated_json, f, indent=4)
+            json.dump(data, f, indent=4)
 
     def _create_json_data(self, rows, key):
         def clean_string(s):
@@ -414,11 +443,12 @@ class IOService:
         """
         try:
             size_output = SetupService.run_command(
-                ["du", "-sm", path],
+                ["/usr/bin/du", "-sm", path],
                 logger=self.logger,
                 capture_output=True,
                 shell=False,
             )
+            print("dir size", size_output)
             size = float(size_output.split()[0])
             return size
         except Exception as e:
@@ -480,7 +510,40 @@ class IOService:
         env_size = self.get_conda_env_size()
         env_size = f"{env_size:.2f}"
         return env_size
+    
 
+    async def _submit_smiles_and_get_results(self, input, cmd_out, poll_interval=2):
+        pattern = r"http://[a-zA-Z0-9.-]+:\d+"
+        match = re.search(pattern, cmd_out)
+        url = match.group(0)
+        base_url = f"{url}/{DEFAULT_ASYNC_API_NAME}"
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{base_url}/submit", json=input) as resp:
+                if resp.status != 200:
+                    echo(f"Job submission failed: {await resp.text()}", fg="red")
+                    return []
+                submission = await resp.json()
+                job_id = submission["job_id"]
+
+            while True:
+                async with session.get(f"{base_url}/status/{job_id}") as resp:
+                    status_resp = await resp.json()
+                    status = status_resp["status"]
+                    if status == "completed":
+                        break
+                    elif status == "failed":
+                        return {"error": "Job failed during processing"}
+                    else:
+                        await asyncio.sleep(poll_interval)
+
+            async with session.get(f"{base_url}/result/{job_id}") as resp:
+                if resp.status != 200:
+                    echo(f"Could not retrieve results: {await resp.text()}")
+                    return []
+                return await resp.json()
+
+    def submit_smiles_and_get_results(self, input, cmd_out, poll_interval=2):
+        return asyncio.run(self._submit_smiles_and_get_results(input, cmd_out, poll_interval))
 
 class PackageInstaller:
     def __init__(self, dir_path, model_id):

@@ -60,10 +60,10 @@ def serve_cmd():
         help="Tracking use case. Options: local, self-service, hosted, test",
     )
     @click.option(
-        "--enable-local-cache/--disable-local-cache", is_flag=True, default=True
+        "--enable-local-cache/--disable-local-cache", is_flag=True, default=False
     )
-    @click.option("--local-cache-only", is_flag=True, default=False)
-    @click.option("--cloud-cache-only", is_flag=True, default=False)
+    @click.option("--local-cache-only", is_flag=False, default=False)
+    @click.option("--cloud-cache-only", is_flag=False, default=False)
     @click.option("--cache-only", is_flag=True, default=False)
     @click.option(
         "--max-cache-memory-frac", "max_memory", type=click.FLOAT, default=None

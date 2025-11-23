@@ -391,7 +391,11 @@ class GenericOutputAdapter(ResponseRefactor):
             for c in self.input_columns:
                 input_data[c] += [r["input"][c]]
             for c in self.output_columns:
-                output_data[c] += [self.output_dtype(r["output"][c])]
+                v = r["output"][c]
+                if v is not None:
+                    output_data[c] += [self.output_dtype(v)]
+                else:
+                    output_data[c] += [None]
         data = []
         columns = self.input_columns + self.output_columns
         dtype = self.output_dtype

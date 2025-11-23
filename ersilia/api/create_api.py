@@ -73,29 +73,51 @@ class Model(object):
         self.session = None
         self.SRV = None
 
-    def fetch(self, verbose=None):
+    def fetch(
+        self,
+        *,
+        overwrite: bool = True,
+        from_dir: str | None = None,
+        from_github: bool = False,
+        from_dockerhub: bool | None = None,
+        version: str = "latest",
+        from_s3: bool = False,
+        from_hosted: bool = False,
+        hosted_url: str | None = None,
+        verbose: bool | None = None,
+        **kwargs,
+    ):
         """
-        Fetches an Ersilia model to run it locally.
+        Fetch an Ersilia model to run it locally.
 
-        This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc...).
-
-        Returns
-        -------
-        Function: The fetch command function to be used by the API.
-        Str: Confirmation message on success or warning message on failure.
-
+        Parameters mirror the CLI:
+        - overwrite: overwrite existing local copy (default: True)
+        - from_dir: fetch from a local directory path
+        - from_github: fetch from GitHub
+        - from_dockerhub: fetch from DockerHub (if None, inferred)
+        - version: version tag (default: "latest")
+        - from_s3: fetch from S3
+        - from_hosted: fetch from a hosted URL
+        - hosted_url: URL to hosted assets (used when from_hosted=True)
+        - verbose: override for verbose mode
+        - **kwargs: passthrough for forward compatibility
         """
+        # infer default: if no source specified, use DockerHub
+        if from_dockerhub is None:
+            from_dockerhub = not any([from_dir, from_github, from_s3, from_hosted])
+
         fetch.fetch(
             model=self.model_id,
-            overwrite=True,
-            from_dir=None,
-            from_github=False,
-            from_dockerhub=True,
-            version="latest",
-            from_s3=False,
-            from_hosted=False,
-            hosted_url=None,
-            verbose_flag=self.verbose_mode or verbose,
+            overwrite=overwrite,
+            from_dir=from_dir,
+            from_github=from_github,
+            from_dockerhub=from_dockerhub,
+            version=version,
+            from_s3=from_s3,
+            from_hosted=from_hosted,
+            hosted_url=hosted_url,
+            verbose_flag=(self.verbose_mode if verbose is None else verbose),
+            **kwargs,
         )
 
     def serve(self, verbose=None):
