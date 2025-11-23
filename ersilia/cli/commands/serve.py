@@ -104,21 +104,19 @@ def serve_cmd():
         sess.register_store_status(read_store, write_store, access, nearest_neighbors)
         store_stat = store_status(read_store, write_store)
         if not is_installed("isaura") and read_store:
-            if not logger.verbosity:
-                echo(
-                    "Isaura is not installed! Please install isaura in your env by running simply \n>> pip install git+https://github.com/ersilia-os/isaura.git.\nTo start all isaura services, run this command >> isaura engine -s.",
-                    fg="red",
-                )
+            echo(
+                "Isaura is not installed! Please install isaura in your env by running simply \n>> pip install git+https://github.com/ersilia-os/isaura.git.\nTo start all isaura services, run this command >> isaura engine -s.",
+                fg="red",
+            )
             logger.error(
                 "Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute >> isaura engine -s. "
             )
             sys.exit(1)
         if write_store and access is None or read_store and access is None:
-            if not logger.verbosity:
-                echo(
-                    "You need to specifiy the access as [public or private] to read/write to store!",
-                    fg="red",
-                )
+            echo(
+                "You need to specifiy the access as [public or private] to read/write to store!",
+                fg="red",
+            )
             logger.error(
                 "You need to specifiy the access as [public or private] to write to store!"
             )

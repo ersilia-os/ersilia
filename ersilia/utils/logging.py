@@ -96,10 +96,10 @@ class Logger(object):
     def __init__(self):
         self.logger = logging.getLogger("ersilia")
         self.logger.setLevel(logging.INFO)
-        # Clear any existing handlers to mimic loguru's .remove()
         self.logger.handlers.clear()
 
         self._console = None
+        self.verbosity = False
         self._file = None
         self._current_file = None
         self.fmt = "%(asctime)s | %(levelname)-8s | %(message)s"
@@ -184,11 +184,11 @@ class Logger(object):
             Whether to enable verbose logging.
         """
         if verbose:
-            self.logger.setLevel(logging.DEBUG)  # <-- add this
+            self.logger.setLevel(logging.DEBUG)
             self._log_to_console()
             self._log_terminal_commands_to_console()
         else:
-            self.logger.setLevel(logging.INFO)  # <-- and this
+            self.logger.setLevel(logging.INFO)
             self._unlog_from_console()
             self._unlog_terminal_commands_from_console()
         self.verbosity = verbose
