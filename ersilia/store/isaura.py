@@ -38,7 +38,6 @@ class IsauraStore:
         current_status = session.current_store_status()
         self.access = current_status[2]
         nn = current_status[-1]
-        print(nn)
         bucket = self.resolve_default_bucket(self.access)
         version = self.latest_version(model_id, bucket)
         self.model_id = model_id

@@ -727,14 +727,15 @@ class SimpleConda(CondaUtils):
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
         run_command(cmd)
-        with open(tmp_log, "r") as f:
-            log_file = f.read()
-        logger.debug(log_file)
-        if "ERROR" in log_file:
-            logger.debug("Error occurred while running: {0}".format(cmd))
-            critical_errors = self._catch_critical_errors_in_conda(log_file)
-            if len(critical_errors) > 0:
-                raise ModelPackageInstallError(cmd)
+        if os.path.exists(tmp_log):
+            with open(tmp_log, "r") as f:
+                log_file = f.read()
+            logger.debug(log_file)
+            if "ERROR" in log_file:
+                logger.debug("Error occurred while running: {0}".format(cmd))
+                critical_errors = self._catch_critical_errors_in_conda(log_file)
+                if len(critical_errors) > 0:
+                    raise ModelPackageInstallError(cmd)
         logger.debug("Activation done")
 
 
@@ -795,10 +796,11 @@ class StandaloneConda(object):
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
         run_command(cmd)
-        with open(tmp_log, "r") as f:
-            log_file = f.read()
-        logger.debug(log_file)
-        if "ERROR" in log_file:
-            logger.debug("Error occurred while running: {0}".format(cmd))
-            # TODO do we catch critical errors here?
+        if os.path.exists(tmp_log):
+            with open(tmp_log, "r") as f:
+                log_file = f.read()
+            logger.debug(log_file)
+            if "ERROR" in log_file:
+                logger.debug("Error occurred while running: {0}".format(cmd))
+                # TODO do we catch critical errors here?
         logger.debug("Activation done")

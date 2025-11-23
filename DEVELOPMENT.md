@@ -74,7 +74,7 @@ After successful installation of ersilia in the user's local computer, the syste
 Folders found in the `$HOME` directory includes:
 
 **Folders**
-- dest/: stores output generated when running a model.
+- dest/: stores output generated when a model.
 - repository/: main directory to cache models files and datasets. This prevent redundant download by storing previously fetched model
 - sessions/: Tracks user session
 - tmp/: stores temporary file during model execution.

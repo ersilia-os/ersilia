@@ -187,5 +187,6 @@ def serve_cmd():
             echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
         else:
             echo("   - Disabled", fg="red")
+        logger.success(f"Model {model} is successfully served!")
 
     return serve

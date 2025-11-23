@@ -8,6 +8,7 @@ import os
 import click
 
 from ..default import SILENCE_FILE
+from ..utils.logging import logger
 from ..utils.session import get_session_dir
 
 
@@ -78,8 +79,7 @@ def echo(text, **styles):
     -------
     None
     """
-    silencer = Silencer()
-    if silencer.is_silence():
+    if logger.verbosity == 1:
         return
     if emoji is not None:
         text = emoji.emojize(text)
