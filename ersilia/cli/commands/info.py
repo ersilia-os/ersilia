@@ -1,6 +1,6 @@
 import json
 
-import click
+import rich_click as click
 
 from ... import ErsiliaModel
 from ...core.session import Session

@@ -1,4 +1,4 @@
-import click
+import rich_click as click
 
 from ... import ModelBase
 from ...hub.content.catalog import ModelCatalog

@@ -480,7 +480,7 @@ class GenericOutputAdapter(ResponseRefactor):
                 json.dump(data, f, indent=4)
         else:
             pass
-        return result
+        return result, df
 
     def adapt(
         self, result: str, output: str, model_id: str = None, api_name: str = None
@@ -504,7 +504,7 @@ class GenericOutputAdapter(ResponseRefactor):
         dict
             The adapted result.
         """
-        adapted_result = self._adapt_generic(result, output, model_id, api_name)
+        adapted_result, _ = self._adapt_generic(result, output, model_id, api_name)
         return adapted_result
 
 

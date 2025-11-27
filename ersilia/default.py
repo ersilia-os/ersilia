@@ -135,6 +135,12 @@ INFERENCE_STORE_API_URL = (
     "https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations"
 )
 API_BASE = "https://hov95ejni7.execute-api.eu-central-1.amazonaws.com/dev/predict"
+# Isaura Buckets
+
+DEFAULT_PUBLIC_BUCKET = ["isaura-public"]
+DEFAULT_PRIVATE_BUCKET = ["isaura-private"]
+ERSILIA_BUCKET = "ersilia"
+
 # EOS conda
 _resolve_script = "conda_env_resolve.py"
 resolve_script = os.path.join(EOS, _resolve_script)

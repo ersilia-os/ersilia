@@ -1,10 +1,11 @@
 import json
+import logging
 import os
-import sys
 import tempfile
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-from loguru import logger
+from rich.logging import RichHandler
 
 from ..default import CURRENT_LOGGING_FILE, LOGGING_FILE, VERBOSE_FILE
 from ..utils.session import get_session_dir
@@ -12,6 +13,30 @@ from ..utils.session import get_session_dir
 ROTATION = "10 MB"
 
 # ruff: noqa: D101, D102, F811
+
+
+def _parse_rotation(rotation_str):
+    """
+    Parse a rotation string like '10 MB' into bytes.
+    """
+    try:
+        number, unit = rotation_str.split()
+        number = float(number)
+        unit = unit.upper()
+        factor = {
+            "B": 1,
+            "KB": 1024,
+            "MB": 1024 * 1024,
+            "GB": 1024 * 1024 * 1024,
+        }.get(unit, 1)
+        return int(number * factor)
+    except Exception:
+        # Fallback: no rotation
+        return 0
+
+
+SUCCESS_LEVEL_NUM = 25
+logging.addLevelName(SUCCESS_LEVEL_NUM, "SUCCESS")
 
 
 def make_temp_dir(prefix):
@@ -69,15 +94,16 @@ class Logger(object):
         return cls._instance
 
     def __init__(self):
-        self.logger = logger
-        self.logger.remove()
+        self.logger = logging.getLogger("ersilia")
+        self.logger.setLevel(logging.INFO)
+        self.logger.handlers.clear()
+
         self._console = None
+        self.verbosity = False
         self._file = None
-        self.fmt = (
-            "<green>{time:HH:mm:ss}</green> | "
-            "<level>{level: <8}</level> | "
-            "<cyan>{message}</cyan>"
-        )
+        self._current_file = None
+        self.fmt = "%(asctime)s | %(levelname)-8s | %(message)s"
+
         self._verbose_file = os.path.join(get_session_dir(), VERBOSE_FILE)
         self._log_to_console()
         self._log_to_file()
@@ -86,23 +112,56 @@ class Logger(object):
 
     def _log_to_file(self):
         logging_file = os.path.join(get_session_dir(), LOGGING_FILE)
-        self._file = self.logger.add(logging_file, format=self.fmt, rotation=ROTATION)
+        if self._file is None and os.path.exists(logging_file):
+            max_bytes = _parse_rotation(ROTATION)
+            if max_bytes > 0:
+                handler = RotatingFileHandler(
+                    logging_file, maxBytes=max_bytes, backupCount=5, mode="w"
+                )
+            else:
+                handler = logging.FileHandler(logging_file, mode="w")
+            handler.setFormatter(logging.Formatter(self.fmt))
+            self.logger.addHandler(handler)
+            self._file = handler
 
     def _log_to_current_file(self):
         session_dir = get_session_dir()
         current_log_file = os.path.join(session_dir, CURRENT_LOGGING_FILE)
-        self._current_file = self.logger.add(
-            current_log_file, format=self.fmt, rotation=ROTATION
-        )
+        if self._current_file is None:
+            Path(current_log_file).parent.mkdir(parents=True, exist_ok=True)
+            max_bytes = _parse_rotation(ROTATION)
+            try:
+                if max_bytes > 0:
+                    handler = RotatingFileHandler(
+                        current_log_file, maxBytes=max_bytes, backupCount=5
+                    )
+                else:
+                    handler = logging.FileHandler(current_log_file)
+            except OSError:
+                return
+            handler.setFormatter(logging.Formatter(self.fmt))
+            self.logger.addHandler(handler)
+            self._current_file = handler
 
     def _log_to_console(self):
         if self._console is None:
-            self._console = self.logger.add(sys.stderr, format=self.fmt)
+            rich_handler = RichHandler(
+                rich_tracebacks=True,
+                markup=True,
+                log_time_format="%H:%M:%S",
+                show_path=False,
+            )
+            formatter = logging.Formatter("%(message)s")
+            rich_handler.setFormatter(formatter)
+            self.logger.addHandler(rich_handler)
+            self._console = rich_handler
 
     def _unlog_from_console(self):
         if self._console is not None:
-            # self.logger.remove(self._console)
-            self.logger.remove()  # TODO: check why console is not found
+            try:
+                self.logger.removeHandler(self._console)
+            except Exception:
+                pass
             self._console = None
 
     def _log_terminal_commands_to_console(self):
@@ -125,9 +184,11 @@ class Logger(object):
             Whether to enable verbose logging.
         """
         if verbose:
+            self.logger.setLevel(logging.DEBUG)
             self._log_to_console()
             self._log_terminal_commands_to_console()
         else:
+            self.logger.setLevel(logging.INFO)
             self._unlog_from_console()
             self._unlog_terminal_commands_from_console()
         self.verbosity = verbose
@@ -196,7 +257,7 @@ class Logger(object):
         text : str
             The message to log.
         """
-        self.logger.success(text)
+        self.logger.log(SUCCESS_LEVEL_NUM, text)
 
 
 logger = Logger()

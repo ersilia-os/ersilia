@@ -6,9 +6,11 @@ import os
 import time
 
 import nest_asyncio
+import pandas as pd
 import requests
 
 from .. import ErsiliaBase
+from ..core.session import Session
 from ..default import (
     DEFAULT_API_NAME,
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
@@ -17,9 +19,7 @@ from ..default import (
 )
 from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
-from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
-from ..utils.echo import echo
+from ..store.isaura import IsauraStore
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -81,6 +81,9 @@ class StandardCSVRunApi(ErsiliaBase):
         self.output_header = self.get_output_header()
 
         self.generic_adapter = GenericOutputAdapter(model_id, self.columns_info)
+        self.isaura_store = IsauraStore()
+        self.session = Session(config_json=config_json)
+        self.write_store = self.session.current_store_status()[1]
 
     def _read_information_file(self):
         try:
@@ -331,8 +334,15 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def _serialize_output(self, result, output, model_id, api_name):
         self.logger.debug("Serializing output with generic adapter")
-        self.generic_adapter._adapt_generic(result, output, model_id, api_name)
+        _, df = self.generic_adapter._adapt_generic(result, output, model_id, api_name)
         self.logger.debug("Output serialized with generic adapter")
+        return df
+
+    def _missing_inputs(self, check_dict, inputs):
+        return [m for m in inputs if not check_dict[m]]
+
+    def _found_inputs(self, check_dict, inputs):
+        return [m for m in inputs if check_dict[m]]
 
     def _post_batch(self, url, input_batch):
         if not input_batch:
@@ -384,11 +394,6 @@ class StandardCSVRunApi(ErsiliaBase):
             Path to the output CSV file if successful, None otherwise.
         """
         input_data = self.serialize_to_json(input)
-        if OutputSource.is_precalculation_enabled(output_source):
-            store = InferenceStoreApi(
-                model_id=self.model_id, output=output, output_source=output_source
-            )
-            return store.get_precalculations(input_data)
 
         url = f"{self.url}/{self.api_name}"
 
@@ -400,16 +405,20 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.info("Waiting for the server to respond...")
         results, meta = self._fetch_result(input_data, url, batch_size)
         self.logger.info("The server has responded")
-        self.logger.info("Standardizing output...")
+        self.logger.info("Standardizing output results...")
         results = self._standardize_output(input_data, results, meta)
         self.logger.debug(f"Results (chunked string): {results}"[:200])
         et = time.perf_counter()
         self.logger.info(f"All batches processed in {et - st:.4f} seconds")
         self.logger.debug("Serializing output...")
-        self._serialize_output(
+        df = self._serialize_output(
             json.dumps(results), output, self.model_id, self.api_name
         )
-        self.logger.debug("Output serialized")
+        if self.write_store:
+            df = pd.DataFrame(
+                data=df.data, columns=["key", "input"] + self.output_header, dtype=str
+            )
+            self.isaura_store.write(df=df)
         self.logger.debug("Checking same row counts")
         matchs = self._same_row_count(input_data, results)
         if not matchs:
@@ -418,48 +427,95 @@ class StandardCSVRunApi(ErsiliaBase):
             )
         ft = time.perf_counter()
         self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")
-        echo(f"Output is being generated within: {ft - st:.5f} seconds")
+        # echo(f"Output is being generated within: {ft - st:.5f} seconds")
         return output
 
+    def _merge_cache_and_api(self, payload, cache_df, missed, api_values):
+        value_cols = [c for c in cache_df.columns if c not in ("key", "input")]
+        cache_map = {}
+        if not cache_df.empty:
+            for _, row in cache_df.iterrows():
+                cache_map[row["input"]] = {col: row[col] for col in value_cols}
+
+        api_map = {}
+        for smi, vals in zip(missed, api_values):
+            if isinstance(vals, dict):
+                api_map[smi] = vals
+            elif isinstance(vals, (list, tuple)):
+                api_map[smi] = {f"value_{j}": v for j, v in enumerate(vals)}
+            else:
+                api_map[smi] = {"value": vals}
+
+        results = []
+        for smi in payload:
+            if smi in cache_map:
+                rec = {"input": smi, **cache_map[smi]}
+            elif smi in api_map:
+                rec = {"input": smi, **api_map[smi]}
+            else:
+                rec = {"input": smi, "value": None}
+            results.append(rec)
+
+        return results
+
     def _fetch_result(self, input_data, url, batch_size):
-        total = len(input_data)
-        overall_results = []
-        meta = None
+        total, meta, missed, found = len(input_data), None, None, None
+        overall_results = [None] * total
 
         for i in range(0, total, batch_size):
             batch_items = input_data[i : i + batch_size]
             payload = [d["input"] for d in batch_items]
+            if IsauraStore.is_installed():
+                check_dict = self.isaura_store.check(payload)
+                missed = self._missing_inputs(check_dict, payload)
+                found = self._found_inputs(check_dict, payload)
+            if found and IsauraStore.is_installed():
+                cache_df = self.isaura_store.read(found)
+            else:
+                cache_df = pd.DataFrame(columns=["key", "input"])
+            api_values = []
+            missed = payload if missed is None else missed
+            if missed:
+                bidx = i // batch_size + 1
+                self.logger.info(f"Running batch {bidx}")
+                st = time.perf_counter()
 
-            bidx = i // batch_size + 1
-            echo(f"Running batch {bidx}")
-            st = time.perf_counter()
+                resp = self._post_batch(url, missed)
 
-            resp = self._post_batch(url, payload)
+                et = time.perf_counter()
+                msg = f"Batch {bidx} response fetched within: {et - st:.4f} seconds"
+                self.logger.info(msg)
+                self.logger.info(msg)
 
-            et = time.perf_counter()
-            msg = f"Batch {bidx} response fetched within: {et - st:.4f} seconds"
-            self.logger.info(msg)
-            echo(msg)
-            try:
-                if isinstance(resp, dict):
-                    data = resp.json()
-                else:
-                    data = resp
-            except ValueError:
-                self.logger.error(f"Batch {bidx} returned non-JSON: {resp.text[:200]}")
-                continue
-            if isinstance(data, list):
-                overall_results.extend(data)
-            elif isinstance(data, dict):
-                if "result" in data:
+                try:
+                    if isinstance(resp, dict):
+                        data = resp.json()
+                    else:
+                        data = resp
+                except ValueError:
+                    self.logger.error(
+                        f"Batch {bidx} returned non-JSON: {getattr(resp, 'text', '')[:200]}"
+                    )
+                    data = None
+
+                if isinstance(data, list):
+                    api_values = data
+                elif isinstance(data, dict) and "result" in data:
                     self.logger.warning("Result is in batch")
-                    overall_results.extend(data["result"])
+                    api_values = data["result"]
                     if "meta" in data:
                         meta = data["meta"]
-                else:
-                    overall_results.append(data)
-            else:
-                self.logger.error(f"Unexpected payload type: {type(data).__name__}")
+                elif data is not None:
+                    api_values = [data] * len(missed)
+
+            batch_results = self._merge_cache_and_api(
+                payload=payload,
+                cache_df=cache_df,
+                missed=missed,
+                api_values=api_values,
+            )
+
+            overall_results[i : i + len(batch_results)] = batch_results
 
         return overall_results, meta
 

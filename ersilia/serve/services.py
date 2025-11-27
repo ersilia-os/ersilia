@@ -1243,16 +1243,15 @@ class PulledDockerImageService(BaseServing):
         )
         containers = self.client.containers.list(all=True)
         for container in containers:
-            self.logger.debug(f"Checking container {container.name}")
             if container.name.startswith(self.model_id):
                 self.logger.debug(
                     "Stopping and removing container {0}".format(container.name)
                 )
                 self._delete_temp_files(container.name)
                 container.stop()
-                self.logger.debug("Container stopped")
+                self.logger.info(f"Container {container.name} stopped")
                 container.remove()
-                self.logger.debug("Container removed")
+                self.logger.info(f"Container {container.name} removed")
 
     @throw_ersilia_exception()
     def _get_apis(self):
@@ -1440,12 +1439,10 @@ class PulledDockerImageService(BaseServing):
             exec_result = container.exec_run(ls_cmd)
             # Check if the command executed successfully
             if exec_result.exit_code == 0:
+                self.logger.info("Deleting all temp directory")
                 list_dirs = exec_result.output.decode("utf-8").split("\n")
                 for f in list_dirs:
                     container.exec_run(rem_cmd.format(f))
-                    self.logger.debug(
-                        f"Deleted temp file {f} from container {container_id}"
-                    )
             else:
                 output = (
                     exec_result.output.decode("utf-8")
