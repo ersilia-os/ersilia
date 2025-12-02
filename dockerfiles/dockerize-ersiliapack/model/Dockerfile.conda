@@ -5,9 +5,9 @@ WORKDIR /root
 COPY ./$MODEL /root/$MODEL
 
 RUN apt-get update && \ 
-    apt-get install -y git && \
+    apt-get install -y git curl && \
     mkdir /root/bundles && ersilia_model_pack --repo_path $MODEL --bundles_repo_path /root/bundles && \
-    apt-get remove --purge -y git && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get remove --purge -y git curl && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN conda create --name baseclone --clone base
 RUN conda install -c conda-forge conda-pack
 RUN conda-pack -n baseclone -o /tmp/env.tar && \
