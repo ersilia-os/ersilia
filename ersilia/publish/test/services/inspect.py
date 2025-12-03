@@ -445,7 +445,6 @@ class ModelInspector:
         if errors:
             logger.debug(f"Errors in Dockerfile install command: {errors}")
         return errors
-
     def _validate_yml(self, yml_content):
         errors = []
         try:
@@ -476,7 +475,9 @@ class ModelInspector:
                     errors.append(f"Missing version for pip package '{pkg}' in {cmd}.")
                     continue
                 ver = cmd[2]
-                if not re.match(rf"^{pkg}=={re.escape(ver)}$", f"{pkg}=={ver}"):
+                escaped_pkg = re.escape(pkg)
+                escaped_ver = re.escape(str(ver))
+                if not re.match(rf"^{escaped_pkg}=={escaped_ver}$", f"{pkg}=={ver}"):
                     errors.append(f"Pip package '{pkg}' in {cmd} is not properly version-pinned.")
 
             elif tool == 'conda':

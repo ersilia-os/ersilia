@@ -284,6 +284,8 @@ class RunnerService:
                         return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
 
                 if all(isinstance(val, (int, float)) for val in bv + ev):
+                    print('#---DEBUG-----')
+                    print(f'Bash value: {bv}  Ersilia value: {ev}')
                     rmse = compute_rmse(bv, ev)
                     _rmse.append(rmse)
 
@@ -433,7 +435,7 @@ class RunnerService:
             self.logger.debug("Output path: {0}".format(output_path))
 
             bash_script = f"""#!/usr/bin/env bash
-                set -Euo pipefail
+                set -Eo pipefail
 
                 log_out="{output_log_path}"
                 log_err="{error_log_path}"
