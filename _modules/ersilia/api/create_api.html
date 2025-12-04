@@ -440,7 +440,19 @@
 
 <div class="viewcode-block" id="Model.serve">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.serve">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">track</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">tracking_use_case</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;local&quot;</span><span class="p">,</span>
+        <span class="n">enable_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">read_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">write_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">access</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nearest_neighbors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">max_cache_memory_frac</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose_flag</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serves a specified model as an API.</span>
 
@@ -450,10 +462,11 @@
 <span class="sd">            port: The port to use when creating a model server. If unspecified, Ersilia looks for empty ports to use on the user&#39;s system.</span>
 <span class="sd">            track: Whether the model&#39;s runs should be tracked to monitor model and system performance.</span>
 <span class="sd">            tracking_use_case: If --track is true, this command allows specification of the tracking use case. Current options are: local, hosted, self-service and test.</span>
-<span class="sd">            enable_local_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.</span>
-<span class="sd">            local_cache_only: Specifies to fetch stored model results from local cache. The local caching system is powered by Redis.</span>
-<span class="sd">            cloud_cache_only: Specifies to fetch stored model results from cloud cache. This allows to fetch model precalculated results in csv file in Ersilia model output format.</span>
-<span class="sd">            cache_only: Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.</span>
+<span class="sd">            enable_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.</span>
+<span class="sd">            read_store: Specifies to read from isaura store</span>
+<span class="sd">            write_store: Specifies to write from isaura store</span>
+<span class="sd">            access: Specifies access level to write to isaura store</span>
+<span class="sd">            nearest_neighbors: Specifies nearest neighbor search when reading from isaura store</span>
 <span class="sd">            max_cache_memory_frac: Sets the maximum fraction of memory to use by Redis for caching. Recommended value 0.2-0.7.</span>
 
 <span class="sd">        Returns</span>
@@ -468,15 +481,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SRV</span> <span class="o">=</span> <span class="n">serve</span><span class="o">.</span><span class="n">serve</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
-            <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">track</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">tracking_use_case</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
-            <span class="n">enable_local_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">local_cache_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">cloud_cache_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">cache_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">max_cache_memory_frac</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">verbose_flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span> <span class="ow">or</span> <span class="n">verbose</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+            <span class="n">track</span><span class="o">=</span><span class="n">track</span><span class="p">,</span>
+            <span class="n">tracking_use_case</span><span class="o">=</span><span class="n">tracking_use_case</span><span class="p">,</span>
+            <span class="n">enable_cache</span><span class="o">=</span><span class="n">enable_cache</span><span class="p">,</span>
+            <span class="n">read_store</span><span class="o">=</span><span class="n">read_store</span><span class="p">,</span>
+            <span class="n">write_store</span><span class="o">=</span><span class="n">write_store</span><span class="p">,</span>
+            <span class="n">access</span><span class="o">=</span><span class="n">access</span><span class="p">,</span>
+            <span class="n">nearest_neighbors</span><span class="o">=</span><span class="n">nearest_neighbors</span><span class="p">,</span>
+            <span class="n">max_cache_memory_frac</span><span class="o">=</span><span class="n">max_cache_memory_frac</span><span class="p">,</span>
+            <span class="n">verbose_flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span> <span class="ow">or</span> <span class="n">verbose_flag</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 

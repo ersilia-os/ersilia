@@ -313,30 +313,35 @@
           <h1>Source code for ersilia.cli.commands</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="kn">import</span> <span class="n">RichCommand</span><span class="p">,</span> <span class="n">RichGroup</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">__version__</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Silencer</span>
 
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">USE_RICH_MARKUP</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">SHOW_ARGUMENTS</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">COLOR_SYSTEM</span> <span class="o">=</span> <span class="s2">&quot;truecolor&quot;</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_OPTION</span> <span class="o">=</span> <span class="s2">&quot;bold magenta&quot;</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_COMMAND</span> <span class="o">=</span> <span class="s2">&quot;bold green&quot;</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_METAVAR</span> <span class="o">=</span> <span class="s2">&quot;italic yellow&quot;</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_SWITCH</span> <span class="o">=</span> <span class="s2">&quot;underline cyan&quot;</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_USAGE</span> <span class="o">=</span> <span class="s2">&quot;bold blue&quot;</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_OPTION_DEFAULT</span> <span class="o">=</span> <span class="s2">&quot;dim italic&quot;</span>
+
+<span class="c1"># ruff: noqa: D101, D102</span>
+
 
 <div class="viewcode-block" id="ErsiliaCommandGroup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaCommandGroup</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Command group for Ersilia CLI commands.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
+<span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaCommandGroup</span><span class="p">(</span><span class="n">RichGroup</span><span class="p">):</span>
     <span class="n">NUMBER_OF_COMMON_PARAMS</span> <span class="o">=</span> <span class="mi">2</span>
 
 <div class="viewcode-block" id="ErsiliaCommandGroup.bentoml_common_params">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.bentoml_common_params">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">bentoml_common_params</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add common parameters to the command.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
             <span class="s2">&quot;-q&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--quiet&quot;</span><span class="p">,</span>
@@ -354,19 +359,17 @@
 <div class="viewcode-block" id="ErsiliaCommandGroup.command">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.command">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Register a new command with common parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;cls&quot;</span><span class="p">,</span> <span class="n">RichCommand</span><span class="p">)</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
             <span class="n">func</span> <span class="o">=</span> <span class="n">ErsiliaCommandGroup</span><span class="o">.</span><span class="n">bentoml_common_params</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="n">func</span><span class="o">.</span><span class="n">__click_params__</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">func</span><span class="o">.</span><span class="n">__click_params__</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_COMMON_PARAMS</span> <span class="p">:]</span>
                 <span class="o">+</span> <span class="n">func</span><span class="o">.</span><span class="n">__click_params__</span><span class="p">[:</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_COMMON_PARAMS</span><span class="p">]</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">func</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">RichGroup</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)(</span><span class="n">func</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">wrapper</span></div>
+        <span class="k">return</span> <span class="n">decorator</span></div>
 </div>
 
 
@@ -388,13 +391,11 @@
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not echo any progress message.&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">ersilia_cli</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">silent</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    🦠 Welcome to Ersilia! 💊</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
     <span class="n">silencer</span> <span class="o">=</span> <span class="n">Silencer</span><span class="p">()</span>
     <span class="n">silencer</span><span class="o">.</span><span class="n">speak</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">silent</span><span class="p">:</span>

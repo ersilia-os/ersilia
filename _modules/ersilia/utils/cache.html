@@ -378,10 +378,11 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">DEFAULT_REDIS_MEMORY_USAGE_FRACTION</span> <span class="o">*</span> <span class="n">total</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_configure_redis_memory_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">client</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">REDIS_HOST</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">REDIS_PORT</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">client</span><span class="o">.</span><span class="n">ping</span><span class="p">():</span>
-            <span class="n">client</span><span class="o">.</span><span class="n">config_set</span><span class="p">(</span><span class="s2">&quot;maxmemory&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_max_memory_limit</span><span class="p">())</span>
-            <span class="n">client</span><span class="o">.</span><span class="n">config_set</span><span class="p">(</span><span class="s2">&quot;maxmemory-policy&quot;</span><span class="p">,</span> <span class="s2">&quot;allkeys-lru&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="n">client</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">REDIS_HOST</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">REDIS_PORT</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">client</span><span class="o">.</span><span class="n">ping</span><span class="p">():</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">config_set</span><span class="p">(</span><span class="s2">&quot;maxmemory&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_max_memory_limit</span><span class="p">())</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">config_set</span><span class="p">(</span><span class="s2">&quot;maxmemory-policy&quot;</span><span class="p">,</span> <span class="s2">&quot;allkeys-lru&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SetupRedis.ensure_redis_running">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cache.SetupRedis.ensure_redis_running">[docs]</a>

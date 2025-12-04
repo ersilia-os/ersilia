@@ -364,6 +364,31 @@
             <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span></div>
 
 
+<div class="viewcode-block" id="Session.current_store_status">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_store_status">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">current_store_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current model ID from the session.</span>
+
+<span class="sd">        This method retrieves the current model ID from the session data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str or None</span>
+<span class="sd">            The current model ID, or None if no session data is available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;read_store&quot;</span><span class="p">],</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;write_store&quot;</span><span class="p">],</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;store_access&quot;</span><span class="p">],</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;nearest_neighbors&quot;</span><span class="p">],</span>
+            <span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Session.current_identifier">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_identifier">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">current_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -462,6 +487,30 @@
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="Session.register_store_status">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_store_status">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register_store_status</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">,</span> <span class="n">store_access</span><span class="p">,</span> <span class="n">nearest_neighbors</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the output source in the session.</span>
+
+<span class="sd">        This method updates the session data with the provided output source.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        output_source : str</span>
+<span class="sd">            The output source to register.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;read_store&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_store</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;write_store&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">write_store</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;store_access&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">store_access</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;nearest_neighbors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nearest_neighbors</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="Session.register_tracking_use_case">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_tracking_use_case">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">register_tracking_use_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_case</span><span class="p">):</span>
@@ -538,12 +587,14 @@
 <span class="sd">            Whether to track runs.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Opening session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">session</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
             <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()),</span>
             <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>
             <span class="s2">&quot;track_runs&quot;</span><span class="p">:</span> <span class="n">track_runs</span><span class="p">,</span>
         <span class="p">}</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">session</span> <span class="o">|</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">session</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 

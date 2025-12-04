@@ -408,18 +408,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">input_csv</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">output_csv</span><span class="p">)</span>
         <span class="n">commands</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;ersilia serve </span><span class="si">{0}</span><span class="s2"> --disable-local-cache&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">&quot;ersilia serve </span><span class="si">{0}</span><span class="s2"> --disable-cache&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
             <span class="s2">&quot;ersilia example -n 3 -f </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_csv</span><span class="p">),</span>
-            <span class="s2">&quot;ersilia -v run -i </span><span class="si">{0}</span><span class="s2"> -o </span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2"> 2&gt;&amp;1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">&quot;ersilia run -i </span><span class="si">{0}</span><span class="s2"> -o </span><span class="si">{1}</span><span class="s2"> &gt; </span><span class="si">{2}</span><span class="s2"> 2&gt;&amp;1&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">input_csv</span><span class="p">,</span> <span class="n">output_csv</span><span class="p">,</span> <span class="n">run_log</span>
             <span class="p">),</span>
             <span class="s2">&quot;ersilia close&quot;</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="n">cmd_output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;ersilia --help&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">cmd_output</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;Welcome to Ersilia&quot;</span> <span class="ow">in</span> <span class="n">cmd_output</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No need to use Conda!&quot;</span><span class="p">)</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot; &amp;&amp; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">&quot;Performing smoke testing the model [serve, run and close] using standard example.&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+                <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Will run this through Conda&quot;</span><span class="p">)</span>
@@ -439,7 +443,11 @@
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">run_log</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">run_log</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_fetched_successfully</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;The model is getting deleted due to it produced all empty values!&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">&quot;The model is getting deleted due to it produced all empty values!&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="n">run_command</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ersilia -v delete </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 

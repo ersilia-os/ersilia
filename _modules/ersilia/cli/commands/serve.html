@@ -311,15 +311,29 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands.serve</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputSource</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupRedis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_model_session</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_serve_summary</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelNotFound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
+
+
+<div class="viewcode-block" id="is_installed">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.serve.is_installed">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_installed</span><span class="p">(</span><span class="n">package_name</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">__import__</span><span class="p">(</span><span class="n">package_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
 
 
 <div class="viewcode-block" id="serve_cmd">
@@ -346,7 +360,15 @@
 <span class="sd">        $ ersilia serve &lt;model_id&gt; --track</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Example usage: ersilia serve {MODEL}</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">store_status</span><span class="p">(</span><span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">write_store</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Enabled: Read Only&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="n">write_store</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Enabled: Writter Only&quot;</span>
+        <span class="k">if</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="n">write_store</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Enabled: Reader &amp; Writter &quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Disabled&quot;</span>
+
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
@@ -356,7 +378,6 @@
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preferred port to use (integer)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="c1"># Add the new flag for tracking the serve session</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--track&quot;</span><span class="p">,</span>
@@ -374,12 +395,13 @@
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Tracking use case. Options: local, self-service, hosted, test&quot;</span><span class="p">,</span>
     <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--enable-cache/--disable-cache&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--read-store&quot;</span><span class="p">,</span> <span class="s2">&quot;-rs&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--write-store&quot;</span><span class="p">,</span> <span class="s2">&quot;-ws&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--access&quot;</span><span class="p">,</span> <span class="s2">&quot;-a&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--enable-local-cache/--disable-local-cache&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="s2">&quot;--nearest-neigbors&quot;</span><span class="p">,</span> <span class="s2">&quot;-nn&quot;</span><span class="p">,</span> <span class="s2">&quot;nearest_neighbors&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--local-cache-only&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--cloud-cache-only&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--cache-only&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--max-cache-memory-frac&quot;</span><span class="p">,</span> <span class="s2">&quot;max_memory&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">)</span>
@@ -388,33 +410,46 @@
         <span class="n">port</span><span class="p">,</span>
         <span class="n">track</span><span class="p">,</span>
         <span class="n">tracking_use_case</span><span class="p">,</span>
-        <span class="n">enable_local_cache</span><span class="p">,</span>
-        <span class="n">local_cache_only</span><span class="p">,</span>
-        <span class="n">cloud_cache_only</span><span class="p">,</span>
-        <span class="n">cache_only</span><span class="p">,</span>
+        <span class="n">enable_cache</span><span class="p">,</span>
+        <span class="n">read_store</span><span class="p">,</span>
+        <span class="n">write_store</span><span class="p">,</span>
+        <span class="n">access</span><span class="p">,</span>
+        <span class="n">nearest_neighbors</span><span class="p">,</span>
         <span class="n">max_memory</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="n">output_source</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Disabled&quot;</span>
-        <span class="k">if</span> <span class="n">local_cache_only</span><span class="p">:</span>
-            <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span>
-            <span class="n">enable_local_cache</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Local only&quot;</span>
-        <span class="k">if</span> <span class="n">cloud_cache_only</span><span class="p">:</span>
-            <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">CLOUD_ONLY</span>
-            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Cloud only&quot;</span>
-        <span class="k">if</span> <span class="n">cache_only</span><span class="p">:</span>
-            <span class="n">output_source</span> <span class="o">=</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">CACHE_ONLY</span>
-            <span class="n">enable_local_cache</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">cache_status</span> <span class="o">=</span> <span class="s2">&quot;Hybrid (local &amp; cloud)&quot;</span>
+        <span class="n">sess</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">sess</span><span class="o">.</span><span class="n">register_store_status</span><span class="p">(</span><span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">,</span> <span class="n">access</span><span class="p">,</span> <span class="n">nearest_neighbors</span><span class="p">)</span>
+        <span class="n">store_stat</span> <span class="o">=</span> <span class="n">store_status</span><span class="p">(</span><span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_installed</span><span class="p">(</span><span class="s2">&quot;isaura&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">read_store</span> <span class="ow">or</span> <span class="n">write_store</span><span class="p">):</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">&quot;Isaura is not installed! Please install isaura in your env by running simply </span><span class="se">\n</span><span class="s2">&gt;&gt; pip install git+https://github.com/ersilia-os/isaura.git.</span><span class="se">\n</span><span class="s2">To start all isaura services, run this command &gt;&gt; isaura engine -s.&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute &gt;&gt; isaura engine -s. &quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">write_store</span> <span class="ow">and</span> <span class="n">access</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="s2">&quot;You need to specifiy the access as [public or private] to write to store!&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You need to specifiy the access as [public or private] to write to store!&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span>
-            <span class="n">output_source</span><span class="o">=</span><span class="n">output_source</span><span class="p">,</span>
+            <span class="n">output_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
-            <span class="n">cache</span><span class="o">=</span><span class="n">enable_local_cache</span><span class="p">,</span>
+            <span class="n">cache</span><span class="o">=</span><span class="n">enable_cache</span><span class="p">,</span>
             <span class="n">maxmemory</span><span class="o">=</span><span class="n">max_memory</span><span class="p">,</span>
+            <span class="n">read_store</span><span class="o">=</span><span class="n">read_store</span><span class="p">,</span>
+            <span class="n">write_store</span><span class="o">=</span><span class="n">write_store</span><span class="p">,</span>
+            <span class="n">access</span><span class="o">=</span><span class="n">access</span><span class="p">,</span>
+            <span class="n">nearest_neighbors</span><span class="o">=</span><span class="n">nearest_neighbors</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">redis_setup</span> <span class="o">=</span> <span class="n">SetupRedis</span><span class="p">(</span><span class="n">enable_local_cache</span><span class="p">,</span> <span class="n">max_memory</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
             <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
 
@@ -429,44 +464,22 @@
             <span class="k">return</span>
 
         <span class="n">register_model_session</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;:rocket: Serving model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
+
+        <span class="n">print_serve_summary</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">slug</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">pid</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span>
+            <span class="n">srv</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">scl</span><span class="p">,</span>
+            <span class="n">session_dir</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">,</span>
+            <span class="n">apis</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">get_apis</span><span class="p">(),</span>
+            <span class="n">store_stat</span><span class="o">=</span><span class="n">store_stat</span><span class="p">,</span>
+            <span class="n">enable_cache</span><span class="o">=</span><span class="n">enable_cache</span><span class="p">,</span>
+            <span class="n">tracking_enabled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">track</span><span class="p">),</span>
+            <span class="n">tracking_use_case</span><span class="o">=</span><span class="n">tracking_use_case</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   URL: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">url</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;-1&quot;</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   PID: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   SRV: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">scl</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   Session: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:backhand_index_pointing_right: Run model:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - run&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">apis</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">apis</span> <span class="o">!=</span> <span class="p">[</span><span class="s2">&quot;run&quot;</span><span class="p">]:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   These APIs are also valid:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">api</span> <span class="ow">in</span> <span class="n">apis</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">api</span> <span class="o">!=</span> <span class="s2">&quot;run&quot;</span><span class="p">:</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">api</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:person_tipping_hand: Information:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - info&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;🔄 Cache fetching mode:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - </span><span class="si">{</span><span class="n">cache_status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">cache_status</span> <span class="o">==</span> <span class="s2">&quot;Disabled&quot;</span> <span class="k">else</span> <span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;   - </span><span class="si">{</span><span class="n">cache_status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
-        <span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:floppy_disk: Local cache:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - Enabled&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">redis_setup</span><span class="o">.</span><span class="n">_is_amenable</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;   - Disabled&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
-        <span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:chart_increasing: Tracking:&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">track</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - Enabled (</span><span class="si">{0}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tracking_use_case</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;   - Disabled&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> is successfully served!&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">serve</span></div>
 

@@ -319,7 +319,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">timeit</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_timer</span> <span class="k">as</span> <span class="n">timer</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span><span class="p">,</span> <span class="n">spinner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">DONE_TAG</span><span class="p">,</span> <span class="n">STATUS_FILE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.actions.check</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelChecker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.actions.content</span><span class="w"> </span><span class="kn">import</span> <span class="n">CardGetter</span>
@@ -411,19 +411,22 @@
         <span class="n">mg</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_pack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Packing the FastAPI&quot;</span><span class="p">)</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPacker</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
         <span class="p">)</span>
-        <span class="n">mp</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+        <span class="n">spinner</span><span class="p">(</span>
+            <span class="s2">&quot;Packing the model using FastAPI. This process may take some time...&quot;</span><span class="p">,</span>
+            <span class="n">mp</span><span class="o">.</span><span class="n">pack</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Model is packed using FastAPI successfully&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Registering all model information started&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Getting model card of the model.&quot;</span><span class="p">)</span>
         <span class="n">cg</span> <span class="o">=</span> <span class="n">CardGetter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">cg</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Checking that the autoservice works.&quot;</span><span class="p">)</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelChecker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">mc</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
@@ -438,7 +441,7 @@
         <span class="n">mi</span><span class="o">.</span><span class="n">inform</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Register the model based on its source.&quot;</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Finalizing fetching. Almost there!&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">done</span> <span class="o">=</span> <span class="p">{</span><span class="n">DONE_TAG</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
         <span class="n">status_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">status_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -450,7 +453,6 @@
         <span class="n">start</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_check</span><span class="p">()</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Checking setup requirements for the model to be installed and run&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pack</span><span class="p">()</span>
@@ -487,7 +489,8 @@
         <span class="n">tr</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">()</span></div>
+        <span class="n">ifa</span> <span class="o">=</span> <span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;Checking the model installability&quot;</span><span class="p">,</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ifa</span></div>
 
 
 <div class="viewcode-block" id="ModelFetcherFromFastAPI.fetch">

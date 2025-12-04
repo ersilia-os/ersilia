@@ -366,6 +366,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.cli.commands.html#module-ersilia.cli.commands.serve">ersilia.cli.commands.serve module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.cli.commands.html#ersilia.cli.commands.serve.is_installed"><code class="docutils literal notranslate"><span class="pre">is_installed()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.cli.commands.html#ersilia.cli.commands.serve.serve_cmd"><code class="docutils literal notranslate"><span class="pre">serve_cmd()</span></code></a></li>
 </ul>
 </li>
@@ -579,20 +580,13 @@ and dynamically imports and executes various CLI commands based on the user’s 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.echo.echo">
-<span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.echo" title="Link to this definition">¶</a></dt>
-<dd><p>Prints styled text to the CLI, optionally with emojis, unless silenced.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<em>str</em>) – The text to be printed.</p></li>
-<li><p><strong>**styles</strong> (<em>dict</em>) – Additional styling options for the text.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.echo" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.echo.spinner">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.echo.</span></span><span class="sig-name descname"><span class="pre">spinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#spinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo.spinner" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-ersilia.cli.messages">
@@ -662,20 +656,13 @@ and dynamically imports and executes various CLI commands based on the user’s 
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.cli" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.echo">
-<span class="sig-prename descclassname"><span class="pre">ersilia.cli.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo" title="Link to this definition">¶</a></dt>
-<dd><p>Prints styled text to the CLI, optionally with emojis, unless silenced.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<em>str</em>) – The text to be printed.</p></li>
-<li><p><strong>**styles</strong> (<em>dict</em>) – Additional styling options for the text.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.echo" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.spinner">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.</span></span><span class="sig-name descname"><span class="pre">spinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/echo.html#spinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.spinner" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </section>
 </section>
@@ -775,6 +762,7 @@ and dynamically imports and executes various CLI commands based on the user’s 
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.cli.echo.echo"><code class="docutils literal notranslate"><span class="pre">echo()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.echo.spinner"><code class="docutils literal notranslate"><span class="pre">spinner()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.cli.messages">ersilia.cli.messages module</a><ul>
@@ -794,6 +782,7 @@ and dynamically imports and executes various CLI commands based on the user’s 
 </li>
 <li><a class="reference internal" href="#module-ersilia.cli">Module contents</a><ul>
 <li><a class="reference internal" href="#ersilia.cli.echo"><code class="docutils literal notranslate"><span class="pre">echo()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.spinner"><code class="docutils literal notranslate"><span class="pre">spinner()</span></code></a></li>
 </ul>
 </li>
 </ul>

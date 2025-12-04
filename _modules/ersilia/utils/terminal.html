@@ -319,6 +319,11 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich</span><span class="w"> </span><span class="kn">import</span> <span class="n">box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.panel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">inputimeout</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeoutOccurred</span><span class="p">,</span> <span class="n">inputimeout</span>
 <span class="k">except</span><span class="p">:</span>
@@ -328,6 +333,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">VERBOSE_FILE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_session_dir</span>
+
+<span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="is_quiet">
@@ -355,7 +362,7 @@
 
 <div class="viewcode-block" id="run_command">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.run_command">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run a shell command and return a named tuple with stdout, stderr, and return code.</span>
 
@@ -500,6 +507,75 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">is_quoted_list</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^([&#39;</span><span class="se">\&quot;</span><span class="s2">])\[.*\]\1$&quot;</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="print_serve_summary">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.terminal.print_serve_summary">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_serve_summary</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="p">,</span>
+    <span class="n">slug</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">,</span>
+    <span class="n">pid</span><span class="p">,</span>
+    <span class="n">srv</span><span class="p">,</span>
+    <span class="n">session_dir</span><span class="p">,</span>
+    <span class="n">apis</span><span class="p">,</span>
+    <span class="n">store_stat</span><span class="p">,</span>
+    <span class="n">enable_cache</span><span class="p">,</span>
+    <span class="n">tracking_enabled</span><span class="p">,</span>
+    <span class="n">tracking_use_case</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print a rich summary table for a served model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+        <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span>
+        <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">pad_edge</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Model&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[bold]</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">[/bold] ([dim]</span><span class="si">{</span><span class="n">slug</span><span class="si">}</span><span class="s2">[/dim])&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;URL&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[cyan]</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">[/cyan]&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;-1&quot;</span><span class="p">:</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;PID&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[yellow]</span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2">[/yellow]&quot;</span><span class="p">)</span>
+
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Service&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[yellow]</span><span class="si">{</span><span class="n">srv</span><span class="si">}</span><span class="s2">[/yellow]&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Session&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[yellow]</span><span class="si">{</span><span class="n">session_dir</span><span class="si">}</span><span class="s2">[/yellow]&quot;</span><span class="p">)</span>
+
+    <span class="n">all_apis</span> <span class="o">=</span> <span class="n">apis</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="s2">&quot;run&quot;</span> <span class="ow">in</span> <span class="n">all_apis</span><span class="p">:</span>
+        <span class="n">all_apis</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;run&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">all_apis</span> <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="s2">&quot;run&quot;</span><span class="p">]</span>
+    <span class="n">apis_display</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_apis</span><span class="p">)</span> <span class="k">if</span> <span class="n">all_apis</span> <span class="k">else</span> <span class="s2">&quot;run&quot;</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;APIs&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[cyan]</span><span class="si">{</span><span class="n">apis_display</span><span class="si">}</span><span class="s2">[/cyan]&quot;</span><span class="p">)</span>
+
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Info&quot;</span><span class="p">,</span> <span class="s2">&quot;[cyan]info[/cyan]&quot;</span><span class="p">)</span>
+
+    <span class="n">store_style</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span> <span class="k">if</span> <span class="n">store_stat</span> <span class="o">==</span> <span class="s2">&quot;Disabled&quot;</span> <span class="k">else</span> <span class="s2">&quot;green&quot;</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Isaura Store&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">store_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">store_stat</span><span class="si">}</span><span class="s2">[/</span><span class="si">{</span><span class="n">store_style</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+    <span class="n">cache_text</span> <span class="o">=</span> <span class="s2">&quot;Enabled&quot;</span> <span class="k">if</span> <span class="n">enable_cache</span> <span class="k">else</span> <span class="s2">&quot;Disabled&quot;</span>
+    <span class="n">cache_style</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span> <span class="k">if</span> <span class="n">enable_cache</span> <span class="k">else</span> <span class="s2">&quot;red&quot;</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Local cache&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">cache_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">cache_text</span><span class="si">}</span><span class="s2">[/</span><span class="si">{</span><span class="n">cache_style</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tracking_enabled</span><span class="p">:</span>
+        <span class="n">tracking_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Enabled (</span><span class="si">{</span><span class="n">tracking_use_case</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="n">tracking_style</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tracking_text</span> <span class="o">=</span> <span class="s2">&quot;Disabled&quot;</span>
+        <span class="n">tracking_style</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Tracking&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">tracking_style</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">tracking_text</span><span class="si">}</span><span class="s2">[/</span><span class="si">{</span><span class="n">tracking_style</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+
+    <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;[bold green]Model served[/bold green]&quot;</span><span class="p">,</span>
+        <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">()</span></div>
 
 </pre></div>
         </article>

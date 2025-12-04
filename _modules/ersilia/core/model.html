@@ -342,7 +342,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputSource</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.csvfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">CsvDataLoader</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">spinner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.api_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiSpecifiedOutputError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.tracking_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrackingNotSupportedError</span>
@@ -440,6 +440,10 @@
         <span class="n">preferred_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">maxmemory</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">read_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">write_store</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">access</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nearest_neighbors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="n">credentials_json</span>
@@ -465,14 +469,16 @@
         <span class="p">],</span> <span class="s2">&quot;Wrong service class&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_store</span> <span class="o">=</span> <span class="n">read_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span> <span class="o">=</span> <span class="n">write_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">access</span> <span class="o">=</span> <span class="n">access</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nearest_neighbors</span> <span class="o">=</span> <span class="n">nearest_neighbors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service_class</span> <span class="o">=</span> <span class="n">service_class</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;The identifier </span><span class="si">{0}</span><span class="s2"> is not valid. Please visit the Ersilia Model Hub for valid identifiers&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">model</span>
-            <span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span><span class="p">,</span> <span class="s2">&quot;The identifier </span><span class="si">{0}</span><span class="s2"> is not valid. Please visit the Ersilia Model Hub for valid identifiers&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">model</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
@@ -614,9 +620,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">),</span> <span class="p">(</span>
-            <span class="s2">&quot;Process ID file does not exist. Please serve the model first!&quot;</span>
-        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span>
+            <span class="n">tmp_file</span>
+        <span class="p">),</span> <span class="s2">&quot;Process ID file does not exist. Please serve the model first!&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">url</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
@@ -626,9 +632,9 @@
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">api_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">api_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">api_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;More than one API found, please specificy api_name&quot;</span>
-            <span class="p">)</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">api_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="p">),</span> <span class="s2">&quot;More than one API found, please specificy api_name&quot;</span>
             <span class="n">api_name</span> <span class="o">=</span> <span class="n">api_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
@@ -662,9 +668,9 @@
 <span class="sd">            The result of each API call.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;Something went wrong. Please contact us at hello@ersila.io&quot;</span>
-            <span class="p">)</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">),</span> <span class="s2">&quot;Something went wrong. Please contact us at hello@ersila.io&quot;</span>
             <span class="k">yield</span> <span class="n">result</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_api_runner_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">:</span> <span class="n">Api</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -1017,17 +1023,20 @@
                     <span class="n">use_case</span><span class="o">=</span><span class="n">track_runs</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;Closing existing sessions of a model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">track_runs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_service_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_output_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_store_status</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_store</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">access</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_neighbors</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_tracking_use_case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tracking_use_case</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">pid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done with basic session registration&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with basic session registration&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ErsiliaModel.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.close">[docs]</a>
@@ -1039,12 +1048,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Closing session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Stopping service&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service stopped&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Closing session&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Session closed&quot;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Session closed&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ErsiliaModel.get_apis">
@@ -1138,7 +1144,6 @@
                 <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">use_case</span><span class="o">=</span><span class="n">use_case</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting runner&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Starting runner&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying standard API&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_run</span><span class="p">(</span>

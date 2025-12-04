@@ -327,6 +327,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupRedis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span><span class="p">,</span> <span class="n">spinner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Api</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.services</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CondaEnvironmentService</span><span class="p">,</span>
@@ -442,6 +443,10 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="n">s</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Using stored service backend &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span><span class="si">}</span><span class="s2">&#39; for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="s2">&quot;No service class file exists in </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">service_class_file</span><span class="p">)</span>
@@ -458,6 +463,10 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: system&quot;</span><span class="p">)</span>
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;system&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;system&quot;</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Selected service backend &#39;system&#39; for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="k">elif</span> <span class="n">VenvEnvironmentService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
@@ -469,6 +478,10 @@
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;venv&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: venv&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;venv&quot;</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Selected service backend &#39;venv&#39; for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="k">elif</span> <span class="n">CondaEnvironmentService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
@@ -480,6 +493,10 @@
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;conda&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: conda&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Selected service backend &#39;conda&#39; for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="k">elif</span> <span class="n">DockerImageService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
@@ -491,6 +508,10 @@
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;docker&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: docker&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Selected service backend &#39;docker&#39; for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="k">elif</span> <span class="n">PulledDockerImageService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
@@ -502,6 +523,10 @@
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;pulled_docker&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: pulled_docker&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;pulled_docker&quot;</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Selected service backend &#39;pulled_docker&#39; for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="k">elif</span> <span class="n">HostedService</span><span class="p">(</span>
                         <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span>
                     <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
@@ -511,12 +536,21 @@
                         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;hosted&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: hosted&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;hosted&quot;</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Selected service backend &#39;hosted&#39; for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Service class: dummy&quot;</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">DummyService</span><span class="p">(</span>
                             <span class="n">model_id</span><span class="p">,</span>
                             <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
                             <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">&quot;dummy&quot;</span>
+                        <span class="n">echo</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;No concrete backend available, using &#39;dummy&#39; service for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
                         <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Service class provided&quot;</span><span class="p">)</span>
@@ -532,6 +566,10 @@
                     <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
                     <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
                     <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Using provided service backend &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span><span class="si">}</span><span class="s2">&#39; for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="kc">None</span>
@@ -749,17 +787,16 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Serve the application.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clean_before_serving</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clean_temp_dir</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
+        <span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;Cleaning existing api processes&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean_before_serving</span><span class="p">)</span>
+        <span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;Cleaning existing temporary directories&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clean_temp_dir</span><span class="p">)</span>
+        <span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;Closing existing session for the model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+        <span class="n">spinner</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting service for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">serve</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Setting up Redis&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup_redis</span><span class="o">.</span><span class="n">ensure_redis_running</span><span class="p">()</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> </span><span class="si">{1}{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">))</span></div>
 
-        <span class="c1"># setting up the Redis container</span>
 
 <div class="viewcode-block" id="AutoService.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.autoservice.AutoService.close">[docs]</a>
@@ -776,7 +813,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">clean_docker_containers</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">except</span><span class="p">:</span>  <span class="c1"># TODO: capture the error</span>
+        <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span></div>
 
 

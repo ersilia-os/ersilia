@@ -366,10 +366,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model_id_or_slug</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
     <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
-    <span class="n">echo</span><span class="p">(</span>
-        <span class="s2">&quot;:down_arrow:  Fetching model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">),</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Fetching model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">))</span>
     <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span>
         <span class="n">repo_path</span><span class="o">=</span><span class="n">from_dir</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
@@ -387,6 +384,7 @@
         <span class="n">echo</span><span class="p">(</span>
             <span class="s2">&quot;:thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> fetched successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span>
         <span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span>
@@ -395,11 +393,13 @@
         <span class="n">echo</span><span class="p">(</span>
             <span class="s2">&quot;:thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> is already fetched successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;:thumbs_down: Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed to fetch! </span><span class="si">{</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span></div>
 
