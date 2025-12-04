@@ -220,11 +220,9 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The serialized JSON data.
         """
-        echo("Batch encoding input", fg="cyan")
         data_list = self.get_list_from_csv(input_data)
         data_list = [d for d in data_list]
         result = await self.encoder.encode_batch(data_list)
-        echo("Batch encoding complete", fg="green")
         return result
 
     def get_list_from_csv(self, input_data):
@@ -301,7 +299,6 @@ class StandardCSVRunApi(ErsiliaBase):
         return True
 
     def _serialize_output(self, result, output, model_id, api_name):
-        echo("Serializing output with generic adapter", fg="cyan")
         _, df = self.generic_adapter._adapt_generic(result, output, model_id, api_name)
         echo("Output serialization complete", fg="green")
         return df
@@ -359,12 +356,11 @@ class StandardCSVRunApi(ErsiliaBase):
         results, meta = self._fetch_result(input_data, url, batch_size)
         echo("Server response received", fg="green")
 
-        echo("Standardizing output", fg="cyan")
         results = self._standardize_output(input_data, results, meta)
         et = time.perf_counter()
         echo(f"All batches processed in {et - st:.4f} seconds", fg="green")
 
-        echo("Serializing output dataframe", fg="cyan")
+        echo("Finalizing the output", fg="cyan")
         df = self._serialize_output(
             json.dumps(results), output, self.model_id, self.api_name
         )
