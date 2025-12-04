@@ -133,7 +133,7 @@ class RunnerService:
             The output of the command.
         """
 
-        cmd = f"ersilia serve {self.model_id} --disable-local-cache"
+        cmd = f"ersilia serve {self.model_id} --disable-cache"
         out = run_command(cmd)
         return out
     
@@ -156,7 +156,7 @@ class RunnerService:
             The output of the command.
         """
 
-        cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
+        cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
         out = run_command(cmd)
         return out
     
@@ -535,7 +535,7 @@ class RunnerService:
                 self.logger.debug("Running model for bash data consistency checking")
                 if not os.path.exists(input_file_path):
                     raise Exception("Input file path {0} does not exist".format(os.path.abspath(input_file_path)))
-                cmd = f"ersilia serve {self.model_id} --disable-local-cache && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
+                cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
                 self.logger.debug(f"Running command: {cmd}")
                 out = run_command(cmd)
                 ers_data, _ = read_csv(output_path, flag=True)

@@ -11,6 +11,7 @@ from ...db.hubdata.localslugs import SlugDb
 from ...setup.requirements.bentoml_requirement import BentoMLRequirement
 from ...utils.conda import SimpleConda
 from ...utils.docker import SimpleDocker
+from ...utils.echo import echo  # <--- you already have semantic echo()
 from ...utils.environment import Environment
 from ...utils.session import (
     deregister_model_session,
@@ -78,6 +79,7 @@ class ModelEosDeleter(ErsiliaBase):
         if not os.path.exists(folder):
             return
         self.logger.info("Removing EOS folder {0}".format(folder))
+        echo(f"Removing EOS folder {folder}", fg="yellow")
         rmtree(folder)
 
 
@@ -117,6 +119,7 @@ class ModelTmpDeleter(ErsiliaBase):
         if not os.path.exists(folder):
             return
         self.logger.info("Removing temporary folder {0}".format(folder))
+        echo(f"Removing temporary folder {folder}", fg="yellow")
         shutil.rmtree(folder)
 
 
@@ -157,9 +160,11 @@ class ModelBundleDeleter(ErsiliaBase):
         bento_folder = self._get_bentoml_location(model_id)
         if bento_folder is not None:
             self.logger.info("Removing bento folder first {0}".format(bento_folder))
+            echo(f"Removing bento folder {bento_folder}", fg="yellow")
             rmtree(bento_folder)
             os.makedirs(bento_folder, exist_ok=True)
         self.logger.info("Removing bundle folder {0}".format(folder))
+        echo(f"Removing bundle folder {folder}", fg="yellow")
         rmtree(folder)
         self.logger.debug("Folder removed")
 
@@ -209,6 +214,7 @@ class ModelBentoDeleter(ErsiliaBase):
                 services = services[1:]
             for service in services:
                 self.logger.info("Removing BentoML service {0}".format(service))
+                echo(f"Removing BentoML service {service}", fg="yellow")
                 self._delete_service(service)
         else:
             self.logger.debug(
@@ -267,6 +273,7 @@ class ModelSlugDeleter(ErsiliaBase):
         model_id : str
             Identifier of the model to be deleted.
         """
+        echo(f"Removing slug DB entry for {model_id}", fg="yellow")
         self.slugdb.delete_by_model_id(model_id)
 
 
@@ -292,9 +299,7 @@ class ModelCondaDeleter(ErsiliaBase):
 
     def _to_delete(self, model_id):
         env = self.envdb.envs_of_model(model_id)
-        if (
-            len(env) != 1
-        ):  # Does not do anything if more than one model depend on the environment.
+        if len(env) != 1:
             return None
         else:
             return list(env)[0]
@@ -315,6 +320,7 @@ class ModelCondaDeleter(ErsiliaBase):
             models.update([model_id])
             if len(models) == 1:
                 self.logger.info("Deleting conda environment {0}".format(env))
+                echo(f"Deleting conda environment {env}", fg="yellow")
                 try:
                     conda = SimpleConda()
                     conda.delete(env)
@@ -363,6 +369,7 @@ class ModelPipDeleter(ErsiliaBase):
         env = Environment()
         if env.has_module(model_id):
             self.logger.info("Uninstalling pip package {0}".format(model_id))
+            echo(f"Uninstalling pip package {model_id}", fg="yellow")
             self.pip_uninstall(model_id)
 
 
@@ -400,6 +407,7 @@ class ModelDockerDeleter(ErsiliaBase):
                 model_id
             )
         )
+        echo(f"Removing docker images and containers for {model_id}", fg="yellow")
         dm = DockerManager(config_json=self.config_json)
         if dm.is_active():
             dm.delete_images(model_id)
@@ -433,6 +441,7 @@ class ModelFetchedEntryDeleter(ErsiliaBase):
         model_id : str
             Identifier of the model to be deleted.
         """
+        echo(f"Removing fetched DB entry for {model_id}", fg="yellow")
         self.fmm.delete(model_id)
 
 
@@ -459,6 +468,7 @@ class TmpCleaner(ErsiliaBase):
         Deletes the temporary directory.
         """
         if os.path.exists(self._tmp_dir):
+            echo(f"Cleaning tmp directory {self._tmp_dir}", fg="yellow")
             os.rmdir(self._tmp_dir)
             os.makedirs(self._tmp_dir)
 
@@ -489,24 +499,29 @@ class BruteDeleter(ErsiliaBase):
         dest_dir = self._model_path(self.model_id)
         if os.path.exists(dest_dir):
             self.logger.info("Removing dest folder {0}".format(dest_dir))
+            echo(f"Removing dest folder {dest_dir}", fg="yellow")
             rmtree(dest_dir)
         bundles_dir = os.path.join(self._bundles_dir, self.model_id)
         if os.path.exists(bundles_dir):
             self.logger.info("Removing bundles folder {0}".format(bundles_dir))
+            echo(f"Removing bundles folder {bundles_dir}", fg="yellow")
             rmtree(bundles_dir)
         tmp_dir = os.path.join(self._tmp_dir, self.model_id)
         if os.path.exists(tmp_dir):
             self.logger.info("Removing tmp folder {0}".format(tmp_dir))
+            echo(f"Removing tmp folder {tmp_dir}", fg="yellow")
             rmtree(tmp_dir)
         conda_model_ids = self.conda.list_eos_environments()
         if self.model_id in conda_model_ids:
             self.logger.info("Removing conda environment {0}".format(self.model_id))
+            echo(f"Removing conda environment {self.model_id}", fg="yellow")
             self.conda.delete(self.model_id)
         docker_model_ids = self.docker.list_eos_images()
         if self.model_id in docker_model_ids:
             self.logger.info(
                 "Removing docker containers related to {0}".format(self.model_id)
             )
+            echo(f"Removing docker containers for {self.model_id}", fg="yellow")
             self.docker.brute_delete_by_model_id(self.model_id)
 
 
@@ -615,6 +630,8 @@ class ModelFullDeleter(ErsiliaBase):
             Identifier of the model to be deleted.
         """
         self.logger.info("Starting delete of model {0}".format(model_id))
+        echo(f"Deleting all data for model {model_id}", fg="cyan")
+
         ModelEosDeleter(self.config_json).delete(model_id)
         ModelSlugDeleter(self.config_json).delete(model_id)
         ModelBundleDeleter(self.config_json).delete(model_id)
@@ -626,4 +643,6 @@ class ModelFullDeleter(ErsiliaBase):
         ModelDockerDeleter(self.config_json).delete(model_id)
         ModelFetchedEntryDeleter(self.config_json).delete(model_id)
         BruteDeleter(self.config_json).delete(model_id)
+
         self.logger.success("Model {0} deleted successfully".format(model_id))
+        echo(f"Model {model_id} deleted successfully", fg="green")

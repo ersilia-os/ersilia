@@ -1,8 +1,17 @@
+import sys
+
 from ... import ErsiliaModel, logger
-from ...store.utils import OutputSource
 from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from ..echo import echo
+
+
+def is_installed(package_name):
+    try:
+        __import__(package_name)
+        return True
+    except ImportError:
+        return False
 
 
 def serve(
@@ -10,10 +19,11 @@ def serve(
     port: int = None,
     track: bool = False,
     tracking_use_case: str = "local",
-    enable_local_cache: bool = True,
-    local_cache_only: bool = False,
-    cloud_cache_only: bool = False,
-    cache_only: bool = False,
+    enable_cache: bool = False,
+    read_store: bool = False,
+    write_store: bool = False,
+    access: bool = None,
+    nearest_neighbors: bool = False,
     max_cache_memory_frac: float = None,
     verbose_flag: bool = False,
 ):
@@ -26,10 +36,11 @@ def serve(
         port: The port to use when creating a model server. If unspecified, Ersilia looks for empty ports to use on the user's system.
         track: Whether the model's runs should be tracked to monitor model and system performance.
         tracking_use_case: If --track is true, this command allows specification of the tracking use case. Current options are: local, hosted, self-service and test.
-        enable_local_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.
-        local_cache_only: Specifies to fetch stored model results from local cache. The local caching system is powered by Redis.
-        cloud_cache_only: Specifies to fetch stored model results from cloud cache. This allows to fetch model precalculated results in csv file in Ersilia model output format.
-        cache_only: Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.
+        enable_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.
+        read_store: Specifies to read from isaura store
+        write_store: Specifies to write from isaura store
+        access: Specifies access level to write to isaura store
+        nearest_neighbors: Specifies nearest neighbor search when reading from isaura store
         max_cache_memory_frac: Sets the maximum fraction of memory to use by Redis for caching. Recommended value 0.2-0.7.
 
     Returns
@@ -42,7 +53,6 @@ def serve(
         or if the maximum cache memory fraction is outside of the recommended range.
 
     """
-    echo("Serving model. This process may take some time...", fg="blue")
 
     if verbose_flag:
         logger.set_verbosity(1)
@@ -55,29 +65,41 @@ def serve(
                 "Maximum fraction of memory to use by Redis for caching is outside of recommended range (0.2–0.7)."
             )
 
-    output_source = None
-
-    if local_cache_only:
-        output_source = OutputSource.LOCAL_ONLY
-        enable_local_cache = True
-    if cloud_cache_only:
-        output_source = OutputSource.CLOUD_ONLY
-    if cache_only:
-        output_source = OutputSource.CACHE_ONLY
-        enable_local_cache = True
+    if not is_installed("isaura") and (read_store or write_store):
+        echo(
+            "Isaura is not installed! Please install isaura in your env by running simply \n>> pip install git+https://github.com/ersilia-os/isaura.git.\nTo start all isaura services, run this command >> isaura engine -s.",
+            fg="red",
+        )
+        logger.error(
+            "Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute >> isaura engine -s. "
+        )
+        sys.exit(1)
+    if write_store and access is None:
+        echo(
+            "You need to specifiy the access as [public or private] to write to store!",
+            fg="red",
+        )
+        logger.error(
+            "You need to specifiy the access as [public or private] to write to store!"
+        )
+        sys.exit(1)
 
     mdl = ErsiliaModel(
         model,
-        output_source=output_source,
+        output_source=None,
         preferred_port=port,
-        cache=enable_local_cache,
+        cache=enable_cache,
         maxmemory=max_cache_memory_frac,
+        read_store=read_store,
+        write_store=write_store,
+        access=access,
+        nearest_neighbors=nearest_neighbors,
     )
-
-    SetupRedis(enable_local_cache, max_cache_memory_frac)
 
     if not mdl.is_valid():
         raise RuntimeError(f"Model {mdl.model_id} is not valid or not found.")
+
+    SetupRedis(enable_cache, max_cache_memory_frac)
 
     track_runs = tracking_use_case if track else None
 

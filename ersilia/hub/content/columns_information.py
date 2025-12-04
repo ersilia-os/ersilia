@@ -80,7 +80,6 @@ class ColumnsInformation(ErsiliaBase):
 
     def _get_columns_information_from_local(self):
         file_name = os.path.join(self._model_path(self.model_id), self.relative_path)
-        print(f"local column name path:{file_name}")
         return self._get_columns_information_from_file(file_name)
 
     def _validate_columns_data(self, data):

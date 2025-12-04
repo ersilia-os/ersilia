@@ -6,9 +6,11 @@ import os
 import time
 
 import nest_asyncio
+import pandas as pd
 import requests
 
 from .. import ErsiliaBase
+from ..core.session import Session
 from ..default import (
     DEFAULT_API_NAME,
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
@@ -17,9 +19,8 @@ from ..default import (
 )
 from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
-from ..store.api import InferenceStoreApi
-from ..store.utils import OutputSource
-from ..utils.echo import echo
+from ..store.isaura import IsauraStore
+from ..utils.echo import echo, spinner
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -52,65 +53,50 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def __init__(self, model_id, url, config_json=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-        self.logger.info("You are running the app with a standard runner.")
         self.model_id = model_id
-        # TODO WHY? Why can't we init with a cleaner url?
         if url[-1] == "/":
             self.url = url[:-1]
         else:
             self.url = url
-        self.logger.debug("Standard API processor started at {0}".format(self.url))
         self.api_name = DEFAULT_API_NAME
         self.path = os.path.abspath(self._model_path(self.model_id))
+        metadata = self._read_information_file()
         self.standard_input_csv = os.path.join(
             self.path, EXAMPLE_STANDARD_INPUT_CSV_FILENAME
         )
         self.standard_output_csv = os.path.join(
             self.path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME
         )
-        metadata = self._read_information_file()
         self.input_type = self._read_field_from_metadata(metadata, "Input")
         self.input_shape = "Single"
-        self.logger.debug("This is the input type: {0}".format(self.input_type))
         self.encoder = self.get_identifier_object_by_input_type()
-
         self.columns_info = ColumnsInformation(
             model_id=model_id, api_name=DEFAULT_API_NAME
         ).load()
         self.input_header = self.get_input_header()
         self.output_header = self.get_output_header()
-
         self.generic_adapter = GenericOutputAdapter(model_id, self.columns_info)
+        self.isaura_store = IsauraStore()
+        self.session = Session(config_json=config_json)
+        store_info = self.session.current_store_status()
+        self.write_store = store_info[1]
+        self.read_store = store_info[0]
+        echo("Standard API runner initialized", fg="green")
 
     def _read_information_file(self):
         try:
-            with open(os.path.join(self.path, INFORMATION_FILE), "r") as f:
-                info = json.load(f)
-                return info
-        except FileNotFoundError:
-            self.logger.debug(
-                f"Error: File '{INFORMATION_FILE}' not found in the path '{self.path}'"
-            )
-        except json.JSONDecodeError:
-            self.logger.debug(
-                f"Error: Failed to parse JSON in file '{INFORMATION_FILE}'"
-            )
-        except Exception as e:
-            self.logger.debug(f"An unexpected error occurred: {e}")
+            return json.load(open(os.path.join(self.path, INFORMATION_FILE), "r"))
+        except:
+            return None
 
     def _read_field_from_metadata(self, meta, field):
         if not meta:
-            self.logger.error("No metadata given")
             return None
         if "metadata" in meta and field in meta["metadata"]:
             return meta["metadata"][field]
-        elif "card" in meta and field in meta["card"]:
+        if "card" in meta and field in meta["card"]:
             return meta["card"][field]
-        else:
-            self.logger.error(f"Neither 'metadata' nor 'card' contains '{field}' key.")
-            if field == "Input Shape":
-                self.logger.debug("Assuming input shape is Single")
-                return "Single"
+        return None
 
     def get_identifier_object_by_input_type(self):
         """
@@ -121,11 +107,8 @@ class StandardCSVRunApi(ErsiliaBase):
         object
             The identifier object.
         """
-        identifier_module_path = "ersilia.utils.identifiers.{0}".format(
-            self.input_type[0].lower()
-        )
-        identifier_object = importlib.import_module(identifier_module_path).Identifier()
-        return identifier_object
+        module_path = f"ersilia.utils.identifiers.{self.input_type[0].lower()}"
+        return importlib.import_module(module_path).Identifier()
 
     def _is_input_file_too_long(self, input_data):
         with open(input_data, "r") as f:
@@ -147,9 +130,7 @@ class StandardCSVRunApi(ErsiliaBase):
         bool
             True if the input type is standardizable, False otherwise.
         """
-        if self.input_type[0] == "Compound":
-            return True
-        return False
+        return self.input_type[0] == "Compound"
 
     def is_output_type_standardizable(self):
         """
@@ -160,9 +141,7 @@ class StandardCSVRunApi(ErsiliaBase):
         bool
             True if the output type is standardizable, False otherwise.
         """
-        if len(self.columns_info["name"]) > 0:
-            return True
-        return False
+        return len(self.columns_info["name"]) > 0
 
     def is_output_csv_file(self, output_data):
         """
@@ -178,11 +157,7 @@ class StandardCSVRunApi(ErsiliaBase):
         bool
             True if the output data is a CSV file, False otherwise.
         """
-        if type(output_data) != str:
-            return False
-        if not output_data.endswith(".csv"):
-            return False
-        return True
+        return isinstance(output_data, str) and output_data.endswith(".csv")
 
     def get_input_header(self):
         """
@@ -202,7 +177,7 @@ class StandardCSVRunApi(ErsiliaBase):
         Returns
         -------
         List | None
-           Returns the header which is a list of column names, or None if the header could not be determined.
+            The header which is a list of column names, or None if the header could not be determined.
         """
         return self.columns_info.get("name", None)
 
@@ -220,13 +195,15 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The serialized JSON data.
         """
+        echo("Serializing CSV input", fg="cyan")
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
             next(reader)
             for row in reader:
                 key = self.encoder.encode(row[0])
-                json_data += [{"key": key, "input": row[0], "text": row[0]}]
+                json_data.append({"key": key, "input": row[0], "text": row[0]})
+        echo("CSV serialization complete", fg="green")
         return json_data
 
     async def async_serialize_to_json_one_column(self, input_data):
@@ -244,9 +221,9 @@ class StandardCSVRunApi(ErsiliaBase):
             The serialized JSON data.
         """
         data_list = self.get_list_from_csv(input_data)
-        data_list = [data for data in data_list]
-        json_data = await self.encoder.encode_batch(data_list)
-        return json_data
+        data_list = [d for d in data_list]
+        result = await self.encoder.encode_batch(data_list)
+        return result
 
     def get_list_from_csv(self, input_data):
         """
@@ -268,8 +245,7 @@ class StandardCSVRunApi(ErsiliaBase):
             header = reader.fieldnames
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
-                data = row.get(key)
-                data_list.append(data)
+                data_list.append(row.get(key))
         return data_list
 
     def serialize_to_json(self, input_data):
@@ -317,50 +293,34 @@ class StandardCSVRunApi(ErsiliaBase):
             True if the request is amenable for a standard run, False otherwise.
         """
         if not self.is_input_type_standardizable():
-            self.logger.debug(
-                "Not amenable for standard run: input type not standardizable"
-            )
             return False
         if not self.is_output_type_standardizable():
-            self.logger.debug(
-                "Not amenable for standard run: output type not standardizable"
-            )
             return False
-        self.logger.debug("It seems amenable for standard run")
         return True
 
     def _serialize_output(self, result, output, model_id, api_name):
-        self.logger.debug("Serializing output with generic adapter")
-        self.generic_adapter._adapt_generic(result, output, model_id, api_name)
-        self.logger.debug("Output serialized with generic adapter")
+        _, df = self.generic_adapter._adapt_generic(result, output, model_id, api_name)
+        echo("Output serialization complete", fg="green")
+        return df
+
+    def _missing_inputs(self, check_dict, inputs):
+        return [m for m in inputs if not check_dict[m]]
+
+    def _found_inputs(self, check_dict, inputs):
+        return [m for m in inputs if check_dict[m]]
 
     def _post_batch(self, url, input_batch):
         if not input_batch:
             return []
 
-        try:
-            response = requests.post(url, json=input_batch)
-            self.logger.debug("Status code: {0}".format(response.status_code))
+        def do_request(batch):
+            response = requests.post(url, json=batch)
             response.raise_for_status()
-            result = response.json()
-            return result
-        except Exception as e:
-            self.logger.error(
-                "Error processing batch of size {}: {}".format(len(input_batch), e)
-            )
-            if len(input_batch) == 1:
-                if self.output_header is not None:
-                    empty_values = [None] * len(self.output_header)
-                    empty_values = [
-                        {k: v for k in self.output_header for v in empty_values}
-                    ]
-                    return empty_values
-                else:
-                    return [None]
-            mid = len(input_batch) // 2
-            left_results = self._post_batch(url, input_batch[:mid])
-            right_results = self._post_batch(url, input_batch[mid:])
-            return left_results + right_results
+            return response.json()
+
+        return spinner(
+            f"Fetching batch of size {len(input_batch)}", do_request, input_batch
+        )
 
     def post(self, input, output, batch_size, output_source):
         """
@@ -383,13 +343,8 @@ class StandardCSVRunApi(ErsiliaBase):
         str | None
             Path to the output CSV file if successful, None otherwise.
         """
+        echo("Preparing input data", fg="cyan")
         input_data = self.serialize_to_json(input)
-        if OutputSource.is_precalculation_enabled(output_source):
-            store = InferenceStoreApi(
-                model_id=self.model_id, output=output, output_source=output_source
-            )
-            return store.get_precalculations(input_data)
-
         url = f"{self.url}/{self.api_name}"
 
         if not isinstance(input_data, list):
@@ -397,69 +352,123 @@ class StandardCSVRunApi(ErsiliaBase):
 
         st = time.perf_counter()
 
-        self.logger.info("Waiting for the server to respond...")
+        echo("Waiting for server response", fg="cyan")
         results, meta = self._fetch_result(input_data, url, batch_size)
-        self.logger.info("The server has responded")
-        self.logger.info("Standardizing output...")
+        echo("Server response received", fg="green")
+
         results = self._standardize_output(input_data, results, meta)
-        self.logger.debug(f"Results (chunked string): {results}"[:200])
         et = time.perf_counter()
-        self.logger.info(f"All batches processed in {et - st:.4f} seconds")
-        self.logger.debug("Serializing output...")
-        self._serialize_output(
+        echo(f"All batches processed in {et - st:.4f} seconds", fg="green")
+
+        echo("Finalizing the output", fg="cyan")
+        df = self._serialize_output(
             json.dumps(results), output, self.model_id, self.api_name
         )
-        self.logger.debug("Output serialized")
-        self.logger.debug("Checking same row counts")
+
+        if self.write_store:
+            df = pd.DataFrame(
+                data=df.data, columns=["key", "input"] + self.output_header, dtype=str
+            )
+            echo("Writing results to Isaura store", fg="cyan")
+            self.isaura_store.write(df=df)
+
         matchs = self._same_row_count(input_data, results)
         if not matchs:
-            raise Exception(
-                "Inputs and outputs are not matching! Please refrain from using the results. Try again, removing bad inputs!"
-            )
+            raise Exception("Inputs and outputs are not matching")
+
         ft = time.perf_counter()
-        self.logger.info(f"Output is being generated within: {ft - st:.5f} seconds")
-        echo(f"Output is being generated within: {ft - st:.5f} seconds")
+        echo(f"Output generated in {ft - st:.5f} seconds", fg="green")
+
         return output
+
+    def _merge_cache_and_api(self, payload, cache_df, missed, api_values):
+        value_cols = [c for c in cache_df.columns if c not in ("key", "input")]
+        cache_map = {}
+        if not cache_df.empty:
+            for _, row in cache_df.iterrows():
+                cache_map[row["input"]] = {col: row[col] for col in value_cols}
+
+        api_map = {}
+        for smi, vals in zip(missed, api_values):
+            if isinstance(vals, dict):
+                api_map[smi] = vals
+            elif isinstance(vals, (list, tuple)):
+                api_map[smi] = {f"value_{j}": v for j, v in enumerate(vals)}
+            else:
+                api_map[smi] = {"value": vals}
+
+        results = []
+        for smi in payload:
+            if smi in cache_map:
+                rec = {"input": smi, **cache_map[smi]}
+            elif smi in api_map:
+                rec = {"input": smi, **api_map[smi]}
+            else:
+                rec = {"input": smi, "value": None}
+            results.append(rec)
+
+        return results
 
     def _fetch_result(self, input_data, url, batch_size):
         total = len(input_data)
-        overall_results = []
         meta = None
+        missed = None
+        found = None
+        overall_results = [None] * total
 
         for i in range(0, total, batch_size):
             batch_items = input_data[i : i + batch_size]
             payload = [d["input"] for d in batch_items]
 
-            bidx = i // batch_size + 1
-            echo(f"Running batch {bidx}")
-            st = time.perf_counter()
+            if IsauraStore.is_installed() and self.read_store:
+                check_dict = self.isaura_store.check(payload)
+                missed = self._missing_inputs(check_dict, payload)
+                found = self._found_inputs(check_dict, payload)
+            else:
+                missed = payload
+                found = []
 
-            resp = self._post_batch(url, payload)
+            if found and IsauraStore.is_installed():
+                cache_df = self.isaura_store.read(found)
+            else:
+                cache_df = pd.DataFrame(columns=["key", "input"])
 
-            et = time.perf_counter()
-            msg = f"Batch {bidx} response fetched within: {et - st:.4f} seconds"
-            self.logger.info(msg)
-            echo(msg)
-            try:
-                if isinstance(resp, dict):
-                    data = resp.json()
-                else:
-                    data = resp
-            except ValueError:
-                self.logger.error(f"Batch {bidx} returned non-JSON: {resp.text[:200]}")
-                continue
-            if isinstance(data, list):
-                overall_results.extend(data)
-            elif isinstance(data, dict):
-                if "result" in data:
-                    self.logger.warning("Result is in batch")
-                    overall_results.extend(data["result"])
+            api_values = []
+            if missed:
+                bidx = i // batch_size + 1
+                echo(f"Running batch {bidx}", fg="cyan")
+                st = time.perf_counter()
+
+                resp = self._post_batch(url, missed)
+
+                et = time.perf_counter()
+                echo(f"Batch {bidx} fetched in {et - st:.4f} seconds", fg="green")
+
+                try:
+                    if isinstance(resp, dict):
+                        data = resp.json()
+                    else:
+                        data = resp
+                except:
+                    data = None
+
+                if isinstance(data, list):
+                    api_values = data
+                elif isinstance(data, dict) and "result" in data:
+                    api_values = data["result"]
                     if "meta" in data:
                         meta = data["meta"]
-                else:
-                    overall_results.append(data)
-            else:
-                self.logger.error(f"Unexpected payload type: {type(data).__name__}")
+                elif data is not None:
+                    api_values = [data] * len(missed)
+
+            batch_results = self._merge_cache_and_api(
+                payload=payload,
+                cache_df=cache_df,
+                missed=missed,
+                api_values=api_values,
+            )
+
+            overall_results[i : i + len(batch_results)] = batch_results
 
         return overall_results, meta
 
@@ -480,7 +489,6 @@ class StandardCSVRunApi(ErsiliaBase):
     def _standardize_output(self, input_data, results, meta):
         results = list(results)
         default_keys = self._generate_default_keys(meta)
-
         standardized = []
         for inp, out in zip(input_data, results):
             values = self._normalize_values(out)
@@ -496,14 +504,11 @@ class StandardCSVRunApi(ErsiliaBase):
     def _generate_default_keys(self, meta):
         if meta is None:
             return ["outcome"]
-
         outcomes = meta.get("outcome", [])
         if not outcomes:
             return ["outcome"]
-
         if len(outcomes) == 1 or "outcome" in outcomes[0]:
             return [outcomes[0]]
-
         return outcomes
 
     def _contains_dict_keys(self, lst):

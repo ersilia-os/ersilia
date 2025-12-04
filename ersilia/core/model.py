@@ -29,7 +29,7 @@ from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
-from ..utils.echo import echo
+from ..utils.echo import spinner
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
@@ -125,6 +125,10 @@ class ErsiliaModel(ErsiliaBase):
         preferred_port: int = None,
         cache: bool = True,
         maxmemory: float = None,
+        read_store: bool = False,
+        write_store: bool = False,
+        access: str = None,
+        nearest_neighbors: bool = False,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
@@ -150,14 +154,16 @@ class ErsiliaModel(ErsiliaBase):
         ], "Wrong service class"
         self.url = None
         self.pid = None
+        self.read_store = read_store
+        self.write_store = write_store
+        self.access = access
+        self.nearest_neighbors = nearest_neighbors
         self.service_class = service_class
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
 
-        assert self._is_valid, (
-            "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
-                model
-            )
+        assert self._is_valid, "The identifier {0} is not valid. Please visit the Ersilia Model Hub for valid identifiers".format(
+            model
         )
         self.config_json = config_json
         self.model_id = mdl.model_id
@@ -293,9 +299,9 @@ class ErsiliaModel(ErsiliaBase):
     def _get_url(self):
         model_id = self.model_id
         tmp_file = tmp_pid_file(model_id)
-        assert os.path.exists(tmp_file), (
-            "Process ID file does not exist. Please serve the model first!"
-        )
+        assert os.path.exists(
+            tmp_file
+        ), "Process ID file does not exist. Please serve the model first!"
         with open(tmp_file, "r") as f:
             for l in f:
                 url = l.rstrip().split()[1]
@@ -305,9 +311,9 @@ class ErsiliaModel(ErsiliaBase):
         url = self._get_url()
         if api_name is None:
             api_names = self.autoservice.get_apis()
-            assert len(api_names) == 1, (
-                "More than one API found, please specificy api_name"
-            )
+            assert (
+                len(api_names) == 1
+            ), "More than one API found, please specificy api_name"
             api_name = api_names[0]
         api = Api(
             model_id=self.model_id,
@@ -341,9 +347,9 @@ class ErsiliaModel(ErsiliaBase):
             The result of each API call.
         """
         for result in api.post(input=input, output=output, batch_size=batch_size):
-            assert result is not None, (
-                "Something went wrong. Please contact us at hello@ersila.io"
-            )
+            assert (
+                result is not None
+            ), "Something went wrong. Please contact us at hello@ersila.io"
             yield result
 
     def _api_runner_return(self, api: Api, input: str, output: str, batch_size: int):
@@ -684,17 +690,20 @@ class ErsiliaModel(ErsiliaBase):
                     use_case=track_runs,
                 )
         self.setup()
-        self.close()
+        spinner("Closing existing sessions of a model", self.close)
         self.session.open(model_id=self.model_id, track_runs=self.track)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
+        self.session.register_store_status(
+            self.read_store, self.write_store, self.access, self.nearest_neighbors
+        )
         if self.track:
             self.session.register_tracking_use_case(self.tracking_use_case)
         self.url = self.autoservice.service.url
         self.pid = self.autoservice.service.pid
         self.scl = self.autoservice._service_class
-        self.logger.debug("Done with basic session registration")
+        self.logger.info("Done with basic session registration")
 
     def close(self):
         """
@@ -704,12 +713,9 @@ class ErsiliaModel(ErsiliaBase):
         """
         self.session = Session(config_json=self.config_json)
         self.logger.debug("Closing session {0}".format(self.session._session_dir))
-        self.logger.debug("Stopping service")
         self.autoservice.close()
-        self.logger.debug("Service stopped")
-        self.logger.debug("Closing session")
         self.session.close()
-        self.logger.debug("Session closed")
+        self.logger.info("Session closed")
 
     def get_apis(self):
         """
@@ -799,7 +805,6 @@ class ErsiliaModel(ErsiliaBase):
                 model_id=self.model_id, config_json=self.config_json, use_case=use_case
             )
         self.logger.info("Starting runner")
-        echo("Starting runner")
         self.logger.debug("Trying standard API")
         try:
             result, _ = self._standard_run(

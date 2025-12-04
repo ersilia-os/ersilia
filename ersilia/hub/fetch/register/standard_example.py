@@ -91,18 +91,22 @@ class ModelStandardExample(ErsiliaBase):
         self.logger.debug(input_csv)
         self.logger.debug(output_csv)
         commands = [
-            "ersilia serve {0} --disable-local-cache".format(self.model_id),
+            "ersilia serve {0} --disable-cache".format(self.model_id),
             "ersilia example -n 3 -f {0}".format(input_csv),
-            "ersilia -v run -i {0} -o {1} > {2} 2>&1".format(
+            "ersilia run -i {0} -o {1} > {2} 2>&1".format(
                 input_csv, output_csv, run_log
             ),
             "ersilia close",
         ]
         cmd_output = run_command_check_output("ersilia --help")
-        self.logger.debug(cmd_output)
         if "Welcome to Ersilia" in cmd_output:
             self.logger.debug("No need to use Conda!")
             cmd = " && ".join(commands)
+            echo(
+                "Performing smoke testing the model [serve, run and close] using standard example.",
+                fg="cyan",
+                bold=True,
+            )
             run_command(cmd)
         else:
             self.logger.debug("Will run this through Conda")
@@ -122,7 +126,11 @@ class ModelStandardExample(ErsiliaBase):
         if os.path.exists(run_log):
             os.remove(run_log)
         if not is_fetched_successfully:
-            echo("The model is getting deleted due to it produced all empty values!")
+            echo(
+                "The model is getting deleted due to it produced all empty values!",
+                fg="red",
+                bold=True,
+            )
             run_command(f"ersilia -v delete {self.model_id}")
 
     def _validate_csv(self, path):

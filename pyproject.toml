@@ -54,6 +54,7 @@ aiohttp = ">=3.10.11"
 nest_asyncio = "<=1.6.0"
 redis = ">=5.1"
 pandas = "^2.0"
+rich-click = "*"
 pytest = { version = "^7.4.0", optional = true }
 pytest-asyncio = { version = "<=0.24.0", optional = true }
 pytest-benchmark = { version = "<=4.0.0", optional = true }
@@ -65,10 +66,12 @@ nox = { version = "*", optional = true }
 rich = { version = "*", optional = true }
 ruff = { version = "*", optional = true }
 pre-commit = { version = "*", optional = true }
+isaura = { git="https://github.com/ersilia-os/isaura.git", optional = true }
 
 [tool.poetry.extras]
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 docs = ["sphinx", "jinja2"]
+isaura = ["isaura"]
 test = ["pytest", "pytest-asyncio", "pytest-benchmark", "nox", "rich", "fuzzywuzzy", "scipy", "ruff", "pre-commit"]
 #all = [docs, test]
 

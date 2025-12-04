@@ -120,7 +120,19 @@ class Model(object):
             **kwargs,
         )
 
-    def serve(self, verbose=None):
+    def serve(
+        self,
+        port: int = None,
+        track: bool = False,
+        tracking_use_case: str = "local",
+        enable_cache: bool = False,
+        read_store: bool = False,
+        write_store: bool = False,
+        access: bool = None,
+        nearest_neighbors: bool = False,
+        max_cache_memory_frac: float = None,
+        verbose_flag: bool = False,
+    ):
         """
         Serves a specified model as an API.
 
@@ -130,10 +142,11 @@ class Model(object):
             port: The port to use when creating a model server. If unspecified, Ersilia looks for empty ports to use on the user's system.
             track: Whether the model's runs should be tracked to monitor model and system performance.
             tracking_use_case: If --track is true, this command allows specification of the tracking use case. Current options are: local, hosted, self-service and test.
-            enable_local_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.
-            local_cache_only: Specifies to fetch stored model results from local cache. The local caching system is powered by Redis.
-            cloud_cache_only: Specifies to fetch stored model results from cloud cache. This allows to fetch model precalculated results in csv file in Ersilia model output format.
-            cache_only: Specifies to fetch stored model results from both local and cloud cache. More details are given in a dump CLI.
+            enable_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.
+            read_store: Specifies to read from isaura store
+            write_store: Specifies to write from isaura store
+            access: Specifies access level to write to isaura store
+            nearest_neighbors: Specifies nearest neighbor search when reading from isaura store
             max_cache_memory_frac: Sets the maximum fraction of memory to use by Redis for caching. Recommended value 0.2-0.7.
 
         Returns
@@ -148,15 +161,16 @@ class Model(object):
         """
         self._url, self.session, self.SRV = serve.serve(
             self.model_id,
-            port=None,
-            track=False,
-            tracking_use_case="local",
-            enable_local_cache=True,
-            local_cache_only=False,
-            cloud_cache_only=False,
-            cache_only=False,
-            max_cache_memory_frac=None,
-            verbose_flag=self.verbose_mode or verbose,
+            port=port,
+            track=track,
+            tracking_use_case=tracking_use_case,
+            enable_cache=enable_cache,
+            read_store=read_store,
+            write_store=write_store,
+            access=access,
+            nearest_neighbors=nearest_neighbors,
+            max_cache_memory_frac=max_cache_memory_frac,
+            verbose_flag=self.verbose_mode or verbose_flag,
         )
 
     def run(self, input_list, batch_size=1000):

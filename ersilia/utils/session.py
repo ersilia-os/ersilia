@@ -208,7 +208,6 @@ def register_model_session(model_id, session_dir):
         The session directory.
     """
     file_path = os.path.join(EOS, MODELS_JSON)
-
     if not os.path.exists(file_path):
         with open(file_path, "w") as f:
             json.dump({}, f, indent=4)

@@ -51,10 +51,7 @@ def fetch(
     else:
         mdl = ModelBase(model_id_or_slug=model)
     model_id = mdl.model_id
-    echo(
-        ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
-        fg="blue",
-    )
+    echo("Fetching model {0}: {1}".format(model_id, mdl.slug))
     mf = ModelFetcher(
         repo_path=from_dir,
         overwrite=overwrite,
@@ -72,6 +69,7 @@ def fetch(
         echo(
             ":thumbs_up: Model {0} fetched successfully!".format(model_id),
             fg="green",
+            bold=True,
         )
     elif (
         fetch_result.reason
@@ -80,10 +78,12 @@ def fetch(
         echo(
             ":thumbs_up: Model {0} is already fetched successfully!".format(model_id),
             fg="green",
+            bold=True,
         )
     else:
         echo(
             f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
             fg="red",
+            bold=True,
         )
         echo(fetch_result.reason)

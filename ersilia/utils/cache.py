@@ -63,10 +63,11 @@ class SetupRedis:
         return int(DEFAULT_REDIS_MEMORY_USAGE_FRACTION * total)
 
     def _configure_redis_memory_policy(self):
-        client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
-        if client.ping():
-            client.config_set("maxmemory", self._get_max_memory_limit())
-            client.config_set("maxmemory-policy", "allkeys-lru")
+        if self.cache:
+            client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT)
+            if client.ping():
+                client.config_set("maxmemory", self._get_max_memory_limit())
+                client.config_set("maxmemory-policy", "allkeys-lru")
 
     def ensure_redis_running(self):
         """
