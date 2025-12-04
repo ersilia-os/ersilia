@@ -6,6 +6,11 @@ import subprocess
 import sys
 from collections import namedtuple
 
+from rich import box
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+
 try:
     from inputimeout import TimeoutOccurred, inputimeout
 except:
@@ -15,6 +20,8 @@ except:
 from ..default import VERBOSE_FILE
 from ..utils.logging import make_temp_dir
 from ..utils.session import get_session_dir
+
+console = Console()
 
 
 def is_quiet():
@@ -37,7 +44,7 @@ def is_quiet():
         return True
 
 
-def run_command(cmd, quiet=None):
+def run_command(cmd, quiet=True):
     """
     Run a shell command and return a named tuple with stdout, stderr, and return code.
 
@@ -170,3 +177,69 @@ def yes_no_input(prompt, default_answer, timeout=5):
 def is_quoted_list(s: str) -> bool:
     pattern = r"^(['\"])\[.*\]\1$"
     return bool(re.match(pattern, s))
+
+
+def print_serve_summary(
+    model_id,
+    slug,
+    url,
+    pid,
+    srv,
+    session_dir,
+    apis,
+    store_stat,
+    enable_cache,
+    tracking_enabled,
+    tracking_use_case,
+):
+    """
+    Print a rich summary table for a served model.
+    """
+    table = Table(
+        show_header=False,
+        box=box.SIMPLE,
+        expand=False,
+        pad_edge=False,
+    )
+
+    table.add_row("Model", f"[bold]{model_id}[/bold] ([dim]{slug}[/dim])")
+    table.add_row("URL", f"[cyan]{url}[/cyan]")
+
+    if str(pid) != "-1":
+        table.add_row("PID", f"[yellow]{pid}[/yellow]")
+
+    table.add_row("Service", f"[yellow]{srv}[/yellow]")
+    table.add_row("Session", f"[yellow]{session_dir}[/yellow]")
+
+    all_apis = apis or []
+    if "run" in all_apis:
+        all_apis = ["run"] + [a for a in all_apis if a != "run"]
+    apis_display = ", ".join(all_apis) if all_apis else "run"
+    table.add_row("APIs", f"[cyan]{apis_display}[/cyan]")
+
+    table.add_row("Info", "[cyan]info[/cyan]")
+
+    store_style = "red" if store_stat == "Disabled" else "green"
+    table.add_row("Isaura Store", f"[{store_style}]{store_stat}[/{store_style}]")
+
+    cache_text = "Enabled" if enable_cache else "Disabled"
+    cache_style = "green" if enable_cache else "red"
+    table.add_row("Local cache", f"[{cache_style}]{cache_text}[/{cache_style}]")
+
+    if tracking_enabled:
+        tracking_text = f"Enabled ({tracking_use_case})"
+        tracking_style = "green"
+    else:
+        tracking_text = "Disabled"
+        tracking_style = "red"
+    table.add_row("Tracking", f"[{tracking_style}]{tracking_text}[/{tracking_style}]")
+
+    panel = Panel(
+        table,
+        title="[bold green]Model served[/bold green]",
+        expand=False,
+        border_style="green",
+    )
+    console.print()
+    console.print(panel)
+    console.print()

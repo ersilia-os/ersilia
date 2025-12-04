@@ -4,12 +4,18 @@ except:
     emoji = None
 import json
 import os
+import shutil
+import sys
 
 import click
+from rich.console import Console
+from rich.text import Text
 
 from ..default import SILENCE_FILE
 from ..utils.logging import logger
 from ..utils.session import get_session_dir
+
+console = Console()
 
 
 class Silencer(object):
@@ -64,23 +70,46 @@ class Silencer(object):
             json.dump({"silence": True}, f, indent=4)
 
 
-def echo(text, **styles):
-    """
-    Prints styled text to the CLI, optionally with emojis, unless silenced.
-
-    Parameters
-    ----------
-    text : str
-        The text to be printed.
-    **styles : dict
-        Additional styling options for the text.
-
-    Returns
-    -------
-    None
-    """
-    if logger.verbosity == 1:
+def echo(text, harmonize=True, **styles):
+    if getattr(logger, "verbosity", 0) == 1:
         return
+
     if emoji is not None:
-        text = emoji.emojize(text)
+        text = emoji.emojize(text, language="alias")
+
+    if not harmonize:
+        return click.echo(click.style(text, **styles))
+
+    color = styles.get("fg") or styles.get("color") or styles.get("style")
+
+    if color in ("yellow", "bright_yellow"):
+        icon = "⚠"
+    elif color in ("red", "bright_red"):
+        icon = "✖"
+    else:
+        icon = "✓"
+
+    text = f"  {icon}  {text}"
+
+    if sys.stdout.isatty():
+        width = shutil.get_terminal_size().columns
+        text = click.wrap_text(text, width=width)
+
+    if not styles:
+        styles["fg"] = "green"
+
     return click.echo(click.style(text, **styles))
+
+
+def spinner(text, func, *args, **kwargs):
+    if getattr(logger, "verbosity", 0) == 1:
+        return func(*args, **kwargs)
+
+    with console.status(Text(text, style="cyan")):
+        try:
+            result = func(*args, **kwargs)
+            console.print(Text(f"  ✓  {text}", style="green"))
+            return result
+        except Exception:
+            console.print(Text(f"  ✖  {text}", style="red"))
+            raise

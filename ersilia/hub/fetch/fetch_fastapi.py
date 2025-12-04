@@ -6,7 +6,7 @@ from datetime import timedelta
 from timeit import default_timer as timer
 
 from ... import ErsiliaBase
-from ...utils.echo import echo
+from ...utils.echo import echo, spinner
 from . import DONE_TAG, STATUS_FILE
 from .actions.check import ModelChecker
 from .actions.content import CardGetter
@@ -96,19 +96,22 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mg.get()
 
     def _pack(self):
-        echo("Packing the FastAPI")
         mp = ModelPacker(
             model_id=self.model_id, mode=self.mode, config_json=self.config_json
         )
-        mp.pack()
+        spinner(
+            "Packing the model using FastAPI. This process may take some time...",
+            mp.pack,
+        )
+        echo("Model is packed using FastAPI successfully", fg="cyan", bold=True)
 
     def _content(self):
+        echo("Registering all model information started", fg="blue")
         echo("Getting model card of the model.")
         cg = CardGetter(self.model_id, self.config_json)
         cg.get()
 
     def _check(self):
-        echo("Checking that the autoservice works.")
         mc = ModelChecker(self.model_id, self.config_json)
         mc.check()
 
@@ -123,7 +126,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mi.inform()
 
     def _success(self):
-        echo("Register the model based on its source.")
+        echo("Finalizing fetching. Almost there!", fg="cyan", bold=True)
         done = {DONE_TAG: True}
         status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         with open(status_file, "w") as f:
@@ -135,7 +138,6 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         start = timer()
         self.model_id = model_id
         self._setup_check()
-        echo("Checking setup requirements for the model to be installed and run")
         self._prepare()
         self._get()
         self._pack()
@@ -170,7 +172,8 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         tr = TemplateResolver(
             model_id=model_id, repo_path=self.repo_path, config_json=self.config_json
         )
-        return tr.is_fastapi()
+        ifa = spinner("Checking the model installability", tr.is_fastapi)
+        return ifa
 
     def fetch(self, model_id: str):
         """

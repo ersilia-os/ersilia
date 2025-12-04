@@ -1,7 +1,17 @@
+import sys
+
 from ... import ErsiliaModel, logger
 from ...utils.cache import SetupRedis
 from ...utils.session import register_model_session
 from ..echo import echo
+
+
+def is_installed(package_name):
+    try:
+        __import__(package_name)
+        return True
+    except ImportError:
+        return False
 
 
 def serve(
@@ -43,7 +53,6 @@ def serve(
         or if the maximum cache memory fraction is outside of the recommended range.
 
     """
-    echo("Serving model. This process may take some time...", fg="blue")
 
     if verbose_flag:
         logger.set_verbosity(1)
@@ -55,6 +64,25 @@ def serve(
             raise RuntimeError(
                 "Maximum fraction of memory to use by Redis for caching is outside of recommended range (0.2–0.7)."
             )
+
+    if not is_installed("isaura") and (read_store or write_store):
+        echo(
+            "Isaura is not installed! Please install isaura in your env by running simply \n>> pip install git+https://github.com/ersilia-os/isaura.git.\nTo start all isaura services, run this command >> isaura engine -s.",
+            fg="red",
+        )
+        logger.error(
+            "Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute >> isaura engine -s. "
+        )
+        sys.exit(1)
+    if write_store and access is None:
+        echo(
+            "You need to specifiy the access as [public or private] to write to store!",
+            fg="red",
+        )
+        logger.error(
+            "You need to specifiy the access as [public or private] to write to store!"
+        )
+        sys.exit(1)
 
     mdl = ErsiliaModel(
         model,

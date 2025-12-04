@@ -102,6 +102,11 @@ class ModelStandardExample(ErsiliaBase):
         if "Welcome to Ersilia" in cmd_output:
             self.logger.debug("No need to use Conda!")
             cmd = " && ".join(commands)
+            echo(
+                "Performing smoke testing the model [serve, run and close] using standard example.",
+                fg="cyan",
+                bold=True,
+            )
             run_command(cmd)
         else:
             self.logger.debug("Will run this through Conda")
@@ -121,7 +126,11 @@ class ModelStandardExample(ErsiliaBase):
         if os.path.exists(run_log):
             os.remove(run_log)
         if not is_fetched_successfully:
-            echo("The model is getting deleted due to it produced all empty values!")
+            echo(
+                "The model is getting deleted due to it produced all empty values!",
+                fg="red",
+                bold=True,
+            )
             run_command(f"ersilia -v delete {self.model_id}")
 
     def _validate_csv(self, path):

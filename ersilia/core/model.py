@@ -29,6 +29,7 @@ from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
+from ..utils.echo import spinner
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
@@ -689,7 +690,7 @@ class ErsiliaModel(ErsiliaBase):
                     use_case=track_runs,
                 )
         self.setup()
-        self.close()
+        spinner("Closing existing sessions of a model", self.close)
         self.session.open(model_id=self.model_id, track_runs=self.track)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)

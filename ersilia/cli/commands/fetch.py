@@ -122,10 +122,7 @@ def fetch_cmd():
         else:
             mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id
-        echo(
-            ":down_arrow:  Fetching model {0}: {1}".format(model_id, mdl.slug),
-            fg="blue",
-        )
+        echo("Fetching model {0}: {1}".format(model_id, mdl.slug))
 
         if any([from_dir, from_github, from_s3, from_hosted]):
             from_dockerhub = False
@@ -154,6 +151,7 @@ def fetch_cmd():
             echo(
                 f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
                 fg="red",
+                bold=True,
             )
 
     return fetch

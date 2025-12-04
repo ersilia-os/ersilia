@@ -66,10 +66,12 @@ nox = { version = "*", optional = true }
 rich = { version = "*", optional = true }
 ruff = { version = "*", optional = true }
 pre-commit = { version = "*", optional = true }
+isaura = { git="https://github.com/ersilia-os/isaura.git", optional = true }
 
 [tool.poetry.extras]
 # Instead of using poetry dependency groups, we use extras to make it pip installable
 docs = ["sphinx", "jinja2"]
+isaura = ["isaura"]
 test = ["pytest", "pytest-asyncio", "pytest-benchmark", "nox", "rich", "fuzzywuzzy", "scipy", "ruff", "pre-commit"]
 #all = [docs, test]
 

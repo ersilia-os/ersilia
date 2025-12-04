@@ -120,7 +120,19 @@ class Model(object):
             **kwargs,
         )
 
-    def serve(self, verbose=None):
+    def serve(
+        self,
+        port: int = None,
+        track: bool = False,
+        tracking_use_case: str = "local",
+        enable_cache: bool = False,
+        read_store: bool = False,
+        write_store: bool = False,
+        access: bool = None,
+        nearest_neighbors: bool = False,
+        max_cache_memory_frac: float = None,
+        verbose_flag: bool = False,
+    ):
         """
         Serves a specified model as an API.
 
@@ -149,16 +161,16 @@ class Model(object):
         """
         self._url, self.session, self.SRV = serve.serve(
             self.model_id,
-            port=None,
-            track=False,
-            tracking_use_case="local",
-            enable_cache=False,
-            read_store=False,
-            write_store=False,
-            access=None,
-            nearest_neighbors=False,
-            max_cache_memory_frac=None,
-            verbose_flag=self.verbose_mode or verbose,
+            port=port,
+            track=track,
+            tracking_use_case=tracking_use_case,
+            enable_cache=enable_cache,
+            read_store=read_store,
+            write_store=write_store,
+            access=access,
+            nearest_neighbors=nearest_neighbors,
+            max_cache_memory_frac=max_cache_memory_frac,
+            verbose_flag=self.verbose_mode or verbose_flag,
         )
 
     def run(self, input_list, batch_size=1000):

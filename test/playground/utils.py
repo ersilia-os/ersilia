@@ -289,7 +289,7 @@ def handle_exception(exc, verbose):
         traceback.print_exc()
     else:
         click.secho(f"Error: {str(exc)}", fg="red")
-        click.secho("Run with --verbose for more details.", fg="cyan")
+        click.secho("Run with --verbose for more details.", fg="cyan", bold=True)
 
 
 def handle_error_logging(command, description, result, config, checkups):

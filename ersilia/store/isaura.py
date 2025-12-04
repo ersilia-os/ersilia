@@ -27,15 +27,16 @@ class IsauraStore:
         self.checker = None
         self.reader = None
         self.check_dict = {}
-
-        if not self.is_installed():
+        session = Session(config_json=None)
+        current_status = session.current_store_status()
+        read_store, write_store = current_status[0], current_status[1]
+        if not self.is_installed() or (not read_store and not write_store):
             return
 
         logger.set_verbosity(log.verbosity)
 
-        session = Session(config_json=None)
         model_id = session.current_model_id()
-        current_status = session.current_store_status()
+
         self.access = current_status[2]
         nn = current_status[-1]
         bucket = self.resolve_default_bucket(self.access)

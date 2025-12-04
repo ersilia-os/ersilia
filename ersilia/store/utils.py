@@ -78,7 +78,7 @@ def echo_redis_local_completed(click_iface):
 
 def echo_uploading_inputs(click_iface):
     click_iface.echo(
-        f"{log_prefix()}Uploading input data to S3 bucket", fg="blue", bold=False
+        f"{log_prefix()}Uploading input data to S3 bucket", fg="cyan", bold=False
     )
 
 
@@ -97,7 +97,7 @@ def echo_local_fetched_cache_size(click_iface, cache_size, none_count):
 
 
 def echo_upload_complete(click_iface):
-    click_iface.echo(f"{log_prefix()}Upload completed.", fg="blue", bold=False)
+    click_iface.echo(f"{log_prefix()}Upload completed.", fg="cyan", bold=False)
 
 
 def echo_submitting_job(click_iface, model_id):
@@ -126,7 +126,7 @@ def echo_redis_null_output(click_iface):
 
 def echo_job_submitted(click_iface, job_id: str):
     click_iface.echo(
-        f"{log_prefix()}Job submitted with a job id: {job_id}", fg="blue", bold=False
+        f"{log_prefix()}Job submitted with a job id: {job_id}", fg="cyan", bold=False
     )
 
 
@@ -203,7 +203,7 @@ def echo_status(click_iface, status: str):
 
 def echo_job_succeeded(click_iface):
     click_iface.echo(
-        f"{log_prefix()}Precalculation successfully fetched", fg="blue", bold=False
+        f"{log_prefix()}Precalculation successfully fetched", fg="cyan", bold=False
     )
 
 
@@ -217,13 +217,13 @@ def echo_found_shards(click_iface, count: int):
 
 def echo_merged_saved(click_iface, output_path: Path):
     click_iface.echo(
-        f"{log_prefix()}Merged CSV saved to: {output_path}", fg="blue", bold=False
+        f"{log_prefix()}Merged CSV saved to: {output_path}", fg="cyan", bold=False
     )
 
 
 def echo_redis_file_saved(click_iface, output_path: Path):
     click_iface.echo(
-        f"{log_prefix()}Output file is saved to: {output_path}", fg="blue", bold=False
+        f"{log_prefix()}Output file is saved to: {output_path}", fg="cyan", bold=False
     )
 
 
@@ -491,12 +491,12 @@ class FileManager:
             total_size += size
 
         click_iface.echo(
-            f"⬇ Total download size: {total_size / 1024:.1f} KB", fg="blue"
+            f"⬇ Total download size: {total_size / 1024:.1f} KB", fg="cyan"
         )
 
         if not input_list:
             click_iface.echo(
-                "⬇ No reorder list provided; merging sequentially", fg="blue"
+                "⬇ No reorder list provided; merging sequentially", fg="cyan"
             )
             with open(output_path, "w", newline="", encoding="utf-8") as out_f:
                 writer = csv.writer(out_f)
@@ -560,7 +560,7 @@ class FileManager:
             else:
                 raise TypeError(f"Cannot extract 'input' from {item}")
 
-        click_iface.echo("⬇ Building lookup and reordering by 'input'", fg="blue")
+        click_iface.echo("⬇ Building lookup and reordering by 'input'", fg="cyan")
         lookup = {}
         pbar = click_iface.progress_bar(
             total=total_size,

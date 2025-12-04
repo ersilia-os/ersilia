@@ -6,6 +6,7 @@ from ... import ErsiliaModel
 from ...core.session import Session
 from ...utils.logging import logger
 from ...utils.session import register_model_session
+from ...utils.terminal import print_serve_summary
 from .. import echo
 from ..messages import ModelNotFound
 from . import ersilia_cli
@@ -50,7 +51,6 @@ def serve_cmd():
             return "Enabled: Reader & Writter "
         return "Disabled"
 
-    # Example usage: ersilia serve {MODEL}
     @ersilia_cli.command(short_help="Serve model", help="Serve model")
     @click.argument("model", type=click.STRING)
     @click.option(
@@ -60,7 +60,6 @@ def serve_cmd():
         type=click.INT,
         help="Preferred port to use (integer)",
     )
-    # Add the new flag for tracking the serve session
     @click.option(
         "-t",
         "--track",
@@ -81,7 +80,7 @@ def serve_cmd():
     @click.option("--enable-cache/--disable-cache", is_flag=True, default=False)
     @click.option("--read-store", "-rs", is_flag=True, default=False)
     @click.option("--write-store", "-ws", is_flag=True, default=False)
-    @click.option("--access", default=None)
+    @click.option("--access", "-a", default=None)
     @click.option(
         "--nearest-neigbors", "-nn", "nearest_neighbors", is_flag=True, default=False
     )
@@ -103,7 +102,7 @@ def serve_cmd():
         sess = Session(config_json=None)
         sess.register_store_status(read_store, write_store, access, nearest_neighbors)
         store_stat = store_status(read_store, write_store)
-        if not is_installed("isaura") and read_store:
+        if not is_installed("isaura") and (read_store or write_store):
             echo(
                 "Isaura is not installed! Please install isaura in your env by running simply \n>> pip install git+https://github.com/ersilia-os/isaura.git.\nTo start all isaura services, run this command >> isaura engine -s.",
                 fg="red",
@@ -112,9 +111,9 @@ def serve_cmd():
                 "Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute >> isaura engine -s. "
             )
             sys.exit(1)
-        if write_store and access is None or read_store and access is None:
+        if write_store and access is None:
             echo(
-                "You need to specifiy the access as [public or private] to read/write to store!",
+                "You need to specifiy the access as [public or private] to write to store!",
                 fg="red",
             )
             logger.error(
@@ -147,44 +146,21 @@ def serve_cmd():
             return
 
         register_model_session(mdl.model_id, mdl.session._session_dir)
-        echo(
-            ":rocket: Serving model {0}: {1}".format(mdl.model_id, mdl.slug), fg="green"
+
+        print_serve_summary(
+            model_id=mdl.model_id,
+            slug=mdl.slug,
+            url=mdl.url,
+            pid=mdl.pid,
+            srv=mdl.scl,
+            session_dir=mdl.session._session_dir,
+            apis=mdl.get_apis(),
+            store_stat=store_stat,
+            enable_cache=enable_cache,
+            tracking_enabled=bool(track),
+            tracking_use_case=tracking_use_case,
         )
-        echo("")
-        echo("   URL: {0}".format(mdl.url), fg="yellow")
-        if str(mdl.pid) != "-1":
-            echo("   PID: {0}".format(mdl.pid), fg="yellow")
-        echo("   SRV: {0}".format(mdl.scl), fg="yellow")
-        echo("   Session: {0}".format(mdl.session._session_dir), fg="yellow")
-        echo("")
-        echo(":backhand_index_pointing_right: Run model:", fg="blue")
-        echo("   - run", fg="blue")
-        apis = mdl.get_apis()
-        if apis != ["run"]:
-            echo("")
-            echo("   These APIs are also valid:", fg="blue")
-            for api in apis:
-                if api != "run":
-                    echo("   - {0}".format(api), fg="blue")
-        echo("")
-        echo(":person_tipping_hand: Information:", fg="blue")
-        echo("   - info", fg="blue")
-        echo("")
-        echo("🏬 Isaura Store:", fg="blue")
-        echo(f"   - {store_stat}", fg="red") if store_stat == "Disabled" else echo(
-            f"   - {store_stat}", fg="green"
-        )
-        echo("")
-        echo(":floppy_disk: Local cache:", fg="blue")
-        echo("   - Enabled", fg="green") if enable_cache else echo(
-            "   - Disabled", fg="red"
-        )
-        echo("")
-        echo(":chart_increasing: Tracking:", fg="blue")
-        if track:
-            echo("   - Enabled ({0})".format(tracking_use_case), fg="green")
-        else:
-            echo("   - Disabled", fg="red")
+
         logger.success(f"Model {model} is successfully served!")
 
     return serve
