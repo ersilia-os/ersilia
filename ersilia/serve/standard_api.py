@@ -301,6 +301,7 @@ class StandardCSVRunApi(ErsiliaBase):
     def _serialize_output(self, result, output, model_id, api_name):
         _, df = self.generic_adapter._adapt_generic(result, output, model_id, api_name)
         echo("Output serialization complete", fg="green")
+        self.logger.info("Output serialization complete")
         return df
 
     def _missing_inputs(self, check_dict, inputs):
@@ -353,14 +354,18 @@ class StandardCSVRunApi(ErsiliaBase):
         st = time.perf_counter()
 
         echo("Waiting for server response", fg="cyan")
+        self.logger.debug("Waiting for server response")
         results, meta = self._fetch_result(input_data, url, batch_size)
         echo("Server response received", fg="green")
+        self.logger.info("Server response received")
 
         results = self._standardize_output(input_data, results, meta)
         et = time.perf_counter()
         echo(f"All batches processed in {et - st:.4f} seconds", fg="green")
+        self.logger.info(f"All batches processed in {et - st:.4f} seconds")
 
         echo("Finalizing the output", fg="cyan")
+        self.logger.debug("Finalizing the output")
         df = self._serialize_output(
             json.dumps(results), output, self.model_id, self.api_name
         )
@@ -370,6 +375,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 data=df.data, columns=["key", "input"] + self.output_header, dtype=str
             )
             echo("Writing results to Isaura store", fg="cyan")
+            self.logger.info("Writing results to Isaura store")
             self.isaura_store.write(df=df)
 
         matchs = self._same_row_count(input_data, results)
@@ -378,6 +384,7 @@ class StandardCSVRunApi(ErsiliaBase):
 
         ft = time.perf_counter()
         echo(f"Output generated in {ft - st:.5f} seconds", fg="green")
+        self.logger.info(f"Output generated to {output} in {ft - st:.5f} seconds")
 
         return output
 
@@ -437,12 +444,14 @@ class StandardCSVRunApi(ErsiliaBase):
             if missed:
                 bidx = i // batch_size + 1
                 echo(f"Running batch {bidx}", fg="cyan")
+                self.logger.debug(f"Running batch {bidx}")
                 st = time.perf_counter()
 
                 resp = self._post_batch(url, missed)
 
                 et = time.perf_counter()
                 echo(f"Batch {bidx} fetched in {et - st:.4f} seconds", fg="green")
+                self.logger.info(f"Batch {bidx} fetched in {et - st:.4f} seconds")
 
                 try:
                     if isinstance(resp, dict):
