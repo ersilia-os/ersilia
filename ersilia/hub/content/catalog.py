@@ -305,11 +305,7 @@ class ModelCatalog(ErsiliaBase):
         for card in model_cards:
             status = self._get_status(card)
             slug = self._get_slug(card)
-            if status.lower() == "In progress".lower():
-                continue
             if status.lower() == "Archived".lower():
-                continue
-            if status.lower() == "In maintenance".lower():
                 continue
             if status.lower() == "Test".lower():
                 continue
