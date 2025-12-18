@@ -24,9 +24,11 @@ def convert_airtable_to_json(
     while True:
         if offset:
             url += f"?offset={offset}"
+            print("REQUEST URL:", url) 
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
             print(f"Error: {response.status_code}")
+            print("Response body:", response.text)
             break
         data = response.json()
         offset = data.get("offset", None)
