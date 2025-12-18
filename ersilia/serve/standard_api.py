@@ -389,12 +389,23 @@ class StandardCSVRunApi(ErsiliaBase):
         return output
 
     def _merge_cache_and_api(self, payload, cache_df, missed, api_values):
+        t0 = time.perf_counter()
+
+        t = time.perf_counter()
         value_cols = [c for c in cache_df.columns if c not in ("key", "input")]
+        self.logger.debug(
+            f"_merge_cache_and_api value_cols n={len(value_cols)} dt={(time.perf_counter()-t):.6f}s"
+        )
+
+        t = time.perf_counter()
         cache_map = {}
         if not cache_df.empty:
-            for _, row in cache_df.iterrows():
-                cache_map[row["input"]] = {col: row[col] for col in value_cols}
+            cache_map = cache_df.set_index("input")[value_cols].to_dict(orient="index")
+        self.logger.debug(
+            f"_merge_cache_and_api cache_map n={len(cache_map)} dt={(time.perf_counter()-t):.6f}s"
+        )
 
+        t = time.perf_counter()
         api_map = {}
         for smi, vals in zip(missed, api_values):
             if isinstance(vals, dict):
@@ -403,17 +414,28 @@ class StandardCSVRunApi(ErsiliaBase):
                 api_map[smi] = {f"value_{j}": v for j, v in enumerate(vals)}
             else:
                 api_map[smi] = {"value": vals}
+        self.logger.debug(
+            f"_merge_cache_and_api api_map n={len(api_map)} dt={(time.perf_counter()-t):.6f}s"
+        )
 
+        t = time.perf_counter()
         results = []
+        append = results.append
         for smi in payload:
             if smi in cache_map:
-                rec = {"input": smi, **cache_map[smi]}
+                append({"input": smi, **cache_map[smi]})
             elif smi in api_map:
-                rec = {"input": smi, **api_map[smi]}
+                append({"input": smi, **api_map[smi]})
             else:
-                rec = {"input": smi, "value": None}
-            results.append(rec)
+                append({"input": smi, "value": None})
+        self.logger.debug(
+            f"_merge_cache_and_api results n={len(results)} dt={(time.perf_counter()-t):.6f}s"
+        )
 
+        self.logger.debug(
+            f"_merge_cache_and_api done payload={len(payload)} missed={len(missed)} "
+            f"cache_rows={len(cache_df)} dt_total={(time.perf_counter()-t0):.6f}s"
+        )
         return results
 
     def _fetch_result(self, input_data, url, batch_size):
@@ -488,41 +510,14 @@ class StandardCSVRunApi(ErsiliaBase):
             return [None] * len(self.output_header) if self.output_header else [None]
         return list(out.values())
 
-    def _select_key_candidates(self, out, default_keys):
-        if out is None:
-            return self.output_header or default_keys
-        if isinstance(out, dict) and "outcome" not in out:
-            return list(out.keys())
-        return default_keys
-
     def _standardize_output(self, input_data, results, meta):
         results = list(results)
-        default_keys = self._generate_default_keys(meta)
         standardized = []
         for inp, out in zip(input_data, results):
             values = self._normalize_values(out)
-            key_candidates = self._select_key_candidates(out, default_keys)
-            keys_flat = (
-                list(key_candidates[0])
-                if self._contains_dict_keys(key_candidates)
-                else key_candidates
-            )
+            keys_flat = self.input_header[1:] + self.output_header
             standardized.append({"input": inp, "output": dict(zip(keys_flat, values))})
         return standardized
-
-    def _generate_default_keys(self, meta):
-        if meta is None:
-            return ["outcome"]
-        outcomes = meta.get("outcome", [])
-        if not outcomes:
-            return ["outcome"]
-        if len(outcomes) == 1 or "outcome" in outcomes[0]:
-            return [outcomes[0]]
-        return outcomes
-
-    def _contains_dict_keys(self, lst):
-        dict_keys_type = type({}.keys())
-        return any(isinstance(x, dict_keys_type) for x in lst)
 
     def _same_row_count(self, inputs, results):
         return len(inputs) == len(results)
