@@ -290,7 +290,10 @@ class CheckService:
 
     def _check_model_sub_tasks(self, data):
         key = "Subtask"
-    
+        
+        if not BaseInformationValidator().validate_subtask(data[key]):
+            raise texc.EmptyField(key)
+        
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
