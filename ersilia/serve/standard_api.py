@@ -400,7 +400,9 @@ class StandardCSVRunApi(ErsiliaBase):
         t = time.perf_counter()
         cache_map = {}
         if not cache_df.empty:
+            cache_df = cache_df.drop_duplicates(subset=["input"], keep="last")
             cache_map = cache_df.set_index("input")[value_cols].to_dict(orient="index")
+
         self.logger.debug(
             f"_merge_cache_and_api cache_map n={len(cache_map)} dt={(time.perf_counter()-t):.6f}s"
         )
