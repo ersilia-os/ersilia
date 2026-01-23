@@ -147,7 +147,7 @@ class Logger(object):
         if self._console is None:
             rich_handler = RichHandler(
                 rich_tracebacks=True,
-                markup=True,
+                markup=False,
                 log_time_format="%H:%M:%S",
                 show_path=False,
             )
