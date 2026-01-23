@@ -293,14 +293,10 @@ class DataFrame(object):
         cols = list(self.columns)
         ncols = len(cols)
 
-        def fmt(i, v):
-            if isinstance(v, str):
-                if i > 1:
-                    l = len(v.split(","))
-                    if l > 1:
-                        return f'"{v}"'
-                return v
-            return str(v)
+        def fmt(v):
+            if v is None:
+                return ""
+            return v if isinstance(v, str) else str(v)
 
         it = iter(self.data)
 
@@ -310,10 +306,11 @@ class DataFrame(object):
                 f,
                 delimiter=delimiter,
                 lineterminator="\n",
-                quoting=csv.QUOTE_NONE,
-                escapechar="\\",
+                quoting=csv.QUOTE_MINIMAL,
+                quotechar='"',
+                doublequote=True,
             )
-            f.write(delimiter.join(cols) + "\n")
+            writer.writerow(cols)
             self.logger.debug(
                 f"write_text header dt={(time.perf_counter()-t0):.6f}s file={file_name}"
             )
@@ -335,7 +332,7 @@ class DataFrame(object):
                     if len(row) != ncols:
                         row = list(row) + [None] * (ncols - len(row))
                         row = row[:ncols]
-                    out_append([fmt(i, v) for i, v in enumerate(row)])
+                    out_append([fmt(v) for v in row])
                 self.logger.debug(
                     f"write_text chunk_format rows={len(out_rows)} dt={(time.perf_counter()-t):.6f}s"
                 )
