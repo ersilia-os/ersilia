@@ -35,7 +35,7 @@ CMD_DEPENDENCY_MAP = {
     "test": ["test"],
 }
 
-RAW_INPUT_URL = "https://github.com/ersilia-os/ersilia-model-hub-maintained-inputs/blob/main/compound/single/inp-000.csv"
+RAW_INPUT_URL = "https://raw.githubusercontent.com/ersilia-os/ersilia-model-hub-maintained-inputs/refs/heads/main/data/example.csv"
 
 
 def build_run_cmd(config):
