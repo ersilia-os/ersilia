@@ -154,7 +154,9 @@ class DataFrame(object):
                     else:
                         text = str(val)
                         if isinstance(val, str) and idx > 1:
-                            text = f'"{text}"'
+                            txt_ls = text.split(",")
+                            if len(txt_ls) > 1:
+                                text = f'"{text}"'
                     out_fields.append(text)
 
                 f.write(delimiter.join(out_fields) + "\n")
