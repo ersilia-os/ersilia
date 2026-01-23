@@ -1,7 +1,10 @@
 import collections
+import csv
 import json
 import os
 import random
+import time
+from itertools import islice
 
 import numpy as np
 
@@ -12,172 +15,9 @@ from ..default import (
 from ..serve.schema import ApiSchema
 from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
 from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
-from ..utils.logging import make_temp_dir
+from ..utils.logging import logger, make_temp_dir
 from .dataframe import Dataframe
 from .readers.file import FileTyper
-
-
-class DataFrame(object):
-    """
-    A class used to represent a DataFrame.
-
-    Attributes
-    ----------
-    data : list
-        The data of the DataFrame.
-    columns : list
-        The column names of the DataFrame.
-    dtype : any
-        Data type for the output part of the data
-    dim: int
-        The number of dimensions of the data.
-
-    Methods
-    -------
-    decompose()
-        Decomposes the DataFrame into its components.
-    write_hdf5(file_name)
-        Writes the DataFrame to an HDF5 file.
-    write_text(file_name, delimiter=None)
-        Writes the DataFrame to a text file.
-    write(file_name, delimiter=None)
-        Writes the DataFrame to a file, determining the format based on the file extension.
-    """
-
-    def __init__(self, data: list, columns: list, dtype: any, dim: int):
-        self.data = data
-        self.dim = dim
-        self.dtype = dtype
-        self.columns = columns
-
-    def _is_unprocessable_input(self) -> bool:
-        if len(self.data) != 1:
-            return False
-        row = self.data[0]
-        return row[0] == "UNPROCESSABLE_INPUT" and row[1] == "UNPROCESSABLE_INPUT"
-
-    @staticmethod
-    def _is_h5(file_name: str) -> bool:
-        """
-        Checks if the file is an HDF5 file.
-
-        Parameters
-        ----------
-        file_name : str
-            The name of the file.
-
-        Returns
-        -------
-        bool
-            True if the file is an HDF5 file, False otherwise.
-        """
-        extension = file_name.split(".")[-1]
-        if extension == "h5":
-            return True
-        else:
-            return False
-
-    @staticmethod
-    def _get_delimiter(file_name: str) -> str:
-        """
-        Gets the delimiter based on the file extension.
-
-        Parameters
-        ----------
-        file_name : str
-            The name of the file.
-
-        Returns
-        -------
-        str
-            The delimiter.
-        """
-        extension = file_name.split(".")[-1]
-        if extension == "tsv":
-            return "\t"
-        else:
-            return ","
-
-    def decompose(self) -> dict:
-        """
-        Decomposes the DataFrame into its components.
-
-        Returns
-        -------
-        dict
-            A dictionary containing keys, inputs, features, and values.
-        """
-        features = self.columns[2:]
-        keys = [r[0] for r in self.data]
-        inputs = [r[1] for r in self.data]
-        values = [r[2:] for r in self.data]
-        return {"keys": keys, "inputs": inputs, "features": features, "values": values}
-
-    def write_hdf5(self, file_name: str):
-        """
-        Writes the DataFrame to an HDF5 file.
-
-        Parameters
-        ----------
-        file_name : str
-            The name of the file to write to.
-        """
-        res = self.decompose()
-        hdf5 = Hdf5Data(
-            values=res["values"],
-            keys=res["keys"],
-            inputs=res["inputs"],
-            features=res["features"],
-            dtype=self.dtype,
-            dim=self.dim,
-        )
-
-        hdf5.save(file_name)
-
-    def write_text(self, file_name: str, delimiter: str = None):
-        """
-        Writes the DataFrame to a text file, wrapping any string-valued field in quotes,
-        except for the first and second columns, which are never quoted.
-        """
-        if delimiter is None:
-            delimiter = self._get_delimiter(file_name)
-
-        none_str = ""
-        with open(file_name, "w", newline="") as f:
-            f.write(delimiter.join(self.columns) + "\n")
-
-            for row in self.data:
-                out_fields = []
-                for idx, val in enumerate(row):
-                    if val is None:
-                        text = none_str
-                    else:
-                        text = str(val)
-                        if isinstance(val, str) and idx > 1:
-                            txt_ls = text.split(",")
-                            if len(txt_ls) > 1:
-                                text = f'"{text}"'
-                    out_fields.append(text)
-
-                f.write(delimiter.join(out_fields) + "\n")
-
-    def write(self, file_name: str, delimiter: str = None):
-        """
-        Writes the DataFrame to a file, determining the format based on the file extension.
-
-        Parameters
-        ----------
-        file_name : str
-            The name of the file to write to.
-        delimiter : str, optional
-            The delimiter to use in the text file (default is None).
-        """
-        if self._is_unprocessable_input():
-            raise UnprocessableInputError()
-        if self._is_h5(file_name):
-            self.write_hdf5(file_name)
-        else:
-            self.write_text(file_name, delimiter=delimiter)
 
 
 class ResponseRefactor(ErsiliaBase):
@@ -322,6 +162,211 @@ class ResponseRefactor(ErsiliaBase):
         return r
 
 
+class DataFrame(object):
+    """
+    A class used to represent a DataFrame.
+
+    Attributes
+    ----------
+    data : list
+        The data of the DataFrame.
+    columns : list
+        The column names of the DataFrame.
+    dtype : any
+        Data type for the output part of the data
+    dim: int
+        The number of dimensions of the data.
+
+    Methods
+    -------
+    decompose()
+        Decomposes the DataFrame into its components.
+    write_hdf5(file_name)
+        Writes the DataFrame to an HDF5 file.
+    write_text(file_name, delimiter=None)
+        Writes the DataFrame to a text file.
+    write(file_name, delimiter=None)
+        Writes the DataFrame to a file, determining the format based on the file extension.
+    """
+
+    def __init__(self, data: list, columns: list, dtype: any, dim: int):
+        self.data = data
+        self.dim = dim
+        self.dtype = dtype
+        self.logger = logger
+        self.columns = columns
+
+    def _is_unprocessable_input(self) -> bool:
+        if len(self.data) != 1:
+            return False
+        row = self.data[0]
+        return row[0] == "UNPROCESSABLE_INPUT" and row[1] == "UNPROCESSABLE_INPUT"
+
+    @staticmethod
+    def _is_h5(file_name: str) -> bool:
+        """
+        Checks if the file is an HDF5 file.
+
+        Parameters
+        ----------
+        file_name : str
+            The name of the file.
+
+        Returns
+        -------
+        bool
+            True if the file is an HDF5 file, False otherwise.
+        """
+        extension = file_name.split(".")[-1]
+        if extension == "h5":
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def _get_delimiter(file_name: str) -> str:
+        """
+        Gets the delimiter based on the file extension.
+
+        Parameters
+        ----------
+        file_name : str
+            The name of the file.
+
+        Returns
+        -------
+        str
+            The delimiter.
+        """
+        extension = file_name.split(".")[-1]
+        if extension == "tsv":
+            return "\t"
+        else:
+            return ","
+
+    def decompose(self) -> dict:
+        """
+        Decomposes the DataFrame into its components.
+
+        Returns
+        -------
+        dict
+            A dictionary containing keys, inputs, features, and values.
+        """
+        features = self.columns[2:]
+        keys = [r[0] for r in self.data]
+        inputs = [r[1] for r in self.data]
+        values = [r[2:] for r in self.data]
+        return {"keys": keys, "inputs": inputs, "features": features, "values": values}
+
+    def write_hdf5(self, file_name: str):
+        """
+        Writes the DataFrame to an HDF5 file.
+
+        Parameters
+        ----------
+        file_name : str
+            The name of the file to write to.
+        """
+        res = self.decompose()
+        hdf5 = Hdf5Data(
+            values=res["values"],
+            keys=res["keys"],
+            inputs=res["inputs"],
+            features=res["features"],
+            dtype=self.dtype,
+            dim=self.dim,
+        )
+
+        hdf5.save(file_name)
+
+    def write_text(
+        self, file_name: str, delimiter: str = None, chunksize: int = 50_000
+    ):
+        """
+        Writes the DataFrame to a text file, wrapping any string-valued field in quotes,
+        except for the first and second columns, which are never quoted.
+        """
+        if delimiter is None:
+            delimiter = self._get_delimiter(file_name)
+
+        cols = list(self.columns)
+        ncols = len(cols)
+
+        def fmt(v):
+            if v is None:
+                return ""
+            return v if isinstance(v, str) else str(v)
+
+        it = iter(self.data)
+
+        t0 = time.perf_counter()
+        with open(file_name, "w", newline="", buffering=1024 * 1024) as f:
+            writer = csv.writer(
+                f,
+                delimiter=delimiter,
+                lineterminator="\n",
+                quoting=csv.QUOTE_MINIMAL,
+                quotechar='"',
+                doublequote=True,
+            )
+            writer.writerow(cols)
+            self.logger.debug(
+                f"write_text header dt={(time.perf_counter()-t0):.6f}s file={file_name}"
+            )
+
+            wrote = 0
+            while True:
+                t = time.perf_counter()
+                chunk = list(islice(it, chunksize))
+                self.logger.debug(
+                    f"write_text chunk_take rows={len(chunk)} dt={(time.perf_counter()-t):.6f}s"
+                )
+                if not chunk:
+                    break
+
+                t = time.perf_counter()
+                out_rows = []
+                out_append = out_rows.append
+                for row in chunk:
+                    if len(row) != ncols:
+                        row = list(row) + [None] * (ncols - len(row))
+                        row = row[:ncols]
+                    out_append([fmt(v) for v in row])
+                self.logger.debug(
+                    f"write_text chunk_format rows={len(out_rows)} dt={(time.perf_counter()-t):.6f}s"
+                )
+
+                t = time.perf_counter()
+                writer.writerows(out_rows)
+                wrote += len(out_rows)
+                self.logger.debug(
+                    f"write_text chunk_write rows={len(out_rows)} dt={(time.perf_counter()-t):.6f}s"
+                )
+
+        self.logger.debug(
+            f"write_text done rows={wrote} dt_total={(time.perf_counter()-t0):.6f}s file={file_name}"
+        )
+
+    def write(self, file_name: str, delimiter: str = None):
+        """
+        Writes the DataFrame to a file, determining the format based on the file extension.
+
+        Parameters
+        ----------
+        file_name : str
+            The name of the file to write to.
+        delimiter : str, optional
+            The delimiter to use in the text file (default is None).
+        """
+        if self._is_unprocessable_input():
+            raise UnprocessableInputError()
+        if self._is_h5(file_name):
+            self.write_hdf5(file_name)
+        else:
+            self.write_text(file_name, delimiter=delimiter)
+
+
 class GenericOutputAdapter(ResponseRefactor):
     """
     A class used to adapt generic outputs.
@@ -385,30 +430,41 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             return False
 
-    def _to_dataframe(self, result: dict) -> DataFrame:
+    def _to_dataframe(self, result) -> DataFrame:
+        t0 = time.perf_counter()
         result = self._try_serialize_str_to_json(result)
-        input_data = collections.defaultdict(list)
-        output_data = collections.defaultdict(list)
-        for r in result:
-            for c in self.input_columns:
-                input_data[c] += [r["input"][c]]
-            for c in self.output_columns:
-                v = r["output"][c]
-                if v is not None:
-                    output_data[c] += [self.output_dtype(v)]
-                else:
-                    output_data[c] += [None]
-        data = []
-        columns = self.input_columns + self.output_columns
-        dtype = self.output_dtype
+        t1 = time.perf_counter()
+        logger.debug(f"_to_dataframe serialize dt={(t1 - t0):.6f}s")
 
-        R = []
-        for c in self.input_columns:
-            R += [input_data[c]]
-        for c in self.output_columns:
-            R += [output_data[c]]
-        data = list(map(list, zip(*R)))
-        df = DataFrame(data=data, columns=columns, dtype=dtype, dim=len(columns))
+        in_cols = self.input_columns
+        out_cols = self.output_columns
+        cols = in_cols + out_cols
+        dim = len(cols)
+        cast = self.output_dtype
+
+        data = []
+        append_row = data.append
+
+        t2 = time.perf_counter()
+        for r in result:
+            rin = r["input"]
+            rout = r["output"]
+
+            row = [rin[c] for c in in_cols]
+            for c in out_cols:
+                v = rout[c]
+                row.append(cast(v) if v is not None else None)
+
+            append_row(row)
+
+        t3 = time.perf_counter()
+        logger.debug(f"_to_dataframe build_rows rows={len(data)} dt={(t3 - t2):.6f}s")
+
+        df = DataFrame(data=data, columns=cols, dtype=cast, dim=dim)
+        t4 = time.perf_counter()
+        logger.debug(
+            f"GenericOutputAdapter_to_dataframe construct_df dt={(t4 - t3):.6f}s dt_total={(t4 - t0):.6f}s"
+        )
         return df
 
     def merge(self, subfiles: list, output_file: str):
