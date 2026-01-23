@@ -4,6 +4,7 @@ import importlib
 import json
 import os
 import time
+from collections import Counter
 
 import nest_asyncio
 import pandas as pd
@@ -369,7 +370,6 @@ class StandardCSVRunApi(ErsiliaBase):
         df = self._serialize_output(
             json.dumps(results), output, self.model_id, self.api_name
         )
-
         if self.write_store:
             df = pd.DataFrame(
                 data=df.data, columns=["key", "input"] + self.output_header, dtype=str
@@ -388,98 +388,235 @@ class StandardCSVRunApi(ErsiliaBase):
 
         return output
 
-    def _merge_cache_and_api(self, payload, cache_df, missed, api_values):
-        value_cols = [c for c in cache_df.columns if c not in ("key", "input")]
-        cache_map = {}
-        if not cache_df.empty:
-            for _, row in cache_df.iterrows():
-                cache_map[row["input"]] = {col: row[col] for col in value_cols}
+    def _check_found_and_key(self, check_dict, smi):
+        if check_dict is None:
+            return False, None
 
-        api_map = {}
-        for smi, vals in zip(missed, api_values):
-            if isinstance(vals, dict):
-                api_map[smi] = vals
-            elif isinstance(vals, (list, tuple)):
-                api_map[smi] = {f"value_{j}": v for j, v in enumerate(vals)}
-            else:
-                api_map[smi] = {"value": vals}
+        if isinstance(check_dict, dict):
+            v = check_dict.get(smi)
+            if v is None:
+                return False, None
+            if isinstance(v, bool):
+                return v, None
+            if isinstance(v, str):
+                return True, v
+            if isinstance(v, dict):
+                if "found" in v:
+                    return bool(v.get("found")), v.get("key")
+                if "exists" in v:
+                    return bool(v.get("exists")), v.get("key")
+                if "key" in v:
+                    return True, v.get("key")
+                return bool(v), v.get("key")
+            if isinstance(v, (list, tuple)):
+                if len(v) == 0:
+                    return False, None
+                if isinstance(v[0], bool):
+                    k = v[1] if len(v) > 1 and isinstance(v[1], str) else None
+                    return bool(v[0]), k
+                if isinstance(v[0], str):
+                    return True, v[0]
+                return True, None
+            return True, None
 
-        results = []
-        for smi in payload:
-            if smi in cache_map:
-                rec = {"input": smi, **cache_map[smi]}
-            elif smi in api_map:
-                rec = {"input": smi, **api_map[smi]}
-            else:
-                rec = {"input": smi, "value": None}
-            results.append(rec)
+        if isinstance(check_dict, (set, list, tuple)):
+            return smi in check_dict, None
 
-        return results
+        return False, None
 
     def _fetch_result(self, input_data, url, batch_size):
         total = len(input_data)
         meta = None
-        missed = None
-        found = None
         overall_results = [None] * total
+        all_replacements = []
+
+        def write_replacements_txt(repls):
+            out_path = getattr(self, "output_path", None) or "output.csv"
+            base, _ = os.path.splitext(out_path)
+            path = base + ".ann_replacements.txt"
+
+            counts = Counter(
+                (r["input"], r["lookup_input"], r.get("source", "")) for r in repls
+            )
+
+            with open(path, "w", encoding="utf-8") as f:
+                f.write("count\tinput\tlookup_input\tsource\n")
+                for (inp, lk, src), c in counts.most_common():
+                    f.write(f"{c}\t{inp}\t{lk}\t{src}\n")
+
+            return path
 
         for i in range(0, total, batch_size):
             batch_items = input_data[i : i + batch_size]
+
             payload = [d["input"] for d in batch_items]
+            lookup_payload = [d.get("lookup_input") or d["input"] for d in batch_items]
 
-            if IsauraStore.is_installed() and self.read_store:
-                check_dict = self.isaura_store.check(payload)
-                missed = self._missing_inputs(check_dict, payload)
-                found = self._found_inputs(check_dict, payload)
-            else:
-                missed = payload
+            if IsauraStore.is_installed() and self.read_store and lookup_payload:
+                check_dict = self.isaura_store.check(lookup_payload)
                 found = []
+                missed = []
+                for smi in lookup_payload:
+                    is_found, _ = self._check_found_and_key(check_dict, smi)
+                    (found if is_found else missed).append(smi)
+            else:
+                found = []
+                missed = lookup_payload
 
-            if found and IsauraStore.is_installed():
-                cache_df = self.isaura_store.read(found)
+            found_u = list(dict.fromkeys(found))
+            missed_u = list(dict.fromkeys(missed))
+
+            if found_u and IsauraStore.is_installed():
+                cache_df = self.isaura_store.read(found_u)
             else:
                 cache_df = pd.DataFrame(columns=["key", "input"])
 
             api_values = []
-            if missed:
+            if missed_u:
                 bidx = i // batch_size + 1
                 echo(f"Running batch {bidx}", fg="cyan")
                 self.logger.debug(f"Running batch {bidx}")
                 st = time.perf_counter()
 
-                resp = self._post_batch(url, missed)
+                resp = self._post_batch(url, missed_u)
 
                 et = time.perf_counter()
                 echo(f"Batch {bidx} fetched in {et - st:.4f} seconds", fg="green")
                 self.logger.info(f"Batch {bidx} fetched in {et - st:.4f} seconds")
 
                 try:
-                    if isinstance(resp, dict):
-                        data = resp.json()
-                    else:
-                        data = resp
-                except:
+                    data = resp.json() if hasattr(resp, "json") else resp
+                except Exception:
                     data = None
 
                 if isinstance(data, list):
                     api_values = data
                 elif isinstance(data, dict) and "result" in data:
                     api_values = data["result"]
-                    if "meta" in data:
-                        meta = data["meta"]
+                    if isinstance(data.get("meta"), dict):
+                        if meta is None:
+                            meta = {}
+                        meta.update(data["meta"])
                 elif data is not None:
-                    api_values = [data] * len(missed)
+                    api_values = [data] * len(missed_u)
+                else:
+                    api_values = []
 
-            batch_results = self._merge_cache_and_api(
+            batch_results, batch_repls = self._merge_cache_and_api(
                 payload=payload,
+                lookup_payload=lookup_payload,
+                found=found_u,
                 cache_df=cache_df,
-                missed=missed,
+                missed=missed_u,
                 api_values=api_values,
             )
 
+            all_replacements.extend(batch_repls)
             overall_results[i : i + len(batch_results)] = batch_results
 
+        if all_replacements:
+            path = write_replacements_txt(all_replacements)
+            self.logger.warning(
+                f"ANN replacements detected count={len(all_replacements)} file={path}"
+            )
+            if meta is None:
+                meta = {}
+            meta["ann_replacements_count"] = len(all_replacements)
+            meta["ann_replacements_file"] = path
+
         return overall_results, meta
+
+    def _write_ann_replacements_txt(self, replacements):
+        out_path = getattr(self, "output_path", None) or "output.csv"
+        base, _ = os.path.splitext(out_path)
+        path = base + ".ann_replacements.txt"
+
+        counts = Counter(
+            (r["input"], r["lookup_input"], r["source"]) for r in replacements
+        )
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("count\tinput\tlookup_input\tsource\n")
+            for (inp, lk, src), c in counts.most_common():
+                f.write(f"{c}\t{inp}\t{lk}\t{src}\n")
+
+        return path
+
+    def _merge_cache_and_api(
+        self, payload, lookup_payload, found, cache_df, missed, api_values
+    ):
+        t0 = time.perf_counter()
+        value_cols = (
+            [c for c in cache_df.columns if c not in ("key", "input")]
+            if cache_df is not None
+            else []
+        )
+
+        cache_map = {}
+        if cache_df is not None and not cache_df.empty and found:
+            if len(cache_df) == len(found):
+                rows = (
+                    cache_df[value_cols].to_dict(orient="records")
+                    if value_cols
+                    else [{}] * len(cache_df)
+                )
+                for smi, vals in zip(found, rows):
+                    cache_map[smi] = vals
+            else:
+                self.logger.warning(
+                    f"cache alignment mismatch found={len(found)} cache_rows={len(cache_df)}"
+                )
+
+        api_map = {}
+        missed = missed or []
+        api_values = api_values or []
+        if missed:
+            if not isinstance(api_values, (list, tuple)):
+                api_values = [api_values] * len(missed)
+            n = min(len(missed), len(api_values))
+            for smi, vals in zip(missed[:n], api_values[:n]):
+                if isinstance(vals, dict):
+                    api_map[smi] = vals
+                elif isinstance(vals, (list, tuple)):
+                    api_map[smi] = {f"value_{j}": v for j, v in enumerate(vals)}
+                else:
+                    api_map[smi] = {"value": vals}
+
+        results = []
+        replacements = []
+
+        for orig_smi, lookup_smi in zip(payload, lookup_payload):
+            lookup_smi = (
+                lookup_smi.strip() if isinstance(lookup_smi, str) else lookup_smi
+            )
+
+            if lookup_smi in cache_map:
+                results.append({"input": orig_smi, **cache_map[lookup_smi]})
+                if lookup_smi != orig_smi:
+                    replacements.append(
+                        {
+                            "input": orig_smi,
+                            "lookup_input": lookup_smi,
+                            "source": "cache",
+                        }
+                    )
+                continue
+
+            if lookup_smi in api_map:
+                results.append({"input": orig_smi, **api_map[lookup_smi]})
+                if lookup_smi != orig_smi:
+                    replacements.append(
+                        {"input": orig_smi, "lookup_input": lookup_smi, "source": "api"}
+                    )
+                continue
+
+            results.append({"input": orig_smi, **{v: None for v in self.output_header}})
+
+        self.logger.debug(
+            f"_merge_cache_and_api done payload={len(payload)} found={len(found or [])} missed={len(missed)} "
+            f"cache_rows={len(cache_df) if cache_df is not None else 0} replacements={len(replacements)} "
+            f"dt_total={(time.perf_counter() - t0):.6f}s"
+        )
+        return results, replacements
 
     def _normalize_values(self, out):
         if isinstance(out, list):
@@ -488,41 +625,14 @@ class StandardCSVRunApi(ErsiliaBase):
             return [None] * len(self.output_header) if self.output_header else [None]
         return list(out.values())
 
-    def _select_key_candidates(self, out, default_keys):
-        if out is None:
-            return self.output_header or default_keys
-        if isinstance(out, dict) and "outcome" not in out:
-            return list(out.keys())
-        return default_keys
-
     def _standardize_output(self, input_data, results, meta):
         results = list(results)
-        default_keys = self._generate_default_keys(meta)
         standardized = []
         for inp, out in zip(input_data, results):
             values = self._normalize_values(out)
-            key_candidates = self._select_key_candidates(out, default_keys)
-            keys_flat = (
-                list(key_candidates[0])
-                if self._contains_dict_keys(key_candidates)
-                else key_candidates
-            )
+            keys_flat = self.input_header[1:] + self.output_header
             standardized.append({"input": inp, "output": dict(zip(keys_flat, values))})
         return standardized
-
-    def _generate_default_keys(self, meta):
-        if meta is None:
-            return ["outcome"]
-        outcomes = meta.get("outcome", [])
-        if not outcomes:
-            return ["outcome"]
-        if len(outcomes) == 1 or "outcome" in outcomes[0]:
-            return [outcomes[0]]
-        return outcomes
-
-    def _contains_dict_keys(self, lst):
-        dict_keys_type = type({}.keys())
-        return any(isinstance(x, dict_keys_type) for x in lst)
 
     def _same_row_count(self, inputs, results):
         return len(inputs) == len(results)

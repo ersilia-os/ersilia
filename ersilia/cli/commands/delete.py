@@ -81,7 +81,7 @@ def delete_cmd():
         else:
             echo(
                 f":thumbs_down: Failed to delete all models. Deleted {deleted_count} out of {len(local_models)} models.",
-                fg="red"
+                fg="red",
             )
 
     # Example usage:
