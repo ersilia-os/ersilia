@@ -1,6 +1,7 @@
 import importlib
 import json
 import os
+import sys
 from collections import namedtuple
 
 from ... import ErsiliaBase
@@ -252,8 +253,6 @@ class ModelFetcher(ErsiliaBase):
     def _decide_if_use_dockerhub(self, model_id: str) -> bool:
         if self.repo_path is not None:
             return False
-        if self.force_from_dockerhub:
-            return True
         if self.force_from_s3:
             return False
         if self.force_from_github:
@@ -264,12 +263,18 @@ class ModelFetcher(ErsiliaBase):
             self.logger.debug("Docker Engine is not installed on your system.")
             echo("Docker Engine is not installed on your system.", fg="red")
             return False
-        if not self.is_docker_active:
-            self.logger.info("Docker is not active in your local")
-            echo("Docker is not active in your local", fg="red")
+        if self.force_from_dockerhub and not self.is_docker_active:
+            self.logger.error("Docker is not active in your local")
+            echo(
+                "Docker is not active in your local. Use other fetch source. Exiting!",
+                fg="red",
+            )
+            sys.exit(1)
             return False
         if not self.ji.identifier_exists(model_id=model_id):
-            self.logger.info("Docker image of this model doesn't seem to be available")
+            self.logger.warning(
+                "Docker image of this model doesn't seem to be available"
+            )
             echo("Docker image of this model doesn't seem to be available", fg="red")
             return False
         return True
