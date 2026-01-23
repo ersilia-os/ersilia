@@ -294,13 +294,11 @@ class DataFrame(object):
         ncols = len(cols)
 
         def fmt(i, v):
-            if v is None:
-                return ""
             if isinstance(v, str):
                 if i > 1:
-                    if '"' in v:
-                        v = v.replace('"', '""')
-                    return f'"{v}"'
+                    l = len(v.split(","))
+                    if l > 1:
+                        return f'"{v}"'
                 return v
             return str(v)
 

@@ -445,6 +445,7 @@ class ModelInspector:
         if errors:
             logger.debug(f"Errors in Dockerfile install command: {errors}")
         return errors
+    
     def _validate_yml(self, yml_content):
         errors = []
         try:
@@ -463,7 +464,6 @@ class ModelInspector:
 
         for cmd in commands:
             if not isinstance(cmd, list) or len(cmd) < 2:
-                errors.append(f"Invalid command format: {cmd}")
                 continue
 
             tool = cmd[0]
