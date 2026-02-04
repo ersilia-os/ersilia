@@ -10,6 +10,7 @@ from ..default import CONDA_ENV_YML_FILE
 from ..utils.exceptions_utils.fetch_exceptions import ModelPackageInstallError
 from ..utils.logging import make_temp_dir
 from .docker import SimpleDockerfileParser
+from .echo import echo
 from .supp.conda_env_resolve import CHECKSUM_FILE, CHECKSUM_NCHAR
 from .terminal import run_command, run_command_check_output
 from .versioning import Versioner
@@ -392,7 +393,7 @@ class CondaUtils(BaseConda):
         snippet = """
         source {0}/etc/profile.d/conda.sh
         conda activate {1}
-        """.format(self.conda_prefix(False), BASE)
+        """.format(self.conda_prefix(True), BASE)
         return snippet
 
 
@@ -568,7 +569,7 @@ class SimpleConda(CondaUtils):
         bash_script += """
         source {0}/etc/profile.d/conda.sh
         conda env remove --name {1} -y
-        """.format(self.conda_prefix(True), environment)
+        """.format(self.conda_prefix(False), environment)
         with open(tmp_script, "w") as f:
             f.write(bash_script)
         run_command("bash {0}".format(tmp_script))
@@ -578,7 +579,7 @@ class SimpleConda(CondaUtils):
             self.delete_one(env)
 
     def _manual_delete(self, environment):
-        envs_path = os.path.join(self.conda_prefix(True), "envs")
+        envs_path = os.path.join(self.conda_prefix(False), "envs")
         for env in os.listdir(envs_path):
             if env.startswith(environment):
                 shutil.rmtree(os.path.join(envs_path, env))
@@ -689,7 +690,7 @@ class SimpleConda(CondaUtils):
         source {0}/etc/profile.d/conda.sh
         conda activate {1}
         {2}
-        """.format(self.conda_prefix(True), environment, commandlines)
+        """.format(self.conda_prefix(False), environment, commandlines)
         with open(file_name, "w") as f:
             f.write(bash_script)
         return file_name
@@ -778,8 +779,16 @@ class StandaloneConda(object):
         logger.debug(commandlines)
 
         if not self.exists(environment):
-            raise Exception("{0} environment does not exist".format(environment))
-
+            logger.warning(
+                "{0} standalone environment does not exist. Proceeding to use it directly!".format(
+                    environment
+                )
+            )
+            echo(
+                "{0} standalone environment does not exist. Proceeding to use it directly!".format(
+                    environment
+                )
+            )
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_script = os.path.join(tmp_folder, "script.sh")
         logger.info(f"Activating environment: {environment}")
