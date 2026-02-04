@@ -313,7 +313,7 @@
           <h1>Source code for ersilia.publish.test.services.setup</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
@@ -324,12 +324,13 @@
     <span class="n">EOS_TMP</span><span class="p">,</span>
     <span class="n">GITHUB_ORG</span><span class="p">,</span>
     <span class="n">S3_BUCKET_URL_ZIP</span><span class="p">,</span>
+    <span class="n">_CONDA_BOOTSTRAP</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....hub.content.card</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCard</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.download</span><span class="w"> </span><span class="kn">import</span> <span class="n">GitHubDownloader</span><span class="p">,</span> <span class="n">S3Downloader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_input</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_input</span><span class="p">,</span> <span class="n">_looks_like_conda</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Using slow pure-python SequenceMatcher.*&quot;</span><span class="p">)</span>
@@ -438,14 +439,19 @@
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.setup.SetupService.run_command">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span>
-        <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">capture_output</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">shell</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">command</span><span class="p">,</span>
+        <span class="n">logger</span><span class="p">,</span>
+        <span class="n">capture_output</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">shell</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">env</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run a shell command.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        command : str</span>
+<span class="sd">        command : str | list | tuple</span>
 <span class="sd">            The command to run.</span>
 <span class="sd">        logger : logging.Logger</span>
 <span class="sd">            Logger for logging messages.</span>
@@ -453,28 +459,75 @@
 <span class="sd">            Flag indicating whether to capture the command output.</span>
 <span class="sd">        shell : bool, optional</span>
 <span class="sd">            Flag indicating whether to run the command in the shell.</span>
+<span class="sd">        env : dict | None, optional</span>
+<span class="sd">            Environment variables to use (defaults to os.environ).</span>
+<span class="sd">        check : bool, optional</span>
+<span class="sd">            If True, raise CalledProcessError on non-zero exit codes (capture_output=True only).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            The output of the command.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        ------</span>
-<span class="sd">        subprocess.CalledProcessError</span>
-<span class="sd">            If the command returns a non-zero exit code.</span>
+<span class="sd">        str | io.TextIOBase</span>
+<span class="sd">            If capture_output=True returns stdout as string.</span>
+<span class="sd">            Otherwise returns process.stdout (a stream).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">capture_output</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-                    <span class="n">command</span><span class="p">,</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">env</span>
+        <span class="n">use_bash</span> <span class="o">=</span> <span class="n">_looks_like_conda</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">capture_output</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">use_bash</span><span class="p">:</span>
+                    <span class="n">script</span> <span class="o">=</span> <span class="n">_CONDA_BOOTSTRAP</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">command</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                        <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">],</span>
+                        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                        <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                        <span class="n">command</span><span class="p">,</span>
+                        <span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">,</span>
+                        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                        <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">use_bash</span><span class="p">:</span>
+                    <span class="n">bash_cmd</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">command</span><span class="p">)</span>
+                    <span class="n">script</span> <span class="o">=</span> <span class="n">_CONDA_BOOTSTRAP</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">bash_cmd</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                        <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">],</span>
+                        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                        <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                        <span class="nb">list</span><span class="p">(</span><span class="n">command</span><span class="p">),</span>
+                        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                        <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
+                    <span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">use_bash</span><span class="p">:</span>
+                <span class="n">script</span> <span class="o">=</span> <span class="n">_CONDA_BOOTSTRAP</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">command</span>
+                <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">],</span>
                     <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                     <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                     <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">,</span>
+                    <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
                     <span class="n">command</span><span class="p">,</span>
@@ -482,37 +535,29 @@
                     <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                     <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">,</span>
+                    <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">use_bash</span><span class="p">:</span>
+                <span class="n">bash_cmd</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">command</span><span class="p">)</span>
+                <span class="n">script</span> <span class="o">=</span> <span class="n">_CONDA_BOOTSTRAP</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">bash_cmd</span>
+                <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">],</span>
+                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">command</span><span class="p">),</span>
+                    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                    <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
                 <span class="p">)</span>
 
-                <span class="n">stdout_lines</span><span class="p">,</span> <span class="n">stderr_lines</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
-
-                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-                        <span class="n">stdout_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-
-                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-                        <span class="n">stderr_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-
-                <span class="n">process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-                <span class="k">return</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span>
-
-        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error executing command: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Error happened when : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">output</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Unexpected error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span></div>
 
 
 <div class="viewcode-block" id="SetupService.get_conda_env_location">
