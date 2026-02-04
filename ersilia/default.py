@@ -242,33 +242,38 @@ def bashrc_cli_snippet(overwrite=True):
 
 _CONDA_BOOTSTRAP = r"""
 set -euo pipefail
-
 if command -v conda >/dev/null 2>&1; then
-  exit 0
-fi
-
-CONDA_SH=""
-
-if [ -n "${CONDA_EXE:-}" ] && [ -x "${CONDA_EXE}" ]; then
-  CONDA_BASE="$(cd "$(dirname "$(dirname "${CONDA_EXE}")")" && pwd)"
-  if [ -f "${CONDA_BASE}/etc/profile.d/conda.sh" ]; then
-    CONDA_SH="${CONDA_BASE}/etc/profile.d/conda.sh"
-  fi
-fi
-
-if [ -z "${CONDA_SH}" ]; then
-  for b in "/opt/conda" "$HOME/miniconda" "$HOME/miniconda3" "$HOME/mambaforge" "$HOME/anaconda3" "/usr/share/miniconda"; do
-    if [ -f "$b/etc/profile.d/conda.sh" ]; then
-      CONDA_SH="$b/etc/profile.d/conda.sh"
-      break
+  :
+else
+  CONDA_SH=""
+  for p in "${CONDA:-}" "${CONDA_PREFIX:-}" "${MAMBA_ROOT_PREFIX:-}" "${CONDA_EXE:-}"; do
+    if [ -n "${p}" ]; then
+      if [ -x "${p}" ]; then
+        base="$(cd "$(dirname "$(dirname "${p}")")" && pwd)"
+      else
+        base="${p}"
+      fi
+      if [ -f "${base}/etc/profile.d/conda.sh" ]; then
+        CONDA_SH="${base}/etc/profile.d/conda.sh"
+        break
+      fi
     fi
   done
-fi
 
-if [ -z "${CONDA_SH}" ]; then
-  echo "ERROR: conda not found on PATH and conda.sh not found. Ensure conda is installed." >&2
-  exit 127
-fi
+  if [ -z "${CONDA_SH}" ]; then
+    for b in "/opt/conda" "/usr/share/miniconda" "$HOME/miniconda" "$HOME/miniconda3" "$HOME/mambaforge" "$HOME/anaconda3"; do
+      if [ -f "$b/etc/profile.d/conda.sh" ]; then
+        CONDA_SH="$b/etc/profile.d/conda.sh"
+        break
+      fi
+    done
+  fi
 
-source "$CONDA_SH"
+  if [ -z "${CONDA_SH}" ]; then
+    echo "ERROR: conda not found on PATH and conda.sh not found. On GitHub Actions, install conda (setup-miniconda) or micromamba." >&2
+    exit 127
+  fi
+
+  source "$CONDA_SH"
+fi
 """

@@ -69,7 +69,7 @@ def run_command(cmd, quiet=True):
         if use_bash:
             script = _CONDA_BOOTSTRAP + "\n" + cmd
             result = subprocess.run(
-                ["bash", "-lc", script],
+                ["bash", "-c", script],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
@@ -91,7 +91,7 @@ def run_command(cmd, quiet=True):
             bash_cmd = " ".join(shlex.quote(str(x)) for x in cmd)
             script = _CONDA_BOOTSTRAP + "\n" + bash_cmd
             result = subprocess.run(
-                ["bash", "-lc", script],
+                ["bash", "-c", script],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
