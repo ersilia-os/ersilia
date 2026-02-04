@@ -191,10 +191,10 @@ class RunnerService:
             self.logger.info(f"Fetching the model from: {loc}")
             cmd = " ".join(["ersilia", "-v", "fetch", model_id, *loc])
             self.logger.debug(f"Running fetch command for testing: {cmd}")
-            out = run_command(cmd, quiet=False)
+            out = run_command(cmd, quiet=True)
             return out
 
-        # self.delete()
+        self.delete()
         out = _fetch(self.model_id, self.logger)
         return out
     
@@ -663,7 +663,7 @@ class RunnerService:
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
             echo("Model tests and checks completed.", fg="green", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
-            # self.delete()
+            self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
         except SystemExit as e:
@@ -673,7 +673,7 @@ class RunnerService:
                 fg="yellow", bold=True,
             )
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
-            # self.delete()
+            self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
 
@@ -682,7 +682,7 @@ class RunnerService:
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
-            # self.delete()
+            self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
     def _configure_environment(self):
