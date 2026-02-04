@@ -1,6 +1,6 @@
 import os
 import subprocess
-import sys
+import shlex
 import warnings
 import zipfile
 from typing import Any
@@ -11,12 +11,13 @@ from ....default import (
     EOS_TMP,
     GITHUB_ORG,
     S3_BUCKET_URL_ZIP,
+    _CONDA_BOOTSTRAP
 )
 from ....hub.content.card import ModelCard
 from ....utils.download import GitHubDownloader, S3Downloader
 from ....utils.conda import SimpleConda
 from ....utils.logging import make_temp_dir
-from ....utils.terminal import yes_no_input
+from ....utils.terminal import yes_no_input, _looks_like_conda
 from ....cli import echo
 
 warnings.filterwarnings("ignore", message="Using slow pure-python SequenceMatcher.*")
@@ -118,14 +119,19 @@ class SetupService:
 
     @staticmethod
     def run_command(
-        command: str, logger, capture_output: bool = False, shell: bool = True
-    ) -> str:
+        command,
+        logger,
+        capture_output: bool = False,
+        shell: bool = True,
+        env=None,
+        check: bool = False,
+    ):
         """
         Run a shell command.
 
         Parameters
         ----------
-        command : str
+        command : str | list | tuple
             The command to run.
         logger : logging.Logger
             Logger for logging messages.
@@ -133,28 +139,75 @@ class SetupService:
             Flag indicating whether to capture the command output.
         shell : bool, optional
             Flag indicating whether to run the command in the shell.
+        env : dict | None, optional
+            Environment variables to use (defaults to os.environ).
+        check : bool, optional
+            If True, raise CalledProcessError on non-zero exit codes (capture_output=True only).
 
         Returns
         -------
-        str
-            The output of the command.
-
-        Raises
-        ------
-        subprocess.CalledProcessError
-            If the command returns a non-zero exit code.
+        str | io.TextIOBase
+            If capture_output=True returns stdout as string.
+            Otherwise returns process.stdout (a stream).
         """
-        try:
-            if capture_output:
-                result = subprocess.run(
-                    command,
+        env = os.environ if env is None else env
+        use_bash = _looks_like_conda(command)
+
+        if capture_output:
+            if isinstance(command, str):
+                if use_bash:
+                    script = _CONDA_BOOTSTRAP + "\n" + command
+                    result = subprocess.run(
+                        ["bash", "-c", script],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                        env=env,
+                        check=check,
+                    )
+                else:
+                    result = subprocess.run(
+                        command,
+                        shell=shell,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                        env=env,
+                        check=check,
+                    )
+            else:
+                if use_bash:
+                    bash_cmd = " ".join(shlex.quote(str(x)) for x in command)
+                    script = _CONDA_BOOTSTRAP + "\n" + bash_cmd
+                    result = subprocess.run(
+                        ["bash", "-c", script],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                        env=env,
+                        check=check,
+                    )
+                else:
+                    result = subprocess.run(
+                        list(command),
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                        env=env,
+                        check=check,
+                    )
+            return result.stdout
+
+        if isinstance(command, str):
+            if use_bash:
+                script = _CONDA_BOOTSTRAP + "\n" + command
+                process = subprocess.Popen(
+                    ["bash", "-c", script],
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True,
-                    check=True,
-                    shell=shell,
+                    env=env,
                 )
-                return result.stdout
             else:
                 process = subprocess.Popen(
                     command,
@@ -162,37 +215,29 @@ class SetupService:
                     stderr=subprocess.PIPE,
                     text=True,
                     shell=shell,
+                    env=env,
+                )
+        else:
+            if use_bash:
+                bash_cmd = " ".join(shlex.quote(str(x)) for x in command)
+                script = _CONDA_BOOTSTRAP + "\n" + bash_cmd
+                process = subprocess.Popen(
+                    ["bash", "-c", script],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    env=env,
+                )
+            else:
+                process = subprocess.Popen(
+                    list(command),
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    env=env,
                 )
 
-                stdout_lines, stderr_lines = [], []
-
-                for line in iter(process.stdout.readline, ""):
-                    if line.strip():
-                        stdout_lines.append(line.strip())
-                        logger.info(line.strip())
-
-                for line in iter(process.stderr.readline, ""):
-                    if line.strip():
-                        stderr_lines.append(line.strip())
-                        logger.info(line.strip())
-
-                process.wait()
-                return process.stdout
-
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Error executing command: {e}")
-            echo(f"\n Error happened when : {e}", fg="red")
-            if e.output:
-                logger.debug(f"Output: {e.output.strip()}")
-                echo(f"Output: {e.output.strip()}", fg="red")
-            if e.stderr:
-                logger.error(f"Error: {e.stderr.strip()}")
-                echo(f"Error: {e.stderr.strip()}", fg="red")
-            sys.exit(1)
-        except Exception as e:
-            logger.debug(f"Unexpected error: {e}")
-            echo(f"\n Unexpected error: {e}", fg="red")
-            sys.exit(1)
+        return process.stdout
 
     @staticmethod
     def get_conda_env_location(model_id: str, logger) -> str:
