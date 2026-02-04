@@ -17,7 +17,7 @@ except:
     inputimeout = None
     TimeoutOccurred = None
 
-from ..default import VERBOSE_FILE
+from ..default import _CONDA_BOOTSTRAP, VERBOSE_FILE
 from ..utils.logging import make_temp_dir
 from ..utils.session import get_session_dir
 
@@ -44,39 +44,73 @@ def is_quiet():
         return True
 
 
-def run_command(cmd, quiet=True):
-    """
-    Run a shell command and return a named tuple with stdout, stderr, and return code.
+def _looks_like_conda(cmd):
+    if isinstance(cmd, str):
+        s = cmd.strip()
+        return s.startswith("conda ") or " conda " in f" {s} "
+    if isinstance(cmd, (list, tuple)) and cmd:
+        return cmd[0] == "conda"
+    return False
 
+
+def run_command(cmd, quiet=True):
+    """Run a shell command and return a named tuple with stdout, stderr, and return code.
     Parameters
     ----------
-    cmd : str or list
-        The command to run.
-    quiet : bool, optional
-        Whether to run the command in quiet mode. Defaults to is_quiet().
+    cmd : str or list The command to run.
+    quiet : bool, optional Whether to run the command in quiet mode. Defaults to is_quiet().
     """
-
     if quiet is None:
         quiet = is_quiet()
 
-    # Run the command and capture outputs
-    result = subprocess.run(
-        cmd,
-        shell=isinstance(cmd, str),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        env=os.environ,
-    )
+    use_bash = _looks_like_conda(cmd)
+
+    if isinstance(cmd, str):
+        if use_bash:
+            script = _CONDA_BOOTSTRAP + "\n" + cmd
+            result = subprocess.run(
+                ["bash", "-lc", script],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=os.environ,
+            )
+        else:
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=os.environ,
+            )
+    else:
+        if use_bash:
+            import shlex
+
+            bash_cmd = " ".join(shlex.quote(str(x)) for x in cmd)
+            script = _CONDA_BOOTSTRAP + "\n" + bash_cmd
+            result = subprocess.run(
+                ["bash", "-lc", script],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=os.environ,
+            )
+        else:
+            result = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=os.environ,
+            )
 
     CommandResult = namedtuple("CommandResult", ["returncode", "stdout", "stderr"])
-    stdout_str = result.stdout.strip()
-    stderr_str = result.stderr.strip()
-    output = CommandResult(
-        returncode=result.returncode, stdout=stdout_str, stderr=stderr_str
-    )
+    stdout_str = (result.stdout or "").strip()
+    stderr_str = (result.stderr or "").strip()
+    output = CommandResult(result.returncode, stdout_str, stderr_str)
 
-    # Log outputs if not in quiet mode
     if not quiet:
         if stdout_str:
             print(stdout_str)
