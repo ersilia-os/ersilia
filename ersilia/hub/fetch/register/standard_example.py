@@ -92,7 +92,6 @@ class ModelStandardExample(ErsiliaBase):
         self.logger.debug(f"Exaple output file:{output_csv}")
         commands = [
             "ersilia serve {0} --disable-cache".format(self.model_id),
-            "sleep 8",
             "ersilia example -n 3 -f {0}".format(input_csv),
             "ersilia run -i {0} -o {1} > {2} 2>&1".format(
                 input_csv, output_csv, run_log
