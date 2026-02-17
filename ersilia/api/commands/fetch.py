@@ -22,7 +22,7 @@ def _fetch(mf, model_id):
 
     # Raises
     # -------
-    # RuntimeError: If both BentoML and FastAPI are used together.
+    # RuntimeError: FastAPI are used together.
 
     """
     res = asyncio.run(mf.fetch(model_id))

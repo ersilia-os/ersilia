@@ -42,7 +42,7 @@ def fetch_cmd():
         short_help="Fetch model from Ersilia Model Hub",
         help="Fetch model from EOS repository. Model files are downloaded from GitHub and model data are "
         "downloaded from a file storage system such as the Open Science Framework. Model is downloaded to "
-        "an EOS folder, then packed to a BentoML bundle",
+        "an EOS folder, then packed to a bundle",
     )
     @click.argument("model", type=click.STRING)
     @click.option(
@@ -90,12 +90,6 @@ def fetch_cmd():
         help="URL of the hosted model service",
     )
     @click.option(
-        "--with_bentoml",
-        is_flag=True,
-        default=False,
-        help="Force fetch using BentoML",
-    )
-    @click.option(
         "--with_fastapi",
         is_flag=True,
         default=False,
@@ -111,12 +105,8 @@ def fetch_cmd():
         from_s3,
         from_hosted,
         hosted_url,
-        with_bentoml,
         with_fastapi,
     ):
-        if with_bentoml and with_fastapi:
-            raise Exception("Cannot use both BentoML and FastAPI")
-
         if from_dir is not None:
             mdl = ModelBase(repo_path=from_dir)
         else:
@@ -135,7 +125,6 @@ def fetch_cmd():
             force_from_dockerhub=from_dockerhub,
             img_version=version,
             force_from_hosted=from_hosted,
-            force_with_bentoml=with_bentoml,
             force_with_fastapi=with_fastapi,
             hosted_url=hosted_url,
             local_dir=from_dir,

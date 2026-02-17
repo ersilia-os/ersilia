@@ -8,7 +8,6 @@ from ....default import (
     DOCKERHUB_LATEST_TAG,
     DOCKERHUB_ORG,
     INFORMATION_FILE,
-    PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     PREDEFINED_EXAMPLE_FILES,
 )
@@ -18,7 +17,6 @@ from ....utils.docker import SimpleDocker
 from ....utils.resolvers import PackMethodResolver
 from ...pull.pull import ModelPuller
 from .. import STATUS_FILE
-from ..actions.template_resolver import TemplateResolver
 from ..register.register import ModelRegisterer
 
 
@@ -64,7 +62,6 @@ class ModelDockerHubFetcher(ErsiliaBase):
         overwrite=None,
         config_json=None,
         img_tag=None,
-        force_with_bentoml=False,
         force_with_fastapi=False,
     ):
         super().__init__(config_json=config_json, credentials_json=None)
@@ -72,27 +69,18 @@ class ModelDockerHubFetcher(ErsiliaBase):
         self.overwrite = overwrite
         self.img_tag = img_tag or DOCKERHUB_LATEST_TAG
         self.pack_method = None
-        self.force_with_bentoml = force_with_bentoml
         self.force_with_fastapi = force_with_fastapi
 
     async def _resolve_pack_method(self, model_id):
         if self.force_with_fastapi:
             pack_method = PACK_METHOD_FASTAPI
-        elif self.force_with_bentoml:
-            pack_method = PACK_METHOD_BENTOML
         else:
             self.logger.debug("Resolving pack method from GitHub repository...")
             pmr = PackMethodResolver(model_id=model_id)
             pack_method = pmr.resolve_pack_method_from_github_metadata()
             if not pack_method:
                 self.logger.debug("Resolving pack method with TemplateResolver...")
-                tr = TemplateResolver(model_id=model_id)
-                if tr.is_fastapi():
-                    pack_method = PACK_METHOD_FASTAPI
-                elif tr.is_bentoml():
-                    pack_method = PACK_METHOD_BENTOML
-                else:
-                    raise Exception("Pack method could not be resolved")
+                pack_method = PACK_METHOD_FASTAPI
         self.logger.debug(f"Pack method resolved: {pack_method}")
         self.pack_method = pack_method
 
@@ -160,30 +148,6 @@ class ModelDockerHubFetcher(ErsiliaBase):
         di.serve()
         di.close()
 
-    async def _copy_from_bentoml_image(self, model_id: str, file: str):
-        """
-        Copy a file from a BentoML image.
-
-        Parameters
-        ----------
-        model_id : str
-            ID of the model.
-        file : str
-            Name of the file to copy.
-        """
-        fr_file = f"/root/eos/dest/{model_id}/{file}"
-        to_file = f"{EOS}/dest/{model_id}/{file}"
-        try:
-            await self.simple_docker.cp_from_image(
-                img_path=fr_file,
-                local_path=to_file,
-                org=DOCKERHUB_ORG,
-                img=model_id,
-                tag=self.img_tag,
-            )
-        except Exception as e:
-            self.logger.error(f"Exception when copying: {e}")
-
     async def _copy_from_ersiliapack_image(self, model_id: str, file: str):
         """
         Copy a file from an ErsiliaPack image.
@@ -218,14 +182,10 @@ class ModelDockerHubFetcher(ErsiliaBase):
         """
         if not self.pack_method:
             raise Exception("Pack method not resolved")
-        if self.pack_method == PACK_METHOD_BENTOML:
-            await self._copy_from_bentoml_image(model_id, file)
-        elif self.pack_method == PACK_METHOD_FASTAPI:
+        if self.pack_method == PACK_METHOD_FASTAPI:
             await self._copy_from_ersiliapack_image(model_id, file)
         else:
-            raise Exception(
-                f"Unresolved method, should be either {PACK_METHOD_FASTAPI} or {PACK_METHOD_BENTOML}"
-            )
+            raise Exception(f"Unresolved method, should be {PACK_METHOD_FASTAPI}")
 
     async def copy_information(self, model_id: str):
         """

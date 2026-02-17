@@ -16,7 +16,6 @@ from ...utils.system import is_inside_docker
 from ...utils.terminal import run_command
 from .localdb import EnvironmentDb
 
-BENTOML_DOCKERPORT = 5000
 INTERNAL_DOCKERPORT = 80
 
 
@@ -33,8 +32,7 @@ class DockerManager(ErsiliaBase):
         Configuration settings for initializing the Docker manager.
     preferred_port : int, optional
         Preferred port number for running Docker containers.
-    with_bentoml : bool, optional
-        Flag indicating whether to use BentoML for model serving.
+
 
     Examples
     --------
@@ -49,7 +47,7 @@ class DockerManager(ErsiliaBase):
     >>> docker_manager.run(model_id="eosxxxx", workers=2)
     """
 
-    def __init__(self, config_json=None, preferred_port=None, with_bentoml=False):
+    def __init__(self, config_json=None, preferred_port=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self._eos_regex = Paths()._eos_regex()
         self._org_regex = re.compile(DOCKERHUB_ORG)
@@ -58,7 +56,6 @@ class DockerManager(ErsiliaBase):
         self.db = EnvironmentDb()
         self.db.table = "docker"
         self.preferred_port = preferred_port
-        self.with_bentoml = with_bentoml
 
     def is_inside_docker(self):
         """
@@ -235,41 +232,6 @@ class DockerManager(ErsiliaBase):
                 cnt_dict[k] = v
         return cnt_dict
 
-    def build_with_bentoml(self, model_id, use_cache=True):  # Ignore for versioning
-        """
-        Builds a Docker image for the model using BentoML.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model.
-        use_cache : bool, optional
-            If True, use Docker's cache when building the image.
-        """
-        bundle_path = self._get_bundle_location(model_id)
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "build.sh")
-        cmdlines = ["cd {0}".format(bundle_path)]
-        if use_cache:
-            cache_str = ""
-        else:
-            cache_str = "--disable-cache"
-        cmdlines += [
-            "docker build {0} -t {1}/{2}:{3} .".format(
-                cache_str, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
-            )
-        ]
-        self.logger.debug(cmdlines)
-        with open(tmp_file, "w") as f:
-            for cmd in cmdlines:
-                f.write(cmd + os.linesep)
-        cmd = "bash {0}".format(tmp_file)
-        run_command(cmd)
-        self.db.insert(
-            model_id=model_id,
-            env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG),
-        )
-
     @property
     def _model_deploy_dockerfiles_url(self):
         return "https://raw.githubusercontent.com/ersilia-os/ersilia/master/dockerfiles/model-deploy"
@@ -369,12 +331,9 @@ class DockerManager(ErsiliaBase):
         use_cache : bool, optional
             If True, use Docker's cache when building the image.
         """
-        if self.with_bentoml:
-            self.build_with_bentoml(model_id=model_id, use_cache=use_cache)
-        else:
-            self.build_with_ersilia(
-                model_id=model_id, docker_user=docker_user, docker_pwd=docker_pwd
-            )
+        self.build_with_ersilia(
+            model_id=model_id, docker_user=docker_user, docker_pwd=docker_pwd
+        )
 
     def remove(self, model_id):
         """
@@ -428,10 +387,7 @@ class DockerManager(ErsiliaBase):
             name_ = "{0}_{1}".format(model_id, si.encode())
             if not self.container_exists(name_):
                 name = name_
-        if self.with_bentoml:
-            dockerport = BENTOML_DOCKERPORT
-        else:
-            dockerport = INTERNAL_DOCKERPORT
+        dockerport = INTERNAL_DOCKERPORT
         if memory is None:
             cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
                 name, port, dockerport, img, workers, mb_string, resolve_platform()

@@ -411,11 +411,11 @@ class ModelParametersGetter(BaseAction):
         """
         model_path = self._model_path(self.model_id)
         folder = self._get_destination()
-        tr = TemplateResolver(
-            model_id=self.model_id, repo_path=model_path, config_json=self.config_json
-        )
-        if tr.is_fastapi():
-            return None
+        # tr = TemplateResolver(
+        #     model_id=self.model_id, repo_path=model_path, config_json=self.config_json
+        # )
+        # if tr.is_fastapi():
+        #     return None
         if not os.path.exists(folder):
             os.mkdir(folder)
         if not self._requires_parameters(model_path):

@@ -1,10 +1,5 @@
 import os
 
-try:
-    import bentoml
-except:
-    bentoml = None
-
 from ..... import throw_ersilia_exception
 from .....db.environments.localdb import EnvironmentDb
 from .....db.environments.managers import DockerManager
@@ -209,18 +204,6 @@ class DockerPack(BasePack):
         self.docker_tag = self.cfg.ENV.DOCKER.REPO_TAG
         self.logger.debug("Initializing docker packer")
 
-    def _load_model_from_tmp(self, path: str):
-        path = os.path.join(path, self.model_id)
-        if not os.path.exists(path):
-            return None
-        items = sorted(os.listdir(path))
-        if not items:
-            return None
-        else:
-            tag = items[-1]
-        path = os.path.join(path, tag)
-        return bentoml.load(path)
-
     def _setup(self):
         name = self.docker._image_name(self.docker_org, self.model_id, self.docker_tag)
         self.logger.debug(
@@ -247,12 +230,7 @@ class DockerPack(BasePack):
         self.logger.debug("Copying bundle from docker image to host")
         tmp_dir = make_temp_dir(prefix="ersilia-")
         self.logger.debug("Using this temporary directory: {0}".format(tmp_dir))
-        self.docker.cp_from_container(
-            name, "/root/bentoml/repository/%s" % model_id, tmp_dir
-        )
-        self.logger.debug("Loading bentoml")
-        mdl = self._load_model_from_tmp(tmp_dir)
-        mdl.save()
+        self.docker.cp_from_container(name, "/root/repository/%s" % model_id, tmp_dir)
         self._symlinks()
         self._delete_packer_container()
 

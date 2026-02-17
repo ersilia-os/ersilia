@@ -42,8 +42,7 @@ class ModelInformer(BaseAction):
 
     def inform(self):
         """
-        Write information to a JSON file and add API info for bentoml models.
+        Write information to a JSON file and add API info for models.
         """
         self._write_information_json()
-        if self._resolve_pack_method_source(self.model_id) == "bentoml":
-            self._add_info_api()
+        self._add_info_api()

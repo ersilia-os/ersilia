@@ -7,7 +7,6 @@ from dockerfile_parse import DockerfileParser
 from ...core.base import ErsiliaBase
 from ...default import CONDA_ENV_YML_FILE, DOCKERFILE_FILE
 from ...hub.fetch import MODEL_INSTALL_COMMANDS_FILE, REQUIREMENTS_TXT
-from .repo import DockerfileFile
 
 
 class BundleEnvironmentFile(ErsiliaBase):
@@ -176,7 +175,7 @@ class BundleDockerfileFile(ErsiliaBase):
     """
     Class to handle the Dockerfile for a model bundle.
 
-    It specifically provides methods to get the path to the Dockerfile, get the BentoML version required for the model, and more.
+    It specifically provides methods to get the path to the Dockerfile, get the  version required for the model, and more.
 
     Parameters
     ----------
@@ -205,45 +204,28 @@ class BundleDockerfileFile(ErsiliaBase):
         """
         return self.path
 
-    def get_bentoml_version(self) -> dict:
+    def get__version(self) -> dict:
         """
-        Get the BentoML version required for the model.
+        Get the  version required for the model.
 
         Returns
         -------
         dict
-            A dictionary containing the BentoML version, slim flag, and Python version.
+            A dictionary containing the  version, slim flag, and Python version.
         """
-        return DockerfileFile(path=self.path).get_bentoml_version()
+        return None
 
     def set_to_slim(self):
         """
-        Set the Dockerfile to use the slim version of the BentoML image.
+        Set the Dockerfile to use the slim version of the  image.
         """
-        ver = self.get_bentoml_version()
-        if not ver:
-            return
-        if ver["slim"]:
-            return
-        img = "bentoml/model-server:{0}-slim-{1}".format(ver["version"], ver["python"])
-        self.parser.baseimage = img
-        content = self.parser.content
-        with open(self.path, "w") as f:
-            f.write(content)
+        return
 
     def set_to_full(self):
         """
-        Set the Dockerfile to use the full version of the BentoML image.
+        Set the Dockerfile to use the full version of the  image.
         """
-        ver = self.get_bentoml_version()
-        if not ver:
-            return
-        if ver["slim"]:
-            img = "bentoml/model-server:{0}-{1}".format(ver["version"], ver["python"])
-            self.parser.baseimage = img
-        content = self.parser.content
-        with open(self.path, "w") as f:
-            f.write(content)
+        return
 
     def check(self):  # TODO: Removing this fucntion
         """

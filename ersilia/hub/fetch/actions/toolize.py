@@ -46,7 +46,7 @@ class ModelToolizer(BaseAction):
 
     def dockerize(self, model_id: str):
         """
-        Containerizes the model using BentoML with Docker.
+        Containerizes the model using Docker.
 
         Parameters
         ----------
@@ -59,10 +59,6 @@ class ModelToolizer(BaseAction):
             return
         self.logger.debug("Dockerizing")
         tag = self.cfg.ENV.DOCKER.LATEST_TAG
-        cmd = "bentoml containerize {1}:{2} -t {0}/{1}:{2}".format(
-            self.docker_org, model_id, tag
-        )
-        run_command(cmd)
         # store docker in the local environment database
         db = EnvironmentDb(config_json=self.config_json)
         db.table = "docker"

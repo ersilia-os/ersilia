@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-from ..default import BENTOML_PATH, EOS
+from ..default import EOS
 from .conda import SimpleConda
 from .docker import SimpleDocker
 from .logging import logger
@@ -30,7 +30,7 @@ class Uninstaller(object):
             logger.error(f"Failed to uninstall Ersilia package: {e}")
 
     def _directories(self):
-        dirs_to_remove = [EOS, BENTOML_PATH]
+        dirs_to_remove = [EOS]
         for dir in dirs_to_remove:
             if os.path.exists(dir):
                 try:

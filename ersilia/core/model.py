@@ -836,7 +836,7 @@ class ErsiliaModel(ErsiliaBase):
         Get the paths related to the model.
 
         This property returns a dictionary containing various paths related to the model,
-        such as the destination path, repository path, and BentoML path.
+        such as the destination path and repository path.
 
         Returns
         -------
@@ -846,7 +846,6 @@ class ErsiliaModel(ErsiliaBase):
         p = {
             "dest": self._model_path(self.model_id),
             "repository": self._get_bundle_location(self.model_id),
-            "bentoml": self._get_bentoml_location(self.model_id),
         }
         return p
 

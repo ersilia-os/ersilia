@@ -8,7 +8,6 @@ from ...db.disk.fetched import FetchedModelsManager
 from ...db.environments.localdb import EnvironmentDb
 from ...db.environments.managers import DockerManager
 from ...db.hubdata.localslugs import SlugDb
-from ...setup.requirements.bentoml_requirement import BentoMLRequirement
 from ...utils.conda import SimpleConda
 from ...utils.docker import SimpleDocker
 from ...utils.echo import echo  # <--- you already have semantic echo()
@@ -157,92 +156,10 @@ class ModelBundleDeleter(ErsiliaBase):
         folder = self._model_path(model_id)
         if not os.path.exists(folder):
             return
-        bento_folder = self._get_bentoml_location(model_id)
-        if bento_folder is not None:
-            self.logger.info("Removing bento folder first {0}".format(bento_folder))
-            echo(f"Removing bento folder {bento_folder}", fg="yellow")
-            rmtree(bento_folder)
-            os.makedirs(bento_folder, exist_ok=True)
         self.logger.info("Removing bundle folder {0}".format(folder))
         echo(f"Removing bundle folder {folder}", fg="yellow")
         rmtree(folder)
         self.logger.debug("Folder removed")
-
-
-class ModelBentoDeleter(ErsiliaBase):
-    """
-    Deletes BentoML services related to a model.
-
-    Parameters
-    ----------
-    config_json : dict, optional
-        Configuration settings for the deleter.
-
-    Methods
-    -------
-    delete(model_id)
-        Deletes all BentoML services related to the model.
-    clean(model_id)
-        Deletes all but the latest BentoML service related to the model.
-    """
-
-    def __init__(self, config_json=None):
-        ErsiliaBase.__init__(self, config_json=config_json)
-
-    def _delete_service(self, service):
-        cmd = "echo yes | bentoml delete %s" % service
-        self.logger.debug(cmd)
-        run_command(cmd)
-
-    def _delete(self, model_id, keep_latest=True):
-        bentomlreq = BentoMLRequirement()
-        if bentomlreq.is_installed():
-            ml = ModelCatalog()
-            try:
-                self.logger.debug("Looking for BentoML catalog")
-                catalog = ml.bentoml()
-                self.logger.debug("Catalog found")
-            except:
-                self.logger.debug("No BentoML Catalog available")
-                catalog = None
-            if catalog is None:
-                return
-            if len(catalog.data) == 0:
-                return
-            services = [r[1] for r in catalog.data if r[0] == model_id]
-            if keep_latest and len(services) > 1:
-                services = services[1:]
-            for service in services:
-                self.logger.info("Removing BentoML service {0}".format(service))
-                echo(f"Removing BentoML service {service}", fg="yellow")
-                self._delete_service(service)
-        else:
-            self.logger.debug(
-                "BentoML is not installed, no need for deleting using BentoML"
-            )
-
-    def delete(self, model_id: str):
-        """
-        Deletes all BentoML services related to the model.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model to be deleted.
-        """
-        self.logger.debug("Attempting Bento delete")
-        self._delete(model_id, keep_latest=False)
-
-    def clean(self, model_id: str):
-        """
-        Deletes all but the latest BentoML service related to the model.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model to be cleaned.
-        """
-        self._delete(model_id, keep_latest=True)
 
 
 class ModelSlugDeleter(ErsiliaBase):
@@ -635,7 +552,6 @@ class ModelFullDeleter(ErsiliaBase):
         ModelEosDeleter(self.config_json).delete(model_id)
         ModelSlugDeleter(self.config_json).delete(model_id)
         ModelBundleDeleter(self.config_json).delete(model_id)
-        ModelBentoDeleter(self.config_json).delete(model_id)
         if self.overwrite:
             ModelCondaDeleter(self.config_json).delete(model_id)
         ModelTmpDeleter(self.config_json).delete(model_id)

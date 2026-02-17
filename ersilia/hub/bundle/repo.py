@@ -53,7 +53,7 @@ class ReadmeFile(object):
 
 class ServiceFile(object):
     """
-    Class to handle service file operations for BentoML web apps.
+    Class to handle service file operations for web apps.
 
     This class provides methods to get the path to the service file, rename the service,
     add an info API, and check if the service file contains the Service class.
@@ -89,7 +89,7 @@ class ServiceFile(object):
 
     def rename_service(self):
         """
-        Rename the BentoML service from the default "Service" to the model ID.
+        Rename the service from the default "Service" to the model ID.
         """
         ru = RepoUtils(self.path)
         model_id = ru.get_model_id()
@@ -206,7 +206,7 @@ class DockerfileFile(object):
     """
     Class to handle Dockerfile operations for models.
 
-    This class provides methods to get the path to the Dockerfile, get the BentoML version required for the model,
+    This class provides methods to get the path to the Dockerfile, get the version required for the model,
     check if the Dockerfile contains RUN commands, check if the Dockerfile requires Conda, get installation commands,
     and more.
 
@@ -231,72 +231,6 @@ class DockerfileFile(object):
             The path to the Dockerfile.
         """
         return os.path.join(self.path, DOCKERFILE_FILE)
-
-    def get_bentoml_version(self) -> dict:
-        """
-        Get the BentoML version required for the model.
-
-        Returns
-        -------
-        dict
-            A dictionary containing the BentoML version, slim flag, and Python version.
-        """
-        bimg = self.parser.baseimage
-        bimg = bimg.split("/")
-        if len(bimg) != 2:
-            return None
-        if bimg[0] != "bentoml":
-            return None
-        img = bimg[1]
-        img = img.split(":")
-        if len(img) != 2:
-            return None
-        if img[0] != "model-server":
-            return None
-        tag = img[1]
-        if "-slim-" in tag:
-            slim = True
-        else:
-            slim = False
-        if slim:
-            tag = tag.split("-")
-            if len(tag) != 3:
-                return None
-        else:
-            tag = tag.split("-")
-            if len(tag) != 2:
-                return None
-        result = {"version": tag[0], "slim": slim, "python": tag[-1]}
-        # if result["python"] in [
-        #     "py30",
-        #     "py31",
-        #     "py32",
-        #     "py33",
-        #     "py34",
-        #     "py35",
-        #     "py36",
-        #     "py37",
-        #     "py38",
-        #     "py39",
-        # ]:
-        # if SystemChecker().is_arm64():
-        #     logger.warning(
-        #         "This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10."
-        #     )
-        #     result["python"] = "py310"
-        return result
-
-    def get_python_version(self) -> str:
-        """
-        Get the python version.
-
-        Returns
-        -------
-        str
-            Python version in the format py**
-        """
-        result = self.get_bentoml_version()
-        return result["python"]
 
     def has_runs(self) -> bool:
         """
@@ -499,7 +433,7 @@ class RepoUtils(ErsiliaBase):
     Utility class for handling repository operations.
 
     It provides methods to get the model ID, get the path to the Conda environment YAML file,
-    get the Docker repository image, and rename the BentoML service.
+    get the Docker repository image, and rename the service.
 
     Parameters
     ----------
@@ -555,17 +489,13 @@ class RepoUtils(ErsiliaBase):
         idx = splits.index(model_id)
         idx += 1
         root = os.sep.join(splits[:idx])
-        # check the we really are in the root, and not in a version (as done by BentoML)
+        # check the we really are in the root, and not in a version (as done by)
         files = os.listdir(root)
         if ROOT_CHECKFILE in files:
             return root
         # try to find bundles dir
         elif self._bundles_dir in root:
             tag = self._get_latest_bundle_tag(model_id)
-            return os.path.join(root, tag)
-        # or must be in the bentoml path
-        elif self._bentoml_dir in root:
-            tag = self._get_latest_bentoml_tag(model_id)
             return os.path.join(root, tag)
         else:
             return None
@@ -600,15 +530,6 @@ class RepoUtils(ErsiliaBase):
                 )
                 if os.path.exists(yml):
                     return yml
-                # try to find yml in bentoml
-                yml = os.path.join(
-                    self._bentoml_dir,
-                    model_id,
-                    self._get_latest_bentoml_tag(model_id),
-                    CONDA_ENV_YML_FILE,
-                )
-                if os.path.exists(yml):
-                    return yml
             else:
                 return os.path.join(root, CONDA_ENV_YML_FILE)
 
@@ -633,7 +554,7 @@ class RepoUtils(ErsiliaBase):
     @staticmethod
     def rename_service(model_id: str) -> str:
         """
-        Rename the BentoML service to the model ID.
+        Rename the service to the model ID.
 
         Parameters
         ----------

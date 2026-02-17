@@ -5,11 +5,6 @@ import shutil
 import subprocess
 from typing import Any, Dict, List
 
-from bentoml import BentoService, api, artifacts
-from bentoml.adapters import JsonInput
-from bentoml.service import BentoServiceArtifact
-from bentoml.types import JsonSerializable
-
 from .....utils.logging import make_temp_dir
 
 CHECKPOINTS_BASEDIR = "checkpoints"
@@ -195,7 +190,7 @@ class Model(object):
         return result
 
 
-class Artifact(BentoServiceArtifact):
+class Artifact(object):
     """
     A class used to represent the Artifact.
 
@@ -221,7 +216,7 @@ class Artifact(BentoServiceArtifact):
     """
 
     def __init__(self, name: str):
-        BentoServiceArtifact.__init__(name)
+        self.name = name
         self._model = None
         self._extension = ".pkl"
 
@@ -306,35 +301,3 @@ class Artifact(BentoServiceArtifact):
         self._copy_checkpoints(dst)
         self._copy_framework(dst)
         pickle.dump(self._model, open(self._model_file_path(dst), "wb"))
-
-
-@artifacts([Artifact("model")])
-class Service(BentoService):
-    """
-    A class used to represent the Service.
-
-    Methods
-    -------
-    run(input)
-        Runs the service with the given input and returns the output.
-    """
-
-    @api(input=JsonInput(), batch=True)
-    def run(self, input: List[JsonSerializable]) -> List[Dict[str, Any]]:
-        """
-        Run the service with the given input and return the output.
-
-        Parameters
-        ----------
-        input : List[JsonSerializable]
-            List of JSON serializable input data.
-
-        Returns
-        -------
-        List[Dict[str, Any]]
-            List containing the output data.
-        """
-        input = input[0]
-        input_list = [inp["input"] for inp in input]
-        output = self.artifacts.model.run(input_list)
-        return [output]

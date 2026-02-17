@@ -71,8 +71,7 @@ class RepoMetadataFile(ErsiliaBase):
 
     def get_json_or_yaml_file(self, org: str = None, branch: str = None) -> dict:
         """
-        Get the metadata file from GitHub in JSON or YAML format. JSON format typically used for bentoml
-        packed models and YAML format typically used for ersilia pack models.
+        Get the metadata file from GitHub in JSON or YAML format.
 
         Parameters
         ----------

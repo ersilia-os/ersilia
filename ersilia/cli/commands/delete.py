@@ -89,7 +89,7 @@ def delete_cmd():
     # 2. Delete all models: ersilia delete --all
     @ersilia_cli.command(
         short_help="Delete model from local computer",
-        help="Delete model from local computer. The BentoML bundle is deleted, as well as the files stored in "
+        help="Delete model from local computer. The bundle is deleted, as well as the files stored in "
         "the EOS directory and the Pip-installed package",
     )
     @click.argument("model", required=False, type=click.STRING)
