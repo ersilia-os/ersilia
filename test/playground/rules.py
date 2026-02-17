@@ -236,6 +236,7 @@ class ServeRule(CommandRule):
     def __init__(self):
         self.session_dir = SESSIONS_DIR
         self.checkups = []
+        self.logger = logger
 
     def check(self, command, config, std_out):
         self.checkups.append(self.extract_url(std_out))
@@ -246,7 +247,7 @@ class ServeRule(CommandRule):
         match = re.search(pattern, text)
         url = match.group(0)
         url = normalize_connect_url(url)
-        _ensure_ready(url)
+        _ensure_ready(self=self,root=url)
         response = requests.get(url)
         status_ok = response.status_code == 200
         return create_response(name=ResponseName.SESSION_URL_VALID, status=status_ok)
