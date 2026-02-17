@@ -22,7 +22,7 @@ from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
 from ..store.isaura import IsauraStore
 from ..utils.echo import echo, spinner
-from ..utils.ports import _ensure_ready
+from ..utils.ports import _ensure_ready, normalize_connect_url
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -60,6 +60,7 @@ class StandardCSVRunApi(ErsiliaBase):
             self.url = url[:-1]
         else:
             self.url = url
+        self.url = normalize_connect_url(self.url)
         self.api_name = DEFAULT_API_NAME
         self.path = os.path.abspath(self._model_path(self.model_id))
         metadata = self._read_information_file()

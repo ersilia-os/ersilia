@@ -1,6 +1,7 @@
 import socket
 import time
 from contextlib import closing
+from urllib.parse import urlparse, urlunparse
 
 import requests
 
@@ -61,3 +62,11 @@ def _ensure_ready(self, root, attempts=60, sleep_s=0.5):
             self.logger.info(f"Probe {root} attempt {i} error: {e}")
         time.sleep(sleep_s)
     raise RuntimeError(f"Server not ready after {attempts} attempts at {root}")
+
+
+def normalize_connect_url(url: str) -> str:
+    u = urlparse(url)
+    if u.hostname == "0.0.0.0":
+        netloc = u.netloc.replace("0.0.0.0", "127.0.0.1")
+        return urlunparse(u._replace(netloc=netloc))
+    return url
