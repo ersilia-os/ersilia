@@ -22,6 +22,7 @@ from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
 from ..store.isaura import IsauraStore
 from ..utils.echo import echo, spinner
+from ..utils.ports import _ensure_ready
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -316,29 +317,16 @@ class StandardCSVRunApi(ErsiliaBase):
             return []
 
         def do_request(batch):
+            st = time.perf_counter()
             response = requests.post(url, json=batch)
+            et = time.perf_counter()
+            print(f"{et-st:.5f}")
             response.raise_for_status()
             return response.json()
 
         return spinner(
             f"Fetching batch of size {len(input_batch)}", do_request, input_batch
         )
-
-    def _ensure_ready(self, root, attempts=60, sleep_s=0.5):
-        if getattr(self, "_ready", False):
-            return
-        for i in range(1, attempts + 1):
-            try:
-                r = requests.get(root, timeout=2)
-                if 200 <= r.status_code < 500:
-                    self._ready = True
-                    self.logger.info(f"Probe OK {root} on attempt {i}")
-                    return
-                self.logger.info(f"Probe {root} attempt {i} got {r.status_code}")
-            except Exception as e:
-                self.logger.info(f"Probe {root} attempt {i} error: {e}")
-            time.sleep(sleep_s)
-        raise RuntimeError(f"Server not ready after {attempts} attempts at {root}")
 
     def post(self, input, output, batch_size, output_source):
         """
@@ -369,7 +357,7 @@ class StandardCSVRunApi(ErsiliaBase):
             input_data = [input_data]
 
         st = time.perf_counter()
-        self._ensure_ready(root=self.url)
+        _ensure_ready(self=self, root=self.url)
         echo("Waiting for server response", fg="cyan")
         self.logger.debug("Waiting for server response")
         results, meta = self._fetch_result(input_data, url, batch_size)
