@@ -14,7 +14,6 @@ from ....utils.logging import make_temp_dir
 from ....utils.paths import get_metadata_from_base_dir
 from ...bundle.repo import DockerfileFile, PackFile
 from . import BaseAction
-from .template_resolver import TemplateResolver
 
 MODEL_DIR = "model"
 ROOT = os.path.basename(os.path.abspath(__file__))
@@ -348,9 +347,7 @@ class ModelRepositoryGetter(BaseAction):
         Copy model repository from local or download from S3 or GitHub.
         """
         folder = self._model_path(self.model_id)
-        tr = TemplateResolver(
-            model_id=self.model_id, repo_path=folder, config_json=self.config_json
-        )
+
         if self.repo_path is not None:
             self._copy_from_local(self.repo_path, folder)
         else:
@@ -368,10 +365,6 @@ class ModelRepositoryGetter(BaseAction):
                         raise S3DownloaderError(model_id=self.model_id)
                     else:
                         self._copy_from_github(folder)
-
-        if tr.is_bentoml():
-            self._prepare_inner_template()
-            self._change_py_version_in_dockerfile_if_necessary()
 
         self._remove_sudo_if_root()
         self._copy_example_file_if_available()

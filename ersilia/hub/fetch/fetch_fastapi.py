@@ -16,7 +16,6 @@ from .actions.pack_fastapi import ModelPacker
 from .actions.prepare import ModelPreparer
 from .actions.setup import SetupChecker
 from .actions.sniff_fastapi import ModelSniffer
-from .actions.template_resolver import TemplateResolver
 from .register.register import ModelRegisterer
 
 
@@ -169,11 +168,11 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         bool
             True if the model is installable with FastAPI, False otherwise.
         """
-        tr = TemplateResolver(
-            model_id=model_id, repo_path=self.repo_path, config_json=self.config_json
-        )
-        ifa = spinner("Checking the model installability", tr.is_fastapi)
-        return ifa
+        # tr = TemplateResolver(
+        #     model_id=model_id, repo_path=self.repo_path, config_json=self.config_json
+        # )
+        # ifa = spinner("Checking the model installability", tr.is_fastapi)
+        return True
 
     def fetch(self, model_id: str):
         """

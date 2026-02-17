@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import sys
+from collections import OrderedDict
 
 from ...core.base import ErsiliaBase
 from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
@@ -17,6 +18,10 @@ from ...utils.terminal import run_command
 from .localdb import EnvironmentDb
 
 INTERNAL_DOCKERPORT = 80
+
+
+def _unique_keep_order(items):
+    return list(OrderedDict.fromkeys(items))
 
 
 class DockerManager(ErsiliaBase):
@@ -580,43 +585,52 @@ class DockerManager(ErsiliaBase):
     def delete_images(self, model_id, purge_unnamed=True):
         """
         Deletes Docker images associated with a model.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model.
-        purge_unnamed : bool, optional
-            If True, also remove unnamed images.
         """
-        if self.is_inside_docker():
+        if self.is_inside_docker() or not self.is_installed():
             return
-        if not self.is_installed():
-            return
+
         self.stop_containers(model_id)
         self.prune()
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "docker-images.txt")
-        cmd = "docker images > {0}".format(tmp_file)
-        self.logger.debug("Running {0}".format(cmd))
-        run_command(cmd)
-        unnamed_images = []
-        named_images = []
-        with open(tmp_file, "r") as f:
-            h = next(f)
-            img_idx = len(h.split("IMAGE ID")[0])
-            for l in f:
-                img = l[img_idx:].split(" ")[0]
-                name = l.split(" ")[0]
-                if model_id in name:
-                    named_images += [img]
-                if "<none>" in name:
-                    unnamed_images += [img]
-        images = named_images
-        if purge_unnamed:
-            images += unnamed_images
-        for img in images:
-            self.logger.debug("Removing docker image {0}".format(img))
-            self.delete_image(img)
+
+        cmd = (
+            r'docker image ls --no-trunc --format "{{.Repository}}\t{{.Tag}}\t{{.ID}}"'
+        )
+        self.logger.debug(f"Running {cmd}")
+        out = run_command(cmd)
+        out = out.stdout
+        named_targets = []
+        unnamed_targets = []
+
+        wanted_suffix = f"/{model_id}"
+
+        for line in out.splitlines():
+            if not line.strip():
+                continue
+            repo, tag, img_id = line.split("\t")
+
+            is_unnamed = repo == "<none>" or tag == "<none>"
+            is_model = (
+                repo.endswith(wanted_suffix)
+                or f"/{model_id}:" in f"{repo}:{tag}"
+                or model_id in repo
+            )
+
+            if is_model:
+                if repo != "<none>" and tag != "<none>":
+                    named_targets.append(f"{repo}:{tag}")
+                else:
+                    named_targets.append(img_id)
+
+            if purge_unnamed and is_unnamed:
+                unnamed_targets.append(img_id)
+
+        targets = _unique_keep_order(
+            named_targets + (unnamed_targets if purge_unnamed else [])
+        )
+
+        for t in targets:
+            self.logger.debug(f"Removing docker image {t}")
+            self.delete_image(t)
 
 
 class CondaManager(object):  # noqa: D101

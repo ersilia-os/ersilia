@@ -3,7 +3,6 @@ import os
 import re
 import shutil
 import subprocess
-import sys
 from collections import namedtuple
 
 from rich import box
@@ -113,9 +112,9 @@ def run_command(cmd, quiet=True):
 
     if not quiet:
         if stdout_str:
-            print(stdout_str)
+            console.print(stdout_str, markup=False, highlight=False, ansi=True)
         if stderr_str:
-            print(stderr_str, file=sys.stderr)
+            console.print(stderr_str, markup=False, highlight=False, ansi=True)
 
     return output
 

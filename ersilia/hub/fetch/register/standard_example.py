@@ -88,10 +88,11 @@ class ModelStandardExample(ErsiliaBase):
         input_csv = os.path.join(path, EXAMPLE_STANDARD_INPUT_CSV_FILENAME)
         output_csv = os.path.join(path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME)
         run_log = os.path.join(path, "standard_run.log")
-        self.logger.debug(input_csv)
-        self.logger.debug(output_csv)
+        self.logger.debug(f"Exaple input file:{input_csv}")
+        self.logger.debug(f"Exaple output file:{output_csv}")
         commands = [
             "ersilia serve {0} --disable-cache".format(self.model_id),
+            "sleep 8",
             "ersilia example -n 3 -f {0}".format(input_csv),
             "ersilia run -i {0} -o {1} > {2} 2>&1".format(
                 input_csv, output_csv, run_log
