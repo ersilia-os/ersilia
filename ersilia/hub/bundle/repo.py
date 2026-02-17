@@ -349,6 +349,60 @@ class DockerfileFile(object):
                 f.write(r)
         self.parser = SimpleDockerfileParser(self.path)
 
+    def get_python_version(self) -> dict:
+        """
+        Get the Python version required for the model.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the BentoML version, slim flag, and Python version.
+        """
+        bimg = self.parser.baseimage
+        bimg = bimg.split("/")
+        if len(bimg) != 2:
+            return None
+        if bimg[0] != "bentoml":
+            return None
+        img = bimg[1]
+        img = img.split(":")
+        if len(img) != 2:
+            return None
+        if img[0] != "model-server":
+            return None
+        tag = img[1]
+        if "-slim-" in tag:
+            slim = True
+        else:
+            slim = False
+        if slim:
+            tag = tag.split("-")
+            if len(tag) != 3:
+                return None
+        else:
+            tag = tag.split("-")
+            if len(tag) != 2:
+                return None
+        result = {"version": tag[0], "slim": slim, "python": tag[-1]}
+        # if result["python"] in [
+        #     "py30",
+        #     "py31",
+        #     "py32",
+        #     "py33",
+        #     "py34",
+        #     "py35",
+        #     "py36",
+        #     "py37",
+        #     "py38",
+        #     "py39",
+        # ]:
+        # if SystemChecker().is_arm64():
+        #     logger.warning(
+        #         "This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10."
+        #     )
+        #     result["python"] = "py310"
+        return result
+
     def check(self) -> bool:
         """
         Check if the Dockerfile exists.

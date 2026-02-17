@@ -22,7 +22,7 @@ ROOT = os.path.basename(os.path.abspath(__file__))
 class PackCreator(ErsiliaBase):
     """
     Class to create a pack for the model. The pack.py file loads a model,
-    packs it into a BentoML Service instance, and saves the service for deployment.
+    packs it into a Service instance, and saves the service for deployment.
 
     Parameters
     ----------
@@ -51,7 +51,7 @@ class PackCreator(ErsiliaBase):
 class ServiceCreator(ErsiliaBase):
     """
     Class to create a service file for the model. The 'service.py' specifically
-    facilitates the deployment of a custom model as a BENTOML REST API service.
+    facilitates the deployment of a custom model as a REST API service.
 
     Parameters
     ----------
@@ -285,7 +285,7 @@ class ModelRepositoryGetter(BaseAction):
         self.logger.debug("Changing python version if necessary")
         path = self._model_path(model_id=self.model_id)
         df = DockerfileFile(path=path)
-        version = df.get_bentoml_version()
+        version = df.get_python_version()
         self.logger.debug(version)
         dockerfile_path = os.path.join(path, "Dockerfile")
         with open(dockerfile_path, "r") as f:

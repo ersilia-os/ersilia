@@ -29,7 +29,7 @@ First version of Ersilia, containing the bare minimum functionalities of the CLI
 
 * CLI interface to fetch, access and deploy models.
 * Fetching models from GitHub \(code\) and Open Science Framework \(data\).
-* Deploy models locally using BentoML.
+* Deploy models locally using Fastapi.
 * Installation pip-friendly.
 * Basic functionalities to obtain model cards.
 

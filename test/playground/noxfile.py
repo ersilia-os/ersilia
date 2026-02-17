@@ -15,7 +15,7 @@ CONFIG_PATH = NOX_CWD / "config.yml"
 DEFAULT_CONFIG = yaml.safe_load(CONFIG_PATH.read_text())
 PYTHON_VERSIONS = DEFAULT_CONFIG["settings"]["python_version"]
 DEFAULT_BACKEND = DEFAULT_CONFIG["runtime"]["backend"]
-
+print(DEFAULT_BACKEND)
 nox.options.envdir = str(Path(EOS_PLAYGROUND) / ".nox")
 
 test_packages = [
