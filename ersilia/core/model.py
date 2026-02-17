@@ -159,6 +159,7 @@ class ErsiliaModel(ErsiliaBase):
         self.access = access
         self.nearest_neighbors = nearest_neighbors
         self.service_class = service_class
+        self.cache = cache
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
 
@@ -696,7 +697,11 @@ class ErsiliaModel(ErsiliaBase):
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
         self.session.register_store_status(
-            self.read_store, self.write_store, self.access, self.nearest_neighbors
+            self.read_store,
+            self.write_store,
+            self.access,
+            self.nearest_neighbors,
+            self.cache,
         )
         if self.track:
             self.session.register_tracking_use_case(self.tracking_use_case)

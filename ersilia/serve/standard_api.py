@@ -82,6 +82,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.isaura_store = IsauraStore()
         self.session = Session(config_json=config_json)
         store_info = self.session.current_store_status()
+        self.local_cache = store_info[-1]
         self.write_store = store_info[1]
         self.read_store = store_info[0]
         echo("Standard API runner initialized", fg="green")
@@ -317,8 +318,13 @@ class StandardCSVRunApi(ErsiliaBase):
         if not input_batch:
             return []
 
+        params = {
+            "fetch_cache": self.local_cache,
+            "save_cache": self.local_cache,
+        }
+
         def do_request(batch):
-            response = requests.post(url, json=batch)
+            response = requests.post(url, params=params, json=batch)
             response.raise_for_status()
             return response.json()
 
