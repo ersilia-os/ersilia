@@ -317,10 +317,7 @@ class StandardCSVRunApi(ErsiliaBase):
             return []
 
         def do_request(batch):
-            st = time.perf_counter()
             response = requests.post(url, json=batch)
-            et = time.perf_counter()
-            print(f"{et-st:.5f}")
             response.raise_for_status()
             return response.json()
 
