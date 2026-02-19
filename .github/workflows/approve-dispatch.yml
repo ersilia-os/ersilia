@@ -115,7 +115,31 @@ jobs:
           git add .gitattributes
           git add mock.txt
           git lfs ls-files
-
+          
+      # find the creator of the issue
+      - name: find original issue creator
+        id: issue-creator
+        env:
+          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
+          OWNER: ersilia-os
+          REPO: ersilia
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ISSUE_CREATOR=$(gh api /repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
+          echo "issue_creator=${ISSUE_CREATOR}" >> $GITHUB_OUTPUT
+          
+      - name: add contributor to metadata
+        env:
+          REPO_NAME: ${{ steps.create-model-repo.outputs.repo_name }}
+          ISSUE_CREATOR: ${{ steps.issue-creator.outputs.issue_creator }}
+        run: |
+          cd "$REPO_NAME"
+          wget -q https://raw.githubusercontent.com/ersilia-os/ersilia-model-workflows/main/.github/scripts/add_field_to_metadata.py
+          if [ -f "metadata.yml" ]; then META="metadata.yml"; else META="metadata.json"; fi
+          python3 add_field_to_metadata.py --metadata_file "$META" --field "Contributor" --content "$ISSUE_CREATOR"
+          rm add_field_to_metadata.py
+          git add "$META"
+          
       - name: commit and push changes
         uses: actions-js/push@v1.5
         with:
@@ -156,19 +180,6 @@ jobs:
         run: |
           pip install boto3 requests pyairtable
           python .github/scripts/convert_airtable_to_json.py $AIRTABLE_API_KEY $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY
-
-
-      # find the creator of the issue
-      - name: find original issue creator
-        id: issue-creator
-        env:
-          ISSUE_NUMBER: ${{ github.event.client_payload.github.payload.issue.number }}
-          OWNER: ersilia-os
-          REPO: ersilia
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          ISSUE_CREATOR=$(gh api /repos/${OWNER}/${REPO}/issues/${ISSUE_NUMBER} | jq -r '.user.login')
-          echo "issue_creator=${ISSUE_CREATOR}" >> $GITHUB_OUTPUT
 
       # comment on the issue comment with further instructions for the user
       - name: comment
