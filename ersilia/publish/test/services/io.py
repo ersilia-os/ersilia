@@ -51,6 +51,7 @@ from ....utils.terminal import run_command
 from ....utils.logging import logger
 from ....utils.docker import SimpleDocker, set_docker_host
 from ....cli import echo
+from ....utils.ports import _ensure_ready, normalize_connect_url
 
 
 class IOService:
@@ -510,6 +511,8 @@ class IOService:
         pattern = r"http://[a-zA-Z0-9.-]+:\d+"
         match = re.search(pattern, cmd_out)
         url = match.group(0)
+        url = normalize_connect_url(url)
+        _ensure_ready(self=self,root=url)
         base_url = f"{url}/{DEFAULT_ASYNC_API_NAME}"
         async with aiohttp.ClientSession() as session:
             async with session.post(f"{base_url}/submit", json=input) as resp:

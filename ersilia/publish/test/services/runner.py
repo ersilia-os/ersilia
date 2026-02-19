@@ -25,7 +25,7 @@ from .setup import SetupService
 from .inspect import InspectService
 from .io import IOService, PackageInstaller
 from .checks import CheckService
-from ....default import PREDEFINED_COLUMN_FILE
+from ....default import PREDEFINED_COLUMN_FILE, _CONDA_BOOTSTRAP
 from ....io.input import ExampleGenerator
 from ....utils.terminal import run_command_check_output, run_command
 from ....cli import echo
@@ -284,8 +284,6 @@ class RunnerService:
                         return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
 
                 if all(isinstance(val, (int, float)) for val in bv + ev):
-                    print('#---DEBUG-----')
-                    print(f'Bash value: {bv}  Ersilia value: {ev}')
                     rmse = compute_rmse(bv, ev)
                     _rmse.append(rmse)
 
@@ -435,79 +433,78 @@ class RunnerService:
             self.logger.debug("Output path: {0}".format(output_path))
 
             bash_script = f"""#!/usr/bin/env bash
-                set -Eo pipefail
+                set -euo pipefail
 
                 log_out="{output_log_path}"
                 log_err="{error_log_path}"
                 mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                : > "$log_out"; : > "$log_err"
+                : >"$log_out"
+                : >"$log_err"
                 exec > >(tee -a "$log_out") 2> >(tee -a "$log_err" >&2)
 
                 ENV_NAME="{self.model_id}"
+                RUN_DIR="{os.path.dirname(run_sh_path)}"
+                INPUT_FILE="{input_file_path}"
+                OUTPUT_FILE="{bash_output_path}"
 
-                echo "Runner arch: $(uname -m)"
-                echo "Using conda: $(command -v conda || echo 'not found')"
-                echo "Target env: $ENV_NAME"
+                echo "[INFO] Runner arch: $(uname -m)"
+                echo "[INFO] Target conda env: $ENV_NAME"
+                echo "[INFO] Initial conda on PATH: $(command -v conda || echo '(not found)')"
 
-                BASE="$(conda info --base 2>/dev/null || true)"
-                ENV_PREFIX=""
 
-                if command -v conda >/dev/null 2>&1; then
-                ENV_PREFIX="$(
-                    conda env list --json 2>/dev/null | python -c 'import json,os,sys; name=sys.argv[1]; data=json.load(sys.stdin); print(next((p for p in data.get("envs", []) if os.path.basename(p)==name), ""))' "$ENV_NAME" || true
-                )"
+                {_CONDA_BOOTSTRAP}
+
+                # Now conda should exist (either it was already, or we sourced conda.sh)
+                echo "[INFO] Conda resolved to: $(command -v conda)"
+                echo "[INFO] Conda base: $(conda info --base)"
+
+                if [[ "${{CONDA_SHLVL:-0}}" -gt 0 ]]; then
+                echo "[INFO] Deactivating existing conda env(s)..."
+                while [[ "${{CONDA_SHLVL:-0}}" -gt 0 ]]; do
+                    conda deactivate || true
+                done
                 fi
 
-                if [ -z "$ENV_PREFIX" ] && [ -n "$BASE" ] && [ -d "$BASE/envs/$ENV_NAME" ]; then
-                ENV_PREFIX="$BASE/envs/$ENV_NAME"
-                fi
-
-                printf 'Resolved prefix: %s\\n' "${{ENV_PREFIX:-'(none)'}}"
-
-                if [ -z "$ENV_PREFIX" ] || [ ! -x "$ENV_PREFIX/bin/python" ]; then
-                echo "[ERR] conda env not found: $ENV_NAME"
+                if ! conda env list | awk '{{print $1}}' | grep -qx "$ENV_NAME"; then
+                echo "[ERROR] Conda env not found: $ENV_NAME"
+                echo "[INFO] Available envs:"
                 conda env list || true
                 exit 1
                 fi
 
-                echo "[RUN] Inside env check: $("$ENV_PREFIX/bin/python" -V) - $("$ENV_PREFIX/bin/python" -c 'import sys,shutil;print(shutil.which("python") or sys.executable)')"
+                echo "[INFO] Activating env: $ENV_NAME"
+                conda activate "$ENV_NAME"
 
-                eval "$("$(command -v conda)" shell.bash hook)" || true
-                while [ "${{CONDA_SHLVL:-0}}" -gt 0 ]; do conda deactivate || true; done
-                unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER
+                echo "[INFO] Active env: $CONDA_DEFAULT_ENV"
+                echo "[INFO] python: $(command -v python)"
+                python -V
 
-                export PATH="$ENV_PREFIX/bin:${{BASE:+$BASE/bin:}}/usr/bin:/bin"
-                hash -r
-
-                echo "[DEBUG] After PATH override:"
-                echo "  which python: $(command -v python || echo '(not found)')"
-                python -V || true
-
-                RUN_DIR="{os.path.dirname(run_sh_path)}"
                 cd "$RUN_DIR"
-                echo "[RUN] Directory: $(pwd)"
-                echo "[RUN] Executing run.sh with env python"
+                echo "[INFO] Run directory: $(pwd)"
+                echo "[INFO] Executing: ./run.sh . '$INPUT_FILE' '$OUTPUT_FILE'"
 
-                if ! PYTHON="$ENV_PREFIX/bin/python" bash ./run.sh . "{input_file_path}" "{bash_output_path}" >>"$log_out" 2>>"$log_err"; then
-                echo "[ERR] run.sh failed. Displaying captured stderr:"
-                echo "============================================"
-                tail -n 80 "$log_err" || echo "(No stderr output)"
-                echo "============================================"
+                # If your run.sh supports reading PYTHON, keep it. Otherwise you can remove PYTHON=...
+                if ! PYTHON="$(command -v python)" bash ./run.sh . "$INPUT_FILE" "$OUTPUT_FILE"; then
+                echo "[ERROR] run.sh failed"
+                echo "==================== STDERR (tail) ===================="
+                tail -n 120 "$log_err" || true
+                echo "======================================================="
                 exit 1
                 fi
 
-                if [ -f "{bash_output_path}" ]; then
-                echo "[OK] SUCCESS"
+                if [[ -f "$OUTPUT_FILE" ]]; then
+                echo "[OK] SUCCESS: output file found: $OUTPUT_FILE"
                 exit 0
                 fi
 
-                echo "[ERR] Expected output file not found: {bash_output_path}"
-                echo "==== STDERR (tail) ===="
-                tail -n 80 "$log_err" || echo "No stderr log."
-                echo "==== STDOUT (tail) ===="
-                tail -n 80 "$log_out" || echo "No stdout log."
+                echo "[ERROR] Expected output file not found: $OUTPUT_FILE"
+                echo "==================== STDERR (tail) ===================="
+                tail -n 120 "$log_err" || true
+                echo "==================== STDOUT (tail) ===================="
+                tail -n 120 "$log_out" || true
                 exit 1
-            """
+                """
+
 
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
@@ -607,21 +604,25 @@ class RunnerService:
         Run the model tests and checks.
         """
         results = []
-
         def _process_stage(name, method, echo_prefix=True):
-            if echo_prefix:
-                echo(f"Performing {name} checks.", fg="yellow", bold=True)
-            out = method()
+            try:
+                if echo_prefix:
+                    
+                    echo(f"Performing {name} checks.", fg="yellow", bold=True)
+                out = method()
 
-            if isinstance(out, tuple) and len(out) == 2:
-                good, _bad = out
-                results.extend(good)
-                sys.exit(1)
+                if isinstance(out, tuple) and len(out) == 2:
 
-            if isinstance(out, list):
-                results.extend(out)
-            else:
-                results.append(out)
+                    good, _bad = out
+                    results.extend(good)
+                    sys.exit(1)
+
+                if isinstance(out, list):
+                    results.extend(out)
+                else:
+                    results.append(out)
+            except Exception as e:
+                self.logger.error(f"Major issue when executing {name} step: {e}")
 
         try:
             if not any((self.inspect, self.surface, self.shallow, self.deep)):
@@ -722,7 +723,6 @@ class RunnerService:
         results = []
 
         out = self.fetch()
-        print("fetch out", out)
         if out.returncode != 0:
             status = [(
                     Checks.FETCH_FAILS.value,
