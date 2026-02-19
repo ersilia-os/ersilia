@@ -261,15 +261,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -496,7 +489,7 @@ It provides a database where models and their corresponding environments (such a
 
 <dl class="py class">
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.db.environments.managers.</span></span><span class="sig-name descname"><span class="pre">DockerManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_bentoml</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.db.environments.managers.</span></span><span class="sig-name descname"><span class="pre">DockerManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
 <p>Manages Docker operations for Ersilia models.</p>
 <p>It provides methods to build, run, and manage Docker images and containers
@@ -506,7 +499,6 @@ associated with Ersilia models.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings for initializing the Docker manager.</p></li>
 <li><p><strong>preferred_port</strong> (<em>int</em><em>, </em><em>optional</em>) – Preferred port number for running Docker containers.</p></li>
-<li><p><strong>with_bentoml</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating whether to use BentoML for model serving.</p></li>
 </ul>
 </dd>
 </dl>
@@ -532,20 +524,6 @@ associated with Ersilia models.</p>
 <li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
 <li><p><strong>docker_user</strong> (<em>str</em>) – Docker Hub username.</p></li>
 <li><p><strong>docker_pwd</strong> (<em>str</em>) – Docker Hub password.</p></li>
-<li><p><strong>use_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use Docker’s cache when building the image.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.build_with_bentoml">
-<span class="sig-name descname"><span class="pre">build_with_bentoml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.build_with_bentoml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.build_with_bentoml" title="Link to this definition">¶</a></dt>
-<dd><p>Builds a Docker image for the model using BentoML.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
 <li><p><strong>use_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, use Docker’s cache when building the image.</p></li>
 </ul>
 </dd>
@@ -642,14 +620,6 @@ associated with Ersilia models.</p>
 <dt class="sig sig-object py" id="ersilia.db.environments.managers.DockerManager.delete_images">
 <span class="sig-name descname"><span class="pre">delete_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">purge_unnamed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/db/environments/managers.html#DockerManager.delete_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.db.environments.managers.DockerManager.delete_images" title="Link to this definition">¶</a></dt>
 <dd><p>Deletes Docker images associated with a model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model_id</strong> (<em>str</em>) – Identifier of the model.</p></li>
-<li><p><strong>purge_unnamed</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, also remove unnamed images.</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -925,7 +895,6 @@ associated with Ersilia models.</p>
 </li>
 <li><a class="reference internal" href="#ersilia.db.environments.managers.DockerManager"><code class="docutils literal notranslate"><span class="pre">DockerManager</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.db.environments.managers.DockerManager.build"><code class="docutils literal notranslate"><span class="pre">DockerManager.build()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.db.environments.managers.DockerManager.build_with_bentoml"><code class="docutils literal notranslate"><span class="pre">DockerManager.build_with_bentoml()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.db.environments.managers.DockerManager.build_with_ersilia"><code class="docutils literal notranslate"><span class="pre">DockerManager.build_with_ersilia()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.db.environments.managers.DockerManager.container_exists"><code class="docutils literal notranslate"><span class="pre">DockerManager.container_exists()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.db.environments.managers.DockerManager.containers"><code class="docutils literal notranslate"><span class="pre">DockerManager.containers()</span></code></a></li>

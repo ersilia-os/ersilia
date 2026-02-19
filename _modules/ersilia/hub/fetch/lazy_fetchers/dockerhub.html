@@ -260,15 +260,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../../source/autodoc/ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../source/autodoc/ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../../../source/autodoc/ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../../source/autodoc/ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../../source/autodoc/ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../../source/autodoc/ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../../source/autodoc/ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -321,7 +314,6 @@
     <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span>
     <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
     <span class="n">INFORMATION_FILE</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
     <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">,</span>
 <span class="p">)</span>
@@ -331,7 +323,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.resolvers</span><span class="w"> </span><span class="kn">import</span> <span class="n">PackMethodResolver</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...pull.pull</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelPuller</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">STATUS_FILE</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..actions.template_resolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateResolver</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..register.register</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelRegisterer</span>
 
 
@@ -379,7 +370,6 @@
         <span class="n">overwrite</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">img_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">force_with_bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">force_with_fastapi</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -387,27 +377,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span> <span class="o">=</span> <span class="n">overwrite</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span> <span class="o">=</span> <span class="n">img_tag</span> <span class="ow">or</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">force_with_bentoml</span> <span class="o">=</span> <span class="n">force_with_bentoml</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_with_fastapi</span> <span class="o">=</span> <span class="n">force_with_fastapi</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_with_fastapi</span><span class="p">:</span>
             <span class="n">pack_method</span> <span class="o">=</span> <span class="n">PACK_METHOD_FASTAPI</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_with_bentoml</span><span class="p">:</span>
-            <span class="n">pack_method</span> <span class="o">=</span> <span class="n">PACK_METHOD_BENTOML</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resolving pack method from GitHub repository...&quot;</span><span class="p">)</span>
             <span class="n">pmr</span> <span class="o">=</span> <span class="n">PackMethodResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
             <span class="n">pack_method</span> <span class="o">=</span> <span class="n">pmr</span><span class="o">.</span><span class="n">resolve_pack_method_from_github_metadata</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">pack_method</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resolving pack method with TemplateResolver...&quot;</span><span class="p">)</span>
-                <span class="n">tr</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
-                    <span class="n">pack_method</span> <span class="o">=</span> <span class="n">PACK_METHOD_FASTAPI</span>
-                <span class="k">elif</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
-                    <span class="n">pack_method</span> <span class="o">=</span> <span class="n">PACK_METHOD_BENTOML</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pack method could not be resolved&quot;</span><span class="p">)</span>
+                <span class="n">pack_method</span> <span class="o">=</span> <span class="n">PACK_METHOD_FASTAPI</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pack method resolved: </span><span class="si">{</span><span class="n">pack_method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">=</span> <span class="n">pack_method</span>
 
@@ -487,30 +468,6 @@
         <span class="n">di</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
-    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_copy_from_bentoml_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Copy a file from a BentoML image.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model_id : str</span>
-<span class="sd">            ID of the model.</span>
-<span class="sd">        file : str</span>
-<span class="sd">            Name of the file to copy.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fr_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/root/eos/dest/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">to_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">EOS</span><span class="si">}</span><span class="s2">/dest/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">cp_from_image</span><span class="p">(</span>
-                <span class="n">img_path</span><span class="o">=</span><span class="n">fr_file</span><span class="p">,</span>
-                <span class="n">local_path</span><span class="o">=</span><span class="n">to_file</span><span class="p">,</span>
-                <span class="n">org</span><span class="o">=</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
-                <span class="n">img</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception when copying: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_copy_from_ersiliapack_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Copy a file from an ErsiliaPack image.</span>
@@ -545,14 +502,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pack method not resolved&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_bentoml_image</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_ersiliapack_image</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unresolved method, should be either </span><span class="si">{</span><span class="n">PACK_METHOD_FASTAPI</span><span class="si">}</span><span class="s2"> or </span><span class="si">{</span><span class="n">PACK_METHOD_BENTOML</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unresolved method, should be </span><span class="si">{</span><span class="n">PACK_METHOD_FASTAPI</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.copy_information">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_information">[docs]</a>

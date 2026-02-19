@@ -260,15 +260,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -321,19 +314,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.hubdata.interfaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonModelsInterface</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span>
-    <span class="n">PACK_METHOD_BENTOML</span><span class="p">,</span>
     <span class="n">PACK_METHOD_FASTAPI</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.delete.delete</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFullDeleter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...hub.fetch.actions.template_resolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemplateResolver</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_bentoml</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...tools.bentoml.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">BentoMLException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.fetch_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">NotInstallableWithBentoML</span><span class="p">,</span>
     <span class="n">NotInstallableWithFastAPI</span><span class="p">,</span>
     <span class="n">StandardModelExampleError</span><span class="p">,</span>
-    <span class="n">WithToolFetchingNotWorking</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_input</span>
@@ -377,8 +364,6 @@
 <span class="sd">        Version of the model image.</span>
 <span class="sd">    force_from_hosted : bool, optional</span>
 <span class="sd">        Whether to force fetching from hosted services.</span>
-<span class="sd">    force_with_bentoml : bool, optional</span>
-<span class="sd">        Whether to force fetching with BentoML.</span>
 <span class="sd">    force_with_fastapi : bool, optional</span>
 <span class="sd">        Whether to force fetching with FastAPI.</span>
 <span class="sd">    hosted_url : str, optional</span>
@@ -408,7 +393,6 @@
         <span class="n">force_from_dockerhub</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">img_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">force_from_hosted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">force_with_bentoml</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">force_with_fastapi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">hosted_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">local_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -435,7 +419,6 @@
             <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
             <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
             <span class="n">img_tag</span><span class="o">=</span><span class="n">img_version</span><span class="p">,</span>
-            <span class="n">force_with_bentoml</span><span class="o">=</span><span class="n">force_with_bentoml</span><span class="p">,</span>
             <span class="n">force_with_fastapi</span><span class="o">=</span><span class="n">force_with_fastapi</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_installed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_dockerhub_fetcher</span><span class="o">.</span><span class="n">is_docker_installed</span><span class="p">()</span>
@@ -443,13 +426,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model_hosted_fetcher</span> <span class="o">=</span> <span class="n">ModelHostedFetcher</span><span class="p">(</span>
             <span class="n">url</span><span class="o">=</span><span class="n">hosted_url</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_bentoml</span> <span class="o">=</span> <span class="n">check_bentoml</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">can_use_docker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_installed</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker_active</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span> <span class="o">=</span> <span class="n">force_from_github</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_from_s3</span> <span class="o">=</span> <span class="n">force_from_s3</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_from_dockerhub</span> <span class="o">=</span> <span class="n">force_from_dockerhub</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_from_hosted</span> <span class="o">=</span> <span class="n">force_from_hosted</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">force_with_bentoml</span> <span class="o">=</span> <span class="n">force_with_bentoml</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_with_fastapi</span> <span class="o">=</span> <span class="n">force_with_fastapi</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hosted_url</span> <span class="o">=</span> <span class="n">hosted_url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">local_dir</span> <span class="o">=</span> <span class="n">local_dir</span>
@@ -494,46 +475,9 @@
             <span class="k">raise</span> <span class="n">NotInstallableWithFastAPI</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Fetching using BentoML&quot;</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Fetching using BentoML&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">check_bentoml</span><span class="p">()</span>
-
-        <span class="n">fetch</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;ersilia.hub.fetch.fetch_bentoml&quot;</span><span class="p">)</span>
-        <span class="n">mf</span> <span class="o">=</span> <span class="n">fetch</span><span class="o">.</span><span class="n">ModelFetcherFromBentoML</span><span class="p">(</span>
-            <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
-            <span class="n">credentials_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials_json</span><span class="p">,</span>
-            <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
-            <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">,</span>
-            <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
-            <span class="n">pip</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">do_pip</span><span class="p">,</span>
-            <span class="n">dockerize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">do_docker</span><span class="p">,</span>
-            <span class="n">force_from_github</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span><span class="p">,</span>
-            <span class="n">force_from_s3</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_s3</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Check if the model can be installed with BentoML</span>
-        <span class="k">if</span> <span class="n">mf</span><span class="o">.</span><span class="n">seems_installable</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">):</span>
-            <span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">NotInstallableWithBentoML</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-
-    <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_not_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="n">tr</span> <span class="o">=</span> <span class="n">TemplateResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">repo_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_with_fastapi</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_fastapi</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="n">WithToolFetchingNotWorking</span><span class="p">(</span><span class="n">tool</span><span class="o">=</span><span class="s2">&quot;fastapi&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_fastapi</span><span class="p">()</span>
-            <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_with_bentoml</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">tr</span><span class="o">.</span><span class="n">is_bentoml</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="n">WithToolFetchingNotWorking</span><span class="p">(</span><span class="n">tool</span><span class="o">=</span><span class="s2">&quot;bentoml&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_bentoml</span><span class="p">()</span>
-            <span class="n">is_fetched</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">is_fetched</span><span class="p">:</span>
             <span class="k">return</span>
@@ -541,8 +485,6 @@
             <span class="n">fetcher_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decide_fetcher</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">fetcher_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_fastapi</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">fetcher_type</span> <span class="o">==</span> <span class="n">PACK_METHOD_BENTOML</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_from_bentoml</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_standard_csv_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStandardExample</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
@@ -726,7 +668,7 @@
 
             <span class="k">return</span> <span class="n">FetchResult</span><span class="p">(</span><span class="n">fetch_success</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;Model fetched successfully&quot;</span><span class="p">)</span>
 
-        <span class="k">except</span> <span class="p">(</span><span class="n">StandardModelExampleError</span><span class="p">,</span> <span class="n">BentoMLException</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">StandardModelExampleError</span><span class="p">,)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> occurred: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> occurred: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
             <span class="n">do_delete</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>

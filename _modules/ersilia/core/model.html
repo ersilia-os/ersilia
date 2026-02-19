@@ -260,15 +260,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -474,6 +467,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">access</span> <span class="o">=</span> <span class="n">access</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nearest_neighbors</span> <span class="o">=</span> <span class="n">nearest_neighbors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service_class</span> <span class="o">=</span> <span class="n">service_class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">cache</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
 
@@ -1029,7 +1023,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_service_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_output_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_store_status</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">read_store</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">access</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nearest_neighbors</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_store</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">access</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nearest_neighbors</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_tracking_use_case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tracking_use_case</span><span class="p">)</span>
@@ -1175,7 +1173,7 @@
 <span class="sd">        Get the paths related to the model.</span>
 
 <span class="sd">        This property returns a dictionary containing various paths related to the model,</span>
-<span class="sd">        such as the destination path, repository path, and BentoML path.</span>
+<span class="sd">        such as the destination path and repository path.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1185,7 +1183,6 @@
         <span class="n">p</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;dest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
             <span class="s2">&quot;repository&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bentoml_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">p</span>
 

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="ersilia.utils.exceptions_utils package" href="ersilia.utils.exceptions_utils.html"><link rel="prev" title="ersilia.tools.bentoml.utils package" href="ersilia.tools.bentoml.utils.html">
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="ersilia.utils.exceptions_utils package" href="ersilia.utils.exceptions_utils.html"><link rel="prev" title="ersilia.tools package" href="ersilia.tools.html">
 
     <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
         <title>ersilia.utils package - Ersilia documentation</title>
@@ -261,15 +261,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 current has-children current-page"><a class="current reference internal" href="#">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" checked="" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 current has-children current-page"><a class="current reference internal" href="#">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" checked="" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -422,7 +415,6 @@
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.InvalidUrlError"><code class="docutils literal notranslate"><span class="pre">InvalidUrlError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.ModelPackageInstallError"><code class="docutils literal notranslate"><span class="pre">ModelPackageInstallError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.NotInstallableError"><code class="docutils literal notranslate"><span class="pre">NotInstallableError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.NotInstallableWithBentoML"><code class="docutils literal notranslate"><span class="pre">NotInstallableWithBentoML</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.NotInstallableWithFastAPI"><code class="docutils literal notranslate"><span class="pre">NotInstallableWithFastAPI</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.OutputDataTypesNotConsistentError"><code class="docutils literal notranslate"><span class="pre">OutputDataTypesNotConsistentError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.S3DownloaderError"><code class="docutils literal notranslate"><span class="pre">S3DownloaderError</span></code></a></li>
@@ -1978,183 +1970,6 @@ int→np.int32, str→utf-8 HDF5 string).  If None: infer per your original logi
 </dd></dl>
 
 </section>
-<section id="module-ersilia.utils.installers">
-<span id="ersilia-utils-installers-module"></span><h2>ersilia.utils.installers module<a class="headerlink" href="#module-ersilia.utils.installers" title="Link to this heading">¶</a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.utils.installers.BaseInstaller">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.installers.</span></span><span class="sig-name descname"><span class="pre">BaseInstaller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check_install_log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#BaseInstaller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.BaseInstaller" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ersilia.core.html#ersilia.core.base.ErsiliaBase" title="ersilia.core.base.ErsiliaBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ErsiliaBase</span></code></a></p>
-<p>Base class for managing installations in Ersilia.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>check_install_log</strong> (<em>bool</em>) – Whether to check the installation log.</p></li>
-<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format. Default is None.</p></li>
-<li><p><strong>credentials_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Credentials settings in JSON format. Default is None.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.BaseInstaller.read_log">
-<span class="sig-name descname"><span class="pre">read_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#BaseInstaller.read_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.BaseInstaller.read_log" title="Link to this definition">¶</a></dt>
-<dd><p>Read the installation log from a file.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.BaseInstaller.remove_from_log">
-<span class="sig-name descname"><span class="pre">remove_from_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#BaseInstaller.remove_from_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.BaseInstaller.remove_from_log" title="Link to this definition">¶</a></dt>
-<dd><p>Remove a task from the installation log.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>task</strong> (<em>str</em>) – The task to remove from the log.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.BaseInstaller.remove_log">
-<span class="sig-name descname"><span class="pre">remove_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#BaseInstaller.remove_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.BaseInstaller.remove_log" title="Link to this definition">¶</a></dt>
-<dd><p>Remove the installation log file.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.BaseInstaller.update_log">
-<span class="sig-name descname"><span class="pre">update_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#BaseInstaller.update_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.BaseInstaller.update_log" title="Link to this definition">¶</a></dt>
-<dd><p>Update the installation log with a new task.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>task</strong> (<em>str</em>) – The task to add to the log.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.BaseInstaller.write_log">
-<span class="sig-name descname"><span class="pre">write_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#BaseInstaller.write_log"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.BaseInstaller.write_log" title="Link to this definition">¶</a></dt>
-<dd><p>Write the installation log to a file.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.installers.</span></span><span class="sig-name descname"><span class="pre">Installer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check_install_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ersilia.utils.installers.BaseInstaller" title="ersilia.utils.installers.BaseInstaller"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseInstaller</span></code></a></p>
-<p>A class to manage the installation of dependencies for Ersilia.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>check_install_log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to check the installation log. Default is True.</p></li>
-<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format. Default is None.</p></li>
-<li><p><strong>credentials_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Credentials settings in JSON format. Default is None.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.base_conda">
-<span class="sig-name descname"><span class="pre">base_conda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.base_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.base_conda" title="Link to this definition">¶</a></dt>
-<dd><p>Create a base Conda environment.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.base_conda_slim">
-<span class="sig-name descname"><span class="pre">base_conda_slim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.base_conda_slim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.base_conda_slim" title="Link to this definition">¶</a></dt>
-<dd><p>Create a slim base Conda environment.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.conda">
-<span class="sig-name descname"><span class="pre">conda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.conda" title="Link to this definition">¶</a></dt>
-<dd><p>Check if Conda is installed.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.config">
-<span class="sig-name descname"><span class="pre">config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.config" title="Link to this definition">¶</a></dt>
-<dd><p>Set up the configuration file.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.git">
-<span class="sig-name descname"><span class="pre">git</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.git"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.git" title="Link to this definition">¶</a></dt>
-<dd><p>Check if Git is installed.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.profile">
-<span class="sig-name descname"><span class="pre">profile</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.profile" title="Link to this definition">¶</a></dt>
-<dd><p>Set up the ‘ersilia’ CLI in the user profile.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.server_docker">
-<span class="sig-name descname"><span class="pre">server_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.server_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.server_docker" title="Link to this definition">¶</a></dt>
-<dd><p>Build the Docker server image.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Installer.server_docker_slim">
-<span class="sig-name descname"><span class="pre">server_docker_slim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Installer.server_docker_slim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Installer.server_docker_slim" title="Link to this definition">¶</a></dt>
-<dd><p>Build the slim Docker server image.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Uninstaller">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.installers.</span></span><span class="sig-name descname"><span class="pre">Uninstaller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">check_install_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Uninstaller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Uninstaller" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#ersilia.utils.installers.BaseInstaller" title="ersilia.utils.installers.BaseInstaller"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseInstaller</span></code></a></p>
-<p>A class to manage the uninstallation of dependencies for Ersilia.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>check_install_log</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to check the installation log. Default is True.</p></li>
-<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format. Default is None.</p></li>
-<li><p><strong>credentials_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Credentials settings in JSON format. Default is None.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Uninstaller.base_conda">
-<span class="sig-name descname"><span class="pre">base_conda</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Uninstaller.base_conda"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Uninstaller.base_conda" title="Link to this definition">¶</a></dt>
-<dd><p>Delete the base Conda environment.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.installers.Uninstaller.server_docker">
-<span class="sig-name descname"><span class="pre">server_docker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#Uninstaller.server_docker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.Uninstaller.server_docker" title="Link to this definition">¶</a></dt>
-<dd><p>Delete the Docker server image.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ersilia.utils.installers.base_installer">
-<span class="sig-prename descclassname"><span class="pre">ersilia.utils.installers.</span></span><span class="sig-name descname"><span class="pre">base_installer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ignore_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#base_installer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.base_installer" title="Link to this definition">¶</a></dt>
-<dd><p>Perform a bare minimum installation of dependencies.</p>
-<p>This function is mainly used to create a base environment for the models.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ignore_status</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to ignore the current installation status. Default is False.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="ersilia.utils.installers.full_installer">
-<span class="sig-prename descclassname"><span class="pre">ersilia.utils.installers.</span></span><span class="sig-name descname"><span class="pre">full_installer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ignore_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/installers.html#full_installer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.installers.full_installer" title="Link to this definition">¶</a></dt>
-<dd><p>Perform a full installation of dependencies for Ersilia.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ignore_status</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to ignore the current installation status. Default is False.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
 <section id="module-ersilia.utils.logging">
 <span id="ersilia-utils-logging-module"></span><h2>ersilia.utils.logging module<a class="headerlink" href="#module-ersilia.utils.logging" title="Link to this heading">¶</a></h2>
 <dl class="py class">
@@ -2827,6 +2642,11 @@ int→np.int32, str→utf-8 HDF5 string).  If None: infer per your original logi
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.ports.normalize_connect_url">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.ports.</span></span><span class="sig-name descname"><span class="pre">normalize_connect_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/ersilia/utils/ports.html#normalize_connect_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.ports.normalize_connect_url" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-ersilia.utils.remove">
 <span id="ersilia-utils-remove-module"></span><h2>ersilia.utils.remove module<a class="headerlink" href="#module-ersilia.utils.remove" title="Link to this heading">¶</a></h2>
@@ -2892,7 +2712,7 @@ before the fetch procedure.</p>
 <dd><p>Resolve the packaging method based on metadata available from GitHub</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The packaging method (fastapi or bentoml)</p>
+<dd class="field-odd"><p>The packaging method (fastapi or )</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2920,7 +2740,7 @@ before the fetch procedure.</p>
 <dd><p>Read the pack method from available from the fetch procedure (i.e. as resolved by the TemplateResolver)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The packaging method (fastapi or bentoml)</p>
+<dd class="field-odd"><p>The packaging method (fastapi or )</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3471,12 +3291,6 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.utils.versioning.Versioner.bentoml_version">
-<span class="sig-name descname"><span class="pre">bentoml_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.bentoml_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.versioning.Versioner.bentoml_version" title="Link to this definition">¶</a></dt>
-<dd><p>Get the current BentoML version.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.versioning.Versioner.server_docker_name">
 <span class="sig-name descname"><span class="pre">server_docker_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_tuple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.server_docker_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.versioning.Versioner.server_docker_name" title="Link to this definition">¶</a></dt>
 <dd><p>Get the server Docker image name.</p>
@@ -3516,21 +3330,7 @@ before the fetch procedure.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id50">
-<span class="sig-name descname"><span class="pre">bentoml_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.bentoml_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id50" title="Link to this definition">¶</a></dt>
-<dd><p>Get the current BentoML version.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The current BentoML version if available, otherwise None.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>str or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="id51">
-<span class="sig-name descname"><span class="pre">ersilia_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.ersilia_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id51" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">ersilia_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.ersilia_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id50" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current Ersilia version.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -3543,8 +3343,8 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id52">
-<span class="sig-name descname"><span class="pre">ersilia_version_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.ersilia_version_from_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id52" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id51">
+<span class="sig-name descname"><span class="pre">ersilia_version_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.ersilia_version_from_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id51" title="Link to this definition">¶</a></dt>
 <dd><p>Get the Ersilia version from a given path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3560,8 +3360,8 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id53">
-<span class="sig-name descname"><span class="pre">ersilia_version_with_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.ersilia_version_with_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id53" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id52">
+<span class="sig-name descname"><span class="pre">ersilia_version_with_py</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.ersilia_version_with_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id52" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current Ersilia version with Python version.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -3574,8 +3374,8 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id54">
-<span class="sig-name descname"><span class="pre">python_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">py_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.python_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id54" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id53">
+<span class="sig-name descname"><span class="pre">python_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">py_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.python_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id53" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current Python version.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3591,8 +3391,8 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id55">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reformat_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.reformat_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id55" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id54">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reformat_py</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.reformat_py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id54" title="Link to this definition">¶</a></dt>
 <dd><p>Reformat a Python version string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3611,8 +3411,8 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id56">
-<span class="sig-name descname"><span class="pre">server_docker_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_tuple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.server_docker_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id56" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id55">
+<span class="sig-name descname"><span class="pre">server_docker_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_tuple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/versioning.html#Versioner.server_docker_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id55" title="Link to this definition">¶</a></dt>
 <dd><p>Get the server Docker image name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3658,8 +3458,8 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id57">
-<span class="sig-name descname"><span class="pre">unzip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/zip.html#Zipper.unzip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id57" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id56">
+<span class="sig-name descname"><span class="pre">unzip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/zip.html#Zipper.unzip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id56" title="Link to this definition">¶</a></dt>
 <dd><p>Unzip a file to the specified destination.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3675,8 +3475,8 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id58">
-<span class="sig-name descname"><span class="pre">zip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/zip.html#Zipper.zip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id58" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id57">
+<span class="sig-name descname"><span class="pre">zip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/zip.html#Zipper.zip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id57" title="Link to this definition">¶</a></dt>
 <dd><p>Zip a directory into a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3719,14 +3519,14 @@ before the fetch procedure.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="ersilia.tools.bentoml.utils.html">
+          <a class="prev-page" href="ersilia.tools.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">ersilia.tools.bentoml.utils package</div>
+                <div class="title">ersilia.tools package</div>
                 
               </div>
             </a>
@@ -3952,35 +3752,6 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.import.import_extra"><code class="docutils literal notranslate"><span class="pre">import_extra()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-ersilia.utils.installers">ersilia.utils.installers module</a><ul>
-<li><a class="reference internal" href="#ersilia.utils.installers.BaseInstaller"><code class="docutils literal notranslate"><span class="pre">BaseInstaller</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.utils.installers.BaseInstaller.read_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.read_log()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.BaseInstaller.remove_from_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.remove_from_log()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.BaseInstaller.remove_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.remove_log()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.BaseInstaller.update_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.update_log()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.BaseInstaller.write_log"><code class="docutils literal notranslate"><span class="pre">BaseInstaller.write_log()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer"><code class="docutils literal notranslate"><span class="pre">Installer</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.base_conda"><code class="docutils literal notranslate"><span class="pre">Installer.base_conda()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.base_conda_slim"><code class="docutils literal notranslate"><span class="pre">Installer.base_conda_slim()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.conda"><code class="docutils literal notranslate"><span class="pre">Installer.conda()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.config"><code class="docutils literal notranslate"><span class="pre">Installer.config()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.git"><code class="docutils literal notranslate"><span class="pre">Installer.git()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.profile"><code class="docutils literal notranslate"><span class="pre">Installer.profile()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.server_docker"><code class="docutils literal notranslate"><span class="pre">Installer.server_docker()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Installer.server_docker_slim"><code class="docutils literal notranslate"><span class="pre">Installer.server_docker_slim()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Uninstaller"><code class="docutils literal notranslate"><span class="pre">Uninstaller</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.utils.installers.Uninstaller.base_conda"><code class="docutils literal notranslate"><span class="pre">Uninstaller.base_conda()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.Uninstaller.server_docker"><code class="docutils literal notranslate"><span class="pre">Uninstaller.server_docker()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#ersilia.utils.installers.base_installer"><code class="docutils literal notranslate"><span class="pre">base_installer()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.installers.full_installer"><code class="docutils literal notranslate"><span class="pre">full_installer()</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#module-ersilia.utils.logging">ersilia.utils.logging module</a><ul>
 <li><a class="reference internal" href="#ersilia.utils.logging.Logger"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.utils.logging.Logger.set_verbosity"><code class="docutils literal notranslate"><span class="pre">Logger.set_verbosity()</span></code></a></li>
@@ -4071,6 +3842,7 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#module-ersilia.utils.ports">ersilia.utils.ports module</a><ul>
 <li><a class="reference internal" href="#ersilia.utils.ports.find_free_port"><code class="docutils literal notranslate"><span class="pre">find_free_port()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.ports.is_port_in_use"><code class="docutils literal notranslate"><span class="pre">is_port_in_use()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.ports.normalize_connect_url"><code class="docutils literal notranslate"><span class="pre">normalize_connect_url()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.utils.remove">ersilia.utils.remove module</a><ul>
@@ -4173,18 +3945,16 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.versioning.Versioner.ersilia_version"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.versioning.Versioner.ersilia_version_with_py"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version_with_py()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.versioning.Versioner.ersilia_version_from_path"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version_from_path()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.utils.versioning.Versioner.bentoml_version"><code class="docutils literal notranslate"><span class="pre">Versioner.bentoml_version()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.versioning.Versioner.server_docker_name"><code class="docutils literal notranslate"><span class="pre">Versioner.server_docker_name()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.versioning.Versioner.base_conda_name"><code class="docutils literal notranslate"><span class="pre">Versioner.base_conda_name()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.versioning.Versioner.reformat_py"><code class="docutils literal notranslate"><span class="pre">Versioner.reformat_py()</span></code></a></li>
 <li><a class="reference internal" href="#id49"><code class="docutils literal notranslate"><span class="pre">Versioner.base_conda_name()</span></code></a></li>
-<li><a class="reference internal" href="#id50"><code class="docutils literal notranslate"><span class="pre">Versioner.bentoml_version()</span></code></a></li>
-<li><a class="reference internal" href="#id51"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version()</span></code></a></li>
-<li><a class="reference internal" href="#id52"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version_from_path()</span></code></a></li>
-<li><a class="reference internal" href="#id53"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version_with_py()</span></code></a></li>
-<li><a class="reference internal" href="#id54"><code class="docutils literal notranslate"><span class="pre">Versioner.python_version()</span></code></a></li>
-<li><a class="reference internal" href="#id55"><code class="docutils literal notranslate"><span class="pre">Versioner.reformat_py()</span></code></a></li>
-<li><a class="reference internal" href="#id56"><code class="docutils literal notranslate"><span class="pre">Versioner.server_docker_name()</span></code></a></li>
+<li><a class="reference internal" href="#id50"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version()</span></code></a></li>
+<li><a class="reference internal" href="#id51"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version_from_path()</span></code></a></li>
+<li><a class="reference internal" href="#id52"><code class="docutils literal notranslate"><span class="pre">Versioner.ersilia_version_with_py()</span></code></a></li>
+<li><a class="reference internal" href="#id53"><code class="docutils literal notranslate"><span class="pre">Versioner.python_version()</span></code></a></li>
+<li><a class="reference internal" href="#id54"><code class="docutils literal notranslate"><span class="pre">Versioner.reformat_py()</span></code></a></li>
+<li><a class="reference internal" href="#id55"><code class="docutils literal notranslate"><span class="pre">Versioner.server_docker_name()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -4193,8 +3963,8 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.zip.Zipper"><code class="docutils literal notranslate"><span class="pre">Zipper</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.utils.zip.Zipper.unzip"><code class="docutils literal notranslate"><span class="pre">Zipper.unzip()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.zip.Zipper.zip"><code class="docutils literal notranslate"><span class="pre">Zipper.zip()</span></code></a></li>
-<li><a class="reference internal" href="#id57"><code class="docutils literal notranslate"><span class="pre">Zipper.unzip()</span></code></a></li>
-<li><a class="reference internal" href="#id58"><code class="docutils literal notranslate"><span class="pre">Zipper.zip()</span></code></a></li>
+<li><a class="reference internal" href="#id56"><code class="docutils literal notranslate"><span class="pre">Zipper.unzip()</span></code></a></li>
+<li><a class="reference internal" href="#id57"><code class="docutils literal notranslate"><span class="pre">Zipper.zip()</span></code></a></li>
 </ul>
 </li>
 </ul>

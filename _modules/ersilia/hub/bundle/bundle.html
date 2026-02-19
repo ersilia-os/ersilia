@@ -260,15 +260,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -320,7 +313,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">MODEL_INSTALL_COMMANDS_FILE</span><span class="p">,</span> <span class="n">REQUIREMENTS_TXT</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.repo</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileFile</span>
 
 
 <div class="viewcode-block" id="BundleEnvironmentFile">
@@ -515,7 +507,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle the Dockerfile for a model bundle.</span>
 
-<span class="sd">    It specifically provides methods to get the path to the Dockerfile, get the BentoML version required for the model, and more.</span>
+<span class="sd">    It specifically provides methods to get the path to the Dockerfile, get the  version required for the model, and more.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -547,53 +539,36 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span></div>
 
 
-<div class="viewcode-block" id="BundleDockerfileFile.get_bentoml_version">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.get_bentoml_version">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="BundleDockerfileFile.get__version">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.get__version">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get__version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the BentoML version required for the model.</span>
+<span class="sd">        Get the  version required for the model.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
-<span class="sd">            A dictionary containing the BentoML version, slim flag, and Python version.</span>
+<span class="sd">            A dictionary containing the  version, slim flag, and Python version.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">DockerfileFile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="BundleDockerfileFile.set_to_slim">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_slim">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_to_slim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the Dockerfile to use the slim version of the BentoML image.</span>
+<span class="sd">        Set the Dockerfile to use the slim version of the  image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ver</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="k">if</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;slim&quot;</span><span class="p">]:</span>
-            <span class="k">return</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="s2">&quot;bentoml/model-server:</span><span class="si">{0}</span><span class="s2">-slim-</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ver</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span> <span class="o">=</span> <span class="n">img</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">content</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+        <span class="k">return</span></div>
 
 
 <div class="viewcode-block" id="BundleDockerfileFile.set_to_full">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.bundle.BundleDockerfileFile.set_to_full">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_to_full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Set the Dockerfile to use the full version of the BentoML image.</span>
+<span class="sd">        Set the Dockerfile to use the full version of the  image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ver</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="k">if</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;slim&quot;</span><span class="p">]:</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="s2">&quot;bentoml/model-server:</span><span class="si">{0}</span><span class="s2">-</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ver</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">],</span> <span class="n">ver</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span> <span class="o">=</span> <span class="n">img</span>
-        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">content</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span></div>
+        <span class="k">return</span></div>
 
 
 <div class="viewcode-block" id="BundleDockerfileFile.check">

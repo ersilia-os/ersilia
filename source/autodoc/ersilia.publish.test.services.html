@@ -261,15 +261,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -869,11 +862,6 @@
 </pre></div>
 </div>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.BENTOML_FILES">
-<span class="sig-name descname"><span class="pre">BENTOML_FILES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE',</span> <span class="pre">'Dockerfile',</span> <span class="pre">'metadata.json',</span> <span class="pre">'model/framework/run.sh',</span> <span class="pre">'src/service.py',</span> <span class="pre">'pack.py',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE']</span></em><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.BENTOML_FILES" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.ERSILIAPACK_FILES">
 <span class="sig-name descname"><span class="pre">ERSILIAPACK_FILES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE',</span> <span class="pre">'install.yml',</span> <span class="pre">'metadata.yml',</span> <span class="pre">'model/framework/examples/run_input.csv',</span> <span class="pre">'model/framework/examples/run_output.csv',</span> <span class="pre">'model/framework/columns/run_columns.csv',</span> <span class="pre">'model/framework/run.sh',</span> <span class="pre">'README.md',</span> <span class="pre">'LICENSE']</span></em><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.ERSILIAPACK_FILES" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -929,7 +917,7 @@
 <dt class="sig sig-object py" id="ersilia.publish.test.services.inspect.ModelInspector.check_dependencies_are_valid">
 <span class="sig-name descname"><span class="pre">check_dependencies_are_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/inspect.html#ModelInspector.check_dependencies_are_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.inspect.ModelInspector.check_dependencies_are_valid" title="Link to this definition">¶</a></dt>
 <dd><p>Check if the dependencies in the Dockerfile or install.yml are valid.</p>
-<p>For PACK_METHOD_BENTOML, the Dockerfile is validated.
+<p>For , the Dockerfile is validated.
 For PACK_METHOD_FASTAPI, either file is acceptable. If one exists, it is validated;
 if both exist, both are validated. If neither is present, an error is returned.</p>
 <dl class="field-list simple">
@@ -1123,7 +1111,7 @@ if both exist, both are validated. If neither is present, an error is returned.<
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).</p>
+<dd class="field-even"><p>The type of the model (e.g., PACK_METHOD_FASTAPI).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
@@ -1579,7 +1567,6 @@ Otherwise returns process.stdout (a stream).</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector"><code class="docutils literal notranslate"><span class="pre">ModelInspector</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.BENTOML_FILES"><code class="docutils literal notranslate"><span class="pre">ModelInspector.BENTOML_FILES</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.ERSILIAPACK_FILES"><code class="docutils literal notranslate"><span class="pre">ModelInspector.ERSILIAPACK_FILES</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.REQUIRED_FIELDS"><code class="docutils literal notranslate"><span class="pre">ModelInspector.REQUIRED_FIELDS</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.inspect.ModelInspector.check_complete_folder_structure"><code class="docutils literal notranslate"><span class="pre">ModelInspector.check_complete_folder_structure()</span></code></a></li>

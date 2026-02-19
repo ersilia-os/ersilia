@@ -260,15 +260,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../source/autodoc/ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -338,10 +331,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaCommandGroup</span><span class="p">(</span><span class="n">RichGroup</span><span class="p">):</span>
     <span class="n">NUMBER_OF_COMMON_PARAMS</span> <span class="o">=</span> <span class="mi">2</span>
 
-<div class="viewcode-block" id="ErsiliaCommandGroup.bentoml_common_params">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.bentoml_common_params">[docs]</a>
+<div class="viewcode-block" id="ErsiliaCommandGroup.common_params">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.common_params">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">bentoml_common_params</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">common_params</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
         <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
             <span class="s2">&quot;-q&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--quiet&quot;</span><span class="p">,</span>
@@ -362,7 +355,7 @@
         <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;cls&quot;</span><span class="p">,</span> <span class="n">RichCommand</span><span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-            <span class="n">func</span> <span class="o">=</span> <span class="n">ErsiliaCommandGroup</span><span class="o">.</span><span class="n">bentoml_common_params</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">ErsiliaCommandGroup</span><span class="o">.</span><span class="n">common_params</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="n">func</span><span class="o">.</span><span class="n">__click_params__</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">func</span><span class="o">.</span><span class="n">__click_params__</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_COMMON_PARAMS</span> <span class="p">:]</span>
                 <span class="o">+</span> <span class="n">func</span><span class="o">.</span><span class="n">__click_params__</span><span class="p">[:</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">NUMBER_OF_COMMON_PARAMS</span><span class="p">]</span>

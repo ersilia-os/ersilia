@@ -261,15 +261,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -565,7 +558,7 @@ as a list of output types.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">paths</span></span><a class="headerlink" href="#ersilia.core.model.ErsiliaModel.paths" title="Link to this definition">¶</a></dt>
 <dd><p>Get the paths related to the model.</p>
 <p>This property returns a dictionary containing various paths related to the model,
-such as the destination path, repository path, and BentoML path.</p>
+such as the destination path and repository path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The dictionary containing paths.</p>
@@ -744,6 +737,21 @@ retrieved when needed.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.core.session.Session.current_local_cache_status">
+<span class="sig-name descname"><span class="pre">current_local_cache_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_local_cache_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_local_cache_status" title="Link to this definition">¶</a></dt>
+<dd><p>Get the current model ID from the session.</p>
+<p>This method retrieves the current model ID from the session data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The current model ID, or None if no session data is available.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.current_model_id">
 <span class="sig-name descname"><span class="pre">current_model_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.current_model_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.current_model_id" title="Link to this definition">¶</a></dt>
 <dd><p>Get the current model ID from the session.</p>
@@ -876,7 +884,7 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.register_store_status">
-<span class="sig-name descname"><span class="pre">register_store_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_access</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearest_neighbors</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.register_store_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.register_store_status" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">register_store_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">read_store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_access</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearest_neighbors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_cache</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.register_store_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.register_store_status" title="Link to this definition">¶</a></dt>
 <dd><p>Register the output source in the session.</p>
 <p>This method updates the session data with the provided output source.</p>
 <dl class="field-list simple">
@@ -1233,6 +1241,7 @@ and uploads the data to AWS if credentials are available.
 <li><a class="reference internal" href="#ersilia.core.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.core.session.Session.close"><code class="docutils literal notranslate"><span class="pre">Session.close()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.current_identifier"><code class="docutils literal notranslate"><span class="pre">Session.current_identifier()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.current_local_cache_status"><code class="docutils literal notranslate"><span class="pre">Session.current_local_cache_status()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.current_model_id"><code class="docutils literal notranslate"><span class="pre">Session.current_model_id()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.current_output_source"><code class="docutils literal notranslate"><span class="pre">Session.current_output_source()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.current_service_class"><code class="docutils literal notranslate"><span class="pre">Session.current_service_class()</span></code></a></li>

@@ -260,15 +260,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -315,6 +308,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span>
@@ -329,8 +323,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.localdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvironmentDb</span>
 
-<span class="n">BENTOML_DOCKERPORT</span> <span class="o">=</span> <span class="mi">5000</span>
 <span class="n">INTERNAL_DOCKERPORT</span> <span class="o">=</span> <span class="mi">80</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_unique_keep_order</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">OrderedDict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">items</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="DockerManager">
@@ -348,8 +345,7 @@
 <span class="sd">        Configuration settings for initializing the Docker manager.</span>
 <span class="sd">    preferred_port : int, optional</span>
 <span class="sd">        Preferred port number for running Docker containers.</span>
-<span class="sd">    with_bentoml : bool, optional</span>
-<span class="sd">        Flag indicating whether to use BentoML for model serving.</span>
+
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -364,7 +360,7 @@
 <span class="sd">    &gt;&gt;&gt; docker_manager.run(model_id=&quot;eosxxxx&quot;, workers=2)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_bentoml</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_eos_regex</span> <span class="o">=</span> <span class="n">Paths</span><span class="p">()</span><span class="o">.</span><span class="n">_eos_regex</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_org_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">)</span>
@@ -373,7 +369,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">preferred_port</span> <span class="o">=</span> <span class="n">preferred_port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">with_bentoml</span> <span class="o">=</span> <span class="n">with_bentoml</span>
 
 <div class="viewcode-block" id="DockerManager.is_inside_docker">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.is_inside_docker">[docs]</a>
@@ -580,44 +575,6 @@
         <span class="k">return</span> <span class="n">cnt_dict</span></div>
 
 
-<div class="viewcode-block" id="DockerManager.build_with_bentoml">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.db.environments.html#ersilia.db.environments.managers.DockerManager.build_with_bentoml">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">build_with_bentoml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>  <span class="c1"># Ignore for versioning</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Builds a Docker image for the model using BentoML.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model_id : str</span>
-<span class="sd">            Identifier of the model.</span>
-<span class="sd">        use_cache : bool, optional</span>
-<span class="sd">            If True, use Docker&#39;s cache when building the image.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">bundle_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
-        <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;build.sh&quot;</span><span class="p">)</span>
-        <span class="n">cmdlines</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cd </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bundle_path</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="n">use_cache</span><span class="p">:</span>
-            <span class="n">cache_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">cache_str</span> <span class="o">=</span> <span class="s2">&quot;--disable-cache&quot;</span>
-        <span class="n">cmdlines</span> <span class="o">+=</span> <span class="p">[</span>
-            <span class="s2">&quot;docker build </span><span class="si">{0}</span><span class="s2"> -t </span><span class="si">{1}</span><span class="s2">/</span><span class="si">{2}</span><span class="s2">:</span><span class="si">{3}</span><span class="s2"> .&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">cache_str</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
-            <span class="p">)</span>
-        <span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">cmdlines</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">cmdlines</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">cmd</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;bash </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
-            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
-            <span class="n">env</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">),</span>
-        <span class="p">)</span></div>
-
-
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_model_deploy_dockerfiles_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/ersilia/master/dockerfiles/model-deploy&quot;</span>
@@ -722,12 +679,9 @@
 <span class="sd">        use_cache : bool, optional</span>
 <span class="sd">            If True, use Docker&#39;s cache when building the image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_bentoml</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">build_with_bentoml</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">use_cache</span><span class="o">=</span><span class="n">use_cache</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">build_with_ersilia</span><span class="p">(</span>
-                <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">docker_user</span><span class="o">=</span><span class="n">docker_user</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="o">=</span><span class="n">docker_pwd</span>
-            <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_with_ersilia</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">docker_user</span><span class="o">=</span><span class="n">docker_user</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="o">=</span><span class="n">docker_pwd</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DockerManager.remove">
@@ -787,10 +741,7 @@
             <span class="n">name_</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">si</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">container_exists</span><span class="p">(</span><span class="n">name_</span><span class="p">):</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">name_</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_bentoml</span><span class="p">:</span>
-            <span class="n">dockerport</span> <span class="o">=</span> <span class="n">BENTOML_DOCKERPORT</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dockerport</span> <span class="o">=</span> <span class="n">INTERNAL_DOCKERPORT</span>
+        <span class="n">dockerport</span> <span class="o">=</span> <span class="n">INTERNAL_DOCKERPORT</span>
         <span class="k">if</span> <span class="n">memory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker run --platform </span><span class="si">{6}</span><span class="s2"> --name </span><span class="si">{0}</span><span class="s2"> -d -p </span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2"> </span><span class="si">{3}</span><span class="s2"> --workers=</span><span class="si">{4}</span><span class="s2"> </span><span class="si">{5}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">name</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">dockerport</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">workers</span><span class="p">,</span> <span class="n">mb_string</span><span class="p">,</span> <span class="n">resolve_platform</span><span class="p">()</span>
@@ -1007,43 +958,52 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">delete_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">purge_unnamed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes Docker images associated with a model.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        model_id : str</span>
-<span class="sd">            Identifier of the model.</span>
-<span class="sd">        purge_unnamed : bool, optional</span>
-<span class="sd">            If True, also remove unnamed images.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
-            <span class="k">return</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">stop_containers</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prune</span><span class="p">()</span>
-        <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
-        <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;docker-images.txt&quot;</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker images &gt; </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">))</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-        <span class="n">unnamed_images</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">named_images</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">h</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="n">img_idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;IMAGE ID&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">img</span> <span class="o">=</span> <span class="n">l</span><span class="p">[</span><span class="n">img_idx</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">name</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">if</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
-                    <span class="n">named_images</span> <span class="o">+=</span> <span class="p">[</span><span class="n">img</span><span class="p">]</span>
-                <span class="k">if</span> <span class="s2">&quot;&lt;none&gt;&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
-                    <span class="n">unnamed_images</span> <span class="o">+=</span> <span class="p">[</span><span class="n">img</span><span class="p">]</span>
-        <span class="n">images</span> <span class="o">=</span> <span class="n">named_images</span>
-        <span class="k">if</span> <span class="n">purge_unnamed</span><span class="p">:</span>
-            <span class="n">images</span> <span class="o">+=</span> <span class="n">unnamed_images</span>
-        <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">images</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Removing docker image </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">delete_image</span><span class="p">(</span><span class="n">img</span><span class="p">)</span></div>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">r</span><span class="s1">&#39;docker image ls --no-trunc --format &quot;{{.Repository}}\t{{.Tag}}\t{{.ID}}&quot;&#39;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="n">named_targets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">unnamed_targets</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">wanted_suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">continue</span>
+            <span class="n">repo</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">img_id</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="n">is_unnamed</span> <span class="o">=</span> <span class="n">repo</span> <span class="o">==</span> <span class="s2">&quot;&lt;none&gt;&quot;</span> <span class="ow">or</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;&lt;none&gt;&quot;</span>
+            <span class="n">is_model</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">repo</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">wanted_suffix</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:&quot;</span> <span class="ow">in</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="ow">or</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">repo</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_model</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">repo</span> <span class="o">!=</span> <span class="s2">&quot;&lt;none&gt;&quot;</span> <span class="ow">and</span> <span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;&lt;none&gt;&quot;</span><span class="p">:</span>
+                    <span class="n">named_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">named_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_id</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">purge_unnamed</span> <span class="ow">and</span> <span class="n">is_unnamed</span><span class="p">:</span>
+                <span class="n">unnamed_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_id</span><span class="p">)</span>
+
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">_unique_keep_order</span><span class="p">(</span>
+            <span class="n">named_targets</span> <span class="o">+</span> <span class="p">(</span><span class="n">unnamed_targets</span> <span class="k">if</span> <span class="n">purge_unnamed</span> <span class="k">else</span> <span class="p">[])</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing docker image </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete_image</span><span class="p">(</span><span class="n">t</span><span class="p">)</span></div>
 </div>
 
 

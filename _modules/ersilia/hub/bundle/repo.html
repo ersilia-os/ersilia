@@ -260,15 +260,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.store.html">ersilia.store package</a></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a><input aria-label="Toggle navigation of ersilia.tools package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.html">ersilia.tools.bentoml package</a><input aria-label="Toggle navigation of ersilia.tools.bentoml package" class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" role="switch" type="checkbox"/><label for="toctree-checkbox-18"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.configuration.html">ersilia.tools.bentoml.configuration package</a></li>
-<li class="toctree-l5"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.bentoml.utils.html">ersilia.tools.bentoml.utils package</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" role="switch" type="checkbox"/><label for="toctree-checkbox-19"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../source/autodoc/ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" role="switch" type="checkbox"/><label for="toctree-checkbox-17"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../source/autodoc/ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
@@ -377,7 +370,7 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ServiceFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to handle service file operations for BentoML web apps.</span>
+<span class="sd">    Class to handle service file operations for web apps.</span>
 
 <span class="sd">    This class provides methods to get the path to the service file, rename the service,</span>
 <span class="sd">    add an info API, and check if the service file contains the Service class.</span>
@@ -418,7 +411,7 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.ServiceFile.rename_service">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rename_service</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Rename the BentoML service from the default &quot;Service&quot; to the model ID.</span>
+<span class="sd">        Rename the service from the default &quot;Service&quot; to the model ID.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ru</span> <span class="o">=</span> <span class="n">RepoUtils</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">ru</span><span class="o">.</span><span class="n">get_model_id</span><span class="p">()</span>
@@ -557,7 +550,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to handle Dockerfile operations for models.</span>
 
-<span class="sd">    This class provides methods to get the path to the Dockerfile, get the BentoML version required for the model,</span>
+<span class="sd">    This class provides methods to get the path to the Dockerfile, get the version required for the model,</span>
 <span class="sd">    check if the Dockerfile contains RUN commands, check if the Dockerfile requires Conda, get installation commands,</span>
 <span class="sd">    and more.</span>
 
@@ -584,78 +577,6 @@
 <span class="sd">            The path to the Dockerfile.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="DockerfileFile.get_bentoml_version">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.get_bentoml_version">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_bentoml_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the BentoML version required for the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            A dictionary containing the BentoML version, slim flag, and Python version.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">bimg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span>
-        <span class="n">bimg</span> <span class="o">=</span> <span class="n">bimg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bimg</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">bimg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">bimg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;model-server&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">tag</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s2">&quot;-slim-&quot;</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">:</span>
-            <span class="n">slim</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">slim</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">slim</span><span class="p">:</span>
-            <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;slim&quot;</span><span class="p">:</span> <span class="n">slim</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]}</span>
-        <span class="c1"># if result[&quot;python&quot;] in [</span>
-        <span class="c1">#     &quot;py30&quot;,</span>
-        <span class="c1">#     &quot;py31&quot;,</span>
-        <span class="c1">#     &quot;py32&quot;,</span>
-        <span class="c1">#     &quot;py33&quot;,</span>
-        <span class="c1">#     &quot;py34&quot;,</span>
-        <span class="c1">#     &quot;py35&quot;,</span>
-        <span class="c1">#     &quot;py36&quot;,</span>
-        <span class="c1">#     &quot;py37&quot;,</span>
-        <span class="c1">#     &quot;py38&quot;,</span>
-        <span class="c1">#     &quot;py39&quot;,</span>
-        <span class="c1"># ]:</span>
-        <span class="c1"># if SystemChecker().is_arm64():</span>
-        <span class="c1">#     logger.warning(</span>
-        <span class="c1">#         &quot;This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10.&quot;</span>
-        <span class="c1">#     )</span>
-        <span class="c1">#     result[&quot;python&quot;] = &quot;py310&quot;</span>
-        <span class="k">return</span> <span class="n">result</span></div>
-
-
-<div class="viewcode-block" id="DockerfileFile.get_python_version">
-<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.get_python_version">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the python version.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        str</span>
-<span class="sd">            Python version in the format py**</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bentoml_version</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="DockerfileFile.has_runs">
@@ -790,6 +711,63 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">SimpleDockerfileParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="DockerfileFile.get_python_version">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.get_python_version">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_python_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the Python version required for the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing the BentoML version, slim flag, and Python version.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bimg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">baseimage</span>
+        <span class="n">bimg</span> <span class="o">=</span> <span class="n">bimg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bimg</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">bimg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;bentoml&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">bimg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;model-server&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;-slim-&quot;</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">:</span>
+            <span class="n">slim</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">slim</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">slim</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;slim&quot;</span><span class="p">:</span> <span class="n">slim</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">:</span> <span class="n">tag</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]}</span>
+        <span class="c1"># if result[&quot;python&quot;] in [</span>
+        <span class="c1">#     &quot;py30&quot;,</span>
+        <span class="c1">#     &quot;py31&quot;,</span>
+        <span class="c1">#     &quot;py32&quot;,</span>
+        <span class="c1">#     &quot;py33&quot;,</span>
+        <span class="c1">#     &quot;py34&quot;,</span>
+        <span class="c1">#     &quot;py35&quot;,</span>
+        <span class="c1">#     &quot;py36&quot;,</span>
+        <span class="c1">#     &quot;py37&quot;,</span>
+        <span class="c1">#     &quot;py38&quot;,</span>
+        <span class="c1">#     &quot;py39&quot;,</span>
+        <span class="c1"># ]:</span>
+        <span class="c1"># if SystemChecker().is_arm64():</span>
+        <span class="c1">#     logger.warning(</span>
+        <span class="c1">#         &quot;This model is trying to install to a python version in ARM64 that is below 3.10. Changing to 3.10.&quot;</span>
+        <span class="c1">#     )</span>
+        <span class="c1">#     result[&quot;python&quot;] = &quot;py310&quot;</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
 <div class="viewcode-block" id="DockerfileFile.check">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.repo.DockerfileFile.check">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -892,7 +870,7 @@
 <span class="sd">    Utility class for handling repository operations.</span>
 
 <span class="sd">    It provides methods to get the model ID, get the path to the Conda environment YAML file,</span>
-<span class="sd">    get the Docker repository image, and rename the BentoML service.</span>
+<span class="sd">    get the Docker repository image, and rename the service.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -951,17 +929,13 @@
         <span class="n">idx</span> <span class="o">=</span> <span class="n">splits</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splits</span><span class="p">[:</span><span class="n">idx</span><span class="p">])</span>
-        <span class="c1"># check the we really are in the root, and not in a version (as done by BentoML)</span>
+        <span class="c1"># check the we really are in the root, and not in a version (as done by)</span>
         <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ROOT_CHECKFILE</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">root</span>
         <span class="c1"># try to find bundles dir</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
             <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bundle_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
-        <span class="c1"># or must be in the bentoml path</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_dir</span> <span class="ow">in</span> <span class="n">root</span><span class="p">:</span>
-            <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bentoml_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -998,15 +972,6 @@
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">yml</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">yml</span>
-                <span class="c1"># try to find yml in bentoml</span>
-                <span class="n">yml</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_bentoml_dir</span><span class="p">,</span>
-                    <span class="n">model_id</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_get_latest_bentoml_tag</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-                    <span class="n">CONDA_ENV_YML_FILE</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">yml</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="n">yml</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">CONDA_ENV_YML_FILE</span><span class="p">)</span></div>
 
@@ -1037,7 +1002,7 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rename_service</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Rename the BentoML service to the model ID.</span>
+<span class="sd">        Rename the service to the model ID.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
