@@ -2,7 +2,6 @@ import os
 
 from packaging import version
 
-from .. import logger
 from ..utils.conda import SimpleConda
 from ..utils.logging import make_temp_dir
 from ..utils.terminal import run_command
@@ -49,26 +48,6 @@ class SetupBaseConda(object):
         else:
             return False
 
-    @staticmethod
-    def _is_bentoml(org: str) -> bool:
-        """
-        Checks if the organization is BentoML.
-
-        Parameters
-        ----------
-        org : str
-            The organization name.
-
-        Returns
-        -------
-        bool
-            True if the organization is BentoML, False otherwise.
-        """
-        if org == "bentoml":
-            return True
-        else:
-            return False
-
     def _parse_tag(self, tag: str) -> dict:
         """
         Parses the tag to extract version and Python version information.
@@ -108,14 +87,7 @@ class SetupBaseConda(object):
             The install command.
         """
         tag = self._parse_tag(tag)
-        if self._is_bentoml(org):
-            if tag["ver"] == "0.11.0":
-                logger.debug("Installing from ersilia's custom BentoML")
-                cmd = "python -m pip install git+https://github.com/ersilia-os/bentoml-ersilia.git"
-            else:
-                logger.debug("Installing from BentoML directly")
-                cmd = "python -m pip install bentoml=={0}".format(tag["ver"])
-        elif self._is_ersiliaos(org):
+        if self._is_ersiliaos(org):
             cmd = "python -m pip install -e ."
         else:
             raise Exception
@@ -184,7 +156,7 @@ class SetupBaseConda(object):
         Parameters
         ----------
         org : str
-            The organization name (bentoml or ersiliaos).
+            The organization name ( or ersiliaos).
         tag : str
             The tag in the format '0.0.0-py37'.
 

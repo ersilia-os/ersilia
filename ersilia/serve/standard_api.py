@@ -22,6 +22,7 @@ from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
 from ..store.isaura import IsauraStore
 from ..utils.echo import echo, spinner
+from ..utils.ports import _ensure_ready, normalize_connect_url
 
 MAX_INPUT_ROWS_STANDARD = 1000
 
@@ -59,6 +60,7 @@ class StandardCSVRunApi(ErsiliaBase):
             self.url = url[:-1]
         else:
             self.url = url
+        self.url = normalize_connect_url(self.url)
         self.api_name = DEFAULT_API_NAME
         self.path = os.path.abspath(self._model_path(self.model_id))
         metadata = self._read_information_file()
@@ -80,6 +82,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.isaura_store = IsauraStore()
         self.session = Session(config_json=config_json)
         store_info = self.session.current_store_status()
+        self.local_cache = store_info[-1]
         self.write_store = store_info[1]
         self.read_store = store_info[0]
         echo("Standard API runner initialized", fg="green")
@@ -315,8 +318,13 @@ class StandardCSVRunApi(ErsiliaBase):
         if not input_batch:
             return []
 
+        params = {
+            "fetch_cache": self.local_cache,
+            "save_cache": self.local_cache,
+        }
+
         def do_request(batch):
-            response = requests.post(url, json=batch)
+            response = requests.post(url, params=params, json=batch)
             response.raise_for_status()
             return response.json()
 
@@ -353,7 +361,7 @@ class StandardCSVRunApi(ErsiliaBase):
             input_data = [input_data]
 
         st = time.perf_counter()
-
+        _ensure_ready(self=self, root=self.url)
         echo("Waiting for server response", fg="cyan")
         self.logger.debug("Waiting for server response")
         results, meta = self._fetch_result(input_data, url, batch_size)

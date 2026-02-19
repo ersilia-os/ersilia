@@ -210,7 +210,7 @@ TABLE_CONFIGS = {
 
 RUN_FILE = f"model/framework/{RUN_FILE}"
 
-BENTOML_FILES = [
+FILES = [
     DOCKERFILE_FILE,
     METADATA_JSON_FILE,
     RUN_FILE,
@@ -253,7 +253,7 @@ COMMON_FILES = [
     "LICENSE",
 ]
 
-BENTOML_FOLDERS = ["model", "src", ".github"]
+FOLDERS = ["model", "src", ".github"]
 
 ERSILIAPACK_FOLDERS = ["model", ".github"]
 

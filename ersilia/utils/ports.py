@@ -1,5 +1,9 @@
 import socket
+import time
 from contextlib import closing
+from urllib.parse import urlparse, urlunparse
+
+import requests
 
 
 def is_port_in_use(port):
@@ -41,3 +45,28 @@ def find_free_port(preferred_port=None):
         s.bind(("", 0))
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return s.getsockname()[1]
+
+
+def _ensure_ready(self, root, attempts=60, sleep_s=0.5):
+    if getattr(self, "_ready", False):
+        return
+    for i in range(1, attempts + 1):
+        try:
+            r = requests.get(root, timeout=2)
+            if 200 <= r.status_code < 500:
+                self._ready = True
+                self.logger.info(f"Probe OK {root} on attempt {i}")
+                return
+            self.logger.info(f"Probe {root} attempt {i} got {r.status_code}")
+        except Exception as e:
+            self.logger.info(f"Probe {root} attempt {i} error: {e}")
+        time.sleep(sleep_s)
+    raise RuntimeError(f"Server not ready after {attempts} attempts at {root}")
+
+
+def normalize_connect_url(url: str) -> str:
+    u = urlparse(url)
+    if u.hostname == "0.0.0.0":
+        netloc = u.netloc.replace("0.0.0.0", "127.0.0.1")
+        return urlunparse(u._replace(netloc=netloc))
+    return url

@@ -737,7 +737,7 @@ class SimpleConda(CondaUtils):
                 critical_errors = self._catch_critical_errors_in_conda(log_file)
                 if len(critical_errors) > 0:
                     raise ModelPackageInstallError(cmd)
-        logger.debug("Activation done")
+        logger.debug("Conda environment qctivated!")
 
 
 class StandaloneConda(object):

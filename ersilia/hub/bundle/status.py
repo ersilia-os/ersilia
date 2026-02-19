@@ -15,7 +15,7 @@ class ModelStatus(ErsiliaBase):
 
     It specifically provides methods to check if a model is downloaded, available as a Docker image,
     pulled from Docker Hub, available in a Conda environment, available as a pip package,
-    available as a bundle, or available as a BentoML service.
+    available as a bundle.
 
     Parameters
     ----------
@@ -40,7 +40,7 @@ class ModelStatus(ErsiliaBase):
         bool
             True if the model is downloaded, False otherwise.
         """
-        essentials = ["README.md", "model"]  #  essential files
+        essentials = ["README.md", "model"]  #  essential files
         dst_dir = os.path.join(self._dest_dir, model_id)
         if not os.path.exists(dst_dir):
             return False
@@ -139,18 +139,6 @@ class ModelStatus(ErsiliaBase):
         except ModuleNotFoundError:
             return False
 
-    def _is_bento_folder(self, model_folder):
-        if model_folder is None:
-            return False
-        if not os.path.exists(model_folder):
-            return False
-        essentials = ["bentoml.yml"]
-        items = {i for i in os.listdir(model_folder)}
-        for essential in essentials:
-            if essential not in items:
-                return False
-        return True
-
     def is_bundle(self, model_id: str) -> bool:
         """
         Check if the model is available as a bundle.
@@ -165,25 +153,7 @@ class ModelStatus(ErsiliaBase):
         bool
             True if the model is available as a bundle, False otherwise.
         """
-        model_folder = self._get_bundle_location(model_id)
-        return self._is_bento_folder(model_folder)
-
-    def is_bentoml(self, model_id: str) -> bool:
-        """
-        Check if the model is available as a BentoML service.
-
-        Parameters
-        ----------
-        model_id : str
-            The ID of the model.
-
-        Returns
-        -------
-        bool
-            True if the model is available as a BentoML service, False otherwise.
-        """
-        model_folder = self._get_bentoml_location(model_id)
-        return self._is_bento_folder(model_folder)
+        return True
 
     def status(self, model_id: str) -> dict:
         """
@@ -201,7 +171,6 @@ class ModelStatus(ErsiliaBase):
         """
         results = {
             "download": self.is_downloaded(model_id),
-            "bentoml": self.is_bentoml(model_id),
             "bundle": self.is_bundle(model_id),
             "docker": self.is_docker(model_id),
             "pulled_docker": self.is_pulled_docker(model_id),

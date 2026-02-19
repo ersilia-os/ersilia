@@ -1,10 +1,6 @@
 import os
 import sys
 
-try:
-    from bentoml import __version__ as __bentoml_version__
-except:
-    __bentoml_version__ = None
 from .. import ErsiliaBase
 from .. import __version__ as __ersilia_version__
 
@@ -23,8 +19,6 @@ class Versioner(ErsiliaBase):
         Get the current Ersilia version with Python version.
     ersilia_version_from_path(path)
         Get the Ersilia version from a given path.
-    bentoml_version()
-        Get the current BentoML version.
     server_docker_name(tag=None, as_tuple=False)
         Get the server Docker image name.
     base_conda_name(org, tag)
@@ -106,17 +100,6 @@ class Versioner(ErsiliaBase):
             text = f.read()
             ver = text.split('"')[1]
         return ver
-
-    def bentoml_version(self):
-        """
-        Get the current BentoML version.
-
-        Returns
-        -------
-        str or None
-            The current BentoML version if available, otherwise None.
-        """
-        return __bentoml_version__
 
     def server_docker_name(self, tag=None, as_tuple=False):
         """

@@ -100,7 +100,9 @@ def serve_cmd():
         max_memory,
     ):
         sess = Session(config_json=None)
-        sess.register_store_status(read_store, write_store, access, nearest_neighbors)
+        sess.register_store_status(
+            read_store, write_store, access, nearest_neighbors, enable_cache
+        )
         store_stat = store_status(read_store, write_store)
         if not is_installed("isaura") and (read_store or write_store):
             echo(

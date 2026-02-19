@@ -24,8 +24,7 @@ from ersilia.utils.session import get_session_dir
 from ersilia.publish.test.services.checks import CheckService
 from ersilia.publish.test.services.io import IOService
 from ersilia.publish.test.services.constants import STATUS_CONFIGS
-
-
+from ersilia.utils.ports import normalize_connect_url, _ensure_ready
 class ResponseName(Enum):
     DEST_FOLDER_EXIST = "Dest Folder Exists"
     DEST_FOLDER_HAS_CONTENT = "Dest folder has necessary files"
@@ -237,6 +236,7 @@ class ServeRule(CommandRule):
     def __init__(self):
         self.session_dir = SESSIONS_DIR
         self.checkups = []
+        self.logger = logger
 
     def check(self, command, config, std_out):
         self.checkups.append(self.extract_url(std_out))
@@ -246,6 +246,8 @@ class ServeRule(CommandRule):
         pattern = r"http://[a-zA-Z0-9.-]+:\d+"
         match = re.search(pattern, text)
         url = match.group(0)
+        url = normalize_connect_url(url)
+        _ensure_ready(self=self,root=url)
         response = requests.get(url)
         status_ok = response.status_code == 200
         return create_response(name=ResponseName.SESSION_URL_VALID, status=status_ok)

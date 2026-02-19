@@ -12,7 +12,6 @@ from ....default import (
     INSTALL_YAML_FILE,
     METADATA_JSON_FILE,
     METADATA_YAML_FILE,
-    PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
     DOCKERFILE_FILE,
 )
@@ -24,16 +23,13 @@ from .constants import (
     REPO_API_URL,
     USER_AGENT,
     COMMON_FILES,
-    BENTOML_FILES,
     ERSILIAPACK_FILES,
-    BENTOML_FOLDERS,
     ERSILIAPACK_FOLDERS,
     TIMEOUT_SECONDS
 
 )
 from .... import ErsiliaBase
 from ....hub.content.card import RepoMetadataFile
-from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.logging import logger
 
 Result = namedtuple("Result", ["success", "details"])
@@ -63,7 +59,6 @@ class ModelInspector:
         result = inspector.check_complete_metadata()
     """
 
-    BENTOML_FILES = COMMON_FILES + BENTOML_FILES
     ERSILIAPACK_FILES = COMMON_FILES + ERSILIAPACK_FILES
 
     REQUIRED_FIELDS = ["Publication", "Source Code", "S3", "DockerHub"]
@@ -100,7 +95,7 @@ class ModelInspector:
         """
         url = (
             f"{self.content_url}{METADATA_JSON_FILE}"
-            if self.pack_type == "bentoml"
+            if self.pack_type == ""
             else f"{self.content_url}{METADATA_YAML_FILE}"
         )
         if not self._url_exists(url):
@@ -144,7 +139,7 @@ class ModelInspector:
         """
         Check if the dependencies in the Dockerfile or install.yml are valid.
 
-        For PACK_METHOD_BENTOML, the Dockerfile is validated.
+        For , the Dockerfile is validated.
         For PACK_METHOD_FASTAPI, either file is acceptable. If one exists, it is validated;
         if both exist, both are validated. If neither is present, an error is returned.
 
@@ -153,17 +148,8 @@ class ModelInspector:
         Result
             A namedtuple containing the success status and details of the check.
         """
-        if self.pack_type not in [PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI]:
+        if self.pack_type not in [PACK_METHOD_FASTAPI]:
             return Result(False, f"Unsupported pack type: {self.pack_type}")
-
-        if self.pack_type == PACK_METHOD_BENTOML:
-            content, error = self._get_file_content(DOCKERFILE_FILE)
-            if content is None:
-                return Result(False, error)
-            errors = self._validate_dockerfile(content)
-            if errors:
-                return Result(False, " ".join(errors))
-            return Result(True, f"{DOCKERFILE_FILE} dependencies are valid.")
 
         else:
             dockerfile_content, dockerfile_error = self._get_file_content(
@@ -260,9 +246,7 @@ class ModelInspector:
         Result
             A namedtuple containing the success status and details of the check.
         """
-        if self.pack_type == PACK_METHOD_BENTOML:
-            expected_items = self.BENTOML_FILES + BENTOML_FOLDERS
-        elif self.pack_type == PACK_METHOD_FASTAPI:
+        if self.pack_type == PACK_METHOD_FASTAPI:
             expected_items = self.ERSILIAPACK_FILES + ERSILIAPACK_FOLDERS
         else:
             return Result(False, f"Unsupported pack type: {self.pack_type}")
@@ -368,15 +352,12 @@ class ModelInspector:
         List of missing items.
         """
         logger.debug(f"Pack Type: {self.pack_type}")
-        if self.pack_type == PACK_METHOD_BENTOML:
-            required_items = self.BENTOML_FILES
-        elif self.pack_type == PACK_METHOD_FASTAPI:
+        if self.pack_type == PACK_METHOD_FASTAPI:
             required_items = self.ERSILIAPACK_FILES
         else:
             raise ValueError(f"Unsupported pack type: {self.pack_type}")
 
         return self._validate_repo_structure(required_items)
-
 
     def _validate_dockerfile(self, dockerfile_content):
         lines = dockerfile_content.splitlines()
@@ -387,29 +368,44 @@ class ModelInspector:
         if "COPY . /repo" not in dockerfile_content:
             errors.append("Missing 'COPY . /repo'.")
 
-        pip_install_re   = re.compile(r"^RUN\s+pip install\s+(.+)$")
+        pip_install_re = re.compile(r"^RUN\s+pip install\s+(.+)$")
         conda_install_re = re.compile(r"^RUN\s+conda install\s+(.+)$")
 
-        pip_pin_re   = re.compile(r"^[A-Za-z0-9_\-\.\[\]]+(?:==|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
-        conda_pin_re = re.compile(r"^[A-Za-z0-9_\-\.]+(?:==|=|>=|<=|>|<)[A-Za-z0-9_\-\.]+$")
-        semver_re    = re.compile(r"^[0-9]+(?:\.[0-9A-Za-z]+)*$")
+        pip_pin_re = re.compile(
+            r"^[A-Za-z0-9_\-\.\[\]]+(?:==|>=|<=|>|<)[A-Za-z0-9_\-\.]+$"
+        )
+        conda_pin_re = re.compile(
+            r"^[A-Za-z0-9_\-\.]+(?:==|=|>=|<=|>|<)[A-Za-z0-9_\-\.]+$"
+        )
+        semver_re = re.compile(r"^[0-9]+(?:\.[0-9A-Za-z]+)*$")
 
         skip_flags = {
-            'pip': (
-                "--index-url", "--extra-index-url", "-f",
-                "--no-deps", "--upgrade", "--no-cache-dir", "-r"
+            "pip": (
+                "--index-url",
+                "--extra-index-url",
+                "-f",
+                "--no-deps",
+                "--upgrade",
+                "--no-cache-dir",
+                "-r",
             ),
-            'conda': (
-                "-c", "--channel", "-y", "--yes",
-                "--override-channels", "--no-deps", "--prune", "--no-pin"
-            )
+            "conda": (
+                "-c",
+                "--channel",
+                "-y",
+                "--yes",
+                "--override-channels",
+                "--no-deps",
+                "--prune",
+                "--no-pin",
+            ),
         }
 
         for raw in lines:
             line = raw.strip()
             for kind, installer_re, pin_re in [
-                ('pip', pip_install_re, pip_pin_re),
-                ('conda', conda_install_re, conda_pin_re)
+                ("pip", pip_install_re, pip_pin_re),
+                ("conda", conda_install_re, conda_pin_re),
             ]:
                 m = installer_re.match(line)
                 if not m:
@@ -432,20 +428,22 @@ class ModelInspector:
                         version_found = True
                         continue
                     # pin or semver check
-                    if pin_re.match(tok) or (kind == 'conda' and semver_re.match(tok)):
+                    if pin_re.match(tok) or (kind == "conda" and semver_re.match(tok)):
                         version_found = True
                         continue
                     errors.append(
                         f"Package '{tok}' in line '{line}' is not properly version-pinned."
                     )
-                if kind == 'conda' and not version_found:
-                    errors.append(f"Missing or invalid version pin in conda line: '{line}'")
+                if kind == "conda" and not version_found:
+                    errors.append(
+                        f"Missing or invalid version pin in conda line: '{line}'"
+                    )
                 break
 
         if errors:
             logger.debug(f"Errors in Dockerfile install command: {errors}")
         return errors
-    
+
     def _validate_yml(self, yml_content):
         errors = []
         try:
@@ -467,9 +465,9 @@ class ModelInspector:
                 continue
 
             tool = cmd[0]
-            if tool == 'pip':
+            if tool == "pip":
                 pkg = cmd[1]
-                if pkg.startswith('git+'):
+                if pkg.startswith("git+"):
                     continue
                 if len(cmd) < 3:
                     errors.append(f"Missing version for pip package '{pkg}' in {cmd}.")
@@ -477,17 +475,23 @@ class ModelInspector:
                 ver = cmd[2]
                 escaped_pkg = re.escape(pkg)
                 escaped_ver = re.escape(str(ver))
-                if not re.match(rf"^{escaped_pkg}=={escaped_ver}$", f"{pkg}=={ver}"):
-                    errors.append(f"Pip package '{pkg}' in {cmd} is not properly version-pinned.")
+                if not re.match(
+                    rf"^{escaped_pkg}=={escaped_ver}$", f"{pkg}=={ver}"
+                ):
+                    errors.append(
+                        f"Pip package '{pkg}' in {cmd} is not properly version-pinned."
+                    )
 
-            elif tool == 'conda':
-                if len(cmd) >= 3 and cmd[1] != 'install':
+            elif tool == "conda":
+                if len(cmd) >= 3 and cmd[1] != "install":
                     pkg = cmd[1]
                     if len(cmd) < 3 or not semver_re.match(cmd[2]):
-                        errors.append(f"Missing or invalid version for conda package '{pkg}' in {cmd}.")
+                        errors.append(
+                            f"Missing or invalid version for conda package '{pkg}' in {cmd}."
+                        )
                     continue
 
-                if len(cmd) < 3 or cmd[1] != 'install':
+                if len(cmd) < 3 or cmd[1] != "install":
                     errors.append(f"Invalid conda install command: {cmd}")
                     continue
                 parts = cmd[2:]
@@ -495,16 +499,18 @@ class ModelInspector:
                 i = 0
                 while i < len(parts):
                     part = parts[i]
-                    if part in ('-c', '--channel') and i + 1 < len(parts):
+                    if part in ("-c", "--channel") and i + 1 < len(parts):
                         i += 2
                         continue
-                    if part in ('-y', '--yes'):
+                    if part in ("-y", "--yes"):
                         i += 1
                         continue
                     if re.match(r"^[\w\-.]+(?:={1,2})[\w\-.]+$", part):
                         found_spec = True
                     else:
-                        errors.append(f"Conda package spec not properly pinned in {cmd}: {part}")
+                        errors.append(
+                            f"Conda package spec not properly pinned in {cmd}: {part}"
+                        )
                     break
                 if not found_spec:
                     errors.append(f"Missing or invalid version pin in conda command: {cmd}")
@@ -516,7 +522,6 @@ class ModelInspector:
             logger.debug(f"Errors in Install YML file install command: {errors}")
         return errors
 
-
     def _run_performance_check(self, n, timeout):
         cmd = (
             f"ersilia serve {self.model} --disable-cache && "
@@ -526,7 +531,7 @@ class ModelInspector:
         if timeout:
             return Result(
                 False, f"{n} predictions executed in {-1.00} seconds. \n"
-            ), timeout   
+            ), timeout
         start_time = time.time()
         try:
             process = subprocess.run(
@@ -539,12 +544,10 @@ class ModelInspector:
             )
         except subprocess.TimeoutExpired as e:
             return Result(
-            False, f"{n} predictions executed in {-1.00} seconds. \n"
-        ), True
+                False, f"{n} predictions executed in {-1.00} seconds. \n"
+            ), True
         if process.returncode != 0:
-            return Result(
-            False, "Something happened when running the deep check!"
-        ), False
+            return Result(False, "Something happened when running the deep check!"), False
         execution_time = time.time() - start_time
         return Result(
             True, f"{n} predictions executed in {execution_time:.2f} seconds. \n"
@@ -630,7 +633,6 @@ class InspectService(ErsiliaBase):
 
         self.model = model
         self.remote = remote
-        self.resolver = TemplateResolver(model_id=model, repo_path=self.dir)
 
     def run(self, check_keys: list = None) -> dict:
         """

@@ -14,7 +14,6 @@ from ....utils.logging import make_temp_dir
 from ....utils.paths import get_metadata_from_base_dir
 from ...bundle.repo import DockerfileFile, PackFile
 from . import BaseAction
-from .template_resolver import TemplateResolver
 
 MODEL_DIR = "model"
 ROOT = os.path.basename(os.path.abspath(__file__))
@@ -23,7 +22,7 @@ ROOT = os.path.basename(os.path.abspath(__file__))
 class PackCreator(ErsiliaBase):
     """
     Class to create a pack for the model. The pack.py file loads a model,
-    packs it into a BentoML Service instance, and saves the service for deployment.
+    packs it into a Service instance, and saves the service for deployment.
 
     Parameters
     ----------
@@ -52,7 +51,7 @@ class PackCreator(ErsiliaBase):
 class ServiceCreator(ErsiliaBase):
     """
     Class to create a service file for the model. The 'service.py' specifically
-    facilitates the deployment of a custom model as a BENTOML REST API service.
+    facilitates the deployment of a custom model as a REST API service.
 
     Parameters
     ----------
@@ -286,7 +285,7 @@ class ModelRepositoryGetter(BaseAction):
         self.logger.debug("Changing python version if necessary")
         path = self._model_path(model_id=self.model_id)
         df = DockerfileFile(path=path)
-        version = df.get_bentoml_version()
+        version = df.get_python_version()
         self.logger.debug(version)
         dockerfile_path = os.path.join(path, "Dockerfile")
         with open(dockerfile_path, "r") as f:
@@ -348,9 +347,7 @@ class ModelRepositoryGetter(BaseAction):
         Copy model repository from local or download from S3 or GitHub.
         """
         folder = self._model_path(self.model_id)
-        tr = TemplateResolver(
-            model_id=self.model_id, repo_path=folder, config_json=self.config_json
-        )
+
         if self.repo_path is not None:
             self._copy_from_local(self.repo_path, folder)
         else:
@@ -368,10 +365,6 @@ class ModelRepositoryGetter(BaseAction):
                         raise S3DownloaderError(model_id=self.model_id)
                     else:
                         self._copy_from_github(folder)
-
-        if tr.is_bentoml():
-            self._prepare_inner_template()
-            self._change_py_version_in_dockerfile_if_necessary()
 
         self._remove_sudo_if_root()
         self._copy_example_file_if_available()
@@ -411,11 +404,11 @@ class ModelParametersGetter(BaseAction):
         """
         model_path = self._model_path(self.model_id)
         folder = self._get_destination()
-        tr = TemplateResolver(
-            model_id=self.model_id, repo_path=model_path, config_json=self.config_json
-        )
-        if tr.is_fastapi():
-            return None
+        # tr = TemplateResolver(
+        #     model_id=self.model_id, repo_path=model_path, config_json=self.config_json
+        # )
+        # if tr.is_fastapi():
+        #     return None
         if not os.path.exists(folder):
             os.mkdir(folder)
         if not self._requires_parameters(model_path):

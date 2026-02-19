@@ -186,11 +186,6 @@ class NotInstallableWithFastAPI(NotInstallableError):
         super.__init__(model_id, "FastAPI")
 
 
-class NotInstallableWithBentoML(NotInstallableError):
-    def __init__(self, model_id):
-        super.__init__(model_id, "BentoML")
-
-
 class SniffFastApiColumnsDontMatch(ErsiliaError):
     def __init__(self, model_id):
         self.model_id = model_id
@@ -225,7 +220,7 @@ class SniffFastApiColumnTypesIncompatibility(ErsiliaError):
 
 class WithToolFetchingNotWorking(ErsiliaError):
     def __init__(self, tool):
-        assert tool in ["bentoml", "fastapi"]
+        assert tool in ["fastapi"]
         self.tool = tool
         self.message = self._get_message()
         self.hints = self._get_hints()

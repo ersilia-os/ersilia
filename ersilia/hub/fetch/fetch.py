@@ -8,19 +8,13 @@ from ... import ErsiliaBase
 from ...db.hubdata.interfaces import JsonModelsInterface
 from ...default import (
     MODEL_SOURCE_FILE,
-    PACK_METHOD_BENTOML,
     PACK_METHOD_FASTAPI,
 )
 from ...hub.delete.delete import ModelFullDeleter
-from ...hub.fetch.actions.template_resolver import TemplateResolver
-from ...setup.requirements import check_bentoml
-from ...tools.bentoml.exceptions import BentoMLException
 from ...utils.echo import echo
 from ...utils.exceptions_utils.fetch_exceptions import (
-    NotInstallableWithBentoML,
     NotInstallableWithFastAPI,
     StandardModelExampleError,
-    WithToolFetchingNotWorking,
 )
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...utils.terminal import yes_no_input
@@ -62,8 +56,6 @@ class ModelFetcher(ErsiliaBase):
         Version of the model image.
     force_from_hosted : bool, optional
         Whether to force fetching from hosted services.
-    force_with_bentoml : bool, optional
-        Whether to force fetching with BentoML.
     force_with_fastapi : bool, optional
         Whether to force fetching with FastAPI.
     hosted_url : str, optional
@@ -93,7 +85,6 @@ class ModelFetcher(ErsiliaBase):
         force_from_dockerhub: bool = False,
         img_version: str = None,
         force_from_hosted: bool = False,
-        force_with_bentoml: bool = False,
         force_with_fastapi: bool = False,
         hosted_url: str = None,
         local_dir: str = None,
@@ -120,7 +111,6 @@ class ModelFetcher(ErsiliaBase):
             overwrite=self.overwrite,
             config_json=self.config_json,
             img_tag=img_version,
-            force_with_bentoml=force_with_bentoml,
             force_with_fastapi=force_with_fastapi,
         )
         self.is_docker_installed = self.model_dockerhub_fetcher.is_docker_installed()
@@ -128,13 +118,11 @@ class ModelFetcher(ErsiliaBase):
         self.model_hosted_fetcher = ModelHostedFetcher(
             url=hosted_url, config_json=self.config_json
         )
-        self.check_bentoml = check_bentoml
         self.can_use_docker = self.is_docker_installed and self.is_docker_active
         self.force_from_github = force_from_github
         self.force_from_s3 = force_from_s3
         self.force_from_dockerhub = force_from_dockerhub
         self.force_from_hosted = force_from_hosted
-        self.force_with_bentoml = force_with_bentoml
         self.force_with_fastapi = force_with_fastapi
         self.hosted_url = hosted_url
         self.local_dir = local_dir
@@ -179,46 +167,9 @@ class ModelFetcher(ErsiliaBase):
             raise NotInstallableWithFastAPI(model_id=self.model_id)
 
     @throw_ersilia_exception()
-    def _fetch_from_bentoml(self):
-        self.logger.debug("Fetching using BentoML")
-        echo("Fetching using BentoML", fg="cyan", bold=True)
-        self.check_bentoml()
-
-        fetch = importlib.import_module("ersilia.hub.fetch.fetch_bentoml")
-        mf = fetch.ModelFetcherFromBentoML(
-            config_json=self.config_json,
-            credentials_json=self.credentials_json,
-            overwrite=self.overwrite,
-            repo_path=self.repo_path,
-            mode=self.mode,
-            pip=self.do_pip,
-            dockerize=self.do_docker,
-            force_from_github=self.force_from_github,
-            force_from_s3=self.force_from_s3,
-        )
-
-        # Check if the model can be installed with BentoML
-        if mf.seems_installable(model_id=self.model_id):
-            mf.fetch(model_id=self.model_id)
-        else:
-            raise NotInstallableWithBentoML(model_id=self.model_id)
-
-    @throw_ersilia_exception()
     def _fetch_not_from_dockerhub(self, model_id: str):
         self.model_id = model_id
         is_fetched = False
-
-        tr = TemplateResolver(model_id=model_id, repo_path=self.repo_path)
-        if self.force_with_fastapi:
-            if not tr.is_fastapi():
-                raise WithToolFetchingNotWorking(tool="fastapi")
-            self._fetch_from_fastapi()
-            is_fetched = True
-        if self.force_with_bentoml:
-            if not tr.is_bentoml():
-                raise WithToolFetchingNotWorking(tool="bentoml")
-            self._fetch_from_bentoml()
-            is_fetched = True
 
         if is_fetched:
             return
@@ -226,8 +177,6 @@ class ModelFetcher(ErsiliaBase):
             fetcher_type = self._decide_fetcher(model_id)
             if fetcher_type == PACK_METHOD_FASTAPI:
                 self._fetch_from_fastapi()
-            if fetcher_type == PACK_METHOD_BENTOML:
-                self._fetch_from_bentoml()
 
     def _standard_csv_example(self, model_id: str):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
@@ -406,7 +355,7 @@ class ModelFetcher(ErsiliaBase):
 
             return FetchResult(fetch_success=True, reason="Model fetched successfully")
 
-        except (StandardModelExampleError, BentoMLException) as err:
+        except (StandardModelExampleError,) as err:
             self.logger.debug(f"{type(err).__name__} occurred: {str(err)}")
             echo(f"{type(err).__name__} occurred: {str(err)}", fg="red")
             do_delete = yes_no_input(

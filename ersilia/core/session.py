@@ -66,7 +66,25 @@ class Session(ErsiliaBase):
                 data["write_store"],
                 data["store_access"],
                 data["nearest_neighbors"],
+                data["local_cache"],
             )
+
+    def current_local_cache_status(self):
+        """
+        Get the current model ID from the session.
+
+        This method retrieves the current model ID from the session data.
+
+        Returns
+        -------
+        str or None
+            The current model ID, or None if no session data is available.
+        """
+        data = self.get()
+        if data is None:
+            return None
+        else:
+            return data["local_cache"]
 
     def current_identifier(self):
         """
@@ -152,7 +170,7 @@ class Session(ErsiliaBase):
             json.dump(data, f, indent=4)
 
     def register_store_status(
-        self, read_store, write_store, store_access, nearest_neighbors
+        self, read_store, write_store, store_access, nearest_neighbors, enable_cache
     ):
         """
         Register the output source in the session.
@@ -169,6 +187,7 @@ class Session(ErsiliaBase):
         data["write_store"] = write_store
         data["store_access"] = store_access
         data["nearest_neighbors"] = nearest_neighbors
+        data["local_cache"] = enable_cache
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
 

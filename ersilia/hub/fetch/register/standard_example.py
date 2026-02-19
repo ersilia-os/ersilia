@@ -1,5 +1,7 @@
 import csv
 import os
+import shutil
+import threading
 
 from click import echo
 
@@ -77,6 +79,29 @@ class ModelStandardExample(ErsiliaBase):
         for l in lines:
             self.logger.debug(l)
 
+    def _run_command_with_slow_notice(self, cmd, threshold_s=60):
+        warned = False
+
+        def warn_user():
+            nonlocal warned
+            warned = True
+            echo(
+                f"This is taking longer than usual (>{threshold_s}s). Please be patient…",
+                fg="yellow",
+                bold=True,
+            )
+
+        timer = threading.Timer(threshold_s, warn_user)
+        timer.daemon = True
+        timer.start()
+
+        try:
+            return run_command(cmd)
+        finally:
+            timer.cancel()
+            if warned:
+                self.logger.debug(f"Command took >{threshold_s}s: {cmd}")
+
     def run(self):
         """
         Run the standard CSV example for the model.
@@ -85,36 +110,37 @@ class ModelStandardExample(ErsiliaBase):
         """
         self.logger.debug("Running standard CSV example")
         path = self._model_path(model_id=self.model_id)
+        example_path = os.path.join(
+            path, "model", "framework", "examples", "run_input.csv"
+        )
         input_csv = os.path.join(path, EXAMPLE_STANDARD_INPUT_CSV_FILENAME)
         output_csv = os.path.join(path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME)
+        shutil.copy2(example_path, input_csv)
         run_log = os.path.join(path, "standard_run.log")
-        self.logger.debug(input_csv)
-        self.logger.debug(output_csv)
+        self.logger.debug(f"Exaple input file:{input_csv}")
+        self.logger.debug(f"Exaple output file:{output_csv}")
         commands = [
-            "ersilia serve {0} --disable-cache".format(self.model_id),
-            "ersilia example -n 3 -f {0}".format(input_csv),
-            "ersilia run -i {0} -o {1} > {2} 2>&1".format(
-                input_csv, output_csv, run_log
-            ),
+            f"ersilia serve {self.model_id} --disable-cache",
+            f"ersilia run -i {input_csv} -o {output_csv} > {run_log} 2>&1",
             "ersilia close",
         ]
         cmd_output = run_command_check_output("ersilia --help")
         if "Welcome to Ersilia" in cmd_output:
             self.logger.debug("No need to use Conda!")
-            cmd = " && ".join(commands)
             echo(
                 "Performing smoke testing the model [serve, run and close] using standard example.",
                 fg="cyan",
                 bold=True,
             )
-            run_command(cmd)
+            for c in commands:
+                echo(f"Running: {c}", fg="cyan")
+                self._run_command_with_slow_notice(c, threshold_s=60)
         else:
             self.logger.debug("Will run this through Conda")
             env_name = os.environ.get("CONDA_DEFAULT_ENV")
             self.logger.debug("The environment name is {0}".format(env_name))
             SimpleConda().run_commandlines(env_name, commands)
 
-        # Check if log file exists before trying to read it
         if os.path.exists(run_log):
             self.logger.info(f"Run log: {open(run_log).read()}")
         else:

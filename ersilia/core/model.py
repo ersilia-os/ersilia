@@ -159,6 +159,7 @@ class ErsiliaModel(ErsiliaBase):
         self.access = access
         self.nearest_neighbors = nearest_neighbors
         self.service_class = service_class
+        self.cache = cache
         mdl = ModelBase(model)
         self._is_valid = mdl.is_valid()
 
@@ -696,7 +697,11 @@ class ErsiliaModel(ErsiliaBase):
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
         self.session.register_store_status(
-            self.read_store, self.write_store, self.access, self.nearest_neighbors
+            self.read_store,
+            self.write_store,
+            self.access,
+            self.nearest_neighbors,
+            self.cache,
         )
         if self.track:
             self.session.register_tracking_use_case(self.tracking_use_case)
@@ -836,7 +841,7 @@ class ErsiliaModel(ErsiliaBase):
         Get the paths related to the model.
 
         This property returns a dictionary containing various paths related to the model,
-        such as the destination path, repository path, and BentoML path.
+        such as the destination path and repository path.
 
         Returns
         -------
@@ -846,7 +851,6 @@ class ErsiliaModel(ErsiliaBase):
         p = {
             "dest": self._model_path(self.model_id),
             "repository": self._get_bundle_location(self.model_id),
-            "bentoml": self._get_bentoml_location(self.model_id),
         }
         return p
 

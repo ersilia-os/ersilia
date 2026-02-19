@@ -25,7 +25,7 @@ class PackMethodResolver(ErsiliaBase):
 
         Returns
         -------
-        The packaging method (fastapi or bentoml)
+        The packaging method (fastapi or )
         """
         path = self._get_bundle_location(model_id=self.model_id)
         pack_method_file = os.path.join(path, PACKMETHOD_FILE)
@@ -40,7 +40,7 @@ class PackMethodResolver(ErsiliaBase):
 
         Returns
         -------
-        The packaging method (fastapi or bentoml)
+        The packaging method (fastapi or )
         """
         model_id = self.model_id
         data = None
@@ -83,7 +83,7 @@ class PackMethodResolver(ErsiliaBase):
         str or None
             The packaging method if found, otherwise None.
         """
-        return self._resolve_pack_method_source(model_id=self.model_id)
+        return PACK_METHOD_FASTAPI
 
     def resolve_pack_method(self):
         """

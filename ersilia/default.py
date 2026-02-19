@@ -14,7 +14,6 @@ if not os.path.exists(EOS):
 ZAIRACHEM_DIR = os.path.join(str(Path.home()), "zairachem")
 EOS_PLAYGROUND = os.path.join(EOS, "playground")
 ROOT = os.path.dirname(os.path.realpath(__file__))
-BENTOML_PATH = os.path.join(str(Path.home()), "bentoml")
 CHECKSUM_NCHAR = 8
 CLOUD_CACHE_CHUNK = 100_000
 CONDA_ENV_YML_FILE = "environment.yml"
@@ -84,15 +83,6 @@ DEFAULT_DOCKER_NETWORK_BRIDGE = "bridge"
 # ERSILIA_RUNS_FOLDER = "ersilia_runs"
 ALLOWED_API_NAMES = ["run", "train"]  # This can grow in the future based on needs
 PACK_METHOD_FASTAPI = "fastapi"
-PACK_METHOD_BENTOML = "bentoml"
-BENTOML_APPROVED_PYTHON_VERSIONS = [
-    "py36",
-    "py37",
-    "py38",
-    "py39",
-    "py310",
-    "py311",
-]
 FASTAPI_APPROVED_PYTHON_VERSIONS = [
     "py38",
     "py39",

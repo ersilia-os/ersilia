@@ -46,7 +46,7 @@ class PackModeDecision(ErsiliaBase):
     ) -> DockerfileFile:
         if version["version"] == "0.11.0":
             self.logger.debug(
-                "Custom Ersilia BentoML is used, no need for modifying protobuf version"
+                "Custom Ersilia is used, no need for modifying protobuf version"
             )
             return dockerfile
         if "0.11" in version["version"]:
@@ -54,7 +54,7 @@ class PackModeDecision(ErsiliaBase):
                 "pip install protobuf=={0}".format(protobuf_version)
             )
             self.logger.info(
-                "Since BentoML is version 0.11, protobuf will been downgraded to {0}".format(
+                "Since version is 0.11, protobuf will been downgraded to {0}".format(
                     protobuf_version
                 )
             )
@@ -111,17 +111,17 @@ class PackModeDecision(ErsiliaBase):
             "Check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)"
         )
         dockerfile = DockerfileFile(folder)
-        self.logger.debug("Check bentoml and python version")
-        version = dockerfile.get_bentoml_version()
-        self.logger.info("BentoML version {0}".format(version))
+        self.logger.debug("Check and python version")
+        version = dockerfile.get_version()
+        self.logger.info("Version {0}".format(version))
         dockerfile = self._correct_protobuf(version, dockerfile)
         if not dockerfile.has_runs():
             same_python = version["python"] == self.versioner.python_version(
                 py_format=True
             )
-            same_bentoml = version["version"] == self.versioner.bentoml_version()
-            if same_python and same_bentoml:
-                self.logger.debug("Same python and same bentoml, run in system")
+            same_version = version["version"] == self.versioner.version()
+            if same_python and same_version:
+                self.logger.debug("Same python and same, run in system")
                 self.logger.debug("Mode: system")
                 return "system"
         self.logger.debug("Model needs some installs")

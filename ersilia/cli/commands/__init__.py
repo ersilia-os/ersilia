@@ -24,7 +24,7 @@ class ErsiliaCommandGroup(RichGroup):
     NUMBER_OF_COMMON_PARAMS = 2
 
     @staticmethod
-    def bentoml_common_params(func):
+    def common_params(func):
         @click.option(
             "-q",
             "--quiet",
@@ -42,7 +42,7 @@ class ErsiliaCommandGroup(RichGroup):
         kwargs.setdefault("cls", RichCommand)
 
         def decorator(func):
-            func = ErsiliaCommandGroup.bentoml_common_params(func)
+            func = ErsiliaCommandGroup.common_params(func)
             func.__click_params__ = (
                 func.__click_params__[-self.NUMBER_OF_COMMON_PARAMS :]
                 + func.__click_params__[: -self.NUMBER_OF_COMMON_PARAMS]

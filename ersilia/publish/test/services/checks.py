@@ -17,10 +17,8 @@ except ImportError:
 # ruff: enable
 from .constants import Checks, Options, STATUS_CONFIGS, PREDEFINED_COLUMN_FILE
 from .io import IOService
-from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.hdf5 import Hdf5DataLoader
-from ....utils.exceptions_utils.base_information_exceptions import _read_default_fields
 from ....store.utils import echo_exceptions, ClickInterface
 from ....hub.content.base_information_validator import BaseInformationValidator
 
@@ -82,7 +80,6 @@ class CheckService:
         self.console = ios.console
         self.original_data_list = []
         self.check_results = ios.check_results
-        self.resolver = TemplateResolver(model_id=model_id, repo_path=self.dir)
 
     def _get_output_consistency(self):
         if self.dir is not None:

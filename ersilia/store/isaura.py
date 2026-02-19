@@ -43,7 +43,7 @@ class IsauraStore:
         logger.set_verbosity(log.verbosity)
         model_id = session.current_model_id()
         self.access = current_status[2]
-        nn = current_status[-1]
+        nn = current_status[3]
         bucket = self.resolve_default_bucket(self.access)
         version = self.latest_version(model_id, bucket)
         self.model_id = model_id

@@ -93,11 +93,6 @@ class PutEnvironmentVariable(ErsiliaBase):
 
     def _get_framework_folder(self):
         bundle_path = self._get_bundle_location(model_id=self.model_id)
-        bentoml_style_path = os.path.join(
-            bundle_path, self.model_id, "artifact", "model", "framework"
-        )
-        if os.path.exists(bentoml_style_path):
-            return bentoml_style_path
         fastapi_style_path = os.path.join(
             bundle_path, self.model_id, "model", "framework"
         )

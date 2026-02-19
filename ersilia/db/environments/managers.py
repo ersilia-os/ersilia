@@ -2,6 +2,7 @@ import os
 import re
 import shutil
 import sys
+from collections import OrderedDict
 
 from ...core.base import ErsiliaBase
 from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
@@ -16,8 +17,11 @@ from ...utils.system import is_inside_docker
 from ...utils.terminal import run_command
 from .localdb import EnvironmentDb
 
-BENTOML_DOCKERPORT = 5000
 INTERNAL_DOCKERPORT = 80
+
+
+def _unique_keep_order(items):
+    return list(OrderedDict.fromkeys(items))
 
 
 class DockerManager(ErsiliaBase):
@@ -33,8 +37,7 @@ class DockerManager(ErsiliaBase):
         Configuration settings for initializing the Docker manager.
     preferred_port : int, optional
         Preferred port number for running Docker containers.
-    with_bentoml : bool, optional
-        Flag indicating whether to use BentoML for model serving.
+
 
     Examples
     --------
@@ -49,7 +52,7 @@ class DockerManager(ErsiliaBase):
     >>> docker_manager.run(model_id="eosxxxx", workers=2)
     """
 
-    def __init__(self, config_json=None, preferred_port=None, with_bentoml=False):
+    def __init__(self, config_json=None, preferred_port=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self._eos_regex = Paths()._eos_regex()
         self._org_regex = re.compile(DOCKERHUB_ORG)
@@ -58,7 +61,6 @@ class DockerManager(ErsiliaBase):
         self.db = EnvironmentDb()
         self.db.table = "docker"
         self.preferred_port = preferred_port
-        self.with_bentoml = with_bentoml
 
     def is_inside_docker(self):
         """
@@ -235,41 +237,6 @@ class DockerManager(ErsiliaBase):
                 cnt_dict[k] = v
         return cnt_dict
 
-    def build_with_bentoml(self, model_id, use_cache=True):  # Ignore for versioning
-        """
-        Builds a Docker image for the model using BentoML.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model.
-        use_cache : bool, optional
-            If True, use Docker's cache when building the image.
-        """
-        bundle_path = self._get_bundle_location(model_id)
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "build.sh")
-        cmdlines = ["cd {0}".format(bundle_path)]
-        if use_cache:
-            cache_str = ""
-        else:
-            cache_str = "--disable-cache"
-        cmdlines += [
-            "docker build {0} -t {1}/{2}:{3} .".format(
-                cache_str, DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
-            )
-        ]
-        self.logger.debug(cmdlines)
-        with open(tmp_file, "w") as f:
-            for cmd in cmdlines:
-                f.write(cmd + os.linesep)
-        cmd = "bash {0}".format(tmp_file)
-        run_command(cmd)
-        self.db.insert(
-            model_id=model_id,
-            env="{0}/{1}:{2}".format(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG),
-        )
-
     @property
     def _model_deploy_dockerfiles_url(self):
         return "https://raw.githubusercontent.com/ersilia-os/ersilia/master/dockerfiles/model-deploy"
@@ -369,12 +336,9 @@ class DockerManager(ErsiliaBase):
         use_cache : bool, optional
             If True, use Docker's cache when building the image.
         """
-        if self.with_bentoml:
-            self.build_with_bentoml(model_id=model_id, use_cache=use_cache)
-        else:
-            self.build_with_ersilia(
-                model_id=model_id, docker_user=docker_user, docker_pwd=docker_pwd
-            )
+        self.build_with_ersilia(
+            model_id=model_id, docker_user=docker_user, docker_pwd=docker_pwd
+        )
 
     def remove(self, model_id):
         """
@@ -428,10 +392,7 @@ class DockerManager(ErsiliaBase):
             name_ = "{0}_{1}".format(model_id, si.encode())
             if not self.container_exists(name_):
                 name = name_
-        if self.with_bentoml:
-            dockerport = BENTOML_DOCKERPORT
-        else:
-            dockerport = INTERNAL_DOCKERPORT
+        dockerport = INTERNAL_DOCKERPORT
         if memory is None:
             cmd = "docker run --platform {6} --name {0} -d -p {1}:{2} {3} --workers={4} {5}".format(
                 name, port, dockerport, img, workers, mb_string, resolve_platform()
@@ -624,43 +585,52 @@ class DockerManager(ErsiliaBase):
     def delete_images(self, model_id, purge_unnamed=True):
         """
         Deletes Docker images associated with a model.
-
-        Parameters
-        ----------
-        model_id : str
-            Identifier of the model.
-        purge_unnamed : bool, optional
-            If True, also remove unnamed images.
         """
-        if self.is_inside_docker():
+        if self.is_inside_docker() or not self.is_installed():
             return
-        if not self.is_installed():
-            return
+
         self.stop_containers(model_id)
         self.prune()
-        tmp_folder = make_temp_dir(prefix="ersilia-")
-        tmp_file = os.path.join(tmp_folder, "docker-images.txt")
-        cmd = "docker images > {0}".format(tmp_file)
-        self.logger.debug("Running {0}".format(cmd))
-        run_command(cmd)
-        unnamed_images = []
-        named_images = []
-        with open(tmp_file, "r") as f:
-            h = next(f)
-            img_idx = len(h.split("IMAGE ID")[0])
-            for l in f:
-                img = l[img_idx:].split(" ")[0]
-                name = l.split(" ")[0]
-                if model_id in name:
-                    named_images += [img]
-                if "<none>" in name:
-                    unnamed_images += [img]
-        images = named_images
-        if purge_unnamed:
-            images += unnamed_images
-        for img in images:
-            self.logger.debug("Removing docker image {0}".format(img))
-            self.delete_image(img)
+
+        cmd = (
+            r'docker image ls --no-trunc --format "{{.Repository}}\t{{.Tag}}\t{{.ID}}"'
+        )
+        self.logger.debug(f"Running {cmd}")
+        out = run_command(cmd)
+        out = out.stdout
+        named_targets = []
+        unnamed_targets = []
+
+        wanted_suffix = f"/{model_id}"
+
+        for line in out.splitlines():
+            if not line.strip():
+                continue
+            repo, tag, img_id = line.split("\t")
+
+            is_unnamed = repo == "<none>" or tag == "<none>"
+            is_model = (
+                repo.endswith(wanted_suffix)
+                or f"/{model_id}:" in f"{repo}:{tag}"
+                or model_id in repo
+            )
+
+            if is_model:
+                if repo != "<none>" and tag != "<none>":
+                    named_targets.append(f"{repo}:{tag}")
+                else:
+                    named_targets.append(img_id)
+
+            if purge_unnamed and is_unnamed:
+                unnamed_targets.append(img_id)
+
+        targets = _unique_keep_order(
+            named_targets + (unnamed_targets if purge_unnamed else [])
+        )
+
+        for t in targets:
+            self.logger.debug(f"Removing docker image {t}")
+            self.delete_image(t)
 
 
 class CondaManager(object):  # noqa: D101

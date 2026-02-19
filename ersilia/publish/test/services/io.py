@@ -45,7 +45,6 @@ from .constants import (
 )
 from .parser import DockerfileInstallParser, YAMLInstallParser
 from .setup import SetupService
-from ....hub.fetch.actions.template_resolver import TemplateResolver
 from ....utils.conda import SimpleConda
 from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.terminal import run_command
@@ -105,13 +104,9 @@ class IOService:
         Returns
         -------
         str
-            The type of the model (e.g., PACK_METHOD_BENTOML, PACK_METHOD_FASTAPI).
+            The type of the model (e.g., PACK_METHOD_FASTAPI).
         """
-        resolver = TemplateResolver(model_id=model_id, repo_path=repo_path)
-        if resolver.is_fastapi():
-            return PACK_METHOD_FASTAPI
-        else:
-            return None
+        return PACK_METHOD_FASTAPI
 
     @staticmethod
     def read_csv_values(file_path):
