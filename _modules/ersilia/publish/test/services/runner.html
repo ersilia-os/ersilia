@@ -331,7 +331,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">InspectService</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">IOService</span><span class="p">,</span> <span class="n">PackageInstaller</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">CheckService</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PREDEFINED_COLUMN_FILE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">PREDEFINED_COLUMN_FILE</span><span class="p">,</span> <span class="n">_CONDA_BOOTSTRAP</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....io.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command_check_output</span><span class="p">,</span> <span class="n">run_command</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
@@ -609,8 +609,6 @@
                         <span class="k">return</span> <span class="p">[(</span><span class="sa">f</span><span class="s2">&quot;Type Check-</span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))]</span>
 
                 <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">bv</span> <span class="o">+</span> <span class="n">ev</span><span class="p">):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;#---DEBUG-----&#39;</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Bash value: </span><span class="si">{</span><span class="n">bv</span><span class="si">}</span><span class="s1">  Ersilia value: </span><span class="si">{</span><span class="n">ev</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                     <span class="n">rmse</span> <span class="o">=</span> <span class="n">compute_rmse</span><span class="p">(</span><span class="n">bv</span><span class="p">,</span> <span class="n">ev</span><span class="p">)</span>
                     <span class="n">_rmse</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rmse</span><span class="p">)</span>
 
@@ -760,79 +758,78 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_path</span><span class="p">))</span>
 
             <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#!/usr/bin/env bash</span>
-<span class="s2">                set -Eo pipefail</span>
+<span class="s2">                set -euo pipefail</span>
 
 <span class="s2">                log_out=&quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="s2">                log_err=&quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="s2">                mkdir -p &quot;$(dirname &quot;$log_out&quot;)&quot; &quot;$(dirname &quot;$log_err&quot;)&quot;</span>
-<span class="s2">                : &gt; &quot;$log_out&quot;; : &gt; &quot;$log_err&quot;</span>
+<span class="s2">                : &gt;&quot;$log_out&quot;</span>
+<span class="s2">                : &gt;&quot;$log_err&quot;</span>
 <span class="s2">                exec &gt; &gt;(tee -a &quot;$log_out&quot;) 2&gt; &gt;(tee -a &quot;$log_err&quot; &gt;&amp;2)</span>
 
 <span class="s2">                ENV_NAME=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                RUN_DIR=&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                INPUT_FILE=&quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">                OUTPUT_FILE=&quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<span class="s2">                echo &quot;Runner arch: $(uname -m)&quot;</span>
-<span class="s2">                echo &quot;Using conda: $(command -v conda || echo &#39;not found&#39;)&quot;</span>
-<span class="s2">                echo &quot;Target env: $ENV_NAME&quot;</span>
+<span class="s2">                echo &quot;[INFO] Runner arch: $(uname -m)&quot;</span>
+<span class="s2">                echo &quot;[INFO] Target conda env: $ENV_NAME&quot;</span>
+<span class="s2">                echo &quot;[INFO] Initial conda on PATH: $(command -v conda || echo &#39;(not found)&#39;)&quot;</span>
 
-<span class="s2">                BASE=&quot;$(conda info --base 2&gt;/dev/null || true)&quot;</span>
-<span class="s2">                ENV_PREFIX=&quot;&quot;</span>
 
-<span class="s2">                if command -v conda &gt;/dev/null 2&gt;&amp;1; then</span>
-<span class="s2">                ENV_PREFIX=&quot;$(</span>
-<span class="s2">                    conda env list --json 2&gt;/dev/null | python -c &#39;import json,os,sys; name=sys.argv[1]; data=json.load(sys.stdin); print(next((p for p in data.get(&quot;envs&quot;, []) if os.path.basename(p)==name), &quot;&quot;))&#39; &quot;$ENV_NAME&quot; || true</span>
-<span class="s2">                )&quot;</span>
+<span class="s2">                </span><span class="si">{</span><span class="n">_CONDA_BOOTSTRAP</span><span class="si">}</span>
+
+<span class="s2">                # Now conda should exist (either it was already, or we sourced conda.sh)</span>
+<span class="s2">                echo &quot;[INFO] Conda resolved to: $(command -v conda)&quot;</span>
+<span class="s2">                echo &quot;[INFO] Conda base: $(conda info --base)&quot;</span>
+
+<span class="s2">                if [[ &quot;$</span><span class="se">{{</span><span class="s2">CONDA_SHLVL:-0</span><span class="se">}}</span><span class="s2">&quot; -gt 0 ]]; then</span>
+<span class="s2">                echo &quot;[INFO] Deactivating existing conda env(s)...&quot;</span>
+<span class="s2">                while [[ &quot;$</span><span class="se">{{</span><span class="s2">CONDA_SHLVL:-0</span><span class="se">}}</span><span class="s2">&quot; -gt 0 ]]; do</span>
+<span class="s2">                    conda deactivate || true</span>
+<span class="s2">                done</span>
 <span class="s2">                fi</span>
 
-<span class="s2">                if [ -z &quot;$ENV_PREFIX&quot; ] &amp;&amp; [ -n &quot;$BASE&quot; ] &amp;&amp; [ -d &quot;$BASE/envs/$ENV_NAME&quot; ]; then</span>
-<span class="s2">                ENV_PREFIX=&quot;$BASE/envs/$ENV_NAME&quot;</span>
-<span class="s2">                fi</span>
-
-<span class="s2">                printf &#39;Resolved prefix: %s</span><span class="se">\\</span><span class="s2">n&#39; &quot;$</span><span class="se">{{</span><span class="s2">ENV_PREFIX:-&#39;(none)&#39;</span><span class="se">}}</span><span class="s2">&quot;</span>
-
-<span class="s2">                if [ -z &quot;$ENV_PREFIX&quot; ] || [ ! -x &quot;$ENV_PREFIX/bin/python&quot; ]; then</span>
-<span class="s2">                echo &quot;[ERR] conda env not found: $ENV_NAME&quot;</span>
+<span class="s2">                if ! conda env list | awk &#39;</span><span class="se">{{</span><span class="s2">print $1</span><span class="se">}}</span><span class="s2">&#39; | grep -qx &quot;$ENV_NAME&quot;; then</span>
+<span class="s2">                echo &quot;[ERROR] Conda env not found: $ENV_NAME&quot;</span>
+<span class="s2">                echo &quot;[INFO] Available envs:&quot;</span>
 <span class="s2">                conda env list || true</span>
 <span class="s2">                exit 1</span>
 <span class="s2">                fi</span>
 
-<span class="s2">                echo &quot;[RUN] Inside env check: $(&quot;$ENV_PREFIX/bin/python&quot; -V) - $(&quot;$ENV_PREFIX/bin/python&quot; -c &#39;import sys,shutil;print(shutil.which(&quot;python&quot;) or sys.executable)&#39;)&quot;</span>
+<span class="s2">                echo &quot;[INFO] Activating env: $ENV_NAME&quot;</span>
+<span class="s2">                conda activate &quot;$ENV_NAME&quot;</span>
 
-<span class="s2">                eval &quot;$(&quot;$(command -v conda)&quot; shell.bash hook)&quot; || true</span>
-<span class="s2">                while [ &quot;$</span><span class="se">{{</span><span class="s2">CONDA_SHLVL:-0</span><span class="se">}}</span><span class="s2">&quot; -gt 0 ]; do conda deactivate || true; done</span>
-<span class="s2">                unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER</span>
+<span class="s2">                echo &quot;[INFO] Active env: $CONDA_DEFAULT_ENV&quot;</span>
+<span class="s2">                echo &quot;[INFO] python: $(command -v python)&quot;</span>
+<span class="s2">                python -V</span>
 
-<span class="s2">                export PATH=&quot;$ENV_PREFIX/bin:$</span><span class="se">{{</span><span class="s2">BASE:+$BASE/bin:</span><span class="se">}}</span><span class="s2">/usr/bin:/bin&quot;</span>
-<span class="s2">                hash -r</span>
-
-<span class="s2">                echo &quot;[DEBUG] After PATH override:&quot;</span>
-<span class="s2">                echo &quot;  which python: $(command -v python || echo &#39;(not found)&#39;)&quot;</span>
-<span class="s2">                python -V || true</span>
-
-<span class="s2">                RUN_DIR=&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 <span class="s2">                cd &quot;$RUN_DIR&quot;</span>
-<span class="s2">                echo &quot;[RUN] Directory: $(pwd)&quot;</span>
-<span class="s2">                echo &quot;[RUN] Executing run.sh with env python&quot;</span>
+<span class="s2">                echo &quot;[INFO] Run directory: $(pwd)&quot;</span>
+<span class="s2">                echo &quot;[INFO] Executing: ./run.sh . &#39;$INPUT_FILE&#39; &#39;$OUTPUT_FILE&#39;&quot;</span>
 
-<span class="s2">                if ! PYTHON=&quot;$ENV_PREFIX/bin/python&quot; bash ./run.sh . &quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot; &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; &gt;&gt;&quot;$log_out&quot; 2&gt;&gt;&quot;$log_err&quot;; then</span>
-<span class="s2">                echo &quot;[ERR] run.sh failed. Displaying captured stderr:&quot;</span>
-<span class="s2">                echo &quot;============================================&quot;</span>
-<span class="s2">                tail -n 80 &quot;$log_err&quot; || echo &quot;(No stderr output)&quot;</span>
-<span class="s2">                echo &quot;============================================&quot;</span>
+<span class="s2">                # If your run.sh supports reading PYTHON, keep it. Otherwise you can remove PYTHON=...</span>
+<span class="s2">                if ! PYTHON=&quot;$(command -v python)&quot; bash ./run.sh . &quot;$INPUT_FILE&quot; &quot;$OUTPUT_FILE&quot;; then</span>
+<span class="s2">                echo &quot;[ERROR] run.sh failed&quot;</span>
+<span class="s2">                echo &quot;==================== STDERR (tail) ====================&quot;</span>
+<span class="s2">                tail -n 120 &quot;$log_err&quot; || true</span>
+<span class="s2">                echo &quot;=======================================================&quot;</span>
 <span class="s2">                exit 1</span>
 <span class="s2">                fi</span>
 
-<span class="s2">                if [ -f &quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">                echo &quot;[OK] SUCCESS&quot;</span>
+<span class="s2">                if [[ -f &quot;$OUTPUT_FILE&quot; ]]; then</span>
+<span class="s2">                echo &quot;[OK] SUCCESS: output file found: $OUTPUT_FILE&quot;</span>
 <span class="s2">                exit 0</span>
 <span class="s2">                fi</span>
 
-<span class="s2">                echo &quot;[ERR] Expected output file not found: </span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                echo &quot;==== STDERR (tail) ====&quot;</span>
-<span class="s2">                tail -n 80 &quot;$log_err&quot; || echo &quot;No stderr log.&quot;</span>
-<span class="s2">                echo &quot;==== STDOUT (tail) ====&quot;</span>
-<span class="s2">                tail -n 80 &quot;$log_out&quot; || echo &quot;No stdout log.&quot;</span>
+<span class="s2">                echo &quot;[ERROR] Expected output file not found: $OUTPUT_FILE&quot;</span>
+<span class="s2">                echo &quot;==================== STDERR (tail) ====================&quot;</span>
+<span class="s2">                tail -n 120 &quot;$log_err&quot; || true</span>
+<span class="s2">                echo &quot;==================== STDOUT (tail) ====================&quot;</span>
+<span class="s2">                tail -n 120 &quot;$log_out&quot; || true</span>
 <span class="s2">                exit 1</span>
-<span class="s2">            &quot;&quot;&quot;</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+
 
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
                 <span class="n">script_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
@@ -935,21 +932,25 @@
 <span class="sd">        Run the model tests and checks.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-
         <span class="k">def</span><span class="w"> </span><span class="nf">_process_stage</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">echo_prefix</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">echo_prefix</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">method</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">echo_prefix</span><span class="p">:</span>
+                    
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">method</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">good</span><span class="p">,</span> <span class="n">_bad</span> <span class="o">=</span> <span class="n">out</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">good</span><span class="p">)</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
 
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+                    <span class="n">good</span><span class="p">,</span> <span class="n">_bad</span> <span class="o">=</span> <span class="n">out</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">good</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Major issue when executing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> step: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">inspect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shallow</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep</span><span class="p">)):</span>
@@ -1051,7 +1052,6 @@
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;fetch out&quot;</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">status</span> <span class="o">=</span> <span class="p">[(</span>
                     <span class="n">Checks</span><span class="o">.</span><span class="n">FETCH_FAILS</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
