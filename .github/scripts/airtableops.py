@@ -363,7 +363,7 @@ if __name__ == "__main__":
     
     elif args.command == "metadata-update":
         print("Updating metadata file from AirTable")
-        update_metadata_from_airtable(args.repo, args.path, args.commit, args.api_key)
+        update_metadata_from_airtable(args.repo, args.path, args.api_key, args.commit)
 
     else:
         print("Invalid command")
