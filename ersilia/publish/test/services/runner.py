@@ -437,37 +437,41 @@ class RunnerService:
 
                 log_out="{output_log_path}"
                 log_err="{error_log_path}"
+                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
+                : >"$log_out"
+                : >"$log_err"
+                exec > >(tee -a "$log_out") 2> >(tee -a "$log_err" >&2)
+
                 ENV_NAME="{self.model_id}"
                 RUN_DIR="{os.path.dirname(run_sh_path)}"
                 INPUT_FILE="{input_file_path}"
                 OUTPUT_FILE="{bash_output_path}"
 
-                mkdir -p "$(dirname "$log_out")" "$(dirname "$log_err")"
-                : >"$log_out"; : >"$log_err"
-                exec > >(tee -a "$log_out") 2> >(tee -a "$log_err" >&2)
-
-                die() {{ echo "[ERROR] $*" >&2; exit 1; }}
-
-                tail_logs() {{
-                echo "==================== STDERR (tail) ===================="
-                tail -n 120 "$log_err" || true
-                echo "==================== STDOUT (tail) ===================="
-                tail -n 120 "$log_out" || true
-                echo "======================================================="
-                }}
-
-                trap 'ec=$?; if [ $ec -ne 0 ]; then echo "[ERROR] Failed (exit $ec)"; tail_logs; fi' EXIT
-
                 echo "[INFO] Runner arch: $(uname -m)"
                 echo "[INFO] Target conda env: $ENV_NAME"
                 echo "[INFO] Initial conda on PATH: $(command -v conda || echo '(not found)')"
 
+
                 {_CONDA_BOOTSTRAP}
 
+                # Now conda should exist (either it was already, or we sourced conda.sh)
                 echo "[INFO] Conda resolved to: $(command -v conda)"
                 echo "[INFO] Conda base: $(conda info --base)"
 
-                # Activate env (works for named envs; if it doesn't exist, conda will error and trap will print logs)
+                if [[ "${{CONDA_SHLVL:-0}}" -gt 0 ]]; then
+                echo "[INFO] Deactivating existing conda env(s)..."
+                while [[ "${{CONDA_SHLVL:-0}}" -gt 0 ]]; do
+                    conda deactivate || true
+                done
+                fi
+
+                if ! conda env list | awk '{{print $1}}' | grep -qx "$ENV_NAME"; then
+                echo "[ERROR] Conda env not found: $ENV_NAME"
+                echo "[INFO] Available envs:"
+                conda env list || true
+                exit 1
+                fi
+
                 echo "[INFO] Activating env: $ENV_NAME"
                 conda activate "$ENV_NAME"
 
@@ -479,10 +483,26 @@ class RunnerService:
                 echo "[INFO] Run directory: $(pwd)"
                 echo "[INFO] Executing: ./run.sh . '$INPUT_FILE' '$OUTPUT_FILE'"
 
-                PYTHON="$(command -v python)" bash ./run.sh . "$INPUT_FILE" "$OUTPUT_FILE"
+                # If your run.sh supports reading PYTHON, keep it. Otherwise you can remove PYTHON=...
+                if ! PYTHON="$(command -v python)" bash ./run.sh . "$INPUT_FILE" "$OUTPUT_FILE"; then
+                echo "[ERROR] run.sh failed"
+                echo "==================== STDERR (tail) ===================="
+                tail -n 120 "$log_err" || true
+                echo "======================================================="
+                exit 1
+                fi
 
-                test -f "$OUTPUT_FILE" || die "Expected output file not found: $OUTPUT_FILE"
+                if [[ -f "$OUTPUT_FILE" ]]; then
                 echo "[OK] SUCCESS: output file found: $OUTPUT_FILE"
+                exit 0
+                fi
+
+                echo "[ERROR] Expected output file not found: $OUTPUT_FILE"
+                echo "==================== STDERR (tail) ===================="
+                tail -n 120 "$log_err" || true
+                echo "==================== STDOUT (tail) ===================="
+                tail -n 120 "$log_out" || true
+                exit 1
                 """
 
 
