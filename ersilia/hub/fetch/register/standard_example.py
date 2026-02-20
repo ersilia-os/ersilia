@@ -1,7 +1,6 @@
 import csv
 import os
-
-from click import echo
+import sys
 
 from .... import ErsiliaBase, throw_ersilia_exception
 from ....default import (
@@ -9,6 +8,7 @@ from ....default import (
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
 )
 from ....utils.conda import SimpleConda
+from ....utils.echo import echo
 from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
 from ....utils.terminal import run_command, run_command_check_output
 
@@ -118,32 +118,51 @@ class ModelStandardExample(ErsiliaBase):
             self.logger.info(f"Run log: {open(run_log).read()}")
         else:
             self.logger.warning(f"Run log file {run_log} was not created")
+        is_fetched_successfully = self._validate_csv(output_csv)
+
+        if not is_fetched_successfully:
+            echo(
+                "The model is getting deleted due to it produced all empty values! Removing the model!",
+                fg="red",
+            )
+            self.logger.error(
+                "The model is getting deleted due to it produced all empty values! Removing the model and exiting"
+            )
+            run_command(f"ersilia -v delete {self.model_id}")
+            sys.exit(1)
 
         self._check_file_exists(output_csv=output_csv)
-        is_fetched_successfully = self._validate_csv(output_csv)
         self.logger.debug("Removing log file: {0}".format(run_log))
         if os.path.exists(run_log):
             os.remove(run_log)
-        if not is_fetched_successfully:
-            echo(
-                "The model is getting deleted due to it produced all empty values!",
-                fg="red",
-                bold=True,
-            )
-            run_command(f"ersilia -v delete {self.model_id}")
 
     def _validate_csv(self, path):
         with open(path, newline="", encoding="utf-8") as f:
             reader = csv.reader(f)
+            saw_data_row = False
+
             for row_num, row in enumerate(reader, start=1):
+                if row_num == 1:
+                    continue
+
+                if not row or all((c or "").strip() == "" for c in row):
+                    continue
+
+                saw_data_row = True
+
                 if len(row) < 3:
                     echo(f"Row {row_num} has fewer than 3 columns: {row}")
                     return False
 
                 for col_idx, cell in enumerate(row[2:], start=3):
-                    if cell.strip() == "":
+                    if (cell or "").strip() == "":
                         echo(
                             f"Empty value at row {row_num}, column {col_idx}. The model is not correctly working!"
                         )
                         return False
-                return True
+
+            if not saw_data_row:
+                echo("No data rows found in output CSV (only header/blank rows).")
+                return False
+
+            return True

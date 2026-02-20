@@ -3,6 +3,7 @@ import yaml
 import re
 import warnings
 from ....utils.terminal import run_command
+from ....default import _CONDA_BOOTSTRAP
 
 def eval_conda_prefix():
     return os.popen("conda info --base").read().strip()
@@ -95,29 +96,38 @@ class InstallParser:
       cmd.append("-y")
     return " ".join(cmd)
 
-  def _convert_commands_to_bash_script(self):
-    commands = self._get_commands()
-    has_conda = self._has_conda(commands)
-    conda_prefix = eval_conda_prefix() or ""
-    python_exe = self.get_python_exe()
-    lines = []
-    if has_conda:
+  def _convert_commands_to_bash_script(self) -> str:
+      commands = self._get_commands()
+      conda_prefix = eval_conda_prefix() or ""
+      python_exe = self.get_python_exe()
+
       env = self.conda_env_name or "base"
+
+      lines: list[str] = [
+          "#!/usr/bin/env bash",
+          "set -euo pipefail",
+      ]
+
       if conda_prefix:
-        lines.append(f"source {conda_prefix}/etc/profile.d/conda.sh")
-      lines.append(f"conda activate {env}")
-    for cmd in commands:
-      if isinstance(cmd, list):
-        if cmd[0] == "pip":
-          bash = f"{python_exe} -m {self._convert_pip_entry_to_bash(cmd)}"
-        elif cmd[0] == "conda":
-          bash = self._convert_conda_entry_to_bash(cmd)
-        else:
-          raise ValueError(f"Unknown command type: {cmd[0]}")
-      else:
-        bash = cmd
-      lines.append(bash)
-    return os.linesep.join(lines)
+          lines.append(f'export CONDA="{conda_prefix}"')
+
+      lines.append(_CONDA_BOOTSTRAP.strip("\n"))
+
+      lines.append(f'conda activate "{env}"')
+
+      for cmd in commands:
+          if isinstance(cmd, list):
+              head = cmd[0]
+              if head == "pip":
+                  lines.append(f'{python_exe} -m {self._convert_pip_entry_to_bash(cmd)}')
+              elif head == "conda":
+                  lines.append(self._convert_conda_entry_to_bash(cmd))
+              else:
+                  raise ValueError(f"Unknown command type: {head}")
+          else:
+              lines.append(cmd)
+
+      return os.linesep.join(lines) + os.linesep
 
   def write_bash_script(self, file_name=None):
     if file_name is None:
