@@ -51,157 +51,6 @@ class ReadmeFile(object):
         return True
 
 
-class ServiceFile(object):
-    """
-    Class to handle service file operations for web apps.
-
-    This class provides methods to get the path to the service file, rename the service,
-    add an info API, and check if the service file contains the Service class.
-
-    Parameters
-    ----------
-    path : str
-        The directory path where the service file is located.
-    """
-
-    def __init__(self, path):
-        self.path = os.path.abspath(path)
-
-    def get_file(self) -> str:
-        """
-        Get the path to the service file.
-
-        Returns
-        -------
-        str
-            The path to the service file.
-        """
-        return os.path.join(self.path, "src", "service.py")
-
-    def _has_service_class(self):
-        """checks if the service.py contains the Service Class."""
-        search_string = "class Service("
-        with open(self.get_file(), "r") as f:
-            for l in f:
-                if search_string == l[: len(search_string)]:
-                    return True
-        return False
-
-    def rename_service(self):
-        """
-        Rename the service from the default "Service" to the model ID.
-        """
-        ru = RepoUtils(self.path)
-        model_id = ru.get_model_id()
-        add_text = ru.rename_service(model_id)
-        file_name = self.get_file()
-        with open(file_name, "r") as f:
-            text = f.read()
-        if add_text in text:
-            return
-        text += os.linesep
-        text += add_text
-        with open(file_name, "w") as f:
-            f.write(text)
-
-    def add_info_api(self, information_file: str):
-        """
-        Add an info API to the service.
-
-        Parameters
-        ----------
-        information_file : str
-            The path to the information file to be used by the info API.
-        """
-        file_name = self.get_file()
-        with open(file_name, "r") as f:
-            text = f.read()
-        splitter_string = "Service.__name__"
-        text = text.split(splitter_string)
-        a = text[0]
-        b = text[1]
-        a += "    @api(input=JsonInput(), batch=True)\n"
-        a += "    def info(self, input=None):\n"
-        a += "        import json\n"
-        a += "        data = json.load(open('{0}', 'r'))\n".format(information_file)
-        a += "        return [data]\n\n"
-        with open(file_name, "w") as f:
-            s = a + splitter_string + b
-            f.write(s)
-
-    def check(self) -> bool:
-        """
-        Check if the service file contains the Service class.
-
-        Returns
-        -------
-        bool
-            True if the service file contains the Service class, False otherwise.
-        """
-        return self._has_service_class()
-
-
-class PackFile(object):
-    """
-    Class to handle pack file operations.
-
-    This class provides methods to get the path to the pack file, check if the pack file needs a model,
-    and check if the pack file exists.
-
-    Parameters
-    ----------
-    path : str
-        The directory path where the pack file is located.
-    """
-
-    def __init__(self, path):
-        self.path = os.path.abspath(path)
-
-    def get_file(self) -> str:
-        """
-        Get the path to the pack file.
-
-        Returns
-        -------
-        str
-            The path to the pack file.
-        """
-        return os.path.join(self.path, "pack.py")
-
-    def needs_model(self) -> bool:
-        """
-        Check if the pack file needs a model. Specifically this determines whether the "pack.py" file
-        requires a model by checking if the file contains lines with the .pack() method and whether "None"
-        is specified as an argument.
-
-        Returns
-        -------
-        bool
-        """
-        # TODO: work on this function to account for more cases.
-        file_name = self.get_file()
-        line = None
-        with open(file_name, "r") as f:
-            for l in f:
-                if ".pack(" in l:
-                    line = l
-        if line is None:
-            return False
-        if "None" in line:
-            return False
-        return True
-
-    def check(self):
-        """
-        Check if the pack file exists.
-
-        Returns
-        -------
-        bool
-        """
-        return True
-
-
 class DockerfileFile(object):
     """
     Class to handle Dockerfile operations for models.
@@ -433,12 +282,6 @@ class Integrity(object):
     def _readme_file(self):
         return ReadmeFile(self.path).get_file()
 
-    def _service_file(self):
-        return ServiceFile(self.path).get_file()
-
-    def _pack_file(self):
-        return PackFile(self.path).get_file()
-
     def has_readme(self) -> bool:
         """
         Check if the README file exists.
@@ -449,34 +292,6 @@ class Integrity(object):
             True if the README file exists, False otherwise.
         """
         if os.path.exists(self._readme_file()):
-            return True
-        else:
-            return False
-
-    def has_service(self) -> bool:
-        """
-        Check if the service file exists.
-
-        Returns
-        -------
-        bool
-            True if the service file exists, False otherwise.
-        """
-        if os.path.exists(self._service_file()):
-            return True
-        else:
-            return False
-
-    def has_pack(self) -> bool:
-        """
-        Check if the pack file exists.
-
-        Returns
-        -------
-        bool
-            True if the pack file exists, False otherwise.
-        """
-        if os.path.exists(self._pack_file()):
             return True
         else:
             return False

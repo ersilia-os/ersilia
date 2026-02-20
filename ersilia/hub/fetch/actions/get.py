@@ -11,93 +11,11 @@ from ....utils.exceptions_utils.fetch_exceptions import (
 )
 from ....utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ....utils.logging import make_temp_dir
-from ....utils.paths import get_metadata_from_base_dir
-from ...bundle.repo import DockerfileFile, PackFile
+from ...bundle.repo import DockerfileFile
 from . import BaseAction
 
 MODEL_DIR = "model"
 ROOT = os.path.basename(os.path.abspath(__file__))
-
-
-class PackCreator(ErsiliaBase):
-    """
-    Class to create a pack for the model. The pack.py file loads a model,
-    packs it into a Service instance, and saves the service for deployment.
-
-    Parameters
-    ----------
-    model_id : str
-        The ID of the model.
-    config_json : dict
-        Configuration settings for the model.
-    """
-
-    def __init__(self, model_id: str, config_json: dict):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-        self.model_id = model_id
-        self.dest_dir = self._model_path(self.model_id)
-
-    def run(self):
-        """
-        Copy the pack creator script to the destination directory.
-        """
-        self.logger.debug("Copying pack creator")
-        os.copy(
-            os.path.join(ROOT, "..", "inner_template", "pack.py"),
-            os.path.join(self.dest_dir, "pack.py"),
-        )
-
-
-class ServiceCreator(ErsiliaBase):
-    """
-    Class to create a service file for the model. The 'service.py' specifically
-    facilitates the deployment of a custom model as a REST API service.
-
-    Parameters
-    ----------
-    model_id : str
-        The ID of the model.
-    config_json : dict
-        Configuration settings for the model.
-    """
-
-    def __init__(self, model_id: str, config_json: dict):
-        ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
-        self.model_id = model_id
-        self.dest_dir = self._model_path(self.model_id)
-
-    def run(self):
-        """
-        Create the service.py file in the src directory.
-        """
-        self.logger.debug("Creating service.py file")
-        src_dir = os.path.join(self.dest_dir, "src")
-        if not os.path.exists(src_dir):
-            os.mkdir(src_dir)
-
-        with open(os.path.join(self.dest_dir, "src", "service.py"), "r") as f:
-            content = f.read()
-
-        try:
-            metadata = get_metadata_from_base_dir(self.dest_dir)
-            output_type = metadata["Output Type"]
-        except (FileNotFoundError, KeyError):
-            output_type = None
-        outcome_line_index = -1
-        splited = content.splitlines()
-        for i, line in enumerate(splited):
-            if "outcome" in line:
-                outcome_line_index = i
-                break
-        output = None
-        if output_type == "String":
-            splited[outcome_line_index] = splited[outcome_line_index].replace(
-                "Float", "String"
-            )
-        output = "\n".join(splited)
-        file_path = os.path.join(self.dest_dir, "src", "service.py")
-        with open(file_path, "w") as f:
-            f.write(output)
 
 
 class DockerfileCreator(ErsiliaBase):
@@ -184,29 +102,6 @@ class TemplatePreparer(BaseAction):
         self.dest_dir = self._model_path(self.model_id)
         self.config_yaml_path = "config.yml"
 
-    def _create_pack(self):
-        pack_file = os.path.join(self.dest_dir, "pack.py")
-        if os.path.exists(pack_file):
-            self.logger.debug("The pack.py file already exists")
-            return
-        PackCreator(model_id=self.model_id, config_json=self.config_json).run()
-
-    def _create_service(self):
-        src_folder = os.path.join(self.dest_dir, "src")
-        if os.path.exists(src_folder):
-            self.logger.debug("The src folder already exists")
-            return
-        service_file = os.path.join(src_folder, "service.py")
-        if os.path.exists(service_file):
-            self.logger.debug("The service.py file already exists")
-            return
-        if not os.path.exists(self.dest_dir, "model", "framework", "run.sh"):
-            self.logger.debug(
-                "The run.sh file, which is assumed by service.py, does not exist"
-            )
-            return
-        ServiceCreator(model_id=self.model_id, config_json=self.config_json).run()
-
     def _create_dockerfile(self):
         dockerfile_file = os.path.join(self.dest_dir, "Dockerfile")
         if os.path.exists(dockerfile_file):
@@ -218,9 +113,7 @@ class TemplatePreparer(BaseAction):
         """
         Prepare the template by creating pack, service, and Dockerfile.
         """
-        self._create_pack()
         self._create_dockerfile()
-        self._create_service()
 
 
 class ModelRepositoryGetter(BaseAction):
@@ -388,11 +281,6 @@ class ModelParametersGetter(BaseAction):
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
 
-    @staticmethod
-    def _requires_parameters(model_path):
-        pf = PackFile(model_path)
-        return pf.needs_model()
-
     def _get_destination(self):
         model_path = self._model_path(self.model_id)
         return os.path.join(model_path, MODEL_DIR)
@@ -402,17 +290,10 @@ class ModelParametersGetter(BaseAction):
         """
         Create a ./model folder in the model repository.
         """
-        model_path = self._model_path(self.model_id)
         folder = self._get_destination()
-        # tr = TemplateResolver(
-        #     model_id=self.model_id, repo_path=model_path, config_json=self.config_json
-        # )
-        # if tr.is_fastapi():
-        #     return None
         if not os.path.exists(folder):
             os.mkdir(folder)
-        if not self._requires_parameters(model_path):
-            return None
+
         if not os.path.exists(folder):
             raise FolderNotFoundError(folder)
 
