@@ -4,6 +4,7 @@ import sys
 import warnings
 import tempfile
 import traceback
+import textwrap
 from pathlib import Path
 from typing import Callable
 
@@ -431,6 +432,7 @@ class RunnerService:
             self.logger.debug("Input file path: {0}".format(input_file_path))
             self.logger.debug("Run script path: {0}".format(run_sh_path))
             self.logger.debug("Output path: {0}".format(output_path))
+
 
             bash_script = f"""#!/usr/bin/env bash
                 set -euo pipefail
