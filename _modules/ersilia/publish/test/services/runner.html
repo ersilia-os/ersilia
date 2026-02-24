@@ -780,48 +780,19 @@
 <span class="s2">            echo &quot;[INFO] Initial CONDA_PREFIX: $</span><span class="se">{{</span><span class="s2">CONDA_PREFIX:-&#39;(unset)&#39;</span><span class="se">}}</span><span class="s2">&quot;</span>
 <span class="s2">            echo &quot;[INFO] Initial CONDA_PREFIX_1: $</span><span class="se">{{</span><span class="s2">CONDA_PREFIX_1:-&#39;(unset)&#39;</span><span class="se">}}</span><span class="s2">&quot;</span>
 
-<span class="s2">            # -------------------------------------------------------------------</span>
-<span class="s2">            # Your existing bootstrap snippet (should make `conda` available)</span>
-<span class="s2">            # -------------------------------------------------------------------</span>
 <span class="s2">            </span><span class="si">{</span><span class="n">_CONDA_BOOTSTRAP</span><span class="si">}</span>
 
-<span class="s2">            if ! command -v conda &gt;/dev/null 2&gt;&amp;1; then</span>
-<span class="s2">            echo &quot;[ERROR] conda not found after bootstrap&quot;</span>
-<span class="s2">            exit 1</span>
-<span class="s2">            fi</span>
-
-<span class="s2">            echo &quot;[INFO] Conda resolved to: $(command -v conda)&quot;</span>
-<span class="s2">            CONDA_BASE=&quot;$(conda info --base)&quot;</span>
-<span class="s2">            echo &quot;[INFO] Conda base: $CONDA_BASE&quot;</span>
-
-<span class="s2">            # -------------------------------------------------------------------</span>
-<span class="s2">            # Hard-reset inherited conda activation state</span>
-<span class="s2">            # -------------------------------------------------------------------</span>
-<span class="s2">            echo &quot;[INFO] Resetting inherited conda environment variables...&quot;</span>
-<span class="s2">            unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER</span>
-<span class="s2">            unset CONDA_SHLVL</span>
-
-<span class="s2">            # Unset any stacked prefixes if present (CONDA_PREFIX_1, CONDA_PREFIX_2, ...)</span>
-<span class="s2">            while IFS=&#39;=&#39; read -r k _; do</span>
-<span class="s2">            if [[ &quot;$k&quot; =~ ^CONDA_PREFIX_[0-9]+$ ]]; then</span>
-<span class="s2">                unset &quot;$k&quot;</span>
-<span class="s2">            fi</span>
-<span class="s2">            done &lt; &lt;(env)</span>
-
-<span class="s2">            echo &quot;[INFO] After reset: CONDA_SHLVL=$</span><span class="se">{{</span><span class="s2">CONDA_SHLVL:-0</span><span class="se">}}</span><span class="s2"> CONDA_PREFIX=$</span><span class="se">{{</span><span class="s2">CONDA_PREFIX:-&#39;(unset)&#39;</span><span class="se">}}</span><span class="s2">&quot;</span>
-
-<span class="s2">            # Disable plugins (your traceback showed plugin involvement)</span>
 <span class="s2">            export CONDA_NO_PLUGINS=true</span>
 
-<span class="s2">            # Verify env exists</span>
+<span class="s2">            echo &quot;[INFO] Conda resolved to: $(command -v conda)&quot;</span>
+<span class="s2">            echo &quot;[INFO] Conda base: $(conda info --base)&quot;</span>
+
 <span class="s2">            if ! conda env list | awk &#39;</span><span class="se">{{</span><span class="s2">print $1</span><span class="se">}}</span><span class="s2">&#39; | grep -qx &quot;$ENV_NAME&quot;; then</span>
 <span class="s2">            echo &quot;[ERROR] Conda env not found: $ENV_NAME&quot;</span>
-<span class="s2">            echo &quot;[INFO] Available envs:&quot;</span>
 <span class="s2">            conda env list || true</span>
 <span class="s2">            exit 1</span>
 <span class="s2">            fi</span>
 
-<span class="s2">            # Run inside the env without activating</span>
 <span class="s2">            cd &quot;$RUN_DIR&quot;</span>
 <span class="s2">            echo &quot;[INFO] Run directory: $(pwd)&quot;</span>
 <span class="s2">            echo &quot;[INFO] Executing via conda run: ./run.sh . &#39;$INPUT_FILE&#39; &#39;$OUTPUT_FILE&#39;&quot;</span>
@@ -848,7 +819,7 @@
 <span class="s2">            echo &quot;==================== STDOUT (tail) ====================&quot;</span>
 <span class="s2">            tail -n 200 &quot;$log_out&quot; || true</span>
 <span class="s2">            exit 1</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &quot;&quot;&quot;</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
                 <span class="n">script_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
 

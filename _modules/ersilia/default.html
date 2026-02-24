@@ -551,6 +551,33 @@
 <span class="n">_CONDA_BOOTSTRAP</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">set -euo pipefail</span>
 
+<span class="s2">unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER || true</span>
+<span class="s2">unset CONDA_SHLVL || true</span>
+<span class="s2">while IFS=&#39;=&#39; read -r k _; do</span>
+<span class="s2">  if [[ &quot;$k&quot; =~ ^CONDA_PREFIX_[0-9]+$ ]]; then</span>
+<span class="s2">    unset &quot;$k&quot;</span>
+<span class="s2">  fi</span>
+<span class="s2">done &lt; &lt;(env)</span>
+
+<span class="s2">for d in \</span>
+<span class="s2">  &quot;/usr/share/miniconda/bin&quot; \</span>
+<span class="s2">  &quot;/usr/local/miniconda/bin&quot; \</span>
+<span class="s2">  &quot;/opt/conda/bin&quot; \</span>
+<span class="s2">  &quot;$HOME/miniconda/bin&quot; \</span>
+<span class="s2">  &quot;$HOME/miniconda3/bin&quot; \</span>
+<span class="s2">  &quot;$HOME/mambaforge/bin&quot; \</span>
+<span class="s2">  &quot;$HOME/miniforge3/bin&quot; \</span>
+<span class="s2">  &quot;$HOME/anaconda3/bin&quot; \</span>
+<span class="s2">  &quot;$HOME/.local/share/mamba/condabin&quot; \</span>
+<span class="s2">; do</span>
+<span class="s2">  if [ -d &quot;$d&quot; ]; then</span>
+<span class="s2">    case &quot;:$PATH:&quot; in</span>
+<span class="s2">      *&quot;:$d:&quot;*) : ;;</span>
+<span class="s2">      *) export PATH=&quot;$d:$PATH&quot; ;;</span>
+<span class="s2">    esac</span>
+<span class="s2">  fi</span>
+<span class="s2">done</span>
+
 <span class="s2">CONDA_BIN=&quot;$(command -v conda || true)&quot;</span>
 <span class="s2">CONDA_SH=&quot;&quot;</span>
 
@@ -569,23 +596,34 @@
 <span class="s2">fi</span>
 
 <span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">  for b in &quot;/usr/share/miniconda&quot; &quot;/opt/conda&quot; &quot;$HOME/miniconda&quot; &quot;$HOME/miniconda3&quot; &quot;$HOME/mambaforge&quot; &quot;$HOME/miniforge3&quot; &quot;$HOME/anaconda3&quot;; do</span>
-<span class="s2">    if [ -f &quot;$b/etc/profile.d/conda.sh&quot; ]; then</span>
+<span class="s2">  for b in \</span>
+<span class="s2">    &quot;$</span><span class="si">{CONDA_PREFIX:-}</span><span class="s2">&quot; \</span>
+<span class="s2">    &quot;$</span><span class="si">{CONDA:-}</span><span class="s2">&quot; \</span>
+<span class="s2">    &quot;$</span><span class="si">{MAMBA_ROOT_PREFIX:-}</span><span class="s2">&quot; \</span>
+<span class="s2">    &quot;/usr/share/miniconda&quot; \</span>
+<span class="s2">    &quot;/opt/conda&quot; \</span>
+<span class="s2">    &quot;$HOME/miniconda&quot; \</span>
+<span class="s2">    &quot;$HOME/miniconda3&quot; \</span>
+<span class="s2">    &quot;$HOME/mambaforge&quot; \</span>
+<span class="s2">    &quot;$HOME/miniforge3&quot; \</span>
+<span class="s2">    &quot;$HOME/anaconda3&quot; \</span>
+<span class="s2">  ; do</span>
+<span class="s2">    if [ -n &quot;$b&quot; ] &amp;&amp; [ -f &quot;$b/etc/profile.d/conda.sh&quot; ]; then</span>
 <span class="s2">      CONDA_SH=&quot;$b/etc/profile.d/conda.sh&quot;</span>
 <span class="s2">      break</span>
 <span class="s2">    fi</span>
 <span class="s2">  done</span>
 <span class="s2">fi</span>
 
-<span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">  if [ -n &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">    echo &quot;[WARN] conda.sh not found; continuing with conda executable only (conda run will work).&quot;</span>
-<span class="s2">  else</span>
-<span class="s2">    echo &quot;ERROR: conda not found on PATH and conda.sh not found. Install conda (setup-miniconda) or micromamba.&quot; &gt;&amp;2</span>
-<span class="s2">    exit 127</span>
-<span class="s2">  fi</span>
-<span class="s2">else</span>
-<span class="s2">  source &quot;$CONDA_SH&quot;</span>
+<span class="s2">if [ -n &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">  source &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; || true</span>
+<span class="s2">fi</span>
+
+<span class="s2">CONDA_BIN=&quot;$(command -v conda || true)&quot;</span>
+<span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">  echo &quot;ERROR: conda not found&quot; &gt;&amp;2</span>
+<span class="s2">  echo &quot;PATH=$PATH&quot; &gt;&amp;2</span>
+<span class="s2">  exit 127</span>
 <span class="s2">fi</span>
 <span class="s2">&quot;&quot;&quot;</span>
 </pre></div>
