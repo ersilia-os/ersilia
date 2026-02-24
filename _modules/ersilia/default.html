@@ -550,38 +550,41 @@
 
 <span class="n">_CONDA_BOOTSTRAP</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">set -euo pipefail</span>
-<span class="s2">if command -v conda &gt;/dev/null 2&gt;&amp;1; then</span>
-<span class="s2">  :</span>
-<span class="s2">else</span>
-<span class="s2">  CONDA_SH=&quot;&quot;</span>
-<span class="s2">  for p in &quot;$</span><span class="si">{CONDA:-}</span><span class="s2">&quot; &quot;$</span><span class="si">{CONDA_PREFIX:-}</span><span class="s2">&quot; &quot;$</span><span class="si">{MAMBA_ROOT_PREFIX:-}</span><span class="s2">&quot; &quot;$</span><span class="si">{CONDA_EXE:-}</span><span class="s2">&quot;; do</span>
-<span class="s2">    if [ -n &quot;$</span><span class="si">{p}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">      if [ -x &quot;$</span><span class="si">{p}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">        base=&quot;$(cd &quot;$(dirname &quot;$(dirname &quot;$</span><span class="si">{p}</span><span class="s2">&quot;)&quot;)&quot; &amp;&amp; pwd)&quot;</span>
-<span class="s2">      else</span>
-<span class="s2">        base=&quot;$</span><span class="si">{p}</span><span class="s2">&quot;</span>
-<span class="s2">      fi</span>
-<span class="s2">      if [ -f &quot;$</span><span class="si">{base}</span><span class="s2">/etc/profile.d/conda.sh&quot; ]; then</span>
-<span class="s2">        CONDA_SH=&quot;$</span><span class="si">{base}</span><span class="s2">/etc/profile.d/conda.sh&quot;</span>
-<span class="s2">        break</span>
-<span class="s2">      fi</span>
+
+<span class="s2">CONDA_BIN=&quot;$(command -v conda || true)&quot;</span>
+<span class="s2">CONDA_SH=&quot;&quot;</span>
+
+<span class="s2">if [ -n &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot; ] &amp;&amp; [ -x &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">  CONDA_BASE=&quot;$(cd &quot;$(dirname &quot;$(dirname &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot;)&quot;)&quot; &amp;&amp; pwd)&quot;</span>
+<span class="s2">  if [ -f &quot;$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh&quot; ]; then</span>
+<span class="s2">    CONDA_SH=&quot;$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh&quot;</span>
+<span class="s2">  fi</span>
+<span class="s2">fi</span>
+
+<span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ] &amp;&amp; [ -n &quot;$</span><span class="si">{CONDA_EXE:-}</span><span class="s2">&quot; ] &amp;&amp; [ -x &quot;$</span><span class="si">{CONDA_EXE}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">  CONDA_BASE=&quot;$(cd &quot;$(dirname &quot;$(dirname &quot;$</span><span class="si">{CONDA_EXE}</span><span class="s2">&quot;)&quot;)&quot; &amp;&amp; pwd)&quot;</span>
+<span class="s2">  if [ -f &quot;$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh&quot; ]; then</span>
+<span class="s2">    CONDA_SH=&quot;$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh&quot;</span>
+<span class="s2">  fi</span>
+<span class="s2">fi</span>
+
+<span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">  for b in &quot;/usr/share/miniconda&quot; &quot;/opt/conda&quot; &quot;$HOME/miniconda&quot; &quot;$HOME/miniconda3&quot; &quot;$HOME/mambaforge&quot; &quot;$HOME/miniforge3&quot; &quot;$HOME/anaconda3&quot;; do</span>
+<span class="s2">    if [ -f &quot;$b/etc/profile.d/conda.sh&quot; ]; then</span>
+<span class="s2">      CONDA_SH=&quot;$b/etc/profile.d/conda.sh&quot;</span>
+<span class="s2">      break</span>
 <span class="s2">    fi</span>
 <span class="s2">  done</span>
+<span class="s2">fi</span>
 
-<span class="s2">  if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">    for b in &quot;/opt/conda&quot; &quot;/usr/share/miniconda&quot; &quot;$HOME/miniconda&quot; &quot;$HOME/miniconda3&quot; &quot;$HOME/mambaforge&quot; &quot;$HOME/anaconda3&quot;; do</span>
-<span class="s2">      if [ -f &quot;$b/etc/profile.d/conda.sh&quot; ]; then</span>
-<span class="s2">        CONDA_SH=&quot;$b/etc/profile.d/conda.sh&quot;</span>
-<span class="s2">        break</span>
-<span class="s2">      fi</span>
-<span class="s2">    done</span>
-<span class="s2">  fi</span>
-
-<span class="s2">  if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">    echo &quot;ERROR: conda not found on PATH and conda.sh not found. On GitHub Actions, install conda (setup-miniconda) or micromamba.&quot; &gt;&amp;2</span>
+<span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">  if [ -n &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">    echo &quot;[WARN] conda.sh not found; continuing with conda executable only (conda run will work).&quot;</span>
+<span class="s2">  else</span>
+<span class="s2">    echo &quot;ERROR: conda not found on PATH and conda.sh not found. Install conda (setup-miniconda) or micromamba.&quot; &gt;&amp;2</span>
 <span class="s2">    exit 127</span>
 <span class="s2">  fi</span>
-
+<span class="s2">else</span>
 <span class="s2">  source &quot;$CONDA_SH&quot;</span>
 <span class="s2">fi</span>
 <span class="s2">&quot;&quot;&quot;</span>
