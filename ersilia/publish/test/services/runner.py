@@ -455,48 +455,19 @@ class RunnerService:
             echo "[INFO] Initial CONDA_PREFIX: ${{CONDA_PREFIX:-'(unset)'}}"
             echo "[INFO] Initial CONDA_PREFIX_1: ${{CONDA_PREFIX_1:-'(unset)'}}"
 
-            # -------------------------------------------------------------------
-            # Your existing bootstrap snippet (should make `conda` available)
-            # -------------------------------------------------------------------
             {_CONDA_BOOTSTRAP}
 
-            if ! command -v conda >/dev/null 2>&1; then
-            echo "[ERROR] conda not found after bootstrap"
-            exit 1
-            fi
-
-            echo "[INFO] Conda resolved to: $(command -v conda)"
-            CONDA_BASE="$(conda info --base)"
-            echo "[INFO] Conda base: $CONDA_BASE"
-
-            # -------------------------------------------------------------------
-            # Hard-reset inherited conda activation state
-            # -------------------------------------------------------------------
-            echo "[INFO] Resetting inherited conda environment variables..."
-            unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER
-            unset CONDA_SHLVL
-
-            # Unset any stacked prefixes if present (CONDA_PREFIX_1, CONDA_PREFIX_2, ...)
-            while IFS='=' read -r k _; do
-            if [[ "$k" =~ ^CONDA_PREFIX_[0-9]+$ ]]; then
-                unset "$k"
-            fi
-            done < <(env)
-
-            echo "[INFO] After reset: CONDA_SHLVL=${{CONDA_SHLVL:-0}} CONDA_PREFIX=${{CONDA_PREFIX:-'(unset)'}}"
-
-            # Disable plugins (your traceback showed plugin involvement)
             export CONDA_NO_PLUGINS=true
 
-            # Verify env exists
+            echo "[INFO] Conda resolved to: $(command -v conda)"
+            echo "[INFO] Conda base: $(conda info --base)"
+
             if ! conda env list | awk '{{print $1}}' | grep -qx "$ENV_NAME"; then
             echo "[ERROR] Conda env not found: $ENV_NAME"
-            echo "[INFO] Available envs:"
             conda env list || true
             exit 1
             fi
 
-            # Run inside the env without activating
             cd "$RUN_DIR"
             echo "[INFO] Run directory: $(pwd)"
             echo "[INFO] Executing via conda run: ./run.sh . '$INPUT_FILE' '$OUTPUT_FILE'"
@@ -523,7 +494,7 @@ class RunnerService:
             echo "==================== STDOUT (tail) ===================="
             tail -n 200 "$log_out" || true
             exit 1
-"""
+            """
             with open(temp_script_path, "w") as script_file:
                 script_file.write(bash_script)
 

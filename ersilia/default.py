@@ -233,6 +233,33 @@ def bashrc_cli_snippet(overwrite=True):
 _CONDA_BOOTSTRAP = r"""
 set -euo pipefail
 
+unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER || true
+unset CONDA_SHLVL || true
+while IFS='=' read -r k _; do
+  if [[ "$k" =~ ^CONDA_PREFIX_[0-9]+$ ]]; then
+    unset "$k"
+  fi
+done < <(env)
+
+for d in \
+  "/usr/share/miniconda/bin" \
+  "/usr/local/miniconda/bin" \
+  "/opt/conda/bin" \
+  "$HOME/miniconda/bin" \
+  "$HOME/miniconda3/bin" \
+  "$HOME/mambaforge/bin" \
+  "$HOME/miniforge3/bin" \
+  "$HOME/anaconda3/bin" \
+  "$HOME/.local/share/mamba/condabin" \
+; do
+  if [ -d "$d" ]; then
+    case ":$PATH:" in
+      *":$d:"*) : ;;
+      *) export PATH="$d:$PATH" ;;
+    esac
+  fi
+done
+
 CONDA_BIN="$(command -v conda || true)"
 CONDA_SH=""
 
@@ -251,22 +278,33 @@ if [ -z "${CONDA_SH}" ] && [ -n "${CONDA_EXE:-}" ] && [ -x "${CONDA_EXE}" ]; the
 fi
 
 if [ -z "${CONDA_SH}" ]; then
-  for b in "/usr/share/miniconda" "/opt/conda" "$HOME/miniconda" "$HOME/miniconda3" "$HOME/mambaforge" "$HOME/miniforge3" "$HOME/anaconda3"; do
-    if [ -f "$b/etc/profile.d/conda.sh" ]; then
+  for b in \
+    "${CONDA_PREFIX:-}" \
+    "${CONDA:-}" \
+    "${MAMBA_ROOT_PREFIX:-}" \
+    "/usr/share/miniconda" \
+    "/opt/conda" \
+    "$HOME/miniconda" \
+    "$HOME/miniconda3" \
+    "$HOME/mambaforge" \
+    "$HOME/miniforge3" \
+    "$HOME/anaconda3" \
+  ; do
+    if [ -n "$b" ] && [ -f "$b/etc/profile.d/conda.sh" ]; then
       CONDA_SH="$b/etc/profile.d/conda.sh"
       break
     fi
   done
 fi
 
-if [ -z "${CONDA_SH}" ]; then
-  if [ -n "${CONDA_BIN}" ]; then
-    echo "[WARN] conda.sh not found; continuing with conda executable only (conda run will work)."
-  else
-    echo "ERROR: conda not found on PATH and conda.sh not found. Install conda (setup-miniconda) or micromamba." >&2
-    exit 127
-  fi
-else
-  source "$CONDA_SH"
+if [ -n "${CONDA_SH}" ]; then
+  source "${CONDA_SH}" || true
+fi
+
+CONDA_BIN="$(command -v conda || true)"
+if [ -z "${CONDA_BIN}" ]; then
+  echo "ERROR: conda not found" >&2
+  echo "PATH=$PATH" >&2
+  exit 127
 fi
 """
