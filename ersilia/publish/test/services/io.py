@@ -28,6 +28,7 @@ from ....default import (
     DOCKERHUB_ORG,
     PREDEFINED_EXAMPLE_OUTPUT_FILES,
     PREDEFINED_EXAMPLE_INPUT_FILES,
+    PREDEFINED_COLUMN_FILE,
     INSTALL_YAML_FILE,
     DOCKERFILE_FILE,
     DEFAULT_ASYNC_API_NAME
@@ -477,6 +478,23 @@ class IOService:
             return f"Image '{image_name}' not found.", Checks.SIZE_CACL_FAILED.value
         except Exception as e:
             return f"An error occurred: {e}", Checks.SIZE_CACL_FAILED.value
+
+    def get_model_dim(self):
+        """
+        Get the model dimension from the metadata and the run column file
+
+        Returns
+        -------
+        tuple
+          A dimensions from the metadata and the run column file
+        """
+        path = os.path.join(self.dir, PREDEFINED_COLUMN_FILE)
+        key = "Output Dimension"
+        data = self._read_metadata()
+        odm = data[key] if key in data else None
+        odc = len(IOService.read_csv_values(path))
+        return odm, odc
+
 
     @throw_ersilia_exception()
     def get_directories_sizes(self) -> str:

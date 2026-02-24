@@ -706,7 +706,7 @@ class RunnerService:
 
     def _perform_basic_checks(self):
         results = []
-
+        
         self.checkup_service.check_information()
         results.append(
             self._generate_table_from_check(
@@ -721,8 +721,15 @@ class RunnerService:
                 TableType.MODEL_FILE_CHECKS, self.ios_service.check_results
             )
         )
+        dim_check = self.checkup_service.check_dim()
+        results.append(
+            self._generate_table_from_check(
+                TableType.MODEL_FILE_CHECKS, [dim_check]
+            )
+        )
 
         results.append(self._log_directory_sizes())
+            
         docker_check = self._docker_yml_column_name_check()
         if isinstance(docker_check, tuple):
             docker_check = docker_check[0]
@@ -735,9 +742,8 @@ class RunnerService:
 
     def _perform_surface_check(self):
         results = []
-
+        
         out = self.fetch()
-        print("fetch out", out)
         if out.returncode != 0:
             status = [(
                     Checks.FETCH_FAILS.value,
