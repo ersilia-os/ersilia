@@ -613,11 +613,12 @@ class PackageInstaller:
             return
         echo(f"Preparing test for bash command execution", fg="green", bold=True)
         shell_path = os.path.join(self.dir, "install.sh")
-        parser.write_bash_script(shell_path)
         python_version = parser.python_version
         self._initialize_env(python_version)
+        parser.write_bash_script(shell_path)
         echo(f"Environment creation and package installation started!", fg="green", bold=True)
         parser._install_packages(shell_path)
         self.logger.info(
             f"Installation completed in the conda environment: {self.model_id}"
         )
+
