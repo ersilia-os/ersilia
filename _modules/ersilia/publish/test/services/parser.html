@@ -314,6 +314,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CONDA_BOOTSTRAP</span>
 
 <span class="n">BASE</span> <span class="o">=</span> <span class="s2">&quot;base&quot;</span>
 <span class="n">TEST_BASE</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span>
@@ -338,41 +339,23 @@
     <span class="k">return</span> <span class="s2">&quot;&quot;</span>
   <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
-
 <div class="viewcode-block" id="get_conda_source">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.parser.get_conda_source">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_conda_source</span><span class="p">(</span><span class="n">env</span><span class="p">):</span>
-  <span class="k">return</span> <span class="p">[</span>
-    <span class="s2">&quot;set -euo pipefail&quot;</span><span class="p">,</span>
-    <span class="s1">&#39;CONDA_SH=&quot;&quot;&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;CONDA_BIN=&quot;$(command -v conda || true)&quot;&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;if [ -n &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s1">&quot; ] &amp;&amp; [ -x &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s1">&quot; ]; then&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;  CONDA_BASE=&quot;$(cd &quot;$(dirname &quot;$(dirname &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s1">&quot;)&quot;)&quot; &amp;&amp; pwd)&quot;&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;  if [ -f &quot;$</span><span class="si">{CONDA_BASE}</span><span class="s1">/etc/profile.d/conda.sh&quot; ]; then&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;    CONDA_SH=&quot;$</span><span class="si">{CONDA_BASE}</span><span class="s1">/etc/profile.d/conda.sh&quot;&#39;</span><span class="p">,</span>
-    <span class="s2">&quot;  fi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;fi&quot;</span><span class="p">,</span>
-    <span class="s1">&#39;if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s1">&quot; ] &amp;&amp; [ -n &quot;$</span><span class="si">{CONDA_EXE:-}</span><span class="s1">&quot; ] &amp;&amp; [ -x &quot;$</span><span class="si">{CONDA_EXE}</span><span class="s1">&quot; ]; then&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;  CONDA_BASE=&quot;$(cd &quot;$(dirname &quot;$(dirname &quot;$</span><span class="si">{CONDA_EXE}</span><span class="s1">&quot;)&quot;)&quot; &amp;&amp; pwd)&quot;&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;  if [ -f &quot;$</span><span class="si">{CONDA_BASE}</span><span class="s1">/etc/profile.d/conda.sh&quot; ]; then&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;    CONDA_SH=&quot;$</span><span class="si">{CONDA_BASE}</span><span class="s1">/etc/profile.d/conda.sh&quot;&#39;</span><span class="p">,</span>
-    <span class="s2">&quot;  fi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;fi&quot;</span><span class="p">,</span>
-    <span class="s1">&#39;if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s1">&quot; ]; then&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;  for b in &quot;/usr/bin/conda&quot; &quot;$HOME/miniconda&quot; &quot;$HOME/miniconda3&quot; &quot;$HOME/mambaforge&quot; &quot;$HOME/anaconda3&quot; &quot;/opt/conda&quot; &quot;/usr/share/miniconda&quot;; do&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;    if [ -f &quot;$b/etc/profile.d/conda.sh&quot; ]; then&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;      CONDA_SH=&quot;$b/etc/profile.d/conda.sh&quot;&#39;</span><span class="p">,</span>
-    <span class="s2">&quot;      break&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;    fi&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;  done&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;fi&quot;</span><span class="p">,</span>
-    <span class="s1">&#39;if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s1">&quot; ]; then&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;  echo &quot;ERROR: conda.sh not found. Ensure conda is installed on this machine.&quot; &gt;&amp;2&#39;</span><span class="p">,</span>
-    <span class="s2">&quot;  exit 127&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;fi&quot;</span><span class="p">,</span>
-    <span class="s1">&#39;source &quot;$CONDA_SH&quot;&#39;</span><span class="p">,</span>
-    <span class="sa">f</span><span class="s1">&#39;conda activate &quot;</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
-  <span class="p">]</span></div>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="s2">&quot;set -euo pipefail&quot;</span><span class="p">,</span>
+        <span class="n">_CONDA_BOOTSTRAP</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+        <span class="s1">&#39;command -v conda &gt;/dev/null 2&gt;&amp;1 || { echo &quot;ERROR: conda not available after bootstrap&quot; &gt;&amp;2; exit 127; }&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER || true&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;unset CONDA_SHLVL || true&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;while IFS=&#39;=&#39; read -r k _; do</span>
+<span class="sd">  if [[ &quot;$k&quot; =~ ^CONDA_PREFIX_[0-9]+$ ]]; then</span>
+<span class="sd">    unset &quot;$k&quot;</span>
+<span class="sd">  fi</span>
+<span class="sd">done &lt; &lt;(env)&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;export CONDA_NO_PLUGINS=true&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s1">&#39;conda activate &quot;</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+    <span class="p">]</span></div>
 
 
 
