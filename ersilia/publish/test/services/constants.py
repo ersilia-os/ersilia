@@ -306,6 +306,7 @@ main_required_keys = {
 check_keys_order = [
     "metadata_checks",
     "model_file_checks",
+    "model_file_checks",
     "file_validity_check",
     "model_size_check",
     "model_run_check",
