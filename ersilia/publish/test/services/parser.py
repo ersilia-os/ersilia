@@ -8,6 +8,7 @@ from pathlib import Path
 import subprocess
 import shutil
 from ....utils.terminal import run_command
+from ....default import _CONDA_BOOTSTRAP
 
 BASE = "base"
 TEST_BASE = "test"
@@ -32,39 +33,21 @@ def eval_conda_prefix() -> str:
     return ""
   return p.stdout.strip()
 
-
 def get_conda_source(env):
-  return [
-    "set -euo pipefail",
-    'CONDA_SH=""',
-    'CONDA_BIN="$(command -v conda || true)"',
-    'if [ -n "${CONDA_BIN}" ] && [ -x "${CONDA_BIN}" ]; then',
-    '  CONDA_BASE="$(cd "$(dirname "$(dirname "${CONDA_BIN}")")" && pwd)"',
-    '  if [ -f "${CONDA_BASE}/etc/profile.d/conda.sh" ]; then',
-    '    CONDA_SH="${CONDA_BASE}/etc/profile.d/conda.sh"',
-    "  fi",
-    "fi",
-    'if [ -z "${CONDA_SH}" ] && [ -n "${CONDA_EXE:-}" ] && [ -x "${CONDA_EXE}" ]; then',
-    '  CONDA_BASE="$(cd "$(dirname "$(dirname "${CONDA_EXE}")")" && pwd)"',
-    '  if [ -f "${CONDA_BASE}/etc/profile.d/conda.sh" ]; then',
-    '    CONDA_SH="${CONDA_BASE}/etc/profile.d/conda.sh"',
-    "  fi",
-    "fi",
-    'if [ -z "${CONDA_SH}" ]; then',
-    '  for b in "/usr/bin/conda" "$HOME/miniconda" "$HOME/miniconda3" "$HOME/mambaforge" "$HOME/anaconda3" "/opt/conda" "/usr/share/miniconda"; do',
-    '    if [ -f "$b/etc/profile.d/conda.sh" ]; then',
-    '      CONDA_SH="$b/etc/profile.d/conda.sh"',
-    "      break",
-    "    fi",
-    "  done",
-    "fi",
-    'if [ -z "${CONDA_SH}" ]; then',
-    '  echo "ERROR: conda.sh not found. Ensure conda is installed on this machine." >&2',
-    "  exit 127",
-    "fi",
-    'source "$CONDA_SH"',
-    f'conda activate "{env}"',
-  ]
+    return [
+        "set -euo pipefail",
+        _CONDA_BOOTSTRAP.strip(),
+        'command -v conda >/dev/null 2>&1 || { echo "ERROR: conda not available after bootstrap" >&2; exit 127; }',
+        "unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER || true",
+        "unset CONDA_SHLVL || true",
+        r"""while IFS='=' read -r k _; do
+  if [[ "$k" =~ ^CONDA_PREFIX_[0-9]+$ ]]; then
+    unset "$k"
+  fi
+done < <(env)""",
+        "export CONDA_NO_PLUGINS=true",
+        f'conda activate "{env}"',
+    ]
 
 
 def run_bash(script):
