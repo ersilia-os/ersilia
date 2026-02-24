@@ -956,15 +956,16 @@
             <span class="k">return</span>
         <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preparing test for bash command execution&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">shell_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;install.sh&quot;</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">write_bash_script</span><span class="p">(</span><span class="n">shell_path</span><span class="p">)</span>
         <span class="n">python_version</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">python_version</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_env</span><span class="p">(</span><span class="n">python_version</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">write_bash_script</span><span class="p">(</span><span class="n">shell_path</span><span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Environment creation and package installation started!&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">_install_packages</span><span class="p">(</span><span class="n">shell_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Installation completed in the conda environment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 </div>
+
 
 </pre></div>
         </article>
