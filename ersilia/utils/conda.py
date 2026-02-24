@@ -4,9 +4,10 @@ import json
 import os
 import shutil
 from collections import OrderedDict, defaultdict
+from pathlib import Path
 
 from .. import logger, throw_ersilia_exception
-from ..default import CONDA_ENV_YML_FILE
+from ..default import _CONDA_BOOTSTRAP, CONDA_ENV_YML_FILE
 from ..utils.exceptions_utils.fetch_exceptions import ModelPackageInstallError
 from ..utils.logging import make_temp_dir
 from .docker import SimpleDockerfileParser
@@ -17,6 +18,13 @@ from .versioning import Versioner
 
 BASE = "base"
 SPECS_JSON = ".specs.json"
+
+
+def _conda_envs_root(path: str) -> str:
+    p = Path(path).resolve()
+    parts = p.parts
+    i = parts.index("envs")
+    return str(Path(*parts[: i + 1])) + "/"
 
 
 class BaseConda(object):
@@ -422,18 +430,20 @@ class SimpleConda(CondaUtils):
         tmp_folder = make_temp_dir(prefix="ersilia-")
         tmp_file = os.path.join(tmp_folder, "env_list.tsv")
         tmp_script = os.path.join(tmp_folder, "script.sh")
-        bash_script = """
-        source {0}/etc/profile.d/conda.sh
-        conda env list > {1}
-        """.format(self.conda_prefix(self.is_base()), tmp_file)
-        with open(tmp_script, "w") as f:
+
+        bash_script = f"""#!/usr/bin/env bash
+        {_CONDA_BOOTSTRAP}
+        conda env list > "{tmp_file}"
+        """
+
+        with open(tmp_script, "w", encoding="utf-8") as f:
             f.write(bash_script)
-        run_command("bash {0}".format(tmp_script))
-        with open(tmp_file, "r") as f:
-            envs = []
-            for l in f:
-                envs += [l.rstrip()]
-        return envs
+        os.chmod(tmp_script, 0o700)
+
+        run_command(f'bash "{tmp_script}"')
+
+        with open(tmp_file, "r", encoding="utf-8") as f:
+            return [line.rstrip("\n") for line in f]
 
     def list_eos_environments(self):
         """
@@ -579,7 +589,8 @@ class SimpleConda(CondaUtils):
             self.delete_one(env)
 
     def _manual_delete(self, environment):
-        envs_path = os.path.join(self.conda_prefix(False), "envs")
+        envs_path = os.path.join(self.conda_prefix(True), "envs")
+        envs_path = _conda_envs_root(envs_path)
         for env in os.listdir(envs_path):
             if env.startswith(environment):
                 shutil.rmtree(os.path.join(envs_path, env))

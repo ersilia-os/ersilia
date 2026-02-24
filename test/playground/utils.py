@@ -32,7 +32,6 @@ CMD_DEPENDENCY_MAP = {
     "catalog": ["catalog"],
     "example": ["serve", "example"],
     "delete": ["delete"],
-    "test": ["test"],
 }
 
 RAW_INPUT_URL = "https://raw.githubusercontent.com/ersilia-os/ersilia-model-hub-maintained-inputs/refs/heads/main/inputs/example.csv"
@@ -157,7 +156,6 @@ def get_commands_all(model_id, config):
         "delete": build_command(
             delete_cmd, flag_key="delete", model_id=model_id
         ),
-        "test": build_command(test_cmd, flag_key="test", model_id=model_id),
     }
 
     return data
@@ -322,7 +320,6 @@ def apply_rules(command, description, config, std_out):
         "serve": "serve_rule",
         "close": "close_rule",
         "run": "run_rule",
-        "test": "test_rule",
     }
 
     try:

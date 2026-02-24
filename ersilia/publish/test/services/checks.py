@@ -574,6 +574,20 @@ class CheckService:
         with open(csv_file, mode="a", newline="", encoding="utf-8") as file:
             writer = csv.DictWriter(file, fieldnames=reader[0].keys())
             writer.writerows(duplicates)
+            
+    def check_dim(self):
+        odm, odc = self.ios.get_model_dim()
+        if odm == odc:
+            return (
+                f"Metadata dim and run column file dim check",
+                "Dimensions are equal",
+                str(STATUS_CONFIGS.PASSED),
+            )
+        return (
+                f"Metadata dim and run column file dim check",
+                "Dimensions are not equal",
+                str(STATUS_CONFIGS.FAILED),
+            )
 
     def get_inputs(self, types):
         samples = IOService._get_input_from_example_file(self.dir)

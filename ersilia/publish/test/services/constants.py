@@ -142,6 +142,7 @@ class TableType(Enum):
     INSPECT_SUMMARY = "Inspect Summary"
     MODEL_RUN_CHECK = "Model Run Check"
     ASNC_MODEL_RUN_CHECK = "Async Model Run Check"
+    MODEL_DIM_CHECK = "Model Dimension Check"
 
 
 @dataclass
@@ -157,6 +158,9 @@ class TableConfig:
 TABLE_CONFIGS = {
     TableType.MODEL_INFORMATION_CHECKS: TableConfig(
         title="\nMetadata Checks", headers=["Check", "Details", "Status"]
+    ),
+    TableType.MODEL_DIM_CHECK: TableConfig(
+        title="\nModel Dimension Check", headers=["Check", "Details", "Status"]
     ),
     TableType.MODEL_FILE_CHECKS: TableConfig(
         title="\nModel File Checks", headers=["Check", "Details", "Status"]
@@ -301,6 +305,7 @@ main_required_keys = {
 
 check_keys_order = [
     "metadata_checks",
+    "model_file_checks",
     "model_file_checks",
     "file_validity_check",
     "model_size_check",
