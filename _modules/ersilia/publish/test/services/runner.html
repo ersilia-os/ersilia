@@ -756,94 +756,112 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input file path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Run script path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output path: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_path</span><span class="p">))</span>
-
             <span class="n">bash_script</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;#!/usr/bin/env bash</span>
-<span class="s2">                set -euo pipefail</span>
+<span class="s2">            set -euo pipefail</span>
 
-<span class="s2">                log_out=&quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                log_err=&quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                mkdir -p &quot;$(dirname &quot;$log_out&quot;)&quot; &quot;$(dirname &quot;$log_err&quot;)&quot;</span>
-<span class="s2">                : &gt;&quot;$log_out&quot;</span>
-<span class="s2">                : &gt;&quot;$log_err&quot;</span>
-<span class="s2">                exec &gt; &gt;(tee -a &quot;$log_out&quot;) 2&gt; &gt;(tee -a &quot;$log_err&quot; &gt;&amp;2)</span>
+<span class="s2">            log_out=&quot;</span><span class="si">{</span><span class="n">output_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            log_err=&quot;</span><span class="si">{</span><span class="n">error_log_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            mkdir -p &quot;$(dirname &quot;$log_out&quot;)&quot; &quot;$(dirname &quot;$log_err&quot;)&quot;</span>
+<span class="s2">            : &gt;&quot;$log_out&quot;</span>
+<span class="s2">            : &gt;&quot;$log_err&quot;</span>
+<span class="s2">            exec &gt; &gt;(tee -a &quot;$log_out&quot;) 2&gt; &gt;(tee -a &quot;$log_err&quot; &gt;&amp;2)</span>
 
-<span class="s2">                ENV_NAME=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                RUN_DIR=&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                INPUT_FILE=&quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="s2">                OUTPUT_FILE=&quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            ENV_NAME=&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            RUN_DIR=&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">run_sh_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            INPUT_FILE=&quot;</span><span class="si">{</span><span class="n">input_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="s2">            OUTPUT_FILE=&quot;</span><span class="si">{</span><span class="n">bash_output_path</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<span class="s2">                echo &quot;[INFO] Runner arch: $(uname -m)&quot;</span>
-<span class="s2">                echo &quot;[INFO] Target conda env: $ENV_NAME&quot;</span>
-<span class="s2">                echo &quot;[INFO] Initial conda on PATH: $(command -v conda || echo &#39;(not found)&#39;)&quot;</span>
+<span class="s2">            echo &quot;[INFO] Runner arch: $(uname -m)&quot;</span>
+<span class="s2">            echo &quot;[INFO] Target conda env: $ENV_NAME&quot;</span>
+<span class="s2">            echo &quot;[INFO] Shell: $</span><span class="se">{{</span><span class="s2">SHELL:-&#39;(unknown)&#39;</span><span class="se">}}</span><span class="s2">&quot;</span>
+<span class="s2">            echo &quot;[INFO] PWD: $(pwd)&quot;</span>
+<span class="s2">            echo &quot;[INFO] Initial conda on PATH: $(command -v conda || echo &#39;(not found)&#39;)&quot;</span>
+<span class="s2">            echo &quot;[INFO] Initial CONDA_SHLVL: $</span><span class="se">{{</span><span class="s2">CONDA_SHLVL:-0</span><span class="se">}}</span><span class="s2">&quot;</span>
+<span class="s2">            echo &quot;[INFO] Initial CONDA_PREFIX: $</span><span class="se">{{</span><span class="s2">CONDA_PREFIX:-&#39;(unset)&#39;</span><span class="se">}}</span><span class="s2">&quot;</span>
+<span class="s2">            echo &quot;[INFO] Initial CONDA_PREFIX_1: $</span><span class="se">{{</span><span class="s2">CONDA_PREFIX_1:-&#39;(unset)&#39;</span><span class="se">}}</span><span class="s2">&quot;</span>
 
+<span class="s2">            # -------------------------------------------------------------------</span>
+<span class="s2">            # Your existing bootstrap snippet (should make `conda` available)</span>
+<span class="s2">            # -------------------------------------------------------------------</span>
+<span class="s2">            </span><span class="si">{</span><span class="n">_CONDA_BOOTSTRAP</span><span class="si">}</span>
 
-<span class="s2">                </span><span class="si">{</span><span class="n">_CONDA_BOOTSTRAP</span><span class="si">}</span>
+<span class="s2">            if ! command -v conda &gt;/dev/null 2&gt;&amp;1; then</span>
+<span class="s2">            echo &quot;[ERROR] conda not found after bootstrap&quot;</span>
+<span class="s2">            exit 1</span>
+<span class="s2">            fi</span>
 
-<span class="s2">                # Now conda should exist (either it was already, or we sourced conda.sh)</span>
-<span class="s2">                echo &quot;[INFO] Conda resolved to: $(command -v conda)&quot;</span>
-<span class="s2">                echo &quot;[INFO] Conda base: $(conda info --base)&quot;</span>
+<span class="s2">            echo &quot;[INFO] Conda resolved to: $(command -v conda)&quot;</span>
+<span class="s2">            CONDA_BASE=&quot;$(conda info --base)&quot;</span>
+<span class="s2">            echo &quot;[INFO] Conda base: $CONDA_BASE&quot;</span>
 
-<span class="s2">                if [[ &quot;$</span><span class="se">{{</span><span class="s2">CONDA_SHLVL:-0</span><span class="se">}}</span><span class="s2">&quot; -gt 0 ]]; then</span>
-<span class="s2">                echo &quot;[INFO] Deactivating existing conda env(s)...&quot;</span>
-<span class="s2">                while [[ &quot;$</span><span class="se">{{</span><span class="s2">CONDA_SHLVL:-0</span><span class="se">}}</span><span class="s2">&quot; -gt 0 ]]; do</span>
-<span class="s2">                    conda deactivate || true</span>
-<span class="s2">                done</span>
-<span class="s2">                fi</span>
+<span class="s2">            # -------------------------------------------------------------------</span>
+<span class="s2">            # Hard-reset inherited conda activation state</span>
+<span class="s2">            # -------------------------------------------------------------------</span>
+<span class="s2">            echo &quot;[INFO] Resetting inherited conda environment variables...&quot;</span>
+<span class="s2">            unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER</span>
+<span class="s2">            unset CONDA_SHLVL</span>
 
-<span class="s2">                if ! conda env list | awk &#39;</span><span class="se">{{</span><span class="s2">print $1</span><span class="se">}}</span><span class="s2">&#39; | grep -qx &quot;$ENV_NAME&quot;; then</span>
-<span class="s2">                echo &quot;[ERROR] Conda env not found: $ENV_NAME&quot;</span>
-<span class="s2">                echo &quot;[INFO] Available envs:&quot;</span>
-<span class="s2">                conda env list || true</span>
-<span class="s2">                exit 1</span>
-<span class="s2">                fi</span>
+<span class="s2">            # Unset any stacked prefixes if present (CONDA_PREFIX_1, CONDA_PREFIX_2, ...)</span>
+<span class="s2">            while IFS=&#39;=&#39; read -r k _; do</span>
+<span class="s2">            if [[ &quot;$k&quot; =~ ^CONDA_PREFIX_[0-9]+$ ]]; then</span>
+<span class="s2">                unset &quot;$k&quot;</span>
+<span class="s2">            fi</span>
+<span class="s2">            done &lt; &lt;(env)</span>
 
-<span class="s2">                echo &quot;[INFO] Activating env: $ENV_NAME&quot;</span>
-<span class="s2">                conda activate &quot;$ENV_NAME&quot;</span>
+<span class="s2">            echo &quot;[INFO] After reset: CONDA_SHLVL=$</span><span class="se">{{</span><span class="s2">CONDA_SHLVL:-0</span><span class="se">}}</span><span class="s2"> CONDA_PREFIX=$</span><span class="se">{{</span><span class="s2">CONDA_PREFIX:-&#39;(unset)&#39;</span><span class="se">}}</span><span class="s2">&quot;</span>
 
-<span class="s2">                echo &quot;[INFO] Active env: $CONDA_DEFAULT_ENV&quot;</span>
-<span class="s2">                echo &quot;[INFO] python: $(command -v python)&quot;</span>
-<span class="s2">                python -V</span>
+<span class="s2">            # Disable plugins (your traceback showed plugin involvement)</span>
+<span class="s2">            export CONDA_NO_PLUGINS=true</span>
 
-<span class="s2">                cd &quot;$RUN_DIR&quot;</span>
-<span class="s2">                echo &quot;[INFO] Run directory: $(pwd)&quot;</span>
-<span class="s2">                echo &quot;[INFO] Executing: ./run.sh . &#39;$INPUT_FILE&#39; &#39;$OUTPUT_FILE&#39;&quot;</span>
+<span class="s2">            # Verify env exists</span>
+<span class="s2">            if ! conda env list | awk &#39;</span><span class="se">{{</span><span class="s2">print $1</span><span class="se">}}</span><span class="s2">&#39; | grep -qx &quot;$ENV_NAME&quot;; then</span>
+<span class="s2">            echo &quot;[ERROR] Conda env not found: $ENV_NAME&quot;</span>
+<span class="s2">            echo &quot;[INFO] Available envs:&quot;</span>
+<span class="s2">            conda env list || true</span>
+<span class="s2">            exit 1</span>
+<span class="s2">            fi</span>
 
-<span class="s2">                # If your run.sh supports reading PYTHON, keep it. Otherwise you can remove PYTHON=...</span>
-<span class="s2">                if ! PYTHON=&quot;$(command -v python)&quot; bash ./run.sh . &quot;$INPUT_FILE&quot; &quot;$OUTPUT_FILE&quot;; then</span>
-<span class="s2">                echo &quot;[ERROR] run.sh failed&quot;</span>
-<span class="s2">                echo &quot;==================== STDERR (tail) ====================&quot;</span>
-<span class="s2">                tail -n 120 &quot;$log_err&quot; || true</span>
-<span class="s2">                echo &quot;=======================================================&quot;</span>
-<span class="s2">                exit 1</span>
-<span class="s2">                fi</span>
+<span class="s2">            # Run inside the env without activating</span>
+<span class="s2">            cd &quot;$RUN_DIR&quot;</span>
+<span class="s2">            echo &quot;[INFO] Run directory: $(pwd)&quot;</span>
+<span class="s2">            echo &quot;[INFO] Executing via conda run: ./run.sh . &#39;$INPUT_FILE&#39; &#39;$OUTPUT_FILE&#39;&quot;</span>
 
-<span class="s2">                if [[ -f &quot;$OUTPUT_FILE&quot; ]]; then</span>
-<span class="s2">                echo &quot;[OK] SUCCESS: output file found: $OUTPUT_FILE&quot;</span>
-<span class="s2">                exit 0</span>
-<span class="s2">                fi</span>
+<span class="s2">            conda run -n &quot;$ENV_NAME&quot; python -V</span>
+<span class="s2">            conda run -n &quot;$ENV_NAME&quot; which python || true</span>
 
-<span class="s2">                echo &quot;[ERROR] Expected output file not found: $OUTPUT_FILE&quot;</span>
-<span class="s2">                echo &quot;==================== STDERR (tail) ====================&quot;</span>
-<span class="s2">                tail -n 120 &quot;$log_err&quot; || true</span>
-<span class="s2">                echo &quot;==================== STDOUT (tail) ====================&quot;</span>
-<span class="s2">                tail -n 120 &quot;$log_out&quot; || true</span>
-<span class="s2">                exit 1</span>
-<span class="s2">                &quot;&quot;&quot;</span>
+<span class="s2">            if ! conda run -n &quot;$ENV_NAME&quot; bash ./run.sh . &quot;$INPUT_FILE&quot; &quot;$OUTPUT_FILE&quot;; then</span>
+<span class="s2">            echo &quot;[ERROR] run.sh failed&quot;</span>
+<span class="s2">            echo &quot;==================== STDERR (tail) ====================&quot;</span>
+<span class="s2">            tail -n 200 &quot;$log_err&quot; || true</span>
+<span class="s2">            echo &quot;=======================================================&quot;</span>
+<span class="s2">            exit 1</span>
+<span class="s2">            fi</span>
 
+<span class="s2">            if [[ -f &quot;$OUTPUT_FILE&quot; ]]; then</span>
+<span class="s2">            echo &quot;[OK] SUCCESS: output file found: $OUTPUT_FILE&quot;</span>
+<span class="s2">            exit 0</span>
+<span class="s2">            fi</span>
 
+<span class="s2">            echo &quot;[ERROR] Expected output file not found: $OUTPUT_FILE&quot;</span>
+<span class="s2">            echo &quot;==================== STDERR (tail) ====================&quot;</span>
+<span class="s2">            tail -n 200 &quot;$log_err&quot; || true</span>
+<span class="s2">            echo &quot;==================== STDOUT (tail) ====================&quot;</span>
+<span class="s2">            tail -n 200 &quot;$log_out&quot; || true</span>
+<span class="s2">            exit 1</span>
+<span class="s2">&quot;&quot;&quot;</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
                 <span class="n">script_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">bash_script</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running bash script: </span><span class="si">{</span><span class="n">temp_script_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running bash script: </span><span class="si">{</span><span class="n">temp_script_path</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">temp_script_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">script_file</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bash script content:</span><span class="se">\n</span><span class="si">{</span><span class="n">script_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">([</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="n">temp_script_path</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bash script output: </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading output path&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bash script output: </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Reading output path&quot;</span><span class="p">)</span>
                 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Done reading output path&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done reading output path&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_log_path</span><span class="p">):</span>
                     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_log_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                         <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -854,11 +872,11 @@
                 <span class="k">if</span> <span class="n">formatted_error</span><span class="p">:</span>
                     <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error detected originated from the bash execution: </span><span class="si">{</span><span class="n">formatted_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">(),</span> <span class="n">bg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
                 <span class="n">bsh_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">bash_output_path</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running model for bash data consistency checking&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Running model for bash data consistency checking&quot;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">):</span>
                     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Input file path </span><span class="si">{0}</span><span class="s2"> does not exist&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)))</span>
                 <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> --disable-cache &amp;&amp; ersilia -v run -i </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">input_file_path</span><span class="p">)</span><span class="si">}</span><span class="s2"> -o </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running command: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running command: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">out</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
                 <span class="n">ers_data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">flag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -932,25 +950,21 @@
 <span class="sd">        Run the model tests and checks.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="k">def</span><span class="w"> </span><span class="nf">_process_stage</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">echo_prefix</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">echo_prefix</span><span class="p">:</span>
-                    
-                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">out</span> <span class="o">=</span> <span class="n">method</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">echo_prefix</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Performing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> checks.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">method</span><span class="p">()</span>
 
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">good</span><span class="p">,</span> <span class="n">_bad</span> <span class="o">=</span> <span class="n">out</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">good</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-                    <span class="n">good</span><span class="p">,</span> <span class="n">_bad</span> <span class="o">=</span> <span class="n">out</span>
-                    <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">good</span><span class="p">)</span>
-                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Major issue when executing </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> step: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">inspect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">surface</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shallow</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">deep</span><span class="p">)):</span>
@@ -1021,7 +1035,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_basic_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_information</span><span class="p">()</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span>
@@ -1036,8 +1050,15 @@
                 <span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_FILE_CHECKS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios_service</span><span class="o">.</span><span class="n">check_results</span>
             <span class="p">)</span>
         <span class="p">)</span>
+        <span class="n">dim_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_dim</span><span class="p">()</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span>
+                <span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_FILE_CHECKS</span><span class="p">,</span> <span class="p">[</span><span class="n">dim_check</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_directory_sizes</span><span class="p">())</span>
+            
         <span class="n">docker_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docker_yml_column_name_check</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">docker_check</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">docker_check</span> <span class="o">=</span> <span class="n">docker_check</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1050,7 +1071,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_perform_surface_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-
+        
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">status</span> <span class="o">=</span> <span class="p">[(</span>

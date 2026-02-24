@@ -334,6 +334,7 @@
     <span class="n">DOCKERHUB_ORG</span><span class="p">,</span>
     <span class="n">PREDEFINED_EXAMPLE_OUTPUT_FILES</span><span class="p">,</span>
     <span class="n">PREDEFINED_EXAMPLE_INPUT_FILES</span><span class="p">,</span>
+    <span class="n">PREDEFINED_COLUMN_FILE</span><span class="p">,</span>
     <span class="n">INSTALL_YAML_FILE</span><span class="p">,</span>
     <span class="n">DOCKERFILE_FILE</span><span class="p">,</span>
     <span class="n">DEFAULT_ASYNC_API_NAME</span>
@@ -808,6 +809,26 @@
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Image &#39;</span><span class="si">{</span><span class="n">image_name</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">,</span> <span class="n">Checks</span><span class="o">.</span><span class="n">SIZE_CACL_FAILED</span><span class="o">.</span><span class="n">value</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;An error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">Checks</span><span class="o">.</span><span class="n">SIZE_CACL_FAILED</span><span class="o">.</span><span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="IOService.get_model_dim">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.get_model_dim">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the model dimension from the metadata and the run column file</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">          A dimensions from the metadata and the run column file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">PREDEFINED_COLUMN_FILE</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Output Dimension&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
+        <span class="n">odm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">odc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">IOService</span><span class="o">.</span><span class="n">read_csv_values</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">odm</span><span class="p">,</span> <span class="n">odc</span></div>
+
 
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>

@@ -888,6 +888,23 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">reader</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">duplicates</span><span class="p">)</span>
+            
+<div class="viewcode-block" id="CheckService.check_dim">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_dim">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">odm</span><span class="p">,</span> <span class="n">odc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">get_model_dim</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">odm</span> <span class="o">==</span> <span class="n">odc</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Metadata dim and run column file dim check&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Dimensions are equal&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Metadata dim and run column file dim check&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Dimensions are not equal&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+            <span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="CheckService.get_inputs">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.get_inputs">[docs]</a>

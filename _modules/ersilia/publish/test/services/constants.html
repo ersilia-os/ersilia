@@ -458,7 +458,8 @@
 
     <span class="n">INSPECT_SUMMARY</span> <span class="o">=</span> <span class="s2">&quot;Inspect Summary&quot;</span>
     <span class="n">MODEL_RUN_CHECK</span> <span class="o">=</span> <span class="s2">&quot;Model Run Check&quot;</span>
-    <span class="n">ASNC_MODEL_RUN_CHECK</span> <span class="o">=</span> <span class="s2">&quot;Async Model Run Check&quot;</span></div>
+    <span class="n">ASNC_MODEL_RUN_CHECK</span> <span class="o">=</span> <span class="s2">&quot;Async Model Run Check&quot;</span>
+    <span class="n">MODEL_DIM_CHECK</span> <span class="o">=</span> <span class="s2">&quot;Model Dimension Check&quot;</span></div>
 
 
 
@@ -478,6 +479,9 @@
 <span class="n">TABLE_CONFIGS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_INFORMATION_CHECKS</span><span class="p">:</span> <span class="n">TableConfig</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Metadata Checks&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Check&quot;</span><span class="p">,</span> <span class="s2">&quot;Details&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_DIM_CHECK</span><span class="p">:</span> <span class="n">TableConfig</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Model Dimension Check&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Check&quot;</span><span class="p">,</span> <span class="s2">&quot;Details&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">]</span>
     <span class="p">),</span>
     <span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_FILE_CHECKS</span><span class="p">:</span> <span class="n">TableConfig</span><span class="p">(</span>
         <span class="n">title</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Model File Checks&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Check&quot;</span><span class="p">,</span> <span class="s2">&quot;Details&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">]</span>
@@ -622,6 +626,7 @@
 
 <span class="n">check_keys_order</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;metadata_checks&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;model_file_checks&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_file_checks&quot;</span><span class="p">,</span>
     <span class="s2">&quot;file_validity_check&quot;</span><span class="p">,</span>
     <span class="s2">&quot;model_size_check&quot;</span><span class="p">,</span>

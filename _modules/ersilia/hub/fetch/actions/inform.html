@@ -308,7 +308,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="n">INFORMATION_FILE</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...bundle.repo</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceFile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...content.information</span><span class="w"> </span><span class="kn">import</span> <span class="n">Information</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAction</span>
 
@@ -341,21 +340,13 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_add_info_api</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">sf</span> <span class="o">=</span> <span class="n">ServiceFile</span><span class="p">(</span>
-            <span class="n">path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">sf</span><span class="o">.</span><span class="n">get_file</span><span class="p">()):</span>
-            <span class="n">sf</span><span class="o">.</span><span class="n">add_info_api</span><span class="p">(</span><span class="n">information_file</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">information_file</span><span class="p">)</span>
-
 <div class="viewcode-block" id="ModelInformer.inform">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.inform.ModelInformer.inform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">inform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write information to a JSON file and add API info for models.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_write_information_json</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_add_info_api</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_information_json</span><span class="p">()</span></div>
 </div>
 
 </pre></div>

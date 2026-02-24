@@ -306,8 +306,7 @@
           <h1>Source code for ersilia.hub.fetch.register.standard_example</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">click</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">....</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -315,6 +314,7 @@
     <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleConda</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.exceptions_utils.fetch_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardModelExampleError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span><span class="p">,</span> <span class="n">run_command_check_output</span>
 
@@ -428,36 +428,55 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run log: </span><span class="si">{</span><span class="nb">open</span><span class="p">(</span><span class="n">run_log</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run log file </span><span class="si">{</span><span class="n">run_log</span><span class="si">}</span><span class="s2"> was not created&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_file_exists</span><span class="p">(</span><span class="n">output_csv</span><span class="o">=</span><span class="n">output_csv</span><span class="p">)</span>
         <span class="n">is_fetched_successfully</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_csv</span><span class="p">(</span><span class="n">output_csv</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Removing log file: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run_log</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">run_log</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">run_log</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_fetched_successfully</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">&quot;The model is getting deleted due to it produced all empty values!&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;The model is getting deleted due to it produced all empty values! Removing the model!&quot;</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
-                <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">run_command</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ersilia -v delete </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;The model is getting deleted due to it produced all empty values! Removing the model and exiting&quot;</span>
+            <span class="p">)</span>
+            <span class="n">run_command</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ersilia -v delete </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_file_exists</span><span class="p">(</span><span class="n">output_csv</span><span class="o">=</span><span class="n">output_csv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Removing log file: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run_log</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">run_log</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">run_log</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">saw_data_row</span> <span class="o">=</span> <span class="kc">False</span>
+
             <span class="k">for</span> <span class="n">row_num</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">row_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">((</span><span class="n">c</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row</span><span class="p">):</span>
+                    <span class="k">continue</span>
+
+                <span class="n">saw_data_row</span> <span class="o">=</span> <span class="kc">True</span>
+
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
                     <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Row </span><span class="si">{</span><span class="n">row_num</span><span class="si">}</span><span class="s2"> has fewer than 3 columns: </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="k">return</span> <span class="kc">False</span>
 
                 <span class="k">for</span> <span class="n">col_idx</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="n">start</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">cell</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
                         <span class="n">echo</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;Empty value at row </span><span class="si">{</span><span class="n">row_num</span><span class="si">}</span><span class="s2">, column </span><span class="si">{</span><span class="n">col_idx</span><span class="si">}</span><span class="s2">. The model is not correctly working!&quot;</span>
                         <span class="p">)</span>
                         <span class="k">return</span> <span class="kc">False</span>
-                <span class="k">return</span> <span class="kc">True</span></div>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">saw_data_row</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No data rows found in output CSV (only header/blank rows).&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">return</span> <span class="kc">True</span></div>
 
 </pre></div>
         </article>

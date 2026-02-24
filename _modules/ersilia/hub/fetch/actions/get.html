@@ -317,105 +317,11 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">....utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_metadata_from_base_dir</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...bundle.repo</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileFile</span><span class="p">,</span> <span class="n">PackFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...bundle.repo</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileFile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseAction</span>
 
 <span class="n">MODEL_DIR</span> <span class="o">=</span> <span class="s2">&quot;model&quot;</span>
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-
-
-<div class="viewcode-block" id="PackCreator">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.PackCreator">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">PackCreator</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to create a pack for the model. The pack.py file loads a model,</span>
-<span class="sd">    packs it into a Service instance, and saves the service for deployment.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    model_id : str</span>
-<span class="sd">        The ID of the model.</span>
-<span class="sd">    config_json : dict</span>
-<span class="sd">        Configuration settings for the model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-
-<div class="viewcode-block" id="PackCreator.run">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.PackCreator.run">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Copy the pack creator script to the destination directory.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Copying pack creator&quot;</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span> <span class="s2">&quot;inner_template&quot;</span><span class="p">,</span> <span class="s2">&quot;pack.py&quot;</span><span class="p">),</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;pack.py&quot;</span><span class="p">),</span>
-        <span class="p">)</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="ServiceCreator">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.ServiceCreator">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ServiceCreator</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to create a service file for the model. The &#39;service.py&#39; specifically</span>
-<span class="sd">    facilitates the deployment of a custom model as a REST API service.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    model_id : str</span>
-<span class="sd">        The ID of the model.</span>
-<span class="sd">    config_json : dict</span>
-<span class="sd">        Configuration settings for the model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ServiceCreator.run">
-<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.get.ServiceCreator.run">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create the service.py file in the src directory.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Creating service.py file&quot;</span><span class="p">)</span>
-        <span class="n">src_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">src_dir</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">src_dir</span><span class="p">)</span>
-
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;service.py&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">)</span>
-            <span class="n">output_type</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">]</span>
-        <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
-            <span class="n">output_type</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">outcome_line_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">splited</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">splited</span><span class="p">):</span>
-            <span class="k">if</span> <span class="s2">&quot;outcome&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                <span class="n">outcome_line_index</span> <span class="o">=</span> <span class="n">i</span>
-                <span class="k">break</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;String&quot;</span><span class="p">:</span>
-            <span class="n">splited</span><span class="p">[</span><span class="n">outcome_line_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">splited</span><span class="p">[</span><span class="n">outcome_line_index</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
-                <span class="s2">&quot;Float&quot;</span><span class="p">,</span> <span class="s2">&quot;String&quot;</span>
-            <span class="p">)</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splited</span><span class="p">)</span>
-        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">,</span> <span class="s2">&quot;service.py&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
-</div>
-
 
 
 <div class="viewcode-block" id="DockerfileCreator">
@@ -510,29 +416,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_yaml_path</span> <span class="o">=</span> <span class="s2">&quot;config.yml&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_create_pack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">pack_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;pack.py&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pack_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The pack.py file already exists&quot;</span><span class="p">)</span>
-            <span class="k">return</span>
-        <span class="n">PackCreator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_create_service</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">src_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;src&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">src_folder</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The src folder already exists&quot;</span><span class="p">)</span>
-            <span class="k">return</span>
-        <span class="n">service_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src_folder</span><span class="p">,</span> <span class="s2">&quot;service.py&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">service_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The service.py file already exists&quot;</span><span class="p">)</span>
-            <span class="k">return</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">,</span> <span class="s2">&quot;run.sh&quot;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;The run.sh file, which is assumed by service.py, does not exist&quot;</span>
-            <span class="p">)</span>
-            <span class="k">return</span>
-        <span class="n">ServiceCreator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_create_dockerfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dockerfile_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_dir</span><span class="p">,</span> <span class="s2">&quot;Dockerfile&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dockerfile_file</span><span class="p">):</span>
@@ -546,9 +429,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Prepare the template by creating pack, service, and Dockerfile.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_pack</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_dockerfile</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_service</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_dockerfile</span><span class="p">()</span></div>
 </div>
 
 
@@ -723,11 +604,6 @@
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_requires_parameters</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
-        <span class="n">pf</span> <span class="o">=</span> <span class="n">PackFile</span><span class="p">(</span><span class="n">model_path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pf</span><span class="o">.</span><span class="n">needs_model</span><span class="p">()</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_destination</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">MODEL_DIR</span><span class="p">)</span>
@@ -737,17 +613,10 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a ./model folder in the model repository.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_destination</span><span class="p">()</span>
-        <span class="c1"># tr = TemplateResolver(</span>
-        <span class="c1">#     model_id=self.model_id, repo_path=model_path, config_json=self.config_json</span>
-        <span class="c1"># )</span>
-        <span class="c1"># if tr.is_fastapi():</span>
-        <span class="c1">#     return None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_requires_parameters</span><span class="p">(</span><span class="n">model_path</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">None</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">FolderNotFoundError</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span></div>
 
