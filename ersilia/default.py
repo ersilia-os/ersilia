@@ -232,38 +232,41 @@ def bashrc_cli_snippet(overwrite=True):
 
 _CONDA_BOOTSTRAP = r"""
 set -euo pipefail
-if command -v conda >/dev/null 2>&1; then
-  :
-else
-  CONDA_SH=""
-  for p in "${CONDA:-}" "${CONDA_PREFIX:-}" "${MAMBA_ROOT_PREFIX:-}" "${CONDA_EXE:-}"; do
-    if [ -n "${p}" ]; then
-      if [ -x "${p}" ]; then
-        base="$(cd "$(dirname "$(dirname "${p}")")" && pwd)"
-      else
-        base="${p}"
-      fi
-      if [ -f "${base}/etc/profile.d/conda.sh" ]; then
-        CONDA_SH="${base}/etc/profile.d/conda.sh"
-        break
-      fi
+
+CONDA_BIN="$(command -v conda || true)"
+CONDA_SH=""
+
+if [ -n "${CONDA_BIN}" ] && [ -x "${CONDA_BIN}" ]; then
+  CONDA_BASE="$(cd "$(dirname "$(dirname "${CONDA_BIN}")")" && pwd)"
+  if [ -f "${CONDA_BASE}/etc/profile.d/conda.sh" ]; then
+    CONDA_SH="${CONDA_BASE}/etc/profile.d/conda.sh"
+  fi
+fi
+
+if [ -z "${CONDA_SH}" ] && [ -n "${CONDA_EXE:-}" ] && [ -x "${CONDA_EXE}" ]; then
+  CONDA_BASE="$(cd "$(dirname "$(dirname "${CONDA_EXE}")")" && pwd)"
+  if [ -f "${CONDA_BASE}/etc/profile.d/conda.sh" ]; then
+    CONDA_SH="${CONDA_BASE}/etc/profile.d/conda.sh"
+  fi
+fi
+
+if [ -z "${CONDA_SH}" ]; then
+  for b in "/usr/share/miniconda" "/opt/conda" "$HOME/miniconda" "$HOME/miniconda3" "$HOME/mambaforge" "$HOME/miniforge3" "$HOME/anaconda3"; do
+    if [ -f "$b/etc/profile.d/conda.sh" ]; then
+      CONDA_SH="$b/etc/profile.d/conda.sh"
+      break
     fi
   done
+fi
 
-  if [ -z "${CONDA_SH}" ]; then
-    for b in "/opt/conda" "/usr/share/miniconda" "$HOME/miniconda" "$HOME/miniconda3" "$HOME/mambaforge" "$HOME/anaconda3"; do
-      if [ -f "$b/etc/profile.d/conda.sh" ]; then
-        CONDA_SH="$b/etc/profile.d/conda.sh"
-        break
-      fi
-    done
-  fi
-
-  if [ -z "${CONDA_SH}" ]; then
-    echo "ERROR: conda not found on PATH and conda.sh not found. On GitHub Actions, install conda (setup-miniconda) or micromamba." >&2
+if [ -z "${CONDA_SH}" ]; then
+  if [ -n "${CONDA_BIN}" ]; then
+    echo "[WARN] conda.sh not found; continuing with conda executable only (conda run will work)."
+  else
+    echo "ERROR: conda not found on PATH and conda.sh not found. Install conda (setup-miniconda) or micromamba." >&2
     exit 127
   fi
-
+else
   source "$CONDA_SH"
 fi
 """
