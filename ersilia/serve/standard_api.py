@@ -82,9 +82,14 @@ class StandardCSVRunApi(ErsiliaBase):
         self.isaura_store = IsauraStore()
         self.session = Session(config_json=config_json)
         store_info = self.session.current_store_status()
-        self.local_cache = store_info[-1]
-        self.write_store = store_info[1]
-        self.read_store = store_info[0]
+        if store_info is None:
+            self.read_store = False
+            self.write_store = False
+            self.local_cache = False
+        else:
+            self.local_cache = store_info[-1]
+            self.write_store = store_info[1]
+            self.read_store = store_info[0]
         echo("Standard API runner initialized", fg="green")
 
     def _read_information_file(self):
