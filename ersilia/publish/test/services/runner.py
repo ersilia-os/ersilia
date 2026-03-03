@@ -97,7 +97,7 @@ class RunnerService:
         report_path: str,
         inspector: InspectService,
         surface: bool,
-        inspect: bool
+        inspect: bool,
     ):
         self.model_id = model_id
         self.logger = logger
@@ -136,7 +136,7 @@ class RunnerService:
         cmd = f"ersilia serve {self.model_id} --disable-cache"
         out = run_command(cmd)
         return out
-    
+
     def run_model(self, inputs: str, output: str, batch: int):
         """
         Run the model with the given input and output parameters.
@@ -159,7 +159,7 @@ class RunnerService:
         cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
         out = run_command(cmd)
         return out
-    
+
     def delete(self):
         """
         Delete model if existed
@@ -197,7 +197,7 @@ class RunnerService:
         self.delete()
         out = _fetch(self.model_id, self.logger)
         return out
-    
+
     def run_example(
         self,
         n_samples: int,
@@ -227,7 +227,6 @@ class RunnerService:
         examples = self.example.example(
             n_samples=n_samples,
             file_name=file_name,
-            simple=simple,
             mode=mode,
         )
         return examples
@@ -241,14 +240,17 @@ class RunnerService:
         RuntimeError
             If there is an error during the subprocess execution or output comparison.
         """
+
         def normalize_quotes(obj):
             def strip_quotes(s: str) -> str:
                 if isinstance(s, float) or isinstance(s, int):
                     return s
-                if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
+                if (s.startswith('"') and s.endswith('"')) or (
+                    s.startswith("'") and s.endswith("'")
+                ):
                     return s[1:-1]
                 return s
-            
+
             if isinstance(obj, list):
                 return [strip_quotes(s) for s in obj]
             elif isinstance(obj, str):
@@ -256,7 +258,6 @@ class RunnerService:
             else:
                 raise TypeError("Input must be a string or a list of strings")
 
-                
         def compute_rmse(y_true, y_pred):
             return sum((yt - yp) ** 2 for yt, yp in zip(y_true, y_pred)) ** 0.5 / len(
                 y_true
@@ -281,7 +282,9 @@ class RunnerService:
                             f"ersilia value={e_val}"
                         )
                         echo_exceptions(msg, ClickInterface())
-                        return [(f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))]
+                        return [
+                            (f"Type Check-{column}", msg, str(STATUS_CONFIGS.FAILED))
+                        ]
 
                 if all(isinstance(val, (int, float)) for val in bv + ev):
                     rmse = compute_rmse(bv, ev)
@@ -334,7 +337,10 @@ class RunnerService:
 
         def read_csv(path, flag=False):
             if not os.path.exists(path):
-                echo_exceptions(f"File not found this might be due to error happened when executing the run.sh: {path}", ClickInterface())
+                echo_exceptions(
+                    f"File not found this might be due to error happened when executing the run.sh: {path}",
+                    ClickInterface(),
+                )
             try:
                 with open(path, "r") as file:
                     self.logger.info("Reading the lines")
@@ -360,13 +366,24 @@ class RunnerService:
 
                         try:
                             i = int(value)
-                            if str(i) == value or (value.startswith(('+', '-')) and str(i) == value.lstrip('+')):
+                            if str(i) == value or (
+                                value.startswith(("+", "-"))
+                                and str(i) == value.lstrip("+")
+                            ):
                                 return i
                         except ValueError:
                             pass
                         try:
                             f = float(value)
-                            if value.lower() not in ("nan", "+nan", "-nan", "none", "inf", "+inf", "-inf"):
+                            if value.lower() not in (
+                                "nan",
+                                "+nan",
+                                "-nan",
+                                "none",
+                                "inf",
+                                "+inf",
+                                "-inf",
+                            ):
                                 return f
                         except ValueError:
                             pass
@@ -384,7 +401,7 @@ class RunnerService:
 
             except Exception as e:
                 echo_exceptions(f"Failed to read CSV from {path}.", ClickInterface())
-                
+
         def read_logs(path):
             if not os.path.exists(path):
                 return "No error detected!"
@@ -417,14 +434,16 @@ class RunnerService:
             input_file_path = IOService._get_input_file_path(self.dir)
             rename_col(input_file_path)
 
-            run_sh_path = os.path.abspath(os.path.join(model_path, "model", "framework", RUN_FILE))
+            run_sh_path = os.path.abspath(
+                os.path.join(model_path, "model", "framework", RUN_FILE)
+            )
             input_file_path = os.path.abspath(input_file_path)
             if not os.path.exists(run_sh_path):
                 self.logger.warning(
                     f"{RUN_FILE} not found at {run_sh_path}. Skipping bash run."
                 )
                 return
-            
+
             self.installer.install_packages_from_dir()
 
             self.logger.debug("The self.dir is: {0}".format(self.dir))
@@ -516,11 +535,20 @@ class RunnerService:
                 logs = read_logs(error_log_path)
                 formatted_error = "".join(logs)
                 if formatted_error:
-                    echo_exceptions(f"Error detected originated from the bash execution: {formatted_error}", ClickInterface(), bg=None, fg="red")
+                    echo_exceptions(
+                        f"Error detected originated from the bash execution: {formatted_error}",
+                        ClickInterface(),
+                        bg=None,
+                        fg="red",
+                    )
                 bsh_data, _ = read_csv(bash_output_path)
                 self.logger.info("Running model for bash data consistency checking")
                 if not os.path.exists(input_file_path):
-                    raise Exception("Input file path {0} does not exist".format(os.path.abspath(input_file_path)))
+                    raise Exception(
+                        "Input file path {0} does not exist".format(
+                            os.path.abspath(input_file_path)
+                        )
+                    )
                 cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia -v run -i {os.path.abspath(input_file_path)} -o {output_path}"
                 self.logger.info(f"Running command: {cmd}")
                 out = run_command(cmd)
@@ -611,8 +639,11 @@ class RunnerService:
 
         try:
             if not any((self.inspect, self.surface, self.shallow, self.deep)):
-                echo("No flag is specified please at least specify [--inspect].",
-                    fg="red", bold=True)
+                echo(
+                    "No flag is specified please at least specify [--inspect].",
+                    fg="red",
+                    bold=True,
+                )
                 sys.exit(1)
 
             self._configure_environment()
@@ -623,18 +654,18 @@ class RunnerService:
 
             if self.surface:
                 for name, method in (
-                                ("basic", self._perform_basic_checks),
-                                ("surface", self._perform_surface_check)
-                            ):
-                                _process_stage(name, method)
+                    ("basic", self._perform_basic_checks),
+                    ("surface", self._perform_surface_check),
+                ):
+                    _process_stage(name, method)
 
             if self.shallow:
                 for name, method in (
-                            ("basic", self._perform_basic_checks),
-                            ("surface", self._perform_surface_check),
-                            ("shallow", self._perform_shallow_checks),
-                        ):
-                            _process_stage(name, method)
+                    ("basic", self._perform_basic_checks),
+                    ("surface", self._perform_surface_check),
+                    ("shallow", self._perform_shallow_checks),
+                ):
+                    _process_stage(name, method)
 
             if self.deep:
                 for name, method in (
@@ -646,7 +677,9 @@ class RunnerService:
 
                 results.append(self._perform_deep_checks())
 
-            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
+            self.ios_service.collect_and_save_json(
+                results, self.report_file, self.from_dockerhub, self.deep
+            )
             echo("Model tests and checks completed.", fg="green", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.delete()
@@ -656,9 +689,12 @@ class RunnerService:
             echo(
                 f"Caught SystemExit({e.code}), returning partial results. "
                 "Saving report, deleting model and exiting.",
-                fg="yellow", bold=True,
+                fg="yellow",
+                bold=True,
             )
-            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
+            self.ios_service.collect_and_save_json(
+                results, self.report_file, self.from_dockerhub, self.deep
+            )
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
             sys.exit(1)
@@ -667,7 +703,9 @@ class RunnerService:
             tb = traceback.format_exc()
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
-            self.ios_service.collect_and_save_json(results, self.report_file, self.from_dockerhub, self.deep)
+            self.ios_service.collect_and_save_json(
+                results, self.report_file, self.from_dockerhub, self.deep
+            )
             self.delete()
             echo("Model successfully deleted", fg="green", bold=True)
 
@@ -677,7 +715,7 @@ class RunnerService:
 
     def _perform_basic_checks(self):
         results = []
-        
+
         self.checkup_service.check_information()
         results.append(
             self._generate_table_from_check(
@@ -694,18 +732,19 @@ class RunnerService:
         )
         dim_check = self.checkup_service.check_dim()
         results.append(
-            self._generate_table_from_check(
-                TableType.MODEL_FILE_CHECKS, [dim_check]
-            )
+            self._generate_table_from_check(TableType.MODEL_FILE_CHECKS, [dim_check])
         )
 
         results.append(self._log_directory_sizes())
-            
+
         docker_check = self._docker_yml_column_name_check()
         if isinstance(docker_check, tuple):
             docker_check = docker_check[0]
             results.append(docker_check)
-            echo_exceptions("Dependencies are not pinned properly. System is exiting!", ClickInterface())
+            echo_exceptions(
+                "Dependencies are not pinned properly. System is exiting!",
+                ClickInterface(),
+            )
             return results, 1
         else:
             results.append(docker_check)
@@ -713,18 +752,23 @@ class RunnerService:
 
     def _perform_surface_check(self):
         results = []
-        
+
         out = self.fetch()
         if out.returncode != 0:
-            status = [(
+            status = [
+                (
                     Checks.FETCH_FAILS.value,
                     "Model not fetched successfully",
                     str(STATUS_CONFIGS.FAILED),
-            )]
+                )
+            ]
             results.append(
                 self._generate_table_from_check(TableType.FETCH_STATUS_SURFACE, status)
             )
-            echo_exceptions("Model was not fetched successfully during start of surface checks. System is exiting before proceeding!", ClickInterface())
+            echo_exceptions(
+                "Model was not fetched successfully during start of surface checks. System is exiting before proceeding!",
+                ClickInterface(),
+            )
             return results, 1
 
         if self.from_github or self.from_s3 or self.from_dir:
@@ -744,19 +788,30 @@ class RunnerService:
             )
 
         simple_output = self.checkup_service.check_simple_model_output(self.run_model)
-        simple_output_async = self.checkup_service.check_simple_model_async_output(self.serve_model)
+        simple_output_async = self.checkup_service.check_simple_model_async_output(
+            self.serve_model
+        )
         results.append(
             self._generate_table_from_check(TableType.MODEL_RUN_CHECK, simple_output)
         )
         results.append(
-            self._generate_table_from_check(TableType.ASNC_MODEL_RUN_CHECK, simple_output_async)
+            self._generate_table_from_check(
+                TableType.ASNC_MODEL_RUN_CHECK, simple_output_async
+            )
         )
         if simple_output[0][-1] == str(STATUS_CONFIGS.FAILED):
-            echo_exceptions("Model simple run check has problem. System is exiting before proceeding!", ClickInterface())
+            echo_exceptions(
+                "Model simple run check has problem. System is exiting before proceeding!",
+                ClickInterface(),
+            )
             return results, 1
         if simple_output_async[0][-1] == str(STATUS_CONFIGS.FAILED):
-            echo_exceptions("Model async simple run check has problem. System is exiting before proceeding!", ClickInterface())
+            echo_exceptions(
+                "Model async simple run check has problem. System is exiting before proceeding!",
+                ClickInterface(),
+            )
             return results, 1
+
         return results
 
     def _perform_shallow_checks(self):
@@ -770,7 +825,14 @@ class RunnerService:
             self._generate_table_from_check(TableType.MODEL_OUTPUT, model_output)
         )
         validations = []
-
+        robustness_output = self.checkup_service.check_robustness(
+            self.run_example, self.run_model
+        )
+        results.append(
+            self._generate_table_from_check(
+                TableType.ROBUSTNESS_CHECK, robustness_output
+            )
+        )
         if "Fixed" in self.ios_service.get_output_consistency() and not is_online:
             res = self._run_single_and_example_input_checks()
 
@@ -779,23 +841,43 @@ class RunnerService:
             )
             bash_results = self.run_bash()
             validations.append(
-                self._generate_table_from_check(TableType.CONSISTENCY_BASH, bash_results)
+                self._generate_table_from_check(
+                    TableType.CONSISTENCY_BASH, bash_results
+                )
             )
             results.extend(validations)
             if bash_results[0][-1] == str(STATUS_CONFIGS.FAILED):
-                echo_exceptions("Model output is not consistent. System is exiting before proceeding!", ClickInterface())
+                echo_exceptions(
+                    "Model output is not consistent. System is exiting before proceeding!",
+                    ClickInterface(),
+                )
                 return results, 1
-            
+
         else:
-            row1=[(Checks.MODEL_CONSISTENCY.value,"Skipped for Online source or Varible output consistency",str(STATUS_CONFIGS.SKIPPED))]
-            results.append(self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY,row1))
+            row1 = [
+                (
+                    Checks.MODEL_CONSISTENCY.value,
+                    "Skipped for Online source or Varible output consistency",
+                    str(STATUS_CONFIGS.SKIPPED),
+                )
+            ]
+            results.append(
+                self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY, row1)
+            )
 
-            row2=[(Checks.RUN_BASH.value,"Skipped for Online source or Varible output consistency", str(STATUS_CONFIGS.SKIPPED))]
-            results.append(self._generate_table_from_check(TableType.CONSISTENCY_BASH, row2))
-
+            row2 = [
+                (
+                    Checks.RUN_BASH.value,
+                    "Skipped for Online source or Varible output consistency",
+                    str(STATUS_CONFIGS.SKIPPED),
+                )
+            ]
+            results.append(
+                self._generate_table_from_check(TableType.CONSISTENCY_BASH, row2)
+            )
 
         return results
-        
+
     def _perform_deep_checks(self):
         performance_data = self.inspector.run(["computational_performance_tracking"])
         return self._generate_table_from_check(
@@ -813,7 +895,9 @@ class RunnerService:
             (docker_check_data[0], Checks.DEPENDENCY_PINNED.value, docker_check_data[1])
         ]
         data.extend(docker_check_data)
-        results = self._generate_table_from_check(TableType.DEPENDECY_COLUMN_CHECK, data)
+        results = self._generate_table_from_check(
+            TableType.DEPENDECY_COLUMN_CHECK, data
+        )
         if docker_check_data[0][-1] == str(STATUS_CONFIGS.FAILED):
             return results, 1
         return results

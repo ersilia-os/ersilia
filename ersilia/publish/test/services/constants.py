@@ -32,6 +32,8 @@ class Options(Enum):
     INPUT_CSV = "input.csv"
     OUTPUT1_CSV = "output1.csv"
     OUTPUT2_CSV = "output2.csv"
+    ROBUSTNESS_INPUT_CSV = "robustness_input.csv"
+    ROBUSTNESS_OUTPUT_CSV = "robustness_output.csv"
     OUTPUT_FILES = [
         "file.csv",
         "file.h5",
@@ -79,7 +81,7 @@ class STATUS_CONFIGS(Enum):
     FAILED = ("FAILED", "red", "✘")
     WARNING = ("WARNING", "yellow", "⚠")
     SUCCESS = ("SUCCESS", "green", "★")
-    SKIPPED = ("SKIPPED",'dim', "~")
+    SKIPPED = ("SKIPPED", "dim", "~")
     NA = ("N/A", "dim", "~")
 
     def __init__(self, label, color, icon):
@@ -118,6 +120,7 @@ class Checks(Enum):
     SIMPLE_MODEL_RUN = "Simple Model Run"
     SIMPLE_MODEL_RUN_ASYNC = "Async Simple Model Run"
     SIMPLE_MODEL_RUN_COLUMNS = "Simple Model Run Columns"
+    ROBUSTNESS_TEST = "Robustness Test"
     DEPENDENCY_PINNED = "Checking package versions and file structure"
 
 
@@ -142,6 +145,7 @@ class TableType(Enum):
     INSPECT_SUMMARY = "Inspect Summary"
     MODEL_RUN_CHECK = "Model Run Check"
     ASNC_MODEL_RUN_CHECK = "Async Model Run Check"
+    ROBUSTNESS_CHECK = "Robustness Check"
     MODEL_DIM_CHECK = "Model Dimension Check"
 
 
@@ -206,9 +210,12 @@ TABLE_CONFIGS = {
     TableType.ASNC_MODEL_RUN_CHECK: TableConfig(
         title="\nAsync Model Run Check", headers=["Check", "Details", "Status"]
     ),
+    TableType.ROBUSTNESS_CHECK: TableConfig(
+        title="\nRobustness Check", headers=["Check", "Details", "Status"]
+    ),
     TableType.FETCH_STATUS_SURFACE: TableConfig(
         title="\nModel Fetching Check", headers=["Check", "Status"]
-    )
+    ),
 }
 
 
@@ -224,7 +231,7 @@ FILES = [
     "LICENSE",
 ]
 
-TIMEOUT_SECONDS = 30 * 60 
+TIMEOUT_SECONDS = 30 * 60
 
 ERSILIAPACK_BACK_FILES = [
     DOCKERFILE_FILE,
@@ -296,6 +303,9 @@ main_required_keys = {
     "async_model_run_check": {
         "async_simple_model_run": False,
     },
+    "robustness_check": {
+        "robustness_test": False,
+    },
     "input_output_check": {"csv_csv": False},
     "model_output_consistency_check": {"check_consistency_of_model_output": False},
     "consistency_summary_between_ersilia_and_bash_execution_outputs": {
@@ -311,8 +321,9 @@ check_keys_order = [
     "model_size_check",
     "model_run_check",
     "async_model_run_check",
+    "robustness_check",
     "input_output_check",
     "model_output_consistency_check",
     "consistency_summary_between_ersilia_and_bash_execution_outputs",
-    "computational_performance_summary"
+    "computational_performance_summary",
 ]

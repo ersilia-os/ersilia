@@ -23,7 +23,6 @@ from ....store.utils import echo_exceptions, ClickInterface
 from ....hub.content.base_information_validator import BaseInformationValidator
 
 
-
 class CheckService:
     """
     Service for performing various checks on the model.
@@ -83,7 +82,7 @@ class CheckService:
 
     def _get_output_consistency(self):
         if self.dir is not None:
-            output_consistency =self.ios.get_output_consistency()
+            output_consistency = self.ios.get_output_consistency()
         else:
             output_consistency = "Fixed"
         return output_consistency
@@ -110,7 +109,7 @@ class CheckService:
         self.logger.debug("Checking model slug...")
         if not data["Slug"]:
             raise texc.EmptyField("slug")
-        
+
         if not BaseInformationValidator().validate_slug(data["Slug"]):
             raise texc.EmptyField("slug")
 
@@ -119,7 +118,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_description(data["Description"]):
             raise texc.EmptyField("Description")
-        
+
         if not data["Description"]:
             raise texc.EmptyField("Description")
 
@@ -128,7 +127,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_tag(data["Tag"]):
             raise texc.EmptyField("Tag")
-        
+
         if not data["Tag"]:
             raise texc.EmptyField("Tag")
 
@@ -137,7 +136,7 @@ class CheckService:
         key = "Source Code"
         if not BaseInformationValidator().validate_source_code(data[key]):
             raise texc.EmptyField(key)
-        
+
         if not data[key]:
             raise texc.EmptyField(key)
 
@@ -146,7 +145,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_title(data["Title"]):
             raise texc.EmptyField("Title")
-        
+
         if not data["Title"]:
             raise texc.EmptyField("Title")
 
@@ -156,7 +155,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_status(data[key]):
             raise texc.EmptyField(key)
-        
+
         if not data["Status"]:
             raise texc.EmptyField("Status")
 
@@ -168,7 +167,7 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
         if not BaseInformationValidator().validate_contributor(data[key]):
             raise texc.EmptyField(key)
 
@@ -177,7 +176,7 @@ class CheckService:
         key = "Interpretation"
         if not data[key]:
             raise texc.EmptyField(key)
-    
+
         if not BaseInformationValidator().validate_interpretation(data[key]):
             raise texc.EmptyField(key)
 
@@ -192,7 +191,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_dockerhub(data[key]):
             raise texc.EmptyField(key)
-        
+
     def _check_model_s3_url(self, data):
         key = "S3"
         self.logger.debug(f"Checking {key} URL field..")
@@ -201,7 +200,7 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
         if not BaseInformationValidator().validate_s3(data[key]):
             raise texc.EmptyField(key)
 
@@ -213,7 +212,7 @@ class CheckService:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
         if not BaseInformationValidator().validate_docker_architecture(data[key]):
             raise texc.EmptyField(key)
 
@@ -271,7 +270,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_source(data[key]):
             raise texc.EmptyField(key)
-        
+
         if not data[key]:
             raise texc.EmptyField(key)
 
@@ -280,17 +279,17 @@ class CheckService:
 
         if not BaseInformationValidator().validate_source_type(data[key]):
             raise texc.EmptyField(key)
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_sub_tasks(self, data):
         key = "Subtask"
-        
+
         if not BaseInformationValidator().validate_subtask(data[key]):
             raise texc.EmptyField(key)
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
@@ -300,7 +299,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_input_dimension(data[key]):
             raise texc.EmptyField(key)
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
@@ -310,7 +309,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_target_organism(data[key]):
             raise texc.EmptyField(key)
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
@@ -320,7 +319,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_biomedical_area(data[key]):
             raise texc.EmptyField(key)
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
@@ -331,7 +330,7 @@ class CheckService:
 
         if not BaseInformationValidator().validate_output_dimension(data[key]):
             raise texc.EmptyField(key)
-        
+
         if not data[key]:
             raise texc.EmptyField(key)
 
@@ -340,14 +339,14 @@ class CheckService:
 
         if not BaseInformationValidator().validate_output_consistency(data[key]):
             raise texc.EmptyField(key)
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if not data[key]:
             raise texc.EmptyField(key)
 
     def _check_model_contribution_date(self, data):
         key = "Incorporation Date"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -360,7 +359,7 @@ class CheckService:
 
     def _check_model_image_size(self, data):
         key = "Image Size"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -373,14 +372,14 @@ class CheckService:
 
     def _check_model_env_size(self, data):
         key = "Environment Size"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-    
+
         if not BaseInformationValidator().is_numeric(data[key]):
             raise texc.EmptyField(key)
 
@@ -408,20 +407,20 @@ class CheckService:
 
     def _check_model_computational_performance_one(self, data):
         key = "Computational Performance 1"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
         if not BaseInformationValidator().is_numeric(data[key]):
             raise texc.EmptyField(key)
 
     def _check_model_computational_performance_two(self, data):
         key = "Computational Performance 2"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -434,7 +433,7 @@ class CheckService:
 
     def _check_model_computational_performance_three(self, data):
         key = "Computational Performance 3"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -444,23 +443,23 @@ class CheckService:
 
         if not BaseInformationValidator().is_numeric(data[key]):
             raise texc.EmptyField(key)
-        
+
     def _check_model_computational_performance_four(self, data):
         key = "Computational Performance 4"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
                 raise texc.EmptyField(key)
         else:
             raise texc.EmptyKey(key)
-        
+
         if not BaseInformationValidator().is_numeric(data[key]):
             raise texc.EmptyField(key)
 
     def _check_model_computational_performance_five(self, data):
         key = "Computational Performance 5"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -470,10 +469,10 @@ class CheckService:
 
         if not BaseInformationValidator().is_numeric(data[key]):
             raise texc.EmptyField(key)
-        
+
     def _check_model_release(self, data):
         key = "Release"
-        
+
         self.logger.debug(f"Checking {key}  field..")
         if key in data:
             if not data[key]:
@@ -574,7 +573,7 @@ class CheckService:
         with open(csv_file, mode="a", newline="", encoding="utf-8") as file:
             writer = csv.DictWriter(file, fieldnames=reader[0].keys())
             writer.writerows(duplicates)
-            
+
     def check_dim(self):
         odm, odc = self.ios.get_model_dim()
         if odm == odc:
@@ -584,10 +583,10 @@ class CheckService:
                 str(STATUS_CONFIGS.PASSED),
             )
         return (
-                f"Metadata dim and run column file dim check",
-                "Dimensions are not equal",
-                str(STATUS_CONFIGS.FAILED),
-            )
+            f"Metadata dim and run column file dim check",
+            "Dimensions are not equal",
+            str(STATUS_CONFIGS.FAILED),
+        )
 
     def get_inputs(self, types):
         samples = IOService._get_input_from_example_file(self.dir)
@@ -626,17 +625,16 @@ class CheckService:
             if " " in text[:max_length]
             else text[:max_length] + "..."
         )
-    
+
     def _input_matchs_output_order(self, input_data, output_data):
         return input_data == output_data
-    
+
     def _check_csv(self, file_path, input_type="list"):
-        
         self.logger.debug(f"Checking CSV file: {file_path} for {input_type} input")
         error_details = []
         is_online = False
         is_fixed = False
-        
+
         metadata = {}
         try:
             metadata = self.ios._read_metadata()
@@ -655,11 +653,15 @@ class CheckService:
                 reader = csv.DictReader(f)
                 rows = list(reader)
                 output_data = [row.get("input") or row.get("smiles") for row in rows]
-                is_order_matchs = self._input_matchs_output_order(self.original_data_list, output_data)
+                is_order_matchs = self._input_matchs_output_order(
+                    self.original_data_list, output_data
+                )
                 if not is_order_matchs:
                     error_details.append("Inputs and outputs order does not match!")
             if is_fixed:
-                missing_values_in_first_col = self.find_missing_first_output_col(file_path)
+                missing_values_in_first_col = self.find_missing_first_output_col(
+                    file_path
+                )
                 if not is_online:
                     if len(missing_values_in_first_col) > 0:
                         error_details.extend(missing_values_in_first_col)
@@ -671,9 +673,9 @@ class CheckService:
                 status = self._check_all_columns_not_null(file_path)
                 if status[0][-1] == str(STATUS_CONFIGS.FAILED):
                     error_details.append(
-                            f"All outputs are None. Invalid output content. {status[0][1]}"
-                        )
-                    
+                        f"All outputs are None. Invalid output content. {status[0][1]}"
+                    )
+
             if error_details:
                 return (
                     f"{input_type.upper()}-CSV",
@@ -817,7 +819,6 @@ class CheckService:
                 )
 
         def check_h5():
-            
             self.logger.debug(f"Checking HDF5 file: {file_path}")
             error_details = []
             metadata = {}
@@ -841,7 +842,7 @@ class CheckService:
                     f"Test not applicable for online models with fixed output consistency",
                     str(STATUS_CONFIGS.WARNING),
                 )
-            
+
             try:
                 loader = Hdf5DataLoader()
                 loader.load(file_path)
@@ -859,12 +860,14 @@ class CheckService:
                     ),
                     None,
                 )
-                
+
                 output_data = (
                     [s for s in loader.inputs] if loader.inputs is not None else []
                 )
-                is_order_matchs = self._input_matchs_output_order(self.original_data_list, output_data)
-                
+                is_order_matchs = self._input_matchs_output_order(
+                    self.original_data_list, output_data
+                )
+
                 if not is_order_matchs:
                     error_details.append("Order Mis match happens")
 
@@ -872,20 +875,20 @@ class CheckService:
                     error_details.append("Empty content")
 
                 content_array = np.array(content)
-                    
 
                 if np.issubdtype(content_array.dtype, np.floating):
                     invalid_mask = np.isnan(content_array)
                 elif np.issubdtype(content_array.dtype, np.integer):
                     invalid_mask = np.full(content_array.shape, False)
-                elif content_array.dtype.kind in ['S', 'U']:
-                    invalid_mask = (content_array == '')
-                elif content_array.dtype.kind == 'O':
+                elif content_array.dtype.kind in ["S", "U"]:
+                    invalid_mask = content_array == ""
+                elif content_array.dtype.kind == "O":
+
                     def is_empty(x):
                         if isinstance(x, bytes):
-                            return x == b''
+                            return x == b""
                         elif isinstance(x, str):
-                            return x == ''
+                            return x == ""
                         else:
                             return False
 
@@ -896,7 +899,9 @@ class CheckService:
 
                 if invalid_mask.any():
                     invalid_indices = np.argwhere(invalid_mask)
-                    error = "H5 content invalid value at index: " + ", ".join(str(index) for index in invalid_indices)
+                    error = "H5 content invalid value at index: " + ", ".join(
+                        str(index) for index in invalid_indices
+                    )
                     error = self.trim_string(error)
                     self.logger.error(error)
                     error_details.append(error)
@@ -942,8 +947,8 @@ class CheckService:
 
     def _read_column_header(self, reader):
         return [row[0] for row in reader if row][1:]
-    
-    def _find_csv_mismatches(self, csv_out_one, csv_out_two):        
+
+    def _find_csv_mismatches(self, csv_out_one, csv_out_two):
         is_online = False
         metadata = {}
         try:
@@ -958,7 +963,9 @@ class CheckService:
         with open(csv_out_one) as f:
             reader = csv.reader(f)
             header = next(reader)
-            idxs = [i for i, col in enumerate(header) if col != "input" and col != "key"]
+            idxs = [
+                i for i, col in enumerate(header) if col != "input" and col != "key"
+            ]
             rows1 = []
             for r in reader:
                 if len(r) != len(header):
@@ -967,11 +974,19 @@ class CheckService:
         with open(csv_out_two) as f:
             reader = csv.reader(f)
             header = next(reader)
-            idxs = [i for i, col in enumerate(header) if col != "input" and col != "key"]
+            idxs = [
+                i for i, col in enumerate(header) if col != "input" and col != "key"
+            ]
             rows2 = []
             for r in reader:
                 if len(r) != len(header):
-                    return [(Checks.COLUMN_MISMATCH, "There was a row with less columns than expected", str(STATUS_CONFIGS.FAILED))]
+                    return [
+                        (
+                            Checks.COLUMN_MISMATCH,
+                            "There was a row with less columns than expected",
+                            str(STATUS_CONFIGS.FAILED),
+                        )
+                    ]
                 rows2.append([r[i] for i in idxs])
         mismatches = []
         max_rows = max(len(rows1), len(rows2))
@@ -1006,7 +1021,7 @@ class CheckService:
                     if math.isnan(f1) and math.isnan(f2):
                         continue
 
-                    if abs(f1-f2)>0.1:
+                    if abs(f1 - f2) > 0.1:
                         mismatches.append((i, j, v1, v2))
 
                 except (ValueError, TypeError):
@@ -1016,24 +1031,32 @@ class CheckService:
         half_cut = len(rows1[0]) // 2
         if mismatches:
             if len(mismatches) >= half_cut:
-                return [(Checks.COLUMN_MISMATCH, f"Column mismatches found (and more): {mismatches[:3]}", str(STATUS_CONFIGS.FAILED))]
-        return [(Checks.COLUMN_MISMATCH, "No column mismatches", str(STATUS_CONFIGS.PASSED))]
-    
+                return [
+                    (
+                        Checks.COLUMN_MISMATCH,
+                        f"Column mismatches found (and more): {mismatches[:3]}",
+                        str(STATUS_CONFIGS.FAILED),
+                    )
+                ]
+        return [
+            (Checks.COLUMN_MISMATCH, "No column mismatches", str(STATUS_CONFIGS.PASSED))
+        ]
+
     def find_missing_first_output_col(self, path):
         missing = []
-        with open(path, newline='') as f:
+        with open(path, newline="") as f:
             reader = csv.reader(f)
             for i, row in enumerate(reader):
-                val = row[2] 
+                val = row[2]
                 if self._is_invalid_value(val):
                     missing.append((i, 3))
         return missing
-    
+
     def _check_all_columns_not_null(self, path):
         col_index = 2
         missing_rows = []
         total_rows = 0
-        with open(path, newline='', encoding='utf-8') as f:
+        with open(path, newline="", encoding="utf-8") as f:
             reader = csv.reader(f)
             next(reader)
             missing_cols = []
@@ -1041,32 +1064,63 @@ class CheckService:
                 total_rows += 1
                 vals = row[col_index:]
                 num_missing = 0
-                for val in vals:                
+                for val in vals:
                     if self._is_invalid_value(val):
                         num_missing += 1
                 missing_cols += [num_missing]
             total_cols = len(row) - 2
 
-        fully_empty_rows = [i for i, val in enumerate(missing_cols) if val == total_cols]
+        fully_empty_rows = [
+            i for i, val in enumerate(missing_cols) if val == total_cols
+        ]
 
-        partially_empty_rows = [i for i, val in enumerate(missing_cols) if val > 0 and val < total_cols]
+        partially_empty_rows = [
+            i for i, val in enumerate(missing_cols) if val > 0 and val < total_cols
+        ]
 
         if len(fully_empty_rows) == total_rows:
-            return [(Checks.EMPTY_COLUMNS, "All columns values are nulls", str(STATUS_CONFIGS.FAILED))]
-        
+            return [
+                (
+                    Checks.EMPTY_COLUMNS,
+                    "All columns values are nulls",
+                    str(STATUS_CONFIGS.FAILED),
+                )
+            ]
+
         if len(fully_empty_rows) > 0:
             missing_rows += fully_empty_rows
-            return [(Checks.EMPTY_COLUMNS, f"All columns values are nulls at these row indices: {missing_rows}", str(STATUS_CONFIGS.WARNING))]
+            return [
+                (
+                    Checks.EMPTY_COLUMNS,
+                    f"All columns values are nulls at these row indices: {missing_rows}",
+                    str(STATUS_CONFIGS.WARNING),
+                )
+            ]
 
         if len(partially_empty_rows) > 0:
             missing_rows += partially_empty_rows
-            return [(Checks.EMPTY_COLUMNS, f"Some columns values are nulls at these row indices: {missing_rows}", str(STATUS_CONFIGS.WARNING))]
-                
-        return [(Checks.EMPTY_COLUMNS, "All columns values are not nulls", str(STATUS_CONFIGS.PASSED))]
-            
+            return [
+                (
+                    Checks.EMPTY_COLUMNS,
+                    f"Some columns values are nulls at these row indices: {missing_rows}",
+                    str(STATUS_CONFIGS.WARNING),
+                )
+            ]
+
+        return [
+            (
+                Checks.EMPTY_COLUMNS,
+                "All columns values are not nulls",
+                str(STATUS_CONFIGS.PASSED),
+            )
+        ]
+
     def compare_csv_columns(self, column_csv, csv_file):
         try:
-            with open(column_csv, "r", newline="") as f1, open(csv_file, "r", newline="") as f2: # ruff: noqa: E501
+            with (
+                open(column_csv, "r", newline="") as f1,
+                open(csv_file, "r", newline="") as f2,
+            ):  # ruff: noqa: E501
                 reader1 = csv.reader(f1)
                 reader2 = csv.reader(f2)
 
@@ -1108,7 +1162,7 @@ class CheckService:
                     str(STATUS_CONFIGS.FAILED),
                 )
             ]
-        
+
     def _results_are_valid(self, results):
         if not results:
             return False
@@ -1120,7 +1174,6 @@ class CheckService:
                 for item in results
             )
         return False
-
 
     def check_simple_model_async_output(self, serve_model):
         input_path = IOService._get_input_file_path(self.dir)
@@ -1185,7 +1238,104 @@ class CheckService:
         _completed_status.extend(res_two)
         return _completed_status
 
-    
+    def check_robustness(self, run_example, run_model):
+        """
+        Robustness test for the Simple Run Model section.
+
+        For non-variable (Fixed) models:
+            - Generate 3 example inputs using the example command.
+            - Run the model and check that the result is not all null.
+
+        For variable models:
+            - Generate 3 example inputs, run the model, check if all null.
+            - If all null, generate 5, run again, check if all null.
+            - If all null, generate 10, run again, check if all null.
+            - If still all null after all attempts, mark as FAILED.
+
+        Parameters
+        ----------
+        run_example : callable
+            Function to generate example inputs. Signature:
+            run_example(n_samples, file_name, simple, mode) -> examples
+        run_model : callable
+            Function to run the model. Signature:
+            run_model(inputs, output, batch) -> result
+
+        Returns
+        -------
+        list of tuple
+            List of (check_name, detail, status) tuples for table rendering.
+        """
+        output_consistency = self._get_output_consistency()
+        is_variable = output_consistency != "Fixed"
+        input_path = Options.ROBUSTNESS_INPUT_CSV.value
+        output_path = Options.ROBUSTNESS_OUTPUT_CSV.value
+
+        if not is_variable:
+            sample_sizes = [3]
+        else:
+            sample_sizes = [3, 5, 10]
+
+        for n_samples in sample_sizes:
+            self.logger.info(
+                f"Robustness test: generating {n_samples} example inputs "
+                f"(output_consistency={output_consistency})"
+            )
+            try:
+                run_example(
+                    n_samples=n_samples,
+                    file_name=input_path,
+                    simple=True,
+                    mode="random",
+                )
+                run_model(inputs=input_path, output=output_path, batch=100)
+            except Exception as e:
+                self.logger.error(f"Exception: {e}")
+                
+            if not os.path.exists(output_path):
+                return [
+                    (
+                        Checks.ROBUSTNESS_TEST.value,
+                        f"Output file not generated with {n_samples} samples",
+                        str(STATUS_CONFIGS.FAILED),
+                    )
+                ]
+
+            null_check = self._check_all_columns_not_null(output_path)
+            all_null = null_check[0][-1] == str(STATUS_CONFIGS.FAILED)
+
+            if not all_null:
+                detail = (
+                    f"Passed with {n_samples} sample(s); not all output values are null"
+                )
+                return [
+                    (
+                        Checks.ROBUSTNESS_TEST.value,
+                        detail,
+                        str(STATUS_CONFIGS.PASSED),
+                    )
+                ]
+
+            self.logger.warning(
+                f"Robustness test: all null output with {n_samples} samples"
+            )
+
+        if is_variable:
+            detail = (
+                "All outputs were null across 3, 5, and 10 sample attempts "
+                "for variable output consistency model"
+            )
+        else:
+            detail = "All outputs were null with 3 samples"
+
+        return [
+            (
+                Checks.ROBUSTNESS_TEST.value,
+                detail,
+                str(STATUS_CONFIGS.FAILED),
+            )
+        ]
+
     def check_consistent_output(self, run_example, run_model):
         """
         Check if the model produces consistent output.
@@ -1211,31 +1361,46 @@ class CheckService:
             if isinstance(output1, (float, int)):
                 rmse = compute_rmse([output1], [output2])
                 if rmse > 0.1:
-                    echo_exceptions(f"Model output is inconsistent. The RMSE between two consequetive outputs found to be > 10%:[{rmse*100}]", ClickInterface())
+                    echo_exceptions(
+                        f"Model output is inconsistent. The RMSE between two consequetive outputs found to be > 10%:[{rmse * 100}]",
+                        ClickInterface(),
+                    )
                     raise ValueError
 
                 rho, _ = spearmanr([output1], [output2])
                 if rho < 0.5:
-                    echo_exceptions(f"Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be < 50%", ClickInterface())
+                    echo_exceptions(
+                        f"Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be < 50%",
+                        ClickInterface(),
+                    )
                     raise ValueError
 
             elif isinstance(output1, list):
                 rmse = compute_rmse(output1, output2)
                 if rmse > 0.1:
-                    echo_exceptions(f"Model output is inconsistent. The RMSE between two consecutive outputs found to be > 10%:[{rmse*100}]", ClickInterface())
+                    echo_exceptions(
+                        f"Model output is inconsistent. The RMSE between two consecutive outputs found to be > 10%:[{rmse * 100}]",
+                        ClickInterface(),
+                    )
                     raise ValueError
-                
+
                 rho, _ = spearmanr(output1, output2)
 
                 if rho < 0.5:
-                    echo_exceptions(f"Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be < 50%", ClickInterface())
+                    echo_exceptions(
+                        f"Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be < 50%",
+                        ClickInterface(),
+                    )
                     raise ValueError
-                
+
             elif isinstance(output1, str):
                 if _compare_output_strings(output1, output2) <= 95:
-                    echo_exceptions(f"Model output is inconsistent. The Fuzz ratio correlation between two consecutive outputs found to be <= 95%", ClickInterface())
+                    echo_exceptions(
+                        f"Model output is inconsistent. The Fuzz ratio correlation between two consecutive outputs found to be <= 95%",
+                        ClickInterface(),
+                    )
                     raise ValueError
-                
+
         def read_csv(file_path):
             absolute_path = os.path.abspath(file_path)
             if not os.path.exists(absolute_path):
