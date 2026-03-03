@@ -1,6 +1,7 @@
 import random
 import time
 import os
+import sys
 import traceback
 from unittest.mock import AsyncMock, patch
 
@@ -179,6 +180,24 @@ def test_standard_api_csv(
             input_dir_listing = sorted(os.listdir(input_dir))
         except OSError:
             input_dir_listing = ["<unreadable>"]
+    if result.exit_code != 0:
+        print(
+            "CLI DEBUG ",
+            {
+                "exit_code": result.exit_code,
+                "exception": repr(result.exception),
+                "cwd": os.getcwd(),
+                "input": input_arg,
+                "output": output_arg,
+                "input_exists": input_exists,
+                "output_exists": output_exists,
+                "input_dir": input_dir,
+                "input_dir_listing": input_dir_listing,
+            },
+            file=sys.stderr,
+        )
+        if result.exc_info:
+            traceback.print_exception(*result.exc_info, file=sys.stderr)
     assert result.exit_code == 0, (
         "CLI run failed. "
         f"exit_code={result.exit_code}, "
