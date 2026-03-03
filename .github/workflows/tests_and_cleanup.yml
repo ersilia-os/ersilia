@@ -49,7 +49,7 @@ jobs:
       - name: Run pytest
         run: |     
           pip install pytest pytest-benchmark pytest-asyncio rdkit-pypi nox rich fuzzywuzzy scipy pyairtable
-          pytest
+          pytest -vv -s
 
   run-default-cli-test:
     needs: run-pytest

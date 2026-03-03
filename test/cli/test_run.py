@@ -1,5 +1,6 @@
 import random
 import time
+import traceback
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -165,11 +166,15 @@ def test_standard_api_csv(
     output_arg = input_arg.replace(INPUT_CSV, RESULT_CSV)
     result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", output_arg])
 
+    traceback_text = ""
+    if result.exc_info:
+        traceback_text = "".join(traceback.format_exception(*result.exc_info))
     assert result.exit_code == 0, (
         "CLI run failed. "
         f"exit_code={result.exit_code}, "
         f"exception={result.exception!r}, "
-        f"output={result.output!r}"
+        f"output={result.output!r}, "
+        f"traceback={traceback_text!r}"
     )
     assert mock_get_input.called
     assert mock_get_url.called
