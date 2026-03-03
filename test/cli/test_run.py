@@ -1,5 +1,6 @@
 import random
 import time
+import os
 import traceback
 from unittest.mock import AsyncMock, patch
 
@@ -169,12 +170,26 @@ def test_standard_api_csv(
     traceback_text = ""
     if result.exc_info:
         traceback_text = "".join(traceback.format_exception(*result.exc_info))
+    input_exists = os.path.exists(input_arg)
+    output_exists = os.path.exists(output_arg)
+    input_dir = os.path.dirname(input_arg)
+    input_dir_listing = []
+    if input_dir and os.path.isdir(input_dir):
+        try:
+            input_dir_listing = sorted(os.listdir(input_dir))
+        except OSError:
+            input_dir_listing = ["<unreadable>"]
     assert result.exit_code == 0, (
         "CLI run failed. "
         f"exit_code={result.exit_code}, "
         f"exception={result.exception!r}, "
         f"output={result.output!r}, "
-        f"traceback={traceback_text!r}"
+        f"traceback={traceback_text!r}, "
+        f"cwd={os.getcwd()!r}, "
+        f"input_exists={input_exists}, "
+        f"output_exists={output_exists}, "
+        f"input_dir={input_dir!r}, "
+        f"input_dir_listing={input_dir_listing!r}"
     )
     assert mock_get_input.called
     assert mock_get_url.called
