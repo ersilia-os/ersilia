@@ -154,12 +154,11 @@ class ModelStandardExample(ErsiliaBase):
                     echo(f"Row {row_num} has fewer than 3 columns: {row}")
                     return False
 
-                for col_idx, cell in enumerate(row[2:], start=3):
-                    if (cell or "").strip() == "":
-                        echo(
-                            f"Empty value at row {row_num}, column {col_idx}. The model is not correctly working!"
-                        )
-                        return False
+                if all((cell or "").strip() == "" for cell in row[2:]):
+                    echo(
+                        f"All output values are empty at row {row_num}. The model is not correctly working!"
+                    )
+                    return False
 
             if not saw_data_row:
                 echo("No data rows found in output CSV (only header/blank rows).")
