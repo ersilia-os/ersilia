@@ -8,6 +8,7 @@ from click.testing import CliRunner
 from ersilia.cli.commands.run import run_cmd
 from ersilia.core.model import ErsiliaModel
 from ersilia.core.session import Session
+from ersilia.hub.content.columns_information import ColumnsInformation
 from ersilia.serve.standard_api import StandardCSVRunApi
 from ersilia.utils.logging import logger
 
@@ -75,6 +76,16 @@ def mock_std_header():
 
 
 @pytest.fixture
+def mock_columns_info():
+    with patch.object(
+        ColumnsInformation,
+        "load",
+        return_value={"name": HEADER, "type": ["string", "string", "float"]},
+    ) as mock_columns:
+        yield mock_columns
+
+
+@pytest.fixture
 def mock_is_amenable():
     with patch.object(
         StandardCSVRunApi, "is_amenable", return_value=True
@@ -83,9 +94,10 @@ def mock_is_amenable():
 
 
 @pytest.fixture
-def compound_csv():
-    create_compound_input_csv(INPUT_CSV)
-    yield INPUT_CSV
+def compound_csv(tmp_path):
+    input_path = tmp_path / INPUT_CSV
+    create_compound_input_csv(str(input_path))
+    yield str(input_path)
 
 
 @pytest.fixture
@@ -112,6 +124,7 @@ def mock_session(compound_csv):
         patch.object(Session, "current_output_source", return_value="LOCAL_ONLY"),
     ):
         yield
+
 
 @pytest.fixture
 def mock_api_task():
@@ -140,14 +153,16 @@ def test_standard_api_csv(
     mock_set_apis,
     mock_get_input,
     mock_std_header,
+    mock_columns_info,
     mock_is_amenable,
     mock_get_url,
     mock_session,
+    compound_csv,
 ):
     # TODO @abellegese: resolve this
     runner = CliRunner()
-    input_arg = INPUT_CSV
-    output_arg = RESULT_CSV
+    input_arg = compound_csv
+    output_arg = input_arg.replace(INPUT_CSV, RESULT_CSV)
     result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", output_arg])
 
     assert result.exit_code == 0
