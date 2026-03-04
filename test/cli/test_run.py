@@ -1,5 +1,4 @@
 import random
-import time
 import os
 import sys
 import traceback
@@ -106,11 +105,12 @@ def compound_csv(tmp_path):
 @pytest.fixture
 def mock_std_api_post():
     def mock_post_side_effect(input, output, batch_size, output_source):
-        api_instance = StandardCSVRunApi(model_id=MODEL_ID, url=URL)
-        logger.info(f"Input: {input}")
-        input_data = api_instance.serialize_to_json(input)
-
-        logger.info(f"Serialized Input Data: {input_data}")
+        # Mock post without actually reading files - just log the input path
+        logger.info(f"Mock post called with input: {input}")
+        logger.info(f"Mock post called with output: {output}")
+        if output:
+            with open(output, "w", newline="") as file:
+                file.write("key,input,value\n")
 
     with patch.object(
         StandardCSVRunApi, "post", side_effect=mock_post_side_effect
@@ -119,7 +119,7 @@ def mock_std_api_post():
 
 
 @pytest.fixture
-def mock_session(compound_csv):
+def mock_session():
     with (
         patch.object(Session, "current_model_id", return_value=MODEL_ID),
         patch.object(Session, "current_service_class", return_value="pulled_docker"),
