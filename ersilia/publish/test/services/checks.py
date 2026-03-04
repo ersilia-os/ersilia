@@ -1,4 +1,5 @@
 import csv
+from contextlib import ExitStack
 import json
 import math
 import numpy as np
@@ -1117,10 +1118,9 @@ class CheckService:
 
     def compare_csv_columns(self, column_csv, csv_file):
         try:
-            with (
-                open(column_csv, "r", newline="") as f1,
-                open(csv_file, "r", newline="") as f2,
-            ):  # ruff: noqa: E501
+            with ExitStack() as stack:
+                f1 = stack.enter_context(open(column_csv, "r", newline=""))
+                f2 = stack.enter_context(open(csv_file, "r", newline=""))
                 reader1 = csv.reader(f1)
                 reader2 = csv.reader(f2)
 
@@ -1291,7 +1291,7 @@ class CheckService:
                 run_model(inputs=input_path, output=output_path, batch=100)
             except Exception as e:
                 self.logger.error(f"Exception: {e}")
-                
+
             if not os.path.exists(output_path):
                 return [
                     (
