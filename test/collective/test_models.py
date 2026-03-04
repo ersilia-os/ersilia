@@ -25,7 +25,7 @@ def mock_fetcher():
 
 @pytest.fixture
 def mock_yes_no_input():
-    with patch("ersilia.utils.terminal.yes_no_input", return_value=True) as mock_yes_no:
+    with patch("ersilia.core.model.yes_no_input", return_value=True) as mock_yes_no:
         yield mock_yes_no
 
 
