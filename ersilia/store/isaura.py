@@ -35,6 +35,9 @@ class IsauraStore:
 
         session = Session(config_json=None)
         current_status = session.current_store_status()
+        if current_status is None:
+            return
+
         read_store, write_store = current_status[0], current_status[1]
         installed = self.is_installed()
         if not installed or (not read_store and not write_store):
@@ -95,13 +98,13 @@ class IsauraStore:
                 model_version=self.version,
             ).seen_many(vs)
             log.debug(
-                f"IsauraStore.check seen_many public n={len(vs)} dt={(time.perf_counter()-t):.6f}s"
+                f"IsauraStore.check seen_many public n={len(vs)} dt={(time.perf_counter() - t):.6f}s"
             )
 
             t = time.perf_counter()
             missed = [k for k, v in cks.items() if not v[0]]
             log.debug(
-                f"IsauraStore.check missed n={len(missed)} dt={(time.perf_counter()-t):.6f}s"
+                f"IsauraStore.check missed n={len(missed)} dt={(time.perf_counter() - t):.6f}s"
             )
 
             if missed:
@@ -112,22 +115,24 @@ class IsauraStore:
                     model_version=self.version,
                 ).seen_many(missed)
                 log.debug(
-                    f"IsauraStore.check seen_many private n={len(missed)} dt={(time.perf_counter()-t):.6f}s"
+                    f"IsauraStore.check seen_many private n={len(missed)} dt={(time.perf_counter() - t):.6f}s"
                 )
 
                 t = time.perf_counter()
                 cks.update(ckss)
-                log.debug(f"IsauraStore.check merge dt={(time.perf_counter()-t):.6f}s")
+                log.debug(
+                    f"IsauraStore.check merge dt={(time.perf_counter() - t):.6f}s"
+                )
 
             self.check_dict = cks
             out = {k: v[0] for k, v in cks.items()}
             log.debug(
-                f"IsauraStore.check done dt_total={(time.perf_counter()-t0):.6f}s"
+                f"IsauraStore.check done dt_total={(time.perf_counter() - t0):.6f}s"
             )
             return out
         except Exception as e:
             log.error(
-                f"IsauraStore.check failed dt_total={(time.perf_counter()-t0):.6f}s err={e}"
+                f"IsauraStore.check failed dt_total={(time.perf_counter() - t0):.6f}s err={e}"
             )
             self.check_dict = {}
             return {}

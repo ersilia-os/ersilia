@@ -24,6 +24,12 @@ def mock_fetcher():
 
 
 @pytest.fixture
+def mock_yes_no_input():
+    with patch("ersilia.core.model.yes_no_input", return_value=True) as mock_yes_no:
+        yield mock_yes_no
+
+
+@pytest.fixture
 def mock_set_apis():
     with patch.object(ErsiliaModel, "_set_apis", return_value=None) as mock_set_apis:
         yield mock_set_apis
@@ -92,6 +98,7 @@ def mock_run():
 def test_model_with_prior_fetching(
     mock_ersilia_model,
     mock_fetcher,
+    mock_yes_no_input,
     mock_session,
     mock_set_apis,
     mock_convn_api_get_apis,
@@ -132,6 +139,7 @@ def test_model_with_prior_fetching(
 def test_model_with_no_prior_fetching(
     mock_ersilia_model,
     mock_fetcher,
+    mock_yes_no_input,
     mock_session,
     mock_set_apis,
     mock_convn_api_get_apis,

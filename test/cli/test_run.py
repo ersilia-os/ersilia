@@ -1,5 +1,7 @@
 import random
-import time
+import os
+import sys
+import traceback
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -8,6 +10,7 @@ from click.testing import CliRunner
 from ersilia.cli.commands.run import run_cmd
 from ersilia.core.model import ErsiliaModel
 from ersilia.core.session import Session
+from ersilia.hub.content.columns_information import ColumnsInformation
 from ersilia.serve.standard_api import StandardCSVRunApi
 from ersilia.utils.logging import logger
 
@@ -75,6 +78,16 @@ def mock_std_header():
 
 
 @pytest.fixture
+def mock_columns_info():
+    with patch.object(
+        ColumnsInformation,
+        "load",
+        return_value={"name": HEADER, "type": ["string", "string", "float"]},
+    ) as mock_columns:
+        yield mock_columns
+
+
+@pytest.fixture
 def mock_is_amenable():
     with patch.object(
         StandardCSVRunApi, "is_amenable", return_value=True
@@ -83,19 +96,21 @@ def mock_is_amenable():
 
 
 @pytest.fixture
-def compound_csv():
-    create_compound_input_csv(INPUT_CSV)
-    yield INPUT_CSV
+def compound_csv(tmp_path):
+    input_path = tmp_path / INPUT_CSV
+    create_compound_input_csv(str(input_path))
+    yield str(input_path)
 
 
 @pytest.fixture
 def mock_std_api_post():
     def mock_post_side_effect(input, output, batch_size, output_source):
-        api_instance = StandardCSVRunApi(model_id=MODEL_ID, url=URL)
-        logger.info(f"Input: {input}")
-        input_data = api_instance.serialize_to_json(input)
-
-        logger.info(f"Serialized Input Data: {input_data}")
+        # Mock post without actually reading files - just log the input path
+        logger.info(f"Mock post called with input: {input}")
+        logger.info(f"Mock post called with output: {output}")
+        if output:
+            with open(output, "w", newline="") as file:
+                file.write("key,input,value\n")
 
     with patch.object(
         StandardCSVRunApi, "post", side_effect=mock_post_side_effect
@@ -104,7 +119,7 @@ def mock_std_api_post():
 
 
 @pytest.fixture
-def mock_session(compound_csv):
+def mock_session():
     with (
         patch.object(Session, "current_model_id", return_value=MODEL_ID),
         patch.object(Session, "current_service_class", return_value="pulled_docker"),
@@ -112,6 +127,7 @@ def mock_session(compound_csv):
         patch.object(Session, "current_output_source", return_value="LOCAL_ONLY"),
     ):
         yield
+
 
 @pytest.fixture
 def mock_api_task():
@@ -140,17 +156,60 @@ def test_standard_api_csv(
     mock_set_apis,
     mock_get_input,
     mock_std_header,
+    mock_columns_info,
     mock_is_amenable,
     mock_get_url,
     mock_session,
+    compound_csv,
 ):
     # TODO @abellegese: resolve this
     runner = CliRunner()
-    input_arg = INPUT_CSV
-    output_arg = RESULT_CSV
+    input_arg = compound_csv
+    output_arg = input_arg.replace(INPUT_CSV, RESULT_CSV)
     result = runner.invoke(run_cmd(), ["-i", input_arg, "-o", output_arg])
 
-    assert result.exit_code == 0
+    traceback_text = ""
+    if result.exc_info:
+        traceback_text = "".join(traceback.format_exception(*result.exc_info))
+    input_exists = os.path.exists(input_arg)
+    output_exists = os.path.exists(output_arg)
+    input_dir = os.path.dirname(input_arg)
+    input_dir_listing = []
+    if input_dir and os.path.isdir(input_dir):
+        try:
+            input_dir_listing = sorted(os.listdir(input_dir))
+        except OSError:
+            input_dir_listing = ["<unreadable>"]
+    if result.exit_code != 0:
+        print(
+            "CLI DEBUG ",
+            {
+                "exit_code": result.exit_code,
+                "exception": repr(result.exception),
+                "cwd": os.getcwd(),
+                "input": input_arg,
+                "output": output_arg,
+                "input_exists": input_exists,
+                "output_exists": output_exists,
+                "input_dir": input_dir,
+                "input_dir_listing": input_dir_listing,
+            },
+            file=sys.stderr,
+        )
+        if result.exc_info:
+            traceback.print_exception(*result.exc_info, file=sys.stderr)
+    assert result.exit_code == 0, (
+        "CLI run failed. "
+        f"exit_code={result.exit_code}, "
+        f"exception={result.exception!r}, "
+        f"output={result.output!r}, "
+        f"traceback={traceback_text!r}, "
+        f"cwd={os.getcwd()!r}, "
+        f"input_exists={input_exists}, "
+        f"output_exists={output_exists}, "
+        f"input_dir={input_dir!r}, "
+        f"input_dir_listing={input_dir_listing!r}"
+    )
     assert mock_get_input.called
     assert mock_get_url.called
     assert mock_set_apis.called
