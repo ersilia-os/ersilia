@@ -305,6 +305,7 @@
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.publish.test.services.checks</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExitStack</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -327,7 +328,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.hdf5</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo_exceptions</span><span class="p">,</span> <span class="n">ClickInterface</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....hub.content.base_information_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseInformationValidator</span>
-
 
 
 <div class="viewcode-block" id="CheckService">
@@ -391,7 +391,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">output_consistency</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">get_output_consistency</span><span class="p">()</span>
+            <span class="n">output_consistency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">get_output_consistency</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">output_consistency</span> <span class="o">=</span> <span class="s2">&quot;Fixed&quot;</span>
         <span class="k">return</span> <span class="n">output_consistency</span>
@@ -421,7 +421,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking model slug...&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;slug&quot;</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_slug</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;slug&quot;</span><span class="p">)</span>
 
@@ -430,7 +430,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_description</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Description&quot;</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Description&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">)</span>
 
@@ -439,7 +439,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_tag</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Tag&quot;</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;Tag&quot;</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Tag&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;Tag&quot;</span><span class="p">)</span>
 
@@ -448,7 +448,7 @@
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Source Code&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_source_code</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -457,7 +457,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_title</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;Title&quot;</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;Title&quot;</span><span class="p">)</span>
 
@@ -467,7 +467,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_status</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Status&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">)</span>
 
@@ -479,7 +479,7 @@
                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_contributor</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -488,7 +488,7 @@
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Interpretation&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-    
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_interpretation</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -503,7 +503,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_dockerhub</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_s3_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;S3&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> URL field..&quot;</span><span class="p">)</span>
@@ -512,7 +512,7 @@
                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_s3</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -524,7 +524,7 @@
                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_docker_architecture</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -582,7 +582,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_source</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -591,17 +591,17 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_source_type</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_sub_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Subtask&quot;</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_subtask</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -611,7 +611,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_input_dimension</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -621,7 +621,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_target_organism</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -631,7 +631,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_biomedical_area</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -642,7 +642,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_output_dimension</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -651,14 +651,14 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_output_consistency</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_contribution_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Incorporation Date&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
@@ -671,7 +671,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_image_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Image Size&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
@@ -684,14 +684,14 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_env_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Environment Size&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-    
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">is_numeric</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
@@ -719,20 +719,20 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_computational_performance_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Computational Performance 1&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">is_numeric</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_computational_performance_two</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Computational Performance 2&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
@@ -745,7 +745,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_computational_performance_three</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Computational Performance 3&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
@@ -755,23 +755,23 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">is_numeric</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_computational_performance_four</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Computational Performance 4&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">is_numeric</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_computational_performance_five</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Computational Performance 5&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
@@ -781,10 +781,10 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">is_numeric</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Release&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">  field..&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
@@ -888,7 +888,7 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">reader</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">duplicates</span><span class="p">)</span>
-            
+
 <div class="viewcode-block" id="CheckService.check_dim">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_dim">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -900,10 +900,10 @@
                 <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Metadata dim and run column file dim check&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Dimensions are not equal&quot;</span><span class="p">,</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
-            <span class="p">)</span></div>
+            <span class="sa">f</span><span class="s2">&quot;Metadata dim and run column file dim check&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Dimensions are not equal&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="CheckService.get_inputs">
@@ -949,17 +949,16 @@
             <span class="k">else</span> <span class="n">text</span><span class="p">[:</span><span class="n">max_length</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;...&quot;</span>
         <span class="p">)</span></div>
 
-    
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">input_data</span> <span class="o">==</span> <span class="n">output_data</span>
-    
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">):</span>
-        
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking CSV file: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">input_type</span><span class="si">}</span><span class="s2"> input&quot;</span><span class="p">)</span>
         <span class="n">error_details</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">is_online</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">is_fixed</span> <span class="o">=</span> <span class="kc">False</span>
-        
+
         <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
@@ -978,11 +977,15 @@
                 <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
                 <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
                 <span class="n">output_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;smiles&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
-                <span class="n">is_order_matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span><span class="p">,</span> <span class="n">output_data</span><span class="p">)</span>
+                <span class="n">is_order_matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_matchs_output_order</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span><span class="p">,</span> <span class="n">output_data</span>
+                <span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_order_matchs</span><span class="p">:</span>
                     <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Inputs and outputs order does not match!&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">is_fixed</span><span class="p">:</span>
-                <span class="n">missing_values_in_first_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_missing_first_output_col</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+                <span class="n">missing_values_in_first_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_missing_first_output_col</span><span class="p">(</span>
+                    <span class="n">file_path</span>
+                <span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_online</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">error_details</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">missing_values_in_first_col</span><span class="p">)</span>
@@ -994,9 +997,9 @@
                 <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_all_columns_not_null</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">status</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">):</span>
                     <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;All outputs are None. Invalid output content. </span><span class="si">{</span><span class="n">status</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="p">)</span>
-                    
+                        <span class="sa">f</span><span class="s2">&quot;All outputs are None. Invalid output content. </span><span class="si">{</span><span class="n">status</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
             <span class="k">if</span> <span class="n">error_details</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2">-CSV&quot;</span><span class="p">,</span>
@@ -1145,7 +1148,6 @@
                 <span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">check_h5</span><span class="p">():</span>
-            
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking HDF5 file: </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="n">error_details</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1169,7 +1171,7 @@
                     <span class="sa">f</span><span class="s2">&quot;Test not applicable for online models with fixed output consistency&quot;</span><span class="p">,</span>
                     <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">),</span>
                 <span class="p">)</span>
-            
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">loader</span> <span class="o">=</span> <span class="n">Hdf5DataLoader</span><span class="p">()</span>
                 <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
@@ -1187,12 +1189,14 @@
                     <span class="p">),</span>
                     <span class="kc">None</span><span class="p">,</span>
                 <span class="p">)</span>
-                
+
                 <span class="n">output_data</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">loader</span><span class="o">.</span><span class="n">inputs</span><span class="p">]</span> <span class="k">if</span> <span class="n">loader</span><span class="o">.</span><span class="n">inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[]</span>
                 <span class="p">)</span>
-                <span class="n">is_order_matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_matchs_output_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span><span class="p">,</span> <span class="n">output_data</span><span class="p">)</span>
-                
+                <span class="n">is_order_matchs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_matchs_output_order</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">original_data_list</span><span class="p">,</span> <span class="n">output_data</span>
+                <span class="p">)</span>
+
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">is_order_matchs</span><span class="p">:</span>
                     <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Order Mis match happens&quot;</span><span class="p">)</span>
 
@@ -1200,20 +1204,20 @@
                     <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Empty content&quot;</span><span class="p">)</span>
 
                 <span class="n">content_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-                    
 
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
                     <span class="n">invalid_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">content_array</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
                     <span class="n">invalid_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">content_array</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">]:</span>
-                    <span class="n">invalid_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">content_array</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;O&#39;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;S&quot;</span><span class="p">,</span> <span class="s2">&quot;U&quot;</span><span class="p">]:</span>
+                    <span class="n">invalid_mask</span> <span class="o">=</span> <span class="n">content_array</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">elif</span> <span class="n">content_array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;O&quot;</span><span class="p">:</span>
+
                     <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-                            <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+                            <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
                         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                            <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span>
+                            <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">return</span> <span class="kc">False</span>
 
@@ -1224,7 +1228,9 @@
 
                 <span class="k">if</span> <span class="n">invalid_mask</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                     <span class="n">invalid_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">invalid_mask</span><span class="p">)</span>
-                    <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;H5 content invalid value at index: &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">invalid_indices</span><span class="p">)</span>
+                    <span class="n">error</span> <span class="o">=</span> <span class="s2">&quot;H5 content invalid value at index: &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">invalid_indices</span>
+                    <span class="p">)</span>
                     <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trim_string</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
                     <span class="n">error_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
@@ -1271,8 +1277,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_column_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reader</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span> <span class="k">if</span> <span class="n">row</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
-    
-    <span class="k">def</span><span class="w"> </span><span class="nf">_find_csv_mismatches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csv_out_one</span><span class="p">,</span> <span class="n">csv_out_two</span><span class="p">):</span>        
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_csv_mismatches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">csv_out_one</span><span class="p">,</span> <span class="n">csv_out_two</span><span class="p">):</span>
         <span class="n">is_online</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1287,7 +1293,9 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_out_one</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-            <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;input&quot;</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;key&quot;</span><span class="p">]</span>
+            <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;input&quot;</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;key&quot;</span>
+            <span class="p">]</span>
             <span class="n">rows1</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
@@ -1296,11 +1304,19 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_out_two</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
-            <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;input&quot;</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;key&quot;</span><span class="p">]</span>
+            <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;input&quot;</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;key&quot;</span>
+            <span class="p">]</span>
             <span class="n">rows2</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
-                    <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span> <span class="s2">&quot;There was a row with less columns than expected&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))]</span>
+                    <span class="k">return</span> <span class="p">[</span>
+                        <span class="p">(</span>
+                            <span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span>
+                            <span class="s2">&quot;There was a row with less columns than expected&quot;</span><span class="p">,</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+                        <span class="p">)</span>
+                    <span class="p">]</span>
                 <span class="n">rows2</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">])</span>
         <span class="n">mismatches</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">max_rows</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows2</span><span class="p">))</span>
@@ -1335,7 +1351,7 @@
                     <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f2</span><span class="p">):</span>
                         <span class="k">continue</span>
 
-                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f1</span><span class="o">-</span><span class="n">f2</span><span class="p">)</span><span class="o">&gt;</span><span class="mf">0.1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f1</span> <span class="o">-</span> <span class="n">f2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
                         <span class="n">mismatches</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">))</span>
 
                 <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
@@ -1345,27 +1361,35 @@
         <span class="n">half_cut</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">//</span> <span class="mi">2</span>
         <span class="k">if</span> <span class="n">mismatches</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mismatches</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">half_cut</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Column mismatches found (and more): </span><span class="si">{</span><span class="n">mismatches</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))]</span>
-        <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span> <span class="s2">&quot;No column mismatches&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">))]</span>
-    
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="p">(</span>
+                        <span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;Column mismatches found (and more): </span><span class="si">{</span><span class="n">mismatches</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">Checks</span><span class="o">.</span><span class="n">COLUMN_MISMATCH</span><span class="p">,</span> <span class="s2">&quot;No column mismatches&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">))</span>
+        <span class="p">]</span>
+
 <div class="viewcode-block" id="CheckService.find_missing_first_output_col">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.find_missing_first_output_col">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_missing_first_output_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
-                <span class="n">val</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> 
+                <span class="n">val</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_invalid_value</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
                     <span class="n">missing</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">missing</span></div>
 
-    
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_all_columns_not_null</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">col_index</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="n">missing_rows</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">total_rows</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
             <span class="n">missing_cols</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1373,34 +1397,64 @@
                 <span class="n">total_rows</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">vals</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">col_index</span><span class="p">:]</span>
                 <span class="n">num_missing</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>                
+                <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">:</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_invalid_value</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
                         <span class="n">num_missing</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">missing_cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">num_missing</span><span class="p">]</span>
             <span class="n">total_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span>
 
-        <span class="n">fully_empty_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missing_cols</span><span class="p">)</span> <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="n">total_cols</span><span class="p">]</span>
+        <span class="n">fully_empty_rows</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missing_cols</span><span class="p">)</span> <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="n">total_cols</span>
+        <span class="p">]</span>
 
-        <span class="n">partially_empty_rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missing_cols</span><span class="p">)</span> <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">total_cols</span><span class="p">]</span>
+        <span class="n">partially_empty_rows</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">missing_cols</span><span class="p">)</span> <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">total_cols</span>
+        <span class="p">]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fully_empty_rows</span><span class="p">)</span> <span class="o">==</span> <span class="n">total_rows</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span> <span class="s2">&quot;All columns values are nulls&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">))]</span>
-        
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span>
+                    <span class="s2">&quot;All columns values are nulls&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fully_empty_rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">missing_rows</span> <span class="o">+=</span> <span class="n">fully_empty_rows</span>
-            <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;All columns values are nulls at these row indices: </span><span class="si">{</span><span class="n">missing_rows</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">))]</span>
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;All columns values are nulls at these row indices: </span><span class="si">{</span><span class="n">missing_rows</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">partially_empty_rows</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">missing_rows</span> <span class="o">+=</span> <span class="n">partially_empty_rows</span>
-            <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Some columns values are nulls at these row indices: </span><span class="si">{</span><span class="n">missing_rows</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">))]</span>
-                
-        <span class="k">return</span> <span class="p">[(</span><span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span> <span class="s2">&quot;All columns values are not nulls&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">))]</span>
-            
+            <span class="k">return</span> <span class="p">[</span>
+                <span class="p">(</span>
+                    <span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">&quot;Some columns values are nulls at these row indices: </span><span class="si">{</span><span class="n">missing_rows</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="n">Checks</span><span class="o">.</span><span class="n">EMPTY_COLUMNS</span><span class="p">,</span>
+                <span class="s2">&quot;All columns values are not nulls&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
 <div class="viewcode-block" id="CheckService.compare_csv_columns">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.compare_csv_columns">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compare_csv_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_csv</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">column_csv</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f1</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f2</span><span class="p">:</span> <span class="c1"># ruff: noqa: E501</span>
+            <span class="k">with</span> <span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">stack</span><span class="p">:</span>
+                <span class="n">f1</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">column_csv</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
+                <span class="n">f2</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">csv_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">))</span>
                 <span class="n">reader1</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f1</span><span class="p">)</span>
                 <span class="n">reader2</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f2</span><span class="p">)</span>
 
@@ -1443,7 +1497,7 @@
                 <span class="p">)</span>
             <span class="p">]</span></div>
 
-        
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_results_are_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -1455,7 +1509,6 @@
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
-
 
 <div class="viewcode-block" id="CheckService.check_simple_model_async_output">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_simple_model_async_output">[docs]</a>
@@ -1526,7 +1579,107 @@
         <span class="k">return</span> <span class="n">_completed_status</span></div>
 
 
-    
+<div class="viewcode-block" id="CheckService.check_robustness">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_robustness">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_robustness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_example</span><span class="p">,</span> <span class="n">run_model</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Robustness test for the Simple Run Model section.</span>
+
+<span class="sd">        For non-variable (Fixed) models:</span>
+<span class="sd">            - Generate 3 example inputs using the example command.</span>
+<span class="sd">            - Run the model and check that the result is not all null.</span>
+
+<span class="sd">        For variable models:</span>
+<span class="sd">            - Generate 3 example inputs, run the model, check if all null.</span>
+<span class="sd">            - If all null, generate 5, run again, check if all null.</span>
+<span class="sd">            - If all null, generate 10, run again, check if all null.</span>
+<span class="sd">            - If still all null after all attempts, mark as FAILED.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_example : callable</span>
+<span class="sd">            Function to generate example inputs. Signature:</span>
+<span class="sd">            run_example(n_samples, file_name, simple, mode) -&gt; examples</span>
+<span class="sd">        run_model : callable</span>
+<span class="sd">            Function to run the model. Signature:</span>
+<span class="sd">            run_model(inputs, output, batch) -&gt; result</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of tuple</span>
+<span class="sd">            List of (check_name, detail, status) tuples for table rendering.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output_consistency</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_consistency</span><span class="p">()</span>
+        <span class="n">is_variable</span> <span class="o">=</span> <span class="n">output_consistency</span> <span class="o">!=</span> <span class="s2">&quot;Fixed&quot;</span>
+        <span class="n">input_path</span> <span class="o">=</span> <span class="n">Options</span><span class="o">.</span><span class="n">ROBUSTNESS_INPUT_CSV</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">Options</span><span class="o">.</span><span class="n">ROBUSTNESS_OUTPUT_CSV</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_variable</span><span class="p">:</span>
+            <span class="n">sample_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sample_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">n_samples</span> <span class="ow">in</span> <span class="n">sample_sizes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Robustness test: generating </span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> example inputs &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(output_consistency=</span><span class="si">{</span><span class="n">output_consistency</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">run_example</span><span class="p">(</span>
+                    <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
+                    <span class="n">file_name</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span>
+                    <span class="n">simple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">run_model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_path</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="p">(</span>
+                        <span class="n">Checks</span><span class="o">.</span><span class="n">ROBUSTNESS_TEST</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">&quot;Output file not generated with </span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> samples&quot;</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+
+            <span class="n">null_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_all_columns_not_null</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+            <span class="n">all_null</span> <span class="o">=</span> <span class="n">null_check</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">all_null</span><span class="p">:</span>
+                <span class="n">detail</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Passed with </span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> sample(s); not all output values are null&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="p">[</span>
+                    <span class="p">(</span>
+                        <span class="n">Checks</span><span class="o">.</span><span class="n">ROBUSTNESS_TEST</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="n">detail</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Robustness test: all null output with </span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> samples&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_variable</span><span class="p">:</span>
+            <span class="n">detail</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;All outputs were null across 3, 5, and 10 sample attempts &quot;</span>
+                <span class="s2">&quot;for variable output consistency model&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">detail</span> <span class="o">=</span> <span class="s2">&quot;All outputs were null with 3 samples&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="n">Checks</span><span class="o">.</span><span class="n">ROBUSTNESS_TEST</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">detail</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">]</span></div>
+
+
 <div class="viewcode-block" id="CheckService.check_consistent_output">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_consistent_output">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check_consistent_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_example</span><span class="p">,</span> <span class="n">run_model</span><span class="p">):</span>
@@ -1554,31 +1707,46 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
                 <span class="n">rmse</span> <span class="o">=</span> <span class="n">compute_rmse</span><span class="p">([</span><span class="n">output1</span><span class="p">],</span> <span class="p">[</span><span class="n">output2</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">rmse</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The RMSE between two consequetive outputs found to be &gt; 10%:[</span><span class="si">{</span><span class="n">rmse</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The RMSE between two consequetive outputs found to be &gt; 10%:[</span><span class="si">{</span><span class="n">rmse</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                        <span class="n">ClickInterface</span><span class="p">(),</span>
+                    <span class="p">)</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
 
                 <span class="n">rho</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">([</span><span class="n">output1</span><span class="p">],</span> <span class="p">[</span><span class="n">output2</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be &lt; 50%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be &lt; 50%&quot;</span><span class="p">,</span>
+                        <span class="n">ClickInterface</span><span class="p">(),</span>
+                    <span class="p">)</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
 
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
                 <span class="n">rmse</span> <span class="o">=</span> <span class="n">compute_rmse</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">rmse</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The RMSE between two consecutive outputs found to be &gt; 10%:[</span><span class="si">{</span><span class="n">rmse</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The RMSE between two consecutive outputs found to be &gt; 10%:[</span><span class="si">{</span><span class="n">rmse</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span>
+                        <span class="n">ClickInterface</span><span class="p">(),</span>
+                    <span class="p">)</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
-                
+
                 <span class="n">rho</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">spearmanr</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">rho</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be &lt; 50%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Spearman correlation between two consecutive outputs found to be &lt; 50%&quot;</span><span class="p">,</span>
+                        <span class="n">ClickInterface</span><span class="p">(),</span>
+                    <span class="p">)</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
-                
+
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">_compare_output_strings</span><span class="p">(</span><span class="n">output1</span><span class="p">,</span> <span class="n">output2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">95</span><span class="p">:</span>
-                    <span class="n">echo_exceptions</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Fuzz ratio correlation between two consecutive outputs found to be &lt;= 95%&quot;</span><span class="p">,</span> <span class="n">ClickInterface</span><span class="p">())</span>
+                    <span class="n">echo_exceptions</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Model output is inconsistent. The Fuzz ratio correlation between two consecutive outputs found to be &lt;= 95%&quot;</span><span class="p">,</span>
+                        <span class="n">ClickInterface</span><span class="p">(),</span>
+                    <span class="p">)</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span>
-                
+
         <span class="k">def</span><span class="w"> </span><span class="nf">read_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
             <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">):</span>

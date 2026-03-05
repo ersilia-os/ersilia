@@ -388,6 +388,42 @@
 <dd></dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_robustness">
+<span class="sig-name descname"><span class="pre">check_robustness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_example</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_robustness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_robustness" title="Link to this definition">¶</a></dt>
+<dd><p>Robustness test for the Simple Run Model section.</p>
+<dl class="simple">
+<dt>For non-variable (Fixed) models:</dt><dd><ul class="simple">
+<li><p>Generate 3 example inputs using the example command.</p></li>
+<li><p>Run the model and check that the result is not all null.</p></li>
+</ul>
+</dd>
+<dt>For variable models:</dt><dd><ul class="simple">
+<li><p>Generate 3 example inputs, run the model, check if all null.</p></li>
+<li><p>If all null, generate 5, run again, check if all null.</p></li>
+<li><p>If all null, generate 10, run again, check if all null.</p></li>
+<li><p>If still all null after all attempts, mark as FAILED.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_example</strong> (<em>callable</em>) – Function to generate example inputs. Signature:
+run_example(n_samples, file_name, simple, mode) -&gt; examples</p></li>
+<li><p><strong>run_model</strong> (<em>callable</em>) – Function to run the model. Signature:
+run_model(inputs, output, batch) -&gt; result</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of (check_name, detail, status) tuples for table rendering.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.checks.CheckService.check_simple_model_async_output">
 <span class="sig-name descname"><span class="pre">check_simple_model_async_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serve_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/publish/test/services/checks.html#CheckService.check_simple_model_async_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.publish.test.services.checks.CheckService.check_simple_model_async_output" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -509,6 +545,11 @@
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Checks.ROBUSTNESS_TEST">
+<span class="sig-name descname"><span class="pre">ROBUSTNESS_TEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Robustness</span> <span class="pre">Test'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Checks.ROBUSTNESS_TEST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Checks.RUN_BASH">
 <span class="sig-name descname"><span class="pre">RUN_BASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'RMSE-MEAN'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Checks.RUN_BASH" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -618,6 +659,16 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Options.OUTPUT_FILES_TEST">
 <span class="sig-name descname"><span class="pre">OUTPUT_FILES_TEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['/root/eos/temp/files/file.csv']</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Options.OUTPUT_FILES_TEST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Options.ROBUSTNESS_INPUT_CSV">
+<span class="sig-name descname"><span class="pre">ROBUSTNESS_INPUT_CSV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/root/eos/temp/files/robustness_input.csv'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Options.ROBUSTNESS_INPUT_CSV" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.constants.Options.ROBUSTNESS_OUTPUT_CSV">
+<span class="sig-name descname"><span class="pre">ROBUSTNESS_OUTPUT_CSV</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/root/eos/temp/files/robustness_output.csv'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.Options.ROBUSTNESS_OUTPUT_CSV" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -754,6 +805,11 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ersilia.publish.test.services.constants.TableType.MODEL_SIZES">
 <span class="sig-name descname"><span class="pre">MODEL_SIZES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Model</span> <span class="pre">Size</span> <span class="pre">Check'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.TableType.MODEL_SIZES" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.publish.test.services.constants.TableType.ROBUSTNESS_CHECK">
+<span class="sig-name descname"><span class="pre">ROBUSTNESS_CHECK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'Robustness</span> <span class="pre">Check'</span></em><a class="headerlink" href="#ersilia.publish.test.services.constants.TableType.ROBUSTNESS_CHECK" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1523,6 +1579,7 @@ Otherwise returns process.stdout (a stream).</p>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_files"><code class="docutils literal notranslate"><span class="pre">CheckService.check_files()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_information"><code class="docutils literal notranslate"><span class="pre">CheckService.check_information()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_model_output_content"><code class="docutils literal notranslate"><span class="pre">CheckService.check_model_output_content()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_robustness"><code class="docutils literal notranslate"><span class="pre">CheckService.check_robustness()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_simple_model_async_output"><code class="docutils literal notranslate"><span class="pre">CheckService.check_simple_model_async_output()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.check_simple_model_output"><code class="docutils literal notranslate"><span class="pre">CheckService.check_simple_model_output()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.checks.CheckService.compare_csv_columns"><code class="docutils literal notranslate"><span class="pre">CheckService.compare_csv_columns()</span></code></a></li>
@@ -1551,6 +1608,7 @@ Otherwise returns process.stdout (a stream).</p>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.INCONSISTENCY"><code class="docutils literal notranslate"><span class="pre">Checks.INCONSISTENCY</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.MODEL_CONSISTENCY"><code class="docutils literal notranslate"><span class="pre">Checks.MODEL_CONSISTENCY</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.PREDEFINED_EXAMPLE"><code class="docutils literal notranslate"><span class="pre">Checks.PREDEFINED_EXAMPLE</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.ROBUSTNESS_TEST"><code class="docutils literal notranslate"><span class="pre">Checks.ROBUSTNESS_TEST</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.RUN_BASH"><code class="docutils literal notranslate"><span class="pre">Checks.RUN_BASH</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.SIMPLE_MODEL_RUN"><code class="docutils literal notranslate"><span class="pre">Checks.SIMPLE_MODEL_RUN</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Checks.SIMPLE_MODEL_RUN_ASYNC"><code class="docutils literal notranslate"><span class="pre">Checks.SIMPLE_MODEL_RUN_ASYNC</span></code></a></li>
@@ -1575,6 +1633,8 @@ Otherwise returns process.stdout (a stream).</p>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Options.OUTPUT_CSV"><code class="docutils literal notranslate"><span class="pre">Options.OUTPUT_CSV</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Options.OUTPUT_FILES"><code class="docutils literal notranslate"><span class="pre">Options.OUTPUT_FILES</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.Options.OUTPUT_FILES_TEST"><code class="docutils literal notranslate"><span class="pre">Options.OUTPUT_FILES_TEST</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.constants.Options.ROBUSTNESS_INPUT_CSV"><code class="docutils literal notranslate"><span class="pre">Options.ROBUSTNESS_INPUT_CSV</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.constants.Options.ROBUSTNESS_OUTPUT_CSV"><code class="docutils literal notranslate"><span class="pre">Options.ROBUSTNESS_OUTPUT_CSV</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.STATUS_CONFIGS"><code class="docutils literal notranslate"><span class="pre">STATUS_CONFIGS</span></code></a><ul>
@@ -1607,6 +1667,7 @@ Otherwise returns process.stdout (a stream).</p>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.TableType.MODEL_OUTPUT"><code class="docutils literal notranslate"><span class="pre">TableType.MODEL_OUTPUT</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.TableType.MODEL_RUN_CHECK"><code class="docutils literal notranslate"><span class="pre">TableType.MODEL_RUN_CHECK</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.TableType.MODEL_SIZES"><code class="docutils literal notranslate"><span class="pre">TableType.MODEL_SIZES</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.publish.test.services.constants.TableType.ROBUSTNESS_CHECK"><code class="docutils literal notranslate"><span class="pre">TableType.ROBUSTNESS_CHECK</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.TableType.RUNNER_CHECKUP_STATUS"><code class="docutils literal notranslate"><span class="pre">TableType.RUNNER_CHECKUP_STATUS</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.publish.test.services.constants.TableType.SHALLOW_CHECK_SUMMARY"><code class="docutils literal notranslate"><span class="pre">TableType.SHALLOW_CHECK_SUMMARY</span></code></a></li>
 </ul>

@@ -390,9 +390,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">isaura_store</span> <span class="o">=</span> <span class="n">IsauraStore</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">store_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">current_store_status</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">local_cache</span> <span class="o">=</span> <span class="n">store_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span> <span class="o">=</span> <span class="n">store_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">read_store</span> <span class="o">=</span> <span class="n">store_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">store_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_store</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">local_cache</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">local_cache</span> <span class="o">=</span> <span class="n">store_info</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span> <span class="o">=</span> <span class="n">store_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_store</span> <span class="o">=</span> <span class="n">store_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Standard API runner initialized&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_information_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
