@@ -103,12 +103,15 @@ class UpdateMetadata:
         # Check if model_description is a list
         if isinstance(self.json_input["model_description"], list):
             # Join the list elements into a single string separated by commas
-            self.metadata["Description"] = ", ".join(
-                self.json_input["model_description"]
-            )
+            description = ", ".join(self.json_input["model_description"])
         else:
-            # If it's already a string, just assign it directly
-            self.metadata["Description"] = self.json_input["model_description"]
+            description = self.json_input["model_description"]
+        if len(description) > 600:
+            raise ValueError(
+                f"Model description is {len(description)} characters, which exceeds the 600-character limit. "
+                "Please shorten the description in the issue and re-run /approve."
+            )
+        self.metadata["Description"] = description
         self.metadata["Publication"] = self.json_input["publication"]
         self.metadata["Source Code"] = self.json_input["source_code"]
         self.metadata["License"] = self.json_input["license"]

@@ -93,7 +93,7 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_description(cls, d) -> bool:
-        return bool(d) and len(d) >= 200
+        return bool(d) and 200 <= len(d) <= 600
 
     @classmethod
     def validate_mode(cls, m) -> bool:
