@@ -367,8 +367,15 @@ class InstallParser:
     def _install_packages(self, file_path):
         cmd = f"bash {file_path}"
         logger.info(f"[InstallParser._install_packages] cmd={cmd}")
-        run_command(cmd)
+        result = run_command(cmd)
         logger.info(f"[InstallParser._install_packages] done cmd={cmd}")
+        if hasattr(result, 'returncode'):
+            stderr = getattr(result, 'stderr', '') or ''
+            stdout = getattr(result, 'stdout', '') or ''
+            raise RuntimeError(f"Failed to install packages. Return code: {result.returncode}"
+                               f"\nStdout (tail): {stdout[-2000:] if len(stdout) > 2000 else stdout}"
+                               f"\nStderr (tail): {stderr[-2000:] if len(stderr) > 2000 else stderr}")
+
 
     def check_file_exists(self):
         ok = os.path.exists(self.file_name)
