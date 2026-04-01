@@ -28,7 +28,15 @@ then
     echo "Model name has not been specified"
     exit 1
 fi
-ersilia_model_serve --bundle_path /root/bundles/$MODEL --port 80
+
+ARGS+=( "--bundle_path" "/root/bundles/$MODEL" "--port" "80" )
+if [ -n "${ROOT_PATH}" ];
+then
+    ARGS+=( "--root_path" "${ROOT_PATH}" )
+fi
+
+ersilia_model_serve "${ARGS[@]}"
+
 echo "Serving model $MODEL..."
 """
 
