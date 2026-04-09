@@ -180,6 +180,10 @@ class ModelPuller(ErsiliaBase):
 
                 await process.wait()
 
+                self.logger.debug(
+                    f"Docker pull process finished with return code {process.returncode}"
+                )
+
                 if process.returncode != 0:
                     self.logger.error(
                         f"Pull command failed with return code {process.returncode}"
