@@ -602,6 +602,12 @@ class PackageInstaller:
         yaml_path = os.path.join(self.dir, INSTALL_YAML_FILE)
         docker_path = os.path.join(self.dir, DOCKERFILE_FILE)
 
+        env_exists = self.conda.exists(self.model_id)
+        env_location = SetupService.get_conda_env_location(self.model_id, self.logger)
+        self.logger.debug(
+            f"[install_packages_from_dir] conda env '{self.model_id}' exists={env_exists} path={env_location}"
+        )
+
         if os.path.exists(yaml_path):
             parser = YAMLInstallParser(self.dir, self.model_id)
         elif os.path.exists(docker_path):
