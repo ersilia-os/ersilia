@@ -169,16 +169,11 @@ class ModelPuller(ErsiliaBase):
                     stderr=asyncio.subprocess.PIPE,
                 )
 
-                async def log_stream(stream, log_method):
-                    async for line in stream:
-                        log_method(line.decode().strip())
-
-                await asyncio.gather(
-                    log_stream(process.stdout, self.logger.info),
-                    log_stream(process.stderr, self.logger.error),
-                )
-
-                await process.wait()
+                stdout, stderr = await process.communicate()
+                if stdout:
+                    self.logger.info(stdout.decode().strip())
+                if stderr:
+                    self.logger.error(stderr.decode().strip())
 
                 self.logger.debug(
                     f"Docker pull process finished with return code {process.returncode}"
@@ -206,12 +201,11 @@ class ModelPuller(ErsiliaBase):
                     stderr=asyncio.subprocess.PIPE,
                 )
 
-                await asyncio.gather(
-                    log_stream(process.stdout, self.logger.info),
-                    log_stream(process.stderr, self.logger.error),
-                )
-
-                await process.wait()
+                stdout, stderr = await process.communicate()
+                if stdout:
+                    self.logger.info(stdout.decode().strip())
+                if stderr:
+                    self.logger.error(stderr.decode().strip())
 
                 if process.returncode != 0:
                     self.logger.error(
