@@ -77,6 +77,7 @@ class ModelTester(ErsiliaBase):
         inspect,
         report_path,
         clean,
+        permissive=False,
     ):
         ErsiliaBase.__init__(self, config_json=None, credentials_json=None)
         clean and self.clean_temp()
@@ -94,6 +95,7 @@ class ModelTester(ErsiliaBase):
         self.deep = deep
         self.surface = surface
         self.inspect = inspect
+        self.permissive = permissive
         self.report_path = report_path
         self._check_pedendency()
         self.setup_service = SetupService(
@@ -131,7 +133,8 @@ class ModelTester(ErsiliaBase):
             self.report_path,
             self.inspector,
             self.surface,
-            self.inspect
+            self.inspect,
+            self.permissive,
         )
 
     def _check_pedendency(self):
