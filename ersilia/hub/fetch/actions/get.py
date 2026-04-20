@@ -146,12 +146,16 @@ class ModelRepositoryGetter(BaseAction):
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
         self.token = self.cfg.HUB.TOKEN
-        self.github_down = GitHubDownloader(self.token)
-        self.s3_down = S3Downloader()
-        self.org = self.cfg.HUB.ORG
         self.force_from_github = force_from_github
         self.force_from_s3 = force_from_s3
         self.repo_path = repo_path
+        self.github_down = GitHubDownloader(
+            overwrite=True,
+            token=self.token,
+            use_eosvc=self.force_from_github,
+        )
+        self.s3_down = S3Downloader()
+        self.org = self.cfg.HUB.ORG
 
     @staticmethod
     def _copy_from_local(src, dst):

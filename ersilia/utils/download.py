@@ -3,6 +3,7 @@
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import uuid
 import zipfile
@@ -194,11 +195,12 @@ class GitHubDownloader(object):
         The GitHub token for authentication. Default is None.
     """
 
-    def __init__(self, overwrite, token=None):
+    def __init__(self, overwrite, token=None, use_eosvc=False):
         self.logger = logger
 
         self.overwrite = overwrite
         self.token = token
+        self.use_eosvc = use_eosvc
 
     @staticmethod
     def _repo_url(org, repo):
@@ -238,6 +240,74 @@ class GitHubDownloader(object):
             f.write(script)
         run_command("bash {0}".format(run_file))
         return self._exists(destination)
+
+    @staticmethod
+    def _access_json_path(destination):
+        return os.path.join(destination, "access.json")
+
+    def _has_access_json(self, destination):
+        return os.path.exists(self._access_json_path(destination))
+
+    def _ensure_git_lfs(self):
+        from ..setup.requirements.git import GitLfsRequirement
+
+        req = GitLfsRequirement()
+        req.is_installed()
+        req.activate()
+
+    def _ensure_eosvc(self):
+        from ..setup.requirements.git import EosvcRequirement
+
+        req = EosvcRequirement()
+        if req.is_installed():
+            return True
+        self.logger.info(
+            "Installing eosvc in the active Python environment for --from_github fetches."
+        )
+        if req.ensure_installed():
+            self.logger.info("eosvc installed successfully.")
+            return True
+        self.logger.warning(
+            "Could not install eosvc automatically. Falling back to Git LFS."
+        )
+        return False
+
+    def _eosvc_download(self, destination, rel_path):
+        return subprocess.run(
+            [sys.executable, "-m", "eosvc.cli", "download", "--path", rel_path],
+            cwd=destination,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            env=os.environ,
+        )
+
+    def _download_large_files_with_eosvc(self, destination):
+        downloaded_any = False
+        for rel_path in ("checkpoints", "fit"):
+            result = self._eosvc_download(destination, rel_path)
+            if result.returncode == 0:
+                downloaded_any = True
+                continue
+
+            output = "\n".join(
+                x for x in [result.stdout.strip(), result.stderr.strip()] if x
+            )
+            if "Nothing found at s3://" in output:
+                self.logger.debug(
+                    f"eosvc did not find artifacts under '{rel_path}'. Continuing."
+                )
+                continue
+
+            if output:
+                self.logger.warning(
+                    f"eosvc failed while downloading '{rel_path}': {output}"
+                )
+            else:
+                self.logger.warning(f"eosvc failed while downloading '{rel_path}'.")
+            return False
+
+        return downloaded_any
 
     def _list_lfs_files(self, destination):
         clean_lfs_files_list = []
@@ -343,6 +413,7 @@ class GitHubDownloader(object):
         # 4. If there's a discrepancy, tries to fetch only files in question
         # from git lfs.
 
+        self._ensure_git_lfs()
         # Ad 1. List all LFS files.
         lfs_files_list = self._list_lfs_files(destination)
         files_with_incorrect_shasum = []
@@ -360,6 +431,27 @@ class GitHubDownloader(object):
             for files in files_with_incorrect_shasum:
                 self._git_lfs(destination, files["file"])
         self.logger.info("🚀 Model starting...")
+
+    def _download_model_artifacts(self, repo, destination):
+        if self.use_eosvc:
+            if self._has_access_json(destination):
+                self.logger.info(
+                    "Detected access.json in the model repository. Trying eosvc before Git LFS."
+                )
+                if self._ensure_eosvc() and self._download_large_files_with_eosvc(
+                    destination
+                ):
+                    self.logger.info("Model artifacts downloaded with eosvc.")
+                    return
+                self.logger.warning(
+                    "eosvc could not fetch model artifacts. Falling back to Git LFS."
+                )
+            else:
+                self.logger.warning(
+                    "Model repository does not contain access.json. Falling back to Git LFS."
+                )
+
+        self._download_large_files(repo, destination)
 
     def clone(self, org, repo, destination, ungit=False):
         """
@@ -385,7 +477,7 @@ class GitHubDownloader(object):
         if not is_done:
             raise Exception("Download from {0}/{1} did not work".format(org, repo))
 
-        self._download_large_files(repo, destination)
+        self._download_model_artifacts(repo, destination)
 
         if ungit:
             self._ungit(destination)
