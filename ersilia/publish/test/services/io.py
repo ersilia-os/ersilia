@@ -329,6 +329,8 @@ class IOService:
                     return False
                 elif "[yellow]✘" in status:
                     return "not present"
+                elif "[yellow]⚠" in status:
+                    return "warning"
                 else:
                     return re.sub(r"\[.*?\]", "", status).strip()
             return status
