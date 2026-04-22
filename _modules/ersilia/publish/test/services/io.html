@@ -652,6 +652,8 @@
                     <span class="k">return</span> <span class="kc">False</span>
                 <span class="k">elif</span> <span class="s2">&quot;[yellow]✘&quot;</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
                     <span class="k">return</span> <span class="s2">&quot;not present&quot;</span>
+                <span class="k">elif</span> <span class="s2">&quot;[yellow]⚠&quot;</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;warning&quot;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\[.*?\]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">status</span>
@@ -944,6 +946,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">install_packages_from_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">yaml_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">INSTALL_YAML_FILE</span><span class="p">)</span>
         <span class="n">docker_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">DOCKERFILE_FILE</span><span class="p">)</span>
+
+        <span class="n">env_exists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">env_location</span> <span class="o">=</span> <span class="n">SetupService</span><span class="o">.</span><span class="n">get_conda_env_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;[install_packages_from_dir] conda env &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&#39; exists=</span><span class="si">{</span><span class="n">env_exists</span><span class="si">}</span><span class="s2"> path=</span><span class="si">{</span><span class="n">env_location</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">yaml_path</span><span class="p">):</span>
             <span class="n">parser</span> <span class="o">=</span> <span class="n">YAMLInstallParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>

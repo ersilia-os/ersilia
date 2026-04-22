@@ -406,6 +406,7 @@
         <span class="n">inspector</span><span class="p">:</span> <span class="n">InspectService</span><span class="p">,</span>
         <span class="n">surface</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">inspect</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">permissive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
@@ -429,6 +430,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">example</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_using_bash</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">surface</span> <span class="o">=</span> <span class="n">surface</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">permissive</span> <span class="o">=</span> <span class="n">permissive</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">installer</span> <span class="o">=</span> <span class="n">PackageInstaller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RunnerService.serve_model">
@@ -1169,6 +1171,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">SHALLOW_CHECK_SUMMARY</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">bash_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_bash</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">permissive</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dockerhub</span><span class="p">:</span>
+                <span class="n">bash_results</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">WARNING</span><span class="p">))</span> <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bash_results</span>
+                <span class="p">]</span>
             <span class="n">validations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span>
                     <span class="n">TableType</span><span class="o">.</span><span class="n">CONSISTENCY_BASH</span><span class="p">,</span> <span class="n">bash_results</span>
