@@ -100,6 +100,12 @@ def test_cmd():
         default=False,
         help="This flag is used to clean out the temp folder after testing",
     )
+    @click.option(
+        "--permissive",
+        is_flag=True,
+        default=False,
+        help="Downgrade bash consistency check failures to warnings. Only valid with --from_dockerhub.",
+    )
     def test(
         model,
         from_dir,
@@ -113,7 +119,10 @@ def test_cmd():
         inspect,
         report_path,
         clean,
+        permissive,
     ):
+        if permissive and not from_dockerhub:
+            raise click.UsageError("--permissive can only be used together with --from_dockerhub.")
         mt = ModelTester(
             model,
             from_dir,
@@ -127,6 +136,7 @@ def test_cmd():
             inspect,
             report_path,
             clean,
+            permissive,
         )
         echo(f"Model testing started for: {model}")
         mt.run()

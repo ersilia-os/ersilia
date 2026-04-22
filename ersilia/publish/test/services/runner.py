@@ -98,6 +98,7 @@ class RunnerService:
         inspector: InspectService,
         surface: bool,
         inspect: bool,
+        permissive: bool = False,
     ):
         self.model_id = model_id
         self.logger = logger
@@ -121,6 +122,7 @@ class RunnerService:
         self.example = ExampleGenerator(model_id=self.model_id)
         self.run_using_bash = False
         self.surface = surface
+        self.permissive = permissive
         self.installer = PackageInstaller(self.dir, self.model_id)
 
     def serve_model(self):
@@ -840,6 +842,11 @@ class RunnerService:
                 self._generate_table_from_check(TableType.SHALLOW_CHECK_SUMMARY, res)
             )
             bash_results = self.run_bash()
+            if self.permissive and self.from_dockerhub:
+                bash_results = [
+                    (n, d, str(STATUS_CONFIGS.WARNING)) if s == str(STATUS_CONFIGS.FAILED) else (n, d, s)
+                    for n, d, s in bash_results
+                ]
             validations.append(
                 self._generate_table_from_check(
                     TableType.CONSISTENCY_BASH, bash_results
