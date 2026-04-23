@@ -100,11 +100,5 @@ def run_cmd():
             fg="green",
             bold=False,
         )
-        if output and output.endswith(".csv"):
-            with open(output, "r") as f:
-                echo(f.read())
-        elif output and output.endswith(".json"):
-            with open(output, "r") as f:
-                echo(json.dumps(json.load(f), indent=2))
 
     return run
