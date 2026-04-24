@@ -678,6 +678,41 @@
             <span class="sa">f</span><span class="s2">&quot;Fetching batch of size </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_batch</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">do_request</span><span class="p">,</span> <span class="n">input_batch</span>
         <span class="p">)</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_post_batch_with_fallback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">batch</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[],</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_batch</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">):</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;result&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">batch_meta</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;meta&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;meta&quot;</span><span class="p">),</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">],</span> <span class="n">batch_meta</span>
+            <span class="k">elif</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch of size </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Molecule could not be processed and will have empty output: </span><span class="si">{</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="kc">None</span>
+            <span class="n">mid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">left_vals</span><span class="p">,</span> <span class="n">left_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_batch_with_fallback</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">batch</span><span class="p">[:</span><span class="n">mid</span><span class="p">])</span>
+            <span class="n">right_vals</span><span class="p">,</span> <span class="n">right_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_batch_with_fallback</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="n">mid</span><span class="p">:])</span>
+            <span class="n">combined_meta</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">left_meta</span> <span class="ow">or</span> <span class="n">right_meta</span><span class="p">:</span>
+                <span class="n">combined_meta</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">left_meta</span><span class="p">:</span>
+                    <span class="n">combined_meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">left_meta</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">right_meta</span><span class="p">:</span>
+                    <span class="n">combined_meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">right_meta</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">left_vals</span> <span class="o">+</span> <span class="n">right_vals</span><span class="p">,</span> <span class="n">combined_meta</span>
+
 <div class="viewcode-block" id="StandardCSVRunApi.post">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.serve.html#ersilia.serve.standard_api.StandardCSVRunApi.post">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">output_source</span><span class="p">):</span>
@@ -835,29 +870,16 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running batch </span><span class="si">{</span><span class="n">bidx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">st</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
-                <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_batch</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">missed_u</span><span class="p">)</span>
+                <span class="n">api_values</span><span class="p">,</span> <span class="n">batch_meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_batch_with_fallback</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">missed_u</span><span class="p">)</span>
 
                 <span class="n">et</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
                 <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">bidx</span><span class="si">}</span><span class="s2"> fetched in </span><span class="si">{</span><span class="n">et</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">bidx</span><span class="si">}</span><span class="s2"> fetched in </span><span class="si">{</span><span class="n">et</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
 
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">resp</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                    <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
-
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                    <span class="n">api_values</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;result&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-                    <span class="n">api_values</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;meta&quot;</span><span class="p">),</span> <span class="nb">dict</span><span class="p">):</span>
-                        <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
-                        <span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">])</span>
-                <span class="k">elif</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">api_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed_u</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">api_values</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">batch_meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">batch_meta</span><span class="p">)</span>
 
             <span class="n">batch_results</span><span class="p">,</span> <span class="n">batch_repls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_cache_and_api</span><span class="p">(</span>
                 <span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span>
@@ -931,6 +953,8 @@
                 <span class="n">api_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">api_values</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">missed</span><span class="p">)</span>
             <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">missed</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">api_values</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">smi</span><span class="p">,</span> <span class="n">vals</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">missed</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span> <span class="n">api_values</span><span class="p">[:</span><span class="n">n</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="n">vals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                     <span class="n">api_map</span><span class="p">[</span><span class="n">smi</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
