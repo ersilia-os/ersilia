@@ -13,6 +13,7 @@ import requests
 
 from .. import logger
 from ..default import S3_BUCKET_URL
+from ..utils.echo import echo
 from ..utils.logging import make_temp_dir
 from .terminal import run_command
 
@@ -284,6 +285,7 @@ class GitHubDownloader(object):
 
     def _download_large_files_with_eosvc(self, destination):
         downloaded_any = False
+        had_error = False
         for rel_path in ("checkpoints", "fit"):
             result = self._eosvc_download(destination, rel_path)
             if result.returncode == 0:
@@ -299,15 +301,15 @@ class GitHubDownloader(object):
                 )
                 continue
 
+            had_error = True
             if output:
                 self.logger.warning(
                     f"eosvc failed while downloading '{rel_path}': {output}"
                 )
             else:
                 self.logger.warning(f"eosvc failed while downloading '{rel_path}'.")
-            return False
 
-        return downloaded_any
+        return downloaded_any, had_error
 
     def _list_lfs_files(self, destination):
         clean_lfs_files_list = []
@@ -435,20 +437,31 @@ class GitHubDownloader(object):
     def _download_model_artifacts(self, repo, destination):
         if self.use_eosvc:
             if self._has_access_json(destination):
-                self.logger.info(
-                    "Detected access.json in the model repository. Trying eosvc before Git LFS."
-                )
-                if self._ensure_eosvc() and self._download_large_files_with_eosvc(
-                    destination
-                ):
-                    self.logger.info("Model artifacts downloaded with eosvc.")
-                    return
-                self.logger.warning(
-                    "eosvc could not fetch model artifacts. Falling back to Git LFS."
-                )
+                echo("Detected access.json. Downloading model artifacts via eosvc.")
+                if self._ensure_eosvc():
+                    downloaded, had_error = self._download_large_files_with_eosvc(
+                        destination
+                    )
+                    if downloaded:
+                        echo("Model artifacts downloaded via eosvc.")
+                        return
+                    if had_error:
+                        echo(
+                            "eosvc encountered errors fetching artifacts. Falling back to Git LFS.",
+                            fg="yellow",
+                        )
+                    else:
+                        self.logger.debug(
+                            "eosvc found no artifacts to download. Falling back to Git LFS."
+                        )
+                else:
+                    echo(
+                        "Could not install eosvc automatically. Falling back to Git LFS.",
+                        fg="yellow",
+                    )
             else:
-                self.logger.warning(
-                    "Model repository does not contain access.json. Falling back to Git LFS."
+                self.logger.debug(
+                    "Model repository does not contain access.json. Using Git LFS."
                 )
 
         self._download_large_files(repo, destination)
