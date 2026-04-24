@@ -337,6 +337,41 @@ class StandardCSVRunApi(ErsiliaBase):
             f"Fetching batch of size {len(input_batch)}", do_request, input_batch
         )
 
+    def _post_batch_with_fallback(self, url, batch):
+        if not batch:
+            return [], None
+        try:
+            data = self._post_batch(url, batch)
+            if hasattr(data, "json"):
+                data = data.json()
+            if isinstance(data, list):
+                return data, None
+            elif isinstance(data, dict) and "result" in data:
+                batch_meta = data.get("meta") if isinstance(data.get("meta"), dict) else None
+                return data["result"], batch_meta
+            elif data is not None:
+                return [data] * len(batch), None
+            else:
+                return [None] * len(batch), None
+        except Exception as e:
+            self.logger.error(f"Batch of size {len(batch)} failed: {e}")
+            if len(batch) == 1:
+                self.logger.warning(
+                    f"Molecule could not be processed and will have empty output: {batch[0]}"
+                )
+                return [None], None
+            mid = len(batch) // 2
+            left_vals, left_meta = self._post_batch_with_fallback(url, batch[:mid])
+            right_vals, right_meta = self._post_batch_with_fallback(url, batch[mid:])
+            combined_meta = None
+            if left_meta or right_meta:
+                combined_meta = {}
+                if left_meta:
+                    combined_meta.update(left_meta)
+                if right_meta:
+                    combined_meta.update(right_meta)
+            return left_vals + right_vals, combined_meta
+
     def post(self, input, output, batch_size, output_source):
         """
         Post input data to the API in batches and get the output data.
@@ -491,29 +526,16 @@ class StandardCSVRunApi(ErsiliaBase):
                 self.logger.debug(f"Running batch {bidx}")
                 st = time.perf_counter()
 
-                resp = self._post_batch(url, missed_u)
+                api_values, batch_meta = self._post_batch_with_fallback(url, missed_u)
 
                 et = time.perf_counter()
                 echo(f"Batch {bidx} fetched in {et - st:.4f} seconds", fg="green")
                 self.logger.info(f"Batch {bidx} fetched in {et - st:.4f} seconds")
 
-                try:
-                    data = resp.json() if hasattr(resp, "json") else resp
-                except Exception:
-                    data = None
-
-                if isinstance(data, list):
-                    api_values = data
-                elif isinstance(data, dict) and "result" in data:
-                    api_values = data["result"]
-                    if isinstance(data.get("meta"), dict):
-                        if meta is None:
-                            meta = {}
-                        meta.update(data["meta"])
-                elif data is not None:
-                    api_values = [data] * len(missed_u)
-                else:
-                    api_values = []
+                if batch_meta is not None:
+                    if meta is None:
+                        meta = {}
+                    meta.update(batch_meta)
 
             batch_results, batch_repls = self._merge_cache_and_api(
                 payload=payload,
@@ -587,6 +609,8 @@ class StandardCSVRunApi(ErsiliaBase):
                 api_values = [api_values] * len(missed)
             n = min(len(missed), len(api_values))
             for smi, vals in zip(missed[:n], api_values[:n]):
+                if vals is None:
+                    continue
                 if isinstance(vals, dict):
                     api_map[smi] = vals
                 elif isinstance(vals, (list, tuple)):

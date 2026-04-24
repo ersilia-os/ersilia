@@ -81,6 +81,8 @@ class ErsiliaBase(object):
 
     def _resolve_pack_method_source(self, model_id):
         bundle_path = self._get_bundle_location(model_id)
+        if bundle_path is None:
+            return None
         if os.path.exists(os.path.join(bundle_path, "installs", "install.sh")):
             return PACK_METHOD_FASTAPI
         self.logger.warning(

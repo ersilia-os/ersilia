@@ -1,3 +1,4 @@
+import io
 import json
 import os
 import shutil
@@ -86,10 +87,13 @@ class AutoService(ErsiliaBase):
         self._url = url
         if service_class is None:
             self.logger.debug("No service class provided, deciding automatically")
-            service_class_file = os.path.join(
-                self._get_bundle_location(model_id), SERVICE_CLASS_FILE
+            bundle_location = self._get_bundle_location(model_id)
+            service_class_file = (
+                os.path.join(bundle_location, SERVICE_CLASS_FILE)
+                if bundle_location is not None
+                else None
             )
-            if os.path.exists(service_class_file):
+            if service_class_file is not None and os.path.exists(service_class_file):
                 self.logger.debug(
                     "Service class file exists in folder {0}".format(service_class_file)
                 )
@@ -136,7 +140,12 @@ class AutoService(ErsiliaBase):
                 self.logger.debug(
                     "No service class file exists in {0}".format(service_class_file)
                 )
-                with open(service_class_file, "w") as f:
+                _ctx = (
+                    open(service_class_file, "w")
+                    if service_class_file is not None
+                    else io.StringIO()
+                )
+                with _ctx as f:
                     if SystemBundleService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():

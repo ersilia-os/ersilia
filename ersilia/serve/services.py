@@ -255,7 +255,7 @@ class _LocalService(ErsiliaBase):
                 preferred_port=preferred_port,
             )
         else:
-            raise Exception("Model is not a valid FastAPI model")
+            self.server = None
 
     def _get_apis_from_where_available(self):
         return self.server._get_apis_from_where_available()
