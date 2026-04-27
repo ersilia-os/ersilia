@@ -466,12 +466,16 @@
             <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">TOKEN</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">github_down</span> <span class="o">=</span> <span class="n">GitHubDownloader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">s3_down</span> <span class="o">=</span> <span class="n">S3Downloader</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">ORG</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span> <span class="o">=</span> <span class="n">force_from_github</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">force_from_s3</span> <span class="o">=</span> <span class="n">force_from_s3</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repo_path</span> <span class="o">=</span> <span class="n">repo_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">github_down</span> <span class="o">=</span> <span class="n">GitHubDownloader</span><span class="p">(</span>
+            <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">use_eosvc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s3_down</span> <span class="o">=</span> <span class="n">S3Downloader</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">org</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">HUB</span><span class="o">.</span><span class="n">ORG</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_copy_from_local</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>

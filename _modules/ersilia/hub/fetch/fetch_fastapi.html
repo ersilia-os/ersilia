@@ -379,7 +379,11 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_setup_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Checking setup requirements for the model to be installed and run&quot;</span><span class="p">)</span>
-        <span class="n">sc</span> <span class="o">=</span> <span class="n">SetupChecker</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
+        <span class="n">sc</span> <span class="o">=</span> <span class="n">SetupChecker</span><span class="p">(</span>
+            <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
+            <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
+            <span class="n">force_from_github</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">sc</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_prepare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
