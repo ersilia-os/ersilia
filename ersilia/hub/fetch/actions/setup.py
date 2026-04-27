@@ -22,10 +22,13 @@ class SetupChecker(BaseAction):
         Checks all setup requirements.
     """
 
-    def __init__(self, model_id: str, config_json: dict):
+    def __init__(
+        self, model_id: str, config_json: dict, force_from_github: bool = False
+    ):
         BaseAction.__init__(
             self, model_id=model_id, config_json=config_json, credentials_json=None
         )
+        self.force_from_github = force_from_github
 
     def _gh_cli(self):
         req = GithubCliRequirement()
@@ -64,7 +67,12 @@ class SetupChecker(BaseAction):
         Checks all setup requirements.
         """
         self._gh_cli()
-        self._git_lfs()
+        if self.force_from_github:
+            self.logger.debug(
+                "Skipping upfront Git LFS setup for --from_github. It will be installed on demand if eosvc fallback is needed."
+            )
+        else:
+            self._git_lfs()
         self._ping()
         self._conda()
         self._eos_home_path()

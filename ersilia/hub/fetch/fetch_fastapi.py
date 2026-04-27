@@ -71,7 +71,11 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
 
     def _setup_check(self):
         echo("Checking setup requirements for the model to be installed and run")
-        sc = SetupChecker(model_id=self.model_id, config_json=self.config_json)
+        sc = SetupChecker(
+            model_id=self.model_id,
+            config_json=self.config_json,
+            force_from_github=self.force_from_github,
+        )
         sc.check()
 
     def _prepare(self):

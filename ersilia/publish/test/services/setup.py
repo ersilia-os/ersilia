@@ -64,7 +64,10 @@ class SetupService:
         ).get("S3")
         self.repo_url = f"{self.BASE_URL}{self.model_id}"
         self.overwrite = self._handle_overwrite()
-        self.github_down = GitHubDownloader(overwrite=self.overwrite)
+        self.github_down = GitHubDownloader(
+            overwrite=self.overwrite,
+            use_eosvc=self.from_github,
+        )
         self.s3_down = S3Downloader()
         self.conda = SimpleConda()
 
