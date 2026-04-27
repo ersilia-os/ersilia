@@ -1,3 +1,6 @@
+import importlib
+import sys
+
 from ... import throw_ersilia_exception
 from ...utils.exceptions_utils.setup_exceptions import (
     GithubCliSetupError,
@@ -127,3 +130,47 @@ class GitLfsRequirement(object):
         None
         """
         run_command("conda install -c conda-forge git-lfs")
+
+
+class EosvcRequirement(object):
+    """
+    A class to handle checking and installing eosvc in the active Python environment.
+    """
+
+    def __init__(self):
+        self.name = "eosvc"
+        self.install_target = "git+https://github.com/ersilia-os/eosvc.git"
+
+    def is_installed(self) -> bool:
+        """
+        Check whether eosvc is importable in the active environment.
+        """
+        try:
+            importlib.import_module(self.name)
+            return True
+        except ModuleNotFoundError:
+            return False
+
+    def install(self) -> bool:
+        """
+        Install eosvc into the active Python environment.
+        """
+        cmd = [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            self.install_target,
+        ]
+        result = run_command(cmd)
+        return result.returncode == 0
+
+    def ensure_installed(self) -> bool:
+        """
+        Ensure eosvc is available in the active Python environment.
+        """
+        if self.is_installed():
+            return True
+        if not self.install():
+            return False
+        return self.is_installed()
