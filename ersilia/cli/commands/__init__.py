@@ -13,6 +13,8 @@ click.rich_click.STYLE_METAVAR = "italic yellow"
 click.rich_click.STYLE_SWITCH = "underline cyan"
 click.rich_click.STYLE_USAGE = "bold blue"
 click.rich_click.STYLE_OPTION_DEFAULT = "dim italic"
+click.rich_click.STYLE_ERRORS_SUGGESTION = "bold"
+click.rich_click.HEADER_TEXT = f"Ersilia version: {__version__}"
 
 # ruff: noqa: D101, D102
 
@@ -23,7 +25,7 @@ class ErsiliaCommandGroup(RichGroup):
         return RichGroup.command(self, *args, **kwargs)
 
 
-@click.group(cls=ErsiliaCommandGroup)
+@click.group(cls=ErsiliaCommandGroup, epilog="To learn more about a specific command, run: ersilia COMMAND --help")
 @click.version_option(version=__version__)
 @click.option(
     "-v",

@@ -36,18 +36,14 @@ def delete_cmd():
         md = ModelFullDeleter()
         can_delete, reason = md.can_be_deleted(model_id)
         if can_delete:
-            echo("Deleting model {0}".format(model_id))
+            echo("Deleting model {0}".format(model_id), harmonize=False)
             _delete(md, model_id)
-            echo(
-                ":collision: Model {0} deleted successfully!".format(model_id),
-                fg="green",
-            )
             return True
         else:
-            echo(
-                f":person_tipping_hand: {reason}".format(model_id),
-                fg="yellow",
-            )
+            if "not available locally" in reason:
+                echo(f"Model {model_id} is not available locally.", fg="red")
+            else:
+                echo(f"{reason}", fg="red")
             return False
 
     def _delete_all():
@@ -58,9 +54,17 @@ def delete_cmd():
         idx = catalog_table.columns.index("Identifier")
         if not local_models:
             echo(
-                ":person_tipping_hand: No models are available locally for deletion.",
-                fg="yellow",
+                "No local models available.",
+                fg="red",
             )
+            return
+        model_ids = [row[idx] for row in local_models]
+        echo(
+            "This will delete the following models: {0}".format(", ".join(model_ids)),
+            fg="yellow",
+        )
+        if not click.confirm("Are you sure you want to proceed?", default=False):
+            echo("Aborted.", fg='green')
             return
         deleted_count = 0
         for model_row in local_models:
@@ -89,8 +93,7 @@ def delete_cmd():
     # 2. Delete all models: ersilia delete --all
     @ersilia_cli.command(
         short_help="Delete model from local computer",
-        help="Delete model from local computer. The bundle is deleted, as well as the files stored in "
-        "the EOS directory and the Pip-installed package",
+        help="Fully remove a model from the local computer. This includes the model files in the EOS directory, conda environment, Docker image and containers, pip package, and all associated database entries.",
     )
     @click.argument("model", required=False, type=click.STRING)
     @click.option("--all", is_flag=True, help="Delete all locally available models.")

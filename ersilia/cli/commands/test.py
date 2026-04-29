@@ -32,73 +32,71 @@ def test_cmd():
 
     @ersilia_cli.command(
         short_help="Test a model",
-        help="""
-        Test a local models that are under development as well as on deployment and obtain a detailed report on its expected behavior and performance
-        """,
+        help="Test a model and generate a detailed report on its expected behavior and performance. Supports surface, shallow, deep, and inspect check levels.",
     )
     @click.argument("model", type=click.STRING)
     @click.option(
         "--from_dir",
         default=None,
         type=click.STRING,
-        help="Local path where the model is stored",
+        help="Path to a local directory where the model is stored.",
     )
     @click.option(
         "--from_github",
         is_flag=True,
         default=False,
-        help="Fetch fetch directly from GitHub",
+        help="Fetch the model directly from GitHub.",
     )
     @click.option(
         "--from_dockerhub",
         is_flag=True,
         default=False,
-        help="Force fetch from DockerHub",
+        help="Fetch the model from DockerHub.",
     )
     @click.option(
-        "--from_s3", is_flag=True, default=False, help="Force fetch from AWS S3 bucket"
+        "--from_s3", is_flag=True, default=False, help="Fetch the model from AWS S3 bucket."
     )
     @click.option(
         "--version",
         default=None,
         type=click.STRING,
-        help="Version of the model to fetch, when fetching a model from DockerHub",
+        help="Model version to fetch from DockerHub.",
     )
     @click.option(
         "--shallow",
         is_flag=True,
         default=False,
-        help="This flag is used to test shallow checks (fetch and run models and output consistency.)",
+        help="Run shallow checks: model fetch, run, and output consistency.",
     )
     @click.option(
         "--deep",
         is_flag=True,
         default=False,
-        help="This flag is used to test deep checks (computational performance)",
+        help="Run deep checks: computational performance.",
     )
     @click.option(
         "--surface",
         is_flag=True,
         default=False,
-        help="This flag is used to test surface checks (simple model fetch and run)",
+        help="Run surface checks: simple model fetch and run.",
     )
     @click.option(
         "--inspect",
         is_flag=True,
         default=False,
-        help="This flag is used to check inspect checks (file structure and metadata)",
+        help="Run inspect checks: file structure and metadata.",
     )
     @click.option(
         "--report_path",
         default=None,
         type=click.STRING,
-        help="This flag is used to specify a path for report json file.)",
+        help="Path to save the JSON report file.",
     )
     @click.option(
         "--clean",
         is_flag=True,
         default=False,
-        help="This flag is used to clean out the temp folder after testing",
+        help="Remove the temp folder after testing.",
     )
     @click.option(
         "--permissive",
