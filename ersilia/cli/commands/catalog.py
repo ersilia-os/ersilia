@@ -26,50 +26,51 @@ def catalog_cmd():
     $ ersilia catalog --card <model_id> --as-json
     """
 
-    # Example usage: ersilia catalog
-    @ersilia_cli.command(help="List a catalog of models")
+    @ersilia_cli.command(
+        short_help="List a catalog of models",
+        help="List models available locally or in the Ersilia Model Hub. By default shows locally fetched models in table format. Supports detailed metadata and individual model cards.\n\nFor a full list of models visit [bold cyan][link=https://catalog.ersilia.io/]https://catalog.ersilia.io/[/link][/bold cyan]",
+    )
     @click.option(
         "-h/-l",
         "--hub/--local",
         is_flag=True,
         default=False,
-        help="Show catalog of models available in the model hub",
+        help="--hub lists models available in the Ersilia Model Hub; --local (default) lists locally fetched models.",
     )
     @click.option(
-        "--file_name", "-f", default=None, type=click.STRING, help="Catalog file name"
+        "--output", "-o", default=None, type=click.STRING, help="Save the catalog to a file. Accepted formats: .csv, .json."
     )
     @click.option(
         "--more/--less",
         is_flag=True,
         default=False,
-        help="Show more information than just the EOS identifier",
+        help="--more shows additional model metadata; --less (default) shows only the EOS identifier.",
     )
     @click.option(
         "--card",
         is_flag=True,
         default=False,
-        help="Use this flag to display model card for a given model ID",
+        help="Display the full model card for a given model ID.",
+    )
+    @click.option(
+        "--task",
+        default=None,
+        type=click.Choice(["Annotation", "Representation", "Sampling"], case_sensitive=False),
+        help="Filter models by task.",
     )
     @click.argument(
         "model",
         type=click.STRING,
         required=False,
     )
-    @click.option(
-        "-j/-t",
-        "--as-json/--as-table",
-        is_flag=True,
-        default=False,
-        help="Show catalog in table format",
-    )
     def catalog(
         hub=False,
-        file_name=None,
+        output=None,
         browser=False,
         more=False,
         card=False,
         model=None,
-        as_json=False,
+        task=None,
     ):
         if card and not model:
             click.echo(
@@ -95,7 +96,7 @@ def catalog_cmd():
                 click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
             return
         else:
-            mc = ModelCatalog(less=not more)
+            mc = ModelCatalog(less=not more, task=task)
 
             if hub:
                 catalog_table = mc.hub()
@@ -109,12 +110,13 @@ def catalog_cmd():
                         )
                     )
                     return
-            if file_name is None:
-                catalog = (
-                    catalog_table.as_json() if as_json else catalog_table.as_table()
-                )
+            if output is None:
+                catalog = catalog_table.as_table()
             else:
-                catalog_table.write(file_name)
+                if not (output.endswith(".csv") or output.endswith(".json")):
+                    click.echo(click.style("Error: output file must have a .csv or .json extension.", fg="red"), err=True)
+                    return
+                catalog_table.write(output)
                 catalog = None
 
             click.echo(catalog)

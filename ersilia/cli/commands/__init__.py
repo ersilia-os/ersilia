@@ -13,6 +13,7 @@ click.rich_click.STYLE_METAVAR = "italic yellow"
 click.rich_click.STYLE_SWITCH = "underline cyan"
 click.rich_click.STYLE_USAGE = "bold blue"
 click.rich_click.STYLE_OPTION_DEFAULT = "dim italic"
+click.rich_click.STYLE_HELPTEXT = ""
 click.rich_click.STYLE_ERRORS_SUGGESTION = "bold"
 click.rich_click.HEADER_TEXT = f"Ersilia version: {__version__}"
 
