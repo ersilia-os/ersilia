@@ -1,11 +1,8 @@
-import functools
-
 import rich_click as click
 from rich_click import RichCommand, RichGroup
 
 from ... import __version__ as __version__
 from ... import logger
-from ..echo import Silencer
 
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.SHOW_ARGUMENTS = True
@@ -21,35 +18,9 @@ click.rich_click.STYLE_OPTION_DEFAULT = "dim italic"
 
 
 class ErsiliaCommandGroup(RichGroup):
-    NUMBER_OF_COMMON_PARAMS = 2
-
-    @staticmethod
-    def common_params(func):
-        @click.option(
-            "-q",
-            "--quiet",
-            is_flag=True,
-            default=False,
-            help="Hide all warnings and info logs",
-        )
-        @functools.wraps(func)
-        def wrapper(quiet, *args, **kwargs):
-            return func(*args, **kwargs)
-
-        return wrapper
-
     def command(self, *args, **kwargs):
         kwargs.setdefault("cls", RichCommand)
-
-        def decorator(func):
-            func = ErsiliaCommandGroup.common_params(func)
-            func.__click_params__ = (
-                func.__click_params__[-self.NUMBER_OF_COMMON_PARAMS :]
-                + func.__click_params__[: -self.NUMBER_OF_COMMON_PARAMS]
-            )
-            return RichGroup.command(self, *args, **kwargs)(func)
-
-        return decorator
+        return RichGroup.command(self, *args, **kwargs)
 
 
 @click.group(cls=ErsiliaCommandGroup)
@@ -61,20 +32,8 @@ class ErsiliaCommandGroup(RichGroup):
     is_flag=True,
     help="Show logging on terminal when running commands.",
 )
-@click.option(
-    "-s",
-    "--silent",
-    default=False,
-    is_flag=True,
-    help="Do not echo any progress message.",
-)
-def ersilia_cli(verbose, silent):
+def ersilia_cli(verbose):
     if verbose:
         logger.set_verbosity(1)
     else:
         logger.set_verbosity(0)
-
-    silencer = Silencer()
-    silencer.speak()
-    if silent:
-        silencer.silence()
