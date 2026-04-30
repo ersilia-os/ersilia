@@ -2,7 +2,7 @@ import os
 
 from ... import ErsiliaBase
 from ...default import (
-    AIRTABLE_MODEL_HUB_VIEW_URL,
+    ERSILIA_CATALOG_URL,
     ERSILIA_MODEL_HUB_URL,
     PREDEFINED_EXAMPLE_INPUT_FILES,
     PREDEFINED_EXAMPLE_OUTPUT_FILES,
@@ -89,8 +89,8 @@ class InvalidModelIdentifierError(ErsiliaError):
         self.message = "Could not identify model identifier or slug: {0}:".format(
             self.model
         )
-        self.hints = "Please check that {0} exists in the Ersilia Model Hub:\n - {1}\n or {2}".format(
-            self.model, ERSILIA_MODEL_HUB_URL, AIRTABLE_MODEL_HUB_VIEW_URL
+        self.hints = "Please check that {0} exists in the Ersilia Model Hub:\n - {1}".format(
+            self.model, ERSILIA_CATALOG_URL
         )
         ErsiliaError.__init__(self, self.message, self.hints)
 

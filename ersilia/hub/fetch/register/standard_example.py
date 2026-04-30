@@ -4,7 +4,7 @@ import shutil
 import sys
 import threading
 
-from click import echo
+from ....utils.echo import echo
 
 from .... import ErsiliaBase, throw_ersilia_exception
 from ....default import (
@@ -103,38 +103,12 @@ class ModelStandardExample(ErsiliaBase):
             if warned:
                 self.logger.debug(f"Command took >{threshold_s}s: {cmd}")
 
-    def run(self):
-        """
-        Run the standard CSV example for the model.
-
-        This method runs the standard CSV example for the model, generating input and output CSV files.
-        """
-        self.logger.debug("Running standard CSV example")
-        path = self._model_path(model_id=self.model_id)
-        example_path = os.path.join(
-            path, "model", "framework", "examples", "run_input.csv"
-        )
-        input_csv = os.path.join(path, EXAMPLE_STANDARD_INPUT_CSV_FILENAME)
-        output_csv = os.path.join(path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME)
-        shutil.copy2(example_path, input_csv)
-        run_log = os.path.join(path, "standard_run.log")
-        self.logger.debug(f"Exaple input file:{input_csv}")
-        self.logger.debug(f"Exaple output file:{output_csv}")
-        commands = [
-            f"ersilia serve {self.model_id} --disable-cache",
-            f"ersilia run -i {input_csv} -o {output_csv} > {run_log} 2>&1",
-            "ersilia close",
-        ]
+    def _execute_commands(self, commands):
         cmd_output = run_command_check_output("ersilia --help")
         if "Welcome to Ersilia" in cmd_output:
             self.logger.debug("No need to use Conda!")
-            echo(
-                "Performing smoke testing the model [serve, run and close] using standard example.",
-                fg="cyan",
-                bold=True,
-            )
             for c in commands:
-                echo(f"Running: {c}", fg="cyan")
+                self.logger.debug(f"Running: {c}")
                 self._run_command_with_slow_notice(c, threshold_s=60)
         else:
             self.logger.debug("Will run this through Conda")
@@ -142,29 +116,56 @@ class ModelStandardExample(ErsiliaBase):
             self.logger.debug("The environment name is {0}".format(env_name))
             SimpleConda().run_commandlines(env_name, commands)
 
-        if os.path.exists(run_log):
-            self.logger.info(f"Run log: {open(run_log).read()}")
-        else:
-            self.logger.warning(f"Run log file {run_log} was not created")
+    def run(self):
+        """
+        Run the standard CSV example for the model (serve + run, without closing).
+        """
+        self.logger.debug("Running standard CSV example")
+        path = self._model_path(model_id=self.model_id)
+        example_path = os.path.join(
+            path, "model", "framework", "examples", "run_input.csv"
+        )
+        self.input_csv = os.path.join(path, EXAMPLE_STANDARD_INPUT_CSV_FILENAME)
+        self.output_csv = os.path.join(path, EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME)
+        shutil.copy2(example_path, self.input_csv)
+        self.run_log = os.path.join(path, "standard_run.log")
+        self.logger.debug(f"Example input file: {self.input_csv}")
+        self.logger.debug(f"Example output file: {self.output_csv}")
 
-        self._check_file_exists(output_csv=output_csv)
-        is_fetched_successfully = self._validate_csv(output_csv)
+        self._execute_commands([
+            f"ersilia serve {self.model_id} --disable-cache",
+            f"ersilia run -i {self.input_csv} -o {self.output_csv} > {self.run_log} 2>&1",
+        ])
+
+        if os.path.exists(self.run_log):
+            self.logger.info(f"Run log: {open(self.run_log).read()}")
+        else:
+            self.logger.warning(f"Run log file {self.run_log} was not created")
+
+        self._check_file_exists(output_csv=self.output_csv)
+        is_fetched_successfully = self._validate_csv(self.output_csv)
 
         if not is_fetched_successfully:
             echo(
-                "The model is getting deleted due to it produced all empty values! Removing the model!",
+                "Model produced all empty values. Removing the model.",
                 fg="red",
             )
             self.logger.error(
-                "The model is getting deleted due to it produced all empty values! Removing the model and exiting"
+                "Model produced all empty values. Removing the model and exiting."
             )
             run_command(f"ersilia -v delete {self.model_id}")
             sys.exit(1)
 
-        self._check_file_exists(output_csv=output_csv)
-        self.logger.debug("Removing log file: {0}".format(run_log))
-        if os.path.exists(run_log):
-            os.remove(run_log)
+        self._check_file_exists(output_csv=self.output_csv)
+        self.logger.debug("Removing log file: {0}".format(self.run_log))
+        if os.path.exists(self.run_log):
+            os.remove(self.run_log)
+
+    def close_model(self):
+        """
+        Shut down the container started during the standard example run.
+        """
+        self._execute_commands(["ersilia close"])
 
     def _validate_csv(self, path):
         with open(path, newline="", encoding="utf-8") as f:

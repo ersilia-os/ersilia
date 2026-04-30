@@ -26,7 +26,7 @@ class ErsiliaCommandGroup(RichGroup):
         return RichGroup.command(self, *args, **kwargs)
 
 
-@click.group(cls=ErsiliaCommandGroup, epilog="To learn more about a specific command, run: ersilia COMMAND --help")
+@click.group(cls=ErsiliaCommandGroup, context_settings={"show_default": True}, epilog="To learn more about a specific command, run: ersilia COMMAND --help")
 @click.version_option(version=__version__)
 @click.option(
     "-v",

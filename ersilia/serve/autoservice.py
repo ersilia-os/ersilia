@@ -261,9 +261,8 @@ class AutoService(ErsiliaBase):
                     preferred_port=preferred_port,
                     url=url,
                 )
-                echo(
-                    f"Using provided service backend '{self._service_class}' for model {model_id}",
-                    fg="cyan",
+                self.logger.info(
+                    f"Using provided service backend '{self._service_class}' for model {model_id}"
                 )
             else:
                 self.service = None

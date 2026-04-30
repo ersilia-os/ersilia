@@ -2,6 +2,7 @@ import asyncio
 import csv
 import importlib
 import json
+import math
 import os
 import time
 from collections import Counter
@@ -21,7 +22,6 @@ from ..default import (
 from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
 from ..store.isaura import IsauraStore
-from ..utils.echo import echo, spinner
 from ..utils.ports import _ensure_ready, normalize_connect_url
 
 MAX_INPUT_ROWS_STANDARD = 1000
@@ -90,7 +90,7 @@ class StandardCSVRunApi(ErsiliaBase):
             self.local_cache = store_info[-1]
             self.write_store = store_info[1]
             self.read_store = store_info[0]
-        echo("Standard API runner initialized", fg="green")
+        self.logger.info("Standard API runner initialized")
 
     def _read_information_file(self):
         try:
@@ -204,7 +204,6 @@ class StandardCSVRunApi(ErsiliaBase):
         list
             The serialized JSON data.
         """
-        echo("Serializing CSV input", fg="cyan")
         json_data = []
         with open(input_data, "r") as f:
             reader = csv.reader(f)
@@ -212,7 +211,6 @@ class StandardCSVRunApi(ErsiliaBase):
             for row in reader:
                 key = self.encoder.encode(row[0])
                 json_data.append({"key": key, "input": row[0], "text": row[0]})
-        echo("CSV serialization complete", fg="green")
         return json_data
 
     async def async_serialize_to_json_one_column(self, input_data):
@@ -309,7 +307,6 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def _serialize_output(self, result, output, model_id, api_name):
         _, df = self.generic_adapter._adapt_generic(result, output, model_id, api_name)
-        echo("Output serialization complete", fg="green")
         self.logger.info("Output serialization complete")
         return df
 
@@ -333,9 +330,7 @@ class StandardCSVRunApi(ErsiliaBase):
             response.raise_for_status()
             return response.json()
 
-        return spinner(
-            f"Fetching batch of size {len(input_batch)}", do_request, input_batch
-        )
+        return do_request(input_batch)
 
     def _post_batch_with_fallback(self, url, batch):
         if not batch:
@@ -393,7 +388,6 @@ class StandardCSVRunApi(ErsiliaBase):
         str | None
             Path to the output CSV file if successful, None otherwise.
         """
-        echo("Preparing input data", fg="cyan")
         input_data = self.serialize_to_json(input)
         url = f"{self.url}/{self.api_name}"
 
@@ -402,19 +396,14 @@ class StandardCSVRunApi(ErsiliaBase):
 
         st = time.perf_counter()
         _ensure_ready(self=self, root=self.url)
-        echo("Waiting for server response", fg="cyan")
         self.logger.debug("Waiting for server response")
         results, meta = self._fetch_result(input_data, url, batch_size)
-        echo("Server response received", fg="green")
         self.logger.info("Server response received")
 
         results = self._standardize_output(input_data, results, meta)
         et = time.perf_counter()
-        echo(f"All batches processed in {et - st:.4f} seconds", fg="green")
         self.logger.info(f"All batches processed in {et - st:.4f} seconds")
 
-        echo("Finalizing the output", fg="cyan")
-        self.logger.debug("Finalizing the output")
         df = self._serialize_output(
             json.dumps(results), output, self.model_id, self.api_name
         )
@@ -422,7 +411,6 @@ class StandardCSVRunApi(ErsiliaBase):
             df = pd.DataFrame(
                 data=df.data, columns=["key", "input"] + self.output_header, dtype=str
             )
-            echo("Writing results to Isaura store", fg="cyan")
             self.logger.info("Writing results to Isaura store")
             self.isaura_store.write(df=df)
 
@@ -431,7 +419,6 @@ class StandardCSVRunApi(ErsiliaBase):
             raise Exception("Inputs and outputs are not matching")
 
         ft = time.perf_counter()
-        echo(f"Output generated in {ft - st:.5f} seconds", fg="green")
         self.logger.info(f"Output generated to {output} in {ft - st:.5f} seconds")
 
         return output
@@ -494,60 +481,75 @@ class StandardCSVRunApi(ErsiliaBase):
 
             return path
 
-        for i in range(0, total, batch_size):
-            batch_items = input_data[i : i + batch_size]
+        from rich.console import Console
+        from rich.progress import BarColumn, MofNCompleteColumn, Progress, TextColumn, TimeElapsedColumn
 
-            payload = [d["input"] for d in batch_items]
-            lookup_payload = [d.get("lookup_input") or d["input"] for d in batch_items]
+        Console().print(f"[bold cyan]Running model {self.model_id}[/bold cyan]")
 
-            if IsauraStore.is_installed() and self.read_store and lookup_payload:
-                check_dict = self.isaura_store.check(lookup_payload)
-                found = []
-                missed = []
-                for smi in lookup_payload:
-                    is_found, _ = self._check_found_and_key(check_dict, smi)
-                    (found if is_found else missed).append(smi)
-            else:
-                found = []
-                missed = lookup_payload
+        num_batches = math.ceil(total / batch_size)
+        label = f"Running {total} input{'s' if total != 1 else ''}"
 
-            found_u = list(dict.fromkeys(found))
-            missed_u = list(dict.fromkeys(missed))
+        with Progress(
+            TextColumn("[bold cyan]{task.description}"),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+        ) as progress:
+            task = progress.add_task(label, total=num_batches)
 
-            if found_u and IsauraStore.is_installed():
-                cache_df = self.isaura_store.read(found_u)
-            else:
-                cache_df = pd.DataFrame(columns=["key", "input"])
+            for i in range(0, total, batch_size):
+                batch_items = input_data[i : i + batch_size]
 
-            api_values = []
-            if missed_u:
-                bidx = i // batch_size + 1
-                echo(f"Running batch {bidx}", fg="cyan")
-                self.logger.debug(f"Running batch {bidx}")
-                st = time.perf_counter()
+                payload = [d["input"] for d in batch_items]
+                lookup_payload = [d.get("lookup_input") or d["input"] for d in batch_items]
 
-                api_values, batch_meta = self._post_batch_with_fallback(url, missed_u)
+                if IsauraStore.is_installed() and self.read_store and lookup_payload:
+                    check_dict = self.isaura_store.check(lookup_payload)
+                    found = []
+                    missed = []
+                    for smi in lookup_payload:
+                        is_found, _ = self._check_found_and_key(check_dict, smi)
+                        (found if is_found else missed).append(smi)
+                else:
+                    found = []
+                    missed = lookup_payload
 
-                et = time.perf_counter()
-                echo(f"Batch {bidx} fetched in {et - st:.4f} seconds", fg="green")
-                self.logger.info(f"Batch {bidx} fetched in {et - st:.4f} seconds")
+                found_u = list(dict.fromkeys(found))
+                missed_u = list(dict.fromkeys(missed))
 
-                if batch_meta is not None:
-                    if meta is None:
-                        meta = {}
-                    meta.update(batch_meta)
+                if found_u and IsauraStore.is_installed():
+                    cache_df = self.isaura_store.read(found_u)
+                else:
+                    cache_df = pd.DataFrame(columns=["key", "input"])
 
-            batch_results, batch_repls = self._merge_cache_and_api(
-                payload=payload,
-                lookup_payload=lookup_payload,
-                found=found_u,
-                cache_df=cache_df,
-                missed=missed_u,
-                api_values=api_values,
-            )
+                api_values = []
+                if missed_u:
+                    bidx = i // batch_size + 1
+                    self.logger.debug(f"Running batch {bidx}")
+                    st = time.perf_counter()
 
-            all_replacements.extend(batch_repls)
-            overall_results[i : i + len(batch_results)] = batch_results
+                    api_values, batch_meta = self._post_batch_with_fallback(url, missed_u)
+
+                    et = time.perf_counter()
+                    self.logger.info(f"Batch {bidx} fetched in {et - st:.4f} seconds")
+
+                    if batch_meta is not None:
+                        if meta is None:
+                            meta = {}
+                        meta.update(batch_meta)
+
+                batch_results, batch_repls = self._merge_cache_and_api(
+                    payload=payload,
+                    lookup_payload=lookup_payload,
+                    found=found_u,
+                    cache_df=cache_df,
+                    missed=missed_u,
+                    api_values=api_values,
+                )
+
+                all_replacements.extend(batch_repls)
+                overall_results[i : i + len(batch_results)] = batch_results
+                progress.advance(task)
 
         if all_replacements:
             path = write_replacements_txt(all_replacements)

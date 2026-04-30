@@ -11,7 +11,7 @@ from ...default import (
     PACK_METHOD_FASTAPI,
 )
 from ...hub.delete.delete import ModelFullDeleter
-from ...utils.echo import echo
+from ...utils.echo import async_spinner, echo, spinner
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithFastAPI,
     StandardModelExampleError,
@@ -139,7 +139,6 @@ class ModelFetcher(ErsiliaBase):
             (source for condition, source in sources.items() if condition), "DockerHub"
         )
         self.logger.debug("Model getting fetched from {0}".format(self.model_source))
-        echo("Model getting fetched from {0}".format(self.model_source))
 
     @throw_ersilia_exception()
     def _decide_fetcher(self, model_id: str) -> str:
@@ -180,14 +179,14 @@ class ModelFetcher(ErsiliaBase):
 
     def _standard_csv_example(self, model_id: str):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
-        ms.run()
+        spinner("Checking that container works", ms.run)
+        spinner("Shutting down container", ms.close_model)
 
     async def _fetch_from_dockerhub(self, model_id: str):
         self.logger.debug("Fetching from DockerHub")
-        echo(
-            "Started fetching from DockerHub — this process may take some time...",
-        )
         await self.model_dockerhub_fetcher.fetch(model_id)
+        dest = self._model_path(model_id)
+        echo(f"Model stored at: {dest}")
 
     def _fetch_from_hosted(self, model_id: str):
         self.logger.debug("Fetching from hosted")
@@ -214,11 +213,6 @@ class ModelFetcher(ErsiliaBase):
             return False
         if self.force_from_dockerhub and not self.is_docker_active:
             self.logger.error("Docker is not active in your local")
-            echo(
-                "Docker is not active in your local. Use other fetch source. Exiting!",
-                fg="red",
-            )
-            sys.exit(1)
             return False
         if not self.ji.identifier_exists(model_id=model_id):
             self.logger.warning(
@@ -270,11 +264,17 @@ class ModelFetcher(ErsiliaBase):
             return False
 
     async def _fetch(self, model_id: str) -> FetchResult:
+        echo(f"Checking if {model_id} is available locally...")
         if not self.exists(model_id):
             self.logger.info("Model doesn't exist on your system, fetching it now.")
-            echo("Model doesn't exist on your system. Proceeding with fetching!")
-            self.logger.debug("Starting fetching procedure")  # should I echo this?
+            echo(f"Model not found locally, fetching from {self.model_source}...")
+            self.logger.debug("Starting fetching procedure")
             do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
+            if self.force_from_dockerhub and not do_dockerhub and not self.is_docker_active:
+                return FetchResult(
+                    fetch_success=False,
+                    reason="Docker is not active on your system. Please start Docker and try again.",
+                )
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
                 if not self.can_use_docker:
@@ -305,10 +305,10 @@ class ModelFetcher(ErsiliaBase):
             self.logger.info(
                 "Model already exists on your system. If you want to fetch it again, please delete it first."
             )
-            # echo(
-            #     "Model already exists on your system. If you want to fetch it again, please delete it first.",
-            #     fg="blue", bold=True
-            # )
+            echo(
+                f"Model {model_id} is already available locally. Delete it first to re-fetch.",
+                fg="yellow",
+            )
             return FetchResult(
                 fetch_success=False,
                 reason="Model already exists on your system. If you want to fetch it again, please delete the existing model first.",

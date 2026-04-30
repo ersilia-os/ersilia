@@ -39,108 +39,80 @@ def fetch_cmd():
 
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
-        short_help="Fetch model from Ersilia Model Hub",
-        help="Fetch model from EOS repository. Model files are downloaded from GitHub and model data are "
-        "downloaded from a file storage system such as the Open Science Framework. Model is downloaded to "
-        "an EOS folder, then packed to a bundle",
+        short_help="Fetch a model from the Ersilia Model Hub",
+        help="Download a model from the Ersilia Model Hub and set it up locally. By default, models are fetched from DockerHub. Use the --from_* flags to override the source.",
     )
     @click.argument("model", type=click.STRING)
-    @click.option(
-        "--overwrite/--reuse",
-        default=True,
-        help="Overwrite environment or reuse using already available environment for this model",
-    )
     @click.option(
         "--from_dir",
         default=None,
         type=click.STRING,
-        help="Local path where the model is stored",
+        help="Fetch from a local directory containing the model repository.",
     )
     @click.option(
         "--from_github",
         is_flag=True,
         default=False,
-        help="Fetch fetch directly from GitHub",
+        help="Fetch directly from the model's GitHub repository.",
     )
     @click.option(
-        "--from_s3", is_flag=True, default=False, help="Force fetch from AWS S3 bucket"
+        "--from_s3",
+        is_flag=True,
+        default=False,
+        help="Fetch from the Ersilia AWS S3 bucket.",
     )
     @click.option(
         "--from_dockerhub",
         is_flag=True,
         default=True,
-        help="Force fetch from DockerHub",
+        help="Fetch from DockerHub (default).",
     )
     @click.option(
         "--from_hosted",
-        is_flag=True,
-        default=False,
-        help="Force fetch from hosted service. This only creates a basic folder structure for the model, the model is not actually downloaded.",
+        default=None,
+        type=click.STRING,
+        help="Connect to a remotely hosted model service by providing its URL. Only creates a local folder structure; the model is not downloaded.",
     )
     @click.option(
         "--version",
         default=None,
         type=click.STRING,
-        help="Version of the model to fetch, when fetching a model from DockerHub",
-    )
-    @click.option(
-        "--hosted_url",
-        default=None,
-        type=click.STRING,
-        help="URL of the hosted model service",
-    )
-    @click.option(
-        "--with_fastapi",
-        is_flag=True,
-        default=False,
-        help="Force fetch using FastAPI",
+        help="Specific Docker image version to fetch from DockerHub.",
     )
     def fetch(
         model,
-        overwrite,
         from_dir,
         from_github,
         from_dockerhub,
         version,
         from_s3,
         from_hosted,
-        hosted_url,
-        with_fastapi,
     ):
         if from_dir is not None:
             mdl = ModelBase(repo_path=from_dir)
         else:
             mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id
-        echo("Fetching model {0}: {1}".format(model_id, mdl.slug))
+        echo("Fetching model {0}: {1}".format(model_id, mdl.slug), fg="cyan")
 
         if any([from_dir, from_github, from_s3, from_hosted]):
             from_dockerhub = False
 
         mf = ModelFetcher(
             repo_path=from_dir,
-            overwrite=overwrite,
             force_from_github=from_github,
             force_from_s3=from_s3,
             force_from_dockerhub=from_dockerhub,
             img_version=version,
-            force_from_hosted=from_hosted,
-            force_with_fastapi=with_fastapi,
-            hosted_url=hosted_url,
+            force_from_hosted=from_hosted is not None,
+            hosted_url=from_hosted,
             local_dir=from_dir,
         )
         fetch_result = _fetch(mf, model_id)
 
         if fetch_result.fetch_success:
-            echo(
-                ":thumbs_up: Model {0} fetched successfully!".format(model_id),
-                fg="green",
-            )
+            echo(f"Model {model_id} fetched successfully.", fg="green")
         else:
-            echo(
-                f":thumbs_down: Model {model_id} failed to fetch! {fetch_result.reason}",
-                fg="red",
-                bold=True,
-            )
+            echo(f"Model {model_id} failed to fetch: {fetch_result.reason}", fg="red", bold=True)
 
     return fetch
