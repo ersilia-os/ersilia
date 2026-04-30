@@ -93,7 +93,6 @@ def fetch_cmd():
         else:
             mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id
-        echo("Fetching model {0}: {1}".format(model_id, mdl.slug), fg="cyan")
 
         if any([from_dir, from_github, from_s3, from_hosted]):
             from_dockerhub = False
@@ -107,6 +106,7 @@ def fetch_cmd():
             force_from_hosted=from_hosted is not None,
             hosted_url=from_hosted,
             local_dir=from_dir,
+            slug=mdl.slug,
         )
         fetch_result = _fetch(mf, model_id)
 

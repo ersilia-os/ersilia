@@ -88,12 +88,14 @@ class ModelFetcher(ErsiliaBase):
         force_with_fastapi: bool = False,
         hosted_url: str = None,
         local_dir: str = None,
+        slug: str = None,
     ):
         ErsiliaBase.__init__(
             self, config_json=config_json, credentials_json=credentials_json
         )
 
         self.ji = JsonModelsInterface(config_json=self.config_json)
+        self.slug = slug
         self.overwrite = overwrite
         self.mode = mode
         self.do_pip = pip
@@ -264,7 +266,8 @@ class ModelFetcher(ErsiliaBase):
             return False
 
     async def _fetch(self, model_id: str) -> FetchResult:
-        echo(f"Checking if {model_id} is available locally...")
+        label = f"{model_id}: {self.slug}" if self.slug else model_id
+        echo(f"Checking if {label} is available locally...", harmonize=False)
         if not self.exists(model_id):
             self.logger.info("Model doesn't exist on your system, fetching it now.")
             echo(f"Model not found locally, fetching from {self.model_source}...")
