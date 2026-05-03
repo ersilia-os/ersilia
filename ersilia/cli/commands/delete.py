@@ -1,8 +1,5 @@
 import rich_click as click
 
-from ... import ModelBase
-from ...hub.content.catalog import ModelCatalog
-from ...hub.delete.delete import ModelFullDeleter
 from .. import echo
 from . import ersilia_cli
 
@@ -33,6 +30,8 @@ def delete_cmd():
         md.delete(model_id)
 
     def _delete_model_by_id(model_id):
+        from ...hub.delete.delete import ModelFullDeleter
+
         md = ModelFullDeleter()
         can_delete, reason = md.can_be_deleted(model_id)
         if can_delete:
@@ -48,6 +47,8 @@ def delete_cmd():
 
     def _delete_all():
         """Function to delete all locally available models"""
+        from ...hub.content.catalog import ModelCatalog
+
         model_catalog = ModelCatalog()
         catalog_table = model_catalog.local()
         local_models = catalog_table.data if catalog_table else None
@@ -101,6 +102,8 @@ def delete_cmd():
         if all:
             _delete_all()
         elif model:
+            from ... import ModelBase
+
             model_id = ModelBase(model).model_id
             _delete_model_by_id(model_id)
         else:

@@ -6,8 +6,6 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
-from ...hub.content.card import ModelCard
-from ...hub.content.catalog import ModelCatalog
 from . import ersilia_cli
 
 _console = Console()
@@ -185,6 +183,9 @@ def catalog_cmd():
         model=None,
         task=None,
     ):
+        from ...hub.content.card import ModelCard
+        from ...hub.content.catalog import ModelCatalog
+
         if card and not model:
             click.echo(
                 click.style("Error: --card option requires a model ID", fg="red"),

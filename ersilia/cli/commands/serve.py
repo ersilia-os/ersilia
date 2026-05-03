@@ -2,13 +2,7 @@ import sys
 
 import rich_click as click
 
-from ... import ErsiliaModel
-from ...core.session import Session
-from ...utils.logging import logger
-from ...utils.session import register_model_session
-from ...utils.terminal import print_serve_summary
 from .. import echo
-from ..messages import ModelNotFound
 from . import ersilia_cli
 
 
@@ -171,6 +165,13 @@ def serve_cmd():
         nearest_neighbors,
         max_memory,
     ):
+        from ... import ErsiliaModel
+        from ...core.session import Session
+        from ...utils.logging import logger
+        from ...utils.session import register_model_session
+        from ...utils.terminal import print_serve_summary
+        from ..messages import ModelNotFound
+
         sess = Session(config_json=None)
         existing_session = sess.get() or {}
         already_served = existing_session.get("model_id")

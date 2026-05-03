@@ -1,14 +1,9 @@
 import asyncio
 
-import nest_asyncio
 import rich_click as click
 
-from ... import ModelBase
-from ...hub.fetch.fetch import ModelFetcher
 from .. import echo
 from . import ersilia_cli
-
-nest_asyncio.apply()
 
 
 def fetch_cmd():
@@ -88,6 +83,13 @@ def fetch_cmd():
         from_s3,
         from_hosted,
     ):
+        import nest_asyncio
+
+        from ... import ModelBase
+        from ...hub.fetch.fetch import ModelFetcher
+
+        nest_asyncio.apply()
+
         if from_dir is not None:
             mdl = ModelBase(repo_path=from_dir)
         else:

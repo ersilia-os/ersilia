@@ -1,6 +1,3 @@
-from ... import ErsiliaModel
-from ...core.session import Session
-from ...utils.session import deregister_model_session
 from .. import echo
 from . import ersilia_cli
 
@@ -27,6 +24,10 @@ def close_cmd():
     # Example usage: ersilia close {MODEL}
     @ersilia_cli.command(short_help="Close model", help="Close model")
     def close():
+        from ... import ErsiliaModel
+        from ...core.session import Session
+        from ...utils.session import deregister_model_session
+
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()

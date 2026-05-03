@@ -4,9 +4,6 @@ import types
 
 import click
 
-from ... import ErsiliaModel
-from ...core.session import Session
-from ...utils.terminal import is_quoted_list
 from .. import echo
 from . import ersilia_cli
 
@@ -34,6 +31,8 @@ def run_cmd():
     """
 
     def validate_input_output_types(input, output):
+        from ...utils.terminal import is_quoted_list
+
         if (type(input) == str and not input.endswith(".csv")) or is_quoted_list(
             json.dumps(input)
         ):
@@ -92,6 +91,9 @@ def run_cmd():
         help="Number of inputs processed per batch.",
     )
     def run(input, output, batch_size):
+        from ... import ErsiliaModel
+        from ...core.session import Session
+
         validate_input_output_types(input, output)
         session = Session(config_json=None)
         model_id = session.current_model_id()

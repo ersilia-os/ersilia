@@ -1,8 +1,5 @@
 import rich_click as click
 
-from ... import ModelBase
-from ...core.session import Session
-from ...io.input import ExampleGenerator
 from .. import echo
 from . import ersilia_cli
 
@@ -36,6 +33,10 @@ def example_cmd():
         help="How examples are generated: random, curated, or deterministic.",
     )
     def example(model, n_samples, output_file, file_name, mode):
+        from ... import ModelBase
+        from ...core.session import Session
+        from ...io.input import ExampleGenerator
+
         # support legacy --file_name / -f
         resolved_file = output_file or file_name
         if not resolved_file:

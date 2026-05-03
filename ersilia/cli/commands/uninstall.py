@@ -1,6 +1,5 @@
 import rich_click as click
 
-from ...utils.uninstall import Uninstaller
 from .. import echo
 from . import ersilia_cli
 
@@ -20,5 +19,7 @@ def uninstall_cmd():
         if not click.confirm("Are you sure you want to proceed?", default=False):
             echo("Aborted.", fg="green")
             return
+        from ...utils.uninstall import Uninstaller
+
         ui = Uninstaller()
         ui.uninstall()

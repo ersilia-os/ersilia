@@ -263,7 +263,7 @@ class AutoService(ErsiliaBase):
                     url=url,
                 )
                 self.logger.info(
-                    f"Using provided service backend '{self._service_class}' for model {model_id}"
+                    f"Resolved service backend '{self._service_class}' for model {model_id}"
                 )
             else:
                 self.service = None

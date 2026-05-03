@@ -1,7 +1,6 @@
 import rich_click as click
 
 from ...cli import echo
-from ...publish.test.test import ModelTester
 from . import ersilia_cli
 
 
@@ -126,6 +125,8 @@ def test_cmd():
             raise click.UsageError(
                 "--permissive can only be used together with --from_dockerhub."
             )
+        from ...publish.test.test import ModelTester
+
         mt = ModelTester(
             model,
             from_dir,

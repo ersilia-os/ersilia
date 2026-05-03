@@ -3,9 +3,6 @@ import json
 
 import rich_click as click
 
-from ... import ErsiliaModel
-from ...core.session import Session
-from ...hub.content.information import InformationDisplayer
 from .. import echo
 from . import ersilia_cli
 
@@ -34,6 +31,10 @@ def info_cmd():
         help="Save model information to a file. Accepted formats: .json, .csv.",
     )
     def info(output):
+        from ... import ErsiliaModel
+        from ...core.session import Session
+        from ...hub.content.information import InformationDisplayer
+
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
