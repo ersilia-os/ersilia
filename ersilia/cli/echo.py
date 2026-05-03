@@ -86,8 +86,10 @@ def echo(text, harmonize=True, **styles):
         icon = "⚠"
     elif color in ("red", "bright_red"):
         icon = "✖"
-    else:
+    elif color in ("green", "bright_green"):
         icon = "✓"
+    else:
+        icon = "▪"
 
     text = f"  {icon}  {text}"
 
@@ -96,7 +98,7 @@ def echo(text, harmonize=True, **styles):
         text = click.wrap_text(text, width=width)
 
     if not styles:
-        styles["fg"] = "green"
+        styles["dim"] = True
 
     return click.echo(click.style(text, **styles))
 
@@ -108,7 +110,7 @@ def spinner(text, func, *args, **kwargs):
     with console.status(Text(text, style="cyan")):
         try:
             result = func(*args, **kwargs)
-            console.print(Text(f"  ✓  {text}", style="green"))
+            console.print(Text(f"  ▪  {text}", style="dim"))
             return result
         except Exception:
             console.print(Text(f"  ✖  {text}", style="red"))

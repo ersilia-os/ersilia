@@ -133,9 +133,8 @@ class AutoService(ErsiliaBase):
                 else:
                     self.service = None
                 self._service_class = s
-                echo(
-                    f"Using stored service backend '{self._service_class}' for model {model_id}",
-                    fg="cyan",
+                self.logger.debug(
+                    f"Using stored service backend '{self._service_class}' for model {model_id}"
                 )
             else:
                 self.logger.debug(
@@ -158,10 +157,6 @@ class AutoService(ErsiliaBase):
                         self.logger.debug("Service class: system")
                         f.write("system")
                         self._service_class = "system"
-                        echo(
-                            f"Selected service backend 'system' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif VenvEnvironmentService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
@@ -173,10 +168,6 @@ class AutoService(ErsiliaBase):
                         f.write("venv")
                         self.logger.debug("Service class: venv")
                         self._service_class = "venv"
-                        echo(
-                            f"Selected service backend 'venv' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif CondaEnvironmentService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
@@ -188,10 +179,6 @@ class AutoService(ErsiliaBase):
                         f.write("conda")
                         self.logger.debug("Service class: conda")
                         self._service_class = "conda"
-                        echo(
-                            f"Selected service backend 'conda' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif DockerImageService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
@@ -203,10 +190,6 @@ class AutoService(ErsiliaBase):
                         f.write("docker")
                         self.logger.debug("Service class: docker")
                         self._service_class = "docker"
-                        echo(
-                            f"Selected service backend 'docker' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif PulledDockerImageService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
@@ -218,10 +201,6 @@ class AutoService(ErsiliaBase):
                         f.write("pulled_docker")
                         self.logger.debug("Service class: pulled_docker")
                         self._service_class = "pulled_docker"
-                        echo(
-                            f"Selected service backend 'pulled_docker' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif HostedService(
                         model_id, config_json=config_json, url=url
                     ).is_available():
@@ -231,10 +210,6 @@ class AutoService(ErsiliaBase):
                         f.write("hosted")
                         self.logger.debug("Service class: hosted")
                         self._service_class = "hosted"
-                        echo(
-                            f"Selected service backend 'hosted' for model {model_id}",
-                            fg="cyan",
-                        )
                     else:
                         self.logger.debug("Service class: dummy")
                         self.service = DummyService(

@@ -190,6 +190,14 @@ class InformationDisplayer(ErsiliaBase):
                 return ", ".join(str(v) for v in value)
             return str(value) if value is not None else "—"
 
+        def fmt_size(value):
+            if value is None:
+                return "—"
+            s = str(value)
+            if any(u in s.upper() for u in ("MB", "GB", "KB")):
+                return s
+            return f"{s} MB"
+
         def fmt_arch(value):
             if not isinstance(value, list):
                 return fmt(value)
@@ -247,11 +255,13 @@ class InformationDisplayer(ErsiliaBase):
             ("Sizes", ["Model Size", "Environment Size", "Image Size"]),
         ]
 
+        size_fields = {"Model Size", "Environment Size", "Image Size"}
         for section_title, fields in sections:
             table.add_row(Text(f" {section_title}", style="bold magenta on grey15"), "")
             for field in fields:
                 if field in card:
-                    table.add_row(f"  {field}", fmt(card[field]))
+                    formatter = fmt_size if field in size_fields else fmt
+                    table.add_row(f"  {field}", formatter(card[field]))
             table.add_row("", "")
 
         title = card.get("Title", "")

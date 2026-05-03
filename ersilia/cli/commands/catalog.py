@@ -54,6 +54,14 @@ def _print_model_card(metadata_json: str):
             return ", ".join(str(v) for v in value)
         return str(value) if value is not None else "—"
 
+    def fmt_size(value):
+        if value is None:
+            return "—"
+        s = str(value)
+        if any(u in s.upper() for u in ("MB", "GB", "KB")):
+            return s
+        return f"{s} MB"
+
     sections = [
         ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
         ("Description", ["Title", "Description", "Interpretation"]),
@@ -99,11 +107,13 @@ def _print_model_card(metadata_json: str):
     table.add_column("Field", style="bold cyan", no_wrap=True, min_width=24)
     table.add_column("Value", overflow="fold")
 
+    size_fields = {"Model Size", "Environment Size", "Image Size"}
     for section_title, fields in sections:
         table.add_row(Text(f" {section_title}", style="bold magenta on grey15"), "")
         for field in fields:
             if field in data:
-                table.add_row(f"  {field}", fmt(data[field]))
+                formatter = fmt_size if field in size_fields else fmt
+                table.add_row(f"  {field}", formatter(data[field]))
         table.add_row("", "")
 
     title = f"[bold]{data.get('Identifier', '')}[/bold]  ·  {data.get('Title', '')}"
