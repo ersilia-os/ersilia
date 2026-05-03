@@ -31,7 +31,7 @@ def close_cmd():
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         if model_id is None:
-            echo("No model was served")
+            echo("No model was served", fg="yellow")
             return
         mdl = ErsiliaModel(model_id, service_class=service_class)
         mdl.close()

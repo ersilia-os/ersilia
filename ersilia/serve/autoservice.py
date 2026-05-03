@@ -16,6 +16,7 @@ from ..default import (
 from ..utils import tmp_pid_file
 from ..utils.cache import SetupRedis
 from ..utils.echo import echo, spinner
+from ..utils.session import stop_containers_by_name
 from .api import Api
 from .services import (
     CondaEnvironmentService,
@@ -504,27 +505,7 @@ class AutoService(ErsiliaBase):
             pass
 
     def _stop_session_containers(self, names):
-        if not names:
-            return
-        try:
-            import docker
-
-            client = docker.from_env()
-        except Exception:
-            return
-        by_name = {c.name: c for c in client.containers.list(all=True)}
-        for name in names:
-            c = by_name.get(name)
-            if c is None:
-                continue
-            try:
-                c.stop()
-            except Exception:
-                pass
-            try:
-                c.remove()
-            except Exception:
-                pass
+        stop_containers_by_name(names)
 
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE
