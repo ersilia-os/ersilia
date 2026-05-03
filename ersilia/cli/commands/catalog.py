@@ -26,10 +26,21 @@ def _print_catalog(catalog_table):
         "Fetched From": ("dim cyan", 14),
     }
 
-    table = RichTable(show_header=True, header_style="bold", border_style="grey50", show_lines=True, expand=False)
+    table = RichTable(
+        show_header=True,
+        header_style="bold",
+        border_style="grey50",
+        show_lines=True,
+        expand=False,
+    )
     for col in catalog_table.columns:
         style, width = col_styles.get(col, ("", 16))
-        table.add_column(col, style=style, min_width=width, no_wrap=col in ("Index", "Identifier", "Slug", "Task"))
+        table.add_column(
+            col,
+            style=style,
+            min_width=width,
+            no_wrap=col in ("Index", "Identifier", "Slug", "Task"),
+        )
 
     for row in catalog_table.data:
         table.add_row(*[str(v) if v is not None else "" for v in row])
@@ -48,9 +59,41 @@ def _print_model_card(metadata_json: str):
     sections = [
         ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
         ("Description", ["Title", "Description", "Interpretation"]),
-        ("Input / Output", ["Input", "Input Dimension", "Input Shape", "Output", "Output Dimension", "Output Shape", "Output Type", "Output Consistency"]),
-        ("Deployment", ["Deployment", "Source", "Source Type", "Docker Architecture", "DockerHub", "S3"]),
-        ("Publication", ["License", "Contributor", "Publication Type", "Publication Year", "Publication", "Source Code"]),
+        (
+            "Input / Output",
+            [
+                "Input",
+                "Input Dimension",
+                "Input Shape",
+                "Output",
+                "Output Dimension",
+                "Output Shape",
+                "Output Type",
+                "Output Consistency",
+            ],
+        ),
+        (
+            "Deployment",
+            [
+                "Deployment",
+                "Source",
+                "Source Type",
+                "Docker Architecture",
+                "DockerHub",
+                "S3",
+            ],
+        ),
+        (
+            "Publication",
+            [
+                "License",
+                "Contributor",
+                "Publication Type",
+                "Publication Year",
+                "Publication",
+                "Source Code",
+            ],
+        ),
         ("Sizes", ["Model Size", "Environment Size", "Image Size"]),
     ]
 
@@ -102,7 +145,11 @@ def catalog_cmd():
         help="--hub lists models available in the Ersilia Model Hub; --local (default) lists locally fetched models.",
     )
     @click.option(
-        "--output", "-o", default=None, type=click.STRING, help="Save the catalog to a file. Accepted formats: .csv, .json."
+        "--output",
+        "-o",
+        default=None,
+        type=click.STRING,
+        help="Save the catalog to a file. Accepted formats: .csv, .json.",
     )
     @click.option(
         "--more/--less",
@@ -119,7 +166,9 @@ def catalog_cmd():
     @click.option(
         "--task",
         default=None,
-        type=click.Choice(["Annotation", "Representation", "Sampling"], case_sensitive=False),
+        type=click.Choice(
+            ["Annotation", "Representation", "Sampling"], case_sensitive=False
+        ),
         help="Filter models by task.",
     )
     @click.argument(
@@ -157,7 +206,13 @@ def catalog_cmd():
                     return
                 if output:
                     if not (output.endswith(".json") or output.endswith(".csv")):
-                        click.echo(click.style("Error: output file must have a .json or .csv extension.", fg="red"), err=True)
+                        click.echo(
+                            click.style(
+                                "Error: output file must have a .json or .csv extension.",
+                                fg="red",
+                            ),
+                            err=True,
+                        )
                         return
                     data = json.loads(model_metadata)
                     if output.endswith(".json"):
@@ -165,11 +220,19 @@ def catalog_cmd():
                             f.write(model_metadata)
                     else:
                         import csv
+
                         with open(output, "w", newline="") as f:
                             writer = csv.writer(f)
                             writer.writerow(["Field", "Value"])
                             for key, value in data.items():
-                                writer.writerow([key, value if not isinstance(value, list) else ", ".join(str(v) for v in value)])
+                                writer.writerow(
+                                    [
+                                        key,
+                                        value
+                                        if not isinstance(value, list)
+                                        else ", ".join(str(v) for v in value),
+                                    ]
+                                )
                     click.echo(click.style(f"Model card saved to {output}", fg="green"))
                 else:
                     _print_model_card(model_metadata)
@@ -195,7 +258,13 @@ def catalog_cmd():
                 _print_catalog(catalog_table)
             else:
                 if not (output.endswith(".csv") or output.endswith(".json")):
-                    click.echo(click.style("Error: output file must have a .csv or .json extension.", fg="red"), err=True)
+                    click.echo(
+                        click.style(
+                            "Error: output file must have a .csv or .json extension.",
+                            fg="red",
+                        ),
+                        err=True,
+                    )
                     return
                 catalog_table.write(output)
                 click.echo(click.style(f"Catalog saved to {output}", fg="green"))

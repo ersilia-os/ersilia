@@ -467,24 +467,64 @@ class AutoService(ErsiliaBase):
         self.logger.info("Setting up Redis")
         self.setup_redis.ensure_redis_running()
         tmp_file = tmp_pid_file(self.model_id)
+        container_name = getattr(self.service, "container_name", None) or "-"
         with open(tmp_file, "a+") as f:
-            f.write("{0} {1}{2}".format(self.service.pid, self.service.url, os.linesep))
+            f.write(
+                "{0} {1} {2}{3}".format(
+                    self.service.pid, self.service.url, container_name, os.linesep
+                )
+            )
 
     def close(self):
         """
         Close the service.
         """
         tmp_file = tmp_pid_file(self.model_id)
+        container_names = []
         if os.path.isfile(tmp_file):
-            pids = self._pids_from_file(tmp_file)
+            pids = []
+            with open(tmp_file, "r") as f:
+                for line in f:
+                    parts = line.strip().split()
+                    if not parts:
+                        continue
+                    try:
+                        pids.append(int(parts[0]))
+                    except ValueError:
+                        pass
+                    if len(parts) >= 3 and parts[2] != "-":
+                        container_names.append(parts[2])
             self._kill_pids(pids)
             os.remove(tmp_file)
         self.clean_temp_dir()
-        self.clean_docker_containers()
+        self._stop_session_containers(container_names)
         try:
             self.service.close()
         except:
             pass
+
+    def _stop_session_containers(self, names):
+        if not names:
+            return
+        try:
+            import docker
+
+            client = docker.from_env()
+        except Exception:
+            return
+        by_name = {c.name: c for c in client.containers.list(all=True)}
+        for name in names:
+            c = by_name.get(name)
+            if c is None:
+                continue
+            try:
+                c.stop()
+            except Exception:
+                pass
+            try:
+                c.remove()
+            except Exception:
+                pass
 
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE

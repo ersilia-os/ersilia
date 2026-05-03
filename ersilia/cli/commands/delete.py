@@ -64,7 +64,7 @@ def delete_cmd():
             fg="yellow",
         )
         if not click.confirm("Are you sure you want to proceed?", default=False):
-            echo("Aborted.", fg='green')
+            echo("Aborted.", fg="green")
             return
         deleted_count = 0
         for model_row in local_models:

@@ -219,9 +219,31 @@ class InformationDisplayer(ErsiliaBase):
         sections = [
             ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
             ("Description", ["Title", "Description", "Interpretation"]),
-            ("Input / Output", ["Input", "Input Dimension", "Input Shape", "Output", "Output Dimension", "Output Shape", "Output Type", "Output Consistency"]),
+            (
+                "Input / Output",
+                [
+                    "Input",
+                    "Input Dimension",
+                    "Input Shape",
+                    "Output",
+                    "Output Dimension",
+                    "Output Shape",
+                    "Output Type",
+                    "Output Consistency",
+                ],
+            ),
             ("Deployment", ["Deployment", "Source", "Source Type", "S3"]),
-            ("Publication", ["License", "Contributor", "Publication Type", "Publication Year", "Publication", "Source Code"]),
+            (
+                "Publication",
+                [
+                    "License",
+                    "Contributor",
+                    "Publication Type",
+                    "Publication Year",
+                    "Publication",
+                    "Source Code",
+                ],
+            ),
             ("Sizes", ["Model Size", "Environment Size", "Image Size"]),
         ]
 

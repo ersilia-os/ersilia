@@ -4,7 +4,11 @@ import sys
 import click
 
 from ... import EOS
-from ...default import CURRENT_LOGGING_FILE, DEFAULT_ERSILIA_ERROR_EXIT_CODE, ERSILIA_CATALOG_URL
+from ...default import (
+    CURRENT_LOGGING_FILE,
+    DEFAULT_ERSILIA_ERROR_EXIT_CODE,
+    ERSILIA_CATALOG_URL,
+)
 
 try:
     import emoji
@@ -36,6 +40,7 @@ def throw_ersilia_exception(exit=True):
                     echo(str(error), fg="red")
                 else:
                     from ..exceptions_utils.exceptions import ErsiliaError
+
                     if isinstance(error, ErsiliaError) and hasattr(error, "message"):
                         echo("✗ " + error.message, fg="red", bold=True)
                         if hasattr(error, "hints") and error.hints:
@@ -47,7 +52,9 @@ def throw_ersilia_exception(exit=True):
                     text += " - https://github.com/ersilia-os/ersilia\n"
                     text += "Or feel free to reach out to us at:\n"
                     text += " - hello[at]ersilia.io\n\n"
-                    text += f"Browse the full model catalog at: {ERSILIA_CATALOG_URL}\n\n"
+                    text += (
+                        f"Browse the full model catalog at: {ERSILIA_CATALOG_URL}\n\n"
+                    )
                     text += "If you haven't, try to run your command in verbose mode (-v in the CLI)\n"
                     text += " - You will find the console log file in: {0}/{1}".format(
                         EOS, CURRENT_LOGGING_FILE

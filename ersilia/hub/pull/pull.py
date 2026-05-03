@@ -142,14 +142,14 @@ class ModelPuller(ErsiliaBase):
 
     def _pull_with_pty_progress(self, cmd: str, progress_callback):
         """Blocking: run docker pull via PTY so docker outputs full layer progress."""
-        import pty
         import os
-        import shlex
+        import pty
         import re as _re
+        import shlex
         import subprocess as _sp
 
-        ansi_re = _re.compile(r'\x1b\[[0-9;]*[a-zA-Z]')
-        layer_re = _re.compile(r'^([a-f0-9]{12,}): (.+)$')
+        ansi_re = _re.compile(r"\x1b\[[0-9;]*[a-zA-Z]")
+        layer_re = _re.compile(r"^([a-f0-9]{12,}): (.+)$")
 
         master_fd, slave_fd = pty.openpty()
         proc = _sp.Popen(
@@ -173,11 +173,11 @@ class ModelPuller(ErsiliaBase):
             except OSError:
                 break
 
-            parts = _re.split(b'[\r\n]', buf)
+            parts = _re.split(b"[\r\n]", buf)
             buf = parts[-1]
 
             for raw in parts[:-1]:
-                line = ansi_re.sub('', raw.decode('utf-8', errors='replace')).strip()
+                line = ansi_re.sub("", raw.decode("utf-8", errors="replace")).strip()
                 if not line:
                     continue
                 self.logger.debug(line)
@@ -232,19 +232,24 @@ class ModelPuller(ErsiliaBase):
             if remote_size:
                 echo(f"Download size: ~{remote_size:.0f} MB (compressed)")
 
-            pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{self.docker_tag}"
+            pull_command = (
+                f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{self.docker_tag}"
+            )
             force_pull_command = f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{self.docker_tag} --platform linux/amd64"
 
             if verbose:
+
                 async def _run_pull(cmd):
                     proc = await asyncio.create_subprocess_shell(
                         cmd,
                         stdout=asyncio.subprocess.PIPE,
                         stderr=asyncio.subprocess.PIPE,
                     )
+
                     async def log_stream(stream, log_method):
                         async for line in stream:
                             log_method(line.decode().strip())
+
                     await asyncio.gather(
                         log_stream(proc.stdout, self.logger.info),
                         log_stream(proc.stderr, self.logger.error),
@@ -259,11 +264,14 @@ class ModelPuller(ErsiliaBase):
                     self.logger.warning("Conventional pull failed, trying linux/amd64")
                     await _run_pull(force_pull_command)
             else:
-                from rich.progress import (
-                    BarColumn, MofNCompleteColumn, Progress,
-                    TextColumn, TimeElapsedColumn,
-                )
                 from rich.console import Console as _Console
+                from rich.progress import (
+                    BarColumn,
+                    MofNCompleteColumn,
+                    Progress,
+                    TextColumn,
+                    TimeElapsedColumn,
+                )
                 from rich.text import Text as _Text
 
                 with Progress(
@@ -280,16 +288,26 @@ class ModelPuller(ErsiliaBase):
                     loop = asyncio.get_running_loop()
                     try:
                         await loop.run_in_executor(
-                            None, self._pull_with_pty_progress, pull_command, on_progress
+                            None,
+                            self._pull_with_pty_progress,
+                            pull_command,
+                            on_progress,
                         )
                     except subprocess.CalledProcessError:
-                        self.logger.warning("Conventional pull failed, trying linux/amd64")
+                        self.logger.warning(
+                            "Conventional pull failed, trying linux/amd64"
+                        )
                         try:
                             await loop.run_in_executor(
-                                None, self._pull_with_pty_progress, force_pull_command, on_progress
+                                None,
+                                self._pull_with_pty_progress,
+                                force_pull_command,
+                                on_progress,
                             )
                         except subprocess.CalledProcessError as e:
-                            raise DockerConventionalPullError(model=self.model_id) from e
+                            raise DockerConventionalPullError(
+                                model=self.model_id
+                            ) from e
 
                 _Console().print(_Text("  ✓  Pulled Docker image", style="green"))
 

@@ -16,15 +16,21 @@ def example_cmd():
         help="Generate input examples for a model. A model must be served before running this command, or a model identifier must be provided. The number of examples and output file can be specified.",
     )
     @click.argument("model", required=False, default=None, type=click.STRING)
-    @click.option("--n_samples", "-n", default=None, type=click.INT, help="Number of examples to generate. Ignored in curated mode.")
-    @click.option("--output_file", "-o", default=None, type=click.STRING, help="Output file name.")
+    @click.option(
+        "--n_samples",
+        "-n",
+        default=None,
+        type=click.INT,
+        help="Number of examples to generate. Ignored in curated mode.",
+    )
+    @click.option(
+        "--output_file", "-o", default=None, type=click.STRING, help="Output file name."
+    )
     @click.option("--file_name", "-f", default=None, type=click.STRING, hidden=True)
     @click.option(
         "--mode",
         "-m",
-        type=click.Choice(
-            ["random", "curated", "deterministic"], case_sensitive=False
-        ),
+        type=click.Choice(["random", "curated", "deterministic"], case_sensitive=False),
         default="random",
         show_default=True,
         help="How examples are generated: random, curated, or deterministic.",

@@ -1,7 +1,6 @@
 import importlib
 import json
 import os
-import sys
 from collections import namedtuple
 
 from ... import ErsiliaBase
@@ -11,7 +10,7 @@ from ...default import (
     PACK_METHOD_FASTAPI,
 )
 from ...hub.delete.delete import ModelFullDeleter
-from ...utils.echo import async_spinner, echo, spinner
+from ...utils.echo import echo, spinner
 from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithFastAPI,
     StandardModelExampleError,
@@ -273,7 +272,11 @@ class ModelFetcher(ErsiliaBase):
             echo(f"Model not found locally, fetching from {self.model_source}...")
             self.logger.debug("Starting fetching procedure")
             do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
-            if self.force_from_dockerhub and not do_dockerhub and not self.is_docker_active:
+            if (
+                self.force_from_dockerhub
+                and not do_dockerhub
+                and not self.is_docker_active
+            ):
                 return FetchResult(
                     fetch_success=False,
                     reason="Docker is not active on your system. Please start Docker and try again.",

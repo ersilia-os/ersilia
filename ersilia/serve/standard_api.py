@@ -342,7 +342,9 @@ class StandardCSVRunApi(ErsiliaBase):
             if isinstance(data, list):
                 return data, None
             elif isinstance(data, dict) and "result" in data:
-                batch_meta = data.get("meta") if isinstance(data.get("meta"), dict) else None
+                batch_meta = (
+                    data.get("meta") if isinstance(data.get("meta"), dict) else None
+                )
                 return data["result"], batch_meta
             elif data is not None:
                 return [data] * len(batch), None
@@ -482,7 +484,13 @@ class StandardCSVRunApi(ErsiliaBase):
             return path
 
         from rich.console import Console
-        from rich.progress import BarColumn, MofNCompleteColumn, Progress, TextColumn, TimeElapsedColumn
+        from rich.progress import (
+            BarColumn,
+            MofNCompleteColumn,
+            Progress,
+            TextColumn,
+            TimeElapsedColumn,
+        )
 
         Console().print(f"[bold cyan]Running model {self.model_id}[/bold cyan]")
 
@@ -501,7 +509,9 @@ class StandardCSVRunApi(ErsiliaBase):
                 batch_items = input_data[i : i + batch_size]
 
                 payload = [d["input"] for d in batch_items]
-                lookup_payload = [d.get("lookup_input") or d["input"] for d in batch_items]
+                lookup_payload = [
+                    d.get("lookup_input") or d["input"] for d in batch_items
+                ]
 
                 if IsauraStore.is_installed() and self.read_store and lookup_payload:
                     check_dict = self.isaura_store.check(lookup_payload)
@@ -528,7 +538,9 @@ class StandardCSVRunApi(ErsiliaBase):
                     self.logger.debug(f"Running batch {bidx}")
                     st = time.perf_counter()
 
-                    api_values, batch_meta = self._post_batch_with_fallback(url, missed_u)
+                    api_values, batch_meta = self._post_batch_with_fallback(
+                        url, missed_u
+                    )
 
                     et = time.perf_counter()
                     self.logger.info(f"Batch {bidx} fetched in {et - st:.4f} seconds")

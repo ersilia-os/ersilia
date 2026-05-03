@@ -4,14 +4,13 @@ import shutil
 import sys
 import threading
 
-from ....utils.echo import echo
-
 from .... import ErsiliaBase, throw_ersilia_exception
 from ....default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
 )
 from ....utils.conda import SimpleConda
+from ....utils.echo import echo
 from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
 from ....utils.terminal import run_command, run_command_check_output
 
@@ -132,10 +131,12 @@ class ModelStandardExample(ErsiliaBase):
         self.logger.debug(f"Example input file: {self.input_csv}")
         self.logger.debug(f"Example output file: {self.output_csv}")
 
-        self._execute_commands([
-            f"ersilia serve {self.model_id} --disable-cache",
-            f"ersilia run -i {self.input_csv} -o {self.output_csv} > {self.run_log} 2>&1",
-        ])
+        self._execute_commands(
+            [
+                f"ersilia serve {self.model_id} --disable-cache",
+                f"ersilia run -i {self.input_csv} -o {self.output_csv} > {self.run_log} 2>&1",
+            ]
+        )
 
         if os.path.exists(self.run_log):
             self.logger.info(f"Run log: {open(self.run_log).read()}")

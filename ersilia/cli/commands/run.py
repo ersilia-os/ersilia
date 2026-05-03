@@ -65,13 +65,30 @@ def run_cmd():
         short_help="Run predictions on the served model",
         help="Run predictions using the currently served model. Input must be a single-column CSV file. Output can be saved as .csv or .h5. A model must be served before running this command.",
     )
-    @click.option("-i", "--input", "input", required=True, type=click.STRING, help="Path to a single-column CSV file containing the input data.")
     @click.option(
-        "-o", "--output", "output", required=True, default=None, type=click.STRING,
+        "-i",
+        "--input",
+        "input",
+        required=True,
+        type=click.STRING,
+        help="Path to a single-column CSV file containing the input data.",
+    )
+    @click.option(
+        "-o",
+        "--output",
+        "output",
+        required=True,
+        default=None,
+        type=click.STRING,
         help="Path to the output file. Accepted formats: .csv, .h5.",
     )
     @click.option(
-        "-b", "--batch_size", "batch_size", required=False, default=100, type=click.INT,
+        "-b",
+        "--batch_size",
+        "batch_size",
+        required=False,
+        default=100,
+        type=click.INT,
         help="Number of inputs processed per batch.",
     )
     def run(input, output, batch_size):

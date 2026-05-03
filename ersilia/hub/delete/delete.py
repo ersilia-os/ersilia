@@ -535,6 +535,7 @@ class ModelFullDeleter(ErsiliaBase):
         model_id : str
             Identifier of the model to be deleted.
         """
+
         def _run_deleters():
             ModelEosDeleter(self.config_json).delete(model_id)
             ModelSlugDeleter(self.config_json).delete(model_id)

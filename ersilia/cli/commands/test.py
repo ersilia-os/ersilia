@@ -54,7 +54,10 @@ def test_cmd():
         help="Fetch the model from DockerHub.",
     )
     @click.option(
-        "--from_s3", is_flag=True, default=False, help="Fetch the model from AWS S3 bucket."
+        "--from_s3",
+        is_flag=True,
+        default=False,
+        help="Fetch the model from AWS S3 bucket.",
     )
     @click.option(
         "--version",
@@ -120,7 +123,9 @@ def test_cmd():
         permissive,
     ):
         if permissive and not from_dockerhub:
-            raise click.UsageError("--permissive can only be used together with --from_dockerhub.")
+            raise click.UsageError(
+                "--permissive can only be used together with --from_dockerhub."
+            )
         mt = ModelTester(
             model,
             from_dir,

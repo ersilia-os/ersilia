@@ -22,23 +22,24 @@ def is_installed(package_name):
 
 def serve_cmd():
     """
-    Serves a specified model.
+    Serves a previously fetched model as a local API.
 
-    This command allows users to serve a specified model as an API.
+    The model must already be available locally (see ``ersilia fetch``).
+    After serving, use ``ersilia run`` to send predictions to it.
 
     Returns
     -------
     function
-        The serve command function to be used by the CLI and for testing in the pytest.
+        The serve command function to be used by the CLI and for testing in pytest.
 
     Examples
     --------
     .. code-block:: console
 
-        Serve a model by its ID:
+        Serve a model on a chosen port:
         $ ersilia serve <model_id> --port 8080
 
-        Serve a model and track the session:
+        Serve a model with run tracking enabled:
         $ ersilia serve <model_id> --track
     """
 
@@ -51,14 +52,23 @@ def serve_cmd():
             return "Enabled: Reader & Writter "
         return "Disabled"
 
-    @ersilia_cli.command(short_help="Serve model", help="Serve model")
+    @ersilia_cli.command(
+        short_help="Serve a model as a local API",
+        help=(
+            "Start a local API server for a previously fetched model. "
+            "Once served, the model is ready to receive predictions via "
+            "`ersilia run`. Optional flags configure session tracking, "
+            "in-memory caching, and Isaura store access."
+        ),
+    )
     @click.argument("model", type=click.STRING)
     @click.option(
         "--port",
         "-p",
         default=None,
         type=click.INT,
-        help="Preferred port to use (integer)",
+        show_default="auto-selected",
+        help="Preferred port for the local API server.",
     )
     @click.option(
         "-t",
@@ -67,6 +77,11 @@ def serve_cmd():
         is_flag=True,
         required=False,
         default=False,
+        show_default="off",
+        help=(
+            "Track model runs (input/output stats, errors, timing, model "
+            "metadata) by sending event data to Ersilia's S3 tracking bucket."
+        ),
     )
     @click.option(
         "--tracking-use-case",
@@ -75,17 +90,74 @@ def serve_cmd():
         ),
         required=False,
         default="local",
-        help="Tracking use case. Options: local, self-service, hosted, test",
-    )
-    @click.option("--enable-cache/--disable-cache", is_flag=True, default=False)
-    @click.option("--read-store", "-rs", is_flag=True, default=False)
-    @click.option("--write-store", "-ws", is_flag=True, default=False)
-    @click.option("--access", "-a", default=None)
-    @click.option(
-        "--nearest-neigbors", "-nn", "nearest_neighbors", is_flag=True, default=False
+        hidden=True,
+        help=(
+            "Deployment context recorded with each tracked run. "
+            "One of: local, self-service, hosted, test."
+        ),
     )
     @click.option(
-        "--max-cache-memory-frac", "max_memory", type=click.FLOAT, default=None
+        "--enable-cache/--disable-cache",
+        is_flag=True,
+        default=False,
+        show_default=True,
+        help=(
+            "Enable a Redis in-memory cache for prediction results so repeat "
+            "inputs return instantly."
+        ),
+    )
+    @click.option(
+        "--read-store",
+        "-rs",
+        is_flag=True,
+        default=False,
+        show_default="off",
+        help=(
+            "Read previously computed predictions from the Isaura store "
+            "before running the model. Requires Isaura installed."
+        ),
+    )
+    @click.option(
+        "--write-store",
+        "-ws",
+        is_flag=True,
+        default=False,
+        show_default="off",
+        help=(
+            "Write predictions to the Isaura store as they are computed. "
+            "Requires Isaura installed and `--access`."
+        ),
+    )
+    @click.option(
+        "--access",
+        "-a",
+        default=None,
+        show_default="unset",
+        help=(
+            "Visibility for predictions written to the Isaura store. "
+            "One of: public, private. Required with `--write-store`."
+        ),
+    )
+    @click.option(
+        "--nearest-neigbors",
+        "-nn",
+        "nearest_neighbors",
+        is_flag=True,
+        default=False,
+        hidden=True,
+        help=(
+            "When reading from the Isaura store, also return approximate "
+            "nearest-neighbor matches for inputs not exactly cached. "
+            "This feature is experimental and not yet ready for use."
+        ),
+    )
+    @click.option(
+        "--max-cache-memory-frac",
+        "max_memory",
+        type=click.FLOAT,
+        default=None,
+        show_default="0.5",
+        help=("Maximum fraction (0.0-1.0) of system RAM the Redis cache may use."),
     )
     def serve(
         model,
@@ -100,6 +172,22 @@ def serve_cmd():
         max_memory,
     ):
         sess = Session(config_json=None)
+        existing_session = sess.get() or {}
+        already_served = existing_session.get("model_id")
+        if already_served:
+            echo(
+                f"A model is already being served in this terminal: {already_served}.",
+                fg="yellow",
+            )
+            if not click.confirm(
+                f"Close {already_served} and serve {model} instead?",
+                default=True,
+            ):
+                echo(
+                    f"Aborted. {already_served} is still being served.",
+                    fg="yellow",
+                )
+                sys.exit(0)
         sess.register_store_status(
             read_store, write_store, access, nearest_neighbors, enable_cache
         )

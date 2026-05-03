@@ -27,8 +27,11 @@ def info_cmd():
         help="Display information about the currently served model, including its title, description, identifiers, GitHub and S3 links, and Docker Hub details. A model must be served before running this command.",
     )
     @click.option(
-        "--output", "-o", default=None, type=click.STRING,
-        help="Save model information to a file. Accepted formats: .json, .csv."
+        "--output",
+        "-o",
+        default=None,
+        type=click.STRING,
+        help="Save model information to a file. Accepted formats: .json, .csv.",
     )
     def info(output):
         session = Session(config_json=None)
@@ -41,7 +44,13 @@ def info_cmd():
         info = mdl.info()
         if output:
             if not (output.endswith(".json") or output.endswith(".csv")):
-                click.echo(click.style("Error: output file must have a .json or .csv extension.", fg="red"), err=True)
+                click.echo(
+                    click.style(
+                        "Error: output file must have a .json or .csv extension.",
+                        fg="red",
+                    ),
+                    err=True,
+                )
                 return
             if output.endswith(".json"):
                 with open(output, "w") as f:
@@ -51,8 +60,14 @@ def info_cmd():
                     writer = csv.writer(f)
                     writer.writerow(["Field", "Value"])
                     for key, value in info.items():
-                        writer.writerow([key, value if not isinstance(value, list) else ", ".join(str(v) for v in value)])
+                        writer.writerow(
+                            [
+                                key,
+                                value
+                                if not isinstance(value, list)
+                                else ", ".join(str(v) for v in value),
+                            ]
+                        )
             echo(f"Model information saved to {output}", fg="green")
         else:
             InformationDisplayer(info).echo()
-
