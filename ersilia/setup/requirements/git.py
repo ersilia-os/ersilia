@@ -139,7 +139,7 @@ class EosvcRequirement(object):
 
     def __init__(self):
         self.name = "eosvc"
-        self.install_target = "git+https://github.com/ersilia-os/eosvc.git"
+        self.install_target = "eosvc>=1.1.0"
 
     def is_installed(self) -> bool:
         """
