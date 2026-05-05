@@ -113,7 +113,8 @@ def fetch_cmd():
         fetch_result = _fetch(mf, model_id)
 
         if fetch_result.fetch_success:
-            echo(f"Model {model_id} fetched successfully.", fg="green")
+            if fetch_result.reason == "Model fetched successfully":
+                echo(f"Model {model_id} fetched successfully.", fg="green")
         else:
             echo(
                 f"Model {model_id} failed to fetch: {fetch_result.reason}",

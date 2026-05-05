@@ -342,6 +342,12 @@ class ModelFetcher(ErsiliaBase):
             success = await fetcher.fetch(model_id="eosxxxx")
         """
         try:
+            if self.force_from_hosted and self.exists(model_id):
+                msg = f"Model {model_id} is already available locally and can be served normally."
+                self.logger.info(msg)
+                echo(msg, fg="yellow")
+                return FetchResult(fetch_success=True, reason=msg)
+
             fr = await self._fetch(model_id)
             if not fr.fetch_success:
                 return fr
