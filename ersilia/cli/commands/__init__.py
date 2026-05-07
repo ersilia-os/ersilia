@@ -1,8 +1,35 @@
+from pathlib import Path
+
 import rich_click as click
 from rich_click import RichCommand, RichGroup
 
 from ... import __version__ as __version__
 from ... import logger
+
+_ASCII_ART_FILE = Path(__file__).parents[3] / "assets" / "ascii-art.txt"
+
+
+def _print_logo():
+    if not _ASCII_ART_FILE.exists():
+        return
+    from rich.console import Console
+    from rich.text import Text
+
+    # Ersilia palette gradient top-to-bottom (yellow excluded — poor visibility on light terminals)
+    gradient = ["#FAA08C", "#DCA0DC", "#AA96FA", "#8CC8FA", "#BEE6B4"]
+
+    console = Console(highlight=False)
+    lines = _ASCII_ART_FILE.read_text().splitlines()
+    non_empty = [l for l in lines if l.strip()]
+    n = max(len(non_empty) - 1, 1)
+    ci = 0
+    for line in lines:
+        if line.strip():
+            color = gradient[ci * (len(gradient) - 1) // n]
+            console.print(Text(line, style=color), end="\n")
+            ci += 1
+        else:
+            console.print("")
 
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.SHOW_ARGUMENTS = True
@@ -24,6 +51,13 @@ class ErsiliaCommandGroup(RichGroup):
     def command(self, *args, **kwargs):
         kwargs.setdefault("cls", RichCommand)
         return RichGroup.command(self, *args, **kwargs)
+
+    def main(self, *args, **kwargs):
+        import sys
+        argv = sys.argv[1:]
+        if not argv or "--help" in argv or "-h" in argv:
+            _print_logo()
+        return super().main(*args, **kwargs)
 
 
 @click.group(
