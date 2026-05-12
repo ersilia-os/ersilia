@@ -7,6 +7,7 @@ from ...default import (
     API_SCHEMA_FILE,
     APIS_LIST_FILE,
     CARD_FILE,
+    DOCKER_INFO_FILE,
     MODEL_SIZE_FILE,
     MODEL_SOURCE_FILE,
     PACKMODE_FILE,
@@ -79,6 +80,14 @@ class Information(ErsiliaBase):
         else:
             return None
 
+    def _get_docker_tag(self):
+        docker_info_file = os.path.join(self.dest_folder, DOCKER_INFO_FILE)
+        if os.path.exists(docker_info_file):
+            with open(docker_info_file, "r") as f:
+                data = json.load(f)
+            return data.get("tag")
+        return None
+
     def _get_metadata(self):
         try:
             data = get_metadata_from_base_dir(self.dest_folder)
@@ -126,6 +135,7 @@ class Information(ErsiliaBase):
             "pack_mode": self._get_pack_mode(),
             "service_class": self._get_service_class(),
             "model_source": self._get_model_source(),
+            "docker_tag": self._get_docker_tag(),
             "apis_list": self._get_apis_list(),
             "api_schema": self._get_api_schema(),
             "size": self._get_size(),
@@ -182,6 +192,7 @@ class InformationDisplayer(ErsiliaBase):
         console = Console()
         card = self.info_data.get("card") or {}
         model_source = self.info_data.get("model_source")
+        docker_tag = self.info_data.get("docker_tag")
         service_class_raw = self.info_data.get("service_class")
         service_class = _service_class_labels.get(service_class_raw, service_class_raw)
 
@@ -217,6 +228,8 @@ class InformationDisplayer(ErsiliaBase):
             table.add_row("  Service class", fmt(service_class))
         if "DockerHub" in card:
             table.add_row("  Docker Hub", fmt(card["DockerHub"]))
+        if docker_tag:
+            table.add_row("  Version", fmt(docker_tag))
         if "Docker Architecture" in card:
             table.add_row("  Architecture", fmt_arch(card["Docker Architecture"]))
         identifier = card.get("Identifier", "")

@@ -238,6 +238,7 @@ def serve_cmd():
 
         register_model_session(mdl.model_id, mdl.session._session_dir)
 
+        info = mdl.info() if mdl.is_valid() else {}
         print_serve_summary(
             model_id=mdl.model_id,
             slug=mdl.slug,
@@ -250,6 +251,7 @@ def serve_cmd():
             enable_cache=enable_cache,
             tracking_enabled=bool(track),
             tracking_use_case=tracking_use_case,
+            version=info.get("docker_tag"),
         )
 
         logger.success(f"Model {model} is successfully served!")

@@ -15,8 +15,8 @@ def _print_logo():
     from rich.console import Console
     from rich.text import Text
 
-    # Ersilia palette gradient top-to-bottom (yellow excluded — poor visibility on light terminals)
-    gradient = ["#FAA08C", "#DCA0DC", "#AA96FA", "#8CC8FA", "#BEE6B4"]
+    # Ersilia palette — deeper tones visible on both dark and light terminals
+    gradient = ["#E07040", "#C060C0", "#8855BB", "#5599DD", "#55BB77"]
 
     console = Console(highlight=False)
     lines = _ASCII_ART_FILE.read_text().splitlines()
@@ -26,7 +26,7 @@ def _print_logo():
     for line in lines:
         if line.strip():
             color = gradient[ci * (len(gradient) - 1) // n]
-            console.print(Text(line, style=color), end="\n")
+            console.print(Text(line, style=f"bold {color}"), end="\n")
             ci += 1
         else:
             console.print("")

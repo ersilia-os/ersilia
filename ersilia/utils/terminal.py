@@ -224,6 +224,7 @@ def print_serve_summary(
     enable_cache,
     tracking_enabled,
     tracking_use_case,
+    version=None,
 ):
     """
     Print a rich summary table for a served model.
@@ -236,6 +237,8 @@ def print_serve_summary(
     )
 
     table.add_row("Model", f"[bold]{model_id}[/bold] ([dim]{slug}[/dim])")
+    if version:
+        table.add_row("Version", f"[dim]{version}[/dim]")
     table.add_row("URL", f"[link={url}][cyan]{url}[/cyan][/link]")
 
     if str(pid) != "-1":
