@@ -244,7 +244,7 @@ def print_serve_summary(
     if str(pid) != "-1":
         table.add_row("PID", f"[yellow]{pid}[/yellow]")
 
-    srv_display = "docker" if srv == "pulled_docker" else srv
+    srv_display = "DockerHub" if srv == "pulled_docker" else srv
     table.add_row("Service", f"[yellow]{srv_display}[/yellow]")
     table.add_row("Session", f"[yellow]{session_dir}[/yellow]")
 
