@@ -88,6 +88,29 @@ def test_delete_all_models_fails_when_can_be_deleted_is_False(mock_echo, mock_de
 
 
 @patch("ersilia.hub.content.catalog.ModelCatalog")
+@patch("ersilia.hub.delete.delete.ModelFullDeleter")
+@patch("ersilia.cli.echo")
+def test_delete_all_models_aborts_when_user_says_no(_mock_echo, mock_deleter, mock_catalog):
+    """Verify that --all aborts cleanly without deleting anything when the user declines the confirmation."""
+    runner = CliRunner()
+
+    mock_catalog_instance = MagicMock()
+    mock_catalog_instance.local.return_value.data = [[MODEL], [DUMMY_MODEL]]
+    mock_catalog_instance.local.return_value.columns = ["Identifier"]
+    mock_catalog.return_value = mock_catalog_instance
+
+    mock_deleter_instance = MagicMock()
+    mock_deleter.return_value = mock_deleter_instance
+
+    result = runner.invoke(delete_cmd(), ["delete", "--all"], input="N\n")
+
+    assert (
+        result.exit_code == 0
+    ), f"Unexpected exit code: {result.exit_code}. Output: {result.output}"
+    mock_deleter_instance.delete.assert_not_called()
+
+
+@patch("ersilia.hub.content.catalog.ModelCatalog")
 @patch("ersilia.cli.echo")
 def test_no_models_available(mock_echo, mock_catalog):
     """Verify that --all exits cleanly with an error message when no local models exist."""
