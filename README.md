@@ -27,9 +27,10 @@ The [Ersilia Model Hub](https://ersilia.io) is a unified platform of pre-trained
 
 In Ersilia, you can find models related to antibiotic activity prediction, ADMET prediction, molecular representation, generative chemistry, and much more.
 
-- To find your models of interest, visit the [Ersilia Model Hub browser](https://ersilia.io/model-hub)
+- To find your models of interest, visit the [Ersilia Model Hub browser](https://catalog.ersilia.io/)
 - For high-level documentation, check the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 - For a low-level documentation for developers, see the [Ersilia API reference](https://ersilia-os.github.io/ersilia/)
+- To contribute with new models, visit the [Contribute App](https://contribute.ersilia.io)
 
 ## Quick Start Guide
 

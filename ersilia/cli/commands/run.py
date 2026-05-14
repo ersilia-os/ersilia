@@ -91,6 +91,9 @@ def run_cmd():
         help="Number of inputs processed per batch.",
     )
     def run(input, output, batch_size):
+        import os
+        import re
+
         from ... import ErsiliaModel
         from ...core.session import Session
 
@@ -106,6 +109,16 @@ def run_cmd():
                 fg="red",
             )
             return
+
+        output_basename = os.path.basename(output)
+        output_model_ids = re.findall(r"eos[0-9][a-z0-9]{3}", output_basename)
+        if output_model_ids and output_model_ids[0] != model_id:
+            echo(
+                f"Output filename contains model identifier '{output_model_ids[0]}' but the served model is '{model_id}'. Please use a correct output filename.",
+                fg="red",
+                bold=True,
+            )
+            sys.exit(1)
 
         mdl = ErsiliaModel(
             model_id,
