@@ -51,7 +51,13 @@ def delete_cmd():
 
         model_catalog = ModelCatalog()
         catalog_table = model_catalog.local()
-        local_models = catalog_table.data if catalog_table else None
+        if not catalog_table:
+            echo(
+                "No local models available.",
+                fg="red",
+            )
+            return
+        local_models = catalog_table.data
         idx = catalog_table.columns.index("Identifier")
         if not local_models:
             echo(

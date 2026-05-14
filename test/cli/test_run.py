@@ -162,6 +162,7 @@ def test_standard_api_csv(
     mock_session,
     compound_csv,
 ):
+    """Verify that the run command with a CSV input exits successfully and writes the output file."""
     # TODO @abellegese: resolve this
     runner = CliRunner()
     input_arg = compound_csv

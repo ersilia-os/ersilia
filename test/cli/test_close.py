@@ -71,6 +71,7 @@ def test_close_cmd(
     mock_convn_api_get_apis,
     mock_get_url,
 ):
+    """Verify that the close command exits successfully and calls ErsiliaModel.close on the current session model."""
     runner = CliRunner()
 
     result = runner.invoke(close_cmd())
