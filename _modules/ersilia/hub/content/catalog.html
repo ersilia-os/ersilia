@@ -511,21 +511,24 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.catalog.CatalogTable.write">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write the catalog table to a file.</span>
+<span class="sd">        Write the catalog table to a file. Supported formats: .csv, .json.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        file_name : str</span>
 <span class="sd">            The name of the file to write the catalog table to.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Only .csv files are allowed&quot;</span><span class="p">)</span>
-            <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
-            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">file_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">as_json</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unsupported file format. Use .csv or .json&quot;</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -560,10 +563,11 @@
         <span class="s2">&quot;Output Dimension&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">less</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">less</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mi</span> <span class="o">=</span> <span class="n">ModelIdentifier</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="o">=</span> <span class="n">less</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="n">task</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
 
@@ -640,6 +644,10 @@
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="s2">&quot;test&quot;</span> <span class="ow">in</span> <span class="n">slug</span><span class="p">:</span>
                 <span class="k">continue</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">:</span>
+                <span class="n">card_task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_item</span><span class="p">(</span><span class="n">card</span><span class="p">,</span> <span class="s2">&quot;task&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">card_task</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">card_task</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="k">continue</span>
             <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
@@ -656,7 +664,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">hub</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;List models available in Ersilia model hub from the S3 JSON&quot;&quot;&quot;</span>
         <span class="n">ji</span> <span class="o">=</span> <span class="n">JsonModelsInterface</span><span class="p">()</span>
-        <span class="n">models</span> <span class="o">=</span> <span class="n">ji</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">ji</span><span class="o">.</span><span class="n">items_all</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_status</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;ready&quot;</span><span class="p">]</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">LESS_FIELDS</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">less</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">MORE_FIELDS</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_catalog</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">models</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">table</span></div>

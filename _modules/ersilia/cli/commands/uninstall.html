@@ -304,7 +304,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands.uninstall</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">...utils.uninstall</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uninstaller</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
 
 
@@ -313,12 +315,20 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">uninstall_cmd</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Uninstalls all Ersilia artifacts present locally on the user&#39;s system&quot;&quot;&quot;</span>
 
-    <span class="c1"># Example usage: ersilia setup</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
         <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Uninstall ersilia&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Uninstalls all Ersilia artifacts present locally on the user&#39;s system.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fully uninstall Ersilia from the local system. Removes the EOS directory with all fetched models, all Ersilia Docker images, and the ersilia pip package.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">uninstall</span><span class="p">():</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">&quot;This will remove the EOS directory with all fetched models, all Ersilia Docker images, and the ersilia pip package.&quot;</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="s2">&quot;Are you sure you want to proceed?&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Aborted.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.uninstall</span><span class="w"> </span><span class="kn">import</span> <span class="n">Uninstaller</span>
+
         <span class="n">ui</span> <span class="o">=</span> <span class="n">Uninstaller</span><span class="p">()</span>
         <span class="n">ui</span><span class="o">.</span><span class="n">uninstall</span><span class="p">()</span></div>
 

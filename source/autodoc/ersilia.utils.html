@@ -1849,6 +1849,11 @@ as needed.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.echo.async_spinner">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ersilia.utils.echo.</span></span><span class="sig-name descname"><span class="pre">async_spinner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coro</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#async_spinner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.echo.async_spinner" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.utils.echo.echo">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.echo.</span></span><span class="sig-name descname"><span class="pre">echo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">harmonize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">styles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#echo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.echo.echo" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -2870,6 +2875,13 @@ before the fetch procedure.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.purge_session_processes">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">purge_session_processes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#purge_session_processes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.purge_session_processes" title="Link to this definition">¶</a></dt>
+<dd><p>Stop any leftover processes and Docker containers tracked by a session’s
+.pid files. Used to clean up after orphaned (terminal-killed) sessions.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.utils.session.register_model_session">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">register_model_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#register_model_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.register_model_session" title="Link to this definition">¶</a></dt>
 <dd><p>Register a model with a session.</p>
@@ -2898,6 +2910,13 @@ before the fetch procedure.</p>
 <dt class="sig sig-object py" id="ersilia.utils.session.set_write_permissions">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">set_write_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#set_write_permissions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.set_write_permissions" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.stop_containers_by_name">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">stop_containers_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#stop_containers_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.stop_containers_by_name" title="Link to this definition">¶</a></dt>
+<dd><p>Stop and remove the named Docker containers, if any.</p>
+<p>Silent no-op if docker is unavailable or a name is unknown.</p>
+</dd></dl>
 
 </section>
 <section id="module-ersilia.utils.spinner">
@@ -3036,7 +3055,7 @@ before the fetch procedure.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.utils.terminal.print_serve_summary">
-<span class="sig-prename descclassname"><span class="pre">ersilia.utils.terminal.</span></span><span class="sig-name descname"><span class="pre">print_serve_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">srv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_cache</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_enabled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_use_case</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/terminal.html#print_serve_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.terminal.print_serve_summary" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.terminal.</span></span><span class="sig-name descname"><span class="pre">print_serve_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slug</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">srv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_stat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_cache</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_enabled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_use_case</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/terminal.html#print_serve_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.terminal.print_serve_summary" title="Link to this definition">¶</a></dt>
 <dd><p>Print a rich summary table for a served model.</p>
 </dd></dl>
 
@@ -3710,6 +3729,7 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">Silencer.speak()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#ersilia.utils.echo.async_spinner"><code class="docutils literal notranslate"><span class="pre">async_spinner()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.echo.echo"><code class="docutils literal notranslate"><span class="pre">echo()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.echo.spinner"><code class="docutils literal notranslate"><span class="pre">spinner()</span></code></a></li>
 </ul>
@@ -3863,10 +3883,12 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_id"><code class="docutils literal notranslate"><span class="pre">get_session_id()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_uuid"><code class="docutils literal notranslate"><span class="pre">get_session_uuid()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.prune_empty_session_dirs"><code class="docutils literal notranslate"><span class="pre">prune_empty_session_dirs()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.purge_session_processes"><code class="docutils literal notranslate"><span class="pre">purge_session_processes()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.register_model_session"><code class="docutils literal notranslate"><span class="pre">register_model_session()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.remove_orphaned_sessions"><code class="docutils literal notranslate"><span class="pre">remove_orphaned_sessions()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.remove_session_dir"><code class="docutils literal notranslate"><span class="pre">remove_session_dir()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.set_write_permissions"><code class="docutils literal notranslate"><span class="pre">set_write_permissions()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.stop_containers_by_name"><code class="docutils literal notranslate"><span class="pre">stop_containers_by_name()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.utils.spinner">ersilia.utils.spinner module</a><ul>

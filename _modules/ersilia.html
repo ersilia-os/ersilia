@@ -319,31 +319,51 @@
 <span class="c1"># Default variables</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.default</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">CONFIG_JSON</span><span class="p">,</span> <span class="n">INSTALL_STATUS_FILE</span>
 
-<span class="c1"># Logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-
 <span class="c1"># Config</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">CONFIG_JSON</span><span class="p">)):</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">.utils.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Checker</span>
 
     <span class="n">Checker</span><span class="p">()</span><span class="o">.</span><span class="n">config</span><span class="p">()</span>
 
-<span class="c1"># Exceptions</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
-
 <span class="c1"># Environmental variables</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;EOS_HOME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EOS</span>
-
-<span class="c1"># Global imports</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">Config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.core.modelbase</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.core.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
 
 <span class="c1"># User profile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.default</span><span class="w"> </span><span class="kn">import</span> <span class="n">bashrc_cli_snippet</span>
 
 <span class="n">bashrc_cli_snippet</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="c1"># Lazy re-exports of heavy library classes/utilities. Importing them eagerly</span>
+<span class="c1"># pulled ~300 ms of transitive dependencies into every CLI startup. PEP 562</span>
+<span class="c1"># __getattr__ defers each import until first access while preserving the</span>
+<span class="c1"># `from ersilia import X` ergonomics.</span>
+<span class="n">_LAZY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.utils.logging&quot;</span><span class="p">,</span> <span class="s2">&quot;logger&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;throw_ersilia_exception&quot;</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">&quot;ersilia.utils.exceptions_utils.throw_ersilia_exception&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;throw_ersilia_exception&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;Config&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.utils.config&quot;</span><span class="p">,</span> <span class="s2">&quot;Config&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;ErsiliaBase&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.core.base&quot;</span><span class="p">,</span> <span class="s2">&quot;ErsiliaBase&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;ModelBase&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.core.modelbase&quot;</span><span class="p">,</span> <span class="s2">&quot;ModelBase&quot;</span><span class="p">),</span>
+    <span class="s2">&quot;ErsiliaModel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.core.model&quot;</span><span class="p">,</span> <span class="s2">&quot;ErsiliaModel&quot;</span><span class="p">),</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_LAZY</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+        <span class="n">mod_name</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">_LAZY</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">mod_name</span><span class="p">),</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="k">return</span> <span class="n">obj</span>
+    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module &#39;ersilia&#39; has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">_LAZY</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
 
 <span class="c1"># Check status of installs</span>

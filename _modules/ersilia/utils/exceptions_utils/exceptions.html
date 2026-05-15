@@ -308,8 +308,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span><span class="p">,</span>
-    <span class="n">ERSILIA_MODEL_HUB_URL</span><span class="p">,</span>
+    <span class="n">ERSILIA_CATALOG_URL</span><span class="p">,</span>
     <span class="n">PREDEFINED_EXAMPLE_INPUT_FILES</span><span class="p">,</span>
     <span class="n">PREDEFINED_EXAMPLE_OUTPUT_FILES</span><span class="p">,</span>
 <span class="p">)</span>
@@ -406,8 +405,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Could not identify model identifier or slug: </span><span class="si">{0}</span><span class="s2">:&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Please check that </span><span class="si">{0}</span><span class="s2"> exists in the Ersilia Model Hub:</span><span class="se">\n</span><span class="s2"> - </span><span class="si">{1}</span><span class="se">\n</span><span class="s2"> or </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">ERSILIA_MODEL_HUB_URL</span><span class="p">,</span> <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;Please check that </span><span class="si">{0}</span><span class="s2"> exists in the Ersilia Model Hub:</span><span class="se">\n</span><span class="s2"> - </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">ERSILIA_CATALOG_URL</span>
+            <span class="p">)</span>
         <span class="p">)</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 

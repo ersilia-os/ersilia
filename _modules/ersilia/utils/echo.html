@@ -436,6 +436,22 @@
             <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✖  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
             <span class="k">raise</span></div>
 
+
+
+<div class="viewcode-block" id="async_spinner">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.echo.async_spinner">[docs]</a>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_spinner</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">coro</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;verbosity&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">coro</span>
+    <span class="k">with</span> <span class="n">console</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">coro</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✓  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✖  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
+            <span class="k">raise</span></div>
+
 </pre></div>
         </article>
       </div>

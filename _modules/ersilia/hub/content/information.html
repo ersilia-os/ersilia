@@ -306,18 +306,14 @@
           <h1>Source code for ersilia.hub.content.information</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">emoji</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="n">emoji</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">platform</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">API_SCHEMA_FILE</span><span class="p">,</span>
     <span class="n">APIS_LIST_FILE</span><span class="p">,</span>
     <span class="n">CARD_FILE</span><span class="p">,</span>
+    <span class="n">DOCKER_INFO_FILE</span><span class="p">,</span>
     <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span>
     <span class="n">MODEL_SOURCE_FILE</span><span class="p">,</span>
     <span class="n">PACKMODE_FILE</span><span class="p">,</span>
@@ -392,6 +388,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_docker_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">docker_info_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_folder</span><span class="p">,</span> <span class="n">DOCKER_INFO_FILE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">docker_info_file</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">docker_info_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_folder</span><span class="p">)</span>
@@ -441,6 +445,7 @@
             <span class="s2">&quot;pack_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pack_mode</span><span class="p">(),</span>
             <span class="s2">&quot;service_class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_service_class</span><span class="p">(),</span>
             <span class="s2">&quot;model_source&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(),</span>
+            <span class="s2">&quot;docker_tag&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_docker_tag</span><span class="p">(),</span>
             <span class="s2">&quot;apis_list&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_apis_list</span><span class="p">(),</span>
             <span class="s2">&quot;api_schema&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_api_schema</span><span class="p">(),</span>
             <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size</span><span class="p">(),</span>
@@ -459,9 +464,6 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to display the information of a model.</span>
 
-<span class="sd">    This class provides methods to display various information about a model,</span>
-<span class="sd">    such as description, identifiers, code, and Docker information.</span>
-
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    info_data : dict</span>
@@ -476,78 +478,124 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">emoji</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">emoji</span><span class="o">.</span><span class="n">emojize</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_description_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span>
-        <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;:rocket: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;Description&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_identifiers_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
-        <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;:person_tipping_hand: Identifiers&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Model identifiers: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Slug: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;Slug&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_code_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
-        <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;:nerd_face: Code and parameters&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;GitHub: https://github.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;S3&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;S3&quot;</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;AWS S3: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_docker_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span>
-            <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
-            <span class="n">dockerhub_field</span> <span class="o">=</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]</span>
-            <span class="n">docker_architecture</span> <span class="o">=</span> <span class="n">card</span><span class="p">[</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">]</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;:whale: Docker&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Docker Hub: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dockerhub_field</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Architectures: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">docker_architecture</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;No metadata for Docker slots&quot;</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_current_arch</span><span class="p">():</span>
+        <span class="n">machine</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">machine</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;arm64&quot;</span><span class="p">,</span> <span class="s2">&quot;aarch64&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;linux/arm64&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;linux/amd64&quot;</span>
 
 <div class="viewcode-block" id="InformationDisplayer.echo">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.InformationDisplayer.echo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Display the information about the model.</span>
+<span class="sd">        Display the information about the model using a rich Panel layout.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_description_info</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_identifiers_info</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_code_info</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_docker_info</span><span class="p">()</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;For more information, please visit https://ersilia.io/model-hub&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span></div>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">rich.panel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panel</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+
+        <span class="n">_service_class_labels</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;docker&quot;</span><span class="p">:</span> <span class="s2">&quot;Docker (local)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;conda&quot;</span><span class="p">:</span> <span class="s2">&quot;Conda&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;venv&quot;</span><span class="p">:</span> <span class="s2">&quot;Virtual environment&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;system&quot;</span><span class="p">:</span> <span class="s2">&quot;System Python&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hosted&quot;</span><span class="p">:</span> <span class="s2">&quot;Hosted&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dummy&quot;</span><span class="p">:</span> <span class="s2">&quot;Dummy&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+        <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;card&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">model_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_source&quot;</span><span class="p">)</span>
+        <span class="n">docker_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;docker_tag&quot;</span><span class="p">)</span>
+        <span class="n">service_class_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service_class&quot;</span><span class="p">)</span>
+        <span class="n">service_class</span> <span class="o">=</span> <span class="n">_service_class_labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_class_raw</span><span class="p">,</span> <span class="n">service_class_raw</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">fmt</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;—&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">fmt_size</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;—&quot;</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">u</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;MB&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">,</span> <span class="s2">&quot;KB&quot;</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="n">s</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> MB&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">fmt_arch</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">fmt</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_arch</span><span class="p">()</span>
+            <span class="n">matched</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">value</span> <span class="k">if</span> <span class="n">current</span> <span class="ow">in</span> <span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">current</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">matched</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">matched</span> <span class="k">else</span> <span class="n">fmt</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold cyan&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_width</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s2">&quot;fold&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Origin section</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot; Origin&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold magenta on grey15&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">model_source</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Fetched from&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">model_source</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">service_class</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Service class&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">service_class</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">&quot;DockerHub&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Docker Hub&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">docker_tag</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Version&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">docker_tag</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">&quot;Docker Architecture&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Architecture&quot;</span><span class="p">,</span> <span class="n">fmt_arch</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">]))</span>
+        <span class="n">identifier</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">identifier</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  GitHub&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;Overview&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">,</span> <span class="s2">&quot;Subtask&quot;</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="s2">&quot;Interpretation&quot;</span><span class="p">]),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Input / Output&quot;</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;Input&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Input Dimension&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Input Shape&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Output&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Output Dimension&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Output Shape&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Output Type&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Output Consistency&quot;</span><span class="p">,</span>
+                <span class="p">],</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Deployment&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Deployment&quot;</span><span class="p">,</span> <span class="s2">&quot;Source&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Type&quot;</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">]),</span>
+            <span class="p">(</span>
+                <span class="s2">&quot;Publication&quot;</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;License&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Contributor&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Publication Type&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Publication Year&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Publication&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span>
+                <span class="p">],</span>
+            <span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;Sizes&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Model Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">]),</span>
+        <span class="p">]</span>
+
+        <span class="n">size_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Model Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">section_title</span><span class="p">,</span> <span class="n">fields</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">section_title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold magenta on grey15&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+                    <span class="n">formatter</span> <span class="o">=</span> <span class="n">fmt_size</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">size_fields</span> <span class="k">else</span> <span class="n">fmt</span>
+                    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">formatter</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="n">field</span><span class="p">]))</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">panel_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[bold]</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">[/bold]  ·  </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">identifier</span> <span class="k">else</span> <span class="n">title</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">panel_title</span><span class="p">,</span> <span class="n">border_style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">))</span></div>
 </div>
 
 </pre></div>

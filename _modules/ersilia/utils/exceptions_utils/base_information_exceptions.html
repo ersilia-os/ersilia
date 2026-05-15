@@ -306,7 +306,7 @@
           <h1>Source code for ersilia.utils.exceptions_utils.base_information_exceptions</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERSILIA_CATALOG_URL</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaError</span>
 
 <span class="c1"># ruff: noqa: D101, D102</span>
@@ -328,8 +328,8 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">BaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia model information</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Please check Ersilia AirTable to make sure you are providing the right information. This is the AirTable link: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Please check the Ersilia Model Catalog to make sure you are providing the right information: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">ERSILIA_CATALOG_URL</span>
         <span class="p">)</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
@@ -340,8 +340,8 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">IdentifierBaseInformationError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Wrong Ersilia model identifier&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Ersilia model identifiers are 7 alphanumeric characters. They always start with eos, followed by a digit. The eos identifier coincides with the name of the repository. Check our current AirTable to see correct identifiers: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Ersilia model identifiers are 7 alphanumeric characters starting with eos followed by a digit. Browse valid identifiers at: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">ERSILIA_CATALOG_URL</span>
         <span class="p">)</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 

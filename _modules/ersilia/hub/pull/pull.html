@@ -314,6 +314,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span><span class="p">,</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.pull_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DockerConventionalPullError</span><span class="p">,</span>
     <span class="n">DockerImageNotAvailableError</span><span class="p">,</span>
@@ -434,12 +435,82 @@
             <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
                 <span class="p">[</span><span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;inspect&quot;</span><span class="p">,</span> <span class="n">image_name</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="s2">&quot;{{.Size}}&quot;</span><span class="p">]</span>
             <span class="p">)</span>
-            <span class="c1"># Convert bytes to MB</span>
             <span class="n">size_in_mb</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">size_in_mb</span>
         <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Image not found locally&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_remote_image_size_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://hub.docker.com/v2/repositories/</span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">/tags/</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span>
+        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="n">full_size</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;full_size&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">full_size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pull_with_pty_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">progress_callback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Blocking: run docker pull via PTY so docker outputs full layer progress.&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pty</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_re</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_sp</span>
+
+        <span class="n">ansi_re</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\x1b\[[0-9;]*[a-zA-Z]&quot;</span><span class="p">)</span>
+        <span class="n">layer_re</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^([a-f0-9]{12,}): (.+)$&quot;</span><span class="p">)</span>
+
+        <span class="n">master_fd</span><span class="p">,</span> <span class="n">slave_fd</span> <span class="o">=</span> <span class="n">pty</span><span class="o">.</span><span class="n">openpty</span><span class="p">()</span>
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">_sp</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+            <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cmd</span><span class="p">),</span>
+            <span class="n">stdout</span><span class="o">=</span><span class="n">slave_fd</span><span class="p">,</span>
+            <span class="n">stderr</span><span class="o">=</span><span class="n">slave_fd</span><span class="p">,</span>
+            <span class="n">close_fds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">slave_fd</span><span class="p">)</span>
+
+        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">chunk</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">master_fd</span><span class="p">,</span> <span class="mi">4096</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">buf</span> <span class="o">+=</span> <span class="n">chunk</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">parts</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;[</span><span class="se">\r\n</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">raw</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">ansi_re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">raw</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">layer_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                    <span class="n">layer_id</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">layer_id</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Pull complete&quot;</span><span class="p">,</span> <span class="s2">&quot;Already exists&quot;</span><span class="p">):</span>
+                        <span class="n">done</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">layer_id</span><span class="p">)</span>
+                    <span class="n">progress_callback</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">done</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">seen</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">master_fd</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">_sp</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_pull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -468,70 +539,91 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Pulling image </span><span class="si">{0}</span><span class="s2"> from DockerHub...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_name</span><span class="p">)</span>
             <span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="s2">&quot;Trying to pull image </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-                <span class="p">)</span>
 
-                <span class="n">pull_command</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;docker pull </span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;verbosity&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
 
-                <span class="n">process</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span>
-                    <span class="n">pull_command</span><span class="p">,</span>
-                    <span class="n">stdout</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                    <span class="n">stderr</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="n">remote_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_remote_image_size_mb</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">remote_size</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Download size: ~</span><span class="si">{</span><span class="n">remote_size</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> MB (compressed)&quot;</span><span class="p">)</span>
 
-                <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">log_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">log_method</span><span class="p">):</span>
-                    <span class="k">async</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-                        <span class="n">log_method</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">pull_command</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;docker pull </span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">force_pull_command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;docker pull </span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="si">}</span><span class="s2"> --platform linux/amd64&quot;</span>
 
-                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
-                    <span class="n">log_stream</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">),</span>
-                    <span class="n">log_stream</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">),</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
 
-                <span class="k">await</span> <span class="n">process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-
-                <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Pull command failed with return code </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span>
-                    <span class="k">raise</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">(</span>
-                        <span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">pull_command</span>
+                <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_pull</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+                    <span class="n">proc</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span>
+                        <span class="n">cmd</span><span class="p">,</span>
+                        <span class="n">stdout</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                        <span class="n">stderr</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                     <span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Image pulled successfully!&quot;</span><span class="p">)</span>
+                    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">log_stream</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">log_method</span><span class="p">):</span>
+                        <span class="k">async</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+                            <span class="n">log_method</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 
-            <span class="k">except</span> <span class="n">DockerConventionalPullError</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Conventional pull did not work, Ersilia is now forcing linux/amd64 architecture&quot;</span>
-                <span class="p">)</span>
-                <span class="n">force_pull_command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;docker pull </span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">docker_tag</span><span class="si">}</span><span class="s2"> --platform linux/amd64&quot;</span>
-
-                <span class="n">process</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_subprocess_shell</span><span class="p">(</span>
-                    <span class="n">force_pull_command</span><span class="p">,</span>
-                    <span class="n">stdout</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                    <span class="n">stderr</span><span class="o">=</span><span class="n">asyncio</span><span class="o">.</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                <span class="p">)</span>
-
-                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
-                    <span class="n">log_stream</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">),</span>
-                    <span class="n">log_stream</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">),</span>
-                <span class="p">)</span>
-
-                <span class="k">await</span> <span class="n">process</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-
-                <span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Forced pull command failed with return code </span><span class="si">{</span><span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+                        <span class="n">log_stream</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">),</span>
+                        <span class="n">log_stream</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">),</span>
                     <span class="p">)</span>
-                    <span class="k">raise</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">(</span>
-                        <span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">force_pull_command</span>
-                    <span class="p">)</span>
+                    <span class="k">await</span> <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="n">cmd</span><span class="p">)</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Forced pull completed successfully!&quot;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">await</span> <span class="n">_run_pull</span><span class="p">(</span><span class="n">pull_command</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Conventional pull failed, trying linux/amd64&quot;</span><span class="p">)</span>
+                    <span class="k">await</span> <span class="n">_run_pull</span><span class="p">(</span><span class="n">force_pull_command</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span> <span class="k">as</span> <span class="n">_Console</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">rich.progress</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+                    <span class="n">BarColumn</span><span class="p">,</span>
+                    <span class="n">MofNCompleteColumn</span><span class="p">,</span>
+                    <span class="n">Progress</span><span class="p">,</span>
+                    <span class="n">TextColumn</span><span class="p">,</span>
+                    <span class="n">TimeElapsedColumn</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span> <span class="k">as</span> <span class="n">_Text</span>
+
+                <span class="k">with</span> <span class="n">Progress</span><span class="p">(</span>
+                    <span class="n">TextColumn</span><span class="p">(</span><span class="s2">&quot;[bold cyan]  Downloading layers&quot;</span><span class="p">),</span>
+                    <span class="n">BarColumn</span><span class="p">(),</span>
+                    <span class="n">MofNCompleteColumn</span><span class="p">(),</span>
+                    <span class="n">TimeElapsedColumn</span><span class="p">(),</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">progress</span><span class="p">:</span>
+                    <span class="n">task</span> <span class="o">=</span> <span class="n">progress</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+                    <span class="k">def</span><span class="w"> </span><span class="nf">on_progress</span><span class="p">(</span><span class="n">completed</span><span class="p">,</span> <span class="n">total</span><span class="p">):</span>
+                        <span class="n">progress</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">completed</span><span class="o">=</span><span class="n">completed</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">)</span>
+
+                    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_running_loop</span><span class="p">()</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+                            <span class="kc">None</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_pull_with_pty_progress</span><span class="p">,</span>
+                            <span class="n">pull_command</span><span class="p">,</span>
+                            <span class="n">on_progress</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="s2">&quot;Conventional pull failed, trying linux/amd64&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+                                <span class="kc">None</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_pull_with_pty_progress</span><span class="p">,</span>
+                                <span class="n">force_pull_command</span><span class="p">,</span>
+                                <span class="n">on_progress</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">DockerConventionalPullError</span><span class="p">(</span>
+                                <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
+                            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+                <span class="n">_Console</span><span class="p">()</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">_Text</span><span class="p">(</span><span class="s2">&quot;  ✓  Pulled Docker image&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">))</span>
 
             <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size_of_local_docker_image_in_mb</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">size</span><span class="p">:</span>

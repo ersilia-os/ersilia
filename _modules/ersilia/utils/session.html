@@ -508,6 +508,79 @@
 
 
 
+<div class="viewcode-block" id="stop_containers_by_name">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.stop_containers_by_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stop_containers_by_name</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stop and remove the named Docker containers, if any.</span>
+
+<span class="sd">    Silent no-op if docker is unavailable or a name is unknown.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">docker</span>
+
+        <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">by_name</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="kc">True</span><span class="p">)}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">by_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="purge_session_processes">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.purge_session_processes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">purge_session_processes</span><span class="p">(</span><span class="n">session_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stop any leftover processes and Docker containers tracked by a session&#39;s</span>
+<span class="sd">    .pid files. Used to clean up after orphaned (terminal-killed) sessions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">session_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">session_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">session_dir</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="n">pids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">container_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">session_dir</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pid&quot;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">parts</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">pids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                        <span class="n">container_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="n">stop_containers_by_name</span><span class="p">(</span><span class="n">container_names</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="remove_orphaned_sessions">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.remove_orphaned_sessions">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_orphaned_sessions</span><span class="p">():</span>
@@ -516,6 +589,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">orphaned_sessions</span> <span class="o">=</span> <span class="n">determine_orphaned_session</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">orphaned_sessions</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">purge_session_processes</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">remove_session_dir</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>

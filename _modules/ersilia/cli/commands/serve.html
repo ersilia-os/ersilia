@@ -308,13 +308,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_model_session</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_serve_summary</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelNotFound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
 
 
@@ -333,23 +327,24 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.serve.serve_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">serve_cmd</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Serves a specified model.</span>
+<span class="sd">    Serves a previously fetched model as a local API.</span>
 
-<span class="sd">    This command allows users to serve a specified model as an API.</span>
+<span class="sd">    The model must already be available locally (see ``ersilia fetch``).</span>
+<span class="sd">    After serving, use ``ersilia run`` to send predictions to it.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    function</span>
-<span class="sd">        The serve command function to be used by the CLI and for testing in the pytest.</span>
+<span class="sd">        The serve command function to be used by the CLI and for testing in pytest.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    .. code-block:: console</span>
 
-<span class="sd">        Serve a model by its ID:</span>
+<span class="sd">        Serve a model on a chosen port:</span>
 <span class="sd">        $ ersilia serve &lt;model_id&gt; --port 8080</span>
 
-<span class="sd">        Serve a model and track the session:</span>
+<span class="sd">        Serve a model with run tracking enabled:</span>
 <span class="sd">        $ ersilia serve &lt;model_id&gt; --track</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -362,14 +357,23 @@
             <span class="k">return</span> <span class="s2">&quot;Enabled: Reader &amp; Writter &quot;</span>
         <span class="k">return</span> <span class="s2">&quot;Disabled&quot;</span>
 
-    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Serve model&quot;</span><span class="p">)</span>
+    <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Serve a model as a local API&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Start a local API server for a previously fetched model. &quot;</span>
+            <span class="s2">&quot;Once served, the model is ready to receive predictions via &quot;</span>
+            <span class="s2">&quot;`ersilia run`. Optional flags configure session tracking, &quot;</span>
+            <span class="s2">&quot;in-memory caching, and Isaura store access.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
         <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preferred port to use (integer)&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;auto-selected&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preferred port for the local API server.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
@@ -378,6 +382,11 @@
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Track model runs (input/output stats, errors, timing, model &quot;</span>
+            <span class="s2">&quot;metadata) by sending event data to Ersilia&#39;s S3 tracking bucket.&quot;</span>
+        <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
         <span class="s2">&quot;--tracking-use-case&quot;</span><span class="p">,</span>
@@ -386,17 +395,74 @@
         <span class="p">),</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Tracking use case. Options: local, self-service, hosted, test&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--enable-cache/--disable-cache&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--read-store&quot;</span><span class="p">,</span> <span class="s2">&quot;-rs&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--write-store&quot;</span><span class="p">,</span> <span class="s2">&quot;-ws&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--access&quot;</span><span class="p">,</span> <span class="s2">&quot;-a&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--nearest-neigbors&quot;</span><span class="p">,</span> <span class="s2">&quot;-nn&quot;</span><span class="p">,</span> <span class="s2">&quot;nearest_neighbors&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">hidden</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Deployment context recorded with each tracked run. &quot;</span>
+            <span class="s2">&quot;One of: local, self-service, hosted, test.&quot;</span>
+        <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--max-cache-memory-frac&quot;</span><span class="p">,</span> <span class="s2">&quot;max_memory&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+        <span class="s2">&quot;--enable-cache/--disable-cache&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Enable a Redis in-memory cache for prediction results so repeat &quot;</span>
+            <span class="s2">&quot;inputs return instantly.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--read-store&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-rs&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Read previously computed predictions from the Isaura store &quot;</span>
+            <span class="s2">&quot;before running the model. Requires Isaura installed.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--write-store&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-ws&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Write predictions to the Isaura store as they are computed. &quot;</span>
+            <span class="s2">&quot;Requires Isaura installed and `--access`.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--access&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;unset&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Visibility for predictions written to the Isaura store. &quot;</span>
+            <span class="s2">&quot;One of: public, private. Required with `--write-store`.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--nearest-neigbors&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-nn&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nearest_neighbors&quot;</span><span class="p">,</span>
+        <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">hidden</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;When reading from the Isaura store, also return approximate &quot;</span>
+            <span class="s2">&quot;nearest-neighbor matches for inputs not exactly cached. &quot;</span>
+            <span class="s2">&quot;This feature is experimental and not yet ready for use.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+        <span class="s2">&quot;--max-cache-memory-frac&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;max_memory&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;0.5&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Maximum fraction (0.0-1.0) of system RAM the Redis cache may use.&quot;</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span>
         <span class="n">model</span><span class="p">,</span>
@@ -410,7 +476,30 @@
         <span class="n">nearest_neighbors</span><span class="p">,</span>
         <span class="n">max_memory</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_model_session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_serve_summary</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelNotFound</span>
+
         <span class="n">sess</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">existing_session</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">already_served</span> <span class="o">=</span> <span class="n">existing_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">already_served</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;A model is already being served in this terminal: </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Close </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> and serve </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> instead?&quot;</span><span class="p">,</span>
+                <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Aborted. </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> is still being served.&quot;</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">sess</span><span class="o">.</span><span class="n">register_store_status</span><span class="p">(</span>
             <span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">,</span> <span class="n">access</span><span class="p">,</span> <span class="n">nearest_neighbors</span><span class="p">,</span> <span class="n">enable_cache</span>
         <span class="p">)</span>
@@ -460,6 +549,7 @@
 
         <span class="n">register_model_session</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">)</span>
 
+        <span class="n">info</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">info</span><span class="p">()</span> <span class="k">if</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="n">print_serve_summary</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">slug</span><span class="o">=</span><span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span>
@@ -472,6 +562,7 @@
             <span class="n">enable_cache</span><span class="o">=</span><span class="n">enable_cache</span><span class="p">,</span>
             <span class="n">tracking_enabled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">track</span><span class="p">),</span>
             <span class="n">tracking_use_case</span><span class="o">=</span><span class="n">tracking_use_case</span><span class="p">,</span>
+            <span class="n">version</span><span class="o">=</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;docker_tag&quot;</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> is successfully served!&quot;</span><span class="p">)</span>

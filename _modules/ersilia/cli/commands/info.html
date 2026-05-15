@@ -304,13 +304,11 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.commands.info</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">rich_click</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">click</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...hub.content.information</span><span class="w"> </span><span class="kn">import</span> <span class="n">InformationDisplayer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">ersilia_cli</span>
 
@@ -327,33 +325,59 @@
 <span class="sd">    -------</span>
 <span class="sd">    function</span>
 <span class="sd">        The info command function to be used by the CLI.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    .. code-block:: console</span>
-
-<span class="sd">        Get information about active session as json:</span>
-<span class="sd">        $ ersilia info  --as_json</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Get model information&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Get model information&quot;</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Get model information&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Display information about the currently served model, including its title, description, identifiers, GitHub and S3 links, and Docker Hub details. A model must be served before running this command.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--as_json&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output as JSON format&quot;</span>
+        <span class="s2">&quot;--output&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Save model information to a file. Accepted formats: .json, .csv.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="n">as_json</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...hub.content.information</span><span class="w"> </span><span class="kn">import</span> <span class="n">InformationDisplayer</span>
+
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No model was served&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No model is currently served.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
         <span class="n">info</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">as_json</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">info</span>
+        <span class="k">if</span> <span class="n">output</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">)):</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
+                    <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
+                        <span class="s2">&quot;Error: output file must have a .json or .csv extension.&quot;</span><span class="p">,</span>
+                        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
+                            <span class="p">[</span>
+                                <span class="n">key</span><span class="p">,</span>
+                                <span class="n">value</span>
+                                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                                <span class="k">else</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">),</span>
+                            <span class="p">]</span>
+                        <span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model information saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">InformationDisplayer</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span></div>
 
