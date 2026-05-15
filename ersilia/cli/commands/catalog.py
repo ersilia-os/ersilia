@@ -1,8 +1,123 @@
-import rich_click as click
+import json
 
-from ...hub.content.card import ModelCard
-from ...hub.content.catalog import ModelCatalog
+import rich_click as click
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+
 from . import ersilia_cli
+
+_console = Console()
+
+
+def _print_catalog(catalog_table):
+    from rich.table import Table as RichTable
+
+    col_styles = {
+        "Index": ("dim", 6),
+        "Identifier": ("bold cyan", 12),
+        "Slug": ("green", 28),
+        "Title": ("", 36),
+        "Task": ("magenta", 16),
+        "Output Dimension": ("yellow", 18),
+        "Fetched From": ("dim cyan", 14),
+    }
+
+    table = RichTable(
+        show_header=True,
+        header_style="bold",
+        border_style="grey50",
+        show_lines=True,
+        expand=False,
+    )
+    for col in catalog_table.columns:
+        style, width = col_styles.get(col, ("", 16))
+        table.add_column(
+            col,
+            style=style,
+            min_width=width,
+            no_wrap=col in ("Index", "Identifier", "Slug", "Task"),
+        )
+
+    for row in catalog_table.data:
+        table.add_row(*[str(v) if v is not None else "" for v in row])
+
+    _console.print(table)
+
+
+def _print_model_card(metadata_json: str):
+    data = json.loads(metadata_json)
+
+    def fmt(value):
+        if isinstance(value, list):
+            return ", ".join(str(v) for v in value)
+        return str(value) if value is not None else "—"
+
+    def fmt_size(value):
+        if value is None:
+            return "—"
+        s = str(value)
+        if any(u in s.upper() for u in ("MB", "GB", "KB")):
+            return s
+        return f"{s} MB"
+
+    sections = [
+        ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
+        ("Description", ["Title", "Description", "Interpretation"]),
+        (
+            "Input / Output",
+            [
+                "Input",
+                "Input Dimension",
+                "Input Shape",
+                "Output",
+                "Output Dimension",
+                "Output Shape",
+                "Output Type",
+                "Output Consistency",
+            ],
+        ),
+        (
+            "Deployment",
+            [
+                "Deployment",
+                "Source",
+                "Source Type",
+                "Docker Architecture",
+                "DockerHub",
+                "S3",
+            ],
+        ),
+        (
+            "Publication",
+            [
+                "License",
+                "Contributor",
+                "Publication Type",
+                "Publication Year",
+                "Publication",
+                "Source Code",
+            ],
+        ),
+        ("Sizes", ["Model Size", "Environment Size", "Image Size"]),
+    ]
+
+    table = Table(show_header=False, box=None, padding=(0, 1), expand=True)
+    table.add_column("Field", style="bold cyan", no_wrap=True, min_width=24)
+    table.add_column("Value", overflow="fold")
+
+    size_fields = {"Model Size", "Environment Size", "Image Size"}
+    for section_title, fields in sections:
+        table.add_row(Text(f" {section_title}", style="bold magenta on grey15"), "")
+        for field in fields:
+            if field in data:
+                formatter = fmt_size if field in size_fields else fmt
+                table.add_row(f"  {field}", formatter(data[field]))
+        table.add_row("", "")
+
+    title = f"[bold]{data.get('Identifier', '')}[/bold]  ·  {data.get('Title', '')}"
+    _console.print(Panel(table, title=title, border_style="cyan"))
 
 
 def catalog_cmd():
@@ -26,51 +141,61 @@ def catalog_cmd():
     $ ersilia catalog --card <model_id> --as-json
     """
 
-    # Example usage: ersilia catalog
-    @ersilia_cli.command(help="List a catalog of models")
+    @ersilia_cli.command(
+        short_help="List a catalog of models",
+        help="List models available locally or in the Ersilia Model Hub. By default shows locally fetched models in table format. Supports detailed metadata and individual model cards.\n\nFor a full list of models visit [bold cyan][link=https://catalog.ersilia.io/]https://catalog.ersilia.io/[/link][/bold cyan]",
+    )
     @click.option(
         "-h/-l",
         "--hub/--local",
         is_flag=True,
         default=False,
-        help="Show catalog of models available in the model hub",
+        help="--hub lists models available in the Ersilia Model Hub; --local (default) lists locally fetched models.",
     )
     @click.option(
-        "--file_name", "-f", default=None, type=click.STRING, help="Catalog file name"
+        "--output",
+        "-o",
+        default=None,
+        type=click.STRING,
+        help="Save the catalog to a file. Accepted formats: .csv, .json.",
     )
     @click.option(
         "--more/--less",
         is_flag=True,
         default=False,
-        help="Show more information than just the EOS identifier",
+        help="--more shows additional model metadata; --less (default) shows only the EOS identifier.",
     )
     @click.option(
         "--card",
         is_flag=True,
         default=False,
-        help="Use this flag to display model card for a given model ID",
+        help="Display the full model card for a given model ID.",
+    )
+    @click.option(
+        "--task",
+        default=None,
+        type=click.Choice(
+            ["Annotation", "Representation", "Sampling"], case_sensitive=False
+        ),
+        help="Filter models by task.",
     )
     @click.argument(
         "model",
         type=click.STRING,
         required=False,
     )
-    @click.option(
-        "-j/-t",
-        "--as-json/--as-table",
-        is_flag=True,
-        default=False,
-        help="Show catalog in table format",
-    )
     def catalog(
         hub=False,
-        file_name=None,
+        output=None,
         browser=False,
         more=False,
         card=False,
         model=None,
-        as_json=False,
+        task=None,
     ):
+        from ...hub.content.card import ModelCard
+        from ...hub.content.catalog import ModelCatalog
+
         if card and not model:
             click.echo(
                 click.style("Error: --card option requires a model ID", fg="red"),
@@ -90,12 +215,43 @@ def catalog_cmd():
                         err=True,
                     )
                     return
-                click.echo(model_metadata)
+                if output:
+                    if not (output.endswith(".json") or output.endswith(".csv")):
+                        click.echo(
+                            click.style(
+                                "Error: output file must have a .json or .csv extension.",
+                                fg="red",
+                            ),
+                            err=True,
+                        )
+                        return
+                    data = json.loads(model_metadata)
+                    if output.endswith(".json"):
+                        with open(output, "w") as f:
+                            f.write(model_metadata)
+                    else:
+                        import csv
+
+                        with open(output, "w", newline="") as f:
+                            writer = csv.writer(f)
+                            writer.writerow(["Field", "Value"])
+                            for key, value in data.items():
+                                writer.writerow(
+                                    [
+                                        key,
+                                        value
+                                        if not isinstance(value, list)
+                                        else ", ".join(str(v) for v in value),
+                                    ]
+                                )
+                    click.echo(click.style(f"Model card saved to {output}", fg="green"))
+                else:
+                    _print_model_card(model_metadata)
             except Exception as e:
                 click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
             return
         else:
-            mc = ModelCatalog(less=not more)
+            mc = ModelCatalog(less=not more, task=task)
 
             if hub:
                 catalog_table = mc.hub()
@@ -109,14 +265,19 @@ def catalog_cmd():
                         )
                     )
                     return
-            if file_name is None:
-                catalog = (
-                    catalog_table.as_json() if as_json else catalog_table.as_table()
-                )
+            if output is None:
+                _print_catalog(catalog_table)
             else:
-                catalog_table.write(file_name)
-                catalog = None
-
-            click.echo(catalog)
+                if not (output.endswith(".csv") or output.endswith(".json")):
+                    click.echo(
+                        click.style(
+                            "Error: output file must have a .csv or .json extension.",
+                            fg="red",
+                        ),
+                        err=True,
+                    )
+                    return
+                catalog_table.write(output)
+                click.echo(click.style(f"Catalog saved to {output}", fg="green"))
 
     return catalog

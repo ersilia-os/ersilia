@@ -39,19 +39,7 @@ def test_fetch_multiple_model(
     model,
     flags,
 ):
-    """
-    Fetch multiple model based on the mocking
-    ============================================
-    This codes creates a mock instance of a model for testing purposes.
-    It sets the model's ID and slug attributes to simulate a real model,
-    and configures the ModelBase mock to return this instance.
-    Additionally, it mocks the behavior of the model's invoke method to
-    simulate a successful command execution, specifying an exit code of 0
-    and providing a formatted output string that mimics the expected
-    success message when fetching the model. This allows for testing
-    without the need for actual model fetching, ensuring that tests can
-    run independently and reliably.
-    """
+    """Verify that fetching a known model exits successfully, with and without the --from_dockerhub flag."""
     if flags is None:
         flags = []
 
@@ -88,6 +76,7 @@ def test_fetch_unknown_model(
     model="xeos3111",  # something different
     flags=["--from_dockerhub"],
 ):
+    """Verify that fetching an unrecognised model ID exits with code 1."""
     if flags is None:
         flags = []
 

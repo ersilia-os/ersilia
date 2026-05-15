@@ -1,17 +1,13 @@
 import json
 import os
-
-try:
-    import emoji
-except:
-    emoji = None
-import click
+import platform
 
 from ... import ErsiliaBase
 from ...default import (
     API_SCHEMA_FILE,
     APIS_LIST_FILE,
     CARD_FILE,
+    DOCKER_INFO_FILE,
     MODEL_SIZE_FILE,
     MODEL_SOURCE_FILE,
     PACKMODE_FILE,
@@ -84,6 +80,14 @@ class Information(ErsiliaBase):
         else:
             return None
 
+    def _get_docker_tag(self):
+        docker_info_file = os.path.join(self.dest_folder, DOCKER_INFO_FILE)
+        if os.path.exists(docker_info_file):
+            with open(docker_info_file, "r") as f:
+                data = json.load(f)
+            return data.get("tag")
+        return None
+
     def _get_metadata(self):
         try:
             data = get_metadata_from_base_dir(self.dest_folder)
@@ -131,6 +135,7 @@ class Information(ErsiliaBase):
             "pack_mode": self._get_pack_mode(),
             "service_class": self._get_service_class(),
             "model_source": self._get_model_source(),
+            "docker_tag": self._get_docker_tag(),
             "apis_list": self._get_apis_list(),
             "api_schema": self._get_api_schema(),
             "size": self._get_size(),
@@ -144,9 +149,6 @@ class Information(ErsiliaBase):
 class InformationDisplayer(ErsiliaBase):
     """
     Class to display the information of a model.
-
-    This class provides methods to display various information about a model,
-    such as description, identifiers, code, and Docker information.
 
     Parameters
     ----------
@@ -162,73 +164,119 @@ class InformationDisplayer(ErsiliaBase):
         self.logger.debug(self.info_data)
 
     @staticmethod
-    def _echo(text, **styles):
-        if emoji is not None:
-            text = emoji.emojize(text)
-        return click.echo(click.style(text, **styles))
-
-    def _description_info(self):
-        color = "blue"
-        card = self.info_data["card"]
-        text = ":rocket: {0}".format(card["Title"]).rstrip(os.linesep)
-        self._echo(text, fg=color, bold=True)
-        text = "{0}".format(card["Description"]).rstrip(os.linesep)
-        self._echo(text, fg=color)
-        text = ""
-        self._echo(text)
-
-    def _identifiers_info(self):
-        color = "green"
-        card = self.info_data["card"]
-        text = ":person_tipping_hand: Identifiers"
-        self._echo(text, fg=color, bold=True)
-        text = "Model identifiers: {0}".format(card["Identifier"]).rstrip(os.linesep)
-        self._echo(text, fg=color)
-        text = "Slug: {0}".format(card["Slug"]).rstrip(os.linesep)
-        self._echo(text, fg=color)
-        text = ""
-        self._echo(text)
-
-    def _code_info(self):
-        color = "red"
-        card = self.info_data["card"]
-        text = ":nerd_face: Code and parameters"
-        self._echo(text, fg=color, bold=True)
-        text = "GitHub: https://github.com/ersilia-os/{0}".format(card["Identifier"])
-        self._echo(text, fg=color)
-        if "S3" in card:
-            s = card["S3"]
-        else:
-            s = "-"
-        text = "AWS S3: {0}".format(s)
-        self._echo(text, fg=color)
-        text = ""
-        self._echo(text)
-
-    def _docker_info(self):
-        try:
-            color = "blue"
-            card = self.info_data["card"]
-            dockerhub_field = card["DockerHub"]
-            docker_architecture = card["Docker Architecture"]
-            text = ":whale: Docker"
-            self._echo(text, fg=color, bold=True)
-            text = "Docker Hub: {0}".format(dockerhub_field)
-            self._echo(text, fg=color)
-            text = "Architectures: {0}".format(",".join(docker_architecture))
-            self._echo(text, fg=color)
-            text = ""
-            self._echo(text)
-        except:
-            self.logger.warning("No metadata for Docker slots")
+    def _current_arch():
+        machine = platform.machine().lower()
+        if machine in ("arm64", "aarch64"):
+            return "linux/arm64"
+        return "linux/amd64"
 
     def echo(self):
         """
-        Display the information about the model.
+        Display the information about the model using a rich Panel layout.
         """
-        self._description_info()
-        self._identifiers_info()
-        self._code_info()
-        self._docker_info()
-        text = "For more information, please visit https://ersilia.io/model-hub"
-        self._echo(text, fg="black")
+        from rich.console import Console
+        from rich.panel import Panel
+        from rich.table import Table
+        from rich.text import Text
+
+        _service_class_labels = {
+            "pulled_docker": "DockerHub",
+            "docker": "Docker (local)",
+            "conda": "Conda",
+            "venv": "Virtual environment",
+            "system": "System Python",
+            "hosted": "Hosted",
+            "dummy": "Dummy",
+        }
+
+        console = Console()
+        card = self.info_data.get("card") or {}
+        model_source = self.info_data.get("model_source")
+        docker_tag = self.info_data.get("docker_tag")
+        service_class_raw = self.info_data.get("service_class")
+        service_class = _service_class_labels.get(service_class_raw, service_class_raw)
+
+        def fmt(value):
+            if isinstance(value, list):
+                return ", ".join(str(v) for v in value)
+            return str(value) if value is not None else "—"
+
+        def fmt_size(value):
+            if value is None:
+                return "—"
+            s = str(value)
+            if any(u in s.upper() for u in ("MB", "GB", "KB")):
+                return s
+            return f"{s} MB"
+
+        def fmt_arch(value):
+            if not isinstance(value, list):
+                return fmt(value)
+            current = self._current_arch()
+            matched = [a for a in value if current in a.lower() or a.lower() in current]
+            return matched[0] if matched else fmt(value)
+
+        table = Table(show_header=False, box=None, padding=(0, 1), expand=True)
+        table.add_column("Field", style="bold cyan", no_wrap=True, min_width=24)
+        table.add_column("Value", overflow="fold")
+
+        # Origin section
+        table.add_row(Text(" Origin", style="bold magenta on grey15"), "")
+        if model_source:
+            table.add_row("  Fetched from", fmt(model_source))
+        if service_class:
+            table.add_row("  Service class", fmt(service_class))
+        if "DockerHub" in card:
+            table.add_row("  Docker Hub", fmt(card["DockerHub"]))
+        if docker_tag:
+            table.add_row("  Version", fmt(docker_tag))
+        if "Docker Architecture" in card:
+            table.add_row("  Architecture", fmt_arch(card["Docker Architecture"]))
+        identifier = card.get("Identifier", "")
+        if identifier:
+            table.add_row("  GitHub", f"https://github.com/ersilia-os/{identifier}")
+        table.add_row("", "")
+
+        sections = [
+            ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
+            ("Description", ["Title", "Description", "Interpretation"]),
+            (
+                "Input / Output",
+                [
+                    "Input",
+                    "Input Dimension",
+                    "Input Shape",
+                    "Output",
+                    "Output Dimension",
+                    "Output Shape",
+                    "Output Type",
+                    "Output Consistency",
+                ],
+            ),
+            ("Deployment", ["Deployment", "Source", "Source Type", "S3"]),
+            (
+                "Publication",
+                [
+                    "License",
+                    "Contributor",
+                    "Publication Type",
+                    "Publication Year",
+                    "Publication",
+                    "Source Code",
+                ],
+            ),
+            ("Sizes", ["Model Size", "Environment Size", "Image Size"]),
+        ]
+
+        size_fields = {"Model Size", "Environment Size", "Image Size"}
+        for section_title, fields in sections:
+            table.add_row(Text(f" {section_title}", style="bold magenta on grey15"), "")
+            for field in fields:
+                if field in card:
+                    formatter = fmt_size if field in size_fields else fmt
+                    table.add_row(f"  {field}", formatter(card[field]))
+            table.add_row("", "")
+
+        title = card.get("Title", "")
+        panel_title = f"[bold]{identifier}[/bold]  ·  {title}" if identifier else title
+        console.print(Panel(table, title=panel_title, border_style="cyan"))

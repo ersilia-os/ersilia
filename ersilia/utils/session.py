@@ -172,12 +172,83 @@ def determine_orphaned_session():
     return _sessions
 
 
+def stop_containers_by_name(names):
+    """
+    Stop and remove the named Docker containers, if any.
+
+    Silent no-op if docker is unavailable or a name is unknown.
+    """
+    if not names:
+        return
+    try:
+        import docker
+
+        client = docker.from_env()
+    except Exception:
+        return
+    by_name = {c.name: c for c in client.containers.list(all=True)}
+    for name in names:
+        c = by_name.get(name)
+        if c is None:
+            continue
+        try:
+            c.stop()
+        except Exception:
+            pass
+        try:
+            c.remove()
+        except Exception:
+            pass
+
+
+def purge_session_processes(session_name):
+    """
+    Stop any leftover processes and Docker containers tracked by a session's
+    .pid files. Used to clean up after orphaned (terminal-killed) sessions.
+    """
+    session_dir = os.path.join(SESSIONS_DIR, session_name)
+    if not os.path.isdir(session_dir):
+        return
+    pids = []
+    container_names = []
+    for fn in os.listdir(session_dir):
+        if not fn.endswith(".pid"):
+            continue
+        path = os.path.join(session_dir, fn)
+        try:
+            with open(path, "r") as f:
+                for line in f:
+                    parts = line.strip().split()
+                    if not parts:
+                        continue
+                    try:
+                        pids.append(int(parts[0]))
+                    except ValueError:
+                        pass
+                    if len(parts) >= 3 and parts[2] != "-":
+                        container_names.append(parts[2])
+        except Exception:
+            continue
+    for pid in pids:
+        if pid == -1:
+            continue
+        try:
+            os.kill(pid, 9)
+        except Exception:
+            pass
+    stop_containers_by_name(container_names)
+
+
 def remove_orphaned_sessions():
     """
     Remove orphaned sessions.
     """
     orphaned_sessions = determine_orphaned_session()
     for session in orphaned_sessions:
+        try:
+            purge_session_processes(session)
+        except Exception:
+            pass
         try:
             remove_session_dir(session)
         except PermissionError:

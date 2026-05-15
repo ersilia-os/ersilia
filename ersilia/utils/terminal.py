@@ -224,6 +224,7 @@ def print_serve_summary(
     enable_cache,
     tracking_enabled,
     tracking_use_case,
+    version=None,
 ):
     """
     Print a rich summary table for a served model.
@@ -236,24 +237,29 @@ def print_serve_summary(
     )
 
     table.add_row("Model", f"[bold]{model_id}[/bold] ([dim]{slug}[/dim])")
-    table.add_row("URL", f"[cyan]{url}[/cyan]")
+    if version:
+        table.add_row("Version", f"[dim]{version}[/dim]")
+    table.add_row("URL", f"[link={url}][cyan]{url}[/cyan][/link]")
 
     if str(pid) != "-1":
         table.add_row("PID", f"[yellow]{pid}[/yellow]")
 
-    table.add_row("Service", f"[yellow]{srv}[/yellow]")
+    srv_display = "DockerHub" if srv == "pulled_docker" else srv
+    table.add_row("Service", f"[yellow]{srv_display}[/yellow]")
     table.add_row("Session", f"[yellow]{session_dir}[/yellow]")
 
     all_apis = apis or []
     if "run" in all_apis:
         all_apis = ["run"] + [a for a in all_apis if a != "run"]
-    apis_display = ", ".join(all_apis) if all_apis else "run"
-    table.add_row("APIs", f"[cyan]{apis_display}[/cyan]")
-
-    table.add_row("Info", "[cyan]info[/cyan]")
+    if not all_apis:
+        all_apis = ["run"]
+    if "info" not in all_apis:
+        all_apis.append("info")
+    endpoints_display = "\n".join(f"[cyan]{a}[/cyan]" for a in all_apis)
+    table.add_row("Endpoints", endpoints_display)
 
     store_style = "red" if store_stat == "Disabled" else "green"
-    table.add_row("Isaura Store", f"[{store_style}]{store_stat}[/{store_style}]")
+    table.add_row("Store", f"[{store_style}]{store_stat}[/{store_style}]")
 
     cache_text = "Enabled" if enable_cache else "Disabled"
     cache_style = "green" if enable_cache else "red"

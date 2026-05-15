@@ -112,3 +112,16 @@ def spinner(text, func, *args, **kwargs):
         except Exception:
             console.print(Text(f"  ✖  {text}", style="red"))
             raise
+
+
+async def async_spinner(text, coro):
+    if getattr(logger, "verbosity", 0) == 1:
+        return await coro
+    with console.status(Text(text, style="cyan")):
+        try:
+            result = await coro
+            console.print(Text(f"  ✓  {text}", style="green"))
+            return result
+        except Exception:
+            console.print(Text(f"  ✖  {text}", style="red"))
+            raise

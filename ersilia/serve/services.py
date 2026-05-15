@@ -1185,7 +1185,6 @@ class PulledDockerImageService(BaseServing):
         Serve the model using the Docker image service.
         """
         self._create_docker_network()
-        self._stop_all_containers_of_image()
         self.container_name = f"{self.model_id}_{str(uuid.uuid4())[:4]}"
 
         env = {
@@ -1277,11 +1276,25 @@ class PulledDockerImageService(BaseServing):
 
     def close(self):
         """
-        Close the Docker image service by stopping and removing the container.
+        Close the Docker image service by stopping and removing this session's container.
         """
-        self.logger.debug("Stopping and removing container")
-        # Here we remove temp files so that they are not left behind
-        self._stop_all_containers_of_image()
+        if not getattr(self, "container_name", None):
+            return
+        self.logger.debug(
+            "Stopping and removing container {0}".format(self.container_name)
+        )
+        try:
+            c = self.client.containers.get(self.container_name)
+        except Exception:
+            return
+        try:
+            c.stop()
+        except Exception:
+            pass
+        try:
+            c.remove()
+        except Exception:
+            pass
 
 
 class HostedService(BaseServing):

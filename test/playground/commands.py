@@ -2,6 +2,7 @@ import json
 import os
 import time
 import traceback
+from unittest.mock import patch
 
 import pytest
 from click.testing import CliRunner
@@ -58,7 +59,8 @@ def execute_command(command, description):
         )
         try:
             memory_before = get_memory_usage()
-            res = runner.invoke(command[0], command[1])
+            with patch("ersilia.cli.commands.serve.click.confirm", return_value=True):
+                res = runner.invoke(command[0], command[1])
             memory_after = get_memory_usage()
 
             max_memory = max(memory_before, memory_after)

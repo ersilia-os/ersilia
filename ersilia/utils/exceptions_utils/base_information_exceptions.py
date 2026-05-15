@@ -1,6 +1,6 @@
 import os
 
-from ...default import AIRTABLE_MODEL_HUB_VIEW_URL
+from ...default import ERSILIA_CATALOG_URL
 from .exceptions import ErsiliaError
 
 # ruff: noqa: D101, D102
@@ -20,8 +20,8 @@ def _read_default_fields(field):
 class BaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model information\n"
-        self.hints = "Please check Ersilia AirTable to make sure you are providing the right information. This is the AirTable link: {0}".format(
-            AIRTABLE_MODEL_HUB_VIEW_URL
+        self.hints = "Please check the Ersilia Model Catalog to make sure you are providing the right information: {0}".format(
+            ERSILIA_CATALOG_URL
         )
         ErsiliaError.__init__(self, self.message, self.hints)
 
@@ -29,8 +29,8 @@ class BaseInformationError(ErsiliaError):
 class IdentifierBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia model identifier"
-        self.hints = "Ersilia model identifiers are 7 alphanumeric characters. They always start with eos, followed by a digit. The eos identifier coincides with the name of the repository. Check our current AirTable to see correct identifiers: {0}".format(
-            AIRTABLE_MODEL_HUB_VIEW_URL
+        self.hints = "Ersilia model identifiers are 7 alphanumeric characters starting with eos followed by a digit. Browse valid identifiers at: {0}".format(
+            ERSILIA_CATALOG_URL
         )
         ErsiliaError.__init__(self, self.message, self.hints)
 

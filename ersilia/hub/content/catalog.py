@@ -189,21 +189,24 @@ class CatalogTable(object):
 
     def write(self, file_name: str):
         """
-        Write the catalog table to a file.
+        Write the catalog table to a file. Supported formats: .csv, .json.
 
         Parameters
         ----------
         file_name : str
             The name of the file to write the catalog table to.
         """
-        with open(file_name, "w") as f:
-            if not file_name.endswith(".csv"):
-                raise Exception("Only .csv files are allowed")
-            delimiter = ","
-            writer = csv.writer(f, delimiter=delimiter)
-            writer.writerow(self.columns)
-            for r in self.data:
-                writer.writerow(r)
+        if file_name.endswith(".csv"):
+            with open(file_name, "w") as f:
+                writer = csv.writer(f)
+                writer.writerow(self.columns)
+                for r in self.data:
+                    writer.writerow(r)
+        elif file_name.endswith(".json"):
+            with open(file_name, "w") as f:
+                f.write(self.as_json())
+        else:
+            raise Exception("Unsupported file format. Use .csv or .json")
 
     def __str__(self):
         return self.as_json()
@@ -234,10 +237,11 @@ class ModelCatalog(ErsiliaBase):
         "Output Dimension",
     ]
 
-    def __init__(self, config_json=None, less=True):
+    def __init__(self, config_json=None, less=True, task=None):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.mi = ModelIdentifier()
         self.less = less
+        self.task = task.lower() if task else None
         self.conda = SimpleConda(config_json=self.config_json)
         self.docker = SimpleDocker()
 
@@ -311,6 +315,10 @@ class ModelCatalog(ErsiliaBase):
                 continue
             if "test" in slug:
                 continue
+            if self.task:
+                card_task = self._get_item(card, "task")
+                if not card_task or self.task not in card_task.lower():
+                    continue
             idx += 1
             r = [idx]
             for field in columns[1:]:
@@ -325,7 +333,7 @@ class ModelCatalog(ErsiliaBase):
     def hub(self):
         """List models available in Ersilia model hub from the S3 JSON"""
         ji = JsonModelsInterface()
-        models = ji.items_all()
+        models = [m for m in ji.items_all() if self._get_status(m).lower() == "ready"]
         columns = self.LESS_FIELDS if self.less else self.MORE_FIELDS
         table = self._get_catalog(columns, models)
         return table

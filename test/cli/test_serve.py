@@ -28,6 +28,7 @@ def mock_serve():
 def test_serve_cmd(
     mock_store_has_model, mock_ersilia_model, mock_serve, mock_std_example
 ):
+    """Verify that the serve command exits successfully and calls ErsiliaModel.serve for the given model ID."""
     runner = CliRunner()
     mock_mdl_instance = MagicMock()
     mock_mdl_instance.is_valid.return_value = True

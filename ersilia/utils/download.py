@@ -11,10 +11,10 @@ from pathlib import Path
 
 import requests
 
-from .. import logger
 from ..default import S3_BUCKET_URL
 from ..utils.echo import echo
 from ..utils.logging import make_temp_dir
+from .logging import logger
 from .terminal import run_command
 
 

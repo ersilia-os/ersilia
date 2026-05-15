@@ -14,6 +14,7 @@ from ....default import (
 from ....serve.services import PulledDockerImageService
 from ....setup.requirements.docker import DockerRequirement
 from ....utils.docker import SimpleDocker
+from ....utils.echo import async_spinner
 from ....utils.resolvers import PackMethodResolver
 from ...pull.pull import ModelPuller
 from .. import STATUS_FILE
@@ -290,6 +291,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
 
         data["service_class"] = "pulled_docker"
         data["size"] = mp._get_size_of_local_docker_image_in_mb()
+        data["docker_tag"] = self.img_tag
         with open(information_file, "w") as outfile:
             json.dump(data, outfile, indent=4)
 
@@ -311,13 +313,16 @@ class ModelDockerHubFetcher(ErsiliaBase):
         await mp.async_pull()
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
         self.logger.debug("Asynchronous and concurrent execution started!")
-        await asyncio.gather(
-            mr.register(is_from_dockerhub=True, img_tag=self.img_tag),
-            self.write_apis(model_id),
-            self.copy_information(model_id),
-            self.modify_information(model_id),
-            self.copy_metadata(model_id),
-            self.copy_status(model_id),
-            self.copy_example_if_available(model_id),
-            self.copy_column_file(model_id),
+        await async_spinner(
+            "Registering model...",
+            asyncio.gather(
+                mr.register(is_from_dockerhub=True, img_tag=self.img_tag),
+                self.write_apis(model_id),
+                self.copy_information(model_id),
+                self.modify_information(model_id),
+                self.copy_metadata(model_id),
+                self.copy_status(model_id),
+                self.copy_example_if_available(model_id),
+                self.copy_column_file(model_id),
+            ),
         )
