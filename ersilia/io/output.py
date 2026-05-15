@@ -312,7 +312,7 @@ class DataFrame(object):
             )
             writer.writerow(cols)
             self.logger.debug(
-                f"write_text header dt={(time.perf_counter()-t0):.6f}s file={file_name}"
+                f"write_text header dt={(time.perf_counter() - t0):.6f}s file={file_name}"
             )
 
             wrote = 0
@@ -320,7 +320,7 @@ class DataFrame(object):
                 t = time.perf_counter()
                 chunk = list(islice(it, chunksize))
                 self.logger.debug(
-                    f"write_text chunk_take rows={len(chunk)} dt={(time.perf_counter()-t):.6f}s"
+                    f"write_text chunk_take rows={len(chunk)} dt={(time.perf_counter() - t):.6f}s"
                 )
                 if not chunk:
                     break
@@ -334,18 +334,18 @@ class DataFrame(object):
                         row = row[:ncols]
                     out_append([fmt(v) for v in row])
                 self.logger.debug(
-                    f"write_text chunk_format rows={len(out_rows)} dt={(time.perf_counter()-t):.6f}s"
+                    f"write_text chunk_format rows={len(out_rows)} dt={(time.perf_counter() - t):.6f}s"
                 )
 
                 t = time.perf_counter()
                 writer.writerows(out_rows)
                 wrote += len(out_rows)
                 self.logger.debug(
-                    f"write_text chunk_write rows={len(out_rows)} dt={(time.perf_counter()-t):.6f}s"
+                    f"write_text chunk_write rows={len(out_rows)} dt={(time.perf_counter() - t):.6f}s"
                 )
 
         self.logger.debug(
-            f"write_text done rows={wrote} dt_total={(time.perf_counter()-t0):.6f}s file={file_name}"
+            f"write_text done rows={wrote} dt_total={(time.perf_counter() - t0):.6f}s file={file_name}"
         )
 
     def write(self, file_name: str, delimiter: str = None):

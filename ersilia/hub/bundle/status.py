@@ -153,7 +153,8 @@ class ModelStatus(ErsiliaBase):
         bool
             True if the model is available as a bundle, False otherwise.
         """
-        return True
+        bundle_dir = os.path.join(self._bundles_dir, model_id)
+        return os.path.exists(bundle_dir)
 
     def status(self, model_id: str) -> dict:
         """

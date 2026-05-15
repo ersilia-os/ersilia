@@ -28,6 +28,7 @@ def test_catalog_command(
     options,
     model,
 ):
+    """Verify that catalog command options (--hub, --card, --browser) exit successfully and call the right backend."""
     mock_model_card_instance = MagicMock()
 
     if model:

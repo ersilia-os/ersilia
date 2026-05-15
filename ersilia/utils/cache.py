@@ -216,18 +216,21 @@ class SetupRedis:
         except Exception as e:
             logger.error(f"An unexpected error occurred while removing the image: {e}")
 
-
     def _remove_container_if_exists(self):
         client = docker.from_env()
 
         try:
-            containers = client.containers.list(all=True, filters={"name": REDIS_CONTAINER_NAME})
+            containers = client.containers.list(
+                all=True, filters={"name": REDIS_CONTAINER_NAME}
+            )
         except docker.errors.DockerException as e:
             logger.error(f"Error accessing Docker: {e}")
             return 0
 
         if not containers:
-            logger.info(f"No containers found with name containing '{REDIS_CONTAINER_NAME}'.")
+            logger.info(
+                f"No containers found with name containing '{REDIS_CONTAINER_NAME}'."
+            )
             return 0
 
         removed = 0

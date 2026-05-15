@@ -16,6 +16,7 @@ from ..default import (
 from ..utils import tmp_pid_file
 from ..utils.cache import SetupRedis
 from ..utils.echo import echo, spinner
+from ..utils.session import stop_containers_by_name
 from .api import Api
 from .services import (
     CondaEnvironmentService,
@@ -132,9 +133,8 @@ class AutoService(ErsiliaBase):
                 else:
                     self.service = None
                 self._service_class = s
-                echo(
-                    f"Using stored service backend '{self._service_class}' for model {model_id}",
-                    fg="cyan",
+                self.logger.debug(
+                    f"Using stored service backend '{self._service_class}' for model {model_id}"
                 )
             else:
                 self.logger.debug(
@@ -157,10 +157,6 @@ class AutoService(ErsiliaBase):
                         self.logger.debug("Service class: system")
                         f.write("system")
                         self._service_class = "system"
-                        echo(
-                            f"Selected service backend 'system' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif VenvEnvironmentService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
@@ -172,10 +168,6 @@ class AutoService(ErsiliaBase):
                         f.write("venv")
                         self.logger.debug("Service class: venv")
                         self._service_class = "venv"
-                        echo(
-                            f"Selected service backend 'venv' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif CondaEnvironmentService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
@@ -187,10 +179,6 @@ class AutoService(ErsiliaBase):
                         f.write("conda")
                         self.logger.debug("Service class: conda")
                         self._service_class = "conda"
-                        echo(
-                            f"Selected service backend 'conda' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif DockerImageService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
@@ -202,10 +190,6 @@ class AutoService(ErsiliaBase):
                         f.write("docker")
                         self.logger.debug("Service class: docker")
                         self._service_class = "docker"
-                        echo(
-                            f"Selected service backend 'docker' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif PulledDockerImageService(
                         model_id, config_json=config_json, preferred_port=preferred_port
                     ).is_available():
@@ -217,10 +201,6 @@ class AutoService(ErsiliaBase):
                         f.write("pulled_docker")
                         self.logger.debug("Service class: pulled_docker")
                         self._service_class = "pulled_docker"
-                        echo(
-                            f"Selected service backend 'pulled_docker' for model {model_id}",
-                            fg="cyan",
-                        )
                     elif HostedService(
                         model_id, config_json=config_json, url=url
                     ).is_available():
@@ -230,10 +210,6 @@ class AutoService(ErsiliaBase):
                         f.write("hosted")
                         self.logger.debug("Service class: hosted")
                         self._service_class = "hosted"
-                        echo(
-                            f"Selected service backend 'hosted' for model {model_id}",
-                            fg="cyan",
-                        )
                     else:
                         self.logger.debug("Service class: dummy")
                         self.service = DummyService(
@@ -261,9 +237,8 @@ class AutoService(ErsiliaBase):
                     preferred_port=preferred_port,
                     url=url,
                 )
-                echo(
-                    f"Using provided service backend '{self._service_class}' for model {model_id}",
-                    fg="cyan",
+                self.logger.info(
+                    f"Resolved service backend '{self._service_class}' for model {model_id}"
                 )
             else:
                 self.service = None
@@ -468,24 +443,44 @@ class AutoService(ErsiliaBase):
         self.logger.info("Setting up Redis")
         self.setup_redis.ensure_redis_running()
         tmp_file = tmp_pid_file(self.model_id)
+        container_name = getattr(self.service, "container_name", None) or "-"
         with open(tmp_file, "a+") as f:
-            f.write("{0} {1}{2}".format(self.service.pid, self.service.url, os.linesep))
+            f.write(
+                "{0} {1} {2}{3}".format(
+                    self.service.pid, self.service.url, container_name, os.linesep
+                )
+            )
 
     def close(self):
         """
         Close the service.
         """
         tmp_file = tmp_pid_file(self.model_id)
+        container_names = []
         if os.path.isfile(tmp_file):
-            pids = self._pids_from_file(tmp_file)
+            pids = []
+            with open(tmp_file, "r") as f:
+                for line in f:
+                    parts = line.strip().split()
+                    if not parts:
+                        continue
+                    try:
+                        pids.append(int(parts[0]))
+                    except ValueError:
+                        pass
+                    if len(parts) >= 3 and parts[2] != "-":
+                        container_names.append(parts[2])
             self._kill_pids(pids)
             os.remove(tmp_file)
         self.clean_temp_dir()
-        self.clean_docker_containers()
+        self._stop_session_containers(container_names)
         try:
             self.service.close()
         except:
             pass
+
+    def _stop_session_containers(self, names):
+        stop_containers_by_name(names)
 
     def api(
         self, api_name, input, output=DEFAULT_OUTPUT, batch_size=DEFAULT_BATCH_SIZE

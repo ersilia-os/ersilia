@@ -27,9 +27,10 @@ The [Ersilia Model Hub](https://ersilia.io) is a unified platform of pre-trained
 
 In Ersilia, you can find models related to antibiotic activity prediction, ADMET prediction, molecular representation, generative chemistry, and much more.
 
-- To find your models of interest, visit the [Ersilia Model Hub browser](https://ersilia.io/model-hub)
+- To find your models of interest, visit the [Ersilia Model Hub browser](https://catalog.ersilia.io/)
 - For high-level documentation, check the [Ersilia Book](https://ersilia.gitbook.io/ersilia-book/)
 - For a low-level documentation for developers, see the [Ersilia API reference](https://ersilia-os.github.io/ersilia/)
+- To contribute with new models, visit the [Contribute App](https://contribute.ersilia.io)
 
 ## Quick Start Guide
 
@@ -188,13 +189,11 @@ The [Ersilia Open Source Initiative](https://ersilia.io) is a tech non-profit or
 ### Funding
 
 The Ersilia Model Hub is our flagship project. The tool is funded via a combination of sources. Full disclosure can be found in our [website](https://ersilia.io/supporters). Highlighted supporters include the [Mozilla Builders Accelerator](https://builders.mozilla.org/), [Fast Forward](https://www.ffwd.org/), [Splunk Pledge](https://www.splunk.com/en_us/about-us/splunk-pledge/nonprofit-license-application.html), the [AI2050 Program by Schmidt Sciences](https://ai2050.schmidtsciences.org/), and the [Spanish Ministry of Science, Innovation, and Universities](https://www.aei.gob.es/convocatorias/buscador-convocatorias/proyectos-generacion-conocimiento-2023) (grant PID2023-148309OA-I00 funded by MICIU/AEI/10.13039/501100011033).
-<br />
-<br />
-<a href="https://vercel.com/oss">
-  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge-2026.svg" />
-</a>
 
 <div id="bottom"></div>
 <img src="https://raw.githubusercontent.com/ersilia-os/ersilia/master/assets/ministerio_ciencia_innovacion_universidades_aei.png" height="70">
 
-
+<br />
+<a href="https://vercel.com/oss">
+  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge-2026.svg" />
+</a>
