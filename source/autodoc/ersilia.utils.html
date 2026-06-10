@@ -1463,6 +1463,12 @@ as needed.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.is_owned_by_current_user">
+<span class="sig-name descname"><span class="pre">is_owned_by_current_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.is_owned_by_current_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.is_owned_by_current_user" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if the image carries the current user’s label, or has no user label (backward compat).</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.kill">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.kill"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.kill" title="Link to this definition">¶</a></dt>
 <dd><p>Kill a Docker container.</p>
@@ -1471,6 +1477,12 @@ as needed.</p>
 <dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The container name.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.docker.SimpleDocker.label_with_current_user">
+<span class="sig-name descname"><span class="pre">label_with_current_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">org</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/docker.html#SimpleDocker.label_with_current_user"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.docker.SimpleDocker.label_with_current_user" title="Link to this definition">¶</a></dt>
+<dd><p>Add the current user’s UID as a Docker label to a local image.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -3674,7 +3686,9 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.exec_container"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.exec_container()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.exists"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.exists()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.images"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.images()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.is_owned_by_current_user"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.is_owned_by_current_user()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.kill"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.kill()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.label_with_current_user"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.label_with_current_user()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.list_eos_images"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.list_eos_images()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.remove"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.remove()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.docker.SimpleDocker.run"><code class="docutils literal notranslate"><span class="pre">SimpleDocker.run()</span></code></a></li>

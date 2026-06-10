@@ -1365,7 +1365,7 @@
             <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">set_docker_host</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">preferred_port</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">find_free_port</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1659,7 +1659,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Create a Docker client from environment variables</span>
         <span class="n">set_docker_host</span><span class="p">()</span>
-        <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
         <span class="n">container</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">containers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">container_id</span><span class="p">)</span>
 
         <span class="c1"># Create the command to remove the file.</span>

@@ -538,6 +538,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_publication</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Publication Type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;Peer reviewed&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">is_valid_doi</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+                <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InvalidEntry</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking model task...&quot;</span><span class="p">)</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Task&quot;</span>

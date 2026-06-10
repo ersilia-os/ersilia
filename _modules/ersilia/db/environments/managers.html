@@ -307,13 +307,19 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerRequirement</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocker</span><span class="p">,</span> <span class="n">model_image_version_reader</span><span class="p">,</span> <span class="n">resolve_platform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ERSILIA_USER_LABEL</span><span class="p">,</span>
+    <span class="n">SimpleDocker</span><span class="p">,</span>
+    <span class="n">model_image_version_reader</span><span class="p">,</span>
+    <span class="n">resolve_platform</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.identifiers.short</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShortIdentifier</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.paths</span><span class="w"> </span><span class="kn">import</span> <span class="n">Paths</span>
@@ -990,6 +996,22 @@
 
             <span class="k">if</span> <span class="n">is_model</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">repo</span> <span class="o">!=</span> <span class="s2">&quot;&lt;none&gt;&quot;</span> <span class="ow">and</span> <span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;&lt;none&gt;&quot;</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;inspect&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{{{</span><span class="s1">index .Config.Labels &quot;</span><span class="si">{</span><span class="n">ERSILIA_USER_LABEL</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">}}}}</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">],</span>
+                        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">label_value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">current_uid</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">())</span>
+                    <span class="k">if</span> <span class="n">label_value</span> <span class="ow">and</span> <span class="n">label_value</span> <span class="o">!=</span> <span class="n">current_uid</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Skipping deletion of </span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">: image belongs to a different user&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">continue</span>
                     <span class="n">named_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">named_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_id</span><span class="p">)</span>

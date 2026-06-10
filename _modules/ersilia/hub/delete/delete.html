@@ -314,6 +314,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.environments.localdb</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvironmentDb</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.environments.managers</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerManager</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...db.hubdata.localslugs</span><span class="w"> </span><span class="kn">import</span> <span class="n">SlugDb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">...default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">,</span> <span class="n">DOCKERHUB_ORG</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.conda</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleConda</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleDocker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span><span class="p">,</span> <span class="n">spinner</span>
@@ -914,6 +915,14 @@
 <span class="sd">        model_id : str</span>
 <span class="sd">            Identifier of the model to be deleted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_inside_docker</span><span class="p">()</span> <span class="ow">and</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">list_eos_images</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker</span><span class="o">.</span><span class="n">is_owned_by_current_user</span><span class="p">(</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span><span class="p">):</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot delete model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">: its Docker image was fetched by a different user on this system.&quot;</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_run_deleters</span><span class="p">():</span>
             <span class="n">ModelEosDeleter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
