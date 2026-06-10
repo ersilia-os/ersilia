@@ -961,7 +961,7 @@ class PulledDockerImageService(BaseServing):
             preferred_port=preferred_port,
         )
         set_docker_host()
-        self.client = docker.from_env()
+        self.client = docker.from_env(timeout=600)
         if preferred_port is None:
             self.port = find_free_port()
         else:
@@ -1243,7 +1243,7 @@ class PulledDockerImageService(BaseServing):
         """
         # Create a Docker client from environment variables
         set_docker_host()
-        client = docker.from_env()
+        client = docker.from_env(timeout=600)
         container = client.containers.get(container_id)
 
         # Create the command to remove the file.

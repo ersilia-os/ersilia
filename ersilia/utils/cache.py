@@ -217,6 +217,7 @@ class SetupRedis:
             logger.error(f"An unexpected error occurred while removing the image: {e}")
 
     def _remove_container_if_exists(self):
+        set_docker_host()
         client = docker.from_env()
 
         try:
