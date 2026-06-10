@@ -227,6 +227,10 @@ class CheckService:
         if not BaseInformationValidator().validate_publication(data[key]):
             raise texc.EmptyField(key)
 
+        if data.get("Publication Type") == "Peer reviewed":
+            if not BaseInformationValidator().is_valid_doi(data[key]):
+                raise texc.InvalidEntry(key)
+
     def _check_model_task(self, data):
         self.logger.debug("Checking model task...")
         key = "Task"

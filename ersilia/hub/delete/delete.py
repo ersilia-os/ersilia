@@ -8,6 +8,7 @@ from ...db.disk.fetched import FetchedModelsManager
 from ...db.environments.localdb import EnvironmentDb
 from ...db.environments.managers import DockerManager
 from ...db.hubdata.localslugs import SlugDb
+from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...utils.conda import SimpleConda
 from ...utils.docker import SimpleDocker
 from ...utils.echo import echo, spinner
@@ -535,6 +536,14 @@ class ModelFullDeleter(ErsiliaBase):
         model_id : str
             Identifier of the model to be deleted.
         """
+
+        if not is_inside_docker() and model_id in self.docker.list_eos_images():
+            if not self.docker.is_owned_by_current_user(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG):
+                echo(
+                    f"Cannot delete model {model_id}: its Docker image was fetched by a different user on this system.",
+                    fg="red",
+                )
+                return
 
         def _run_deleters():
             ModelEosDeleter(self.config_json).delete(model_id)

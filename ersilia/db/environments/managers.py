@@ -1,13 +1,14 @@
 import os
 import re
 import shutil
+import subprocess
 import sys
 from collections import OrderedDict
 
 from ...core.base import ErsiliaBase
 from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...setup.requirements.docker import DockerRequirement
-from ...utils.docker import SimpleDocker, model_image_version_reader, resolve_platform
+from ...utils.docker import ERSILIA_USER_LABEL, SimpleDocker, model_image_version_reader, resolve_platform
 from ...utils.identifiers.short import ShortIdentifier
 from ...utils.logging import make_temp_dir
 from ...utils.paths import Paths
@@ -617,6 +618,22 @@ class DockerManager(ErsiliaBase):
 
             if is_model:
                 if repo != "<none>" and tag != "<none>":
+                    result = subprocess.run(
+                        [
+                            "docker", "inspect",
+                            "--format", f'{{{{index .Config.Labels "{ERSILIA_USER_LABEL}"}}}}',
+                            f"{repo}:{tag}",
+                        ],
+                        capture_output=True,
+                        text=True,
+                    )
+                    label_value = result.stdout.strip()
+                    current_uid = str(os.getuid())
+                    if label_value and label_value != current_uid:
+                        self.logger.warning(
+                            f"Skipping deletion of {repo}:{tag}: image belongs to a different user"
+                        )
+                        continue
                     named_targets.append(f"{repo}:{tag}")
                 else:
                     named_targets.append(img_id)

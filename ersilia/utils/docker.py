@@ -80,6 +80,9 @@ def model_image_version_reader(dir):
     return DOCKERHUB_LATEST_TAG
 
 
+ERSILIA_USER_LABEL = "ersilia.user.id"
+
+
 class SimpleDocker(object):
     """
     A class to manage Docker containers and images.
@@ -109,6 +112,57 @@ class SimpleDocker(object):
     @staticmethod
     def _image_name(org, img, tag):
         return "%s/%s:%s" % (org, img, tag)
+
+    def label_with_current_user(self, org, img, tag):
+        """Add the current user's UID as a Docker label to a local image."""
+        image_name = self._image_name(org, img, tag)
+        uid = os.getuid()
+
+        old_id_result = subprocess.run(
+            ["docker", "inspect", "--format", "{{.Id}}", image_name],
+            capture_output=True,
+            text=True,
+        )
+        old_id = old_id_result.stdout.strip()
+
+        dockerfile = f"FROM {image_name}"
+        result = subprocess.run(
+            [
+                "docker", "build",
+                "--label", f"{ERSILIA_USER_LABEL}={uid}",
+                "-t", image_name,
+                "-",
+            ],
+            input=dockerfile.encode(),
+            capture_output=True,
+        )
+        if result.returncode != 0:
+            self.logger.warning(
+                f"Could not label image {image_name} with user ID {uid}: "
+                + result.stderr.decode().strip()
+            )
+        else:
+            if old_id:
+                subprocess.run(["docker", "rmi", old_id], capture_output=True)
+            self.logger.debug(f"Labeled image {image_name} with user ID {uid}")
+
+    def is_owned_by_current_user(self, org, img, tag):
+        """Return True if the image carries the current user's label, or has no user label (backward compat)."""
+        image_name = self._image_name(org, img, tag)
+        uid = str(os.getuid())
+        result = subprocess.run(
+            [
+                "docker", "inspect",
+                "--format", f'{{{{index .Config.Labels "{ERSILIA_USER_LABEL}"}}}}',
+                image_name,
+            ],
+            capture_output=True,
+            text=True,
+        )
+        label_value = result.stdout.strip()
+        if not label_value:
+            return True
+        return label_value == uid
 
     def images(self):
         """
@@ -261,6 +315,7 @@ class SimpleDocker(object):
         cmd = "docker build -t %s %s" % (self._image_name(org, img, tag), path)
         run_command(cmd)
         os.chdir(cwd)
+        self.label_with_current_user(org, img, tag)
 
     def delete(self, org, img, tag):
         """
@@ -275,6 +330,11 @@ class SimpleDocker(object):
         tag : str
             The image tag.
         """
+        if not self.is_owned_by_current_user(org, img, tag):
+            self.logger.warning(
+                f"Skipping deletion of {self._image_name(org, img, tag)}: image belongs to a different user"
+            )
+            return
         cmd = "docker rmi -f %s" % self._image_name(org, img, tag)
         run_command(cmd)
 
@@ -291,7 +351,12 @@ class SimpleDocker(object):
         for k, _ in images_dict.items():
             if model_id in k:
                 org, img, tag = self._splitter(k)
-                self.delete(org=org, img=img, tag=tag)
+                if self.is_owned_by_current_user(org, img, tag):
+                    self.delete(org=org, img=img, tag=tag)
+                else:
+                    self.logger.warning(
+                        f"Skipping deletion of {k}: image belongs to a different user"
+                    )
 
     def run(self, org, img, tag, name, memory=None):
         """

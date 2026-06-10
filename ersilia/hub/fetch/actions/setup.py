@@ -42,7 +42,7 @@ class SetupChecker(BaseAction):
     def _git_lfs(self):
         self.logger.debug("Checking Git LFS")
         req = GitLfsRequirement()
-        req.is_installed()
+        req.is_installed(install_if_necessary=False)
         self.logger.debug("Git LFS is installed")
         req.activate()
         self.logger.debug("Git LFS has been activated")

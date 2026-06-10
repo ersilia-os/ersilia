@@ -316,6 +316,9 @@ class ModelPuller(ErsiliaBase):
                 self.logger.debug("Size of image {0} MB".format(size))
             else:
                 self.logger.warning("Could not obtain size of image")
+            self.simple_docker.label_with_current_user(
+                DOCKERHUB_ORG, self.model_id, self.docker_tag
+            )
             return size
         else:
             self.logger.info("Image {0} is not available".format(self.image_name))
@@ -388,6 +391,9 @@ class ModelPuller(ErsiliaBase):
                 # self.logger.debug("Size written to {}".format(path))
             else:
                 self.logger.warning("Could not obtain size of image")
+            self.simple_docker.label_with_current_user(
+                DOCKERHUB_ORG, self.model_id, self.docker_tag
+            )
             return size
         else:
             self.logger.info("Image {0} is not available".format(self.image_name))

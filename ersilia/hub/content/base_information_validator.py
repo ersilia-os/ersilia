@@ -40,6 +40,13 @@ class BaseInformationValidator:
         return False if isinstance(r, ValidationFailure) else bool(r)
 
     @staticmethod
+    def is_valid_doi(doi: str) -> bool:
+        r=validators.url(doi)
+        if isinstance(r, ValidationFailure):
+            return False
+        return doi.startswith("https://doi.org/")
+    
+    @staticmethod
     def is_semver(version: str, allow_v_prefix: bool = True) -> bool:
         if not isinstance(version, str):
             return False
