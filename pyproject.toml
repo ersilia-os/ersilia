@@ -59,6 +59,7 @@ eosvc = { version = ">=1.1.0", optional = true }
 pytest = { version = "^7.4.0", optional = true }
 pytest-asyncio = { version = "<=0.24.0", optional = true }
 pytest-benchmark = { version = "<=4.0.0", optional = true }
+pyairtable = { version = "*", optional = true }
 fuzzywuzzy = { version = "^0.18.0", optional = true }
 sphinx = { version = ">=6.0.0", optional = true }           # for minimum version and support for Python 3.10
 jinja2 = { version = "^3.1.2", optional = true }
@@ -75,7 +76,7 @@ isaura = { version = ">=2.2.0", optional = true }
 docs = ["sphinx", "jinja2"]
 isaura = ["isaura"]
 eosvc = ["eosvc"]
-test = ["pytest", "pytest-asyncio", "pytest-benchmark", "nox", "rich", "fuzzywuzzy", "scipy", "ruff", "pre-commit"]
+test = ["pytest", "pytest-asyncio", "pytest-benchmark", "pyairtable", "nox", "rich", "fuzzywuzzy", "scipy", "ruff", "pre-commit"]
 #all = [docs, test]
 
 [tool.poetry.scripts]

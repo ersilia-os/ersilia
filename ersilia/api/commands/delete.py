@@ -13,7 +13,7 @@ def delete(model_id: str, verbose=False):
         model_id (str): ID of the model to delete.
 
     Returns:
-        str: Confirmation message on success or warning message on failure.
+        bool: True if the model was deleted successfully, False otherwise.
 
     Raises:
         RuntimeError: If the model cannot be deleted.
@@ -34,9 +34,10 @@ def delete(model_id: str, verbose=False):
             ":collision: Model {0} deleted successfully!".format(model_id),
             fg="green",
         )
+        return True
     else:
         echo(
             f":person_tipping_hand: {reason}".format(model_id),
             fg="yellow",
         )
-    return
+        return False

@@ -90,23 +90,47 @@ class Model(object):
         """
         Fetch an Ersilia model to run it locally.
 
-        Parameters mirror the CLI:
-        - overwrite: overwrite existing local copy (default: True)
-        - from_dir: fetch from a local directory path
-        - from_github: fetch from GitHub
-        - from_dockerhub: fetch from DockerHub (if None, inferred)
-        - version: version tag (default: "latest")
-        - from_s3: fetch from S3
-        - from_hosted: fetch from a hosted URL
-        - hosted_url: URL to hosted assets (used when from_hosted=True)
-        - verbose: override for verbose mode
-        - **kwargs: passthrough for forward compatibility
+        Downloads the model and its dependencies from the specified source. If no source
+        is specified, defaults to DockerHub. If DockerHub is requested but Docker is not
+        running, returns False instead of proceeding.
+
+        Parameters
+        ----------
+        overwrite : bool, default=True
+            Whether to overwrite existing local copy of the model.
+        from_dir : str or None, default=None
+            Local directory path to fetch model from. If specified, other sources are ignored.
+        from_github : bool, default=False
+            Fetch from GitHub.
+        from_dockerhub : bool or None, default=None
+            Fetch from DockerHub. Defaults to True when no source is specified.
+        version : str, default="latest"
+            Version/tag of the model to fetch.
+        from_s3 : bool, default=False
+            Fetch from Amazon S3.
+        from_hosted : bool, default=False
+            Fetch from a hosted URL.
+        hosted_url : str or None, default=None
+            URL for the hosted model service (used when from_hosted=True).
+        verbose : bool or None, default=None
+            Enable verbose logging.
+        **kwargs
+            Additional arguments passed through for forward compatibility.
+
+        Returns
+        -------
+        bool or result
+            False if DockerHub was requested but Docker is not running.
+            Otherwise returns the result from the underlying fetch command.
         """
         # infer default: if no source specified, use DockerHub
         if from_dockerhub is None:
             from_dockerhub = not any([from_dir, from_github, from_s3, from_hosted])
 
-        fetch.fetch(
+        if from_dockerhub and not self._is_docker_running():
+            return False
+
+        return fetch.fetch(
             model=self.model_id,
             overwrite=overwrite,
             from_dir=from_dir,
@@ -151,7 +175,11 @@ class Model(object):
 
         Returns
         -------
-            Model ID, URL, SRV, Session, SRV, Session, Caching Mode Status, Local Cache Status, Tracking Status
+        dict
+            A dictionary containing:
+            - url: The URL where the model is being served
+            - session: The session object
+            - server: The server object
 
         Raises
         -------
@@ -172,6 +200,11 @@ class Model(object):
             max_cache_memory_frac=max_cache_memory_frac,
             verbose_flag=self.verbose_mode or verbose_flag,
         )
+        return {
+            "url": self._url,
+            "session": self.session,
+            "server": self.SRV,
+        }
 
     def run(self, input_list, batch_size=1000):
         """
@@ -194,22 +227,18 @@ class Model(object):
 
     def close(self):
         """
-        This command closes the current session of the served model and cleans up any associated resources.
+        Close the current session and clean up associated resources.
 
-        Args
-        -------
-            model_id (str): ID of the model to delete.
+        Terminates the model server and removes the session file, freeing up system resources.
 
         Returns
         -------
-            str: Confirmation message on success or warning message on failure.
-
-        Raises
-        -------
-            RuntimeError: If no model was served in the current session.
+        bool
+            True if the session was successfully closed, False otherwise.
         """
-        close.close(self.model_id)
+        result = close.close(self.model_id)
         self._url = None
+        return result
 
     def info(self):
         """
@@ -255,18 +284,19 @@ class Model(object):
 
     def delete(self):
         """
-        Deletes a specified model from local storage.
+        Delete the model from local storage.
 
-        Args:
-            model_id (str): ID of the model to delete.
+        Removes the model files and associated artifacts from the system.
 
-        Returns:
-            str: Confirmation message on success or warning message on failure.
+        Returns
+        -------
+        bool
+            True if the model was successfully deleted, False otherwise.
 
         Raises:
             RuntimeError: If the model cannot be deleted.
         """
-        delete.delete(self.model_id, verbose=self.verbose_mode)
+        return delete.delete(self.model_id, verbose=self.verbose_mode)
 
     def is_fetched(self):
         """
@@ -295,11 +325,13 @@ class Model(object):
                 check=True,
             )
             echo("✅ Docker is running locally.", fg="green")
+            return True
         except (subprocess.CalledProcessError, FileNotFoundError):
             echo(
                 "❌ Docker is NOT running locally. Please start Docker to use Ersilia models.",
                 fg="red",
             )
+            return False
 
     def __enter__(self):
         self.serve()

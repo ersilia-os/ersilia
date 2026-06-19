@@ -19,8 +19,9 @@ conda activate ersilia
 # clone from github
 git clone https://github.com/ersilia-os/ersilia.git
 cd ersilia
+pip install poetry
 # install with pip (use -e for developer mode)
-pip install -e .[test]
+pip install -e ".[test]"
 ```
 **The -e (editable) for developer mode ensures that whenever a user change the code, they don't need to reinstall ersilia for those changes to take effect.**
 
