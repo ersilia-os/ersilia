@@ -538,7 +538,9 @@ class ModelFullDeleter(ErsiliaBase):
         """
 
         if not is_inside_docker() and model_id in self.docker.list_eos_images():
-            if not self.docker.is_owned_by_current_user(DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG):
+            if not self.docker.is_owned_by_current_user(
+                DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
+            ):
                 echo(
                     f"Cannot delete model {model_id}: its Docker image was fetched by a different user on this system.",
                     fg="red",

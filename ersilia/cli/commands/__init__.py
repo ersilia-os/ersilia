@@ -31,6 +31,7 @@ def _print_logo():
         else:
             console.print("")
 
+
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.SHOW_ARGUMENTS = True
 click.rich_click.COLOR_SYSTEM = "truecolor"
@@ -54,6 +55,7 @@ class ErsiliaCommandGroup(RichGroup):
 
     def main(self, *args, **kwargs):
         import sys
+
         argv = sys.argv[1:]
         if not argv or "--help" in argv or "-h" in argv:
             _print_logo()
