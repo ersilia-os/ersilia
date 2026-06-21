@@ -356,18 +356,7 @@ class Session(ErsiliaBase):
         Close the current session.
 
         This method removes the session file, effectively closing the session.
-
-        Returns
-        -------
-        bool
-            True if the session was successfully closed, False otherwise.
         """
         self.logger.debug("Closing session {0}".format(self.session_file))
         if os.path.isfile(self.session_file):
-            try:
-                os.remove(self.session_file)
-                return True
-            except OSError as e:
-                self.logger.warning(f"Could not remove session file: {e}")
-                return False
-        return True
+            os.remove(self.session_file)

@@ -39,8 +39,8 @@ def test_serve_returns_dict(mock_serve_cmd):
     assert serve_result["url"] == "http://localhost:5000"
 
 @patch('ersilia.api.commands.close.close')
-def test_close_returns_bool(mock_close_cmd):
-    """Test that close() returns a bool"""
+def test_close(mock_close_cmd):
+    """Test that close() returns the result from underlying close command"""
     mock_close_cmd.return_value = True
     mdl = Model(MODEL_ID)
     close_result = mdl.close()
