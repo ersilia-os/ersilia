@@ -1,4 +1,5 @@
 from unittest.mock import patch
+import pandas as pd
 from ersilia.api import Model
 
 MODEL_ID = "eos3b5e"
@@ -37,6 +38,18 @@ def test_serve_returns_dict(mock_serve_cmd):
     assert "session" in serve_result
     assert "server" in serve_result
     assert serve_result["url"] == "http://localhost:5000"
+
+@patch('ersilia.api.commands.run.run')
+def test_run_returns_dataframe(mock_run_cmd):
+    """Test that run() returns a pandas dataframe"""
+    mock_df = pd.DataFrame({"prediction": [0.5]})
+    mock_run_cmd.return_value = mock_df
+
+    mdl = Model(MODEL_ID)
+    result = mdl.run(input_list=INPUT_LIST)
+
+    assert isinstance(result, pd.DataFrame)
+    assert result.shape[0] == 1
 
 @patch('ersilia.api.commands.close.close')
 def test_close(mock_close_cmd):
