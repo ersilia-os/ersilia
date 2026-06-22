@@ -5,7 +5,7 @@ This file highlight the installation process of getting started with Ersilia, Er
 Ersilia can be run either on local computer or with the use of GitHub codespaces. Ersilia is designed to run on **Linux or Linux-like environments** namely: MacOS, Windows Sub-system for Linux (WSL) and at present is not supported on Windows systems.
 
 - ### Installation of Ersilia on local computer
-To get started with Ersilia installation, there are few dependencies that needs to be installed before proceeding to installation of Ersilia. Please, check the package requirement in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/installation)
+To get started with Ersilia installation, there are few dependencies that needs to be installed before proceeding to installation of Ersilia. Please, check the package requirement in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/local-inference#installation-in-linux-macos). Note: docker needs to be installed in order to run tests locally.
 1. Once the required dependencies has been installed, open a terminal and set up a Conda environment.
 
 ```
