@@ -5,7 +5,7 @@ This file highlight the installation process of getting started with Ersilia, Er
 Ersilia can be run either on local computer or with the use of GitHub codespaces. Ersilia is designed to run on **Linux or Linux-like environments** namely: MacOS, Windows Sub-system for Linux (WSL) and at present is not supported on Windows systems.
 
 - ### Installation of Ersilia on local computer
-To get started with Ersilia installation, there are few dependencies that needs to be installed before proceeding to installation of Ersilia. Please, check the package requirement in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/local-inference#installation-in-linux-macos). Note: docker needs to be installed in order to run tests locally.
+To get started with Ersilia installation, there are few dependencies that needs to be installed before proceeding to installation of Ersilia. Please, check the package requirement in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/local-inference#installation-in-linux-macos).
 1. Once the required dependencies has been installed, open a terminal and set up a Conda environment.
 
 ```
@@ -21,7 +21,7 @@ git clone https://github.com/ersilia-os/ersilia.git
 cd ersilia
 pip install poetry
 # install with pip (use -e for developer mode)
-pip install -e ".[test]"
+pip install -e .
 ```
 **The -e (editable) for developer mode ensures that whenever a user change the code, they don't need to reinstall ersilia for those changes to take effect.**
 
@@ -79,6 +79,22 @@ Folders found in the `$HOME` directory includes:
 - repository/: main directory to cache models files and datasets. This prevent redundant download by storing previously fetched model
 - sessions/: Tracks user session
 - tmp/: stores temporary file during model execution.
+
+## Running tests locally
+Before opening a PR, you may want to validate your changes by running tests locally.
+
+First you'll need to install additional dependencies:
+```bash
+pip install -e ".[test]"
+pip install pyairtable
+```
+
+Some tests also require Docker to run. Follow the instructions [here](https://docs.docker.com/desktop/) to install Docker Desktop.
+
+Then, you can run tests using pytest:
+```bash
+pytest -v # -v is for verbose mode
+```
 
 ## Creating a Pull Request
 To get started, please read and follow our [Code of Conduct](https://github.com/ersilia-os/ersilia/blob/master/CODE_OF_CONDUCT.md).
