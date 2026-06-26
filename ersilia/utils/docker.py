@@ -128,9 +128,12 @@ class SimpleDocker(object):
         dockerfile = f"FROM {image_name}"
         result = subprocess.run(
             [
-                "docker", "build",
-                "--label", f"{ERSILIA_USER_LABEL}={uid}",
-                "-t", image_name,
+                "docker",
+                "build",
+                "--label",
+                f"{ERSILIA_USER_LABEL}={uid}",
+                "-t",
+                image_name,
                 "-",
             ],
             input=dockerfile.encode(),
@@ -152,8 +155,10 @@ class SimpleDocker(object):
         uid = str(os.getuid())
         result = subprocess.run(
             [
-                "docker", "inspect",
-                "--format", f'{{{{index .Config.Labels "{ERSILIA_USER_LABEL}"}}}}',
+                "docker",
+                "inspect",
+                "--format",
+                f'{{{{index .Config.Labels "{ERSILIA_USER_LABEL}"}}}}',
                 image_name,
             ],
             capture_output=True,

@@ -87,3 +87,5 @@ def fetch(
             bold=True,
         )
         echo(fetch_result.reason)
+
+    return fetch_result

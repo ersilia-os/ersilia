@@ -36,7 +36,7 @@ In Ersilia, you can find models related to antibiotic activity prediction, ADMET
 
 ### Installation
 
-Please check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/quick-start/installation). In brief:
+Please check the package requirements in the [Installation Guide](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/local-inference). In brief:
 
 1. You need to install the Ersilia CLI. This is the central tool to manage models in the Ersilia Model Hub.
 2. Each model is packaged independently in its own environment
