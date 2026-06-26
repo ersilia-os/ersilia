@@ -8,18 +8,20 @@ INPUT_LIST = [
 
 def test_fetch():
     mdl = Model(MODEL_ID)
-    mdl.fetch()
+    assert mdl.fetch()
     assert mdl.is_fetched()
 
 def test_serve_run_and_close():
     mdl = Model(MODEL_ID)
-    mdl.serve()
+    serve_result = mdl.serve()
+    assert serve_result
+
     df = mdl.run(input_list = INPUT_LIST)
     assert df.shape[0] == len(INPUT_LIST)
-    mdl.close()
-    assert 1 == 1
+
+    close_result = mdl.close()
+    assert close_result
 
 def test_delete():
     mdl = Model(MODEL_ID)
-    mdl.delete()
-    assert 1 == 1
+    assert mdl.delete()

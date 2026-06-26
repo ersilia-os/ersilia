@@ -625,8 +625,10 @@ class DockerManager(ErsiliaBase):
                 if repo != "<none>" and tag != "<none>":
                     result = subprocess.run(
                         [
-                            "docker", "inspect",
-                            "--format", f'{{{{index .Config.Labels "{ERSILIA_USER_LABEL}"}}}}',
+                            "docker",
+                            "inspect",
+                            "--format",
+                            f'{{{{index .Config.Labels "{ERSILIA_USER_LABEL}"}}}}',
                             f"{repo}:{tag}",
                         ],
                         capture_output=True,
