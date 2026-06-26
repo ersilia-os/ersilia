@@ -321,7 +321,7 @@
 <span class="sd">        model_id (str): ID of the model to delete.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        str: Confirmation message on success or warning message on failure.</span>
+<span class="sd">        bool: True if the model was deleted successfully, False otherwise.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        RuntimeError: If the model cannot be deleted.</span>
@@ -342,12 +342,13 @@
             <span class="s2">&quot;:collision: Model </span><span class="si">{0}</span><span class="s2"> deleted successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;:person_tipping_hand: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
             <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">return</span></div>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
 </pre></div>
         </article>

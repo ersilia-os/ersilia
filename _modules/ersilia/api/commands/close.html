@@ -315,29 +315,30 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.api.commands.html#ersilia.api.commands.close.close">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This command closes the current session of the served model and cleans up any associated resources.</span>
+<span class="sd">    Close the current session of the served model and clean up associated resources.</span>
 
 <span class="sd">    Args</span>
 <span class="sd">    -------</span>
-<span class="sd">        model_id (str): ID of the model to delete.</span>
+<span class="sd">        model_id (str): ID of the model to close.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">        str: Confirmation message on success or warning message on failure.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    -------</span>
-<span class="sd">        RuntimeError: If no model was served in the current session.</span>
+<span class="sd">        bool: True if the model was successfully closed, False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No model was served&quot;</span><span class="p">)</span>
-    <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
-    <span class="n">mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-    <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:no_entry: Model </span><span class="si">{0}</span><span class="s2"> closed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
-    <span class="k">return</span></div>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:person_tipping_hand: No model was served&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
+        <span class="n">mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;:no_entry: Model </span><span class="si">{0}</span><span class="s2"> closed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;:warning: Failed to close model: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
 
 </pre></div>
         </article>

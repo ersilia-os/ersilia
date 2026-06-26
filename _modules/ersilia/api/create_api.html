@@ -400,23 +400,47 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fetch an Ersilia model to run it locally.</span>
 
-<span class="sd">        Parameters mirror the CLI:</span>
-<span class="sd">        - overwrite: overwrite existing local copy (default: True)</span>
-<span class="sd">        - from_dir: fetch from a local directory path</span>
-<span class="sd">        - from_github: fetch from GitHub</span>
-<span class="sd">        - from_dockerhub: fetch from DockerHub (if None, inferred)</span>
-<span class="sd">        - version: version tag (default: &quot;latest&quot;)</span>
-<span class="sd">        - from_s3: fetch from S3</span>
-<span class="sd">        - from_hosted: fetch from a hosted URL</span>
-<span class="sd">        - hosted_url: URL to hosted assets (used when from_hosted=True)</span>
-<span class="sd">        - verbose: override for verbose mode</span>
-<span class="sd">        - **kwargs: passthrough for forward compatibility</span>
+<span class="sd">        Downloads the model and its dependencies from the specified source. If no source</span>
+<span class="sd">        is specified, defaults to DockerHub. If DockerHub is requested but Docker is not</span>
+<span class="sd">        running, returns False instead of proceeding.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        overwrite : bool, default=True</span>
+<span class="sd">            Whether to overwrite existing local copy of the model.</span>
+<span class="sd">        from_dir : str or None, default=None</span>
+<span class="sd">            Local directory path to fetch model from. If specified, other sources are ignored.</span>
+<span class="sd">        from_github : bool, default=False</span>
+<span class="sd">            Fetch from GitHub.</span>
+<span class="sd">        from_dockerhub : bool or None, default=None</span>
+<span class="sd">            Fetch from DockerHub. Defaults to True when no source is specified.</span>
+<span class="sd">        version : str, default=&quot;latest&quot;</span>
+<span class="sd">            Version/tag of the model to fetch.</span>
+<span class="sd">        from_s3 : bool, default=False</span>
+<span class="sd">            Fetch from Amazon S3.</span>
+<span class="sd">        from_hosted : bool, default=False</span>
+<span class="sd">            Fetch from a hosted URL.</span>
+<span class="sd">        hosted_url : str or None, default=None</span>
+<span class="sd">            URL for the hosted model service (used when from_hosted=True).</span>
+<span class="sd">        verbose : bool or None, default=None</span>
+<span class="sd">            Enable verbose logging.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional arguments passed through for forward compatibility.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool or result</span>
+<span class="sd">            False if DockerHub was requested but Docker is not running.</span>
+<span class="sd">            Otherwise returns the result from the underlying fetch command.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># infer default: if no source specified, use DockerHub</span>
         <span class="k">if</span> <span class="n">from_dockerhub</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">from_dockerhub</span> <span class="o">=</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="n">from_dir</span><span class="p">,</span> <span class="n">from_github</span><span class="p">,</span> <span class="n">from_s3</span><span class="p">,</span> <span class="n">from_hosted</span><span class="p">])</span>
 
-        <span class="n">fetch</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
+        <span class="k">if</span> <span class="n">from_dockerhub</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_docker_running</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">fetch</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
             <span class="n">from_dir</span><span class="o">=</span><span class="n">from_dir</span><span class="p">,</span>
@@ -464,7 +488,11 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            Model ID, URL, SRV, Session, SRV, Session, Caching Mode Status, Local Cache Status, Tracking Status</span>
+<span class="sd">        dict</span>
+<span class="sd">            A dictionary containing:</span>
+<span class="sd">            - url: The URL where the model is being served</span>
+<span class="sd">            - session: The session object</span>
+<span class="sd">            - server: The server object</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        -------</span>
@@ -484,7 +512,12 @@
             <span class="n">nearest_neighbors</span><span class="o">=</span><span class="n">nearest_neighbors</span><span class="p">,</span>
             <span class="n">max_cache_memory_frac</span><span class="o">=</span><span class="n">max_cache_memory_frac</span><span class="p">,</span>
             <span class="n">verbose_flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span> <span class="ow">or</span> <span class="n">verbose_flag</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">,</span>
+            <span class="s2">&quot;session&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">,</span>
+            <span class="s2">&quot;server&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">SRV</span><span class="p">,</span>
+        <span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="Model.run">
@@ -513,22 +546,18 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This command closes the current session of the served model and cleans up any associated resources.</span>
+<span class="sd">        Close the current session and clean up associated resources.</span>
 
-<span class="sd">        Args</span>
-<span class="sd">        -------</span>
-<span class="sd">            model_id (str): ID of the model to delete.</span>
+<span class="sd">        Terminates the model server and removes the session file, freeing up system resources.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">            str: Confirmation message on success or warning message on failure.</span>
-
-<span class="sd">        Raises</span>
-<span class="sd">        -------</span>
-<span class="sd">            RuntimeError: If no model was served in the current session.</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the session was successfully closed, False otherwise.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">close</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">close</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="Model.info">
@@ -583,18 +612,19 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.delete">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Deletes a specified model from local storage.</span>
+<span class="sd">        Delete the model from local storage.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            model_id (str): ID of the model to delete.</span>
+<span class="sd">        Removes the model files and associated artifacts from the system.</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            str: Confirmation message on success or warning message on failure.</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the model was successfully deleted, False otherwise.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            RuntimeError: If the model cannot be deleted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">delete</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">delete</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_mode</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Model.is_fetched">
@@ -627,11 +657,13 @@
                 <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;✅ Docker is running locally.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
             <span class="n">echo</span><span class="p">(</span>
                 <span class="s2">&quot;❌ Docker is NOT running locally. Please start Docker to use Ersilia models.&quot;</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>

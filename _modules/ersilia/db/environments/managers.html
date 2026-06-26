@@ -998,8 +998,10 @@
                 <span class="k">if</span> <span class="n">repo</span> <span class="o">!=</span> <span class="s2">&quot;&lt;none&gt;&quot;</span> <span class="ow">and</span> <span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;&lt;none&gt;&quot;</span><span class="p">:</span>
                     <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
                         <span class="p">[</span>
-                            <span class="s2">&quot;docker&quot;</span><span class="p">,</span> <span class="s2">&quot;inspect&quot;</span><span class="p">,</span>
-                            <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{{{</span><span class="s1">index .Config.Labels &quot;</span><span class="si">{</span><span class="n">ERSILIA_USER_LABEL</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">}}}}</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="s2">&quot;docker&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;inspect&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;--format&quot;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s1">&#39;</span><span class="se">{{{{</span><span class="s1">index .Config.Labels &quot;</span><span class="si">{</span><span class="n">ERSILIA_USER_LABEL</span><span class="si">}</span><span class="s1">&quot;</span><span class="se">}}}}</span><span class="s1">&#39;</span><span class="p">,</span>
                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                         <span class="p">],</span>
                         <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>

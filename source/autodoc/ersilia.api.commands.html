@@ -353,19 +353,16 @@ or None on failure.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.api.commands.close.close">
 <span class="sig-prename descclassname"><span class="pre">ersilia.api.commands.close.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/commands/close.html#close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.commands.close.close" title="Link to this definition">¶</a></dt>
-<dd><p>This command closes the current session of the served model and cleans up any associated resources.</p>
+<dd><p>Close the current session of the served model and clean up associated resources.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>str</strong></p>
+<dd class="field-even"><p><strong>bool</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Confirmation message on success or warning message on failure.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+<dd class="field-odd"><p>True if the model was successfully closed, False otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -382,10 +379,10 @@ or None on failure.</p>
 <dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – ID of the model to delete.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Confirmation message on success or warning message on failure.</p>
+<dd class="field-even"><p>True if the model was deleted successfully, False otherwise.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>bool</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>RuntimeError</strong> – If the model cannot be deleted.</p>

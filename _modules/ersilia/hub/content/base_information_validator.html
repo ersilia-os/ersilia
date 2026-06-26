@@ -354,12 +354,12 @@
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information_validator.BaseInformationValidator.is_valid_doi">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_valid_doi</span><span class="p">(</span><span class="n">doi</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="n">r</span><span class="o">=</span><span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">doi</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">doi</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">ValidationFailure</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="n">doi</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://doi.org/&quot;</span><span class="p">)</span></div>
 
-    
+
 <div class="viewcode-block" id="BaseInformationValidator.is_semver">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.base_information_validator.BaseInformationValidator.is_semver">[docs]</a>
     <span class="nd">@staticmethod</span>

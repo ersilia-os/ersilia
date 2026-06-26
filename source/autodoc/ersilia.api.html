@@ -520,19 +520,14 @@ functionality in a clean Pythonic interface and supports use in context managers
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.api.create_api.Model.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.Model.close" title="Link to this definition">¶</a></dt>
-<dd><p>This command closes the current session of the served model and cleans up any associated resources.</p>
+<dd><p>Close the current session and clean up associated resources.</p>
+<p>Terminates the model server and removes the session file, freeing up system resources.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the session was successfully closed, False otherwise.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>str</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Confirmation message on success or warning message on failure.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -540,19 +535,15 @@ functionality in a clean Pythonic interface and supports use in context managers
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.api.create_api.Model.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.Model.delete" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes a specified model from local storage.</p>
+<dd><p>Delete the model from local storage.</p>
+<p>Removes the model files and associated artifacts from the system.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – ID of the model to delete.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Confirmation message on success or warning message on failure.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If the model cannot be deleted.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>bool</em> – True if the model was successfully deleted, False otherwise.</p></li>
+<li><p><em>Raises</em> – RuntimeError: If the model cannot be deleted.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -585,17 +576,32 @@ functionality in a clean Pythonic interface and supports use in context managers
 <dt class="sig sig-object py" id="ersilia.api.create_api.Model.fetch">
 <span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dockerhub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_hosted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hosted_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.create_api.Model.fetch" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch an Ersilia model to run it locally.</p>
-<p>Parameters mirror the CLI:
-- overwrite: overwrite existing local copy (default: True)
-- from_dir: fetch from a local directory path
-- from_github: fetch from GitHub
-- from_dockerhub: fetch from DockerHub (if None, inferred)
-- version: version tag (default: “latest”)
-- from_s3: fetch from S3
-- from_hosted: fetch from a hosted URL
-- hosted_url: URL to hosted assets (used when from_hosted=True)
-- verbose: override for verbose mode
-- <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs: passthrough for forward compatibility</p>
+<p>Downloads the model and its dependencies from the specified source. If no source
+is specified, defaults to DockerHub. If DockerHub is requested but Docker is not
+running, returns False instead of proceeding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to overwrite existing local copy of the model.</p></li>
+<li><p><strong>from_dir</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Local directory path to fetch model from. If specified, other sources are ignored.</p></li>
+<li><p><strong>from_github</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Fetch from GitHub.</p></li>
+<li><p><strong>from_dockerhub</strong> (<em>bool</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Fetch from DockerHub. Defaults to True when no source is specified.</p></li>
+<li><p><strong>version</strong> (<em>str</em><em>, </em><em>default=&quot;latest&quot;</em>) – Version/tag of the model to fetch.</p></li>
+<li><p><strong>from_s3</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Fetch from Amazon S3.</p></li>
+<li><p><strong>from_hosted</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Fetch from a hosted URL.</p></li>
+<li><p><strong>hosted_url</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – URL for the hosted model service (used when from_hosted=True).</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Enable verbose logging.</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments passed through for forward compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>False if DockerHub was requested but Docker is not running.
+Otherwise returns the result from the underlying fetch command.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool or result</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -673,11 +679,17 @@ A pandas df with the predictions.</p>
 <li><p><strong>max_cache_memory_frac</strong> (<em>Sets the maximum fraction</em><em> of </em><em>memory to use by Redis for caching. Recommended value 0.2-0.7.</em>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Model ID, URL, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, Caching Mode Status, Local Cache Status, Tracking Status</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing:
+- url: The URL where the model is being served
+- session: The session object
+- server: The server object</p>
 </dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>RuntimeError</strong> – If the model/URL is not valid or not found,:</p></li>
 <li><p><strong>or if the maximum cache memory fraction is outside</strong><strong> of </strong><strong>the recommended range.</strong> – </p></li>
 </ul>
@@ -739,14 +751,14 @@ A pandas df with the predictions.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">silence</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.silence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd><p>Disables CLI output.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="id4">
-<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">speak</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/echo.html#Silencer.speak"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
 <dd><p>Enables CLI output.</p>
 </dd></dl>
 
@@ -916,19 +928,14 @@ functionality in a clean Pythonic interface and supports use in context managers
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.api.Model.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.close" title="Link to this definition">¶</a></dt>
-<dd><p>This command closes the current session of the served model and cleans up any associated resources.</p>
+<dd><p>Close the current session and clean up associated resources.</p>
+<p>Terminates the model server and removes the session file, freeing up system resources.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>(</strong><strong>str</strong><strong>)</strong> (<em>model_id</em>)</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the session was successfully closed, False otherwise.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>str</strong></p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Confirmation message on success or warning message on failure.</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If no model was served in the current session.:</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -936,19 +943,15 @@ functionality in a clean Pythonic interface and supports use in context managers
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.api.Model.delete">
 <span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.delete" title="Link to this definition">¶</a></dt>
-<dd><p>Deletes a specified model from local storage.</p>
+<dd><p>Delete the model from local storage.</p>
+<p>Removes the model files and associated artifacts from the system.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – ID of the model to delete.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Confirmation message on success or warning message on failure.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>RuntimeError</strong> – If the model cannot be deleted.</p>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>bool</em> – True if the model was successfully deleted, False otherwise.</p></li>
+<li><p><em>Raises</em> – RuntimeError: If the model cannot be deleted.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -981,17 +984,32 @@ functionality in a clean Pythonic interface and supports use in context managers
 <dt class="sig sig-object py" id="ersilia.api.Model.fetch">
 <span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_dockerhub</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'latest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_s3</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_hosted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hosted_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.fetch" title="Link to this definition">¶</a></dt>
 <dd><p>Fetch an Ersilia model to run it locally.</p>
-<p>Parameters mirror the CLI:
-- overwrite: overwrite existing local copy (default: True)
-- from_dir: fetch from a local directory path
-- from_github: fetch from GitHub
-- from_dockerhub: fetch from DockerHub (if None, inferred)
-- version: version tag (default: “latest”)
-- from_s3: fetch from S3
-- from_hosted: fetch from a hosted URL
-- hosted_url: URL to hosted assets (used when from_hosted=True)
-- verbose: override for verbose mode
-- <a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs: passthrough for forward compatibility</p>
+<p>Downloads the model and its dependencies from the specified source. If no source
+is specified, defaults to DockerHub. If DockerHub is requested but Docker is not
+running, returns False instead of proceeding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>overwrite</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to overwrite existing local copy of the model.</p></li>
+<li><p><strong>from_dir</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Local directory path to fetch model from. If specified, other sources are ignored.</p></li>
+<li><p><strong>from_github</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Fetch from GitHub.</p></li>
+<li><p><strong>from_dockerhub</strong> (<em>bool</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Fetch from DockerHub. Defaults to True when no source is specified.</p></li>
+<li><p><strong>version</strong> (<em>str</em><em>, </em><em>default=&quot;latest&quot;</em>) – Version/tag of the model to fetch.</p></li>
+<li><p><strong>from_s3</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Fetch from Amazon S3.</p></li>
+<li><p><strong>from_hosted</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Fetch from a hosted URL.</p></li>
+<li><p><strong>hosted_url</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – URL for the hosted model service (used when from_hosted=True).</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em> or </em><em>None</em><em>, </em><em>default=None</em>) – Enable verbose logging.</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments passed through for forward compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>False if DockerHub was requested but Docker is not running.
+Otherwise returns the result from the underlying fetch command.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool or result</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1069,11 +1087,17 @@ A pandas df with the predictions.</p>
 <li><p><strong>max_cache_memory_frac</strong> (<em>Sets the maximum fraction</em><em> of </em><em>memory to use by Redis for caching. Recommended value 0.2-0.7.</em>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>Model ID, URL, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, SRV, <a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session" title="ersilia.core.session.Session">Session</a>, Caching Mode Status, Local Cache Status, Tracking Status</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing:
+- url: The URL where the model is being served
+- session: The session object
+- server: The server object</p>
 </dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>RuntimeError</strong> – If the model/URL is not valid or not found,:</p></li>
 <li><p><strong>or if the maximum cache memory fraction is outside</strong><strong> of </strong><strong>the recommended range.</strong> – </p></li>
 </ul>
@@ -1169,8 +1193,8 @@ A pandas df with the predictions.</p>
 <li><a class="reference internal" href="#ersilia.api.echo.Silencer.speak"><code class="docutils literal notranslate"><span class="pre">Silencer.speak()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.api.echo.Silencer.silence"><code class="docutils literal notranslate"><span class="pre">Silencer.silence()</span></code></a></li>
 <li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Silencer.is_silence()</span></code></a></li>
-<li><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">Silencer.silence()</span></code></a></li>
-<li><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">Silencer.speak()</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Silencer.silence()</span></code></a></li>
+<li><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">Silencer.speak()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.api.echo.echo"><code class="docutils literal notranslate"><span class="pre">echo()</span></code></a></li>
