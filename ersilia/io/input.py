@@ -1,3 +1,4 @@
+import ast
 import csv
 import importlib
 import itertools
@@ -174,9 +175,10 @@ class _GenericAdapter(object):
             return False
 
     def _try_to_eval(self, inp):
+        # use literal_eval instead of eval -- avoids arbitrary code execution
         try:
-            data = eval(inp)
-        except:
+            data = ast.literal_eval(inp)
+        except (ValueError, SyntaxError):
             data = inp
         return data
 

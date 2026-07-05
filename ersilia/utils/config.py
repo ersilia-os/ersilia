@@ -1,3 +1,4 @@
+import ast
 import json
 import os
 
@@ -128,10 +129,14 @@ class _Field(object):
     def __init__(self, field_kv):
         tmp = dict()
         for k, v in field_kv.items():
-            if type(v) == dict:
+            if isinstance(v, dict):
                 tmp[k] = _Field(v)
             else:
-                tmp[k] = eval(v)
+                # literal_eval is safe; falls back to raw string if it can't parse
+                try:
+                    tmp[k] = ast.literal_eval(v)
+                except (ValueError, SyntaxError):
+                    tmp[k] = v
         self.__dict__.update(tmp)
 
     def items(self):
@@ -150,10 +155,14 @@ def _eval_obj(json_file):
 
     eval_obj_dict = dict()
     for k, v in obj_dict.items():
-        if type(v) == dict:
+        if isinstance(v, dict):
             eval_obj_dict[k] = _Field(v)
         else:
-            eval_obj_dict[k] = eval(v)
+            # same deal -- don't want arbitrary code running from a config file
+            try:
+                eval_obj_dict[k] = ast.literal_eval(v)
+            except (ValueError, SyntaxError):
+                eval_obj_dict[k] = v
     return eval_obj_dict
 
 
