@@ -168,7 +168,10 @@ def serve_cmd():
         from ... import ErsiliaModel
         from ...core.session import Session
         from ...utils.logging import logger
-        from ...utils.session import register_model_session
+        from ...utils.session import (
+            deregister_model_session,
+            register_model_session,
+        )
         from ...utils.terminal import print_serve_summary
         from ..messages import ModelNotFound
 
@@ -189,6 +192,15 @@ def serve_cmd():
                     fg="yellow",
                 )
                 sys.exit(0)
+            # Actually close the previously served model so its Docker
+            # container and session are shut down before serving the new one.
+            previous_service_class = sess.current_service_class()
+            previous_mdl = ErsiliaModel(
+                already_served, service_class=previous_service_class
+            )
+            previous_mdl.close()
+            deregister_model_session(already_served)
+            echo(f":no_entry: Model {already_served} closed", fg="green")
         sess.register_store_status(
             read_store, write_store, access, nearest_neighbors, enable_cache
         )
