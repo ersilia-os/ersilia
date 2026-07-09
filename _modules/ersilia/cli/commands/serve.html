@@ -479,7 +479,10 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_model_session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">deregister_model_session</span><span class="p">,</span>
+            <span class="n">register_model_session</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_serve_summary</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelNotFound</span>
 
@@ -500,6 +503,15 @@
                     <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># Actually close the previously served model so its Docker</span>
+            <span class="c1"># container and session are shut down before serving the new one.</span>
+            <span class="n">previous_service_class</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
+            <span class="n">previous_mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
+                <span class="n">already_served</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">previous_service_class</span>
+            <span class="p">)</span>
+            <span class="n">previous_mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">already_served</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;:no_entry: Model </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> closed&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
         <span class="n">sess</span><span class="o">.</span><span class="n">register_store_status</span><span class="p">(</span>
             <span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">,</span> <span class="n">access</span><span class="p">,</span> <span class="n">nearest_neighbors</span><span class="p">,</span> <span class="n">enable_cache</span>
         <span class="p">)</span>
