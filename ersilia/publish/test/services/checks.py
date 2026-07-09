@@ -132,6 +132,15 @@ class CheckService:
         if not data["Tag"]:
             raise texc.EmptyField("Tag")
 
+    def _check_model_license(self, data):
+        self.logger.debug("Checking model license...")
+
+        if not data["License"]:
+            raise texc.EmptyField("License")
+
+        if not BaseInformationValidator().validate_license(data["License"]):
+            raise texc.EmptyField("License")
+
     def _check_model_source_code(self, data):
         self.logger.debug("Checking model source code...")
         key = "Source Code"
@@ -510,6 +519,7 @@ class CheckService:
         self._run_check(self._check_model_output, data, "Model Output")
         self._run_check(self._check_model_interpret, data, "Model Interpretation")
         self._run_check(self._check_model_tag, data, "Model Tag")
+        self._run_check(self._check_model_license, data, "Model License")
         self._run_check(self._check_model_publication, data, "Model Publication")
         self._run_check(self._check_model_source_code, data, "Model Source Code")
         self._run_check(self._check_model_contributor, data, "Model Contributor")

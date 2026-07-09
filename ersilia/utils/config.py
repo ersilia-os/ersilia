@@ -1,3 +1,4 @@
+import ast
 import json
 import os
 
@@ -131,7 +132,7 @@ class _Field(object):
             if type(v) == dict:
                 tmp[k] = _Field(v)
             else:
-                tmp[k] = eval(v)
+                tmp[k] = ast.literal_eval(v)
         self.__dict__.update(tmp)
 
     def items(self):
@@ -153,7 +154,7 @@ def _eval_obj(json_file):
         if type(v) == dict:
             eval_obj_dict[k] = _Field(v)
         else:
-            eval_obj_dict[k] = eval(v)
+            eval_obj_dict[k] = ast.literal_eval(v)
     return eval_obj_dict
 
 
