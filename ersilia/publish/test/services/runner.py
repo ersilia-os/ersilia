@@ -136,13 +136,12 @@ class RunnerService:
         """
 
         cmd = f"ersilia serve {self.model_id} --disable-cache"
-        echo(f"[ARM64-DEBUG serve_model] CMD: {cmd}", fg="magenta", bold=True)
+        self.logger.info(f"[ARM64-DEBUG serve_model] CMD: {cmd}")
         out = run_command(cmd, quiet=False)
-        echo(
+        self.logger.info(
             f"[ARM64-DEBUG serve_model] returncode={getattr(out, 'returncode', None)}\n"
             f"--- STDOUT ---\n{getattr(out, 'stdout', '')}\n"
-            f"--- STDERR ---\n{getattr(out, 'stderr', '')}",
-            fg="magenta",
+            f"--- STDERR ---\n{getattr(out, 'stderr', '')}"
         )
         return out
 
@@ -166,32 +165,26 @@ class RunnerService:
         """
 
         cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia -v run -i '{inputs}' -o {output} -b {str(batch)}"
-        echo(f"[ARM64-DEBUG run_model] CMD: {cmd}", fg="magenta", bold=True)
+        self.logger.info(f"[ARM64-DEBUG run_model] CMD: {cmd}")
         out = run_command(cmd, quiet=False)
-        echo(
+        self.logger.info(
             f"[ARM64-DEBUG run_model] returncode={getattr(out, 'returncode', None)}\n"
             f"--- STDOUT ---\n{getattr(out, 'stdout', '')}\n"
-            f"--- STDERR ---\n{getattr(out, 'stderr', '')}",
-            fg="magenta",
+            f"--- STDERR ---\n{getattr(out, 'stderr', '')}"
         )
         try:
             if output and os.path.exists(output):
                 with open(output) as _f:
-                    echo(
-                        f"[ARM64-DEBUG run_model] OUTPUT FILE '{output}':\n{_f.read()}",
-                        fg="magenta",
-                        bold=True,
+                    self.logger.info(
+                        f"[ARM64-DEBUG run_model] OUTPUT FILE '{output}':\n{_f.read()}"
                     )
             else:
-                echo(
-                    f"[ARM64-DEBUG run_model] OUTPUT FILE '{output}' DOES NOT EXIST (empty run!)",
-                    fg="red",
-                    bold=True,
+                self.logger.error(
+                    f"[ARM64-DEBUG run_model] OUTPUT FILE '{output}' DOES NOT EXIST (empty run!)"
                 )
         except Exception as _e:
-            echo(
-                f"[ARM64-DEBUG run_model] could not read output '{output}': {_e}",
-                fg="red",
+            self.logger.error(
+                f"[ARM64-DEBUG run_model] could not read output '{output}': {_e}"
             )
         return out
 
