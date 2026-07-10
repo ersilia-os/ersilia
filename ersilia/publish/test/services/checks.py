@@ -1221,12 +1221,35 @@ class CheckService:
         output_path = IOService._get_output_file_path(self.dir)
         run_model(inputs=input_path, output=Options.OUTPUT_CSV.value, batch=100)
         output_consistency = self._get_output_consistency()
+
+        def _dbg_read(p):
+            try:
+                if p and os.path.exists(p):
+                    with open(p) as _f:
+                        return _f.read()
+                return f"<<MISSING: {p!r} (cwd={os.getcwd()})>>"
+            except Exception as _e:
+                return f"<<UNREADABLE {p!r}: {_e}>>"
+
+        self.logger.info(
+            f"[ARM64-DEBUG check_simple] cwd={os.getcwd()} consistency={output_consistency!r}\n"
+            f"input_path={input_path!r}\n"
+            f"output_path(expected)={output_path!r}\n"
+            f"OUTPUT_CSV(actual)={Options.OUTPUT_CSV.value!r}\n"
+            f"--- expected content ---\n{_dbg_read(output_path)}\n"
+            f"--- actual content ---\n{_dbg_read(Options.OUTPUT_CSV.value)}"
+        )
+
         if output_consistency == "Fixed":
             res_one = self._find_csv_mismatches(output_path, Options.OUTPUT_CSV.value)
         else:
             res_one = self._check_all_columns_not_null(Options.OUTPUT_CSV.value)
         res_two = self.compare_csv_columns(
             os.path.join(self.dir, PREDEFINED_COLUMN_FILE), Options.OUTPUT_CSV.value
+        )
+        self.logger.info(
+            f"[ARM64-DEBUG check_simple] res_one={res_one!r}\n"
+            f"[ARM64-DEBUG check_simple] res_two={res_two!r}"
         )
         _completed_status = []
         if res_one[0][-1] == str(STATUS_CONFIGS.FAILED):
