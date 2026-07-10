@@ -534,10 +534,18 @@ class IOService:
         url = normalize_connect_url(url)
         _ensure_ready(self=self,root=url)
         base_url = f"{url}/{DEFAULT_ASYNC_API_NAME}"
+        self.logger.info(f"[ARM64-DEBUG async] base_url={base_url}  submit={base_url}/submit")
         async with aiohttp.ClientSession() as session:
             async with session.post(f"{base_url}/submit", json=input) as resp:
+                _body = await resp.text()
+                self.logger.info(
+                    f"[ARM64-DEBUG async] POST {base_url}/submit -> status={resp.status}\n"
+                    f"--- BODY ---\n{_body}"
+                )
                 if resp.status != 200:
-                    echo(f"Job submission failed: {await resp.text()}", fg="red")
+                    self.logger.error(
+                        f"[ARM64-DEBUG async] Job submission FAILED status={resp.status} body={_body}"
+                    )
                     return []
                 submission = await resp.json()
                 job_id = submission["job_id"]
@@ -555,9 +563,13 @@ class IOService:
 
             async with session.get(f"{base_url}/result/{job_id}") as resp:
                 if resp.status != 200:
-                    echo(f"Could not retrieve results: {await resp.text()}")
+                    self.logger.error(
+                        f"[ARM64-DEBUG async] result retrieval FAILED status={resp.status} body={await resp.text()}"
+                    )
                     return []
-                return await resp.json()
+                _res = await resp.json()
+                self.logger.info(f"[ARM64-DEBUG async] result -> {_res}")
+                return _res
 
     def submit_smiles_and_get_results(self, input, cmd_out, poll_interval=2):
         return asyncio.run(self._submit_smiles_and_get_results(input, cmd_out, poll_interval))
