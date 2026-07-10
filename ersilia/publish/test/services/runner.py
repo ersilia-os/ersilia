@@ -137,7 +137,7 @@ class RunnerService:
 
         cmd = f"ersilia serve {self.model_id} --disable-cache"
         self.logger.info(f"[ARM64-DEBUG serve_model] CMD: {cmd}")
-        out = run_command(cmd, quiet=False)
+        out = run_command(cmd, quiet=True)
         self.logger.info(
             f"[ARM64-DEBUG serve_model] returncode={getattr(out, 'returncode', None)}\n"
             f"--- STDOUT ---\n{getattr(out, 'stdout', '')}\n"
@@ -166,7 +166,7 @@ class RunnerService:
 
         cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia -v run -i '{inputs}' -o {output} -b {str(batch)}"
         self.logger.info(f"[ARM64-DEBUG run_model] CMD: {cmd}")
-        out = run_command(cmd, quiet=False)
+        out = run_command(cmd, quiet=True)
         self.logger.info(
             f"[ARM64-DEBUG run_model] returncode={getattr(out, 'returncode', None)}\n"
             f"--- STDOUT ---\n{getattr(out, 'stdout', '')}\n"
