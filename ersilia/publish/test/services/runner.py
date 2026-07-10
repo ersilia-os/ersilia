@@ -729,6 +729,7 @@ class RunnerService:
 
         except Exception as error:
             tb = traceback.format_exc()
+            self.logger.error(f"[ARM64-DEBUG run() EXCEPTION] {error!r}\n{tb}")
             echo(f"An error occurred: {error}\nTraceback:\n{tb}", fg="red", bold=True)
             echo("Deleting model...", fg="yellow", bold=True)
             self.ios_service.collect_and_save_json(
