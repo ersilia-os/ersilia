@@ -136,7 +136,14 @@ class RunnerService:
         """
 
         cmd = f"ersilia serve {self.model_id} --disable-cache"
-        out = run_command(cmd)
+        echo(f"[ARM64-DEBUG serve_model] CMD: {cmd}", fg="magenta", bold=True)
+        out = run_command(cmd, quiet=False)
+        echo(
+            f"[ARM64-DEBUG serve_model] returncode={getattr(out, 'returncode', None)}\n"
+            f"--- STDOUT ---\n{getattr(out, 'stdout', '')}\n"
+            f"--- STDERR ---\n{getattr(out, 'stderr', '')}",
+            fg="magenta",
+        )
         return out
 
     def run_model(self, inputs: str, output: str, batch: int):
@@ -158,8 +165,34 @@ class RunnerService:
             The output of the command.
         """
 
-        cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia run -i '{inputs}' -o {output} -b {str(batch)}"
-        out = run_command(cmd)
+        cmd = f"ersilia serve {self.model_id} --disable-cache && ersilia -v run -i '{inputs}' -o {output} -b {str(batch)}"
+        echo(f"[ARM64-DEBUG run_model] CMD: {cmd}", fg="magenta", bold=True)
+        out = run_command(cmd, quiet=False)
+        echo(
+            f"[ARM64-DEBUG run_model] returncode={getattr(out, 'returncode', None)}\n"
+            f"--- STDOUT ---\n{getattr(out, 'stdout', '')}\n"
+            f"--- STDERR ---\n{getattr(out, 'stderr', '')}",
+            fg="magenta",
+        )
+        try:
+            if output and os.path.exists(output):
+                with open(output) as _f:
+                    echo(
+                        f"[ARM64-DEBUG run_model] OUTPUT FILE '{output}':\n{_f.read()}",
+                        fg="magenta",
+                        bold=True,
+                    )
+            else:
+                echo(
+                    f"[ARM64-DEBUG run_model] OUTPUT FILE '{output}' DOES NOT EXIST (empty run!)",
+                    fg="red",
+                    bold=True,
+                )
+        except Exception as _e:
+            echo(
+                f"[ARM64-DEBUG run_model] could not read output '{output}': {_e}",
+                fg="red",
+            )
         return out
 
     def delete(self):
