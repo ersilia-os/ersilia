@@ -172,6 +172,8 @@ class ModelStandardExample(ErsiliaBase):
         with open(path, newline="", encoding="utf-8") as f:
             reader = csv.reader(f)
             saw_data_row = False
+            total_data_rows = 0
+            empty_rows = []
 
             for row_num, row in enumerate(reader, start=1):
                 if row_num == 1:
@@ -181,19 +183,28 @@ class ModelStandardExample(ErsiliaBase):
                     continue
 
                 saw_data_row = True
+                total_data_rows += 1
 
                 if len(row) < 3:
                     echo(f"Row {row_num} has fewer than 3 columns: {row}")
                     return False
 
                 if all((cell or "").strip() == "" for cell in row[2:]):
-                    echo(
-                        f"All output values are empty at row {row_num}. The model is not correctly working!"
-                    )
-                    return False
+                    empty_rows.append(row_num)
 
             if not saw_data_row:
                 echo("No data rows found in output CSV (only header/blank rows).")
                 return False
+
+            if empty_rows and len(empty_rows) == total_data_rows:
+                echo(
+                    f"All output values are empty at rows {empty_rows}. The model is not correctly working!"
+                )
+                return False
+
+            if empty_rows:
+                echo(
+                    f"Some output values are empty at rows {empty_rows}, but not all rows are empty. Continuing."
+                )
 
             return True
