@@ -15,7 +15,7 @@ DUMMP_API_KEY = "airtable_api_key_456"
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.github/scripts")))
 
-from airtableops import AirtableInterface, AirtableMetadata
+from airtableops import AirtableInterface, AirtableMetadata, MetadataFileUpdater
 
 MOCK_RECORD = {
     "fields": {
@@ -92,3 +92,15 @@ def test_airtable_metadata_find_record(mock_find_record):
     assert data["Computational Performance 3"] == COMPUTATIONAL_PERFORMANCE_3
     assert data["Computational Performance 4"] == COMPUTATIONAL_PERFORMANCE_4
     assert data["Computational Performance 5"] == COMPUTATIONAL_PERFORMANCE_5
+
+
+def test_metadata_file_updater_selects_yml_in_remote_repository(tmp_path):
+    model_path = tmp_path / MODEL_ID
+    model_path.mkdir()
+    metadata_path = model_path / "metadata.yml"
+    metadata_path.write_text("Identifier: eos3b5e\n")
+
+    updater = MetadataFileUpdater(model_id=MODEL_ID)
+    updater.tmp_folder = str(tmp_path)
+
+    assert updater._select_correct_metadata_file() == str(metadata_path)

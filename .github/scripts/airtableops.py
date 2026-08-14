@@ -224,8 +224,8 @@ class MetadataFileUpdater(FileUpdater):
                 return os.path.join(self.tmp_folder, self.model_id, "metadata.json")
             elif os.path.exists(os.path.join(self.tmp_folder, self.model_id, "metadata.yaml")):
                 return os.path.join(self.tmp_folder, self.model_id, "metadata.yaml")
-            elif os.path.exists(os.path.join(self.repo_path, "metadata.yml")):
-                return os.path.join(self.repo_path, "metadata.yml")
+            elif os.path.exists(os.path.join(self.tmp_folder, self.model_id, "metadata.yml")):
+                return os.path.join(self.tmp_folder, self.model_id, "metadata.yml")
             else:
                 print("Metadata file not found")
         else:
