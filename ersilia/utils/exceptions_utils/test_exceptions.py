@@ -63,8 +63,7 @@ class InvalidEntry(ErsiliaError):
             )
         )
         if reason:
-            self.message += "  {0}".format(reason)
-            
+            self.message += "  {0}".format(reason)   
         self.hints = (
             "Check the model information, usually available in a metadata.json file."
         )
