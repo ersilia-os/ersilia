@@ -323,19 +323,19 @@
 <div class="viewcode-block" id="log_prefix">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.log_prefix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">log_prefix</span><span class="p">():</span>
-    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H:%M:%S&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[INFO]:[</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2">] &quot;</span></div>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%H:%M:%S"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"[INFO]:[</span><span class="si">{</span><span class="n">now</span><span class="si">}</span><span class="s2">] "</span></div>
 
 
 
 <span class="c1"># ruff: noqa: W291</span>
-<span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="n">title</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""</span>
 <span class="s2">    ____                            __              __        __   _                  _____  __                   </span>
 <span class="s2">   / __ \ _____ ___   _____ ____ _ / /_____ __  __ / /____ _ / /_ (_)____   ____     / ___/ / /_ ____   _____ ___ </span>
 <span class="s2">  / /_/ // ___// _ \ / ___// __ `// // ___// / / // // __ `// __// // __ \ / __ \    \__ \ / __// __ \ / ___// _ \</span>
 <span class="s2"> / ____// /   /  __// /__ / /_/ // // /__ / /_/ // // /_/ // /_ / // /_/ // / / /   ___/ // /_ / /_/ // /   /  __/</span>
 <span class="s2">/_/    /_/    \___/ \___/ \__,_//_/ \___/ \__,_//_/ \__,_/ \__//_/ \____//_/ /_/   /____/ \__/ \____//_/    \___/                                                     </span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="echo_intro">
@@ -343,23 +343,23 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_intro</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
     <span class="n">width</span> <span class="o">=</span> <span class="mi">120</span>
     <span class="n">mode</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s2">&quot;Hybrid [Local + Cloud]&quot;</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;cache-only&quot;</span>
-        <span class="k">else</span> <span class="n">mode</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+        <span class="s2">"Hybrid [Local + Cloud]"</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"cache-only"</span>
+        <span class="k">else</span> <span class="n">mode</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"-"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
     <span class="p">)</span>
-    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">mode_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;⚙️ Fetch Mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">version_text</span> <span class="o">=</span> <span class="s2">&quot;🏷️ [Version 0.1.0] 🏷️&quot;</span>
-    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">version_text</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mode_text</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span></div>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">title</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">mode_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"⚙️ Fetch Mode: </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">version_text</span> <span class="o">=</span> <span class="s2">"🏷️ [Version 0.1.0] 🏷️"</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">version_text</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">mode_text</span><span class="si">:</span><span class="s2">^</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="echo_exceptions">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_exceptions">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">echo_exceptions</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">click_iface</span><span class="p">,</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">):</span>
-    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">fg</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">echo_exceptions</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">click_iface</span><span class="p">,</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"white"</span><span class="p">):</span>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="n">fg</span><span class="p">,</span> <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">exit</span><span class="p">:</span>
         <span class="n">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
@@ -370,8 +370,8 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_job_submitted">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_job_submitted</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Job submitted to Redis caching system. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Job submitted to Redis caching system. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -381,8 +381,8 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_fetched_missed">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_fetched_missed</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">size_res</span><span class="p">,</span> <span class="n">size_missing</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Results size of </span><span class="si">{</span><span class="n">size_res</span><span class="si">}</span><span class="s2"> fetched from local cache. Missing inputs: </span><span class="si">{</span><span class="n">size_missing</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Results size of </span><span class="si">{</span><span class="n">size_res</span><span class="si">}</span><span class="s2"> fetched from local cache. Missing inputs: </span><span class="si">{</span><span class="n">size_missing</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -392,8 +392,8 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_local_completed">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_local_completed</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">All inputs has results in local caches and won&#39;t processed further query.&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">All inputs has results in local caches and won't processed further query."</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span></div>
@@ -404,7 +404,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_uploading_inputs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_uploading_inputs</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Uploading input data to S3 bucket&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Uploading input data to S3 bucket"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
 
 
@@ -414,8 +414,8 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_local_fetched_cache_size</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">,</span> <span class="n">none_count</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">cache_size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Found cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> from local Redis cache. Post processing started!&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Found cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> from local Redis cache. Post processing started!"</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
             <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -429,7 +429,7 @@
 <div class="viewcode-block" id="echo_upload_complete">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_upload_complete">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_upload_complete</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
-    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Upload completed.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+    <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Upload completed."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 
@@ -437,8 +437,8 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_submitting_job">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_submitting_job</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitting a task for model[</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">] precalculation&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitting a task for model[</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">] precalculation"</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -448,8 +448,8 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_sys_exited">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_sys_exited</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">System exits with exit code 1&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">System exits with exit code 1"</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -459,8 +459,8 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_null_output">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_null_output</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Beware that output file may contain None or empty values!&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Beware that output file may contain None or empty values!"</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -470,7 +470,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_job_submitted">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_job_submitted</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Job submitted with a job id: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Job submitted with a job id: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
 
 
@@ -479,11 +479,11 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_local_only_empty_cache">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_local_only_empty_cache</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Ooopps! No cached results found in local Redis system for the model! Try cloud caching!&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Ooopps! No cached results found in local Redis system for the model! Try cloud caching!"</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
         <span class="n">blink</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="n">bg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
     <span class="p">)</span></div>
 
 
@@ -493,7 +493,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_local_sample_warning_</span><span class="p">(</span>
     <span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Do you want to continue to cloud for fetching?&quot;</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="s2">"Do you want to continue to cloud for fetching?"</span>
 
     <span class="k">if</span> <span class="n">cache_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">echo_local_only_empty_cache</span><span class="p">(</span><span class="n">click_iface</span><span class="p">)</span>
@@ -501,15 +501,15 @@
 
     <span class="n">d</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">cache_size</span>
     <span class="k">if</span> <span class="n">cache_size</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span>
-        <span class="n">bg</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;This is more or equal to the sample size you requested!&quot;</span>
+        <span class="n">bg</span> <span class="o">=</span> <span class="s2">"cyan"</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="s2">"This is more or equal to the sample size you requested!"</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">bg</span> <span class="o">=</span> <span class="s2">&quot;yellow&quot;</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;This is less than the sample size you requested by </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">!&quot;</span>
+        <span class="n">bg</span> <span class="o">=</span> <span class="s2">"yellow"</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"This is less than the sample size you requested by </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">!"</span>
 
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> fetched from local Redis caching. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Cache size of </span><span class="si">{</span><span class="n">cache_size</span><span class="si">}</span><span class="s2"> fetched from local Redis caching. </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
         <span class="n">blink</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">bg</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span>
@@ -525,12 +525,12 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_small_sample_warning">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_small_sample_warning</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">50000</span><span class="p">:</span>
-        <span class="n">promompt</span> <span class="o">=</span> <span class="s2">&quot;Do you want to continue?&quot;</span>
+        <span class="n">promompt</span> <span class="o">=</span> <span class="s2">"Do you want to continue?"</span>
         <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Sample size of less than 50,000 [</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">] is not recommended for fetching precalculation!&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Sample size of less than 50,000 [</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">] is not recommended for fetching precalculation!"</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
             <span class="n">blink</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">bg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="n">bg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span><span class="n">promompt</span><span class="p">)</span></div>
 
@@ -541,19 +541,19 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_status</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">PENDING</span><span class="p">:</span>
         <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitted job status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitted job status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span><span class="p">:</span>
         <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitted job status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitted job status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">:</span>
         <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitted job status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitted job status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitted job status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Submitted job status: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span></div>
 
 
@@ -562,7 +562,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_job_succeeded">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_job_succeeded</span><span class="p">(</span><span class="n">click_iface</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Precalculation successfully fetched&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Precalculation successfully fetched"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
 
 
@@ -571,8 +571,8 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_found_shards">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_found_shards</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Fetched </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> .gz compressed precalcultaion files.&quot;</span><span class="p">,</span>
-        <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Fetched </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2"> .gz compressed precalcultaion files."</span><span class="p">,</span>
+        <span class="n">fg</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
         <span class="n">bold</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -582,7 +582,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_merged_saved">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_merged_saved</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Merged CSV saved to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Merged CSV saved to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
 
 
@@ -591,7 +591,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.echo_redis_file_saved">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo_redis_file_saved</span><span class="p">(</span><span class="n">click_iface</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
     <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Output file is saved to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">log_prefix</span><span class="p">()</span><span class="si">}</span><span class="s2">Output file is saved to: </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
 
 
@@ -599,10 +599,10 @@
 <div class="viewcode-block" id="merge_csvs_stdlib">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.merge_csvs_stdlib">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_csvs_stdlib</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
         <span class="n">writer</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
                 <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
                 <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">writer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -616,14 +616,14 @@
 <div class="viewcode-block" id="ClickInterface">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ClickInterface">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ClickInterface</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Interactive CLI helper for styled console output and progress bars.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    colourize : bool, optional</span>
 <span class="sd">        Whether to enable ANSI styling in output (default is True).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colourize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">colourize</span> <span class="o">=</span> <span class="n">colourize</span>
@@ -638,7 +638,7 @@
         <span class="n">bold</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">blink</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Print a styled message with optional colors and text effects.</span>
 
 <span class="sd">        Parameters</span>
@@ -653,16 +653,16 @@
 <span class="sd">            Whether to use bold text.</span>
 <span class="sd">        blink : bool, optional</span>
 <span class="sd">            Whether to use blinking text.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">style_args</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">fg</span><span class="p">:</span>
-            <span class="n">style_args</span><span class="p">[</span><span class="s2">&quot;fg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fg</span>
+            <span class="n">style_args</span><span class="p">[</span><span class="s2">"fg"</span><span class="p">]</span> <span class="o">=</span> <span class="n">fg</span>
         <span class="k">if</span> <span class="n">bg</span><span class="p">:</span>
-            <span class="n">style_args</span><span class="p">[</span><span class="s2">&quot;bg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bg</span>
+            <span class="n">style_args</span><span class="p">[</span><span class="s2">"bg"</span><span class="p">]</span> <span class="o">=</span> <span class="n">bg</span>
         <span class="k">if</span> <span class="n">bold</span><span class="p">:</span>
-            <span class="n">style_args</span><span class="p">[</span><span class="s2">&quot;bold&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">style_args</span><span class="p">[</span><span class="s2">"bold"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">blink</span><span class="p">:</span>
-            <span class="n">style_args</span><span class="p">[</span><span class="s2">&quot;blink&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">style_args</span><span class="p">[</span><span class="s2">"blink"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">styled</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="o">**</span><span class="n">style_args</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">colourize</span> <span class="k">else</span> <span class="n">message</span>
         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">styled</span><span class="p">)</span></div>
 
@@ -670,7 +670,7 @@
 <div class="viewcode-block" id="ClickInterface.progress_bar">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ClickInterface.progress_bar">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">progress_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Create and return a progress bar instance.</span>
 
 <span class="sd">        Parameters</span>
@@ -684,7 +684,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        tqdm.tqdm</span>
 <span class="sd">            Configured progress bar.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </div>
 
@@ -693,7 +693,7 @@
 <div class="viewcode-block" id="ApiClient">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ApiClient">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApiClient</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    HTTP client wrapper for JSON-based and streaming API requests.</span>
 
 <span class="sd">    Parameters</span>
@@ -702,16 +702,16 @@
 <span class="sd">        Base URL for all HTTP requests.</span>
 <span class="sd">    timeout : int, optional</span>
 <span class="sd">        Default timeout in seconds for HTTP requests.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3600</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span> <span class="ow">or</span> <span class="s2">""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span>
 
 <div class="viewcode-block" id="ApiClient.get_json">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ApiClient.get_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Perform a GET request and return parsed JSON.</span>
 
 <span class="sd">        Parameters</span>
@@ -725,7 +725,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            Parsed JSON response.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
         <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
@@ -734,7 +734,7 @@
 <div class="viewcode-block" id="ApiClient.post_json">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ApiClient.post_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">post_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Perform a POST request with JSON payload and return parsed JSON.</span>
 
 <span class="sd">        Parameters</span>
@@ -748,7 +748,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            Parsed JSON response.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
         <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
@@ -757,7 +757,7 @@
 <div class="viewcode-block" id="ApiClient.head">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ApiClient.head">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Perform a HEAD request and return response headers.</span>
 
 <span class="sd">        Parameters</span>
@@ -769,7 +769,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        requests.structures.CaseInsensitiveDict</span>
 <span class="sd">            Response headers.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
         <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">headers</span></div>
@@ -778,7 +778,7 @@
 <div class="viewcode-block" id="ApiClient.download_stream">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ApiClient.download_stream">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">download_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Stream binary data from a URL in configurable chunk sizes.</span>
 
 <span class="sd">        Parameters</span>
@@ -792,7 +792,7 @@
 <span class="sd">        ------</span>
 <span class="sd">        bytes</span>
 <span class="sd">            Chunks of data from the response.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
         <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">):</span>
@@ -804,15 +804,15 @@
 <div class="viewcode-block" id="FileManager">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.FileManager">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FileManager</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Utility class for temporary CSV creation, S3 uploads, and merging result shards.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 <div class="viewcode-block" id="FileManager.create_temp_csv">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.FileManager.create_temp_csv">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_temp_csv</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">input_adapter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Write records to a temporary CSV file via a GenericInputAdapter.</span>
 
 <span class="sd">        Parameters</span>
@@ -820,19 +820,19 @@
 <span class="sd">        records : list</span>
 <span class="sd">            Iterable of input records to write.</span>
 <span class="sd">        input_adapter : GenericInputAdapter</span>
-<span class="sd">            Adapter that yields dicts with &#39;input&#39; key.</span>
+<span class="sd">            Adapter that yields dicts with 'input' key.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            Path of the created temporary CSV file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
-            <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+            <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"w+"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span>
         <span class="p">)</span>
         <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">input_adapter</span><span class="o">.</span><span class="n">adapt_one_by_one</span><span class="p">(</span><span class="n">records</span><span class="p">):</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">rec</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]])</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">rec</span><span class="p">[</span><span class="s2">"key"</span><span class="p">],</span> <span class="n">rec</span><span class="p">[</span><span class="s2">"input"</span><span class="p">]])</span>
         <span class="n">tmp</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">tmp</span><span class="o">.</span><span class="n">name</span></div>
 
@@ -841,21 +841,21 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.FileManager.upload_to_s3">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">upload_to_s3</span><span class="p">(</span><span class="n">presigned_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Upload a local file to S3 using provided presigned URL and form fields.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        presigned_info : dict</span>
-<span class="sd">            Contains &#39;url&#39; and optional &#39;fields&#39; for multipart upload.</span>
+<span class="sd">            Contains 'url' and optional 'fields' for multipart upload.</span>
 <span class="sd">        file_path : str</span>
 <span class="sd">            Local path of the file to upload.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fbin</span><span class="p">:</span>
-            <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">fbin</span><span class="p">)}</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fbin</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"file"</span><span class="p">:</span> <span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">fbin</span><span class="p">)}</span>
             <span class="n">up</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-                <span class="n">presigned_info</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">presigned_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fields&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+                <span class="n">presigned_info</span><span class="p">[</span><span class="s2">"url"</span><span class="p">],</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">presigned_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fields"</span><span class="p">,</span> <span class="p">{}),</span>
                 <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span>
                 <span class="n">timeout</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>
             <span class="p">)</span>
@@ -875,55 +875,55 @@
         <span class="n">click_iface</span><span class="p">,</span>
         <span class="n">local_cache_csv_path</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Download, decompress, and concatenate multiple CSV shards into a single file.</span>
 <span class="sd">        If `input_list` is non-empty, reorder the rows to match its order;</span>
 <span class="sd">        otherwise, just merge them sequentially.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gz_shards</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">s</span>
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">shards</span>
-            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"key"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".gz"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"url"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".gz"</span><span class="p">)</span>
         <span class="p">]</span>
         <span class="n">total_size</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">gz_shards</span><span class="p">:</span>
-            <span class="n">size</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"size"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">hdrs</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">])</span>
-                <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hdrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Length&quot;</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
+                <span class="n">hdrs</span> <span class="o">=</span> <span class="n">downloader</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">"url"</span><span class="p">])</span>
+                <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hdrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Content-Length"</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="k">pass</span>
             <span class="n">total_size</span> <span class="o">+=</span> <span class="n">size</span>
 
         <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;⬇ Total download size: </span><span class="si">{</span><span class="n">total_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> KB&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span>
+            <span class="sa">f</span><span class="s2">"⬇ Total download size: </span><span class="si">{</span><span class="n">total_size</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1024</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> KB"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">input_list</span><span class="p">:</span>
             <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                <span class="s2">&quot;⬇ No reorder list provided; merging sequentially&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span>
+                <span class="s2">"⬇ No reorder list provided; merging sequentially"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span>
             <span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_f</span><span class="p">:</span>
                 <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">out_f</span><span class="p">)</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
                 <span class="n">pbar</span> <span class="o">=</span> <span class="n">click_iface</span><span class="o">.</span><span class="n">progress_bar</span><span class="p">(</span>
                     <span class="n">total</span><span class="o">=</span><span class="n">total_size</span><span class="p">,</span>
-                    <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+                    <span class="n">unit</span><span class="o">=</span><span class="s2">"B"</span><span class="p">,</span>
                     <span class="n">unit_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="n">unit_divisor</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
-                    <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;⬇ downloading shards&quot;</span><span class="p">,</span>
-                    <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+                    <span class="n">desc</span><span class="o">=</span><span class="s2">"⬇ downloading shards"</span><span class="p">,</span>
+                    <span class="n">colour</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
                     <span class="n">ncols</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">first_shard</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">for</span> <span class="n">shard</span> <span class="ow">in</span> <span class="n">gz_shards</span><span class="p">:</span>
                     <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
-                    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download_stream</span><span class="p">(</span><span class="n">shard</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]):</span>
+                    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download_stream</span><span class="p">(</span><span class="n">shard</span><span class="p">[</span><span class="s2">"url"</span><span class="p">]):</span>
                         <span class="n">buf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
                         <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
                     <span class="n">text</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
-                        <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span>
+                        <span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span>
                     <span class="p">)</span>
                     <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
                     <span class="k">if</span> <span class="n">first_shard</span><span class="p">:</span>
@@ -937,7 +937,7 @@
                 <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">local_cache_csv_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
             <span class="p">):</span>
                 <span class="c1"># fmt: off</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_cache_csv_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache_f</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_f</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_cache_csv_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache_f</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_f</span><span class="p">:</span>
                     <span class="nb">next</span><span class="p">(</span><span class="n">cache_f</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">cache_f</span><span class="p">:</span>
                         <span class="n">out_f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
@@ -948,42 +948,42 @@
                 <span class="c1"># fmt: off</span>
 
             <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;✅ Sequential merge written to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span>
+                <span class="sa">f</span><span class="s2">"✅ Sequential merge written to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span>
             <span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Header must contain &#39;input&#39; to reorder&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"input"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"Header must contain 'input' to reorder"</span><span class="p">)</span>
 
-        <span class="n">col_idx</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+        <span class="n">col_idx</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"input"</span><span class="p">)</span>
 
         <span class="n">normalized</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">input_list</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
-                <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"input"</span> <span class="ow">in</span> <span class="n">item</span><span class="p">:</span>
+                <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"input"</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot extract &#39;input&#39; from </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot extract 'input' from </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-        <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;⬇ Building lookup and reordering by &#39;input&#39;&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
+        <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">"⬇ Building lookup and reordering by 'input'"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">)</span>
         <span class="n">lookup</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">pbar</span> <span class="o">=</span> <span class="n">click_iface</span><span class="o">.</span><span class="n">progress_bar</span><span class="p">(</span>
             <span class="n">total</span><span class="o">=</span><span class="n">total_size</span><span class="p">,</span>
-            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">"B"</span><span class="p">,</span>
             <span class="n">unit_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">unit_divisor</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span>
-            <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;⬇ downloading shards&quot;</span><span class="p">,</span>
-            <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s2">"⬇ downloading shards"</span><span class="p">,</span>
+            <span class="n">colour</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
             <span class="n">ncols</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">first_shard</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">shard</span> <span class="ow">in</span> <span class="n">gz_shards</span><span class="p">:</span>
             <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download_stream</span><span class="p">(</span><span class="n">shard</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">downloader</span><span class="o">.</span><span class="n">download_stream</span><span class="p">(</span><span class="n">shard</span><span class="p">[</span><span class="s2">"url"</span><span class="p">]):</span>
                 <span class="n">buf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
                 <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">))</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">"replace"</span><span class="p">)</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">first_shard</span><span class="p">:</span>
                 <span class="n">first_shard</span> <span class="o">=</span> <span class="kc">False</span>
@@ -993,7 +993,7 @@
                 <span class="n">lookup</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">col_idx</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span>
         <span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_f</span><span class="p">:</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">out_f</span><span class="p">)</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">normalized</span><span class="p">:</span>
@@ -1001,7 +1001,7 @@
                 <span class="k">if</span> <span class="n">row</span><span class="p">:</span>
                     <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">empty_row</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+                    <span class="n">empty_row</span> <span class="o">=</span> <span class="p">[</span><span class="s2">""</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
                     <span class="n">empty_row</span><span class="p">[</span><span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">inp</span>
                     <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">empty_row</span><span class="p">)</span>
 
@@ -1009,18 +1009,18 @@
             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_cache_csv_path</span><span class="p">)</span>
             <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">local_cache_csv_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_cache_csv_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache_f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_cache_csv_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache_f</span><span class="p">:</span>
                 <span class="n">cache_reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">cache_f</span><span class="p">)</span>
                 <span class="nb">next</span><span class="p">(</span><span class="n">cache_reader</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="n">cache_rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cache_reader</span><span class="p">)</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">merged_f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">merged_f</span><span class="p">:</span>
                 <span class="n">merged_reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">merged_f</span><span class="p">)</span>
                 <span class="n">merged_header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">merged_reader</span><span class="p">)</span>
                 <span class="n">merged_rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">merged_reader</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">merged_header</span><span class="p">:</span>
-                <span class="n">idx</span> <span class="o">=</span> <span class="n">merged_header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">"input"</span> <span class="ow">in</span> <span class="n">merged_header</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">merged_header</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"input"</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -1043,7 +1043,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">final_cache</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cro</span><span class="p">)</span>
 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">wf</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">wf</span><span class="p">:</span>
                 <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">wf</span><span class="p">)</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">merged_header</span><span class="p">)</span>
 
@@ -1062,7 +1062,7 @@
             <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
                 <span class="k">pass</span>
 
-        <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ Final ordered CSV written to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span></div>
+        <span class="n">click_iface</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"✅ Final ordered CSV written to </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span></div>
 </div>
 
 
@@ -1070,14 +1070,14 @@
 <div class="viewcode-block" id="InferenceStoreMessage">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.InferenceStoreMessage">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InferenceStoreMessage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Base class for inference store messages.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    model_id : str</span>
 <span class="sd">        The ID of the model for which the message is being generated.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -1090,29 +1090,29 @@
 <div class="viewcode-block" id="JobStatus">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.JobStatus">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JobStatus</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class to define job completetion status.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">&quot;PENDING&quot;</span>
-    <span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">&quot;RUNNING&quot;</span>
-    <span class="n">FAILED</span> <span class="o">=</span> <span class="s2">&quot;FAILED&quot;</span>
-    <span class="n">SUCCEEDED</span> <span class="o">=</span> <span class="s2">&quot;SUCCEEDED&quot;</span></div>
+    <span class="n">PENDING</span> <span class="o">=</span> <span class="s2">"PENDING"</span>
+    <span class="n">RUNNING</span> <span class="o">=</span> <span class="s2">"RUNNING"</span>
+    <span class="n">FAILED</span> <span class="o">=</span> <span class="s2">"FAILED"</span>
+    <span class="n">SUCCEEDED</span> <span class="o">=</span> <span class="s2">"SUCCEEDED"</span></div>
 
 
 
 <div class="viewcode-block" id="OutputSource">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OutputSource</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class to define output source options.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">LOCAL_ONLY</span> <span class="o">=</span> <span class="s2">&quot;local-cache-only&quot;</span>
-    <span class="n">CACHE_ONLY</span> <span class="o">=</span> <span class="s2">&quot;cache-only&quot;</span>
-    <span class="n">LOCAL</span> <span class="o">=</span> <span class="s2">&quot;local-cache&quot;</span>
-    <span class="n">CLOUD_ONLY</span> <span class="o">=</span> <span class="s2">&quot;cloud-cache-only&quot;</span>
-    <span class="n">CLOUD</span> <span class="o">=</span> <span class="s2">&quot;cloud-cache&quot;</span>
+    <span class="n">LOCAL_ONLY</span> <span class="o">=</span> <span class="s2">"local-cache-only"</span>
+    <span class="n">CACHE_ONLY</span> <span class="o">=</span> <span class="s2">"cache-only"</span>
+    <span class="n">LOCAL</span> <span class="o">=</span> <span class="s2">"local-cache"</span>
+    <span class="n">CLOUD_ONLY</span> <span class="o">=</span> <span class="s2">"cloud-cache-only"</span>
+    <span class="n">CLOUD</span> <span class="o">=</span> <span class="s2">"cloud-cache"</span>
     <span class="n">ALL</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">LOCAL_ONLY</span><span class="p">,</span>
         <span class="n">CLOUD_ONLY</span><span class="p">,</span>
@@ -1122,7 +1122,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_local">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_local</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the option is local.</span>
 
 <span class="sd">        Parameters</span>
@@ -1134,7 +1134,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the option is local, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">option</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOCAL_ONLY</span></div>
 
 
@@ -1142,7 +1142,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_cloud">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_cloud</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the option is cloud.</span>
 
 <span class="sd">        Parameters</span>
@@ -1154,7 +1154,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the option is cloud, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">option</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CLOUD_ONLY</span></div>
 
 
@@ -1162,7 +1162,7 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.OutputSource.is_precalculation_enabled">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_precalculation_enabled</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the option is cloud.</span>
 
 <span class="sd">        Parameters</span>
@@ -1174,7 +1174,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the option is cloud, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">option</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CLOUD_ONLY</span>
             <span class="ow">or</span> <span class="n">option</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">LOCAL_ONLY</span>
@@ -1187,14 +1187,14 @@
 <div class="viewcode-block" id="ModelNotInStore">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ModelNotInStore">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModelNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Message class for models not found in the inference store.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    model_id : str</span>
 <span class="sd">        The ID of the model that is not found.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -1203,15 +1203,15 @@
 <div class="viewcode-block" id="ModelNotInStore.echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.ModelNotInStore.echo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Echo the message for model not found in inference store.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span>
-            <span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> could not be found in inference store&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> could not be found in inference store"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span>
-            <span class="s2">&quot;Please serve the model locally: ersilia serve </span><span class="si">{0}</span><span class="s2"> --output-source </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Please serve the model locally: ersilia serve </span><span class="si">{0}</span><span class="s2"> --output-source </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -1223,14 +1223,14 @@
 <div class="viewcode-block" id="PrecalculationsNotInStore">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PrecalculationsNotInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Message class for precalculations not found in the inference store.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    model_id : str</span>
 <span class="sd">        The ID of the model for which precalculations are not found.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -1239,17 +1239,17 @@
 <div class="viewcode-block" id="PrecalculationsNotInStore.echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsNotInStore.echo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Echo the message for precalculations not found in inference store.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span>
-            <span class="s2">&quot;Precalculations for model </span><span class="si">{0}</span><span class="s2"> could not be found in inference store&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Precalculations for model </span><span class="si">{0}</span><span class="s2"> could not be found in inference store"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
             <span class="p">),</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span>
-            <span class="s2">&quot;Please serve the model locally: ersilia serve </span><span class="si">{0}</span><span class="s2"> --output-source </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Please serve the model locally: ersilia serve </span><span class="si">{0}</span><span class="s2"> --output-source </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">LOCAL_ONLY</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -1261,7 +1261,7 @@
 <div class="viewcode-block" id="PrecalculationsInStore">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsInStore">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PrecalculationsInStore</span><span class="p">(</span><span class="n">InferenceStoreMessage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Message class for precalculations found in the inference store.</span>
 
 <span class="sd">    Parameters</span>
@@ -1270,7 +1270,7 @@
 <span class="sd">        The ID of the model for which precalculations are found.</span>
 <span class="sd">    output_url : str</span>
 <span class="sd">        The URL where the precalculations can be downloaded.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">output_url</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
@@ -1279,19 +1279,19 @@
 <div class="viewcode-block" id="PrecalculationsInStore.echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.PrecalculationsInStore.echo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Echo the message for precalculations available for download.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        output_url : str</span>
 <span class="sd">            The URL for downloading the precalculations.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_echo</span><span class="p">(</span>
-            <span class="s2">&quot;Precalculations for model </span><span class="si">{0}</span><span class="s2"> are now available for download via this link (expires in 60 minutes): </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Precalculations for model </span><span class="si">{0}</span><span class="s2"> are now available for download via this link (expires in 60 minutes): </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_url</span>
             <span class="p">),</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 </div>
@@ -1301,7 +1301,7 @@
 <div class="viewcode-block" id="store_has_model">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.store_has_model">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">store_has_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Check if the model exists in the inference store.</span>
 
 <span class="sd">    Parameters</span>
@@ -1313,14 +1313,14 @@
 <span class="sd">    -------</span>
 <span class="sd">    bool</span>
 <span class="sd">        True if the model exists in the store, False otherwise.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-        <span class="n">INFERENCE_STORE_API_URL</span> <span class="o">+</span> <span class="s2">&quot;/model&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;modelid&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">},</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span>
+        <span class="n">INFERENCE_STORE_API_URL</span> <span class="o">+</span> <span class="s2">"/model"</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">"modelid"</span><span class="p">:</span> <span class="n">model_id</span><span class="p">},</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> found in inference store&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> found in inference store"</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> not found in inference store&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> not found in inference store"</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
@@ -1328,7 +1328,7 @@
 <div class="viewcode-block" id="delete_file_upon_upload">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.store.html#ersilia.store.utils.delete_file_upon_upload">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">delete_file_upon_upload</span><span class="p">(</span><span class="n">response_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Delete the file upon successful upload.</span>
 
 <span class="sd">    Parameters</span>
@@ -1337,14 +1337,14 @@
 <span class="sd">        The HTTP response code from the upload request.</span>
 <span class="sd">    file_path : str</span>
 <span class="sd">        The path of the file to delete.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">response_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> deleted successfully.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"File </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> deleted successfully."</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Failed to delete file </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">, please delete manually. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Failed to delete file </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">, please delete manually. Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span></div>
 
 </pre></div>

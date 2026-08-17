@@ -326,7 +326,7 @@
 <div class="viewcode-block" id="serve_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.serve.serve_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">serve_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Serves a previously fetched model as a local API.</span>
 
 <span class="sd">    The model must already be available locally (see ``ersilia fetch``).</span>
@@ -346,123 +346,123 @@
 
 <span class="sd">        Serve a model with run tracking enabled:</span>
 <span class="sd">        $ ersilia serve &lt;model_id&gt; --track</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">store_status</span><span class="p">(</span><span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">write_store</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;Enabled: Read Only&quot;</span>
+            <span class="k">return</span> <span class="s2">"Enabled: Read Only"</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="n">write_store</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;Enabled: Writter Only&quot;</span>
+            <span class="k">return</span> <span class="s2">"Enabled: Writter Only"</span>
         <span class="k">if</span> <span class="n">read_store</span> <span class="ow">and</span> <span class="n">write_store</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;Enabled: Reader &amp; Writter &quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;Disabled&quot;</span>
+            <span class="k">return</span> <span class="s2">"Enabled: Reader &amp; Writter "</span>
+        <span class="k">return</span> <span class="s2">"Disabled"</span>
 
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Serve a model as a local API&quot;</span><span class="p">,</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">"Serve a model as a local API"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Start a local API server for a previously fetched model. &quot;</span>
-            <span class="s2">&quot;Once served, the model is ready to receive predictions via &quot;</span>
-            <span class="s2">&quot;`ersilia run`. Optional flags configure session tracking, &quot;</span>
-            <span class="s2">&quot;in-memory caching, and Isaura store access.&quot;</span>
+            <span class="s2">"Start a local API server for a previously fetched model. "</span>
+            <span class="s2">"Once served, the model is ready to receive predictions via "</span>
+            <span class="s2">"`ersilia run`. Optional flags configure session tracking, "</span>
+            <span class="s2">"in-memory caching, and Isaura store access."</span>
         <span class="p">),</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--port&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="s2">"--port"</span><span class="p">,</span>
+        <span class="s2">"-p"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span>
-        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;auto-selected&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Preferred port for the local API server.&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">"auto-selected"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Preferred port for the local API server."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--track&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;track&quot;</span><span class="p">,</span>
+        <span class="s2">"-t"</span><span class="p">,</span>
+        <span class="s2">"--track"</span><span class="p">,</span>
+        <span class="s2">"track"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">"off"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Track model runs (input/output stats, errors, timing, model &quot;</span>
-            <span class="s2">&quot;metadata) by sending event data to Ersilia&#39;s S3 tracking bucket.&quot;</span>
+            <span class="s2">"Track model runs (input/output stats, errors, timing, model "</span>
+            <span class="s2">"metadata) by sending event data to Ersilia's S3 tracking bucket."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--tracking-use-case&quot;</span><span class="p">,</span>
+        <span class="s2">"--tracking-use-case"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">(</span>
-            <span class="p">[</span><span class="s2">&quot;local&quot;</span><span class="p">,</span> <span class="s2">&quot;self-service&quot;</span><span class="p">,</span> <span class="s2">&quot;hosted&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">],</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">[</span><span class="s2">"local"</span><span class="p">,</span> <span class="s2">"self-service"</span><span class="p">,</span> <span class="s2">"hosted"</span><span class="p">,</span> <span class="s2">"test"</span><span class="p">],</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">),</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;local&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"local"</span><span class="p">,</span>
         <span class="n">hidden</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Deployment context recorded with each tracked run. &quot;</span>
-            <span class="s2">&quot;One of: local, self-service, hosted, test.&quot;</span>
+            <span class="s2">"Deployment context recorded with each tracked run. "</span>
+            <span class="s2">"One of: local, self-service, hosted, test."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--enable-cache/--disable-cache&quot;</span><span class="p">,</span>
+        <span class="s2">"--enable-cache/--disable-cache"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Enable a Redis in-memory cache for prediction results so repeat &quot;</span>
-            <span class="s2">&quot;inputs return instantly.&quot;</span>
+            <span class="s2">"Enable a Redis in-memory cache for prediction results so repeat "</span>
+            <span class="s2">"inputs return instantly."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--read-store&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;-rs&quot;</span><span class="p">,</span>
+        <span class="s2">"--read-store"</span><span class="p">,</span>
+        <span class="s2">"-rs"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">"off"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Read previously computed predictions from the Isaura store &quot;</span>
-            <span class="s2">&quot;before running the model. Requires Isaura installed.&quot;</span>
+            <span class="s2">"Read previously computed predictions from the Isaura store "</span>
+            <span class="s2">"before running the model. Requires Isaura installed."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--write-store&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;-ws&quot;</span><span class="p">,</span>
+        <span class="s2">"--write-store"</span><span class="p">,</span>
+        <span class="s2">"-ws"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;off&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">"off"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Write predictions to the Isaura store as they are computed. &quot;</span>
-            <span class="s2">&quot;Requires Isaura installed and `--access`.&quot;</span>
+            <span class="s2">"Write predictions to the Isaura store as they are computed. "</span>
+            <span class="s2">"Requires Isaura installed and `--access`."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--access&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
+        <span class="s2">"--access"</span><span class="p">,</span>
+        <span class="s2">"-a"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;unset&quot;</span><span class="p">,</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">"unset"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Visibility for predictions written to the Isaura store. &quot;</span>
-            <span class="s2">&quot;One of: public, private. Required with `--write-store`.&quot;</span>
+            <span class="s2">"Visibility for predictions written to the Isaura store. "</span>
+            <span class="s2">"One of: public, private. Required with `--write-store`."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--nearest-neigbors&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;-nn&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;nearest_neighbors&quot;</span><span class="p">,</span>
+        <span class="s2">"--nearest-neigbors"</span><span class="p">,</span>
+        <span class="s2">"-nn"</span><span class="p">,</span>
+        <span class="s2">"nearest_neighbors"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">hidden</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;When reading from the Isaura store, also return approximate &quot;</span>
-            <span class="s2">&quot;nearest-neighbor matches for inputs not exactly cached. &quot;</span>
-            <span class="s2">&quot;This feature is experimental and not yet ready for use.&quot;</span>
+            <span class="s2">"When reading from the Isaura store, also return approximate "</span>
+            <span class="s2">"nearest-neighbor matches for inputs not exactly cached. "</span>
+            <span class="s2">"This feature is experimental and not yet ready for use."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--max-cache-memory-frac&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;max_memory&quot;</span><span class="p">,</span>
+        <span class="s2">"--max-cache-memory-frac"</span><span class="p">,</span>
+        <span class="s2">"max_memory"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">show_default</span><span class="o">=</span><span class="s2">&quot;0.5&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Maximum fraction (0.0-1.0) of system RAM the Redis cache may use.&quot;</span><span class="p">),</span>
+        <span class="n">show_default</span><span class="o">=</span><span class="s2">"0.5"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">"Maximum fraction (0.0-1.0) of system RAM the Redis cache may use."</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span>
         <span class="n">model</span><span class="p">,</span>
@@ -488,19 +488,19 @@
 
         <span class="n">sess</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">existing_session</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="n">already_served</span> <span class="o">=</span> <span class="n">existing_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_id&quot;</span><span class="p">)</span>
+        <span class="n">already_served</span> <span class="o">=</span> <span class="n">existing_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"model_id"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">already_served</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;A model is already being served in this terminal: </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"A model is already being served in this terminal: </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">click</span><span class="o">.</span><span class="n">confirm</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Close </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> and serve </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> instead?&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Close </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> and serve </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> instead?"</span><span class="p">,</span>
                 <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="n">echo</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Aborted. </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> is still being served.&quot;</span><span class="p">,</span>
-                    <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s2">"Aborted. </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> is still being served."</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="c1"># Actually close the previously served model so its Docker</span>
@@ -511,27 +511,27 @@
             <span class="p">)</span>
             <span class="n">previous_mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">already_served</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;:no_entry: Model </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> closed&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">":no_entry: Model </span><span class="si">{</span><span class="n">already_served</span><span class="si">}</span><span class="s2"> closed"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
         <span class="n">sess</span><span class="o">.</span><span class="n">register_store_status</span><span class="p">(</span>
             <span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">,</span> <span class="n">access</span><span class="p">,</span> <span class="n">nearest_neighbors</span><span class="p">,</span> <span class="n">enable_cache</span>
         <span class="p">)</span>
         <span class="n">store_stat</span> <span class="o">=</span> <span class="n">store_status</span><span class="p">(</span><span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_installed</span><span class="p">(</span><span class="s2">&quot;isaura&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">read_store</span> <span class="ow">or</span> <span class="n">write_store</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_installed</span><span class="p">(</span><span class="s2">"isaura"</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">read_store</span> <span class="ow">or</span> <span class="n">write_store</span><span class="p">):</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">&quot;Isaura is not installed! Please install isaura in your env by running simply </span><span class="se">\n</span><span class="s2">&gt;&gt; pip install git+https://github.com/ersilia-os/isaura.git.</span><span class="se">\n</span><span class="s2">To start all isaura services, run this command &gt;&gt; isaura engine -s.&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="s2">"Isaura is not installed! Please install isaura in your env by running simply </span><span class="se">\n</span><span class="s2">&gt;&gt; pip install git+https://github.com/ersilia-os/isaura.git.</span><span class="se">\n</span><span class="s2">To start all isaura services, run this command &gt;&gt; isaura engine -s."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute &gt;&gt; isaura engine -s. &quot;</span>
+                <span class="s2">"Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute &gt;&gt; isaura engine -s. "</span>
             <span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">write_store</span> <span class="ow">and</span> <span class="n">access</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">&quot;You need to specifiy the access as [public or private] to write to store!&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="s2">"You need to specifiy the access as [public or private] to write to store!"</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;You need to specifiy the access as [public or private] to write to store!&quot;</span>
+                <span class="s2">"You need to specifiy the access as [public or private] to write to store!"</span>
             <span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
@@ -556,7 +556,7 @@
 
         <span class="n">mdl</span><span class="o">.</span><span class="n">serve</span><span class="p">(</span><span class="n">track_runs</span><span class="o">=</span><span class="n">track</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mdl</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No URL found. Service unsuccessful.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"No URL found. Service unsuccessful."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="n">register_model_session</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">)</span>
@@ -574,10 +574,10 @@
             <span class="n">enable_cache</span><span class="o">=</span><span class="n">enable_cache</span><span class="p">,</span>
             <span class="n">tracking_enabled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">track</span><span class="p">),</span>
             <span class="n">tracking_use_case</span><span class="o">=</span><span class="n">tracking_use_case</span><span class="p">,</span>
-            <span class="n">version</span><span class="o">=</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;docker_tag&quot;</span><span class="p">),</span>
+            <span class="n">version</span><span class="o">=</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"docker_tag"</span><span class="p">),</span>
         <span class="p">)</span>
 
-        <span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> is successfully served!&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2"> is successfully served!"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">serve</span></div>
 

@@ -311,7 +311,7 @@
 <div class="viewcode-block" id="info">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.api.commands.html#ersilia.api.commands.info.info">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Provides information about a specified model.</span>
 
 <span class="sd">    This command allows users to get detailed information about a current active session,</span>
@@ -329,15 +329,15 @@
 <span class="sd">    Raises</span>
 <span class="sd">    -------</span>
 <span class="sd">    RuntimeError: If no model was served in the current session.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No model was served&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"No model was served"</span><span class="p">)</span>
     <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
     <span class="n">info</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">"card"</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">"card"</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">info</span></div>
 
 </pre></div>

@@ -311,10 +311,10 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="c1"># Filter out some warnings</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
 
 <span class="c1"># Disable GPU</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;-1&quot;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"CUDA_VISIBLE_DEVICES"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"-1"</span>
 
 <span class="c1"># Default variables</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.default</span><span class="w"> </span><span class="kn">import</span> <span class="n">EOS</span><span class="p">,</span> <span class="n">CONFIG_JSON</span><span class="p">,</span> <span class="n">INSTALL_STATUS_FILE</span>
@@ -326,7 +326,7 @@
     <span class="n">Checker</span><span class="p">()</span><span class="o">.</span><span class="n">config</span><span class="p">()</span>
 
 <span class="c1"># Environmental variables</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;EOS_HOME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EOS</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"EOS_HOME"</span><span class="p">]</span> <span class="o">=</span> <span class="n">EOS</span>
 
 <span class="c1"># User profile</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.default</span><span class="w"> </span><span class="kn">import</span> <span class="n">bashrc_cli_snippet</span>
@@ -339,15 +339,15 @@
 <span class="c1"># __getattr__ defers each import until first access while preserving the</span>
 <span class="c1"># `from ersilia import X` ergonomics.</span>
 <span class="n">_LAZY</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;logger&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.utils.logging&quot;</span><span class="p">,</span> <span class="s2">&quot;logger&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;throw_ersilia_exception&quot;</span><span class="p">:</span> <span class="p">(</span>
-        <span class="s2">&quot;ersilia.utils.exceptions_utils.throw_ersilia_exception&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;throw_ersilia_exception&quot;</span><span class="p">,</span>
+    <span class="s2">"logger"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"ersilia.utils.logging"</span><span class="p">,</span> <span class="s2">"logger"</span><span class="p">),</span>
+    <span class="s2">"throw_ersilia_exception"</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s2">"ersilia.utils.exceptions_utils.throw_ersilia_exception"</span><span class="p">,</span>
+        <span class="s2">"throw_ersilia_exception"</span><span class="p">,</span>
     <span class="p">),</span>
-    <span class="s2">&quot;Config&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.utils.config&quot;</span><span class="p">,</span> <span class="s2">&quot;Config&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;ErsiliaBase&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.core.base&quot;</span><span class="p">,</span> <span class="s2">&quot;ErsiliaBase&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;ModelBase&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.core.modelbase&quot;</span><span class="p">,</span> <span class="s2">&quot;ModelBase&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;ErsiliaModel&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;ersilia.core.model&quot;</span><span class="p">,</span> <span class="s2">&quot;ErsiliaModel&quot;</span><span class="p">),</span>
+    <span class="s2">"Config"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"ersilia.utils.config"</span><span class="p">,</span> <span class="s2">"Config"</span><span class="p">),</span>
+    <span class="s2">"ErsiliaBase"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"ersilia.core.base"</span><span class="p">,</span> <span class="s2">"ErsiliaBase"</span><span class="p">),</span>
+    <span class="s2">"ModelBase"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"ersilia.core.modelbase"</span><span class="p">,</span> <span class="s2">"ModelBase"</span><span class="p">),</span>
+    <span class="s2">"ErsiliaModel"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"ersilia.core.model"</span><span class="p">,</span> <span class="s2">"ErsiliaModel"</span><span class="p">),</span>
 <span class="p">}</span>
 
 
@@ -359,7 +359,7 @@
         <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">mod_name</span><span class="p">),</span> <span class="n">attr</span><span class="p">)</span>
         <span class="nb">globals</span><span class="p">()[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
         <span class="k">return</span> <span class="n">obj</span>
-    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module &#39;ersilia&#39; has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"module 'ersilia' has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">():</span>
@@ -374,14 +374,14 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
         <span class="n">status</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">status</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;install_status_file&quot;</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">}</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"install_status_file"</span><span class="p">:</span> <span class="n">fn</span><span class="p">,</span> <span class="s2">"status"</span><span class="p">:</span> <span class="n">status</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">results</span></div>
 
 
 
-<span class="n">INSTALL_STATUS</span> <span class="o">=</span> <span class="n">check_install_status</span><span class="p">()[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span>
+<span class="n">INSTALL_STATUS</span> <span class="o">=</span> <span class="n">check_install_status</span><span class="p">()[</span><span class="s2">"status"</span><span class="p">]</span>
 </pre></div>
         </article>
       </div>

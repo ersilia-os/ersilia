@@ -318,7 +318,7 @@
 <div class="viewcode-block" id="CompoundIdentifier">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CompoundIdentifier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class to handle compound identification and conversion between different chemical identifiers.</span>
 
 <span class="sd">    Parameters</span>
@@ -331,22 +331,22 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        identifier = CompoundIdentifier()</span>
-<span class="sd">        smiles = &quot;CCO&quot;</span>
+<span class="sd">        smiles = "CCO"</span>
 <span class="sd">        key = identifier.encode(smiles)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concurrency_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">default_type</span> <span class="o">=</span> <span class="s2">&quot;smiles&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;smiles&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;key&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_type</span> <span class="o">=</span> <span class="s2">"smiles"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">"smiles"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">"key"</span><span class="p">])</span>
         <span class="c1"># The APIs have the worst rate limitation so its better not to increase more than 10</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">concurrency_limit</span> <span class="o">=</span> <span class="n">concurrency_limit</span>
 
 <div class="viewcode-block" id="CompoundIdentifier.is_input_header">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_input_header">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_input_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the given header is an input header.</span>
 
 <span class="sd">        Parameters</span>
@@ -358,14 +358,14 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the header is an input header, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_header_synonyms</span></div>
 
 
 <div class="viewcode-block" id="CompoundIdentifier.is_key_header">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.is_key_header">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_key_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the given header is a key header.</span>
 
 <span class="sd">        Parameters</span>
@@ -377,7 +377,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the header is a key header, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">h</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_header_synonyms</span></div>
 
 
@@ -386,20 +386,20 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="c1"># Rough SMILES pattern, allows space for CXSMILES</span>
         <span class="n">SMILES_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;^[A-Za-z0-9@+\-\[\]\(\)=#$:.</span><span class="se">\\</span><span class="s2">/%,*]+(?:\s[A-Za-z0-9@+\-\[\]\(\)=#$:.</span><span class="se">\\</span><span class="s2">/%,*]+)*$&quot;</span>
+            <span class="sa">r</span><span class="s2">"^[A-Za-z0-9@+\-\[\]\(\)=#$:.</span><span class="se">\\</span><span class="s2">/%,*]+(?:\s[A-Za-z0-9@+\-\[\]\(\)=#$:.</span><span class="se">\\</span><span class="s2">/%,*]+)*$"</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">SMILES_REGEX</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">KEY_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z0-9]</span><span class="si">{32}</span><span class="s2">$&quot;</span><span class="p">)</span>
+        <span class="n">KEY_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^[A-Za-z0-9]</span><span class="si">{32}</span><span class="s2">$"</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">KEY_REGEX</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
 
 <div class="viewcode-block" id="CompoundIdentifier.convert_smiles_to_checksum">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.convert_smiles_to_checksum">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">convert_smiles_to_checksum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Convert a SMILES string to a checksum.</span>
 
 <span class="sd">        Parameters</span>
@@ -411,7 +411,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            The converted checksum.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">smiles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">smiles</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
@@ -420,8 +420,8 @@
 <div class="viewcode-block" id="CompoundIdentifier.guess_type">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.guess_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">guess_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Guess the type of the given text (either &#39;smiles&#39;).</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Guess the type of the given text (either 'smiles').</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -431,19 +431,19 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            The guessed type (&#39;smiles&#39;, &#39;UNPROCESSABLE_INPUT&#39;).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            The guessed type ('smiles', 'UNPROCESSABLE_INPUT').</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="n">text</span> <span class="o">==</span> <span class="n">UNPROCESSABLE_INPUT</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_smiles</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s2">&quot;smiles&quot;</span>
+            <span class="k">return</span> <span class="s2">"smiles"</span>
         <span class="k">return</span> <span class="n">UNPROCESSABLE_INPUT</span></div>
 
 
 <div class="viewcode-block" id="CompoundIdentifier.process_smiles">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.process_smiles">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">result_list</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Process a SMILES string asynchronously.</span>
 
 <span class="sd">        Parameters</span>
@@ -456,16 +456,16 @@
 <span class="sd">            The HTTP session for making requests.</span>
 <span class="sd">        result_list : list</span>
 <span class="sd">            The list to store results.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">semaphore</span><span class="p">:</span>  <span class="c1"># high performance resource manager</span>
             <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_smiles_to_checksum</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span>
-            <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">smiles</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">smiles</span><span class="p">})</span></div>
+            <span class="n">result_list</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"key"</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">:</span> <span class="n">smiles</span><span class="p">,</span> <span class="s2">"text"</span><span class="p">:</span> <span class="n">smiles</span><span class="p">})</span></div>
 
 
 <div class="viewcode-block" id="CompoundIdentifier.encode_batch">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode_batch">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">encode_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles_list</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Encode a batch of SMILES strings asynchronously.</span>
 
 <span class="sd">        Parameters</span>
@@ -477,7 +477,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
 <span class="sd">            The list of encoded results.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">result_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">semaphore</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">concurrency_limit</span><span class="p">)</span>
         <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
@@ -491,7 +491,7 @@
 <div class="viewcode-block" id="CompoundIdentifier.encode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.encode">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the key of a compound based on its SMILES string.</span>
 
 <span class="sd">        Parameters</span>
@@ -502,8 +502,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
-<span class="sd">            The key of the compound, or &#39;UNPROCESSABLE_INPUT&#39; if conversion fails.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            The key of the compound, or 'UNPROCESSABLE_INPUT' if conversion fails.</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">smiles</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
             <span class="ow">or</span> <span class="ow">not</span> <span class="n">smiles</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -518,7 +518,7 @@
 <div class="viewcode-block" id="CompoundIdentifier.validate_smiles">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.identifiers.html#ersilia.utils.identifiers.compound.CompoundIdentifier.validate_smiles">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_smiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smiles</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Validate a SMILES string.</span>
 
 <span class="sd">        Parameters</span>
@@ -530,7 +530,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the SMILES string is valid, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_smiles</span><span class="p">(</span><span class="n">smiles</span><span class="p">)</span></div>
 </div>
 

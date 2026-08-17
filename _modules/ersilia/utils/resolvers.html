@@ -317,11 +317,11 @@
 <div class="viewcode-block" id="PackMethodResolver">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PackMethodResolver</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This class resolves the pack method for a given model after the fetch resolution.</span>
 <span class="sd">    Note that this class is different from the TemplateResolver, which resolves the pack method</span>
 <span class="sd">    before the fetch procedure.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -330,55 +330,55 @@
 <div class="viewcode-block" id="PackMethodResolver.resolve_pack_method_tracked_at_fetch">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver.resolve_pack_method_tracked_at_fetch">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_tracked_at_fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Read the pack method from available from the fetch procedure (i.e. as resolved by the TemplateResolver)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        The packaging method (fastapi or )</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">pack_method_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">PACKMETHOD_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pack_method_file</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pack_method_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pack_method_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="PackMethodResolver.resolve_pack_method_from_github_metadata">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver.resolve_pack_method_from_github_metadata">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_from_github_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Resolve the packaging method based on metadata available from GitHub</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        The packaging method (fastapi or )</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">root_github_url</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/refs/heads/main/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"https://raw.githubusercontent.com/ersilia-os/</span><span class="si">{0}</span><span class="s2">/refs/heads/main/"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">model_id</span>
             <span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;yml&quot;</span><span class="p">]</span>
+        <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"json"</span><span class="p">,</span> <span class="s2">"yml"</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">:</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">root_github_url</span><span class="si">}</span><span class="s2">/metadata.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">root_github_url</span><span class="si">}</span><span class="s2">/metadata.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
                         <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-                    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">&quot;yml&quot;</span><span class="p">:</span>
+                    <span class="k">elif</span> <span class="n">ext</span> <span class="o">==</span> <span class="s2">"yml"</span><span class="p">:</span>
                         <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">:</span>
                 <span class="k">pass</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;Docker Pack Method&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Docker Pack Method&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s2">"Docker Pack Method"</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"Docker Pack Method"</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">None</span></div>
 
@@ -386,7 +386,7 @@
 <div class="viewcode-block" id="PackMethodResolver.resolve_pack_method_source">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver.resolve_pack_method_source">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Resolve the packaging method for a model based on its source files.</span>
 
 <span class="sd">        Parameters</span>
@@ -398,14 +398,14 @@
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
 <span class="sd">            The packaging method if found, otherwise None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span></div>
 
 
 <div class="viewcode-block" id="PackMethodResolver.resolve_pack_method">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.resolvers.PackMethodResolver.resolve_pack_method">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">resolve_pack_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Resolve the packaging method for a model.</span>
 
 <span class="sd">        Parameters</span>
@@ -417,26 +417,26 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            The packaging method.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">pack_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_pack_method_tracked_at_fetch</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">pack_method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pack_method</span>
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">model_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="n">service_class_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;service_class.txt&quot;</span><span class="p">)</span>
+        <span class="n">service_class_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">"service_class.txt"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">service_class_file</span><span class="p">):</span>
-            <span class="n">service_class</span> <span class="o">=</span> <span class="s2">&quot;pulled_docker&quot;</span>
+            <span class="n">service_class</span> <span class="o">=</span> <span class="s2">"pulled_docker"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">&quot;service_class.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="s2">"service_class.txt"</span><span class="p">),</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">service_class</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">service_class</span> <span class="o">==</span> <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">service_class</span> <span class="o">==</span> <span class="s2">"pulled_docker"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Service class is pulled_docker, resolving pack method from GitHub metadata...&quot;</span>
+                <span class="s2">"Service class is pulled_docker, resolving pack method from GitHub metadata..."</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_pack_method_from_github_metadata</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Service class is not pulled_docker, resolving pack method from source...&quot;</span>
+                <span class="s2">"Service class is not pulled_docker, resolving pack method from source..."</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolve_pack_method_source</span><span class="p">()</span></div>
 </div>

@@ -315,7 +315,7 @@
 <div class="viewcode-block" id="fetch_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.fetch.fetch_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fetch_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Fetches a specified model.</span>
 
 <span class="sd">    This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc...).</span>
@@ -334,7 +334,7 @@
 
 <span class="sd">        Fetch a model from a local directory:</span>
 <span class="sd">        $ ersilia fetch &lt;model_id&gt; --from_dir &lt;path&gt;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
@@ -342,45 +342,45 @@
 
     <span class="c1"># Example usage: ersilia fetch {MODEL}</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Fetch a model from the Ersilia Model Hub&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Download a model from the Ersilia Model Hub and set it up locally. By default, models are fetched from DockerHub. Use the --from_* flags to override the source.&quot;</span><span class="p">,</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">"Fetch a model from the Ersilia Model Hub"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Download a model from the Ersilia Model Hub and set it up locally. By default, models are fetched from DockerHub. Use the --from_* flags to override the source."</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--from_dir&quot;</span><span class="p">,</span>
+        <span class="s2">"--from_dir"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fetch from a local directory containing the model repository.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Fetch from a local directory containing the model repository."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--from_github&quot;</span><span class="p">,</span>
+        <span class="s2">"--from_github"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fetch directly from the model&#39;s GitHub repository.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Fetch directly from the model's GitHub repository."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--from_s3&quot;</span><span class="p">,</span>
+        <span class="s2">"--from_s3"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fetch from the Ersilia AWS S3 bucket.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Fetch from the Ersilia AWS S3 bucket."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--from_dockerhub&quot;</span><span class="p">,</span>
+        <span class="s2">"--from_dockerhub"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Fetch from DockerHub (default).&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Fetch from DockerHub (default)."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--from_hosted&quot;</span><span class="p">,</span>
+        <span class="s2">"--from_hosted"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Connect to a remotely hosted model service by providing its URL. Only creates a local folder structure; the model is not downloaded.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Connect to a remotely hosted model service by providing its URL. Only creates a local folder structure; the model is not downloaded."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
+        <span class="s2">"--version"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Specific Docker image version to fetch from DockerHub.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Specific Docker image version to fetch from DockerHub."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span>
         <span class="n">model</span><span class="p">,</span>
@@ -421,12 +421,12 @@
         <span class="n">fetch_result</span> <span class="o">=</span> <span class="n">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">fetch_success</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;Model fetched successfully&quot;</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> fetched successfully.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span> <span class="o">==</span> <span class="s2">"Model fetched successfully"</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> fetched successfully."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed to fetch: </span><span class="si">{</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed to fetch: </span><span class="si">{</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
                 <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 

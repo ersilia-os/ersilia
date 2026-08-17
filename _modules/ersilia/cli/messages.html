@@ -313,7 +313,7 @@
 <div class="viewcode-block" id="ModelNotFound">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.ModelNotFound">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModelNotFound</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class to handle the scenario when a model is not found.</span>
 
 <span class="sd">    Attributes</span>
@@ -325,7 +325,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    echo()</span>
 <span class="sd">        Prints an error message and exits the program.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
@@ -333,17 +333,17 @@
 <div class="viewcode-block" id="ModelNotFound.echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.ModelNotFound.echo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Prints an error message indicating the model was not found and exits the program.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;Model not found... </span><span class="si">{0}</span><span class="s2"> is not a valid model identifier&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Model not found... </span><span class="si">{0}</span><span class="s2"> is not a valid model identifier"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">text</span>
             <span class="p">),</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;Find valid identifiers in the Ersilia Model Hub: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Find valid identifiers in the Ersilia Model Hub: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">ERSILIA_MODEL_HUB_URL</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -355,7 +355,7 @@
 <div class="viewcode-block" id="ModelNotInLocal">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.ModelNotInLocal">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModelNotInLocal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class to handle the scenario when a model is not found locally.</span>
 
 <span class="sd">    Attributes</span>
@@ -367,7 +367,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    echo()</span>
 <span class="sd">        Prints an error message and exits the program.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
@@ -375,15 +375,15 @@
 <div class="viewcode-block" id="ModelNotInLocal.echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.ModelNotInLocal.echo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Prints an error message indicating the model was not found locally and exits the program.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;Model </span><span class="si">{0}</span><span class="s2"> could not be found in local device&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> could not be found in local device"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;Please fetch the model from the Ersilia Model Hub: ersilia fetch </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Please fetch the model from the Ersilia Model Hub: ersilia fetch </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
             <span class="p">)</span>
         <span class="p">)</span>

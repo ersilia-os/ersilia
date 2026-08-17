@@ -304,7 +304,7 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.hub.content.search</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Search for models&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Search for models"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 
@@ -316,7 +316,7 @@
 <div class="viewcode-block" id="ModelSearcher">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModelSearcher</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class to handle model search operations.</span>
 
 <span class="sd">    This class provides methods to search for models in the catalog table</span>
@@ -326,14 +326,14 @@
 <span class="sd">    ----------</span>
 <span class="sd">    catalog : CatalogTable</span>
 <span class="sd">        The catalog table containing the models.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This class is used for searching through the catalog table</span>
+<span class="w">    </span><span class="sd">"""This class is used for searching through the catalog table</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">    catalog : list and description of model on the hub or in local</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">catalog</span>
@@ -341,7 +341,7 @@
 <div class="viewcode-block" id="ModelSearcher.levenshtein_ratio_and_distance">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.levenshtein_ratio_and_distance">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Algorithm to fuzzy match strings using Levenshtein distance.</span>
 
 <span class="sd">        Parameters</span>
@@ -355,7 +355,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The Levenshtein distance ratio between the two strings.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Initialize matrix of zeros</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
         <span class="n">t</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -392,7 +392,7 @@
 <div class="viewcode-block" id="ModelSearcher.search_text">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.search_text">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">search_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Search using text and return the closest matching string.</span>
 
 <span class="sd">        Parameters</span>
@@ -404,7 +404,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        CatalogTable</span>
 <span class="sd">            The catalog table containing the closest matching models.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">idxs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">ratio_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -415,7 +415,7 @@
             <span class="n">string_ratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
             <span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">string_ratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\s&quot;</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\s"</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
             <span class="k">for</span> <span class="n">r1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
                 <span class="n">ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">levenshtein_ratio_and_distance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">r1</span><span class="p">)</span>
                 <span class="n">string_ratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
@@ -425,11 +425,11 @@
             <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ratio_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ratio_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mf">0.7</span><span class="p">]</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s2">&quot;not found. Here&#39;s a close match:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s2">"not found. Here's a close match:"</span><span class="p">)</span>
 
         <span class="n">isEmpty</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">isEmpty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;No such element present. Please look through the catalog table.&quot;</span>
+            <span class="k">return</span> <span class="s2">"No such element present. Please look through the catalog table."</span>
         <span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">CatalogTable</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span></div>
@@ -438,7 +438,7 @@
 <div class="viewcode-block" id="ModelSearcher.search_mode">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.search.ModelSearcher.search_mode">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">search_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CatalogTable</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Search the mode of training.</span>
 
 <span class="sd">        Parameters</span>
@@ -450,7 +450,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        CatalogTable</span>
 <span class="sd">            The catalog table containing the models with the specified mode of training.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">idxs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">data</span>
@@ -460,7 +460,7 @@
                 <span class="n">idxs</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="n">i</span><span class="p">])</span>
         <span class="n">isEmpty</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">isEmpty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;No such element present. Look through the catalog table.&quot;</span>
+            <span class="k">return</span> <span class="s2">"No such element present. Look through the catalog table."</span>
 
         <span class="n">R</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">]</span>
 

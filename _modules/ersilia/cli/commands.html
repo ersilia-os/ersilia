@@ -312,7 +312,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">__version__</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
-<span class="n">_ASCII_ART_FILE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="s2">&quot;assets&quot;</span> <span class="o">/</span> <span class="s2">&quot;ascii-art.txt&quot;</span>
+<span class="n">_ASCII_ART_FILE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="s2">"assets"</span> <span class="o">/</span> <span class="s2">"ascii-art.txt"</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_print_logo</span><span class="p">():</span>
@@ -322,7 +322,7 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 
     <span class="c1"># Ersilia palette — deeper tones visible on both dark and light terminals</span>
-    <span class="n">gradient</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#E07040&quot;</span><span class="p">,</span> <span class="s2">&quot;#C060C0&quot;</span><span class="p">,</span> <span class="s2">&quot;#8855BB&quot;</span><span class="p">,</span> <span class="s2">&quot;#5599DD&quot;</span><span class="p">,</span> <span class="s2">&quot;#55BB77&quot;</span><span class="p">]</span>
+    <span class="n">gradient</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"#E07040"</span><span class="p">,</span> <span class="s2">"#C060C0"</span><span class="p">,</span> <span class="s2">"#8855BB"</span><span class="p">,</span> <span class="s2">"#5599DD"</span><span class="p">,</span> <span class="s2">"#55BB77"</span><span class="p">]</span>
 
     <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">(</span><span class="n">highlight</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="n">_ASCII_ART_FILE</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
@@ -332,24 +332,24 @@
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">gradient</span><span class="p">[</span><span class="n">ci</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">gradient</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">n</span><span class="p">]</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;bold </span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="sa">f</span><span class="s2">"bold </span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">ci</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="s2">""</span><span class="p">)</span>
 
 
 <span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">USE_RICH_MARKUP</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">SHOW_ARGUMENTS</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">COLOR_SYSTEM</span> <span class="o">=</span> <span class="s2">&quot;truecolor&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_OPTION</span> <span class="o">=</span> <span class="s2">&quot;bold magenta&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_COMMAND</span> <span class="o">=</span> <span class="s2">&quot;bold green&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_METAVAR</span> <span class="o">=</span> <span class="s2">&quot;italic yellow&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_SWITCH</span> <span class="o">=</span> <span class="s2">&quot;underline cyan&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_USAGE</span> <span class="o">=</span> <span class="s2">&quot;bold blue&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_OPTION_DEFAULT</span> <span class="o">=</span> <span class="s2">&quot;dim italic&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_HELPTEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_ERRORS_SUGGESTION</span> <span class="o">=</span> <span class="s2">&quot;bold&quot;</span>
-<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">HEADER_TEXT</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Ersilia version: </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">COLOR_SYSTEM</span> <span class="o">=</span> <span class="s2">"truecolor"</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_OPTION</span> <span class="o">=</span> <span class="s2">"bold magenta"</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_COMMAND</span> <span class="o">=</span> <span class="s2">"bold green"</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_METAVAR</span> <span class="o">=</span> <span class="s2">"italic yellow"</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_SWITCH</span> <span class="o">=</span> <span class="s2">"underline cyan"</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_USAGE</span> <span class="o">=</span> <span class="s2">"bold blue"</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_OPTION_DEFAULT</span> <span class="o">=</span> <span class="s2">"dim italic"</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_HELPTEXT</span> <span class="o">=</span> <span class="s2">""</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">STYLE_ERRORS_SUGGESTION</span> <span class="o">=</span> <span class="s2">"bold"</span>
+<span class="n">click</span><span class="o">.</span><span class="n">rich_click</span><span class="o">.</span><span class="n">HEADER_TEXT</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Ersilia version: </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">"</span>
 
 <span class="c1"># ruff: noqa: D101, D102</span>
 
@@ -360,7 +360,7 @@
 <div class="viewcode-block" id="ErsiliaCommandGroup.command">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.ErsiliaCommandGroup.command">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;cls&quot;</span><span class="p">,</span> <span class="n">RichCommand</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">"cls"</span><span class="p">,</span> <span class="n">RichCommand</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">RichGroup</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
@@ -370,7 +370,7 @@
         <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
         <span class="n">argv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">argv</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">argv</span> <span class="ow">or</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">argv</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">argv</span> <span class="ow">or</span> <span class="s2">"--help"</span> <span class="ow">in</span> <span class="n">argv</span> <span class="ow">or</span> <span class="s2">"-h"</span> <span class="ow">in</span> <span class="n">argv</span><span class="p">:</span>
             <span class="n">_print_logo</span><span class="p">()</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </div>
@@ -379,16 +379,16 @@
 
 <span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span>
     <span class="bp">cls</span><span class="o">=</span><span class="n">ErsiliaCommandGroup</span><span class="p">,</span>
-    <span class="n">context_settings</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;show_default&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-    <span class="n">epilog</span><span class="o">=</span><span class="s2">&quot;To learn more about a specific command, run: ersilia COMMAND --help&quot;</span><span class="p">,</span>
+    <span class="n">context_settings</span><span class="o">=</span><span class="p">{</span><span class="s2">"show_default"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="n">epilog</span><span class="o">=</span><span class="s2">"To learn more about a specific command, run: ersilia COMMAND --help"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">version_option</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
+    <span class="s2">"-v"</span><span class="p">,</span>
+    <span class="s2">"--verbose"</span><span class="p">,</span>
     <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show logging on terminal when running commands.&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">"Show logging on terminal when running commands."</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">ersilia_cli</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>

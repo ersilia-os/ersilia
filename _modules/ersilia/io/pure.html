@@ -313,7 +313,7 @@
 <div class="viewcode-block" id="PureDataTyper">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.pure.PureDataTyper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PureDataTyper</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class used to determine the type of data provided.</span>
 
 <span class="sd">    Parameters</span>
@@ -331,8 +331,8 @@
 
 <span class="sd">        &gt;&gt;&gt; data_typer = PureDataTyper(data=[1, 2, 3])</span>
 <span class="sd">        &gt;&gt;&gt; data_typer.get_type()</span>
-<span class="sd">        {&#39;type&#39;: &#39;numeric_array&#39;, &#39;shape&#39;: (3,)}</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        {'type': 'numeric_array', 'shape': (3,)}</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">any</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -405,14 +405,14 @@
 <div class="viewcode-block" id="PureDataTyper.get_type_from_metadata">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.pure.PureDataTyper.get_type_from_metadata">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_type_from_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the type of data from the model metadata.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            A dictionary containing the type and shape of the data if available, otherwise None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">dest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
@@ -420,28 +420,28 @@
             <span class="n">meta</span> <span class="o">=</span> <span class="n">get_metadata_from_base_dir</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">output_type</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;Output Type&quot;</span><span class="p">]</span>
-        <span class="n">output_shape</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;Output Shape&quot;</span><span class="p">]</span>
+        <span class="n">output_type</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">"Output Type"</span><span class="p">]</span>
+        <span class="n">output_shape</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s2">"Output Shape"</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_type</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="n">output_shape</span> <span class="o">==</span> <span class="s2">&quot;Flexible List&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output_shape</span> <span class="o">==</span> <span class="s2">"Flexible List"</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">output_type</span> <span class="o">=</span> <span class="n">output_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">output_shape</span> <span class="o">==</span> <span class="s2">&quot;Single&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;Integer&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numeric&quot;</span><span class="p">}</span>
-            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;Float&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numeric&quot;</span><span class="p">}</span>
-            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;String&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">output_shape</span> <span class="o">==</span> <span class="s2">"Single"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">"Integer"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"numeric"</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">"Float"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"numeric"</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">"String"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">}</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="n">output_shape</span> <span class="o">==</span> <span class="s2">&quot;List&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;Integer&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numeric_array&quot;</span><span class="p">,</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">}</span>
-            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;Float&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numeric_array&quot;</span><span class="p">,</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">}</span>
-            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">&quot;String&quot;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string_array&quot;</span><span class="p">,</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">output_shape</span> <span class="o">==</span> <span class="s2">"List"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">"Integer"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"numeric_array"</span><span class="p">,</span> <span class="s2">"shape"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">"Float"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"numeric_array"</span><span class="p">,</span> <span class="s2">"shape"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">output_type</span> <span class="o">==</span> <span class="s2">"String"</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string_array"</span><span class="p">,</span> <span class="s2">"shape"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">}</span>
             <span class="k">return</span>
         <span class="k">return</span></div>
 
@@ -449,30 +449,30 @@
 <div class="viewcode-block" id="PureDataTyper.get_type">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.pure.PureDataTyper.get_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Determine the type of the data.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            A dictionary containing the type and shape of the data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_type_from_metadata</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">data_type</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_string</span><span class="p">():</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string"</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric</span><span class="p">():</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numeric&quot;</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"numeric"</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_numeric_array</span><span class="p">():</span>
             <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;numeric_array&quot;</span><span class="p">,</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="n">shape</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"numeric_array"</span><span class="p">,</span> <span class="s2">"shape"</span><span class="p">:</span> <span class="n">shape</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_string_array</span><span class="p">():</span>
             <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string_array&quot;</span><span class="p">,</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="n">shape</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"string_array"</span><span class="p">,</span> <span class="s2">"shape"</span><span class="p">:</span> <span class="n">shape</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_mixed_array</span><span class="p">():</span>
             <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
-            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;mixed_array&quot;</span><span class="p">,</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="n">shape</span><span class="p">}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">"type"</span><span class="p">:</span> <span class="s2">"mixed_array"</span><span class="p">,</span> <span class="s2">"shape"</span><span class="p">:</span> <span class="n">shape</span><span class="p">}</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 </div>
 

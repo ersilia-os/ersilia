@@ -314,7 +314,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Using slow pure-python SequenceMatcher&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">"Using slow pure-python SequenceMatcher"</span><span class="p">)</span>
 
 <span class="c1"># ruff: noqa</span>
 <span class="n">MISSING_PACKAGES</span> <span class="o">=</span> <span class="kc">False</span>
@@ -364,7 +364,7 @@
 <div class="viewcode-block" id="IOService">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IOService</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Service for handling input/output operations related to model testing.</span>
 
 <span class="sd">    Parameters</span>
@@ -382,11 +382,11 @@
 
 <span class="sd">        ios = IOService(</span>
 <span class="sd">            logger=logger,</span>
-<span class="sd">            model_id=&quot;model_id&quot;,</span>
-<span class="sd">            dir=&quot;/path/to/dir&quot;,</span>
+<span class="sd">            model_id="model_id",</span>
+<span class="sd">            dir="/path/to/dir",</span>
 <span class="sd">        )</span>
 <span class="sd">        ios.read_metadata()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">from_dir</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">from_dir</span> <span class="o">=</span> <span class="n">from_dir</span>
@@ -403,7 +403,7 @@
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.get_model_type">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_model_type</span><span class="p">(</span><span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the type of the model based on the repository contents.</span>
 
 <span class="sd">        Parameters</span>
@@ -417,7 +417,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            The type of the model (e.g., PACK_METHOD_FASTAPI).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">PACK_METHOD_FASTAPI</span></div>
 
 
@@ -425,7 +425,7 @@
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.read_csv_values">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_csv_values</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Reads a CSV file and returns its values excluding the header row.</span>
 
 <span class="sd">        Args:</span>
@@ -433,9 +433,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list: A list of rows (each row is a list of values) from the CSV file without the header.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
                 <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
                 <span class="nb">next</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">return</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">]</span>
@@ -472,16 +472,16 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">get_output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;Fixed&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;Output Consistency&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Output Consistency&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="s2">&quot;Fixed&quot;</span></div>
+            <span class="k">return</span> <span class="s2">"Fixed"</span>
+        <span class="k">if</span> <span class="s2">"Output Consistency"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"Output Consistency"</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s2">"Fixed"</span></div>
 
 
 <div class="viewcode-block" id="IOService.get_file_requirements">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.get_file_requirements">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_file_requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the list of required files for the model.</span>
 
 <span class="sd">        Returns</span>
@@ -493,7 +493,7 @@
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If the model type is unsupported.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">from_dir</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_dir</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS_TMP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">METADATA_JSON_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">ERSILIAPACK_BACK_FILES</span>
@@ -511,27 +511,27 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">check_function</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> has correct entry.&quot;</span> <span class="k">if</span> <span class="n">data</span> <span class="k">else</span> <span class="s2">&quot;File exists&quot;</span>
+                <span class="sa">f</span><span class="s2">"Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> has correct entry."</span> <span class="k">if</span> <span class="n">data</span> <span class="k">else</span> <span class="s2">"File exists"</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">check_name</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">)))</span>
             <span class="k">return</span> <span class="kc">True</span>
 
         <span class="k">except</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span> <span class="k">as</span> <span class="n">ef</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;EmptyField exception caught for key &#39;</span><span class="si">{</span><span class="n">ef</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"EmptyField exception caught for key '</span><span class="si">{</span><span class="n">ef</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> has invalid value&quot;</span>
+                <span class="sa">f</span><span class="s2">"Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> has invalid value"</span>
                 <span class="k">if</span> <span class="n">data</span>
-                <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+                <span class="k">else</span> <span class="sa">f</span><span class="s2">"File </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> does not exist"</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">check_name</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)))</span>
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">except</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span> <span class="k">as</span> <span class="n">ek</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;EmptyKey exception caught for key &#39;</span><span class="si">{</span><span class="n">ek</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"EmptyKey exception caught for key '</span><span class="si">{</span><span class="n">ek</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Key </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> not present in the metadata file&quot;</span>
+                <span class="sa">f</span><span class="s2">"Key </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> not present in the metadata file"</span>
                 <span class="k">if</span> <span class="n">data</span>
-                <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+                <span class="k">else</span> <span class="sa">f</span><span class="s2">"File </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> does not exist"</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">check_name</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">NOT_PRESENT</span><span class="p">))</span>
@@ -539,11 +539,11 @@
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An unexpected exception occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"An unexpected exception occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> has invalid value&quot;</span>
+                <span class="sa">f</span><span class="s2">"Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> has invalid value"</span>
                 <span class="k">if</span> <span class="n">data</span>
-                <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> does not exist&quot;</span>
+                <span class="k">else</span> <span class="sa">f</span><span class="s2">"File </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> does not exist"</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">check_name</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)))</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -560,31 +560,31 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata_file</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">):</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".yml"</span><span class="p">,</span> <span class="s2">".yaml"</span><span class="p">)):</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file format: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported file format: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">return</span> <span class="kc">None</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">_read_metadata_from_strict_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata_file</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">):</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">)):</span>
+                <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">".yml"</span><span class="p">,</span> <span class="s2">".yaml"</span><span class="p">)):</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported file format: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported file format: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">return</span> <span class="kc">None</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">_combine_dir_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;directory_size_mb&quot;</span><span class="p">,</span> <span class="s2">&quot;model_size_check&quot;</span><span class="p">,</span> <span class="s2">&quot;directory_size_check&quot;</span><span class="p">)</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"directory_size_mb"</span><span class="p">,</span> <span class="s2">"model_size_check"</span><span class="p">,</span> <span class="s2">"directory_size_check"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]][</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">2</span><span class="p">]][</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
             <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
@@ -615,56 +615,56 @@
 <div class="viewcode-block" id="IOService.collect_and_save_json">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.collect_and_save_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">collect_and_save_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">from_dockerhub</span><span class="p">,</span> <span class="n">deep</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Helper function to collect JSON results and save them to a file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Json result</span><span class="se">\n</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Json result</span><span class="se">\n</span><span class="s2">: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_keys</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">from_dockerhub</span><span class="o">=</span><span class="n">from_dockerhub</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="n">deep</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_dir_size</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">check_keys_order</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">}</span>
 
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_create_json_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">clean_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">u[0-9a-fA-F]</span><span class="si">{4}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"</span><span class="se">\\</span><span class="s2">u[0-9a-fA-F]</span><span class="si">{4}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">s</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">sanitize_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[ \-./]&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[ \-./]"</span><span class="p">,</span> <span class="s2">"_"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">parse_status</span><span class="p">(</span><span class="n">status</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">status</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
-                    <span class="sa">r</span><span class="s2">&quot;[-+]?\d*\.\d+|\d+&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">())),</span> <span class="n">status</span>
+                    <span class="sa">r</span><span class="s2">"[-+]?\d*\.\d+|\d+"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">())),</span> <span class="n">status</span>
                 <span class="p">)</span>
-                <span class="k">if</span> <span class="s2">&quot;[green]✔&quot;</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">"[green]✔"</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
                     <span class="k">return</span> <span class="kc">True</span>
-                <span class="k">elif</span> <span class="s2">&quot;[red]✘&quot;</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="s2">"[red]✘"</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
                     <span class="k">return</span> <span class="kc">False</span>
-                <span class="k">elif</span> <span class="s2">&quot;[yellow]✘&quot;</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="s2">&quot;not present&quot;</span>
-                <span class="k">elif</span> <span class="s2">&quot;[yellow]⚠&quot;</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="s2">&quot;warning&quot;</span>
+                <span class="k">elif</span> <span class="s2">"[yellow]✘"</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">"not present"</span>
+                <span class="k">elif</span> <span class="s2">"[yellow]⚠"</span> <span class="ow">in</span> <span class="n">status</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">"warning"</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\[.*?\]&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\[.*?\]"</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">status</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">parse_performance</span><span class="p">(</span><span class="n">status</span><span class="p">):</span>
-            <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(\d+) predictions executed in (-?\d+\.\d+) seconds. \n&quot;</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"(\d+) predictions executed in (-?\d+\.\d+) seconds. \n"</span>
             <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">secs</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">status</span><span class="p">):</span>
                 <span class="n">secs_f</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">secs</span><span class="p">)</span>
-                <span class="n">out</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;pred_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">secs_f</span>
+                <span class="n">out</span><span class="p">[</span><span class="sa">f</span><span class="s2">"pred_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">secs_f</span>
                 <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">return</span> <span class="n">out</span>
 
@@ -675,12 +675,12 @@
             <span class="n">check_name</span> <span class="o">=</span> <span class="n">sanitize_name</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">check_status</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-            <span class="k">if</span> <span class="n">check_name</span> <span class="o">==</span> <span class="s2">&quot;computational_performance_tracking_details&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">check_name</span> <span class="o">==</span> <span class="s2">"computational_performance_tracking_details"</span><span class="p">:</span>
                 <span class="n">json_data</span><span class="p">[</span><span class="n">check_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_performance</span><span class="p">(</span><span class="n">check_status</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">check_name</span> <span class="ow">in</span> <span class="p">(</span>
-                <span class="s2">&quot;environment_size_mb&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;directory_size_mb&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;image_size_mb&quot;</span><span class="p">,</span>
+                <span class="s2">"environment_size_mb"</span><span class="p">,</span>
+                <span class="s2">"directory_size_mb"</span><span class="p">,</span>
+                <span class="s2">"image_size_mb"</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="n">json_data</span><span class="p">[</span><span class="n">check_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">check_status</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -694,26 +694,26 @@
         <span class="n">d_col_width</span> <span class="o">=</span> <span class="mi">30</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">large_table</span> <span class="k">else</span> <span class="mi">20</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
-            <span class="n">title</span><span class="o">=</span><span class="n">Text</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold light_green&quot;</span><span class="p">),</span>
-            <span class="n">border_style</span><span class="o">=</span><span class="s2">&quot;light_green&quot;</span><span class="p">,</span>
+            <span class="n">title</span><span class="o">=</span><span class="n">Text</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold light_green"</span><span class="p">),</span>
+            <span class="n">border_style</span><span class="o">=</span><span class="s2">"light_green"</span><span class="p">,</span>
             <span class="n">show_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">f_col_width</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">justify</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">f_col_width</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">d_col_width</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">justify</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">l_col_width</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">justify</span><span class="o">=</span><span class="s2">"center"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">d_col_width</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">headers</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">justify</span><span class="o">=</span><span class="s2">"right"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">l_col_width</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">)</span>
 
         <span class="n">prev_value</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
             <span class="n">first_col</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">merge</span> <span class="ow">and</span> <span class="n">first_col</span> <span class="o">==</span> <span class="n">prev_value</span><span class="p">:</span>
-                <span class="n">first_col</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">first_col</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">prev_value</span> <span class="o">=</span> <span class="n">first_col</span>
 
             <span class="n">styled_row</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">Text</span><span class="p">(</span><span class="n">first_col</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">),</span>
+                <span class="n">Text</span><span class="p">(</span><span class="n">first_col</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">),</span>
                 <span class="o">*</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span>
                 <span class="n">row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
             <span class="p">]</span>
@@ -728,7 +728,7 @@
 <div class="viewcode-block" id="IOService.get_conda_env_size">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.get_conda_env_size">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_conda_env_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the size of the Conda environment for the model.</span>
 
 <span class="sd">        Returns</span>
@@ -740,22 +740,22 @@
 <span class="sd">        ------</span>
 <span class="sd">        Exception</span>
 <span class="sd">            If there is an error calculating the size.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">loc</span> <span class="o">=</span> <span class="n">SetupService</span><span class="o">.</span><span class="n">get_conda_env_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_directory_size</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Error calculating size of Conda environment &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Error calculating size of Conda environment '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error calculating size of Conda environment &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error calculating size of Conda environment '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">': </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">return</span> <span class="mi">0</span></div>
 
 
 <div class="viewcode-block" id="IOService.calculate_directory_size">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.calculate_directory_size">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">calculate_directory_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the size of a directory.</span>
 
 <span class="sd">        Parameters</span>
@@ -767,10 +767,10 @@
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
 <span class="sd">            The size of the directory.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">size_output</span> <span class="o">=</span> <span class="n">SetupService</span><span class="o">.</span><span class="n">run_command</span><span class="p">(</span>
-                <span class="p">[</span><span class="s2">&quot;/usr/bin/du&quot;</span><span class="p">,</span> <span class="s2">&quot;-sm&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">"/usr/bin/du"</span><span class="p">,</span> <span class="s2">"-sm"</span><span class="p">,</span> <span class="n">path</span><span class="p">],</span>
                 <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
                 <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -778,54 +778,54 @@
             <span class="n">size</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">size_output</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">size</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error calculating directory size for </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error calculating directory size for </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error calculating directory size for </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error calculating directory size for </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">return</span> <span class="mi">0</span></div>
 
 
 <div class="viewcode-block" id="IOService.calculate_image_size">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.calculate_image_size">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_image_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;latest&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_image_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">"latest"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the size of a Docker image.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        tag : str, optional</span>
-<span class="sd">            The tag of the Docker image (default is &#39;latest&#39;).</span>
+<span class="sd">            The tag of the Docker image (default is 'latest').</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            The size of the Docker image.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">image_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">        """</span>
+        <span class="n">image_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">DOCKERHUB_ORG</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">"</span>
         <span class="n">set_docker_host</span><span class="p">()</span>
         <span class="n">client</span> <span class="o">=</span> <span class="n">docker</span><span class="o">.</span><span class="n">from_env</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">image</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">images</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
-            <span class="n">size_bytes</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;Size&quot;</span><span class="p">]</span>
+            <span class="n">size_bytes</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">"Size"</span><span class="p">]</span>
             <span class="n">size_mb</span> <span class="o">=</span> <span class="n">size_bytes</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">size_mb</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">Checks</span><span class="o">.</span><span class="n">SIZE_CACL_SUCCESS</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">size_mb</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">Checks</span><span class="o">.</span><span class="n">SIZE_CACL_SUCCESS</span><span class="o">.</span><span class="n">value</span>
         <span class="k">except</span> <span class="n">docker</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">ImageNotFound</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Image &#39;</span><span class="si">{</span><span class="n">image_name</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span><span class="p">,</span> <span class="n">Checks</span><span class="o">.</span><span class="n">SIZE_CACL_FAILED</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"Image '</span><span class="si">{</span><span class="n">image_name</span><span class="si">}</span><span class="s2">' not found."</span><span class="p">,</span> <span class="n">Checks</span><span class="o">.</span><span class="n">SIZE_CACL_FAILED</span><span class="o">.</span><span class="n">value</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;An error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">Checks</span><span class="o">.</span><span class="n">SIZE_CACL_FAILED</span><span class="o">.</span><span class="n">value</span></div>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"An error occurred: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">Checks</span><span class="o">.</span><span class="n">SIZE_CACL_FAILED</span><span class="o">.</span><span class="n">value</span></div>
 
 
 <div class="viewcode-block" id="IOService.get_model_dim">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.get_model_dim">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_model_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the model dimension from the metadata and the run column file</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        tuple</span>
 <span class="sd">          A dimensions from the metadata and the run column file</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">PREDEFINED_COLUMN_FILE</span><span class="p">)</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;Output Dimension&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">"Output Dimension"</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_metadata</span><span class="p">()</span>
         <span class="n">odm</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="n">odc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">IOService</span><span class="o">.</span><span class="n">read_csv_values</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
@@ -835,62 +835,62 @@
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_directories_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the sizes of the model directory.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">          A string of containing size of the model directory</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">dir_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_directory_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
-        <span class="n">dir_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dir_size</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">dir_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dir_size</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">dir_size</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_env_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the sizes of the Conda environment directory.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">          A string of containing size of the model environment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">env_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conda_env_size</span><span class="p">()</span>
-        <span class="n">env_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env_size</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">env_size</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">env_size</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">env_size</span>
     
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_submit_smiles_and_get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">cmd_out</span><span class="p">,</span> <span class="n">poll_interval</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;http://[a-zA-Z0-9.-]+:\d+&quot;</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"http://[a-zA-Z0-9.-]+:\d+"</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">cmd_out</span><span class="p">)</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">url</span> <span class="o">=</span> <span class="n">normalize_connect_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="n">_ensure_ready</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span><span class="n">root</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">base_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">DEFAULT_ASYNC_API_NAME</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">base_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">DEFAULT_ASYNC_API_NAME</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/submit&quot;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/submit"</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="nb">input</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job submission failed: </span><span class="si">{</span><span class="k">await</span><span class="w"> </span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Job submission failed: </span><span class="si">{</span><span class="k">await</span><span class="w"> </span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
                     <span class="k">return</span> <span class="p">[]</span>
                 <span class="n">submission</span> <span class="o">=</span> <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-                <span class="n">job_id</span> <span class="o">=</span> <span class="n">submission</span><span class="p">[</span><span class="s2">&quot;job_id&quot;</span><span class="p">]</span>
+                <span class="n">job_id</span> <span class="o">=</span> <span class="n">submission</span><span class="p">[</span><span class="s2">"job_id"</span><span class="p">]</span>
 
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/status/</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+                <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/status/</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
                     <span class="n">status_resp</span> <span class="o">=</span> <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-                    <span class="n">status</span> <span class="o">=</span> <span class="n">status_resp</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;completed&quot;</span><span class="p">:</span>
+                    <span class="n">status</span> <span class="o">=</span> <span class="n">status_resp</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"completed"</span><span class="p">:</span>
                         <span class="k">break</span>
-                    <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;failed&quot;</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Job failed during processing&quot;</span><span class="p">}</span>
+                    <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"failed"</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="p">{</span><span class="s2">"error"</span><span class="p">:</span> <span class="s2">"Job failed during processing"</span><span class="p">}</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">poll_interval</span><span class="p">)</span>
 
-            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/result/</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/result/</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">resp</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not retrieve results: </span><span class="si">{</span><span class="k">await</span><span class="w"> </span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not retrieve results: </span><span class="si">{</span><span class="k">await</span><span class="w"> </span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                     <span class="k">return</span> <span class="p">[]</span>
                 <span class="k">return</span> <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
@@ -912,33 +912,33 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_env</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">python_version</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating conda environment &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&#39; with Python </span><span class="si">{</span><span class="n">python_version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Creating conda environment '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">' with Python </span><span class="si">{</span><span class="n">python_version</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">python_version</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Conda environment &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&#39; already exists&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Conda environment '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">' already exists"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_install_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;pip&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'pip'</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                         <span class="n">spec</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                         <span class="n">flags</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">spec</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">==</span><span class="si">{</span><span class="n">cmd</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="n">spec</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">==</span><span class="si">{</span><span class="n">cmd</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
                         <span class="n">flags</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing pip package: </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;conda&quot;</span><span class="p">,</span> <span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="p">]</span> <span class="o">+</span> <span class="n">flags</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Installing pip package: </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"conda"</span><span class="p">,</span> <span class="s2">"run"</span><span class="p">,</span> <span class="s2">"-n"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="s2">"pip"</span><span class="p">,</span> <span class="s2">"install"</span><span class="p">,</span> <span class="n">spec</span><span class="p">]</span> <span class="o">+</span> <span class="n">flags</span>
                     <span class="n">run_command</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;conda&#39;</span><span class="p">:</span>
+                <span class="k">elif</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'conda'</span><span class="p">:</span>
                     <span class="n">extras</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Installing conda package: </span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;conda&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;-n&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot;-y&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">extras</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Installing conda package: </span><span class="si">{</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">extras</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                    <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"conda"</span><span class="p">,</span> <span class="s2">"install"</span><span class="p">,</span> <span class="s2">"-n"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="s2">"-y"</span><span class="p">]</span> <span class="o">+</span> <span class="n">extras</span>
                     <span class="n">run_command</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown install command: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown install command: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running raw command: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Running raw command: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
 
 <div class="viewcode-block" id="PackageInstaller.install_packages_from_dir">
@@ -950,7 +950,7 @@
         <span class="n">env_exists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conda</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">env_location</span> <span class="o">=</span> <span class="n">SetupService</span><span class="o">.</span><span class="n">get_conda_env_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;[install_packages_from_dir] conda env &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&#39; exists=</span><span class="si">{</span><span class="n">env_exists</span><span class="si">}</span><span class="s2"> path=</span><span class="si">{</span><span class="n">env_location</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"[install_packages_from_dir] conda env '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">' exists=</span><span class="si">{</span><span class="n">env_exists</span><span class="si">}</span><span class="s2"> path=</span><span class="si">{</span><span class="n">env_location</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">yaml_path</span><span class="p">):</span>
@@ -959,18 +959,18 @@
             <span class="n">parser</span> <span class="o">=</span> <span class="n">DockerfileInstallParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Neither &#39;install.yml&#39; nor &#39;Dockerfile&#39; was found in the specified directory.&quot;</span>
+                <span class="s2">"Neither 'install.yml' nor 'Dockerfile' was found in the specified directory."</span>
             <span class="p">)</span>
             <span class="k">return</span>
-        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preparing test for bash command execution&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">shell_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">&quot;install.sh&quot;</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Preparing test for bash command execution"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">shell_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s2">"install.sh"</span><span class="p">)</span>
         <span class="n">python_version</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">python_version</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialize_env</span><span class="p">(</span><span class="n">python_version</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">write_bash_script</span><span class="p">(</span><span class="n">shell_path</span><span class="p">)</span>
-        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Environment creation and package installation started!&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Environment creation and package installation started!"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">_install_packages</span><span class="p">(</span><span class="n">shell_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Installation completed in the conda environment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Installation completed in the conda environment: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 </div>
 

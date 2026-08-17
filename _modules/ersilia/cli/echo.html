@@ -327,7 +327,7 @@
 <div class="viewcode-block" id="Silencer">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Silencer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class to manage the silencing of CLI output.</span>
 
 <span class="sd">    Attributes</span>
@@ -343,7 +343,7 @@
 <span class="sd">        Enables CLI output.</span>
 <span class="sd">    silence()</span>
 <span class="sd">        Disables CLI output.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SILENCE_FILE</span><span class="p">)</span>
@@ -353,37 +353,37 @@
 <div class="viewcode-block" id="Silencer.is_silence">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.is_silence">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks if the CLI output is silenced.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the CLI output is silenced, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;silence&quot;</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s2">"silence"</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Silencer.speak">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.speak">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">speak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Enables CLI output.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;silence&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">"silence"</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Silencer.silence">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.Silencer.silence">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">silence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Disables CLI output.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">&quot;silence&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">silence_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span><span class="s2">"silence"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 </div>
 
 
@@ -391,34 +391,34 @@
 <div class="viewcode-block" id="echo">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.echo">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">harmonize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;verbosity&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="n">emoji</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">emoji</span><span class="o">.</span><span class="n">emojize</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;alias&quot;</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">emoji</span><span class="o">.</span><span class="n">emojize</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">"alias"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">harmonize</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span>
 
-    <span class="n">color</span> <span class="o">=</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fg&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;style&quot;</span><span class="p">)</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fg"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"color"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"style"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;bright_yellow&quot;</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">&quot;⚠&quot;</span>
-    <span class="k">elif</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;bright_red&quot;</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">&quot;✖&quot;</span>
-    <span class="k">elif</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="s2">&quot;bright_green&quot;</span><span class="p">):</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">&quot;✓&quot;</span>
+    <span class="k">if</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"yellow"</span><span class="p">,</span> <span class="s2">"bright_yellow"</span><span class="p">):</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"⚠"</span>
+    <span class="k">elif</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"red"</span><span class="p">,</span> <span class="s2">"bright_red"</span><span class="p">):</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"✖"</span>
+    <span class="k">elif</span> <span class="n">color</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"green"</span><span class="p">,</span> <span class="s2">"bright_green"</span><span class="p">):</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"✓"</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">icon</span> <span class="o">=</span> <span class="s2">&quot;▪&quot;</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="s2">"▪"</span>
 
-    <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">icon</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">icon</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">isatty</span><span class="p">():</span>
         <span class="n">width</span> <span class="o">=</span> <span class="n">shutil</span><span class="o">.</span><span class="n">get_terminal_size</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">click</span><span class="o">.</span><span class="n">wrap_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">styles</span><span class="p">:</span>
-        <span class="n">styles</span><span class="p">[</span><span class="s2">&quot;dim&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">styles</span><span class="p">[</span><span class="s2">"dim"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">))</span></div>
 
@@ -427,16 +427,16 @@
 <div class="viewcode-block" id="spinner">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.echo.spinner">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">spinner</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">&quot;verbosity&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="n">console</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">)):</span>
+    <span class="k">with</span> <span class="n">console</span><span class="o">.</span><span class="n">status</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">)):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ▪  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;dim&quot;</span><span class="p">))</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ▪  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"dim"</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">result</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  ✖  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
+            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✖  </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"red"</span><span class="p">))</span>
             <span class="k">raise</span></div>
 
 </pre></div>

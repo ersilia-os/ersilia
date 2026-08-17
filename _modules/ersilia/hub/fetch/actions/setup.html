@@ -314,7 +314,7 @@
 <div class="viewcode-block" id="SetupChecker">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SetupChecker</span><span class="p">(</span><span class="n">BaseAction</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Checks the setup requirements for the model to be installed and run.</span>
 
 <span class="sd">    Parameters</span>
@@ -328,7 +328,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    check()</span>
 <span class="sd">        Checks all setup requirements.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">force_from_github</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -341,45 +341,45 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_gh_cli</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">GithubCliRequirement</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;GitHub CLI is installed&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"GitHub CLI is installed"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;GitHub CLI is not installed. Ersilia can work without it, but we highly recommend that you install this tool.&quot;</span>
+                <span class="s2">"GitHub CLI is not installed. Ersilia can work without it, but we highly recommend that you install this tool."</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_git_lfs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking Git LFS&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Checking Git LFS"</span><span class="p">)</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">GitLfsRequirement</span><span class="p">()</span>
         <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">(</span><span class="n">install_if_necessary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Git LFS is installed&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Git LFS is installed"</span><span class="p">)</span>
         <span class="n">req</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Git LFS has been activated&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Git LFS has been activated"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">PingRequirement</span><span class="p">()</span>
         <span class="n">req</span><span class="o">.</span><span class="n">is_connected</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Connected to the internet&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Connected to the internet"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">CondaRequirement</span><span class="p">()</span>
         <span class="n">req</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Conda is installed&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Conda is installed"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_eos_home_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">EosHomePathRequirement</span><span class="p">()</span>
         <span class="n">req</span><span class="o">.</span><span class="n">eos_home_path_exists</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;EOS Home path exists&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"EOS Home path exists"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SetupChecker.check">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.actions.html#ersilia.hub.fetch.actions.setup.SetupChecker.check">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks all setup requirements.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gh_cli</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_from_github</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Skipping upfront Git LFS setup for --from_github. It will be installed on demand if eosvc fallback is needed.&quot;</span>
+                <span class="s2">"Skipping upfront Git LFS setup for --from_github. It will be installed on demand if eosvc fallback is needed."</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_git_lfs</span><span class="p">()</span>

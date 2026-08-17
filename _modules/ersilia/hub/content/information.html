@@ -326,7 +326,7 @@
 <div class="viewcode-block" id="Information">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.Information">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Information</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class to handle the information of a models.</span>
 
 <span class="sd">    This class provides methods to get various information about a model,</span>
@@ -338,7 +338,7 @@
 <span class="sd">        The ID of the model.</span>
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration settings in JSON format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -351,7 +351,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_pack_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">pack_mode_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_folder</span><span class="p">,</span> <span class="n">PACKMODE_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pack_mode_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pack_mode_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pack_mode_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -359,7 +359,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">service_class_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">SERVICE_CLASS_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">service_class_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">service_class_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">service_class_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -375,7 +375,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_api_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">api_schema_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_folder</span><span class="p">,</span> <span class="n">API_SCHEMA_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">api_schema_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">api_schema_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">api_schema_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -383,7 +383,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">size_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_folder</span><span class="p">,</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">size_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">size_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">size_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -391,9 +391,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_docker_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">docker_info_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_folder</span><span class="p">,</span> <span class="n">DOCKER_INFO_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">docker_info_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">docker_info_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">docker_info_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tag"</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -406,7 +406,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_card</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">card_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_folder</span><span class="p">,</span> <span class="n">CARD_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">card_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">card_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">card_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -414,7 +414,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_apis_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">apis_list_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dest_folder</span><span class="p">,</span> <span class="n">CARD_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">apis_list_file</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">APIS_LIST_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repository_folder</span><span class="p">,</span> <span class="n">APIS_LIST_FILE</span><span class="p">),</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -433,25 +433,25 @@
 <div class="viewcode-block" id="Information.get">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.Information.get">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get various information about the model.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            A dictionary containing several information about the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;pack_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pack_mode</span><span class="p">(),</span>
-            <span class="s2">&quot;service_class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_service_class</span><span class="p">(),</span>
-            <span class="s2">&quot;model_source&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(),</span>
-            <span class="s2">&quot;docker_tag&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_docker_tag</span><span class="p">(),</span>
-            <span class="s2">&quot;apis_list&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_apis_list</span><span class="p">(),</span>
-            <span class="s2">&quot;api_schema&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_api_schema</span><span class="p">(),</span>
-            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size</span><span class="p">(),</span>
-            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata</span><span class="p">(),</span>
-            <span class="s2">&quot;card&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_card</span><span class="p">(),</span>
-            <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(),</span>
+            <span class="s2">"pack_mode"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_pack_mode</span><span class="p">(),</span>
+            <span class="s2">"service_class"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_service_class</span><span class="p">(),</span>
+            <span class="s2">"model_source"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(),</span>
+            <span class="s2">"docker_tag"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_docker_tag</span><span class="p">(),</span>
+            <span class="s2">"apis_list"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_apis_list</span><span class="p">(),</span>
+            <span class="s2">"api_schema"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_api_schema</span><span class="p">(),</span>
+            <span class="s2">"size"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_size</span><span class="p">(),</span>
+            <span class="s2">"metadata"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_metadata</span><span class="p">(),</span>
+            <span class="s2">"card"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_card</span><span class="p">(),</span>
+            <span class="s2">"columns"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_columns</span><span class="p">(),</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">data</span></div>
 </div>
@@ -461,7 +461,7 @@
 <div class="viewcode-block" id="InformationDisplayer">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.InformationDisplayer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InformationDisplayer</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class to display the information of a model.</span>
 
 <span class="sd">    Parameters</span>
@@ -470,7 +470,7 @@
 <span class="sd">        The information data of the model.</span>
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration settings in JSON format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_data</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -480,50 +480,50 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_current_arch</span><span class="p">():</span>
         <span class="n">machine</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">machine</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">machine</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;arm64&quot;</span><span class="p">,</span> <span class="s2">&quot;aarch64&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s2">&quot;linux/arm64&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;linux/amd64&quot;</span>
+        <span class="k">if</span> <span class="n">machine</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"arm64"</span><span class="p">,</span> <span class="s2">"aarch64"</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">"linux/arm64"</span>
+        <span class="k">return</span> <span class="s2">"linux/amd64"</span>
 
 <div class="viewcode-block" id="InformationDisplayer.echo">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.content.html#ersilia.hub.content.information.InformationDisplayer.echo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Display the information about the model using a rich Panel layout.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">rich.panel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panel</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">rich.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 
         <span class="n">_service_class_labels</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span> <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;docker&quot;</span><span class="p">:</span> <span class="s2">&quot;Docker (local)&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;conda&quot;</span><span class="p">:</span> <span class="s2">&quot;Conda&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;venv&quot;</span><span class="p">:</span> <span class="s2">&quot;Virtual environment&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;system&quot;</span><span class="p">:</span> <span class="s2">&quot;System Python&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;hosted&quot;</span><span class="p">:</span> <span class="s2">&quot;Hosted&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;dummy&quot;</span><span class="p">:</span> <span class="s2">&quot;Dummy&quot;</span><span class="p">,</span>
+            <span class="s2">"pulled_docker"</span><span class="p">:</span> <span class="s2">"DockerHub"</span><span class="p">,</span>
+            <span class="s2">"docker"</span><span class="p">:</span> <span class="s2">"Docker (local)"</span><span class="p">,</span>
+            <span class="s2">"conda"</span><span class="p">:</span> <span class="s2">"Conda"</span><span class="p">,</span>
+            <span class="s2">"venv"</span><span class="p">:</span> <span class="s2">"Virtual environment"</span><span class="p">,</span>
+            <span class="s2">"system"</span><span class="p">:</span> <span class="s2">"System Python"</span><span class="p">,</span>
+            <span class="s2">"hosted"</span><span class="p">:</span> <span class="s2">"Hosted"</span><span class="p">,</span>
+            <span class="s2">"dummy"</span><span class="p">:</span> <span class="s2">"Dummy"</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
-        <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;card&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="n">model_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_source&quot;</span><span class="p">)</span>
-        <span class="n">docker_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;docker_tag&quot;</span><span class="p">)</span>
-        <span class="n">service_class_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service_class&quot;</span><span class="p">)</span>
+        <span class="n">card</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"card"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">model_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"model_source"</span><span class="p">)</span>
+        <span class="n">docker_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"docker_tag"</span><span class="p">)</span>
+        <span class="n">service_class_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"service_class"</span><span class="p">)</span>
         <span class="n">service_class</span> <span class="o">=</span> <span class="n">_service_class_labels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">service_class_raw</span><span class="p">,</span> <span class="n">service_class_raw</span><span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">fmt</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
-            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;—&quot;</span>
+                <span class="k">return</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">"—"</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">fmt_size</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;—&quot;</span>
+                <span class="k">return</span> <span class="s2">"—"</span>
             <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">u</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;MB&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">,</span> <span class="s2">&quot;KB&quot;</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">u</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"MB"</span><span class="p">,</span> <span class="s2">"GB"</span><span class="p">,</span> <span class="s2">"KB"</span><span class="p">)):</span>
                 <span class="k">return</span> <span class="n">s</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> MB&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> MB"</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">fmt_arch</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -533,69 +533,69 @@
             <span class="k">return</span> <span class="n">matched</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">matched</span> <span class="k">else</span> <span class="n">fmt</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold cyan&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_width</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s2">&quot;fold&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"Field"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold cyan"</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_width</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"Value"</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s2">"fold"</span><span class="p">)</span>
 
         <span class="c1"># Origin section</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot; Origin&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold magenta on grey15&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="s2">" Origin"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold magenta on grey15"</span><span class="p">),</span> <span class="s2">""</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">model_source</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Fetched from&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">model_source</span><span class="p">))</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Fetched from"</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">model_source</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">service_class</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Service class&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">service_class</span><span class="p">))</span>
-        <span class="k">if</span> <span class="s2">&quot;DockerHub&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Docker Hub&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;DockerHub&quot;</span><span class="p">]))</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Service class"</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">service_class</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">"DockerHub"</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Docker Hub"</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">"DockerHub"</span><span class="p">]))</span>
         <span class="k">if</span> <span class="n">docker_tag</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Version&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">docker_tag</span><span class="p">))</span>
-        <span class="k">if</span> <span class="s2">&quot;Docker Architecture&quot;</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  Architecture&quot;</span><span class="p">,</span> <span class="n">fmt_arch</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">&quot;Docker Architecture&quot;</span><span class="p">]))</span>
-        <span class="n">identifier</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Version"</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="n">docker_tag</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s2">"Docker Architecture"</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  Architecture"</span><span class="p">,</span> <span class="n">fmt_arch</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="s2">"Docker Architecture"</span><span class="p">]))</span>
+        <span class="n">identifier</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Identifier"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">identifier</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;  GitHub&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;https://github.com/ersilia-os/</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">"  GitHub"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"https://github.com/ersilia-os/</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
         <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="s2">&quot;Overview&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">,</span> <span class="s2">&quot;Subtask&quot;</span><span class="p">]),</span>
-            <span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="s2">&quot;Interpretation&quot;</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s2">"Overview"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Identifier"</span><span class="p">,</span> <span class="s2">"Slug"</span><span class="p">,</span> <span class="s2">"Status"</span><span class="p">,</span> <span class="s2">"Task"</span><span class="p">,</span> <span class="s2">"Subtask"</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s2">"Description"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Title"</span><span class="p">,</span> <span class="s2">"Description"</span><span class="p">,</span> <span class="s2">"Interpretation"</span><span class="p">]),</span>
             <span class="p">(</span>
-                <span class="s2">&quot;Input / Output&quot;</span><span class="p">,</span>
+                <span class="s2">"Input / Output"</span><span class="p">,</span>
                 <span class="p">[</span>
-                    <span class="s2">&quot;Input&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Input Dimension&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Input Shape&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Output&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Output Dimension&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Output Shape&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Output Type&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Output Consistency&quot;</span><span class="p">,</span>
+                    <span class="s2">"Input"</span><span class="p">,</span>
+                    <span class="s2">"Input Dimension"</span><span class="p">,</span>
+                    <span class="s2">"Input Shape"</span><span class="p">,</span>
+                    <span class="s2">"Output"</span><span class="p">,</span>
+                    <span class="s2">"Output Dimension"</span><span class="p">,</span>
+                    <span class="s2">"Output Shape"</span><span class="p">,</span>
+                    <span class="s2">"Output Type"</span><span class="p">,</span>
+                    <span class="s2">"Output Consistency"</span><span class="p">,</span>
                 <span class="p">],</span>
             <span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Deployment&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Deployment&quot;</span><span class="p">,</span> <span class="s2">&quot;Source&quot;</span><span class="p">,</span> <span class="s2">&quot;Source Type&quot;</span><span class="p">,</span> <span class="s2">&quot;S3&quot;</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s2">"Deployment"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Deployment"</span><span class="p">,</span> <span class="s2">"Source"</span><span class="p">,</span> <span class="s2">"Source Type"</span><span class="p">,</span> <span class="s2">"S3"</span><span class="p">]),</span>
             <span class="p">(</span>
-                <span class="s2">&quot;Publication&quot;</span><span class="p">,</span>
+                <span class="s2">"Publication"</span><span class="p">,</span>
                 <span class="p">[</span>
-                    <span class="s2">&quot;License&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Contributor&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Publication Type&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Publication Year&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Publication&quot;</span><span class="p">,</span>
-                    <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span>
+                    <span class="s2">"License"</span><span class="p">,</span>
+                    <span class="s2">"Contributor"</span><span class="p">,</span>
+                    <span class="s2">"Publication Type"</span><span class="p">,</span>
+                    <span class="s2">"Publication Year"</span><span class="p">,</span>
+                    <span class="s2">"Publication"</span><span class="p">,</span>
+                    <span class="s2">"Source Code"</span><span class="p">,</span>
                 <span class="p">],</span>
             <span class="p">),</span>
-            <span class="p">(</span><span class="s2">&quot;Sizes&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Model Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">]),</span>
+            <span class="p">(</span><span class="s2">"Sizes"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Model Size"</span><span class="p">,</span> <span class="s2">"Environment Size"</span><span class="p">,</span> <span class="s2">"Image Size"</span><span class="p">]),</span>
         <span class="p">]</span>
 
-        <span class="n">size_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Model Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">}</span>
+        <span class="n">size_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Model Size"</span><span class="p">,</span> <span class="s2">"Environment Size"</span><span class="p">,</span> <span class="s2">"Image Size"</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">section_title</span><span class="p">,</span> <span class="n">fields</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">section_title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold magenta on grey15&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">section_title</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold magenta on grey15"</span><span class="p">),</span> <span class="s2">""</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">card</span><span class="p">:</span>
                     <span class="n">formatter</span> <span class="o">=</span> <span class="n">fmt_size</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">size_fields</span> <span class="k">else</span> <span class="n">fmt</span>
-                    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">formatter</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="n">field</span><span class="p">]))</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">formatter</span><span class="p">(</span><span class="n">card</span><span class="p">[</span><span class="n">field</span><span class="p">]))</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
-        <span class="n">title</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">panel_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[bold]</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">[/bold]  ·  </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">identifier</span> <span class="k">else</span> <span class="n">title</span>
-        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">panel_title</span><span class="p">,</span> <span class="n">border_style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">))</span></div>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">card</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Title"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="n">panel_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"[bold]</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">[/bold]  ·  </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">identifier</span> <span class="k">else</span> <span class="n">title</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">panel_title</span><span class="p">,</span> <span class="n">border_style</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">))</span></div>
 </div>
 
 </pre></div>

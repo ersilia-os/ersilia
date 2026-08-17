@@ -332,7 +332,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_is_verbose</span><span class="p">():</span>
-    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;ersilia&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">level</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
+    <span class="k">return</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"ersilia"</span><span class="p">)</span><span class="o">.</span><span class="n">level</span> <span class="o">==</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span>
 
 
 <div class="viewcode-block" id="throw_ersilia_exception">
@@ -345,49 +345,49 @@
                 <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">_is_verbose</span><span class="p">():</span>
-                    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;:police_car_light::police_car_light::police_car_light: Something went wrong with Ersilia :police_car_light::police_car_light::police_car_light:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">blink</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Error message:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s2">":police_car_light::police_car_light::police_car_light: Something went wrong with Ersilia :police_car_light::police_car_light::police_car_light:</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">blink</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="s2">"Error message:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="kn">from</span><span class="w"> </span><span class="nn">..exceptions_utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaError</span>
 
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">ErsiliaError</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">):</span>
-                        <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;✗ &quot;</span> <span class="o">+</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s2">&quot;hints&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">error</span><span class="o">.</span><span class="n">hints</span><span class="p">:</span>
-                            <span class="n">echo</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">hints</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">ErsiliaError</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">):</span>
+                        <span class="n">echo</span><span class="p">(</span><span class="s2">"✗ "</span> <span class="o">+</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s2">"hints"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">error</span><span class="o">.</span><span class="n">hints</span><span class="p">:</span>
+                            <span class="n">echo</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">hints</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">echo</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="n">echo</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">_is_verbose</span><span class="p">():</span>
-                    <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;If this error message is not helpful, open an issue at:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot; - https://github.com/ersilia-os/ersilia</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;Or feel free to reach out to us at:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot; - hello[at]ersilia.io</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="s2">"If this error message is not helpful, open an issue at:</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">" - https://github.com/ersilia-os/ersilia</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">"Or feel free to reach out to us at:</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">" - hello[at]ersilia.io</span><span class="se">\n\n</span><span class="s2">"</span>
                     <span class="n">text</span> <span class="o">+=</span> <span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Browse the full model catalog at: </span><span class="si">{</span><span class="n">ERSILIA_CATALOG_URL</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Browse the full model catalog at: </span><span class="si">{</span><span class="n">ERSILIA_CATALOG_URL</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
                     <span class="p">)</span>
-                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot;If you haven&#39;t, try to run your command in verbose mode (-v in the CLI)</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">&quot; - You will find the console log file in: </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">"If you haven't, try to run your command in verbose mode (-v in the CLI)</span><span class="se">\n</span><span class="s2">"</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="s2">" - You will find the console log file in: </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="n">EOS</span><span class="p">,</span> <span class="n">CURRENT_LOGGING_FILE</span>
                     <span class="p">)</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">exit</span><span class="p">:</span>
                     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">DEFAULT_ERSILIA_ERROR_EXIT_CODE</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="n">error</span>
                 <span class="c1"># FIXME: Enable automatic reporting of issues</span>
-                <span class="c1"># if query_yes_no(&quot;Would you like to report this error to Ersilia?&quot;):</span>
+                <span class="c1"># if query_yes_no("Would you like to report this error to Ersilia?"):</span>
                 <span class="c1">#     if query_yes_no(</span>
-                <span class="c1">#         &quot;Would you like to include your last Ersilia command in the issue (for issue reproducibility)?&quot;</span>
+                <span class="c1">#         "Would you like to include your last Ersilia command in the issue (for issue reproducibility)?"</span>
                 <span class="c1">#     ):</span>
-                <span class="c1">#         sys.stdout.write(&quot;Please re-type your last Ersilia command: &quot;)</span>
+                <span class="c1">#         sys.stdout.write("Please re-type your last Ersilia command: ")</span>
                 <span class="c1">#         message = input()</span>
                 <span class="c1">#         send_exception_issue(E, message)</span>
                 <span class="c1">#     else:</span>
-                <span class="c1">#         send_exception_issue(E, &quot;&quot;)</span>
+                <span class="c1">#         send_exception_issue(E, "")</span>
 
-                <span class="c1"># if query_yes_no(&quot;Would you like to access the log?&quot;):</span>
-                <span class="c1">#     print(&quot;No log info&quot;)</span>
+                <span class="c1"># if query_yes_no("Would you like to access the log?"):</span>
+                <span class="c1">#     print("No log info")</span>
                 <span class="c1">#     # TODO: execute cli logic for [y/n] query and write log to a file</span>
 
         <span class="k">return</span> <span class="n">inner_function</span>

@@ -329,7 +329,7 @@
 <div class="viewcode-block" id="ResponseRefactor">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.ResponseRefactor">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ResponseRefactor</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class used to refactor API responses.</span>
 
 <span class="sd">    Attributes</span>
@@ -341,21 +341,21 @@
 <span class="sd">    -------</span>
 <span class="sd">    refactor_response(result)</span>
 <span class="sd">        Refactors the API response.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        config_json : dict</span>
 <span class="sd">            Configuration settings in JSON format.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_has_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks if the result has meta information.</span>
 
 <span class="sd">        Parameters</span>
@@ -367,18 +367,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the result has meta information, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>  <span class="c1"># noqa: F841</span>
-            <span class="n">m</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span>  <span class="c1"># noqa: F841</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"result"</span><span class="p">]</span>  <span class="c1"># noqa: F841</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"meta"</span><span class="p">]</span>  <span class="c1"># noqa: F841</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Gets the result from the response.</span>
 
 <span class="sd">        Parameters</span>
@@ -390,16 +390,16 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The result.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_has_meta</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"result"</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Gets the meta information from the response.</span>
 
 <span class="sd">        Parameters</span>
@@ -411,18 +411,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The meta information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_has_meta</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expect_meta</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="s2">"meta"</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_nullify_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Nullifies the meta information.</span>
 
 <span class="sd">        Parameters</span>
@@ -436,7 +436,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The nullified meta information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">m</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">one_output</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">one_output</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -452,7 +452,7 @@
 <div class="viewcode-block" id="ResponseRefactor.refactor_response">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.ResponseRefactor.refactor_response">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">refactor_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Refactors the API response.</span>
 
 <span class="sd">        Parameters</span>
@@ -464,7 +464,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The refactored API response.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_meta</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nullify_meta</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
@@ -477,7 +477,7 @@
 <div class="viewcode-block" id="DataFrame">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DataFrame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class used to represent a DataFrame.</span>
 
 <span class="sd">    Attributes</span>
@@ -501,7 +501,7 @@
 <span class="sd">        Writes the DataFrame to a text file.</span>
 <span class="sd">    write(file_name, delimiter=None)</span>
 <span class="sd">        Writes the DataFrame to a file, determining the format based on the file extension.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">any</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
@@ -514,11 +514,11 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;UNPROCESSABLE_INPUT&quot;</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;UNPROCESSABLE_INPUT&quot;</span>
+        <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"UNPROCESSABLE_INPUT"</span> <span class="ow">and</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"UNPROCESSABLE_INPUT"</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_h5</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks if the file is an HDF5 file.</span>
 
 <span class="sd">        Parameters</span>
@@ -530,16 +530,16 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the file is an HDF5 file, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">extension</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;h5&quot;</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="n">extension</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">"h5"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_delimiter</span><span class="p">(</span><span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Gets the delimiter based on the file extension.</span>
 
 <span class="sd">        Parameters</span>
@@ -551,48 +551,48 @@
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            The delimiter.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">extension</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;tsv&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
+<span class="sd">        """</span>
+        <span class="n">extension</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">"tsv"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;,&quot;</span>
+            <span class="k">return</span> <span class="s2">","</span>
 
 <div class="viewcode-block" id="DataFrame.decompose">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.decompose">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Decomposes the DataFrame into its components.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            A dictionary containing keys, inputs, features, and values.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;keys&quot;</span><span class="p">:</span> <span class="n">keys</span><span class="p">,</span> <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="n">inputs</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">values</span><span class="p">}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"keys"</span><span class="p">:</span> <span class="n">keys</span><span class="p">,</span> <span class="s2">"inputs"</span><span class="p">:</span> <span class="n">inputs</span><span class="p">,</span> <span class="s2">"features"</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span> <span class="s2">"values"</span><span class="p">:</span> <span class="n">values</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="DataFrame.write_hdf5">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_hdf5">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Writes the DataFrame to an HDF5 file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        file_name : str</span>
 <span class="sd">            The name of the file to write to.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
         <span class="n">hdf5</span> <span class="o">=</span> <span class="n">Hdf5Data</span><span class="p">(</span>
-            <span class="n">values</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">],</span>
-            <span class="n">keys</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;keys&quot;</span><span class="p">],</span>
-            <span class="n">inputs</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">],</span>
-            <span class="n">features</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">"values"</span><span class="p">],</span>
+            <span class="n">keys</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">"keys"</span><span class="p">],</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">"inputs"</span><span class="p">],</span>
+            <span class="n">features</span><span class="o">=</span><span class="n">res</span><span class="p">[</span><span class="s2">"features"</span><span class="p">],</span>
             <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
             <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span>
         <span class="p">)</span>
@@ -605,10 +605,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">write_text</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50_000</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Writes the DataFrame to a text file, wrapping any string-valued field in quotes,</span>
 <span class="sd">        except for the first and second columns, which are never quoted.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">delimiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_delimiter</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
 
@@ -617,24 +617,24 @@
 
         <span class="k">def</span><span class="w"> </span><span class="nf">fmt</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">return</span> <span class="s2">""</span>
             <span class="k">return</span> <span class="n">v</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
         <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span>
                 <span class="n">f</span><span class="p">,</span>
                 <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span>
-                <span class="n">lineterminator</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">lineterminator</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
                 <span class="n">quoting</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_MINIMAL</span><span class="p">,</span>
-                <span class="n">quotechar</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+                <span class="n">quotechar</span><span class="o">=</span><span class="s1">'"'</span><span class="p">,</span>
                 <span class="n">doublequote</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;write_text header dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s file=</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"write_text header dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s file=</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
             <span class="n">wrote</span> <span class="o">=</span> <span class="mi">0</span>
@@ -642,7 +642,7 @@
                 <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
                 <span class="n">chunk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;write_text chunk_take rows=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span><span class="si">}</span><span class="s2"> dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s&quot;</span>
+                    <span class="sa">f</span><span class="s2">"write_text chunk_take rows=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span><span class="si">}</span><span class="s2"> dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s"</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="p">:</span>
                     <span class="k">break</span>
@@ -656,25 +656,25 @@
                         <span class="n">row</span> <span class="o">=</span> <span class="n">row</span><span class="p">[:</span><span class="n">ncols</span><span class="p">]</span>
                     <span class="n">out_append</span><span class="p">([</span><span class="n">fmt</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;write_text chunk_format rows=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">out_rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s&quot;</span>
+                    <span class="sa">f</span><span class="s2">"write_text chunk_format rows=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">out_rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s"</span>
                 <span class="p">)</span>
 
                 <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">out_rows</span><span class="p">)</span>
                 <span class="n">wrote</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_rows</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;write_text chunk_write rows=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">out_rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s&quot;</span>
+                    <span class="sa">f</span><span class="s2">"write_text chunk_write rows=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">out_rows</span><span class="p">)</span><span class="si">}</span><span class="s2"> dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s"</span>
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;write_text done rows=</span><span class="si">{</span><span class="n">wrote</span><span class="si">}</span><span class="s2"> dt_total=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s file=</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"write_text done rows=</span><span class="si">{</span><span class="n">wrote</span><span class="si">}</span><span class="s2"> dt_total=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s file=</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DataFrame.write">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Writes the DataFrame to a file, determining the format based on the file extension.</span>
 
 <span class="sd">        Parameters</span>
@@ -683,7 +683,7 @@
 <span class="sd">            The name of the file to write to.</span>
 <span class="sd">        delimiter : str, optional</span>
 <span class="sd">            The delimiter to use in the text file (default is None).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_unprocessable_input</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">UnprocessableInputError</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_h5</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
@@ -697,7 +697,7 @@
 <div class="viewcode-block" id="GenericOutputAdapter">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GenericOutputAdapter</span><span class="p">(</span><span class="n">ResponseRefactor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class used to adapt generic outputs.</span>
 
 <span class="sd">    Attributes</span>
@@ -711,7 +711,7 @@
 <span class="sd">    -------</span>
 <span class="sd">    adapt(result, output, model_id=None, api_name=None)</span>
 <span class="sd">        Adapts the output based on the result and model.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">columns_info</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span>
@@ -719,17 +719,17 @@
         <span class="n">ResponseRefactor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">columns_info</span> <span class="o">=</span> <span class="n">columns_info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns_info</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"key"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns_info</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output_dtype</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_output_dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">dtypes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns_info</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]))</span>
-        <span class="k">if</span> <span class="n">dtypes</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">]:</span>
+        <span class="n">dtypes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns_info</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">dtypes</span> <span class="o">==</span> <span class="p">[</span><span class="s2">"string"</span><span class="p">]:</span>
             <span class="k">return</span> <span class="nb">str</span>
-        <span class="k">elif</span> <span class="n">dtypes</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;float&quot;</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">dtypes</span> <span class="o">==</span> <span class="p">[</span><span class="s2">"float"</span><span class="p">]:</span>
             <span class="k">return</span> <span class="nb">float</span>
-        <span class="k">elif</span> <span class="n">dtypes</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;integer&quot;</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">dtypes</span> <span class="o">==</span> <span class="p">[</span><span class="s2">"integer"</span><span class="p">]:</span>
             <span class="k">return</span> <span class="nb">int</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">float</span>
@@ -748,12 +748,12 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_has_extension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">any</span><span class="p">,</span> <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_string</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="n">ext</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="n">extension</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -763,7 +763,7 @@
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_try_serialize_str_to_json</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_to_dataframe serialize dt=</span><span class="si">{</span><span class="p">(</span><span class="n">t1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"_to_dataframe serialize dt=</span><span class="si">{</span><span class="p">(</span><span class="n">t1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
 
         <span class="n">in_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_columns</span>
         <span class="n">out_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_columns</span>
@@ -776,8 +776,8 @@
 
         <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
-            <span class="n">rin</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
-            <span class="n">rout</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>
+            <span class="n">rin</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">"input"</span><span class="p">]</span>
+            <span class="n">rout</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s2">"output"</span><span class="p">]</span>
 
             <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">rin</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">in_cols</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">out_cols</span><span class="p">:</span>
@@ -787,19 +787,19 @@
             <span class="n">append_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
         <span class="n">t3</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;_to_dataframe build_rows rows=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> dt=</span><span class="si">{</span><span class="p">(</span><span class="n">t3</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t2</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"_to_dataframe build_rows rows=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> dt=</span><span class="si">{</span><span class="p">(</span><span class="n">t3</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t2</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
 
         <span class="n">df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">cast</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
         <span class="n">t4</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;GenericOutputAdapter_to_dataframe construct_df dt=</span><span class="si">{</span><span class="p">(</span><span class="n">t4</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t3</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s dt_total=</span><span class="si">{</span><span class="p">(</span><span class="n">t4</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s&quot;</span>
+            <span class="sa">f</span><span class="s2">"GenericOutputAdapter_to_dataframe construct_df dt=</span><span class="si">{</span><span class="p">(</span><span class="n">t4</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t3</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s dt_total=</span><span class="si">{</span><span class="p">(</span><span class="n">t4</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s"</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span>
 
 <div class="viewcode-block" id="GenericOutputAdapter.merge">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.merge">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subfiles</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Merges the subfiles into a single output file.</span>
 
 <span class="sd">        Parameters</span>
@@ -808,24 +808,24 @@
 <span class="sd">            The list of subfiles to merge.</span>
 <span class="sd">        output_file : str</span>
 <span class="sd">            The name of the output file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Merging </span><span class="si">{0}</span><span class="s2"> files into </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subfiles</span><span class="p">),</span> <span class="n">output_file</span><span class="p">)</span>
+            <span class="s2">"Merging </span><span class="si">{0}</span><span class="s2"> files into </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subfiles</span><span class="p">),</span> <span class="n">output_file</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">extensions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_extension</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">subfiles</span> <span class="o">+</span> <span class="p">[</span><span class="n">output_file</span><span class="p">]])</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">extensions</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">subfile</span> <span class="ow">in</span> <span class="n">subfiles</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subfile</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">data</span> <span class="o">+=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fo</span><span class="p">:</span>
                 <span class="n">use_header</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">for</span> <span class="n">subfile</span> <span class="ow">in</span> <span class="n">subfiles</span><span class="p">:</span>
-                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subfile</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fi</span><span class="p">:</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">use_header</span><span class="p">:</span>
                             <span class="nb">next</span><span class="p">(</span><span class="n">fi</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">fi</span><span class="p">:</span>
@@ -836,37 +836,37 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_adapt_generic</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">api_name</span> <span class="o">!=</span> <span class="s2">&quot;run&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Api was not run&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">api_name</span> <span class="o">!=</span> <span class="s2">"run"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Api was not run"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Only &#39;run&#39; api is supported for now... Please open an issue if you feel Ersilia needs to add&quot;</span>
+                <span class="s2">"Only 'run' api is supported for now... Please open an issue if you feel Ersilia needs to add"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model ID is None&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Model ID is None"</span><span class="p">)</span>
             <span class="k">pass</span>
         <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output is None&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Output is None"</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">):</span>
-            <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;csv&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;tsv&quot;</span><span class="p">):</span>
-            <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;tsv&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;h5&quot;</span><span class="p">):</span>
-            <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;h5&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">):</span>
-            <span class="n">extension</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"csv"</span><span class="p">):</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="s2">"csv"</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"tsv"</span><span class="p">):</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="s2">"tsv"</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"h5"</span><span class="p">):</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="s2">"h5"</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"json"</span><span class="p">):</span>
+            <span class="n">extension</span> <span class="o">=</span> <span class="s2">"json"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">extension</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Extension: </span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Extension: </span><span class="si">{</span><span class="n">extension</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dataframe</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-        <span class="n">delimiters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;csv&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;tsv&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">}</span>
-        <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;tsv&quot;</span><span class="p">,</span> <span class="s2">&quot;csv&quot;</span><span class="p">]:</span>
+        <span class="n">delimiters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"csv"</span><span class="p">:</span> <span class="s2">","</span><span class="p">,</span> <span class="s2">"tsv"</span><span class="p">:</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"tsv"</span><span class="p">,</span> <span class="s2">"csv"</span><span class="p">]:</span>
             <span class="n">df</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiters</span><span class="p">[</span><span class="n">extension</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;h5&quot;</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"h5"</span><span class="p">]:</span>
             <span class="n">df</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">extension</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -877,7 +877,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">adapt</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Adapts the output based on the result and model.</span>
 
 <span class="sd">        Parameters</span>
@@ -895,7 +895,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The adapted result.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">adapted_result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adapt_generic</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">adapted_result</span></div>
 </div>
@@ -905,7 +905,7 @@
 <div class="viewcode-block" id="DictlistDataframeConverter">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DictlistDataframeConverter</span><span class="p">(</span><span class="n">GenericOutputAdapter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class used to convert between dictlist and DataFrame.</span>
 
 <span class="sd">    Attributes</span>
@@ -919,21 +919,21 @@
 <span class="sd">        Converts a dictlist to a DataFrame.</span>
 <span class="sd">    dataframe2dictlist(df, model_id, api_name)</span>
 <span class="sd">        Converts a DataFrame to a dictlist.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        config_json : dict</span>
 <span class="sd">            Configuration settings in JSON format.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">GenericOutputAdapter</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DictlistDataframeConverter.dictlist2dataframe">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dictlist2dataframe">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dictlist2dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dl</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataframe</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Converts a dictlist to a DataFrame.</span>
 
 <span class="sd">        Parameters</span>
@@ -949,9 +949,9 @@
 <span class="sd">        -------</span>
 <span class="sd">        Dataframe</span>
 <span class="sd">            The converted DataFrame.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
-        <span class="n">df_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"ersilia-"</span><span class="p">)</span>
+        <span class="n">df_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">"data.csv"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adapt</span><span class="p">(</span><span class="n">dl</span><span class="p">,</span> <span class="n">df_file</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">api_name</span><span class="p">)</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">Dataframe</span><span class="p">()</span>
         <span class="n">df</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">df_file</span><span class="p">)</span>
@@ -959,7 +959,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__nan_to_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Converts NaN values to None.</span>
 
 <span class="sd">        Parameters</span>
@@ -971,7 +971,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        any</span>
 <span class="sd">            The converted value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">x</span>
@@ -979,7 +979,7 @@
 <div class="viewcode-block" id="DictlistDataframeConverter.dataframe2dictlist">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DictlistDataframeConverter.dataframe2dictlist">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">dataframe2dictlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">api_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Converts a DataFrame to a dictlist.</span>
 
 <span class="sd">        Parameters</span>
@@ -995,7 +995,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
 <span class="sd">            The converted dictlist.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">schema</span> <span class="o">=</span> <span class="n">ApiSchema</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span>
         <span class="p">)</span><span class="o">.</span><span class="n">get_output_by_api</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">)</span>
@@ -1022,21 +1022,21 @@
         <span class="c1"># Reorder to match schema, just to be sure</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">grouped_features</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">ords</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k_</span><span class="p">,</span> <span class="n">i_</span><span class="p">)</span> <span class="k">for</span> <span class="n">i_</span><span class="p">,</span> <span class="n">k_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">schema</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;meta&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">ord_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">ords</span><span class="p">[</span><span class="n">v_</span><span class="p">]</span> <span class="k">for</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;meta&quot;</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">"meta"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ord_idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">ords</span><span class="p">[</span><span class="n">v_</span><span class="p">]</span> <span class="k">for</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">schema</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">"meta"</span><span class="p">]]</span>
                 <span class="n">grouped_features</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">ord_idxs</span><span class="p">]</span>
                 <span class="n">w</span> <span class="o">=</span> <span class="n">grouped_features_idxs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
                 <span class="n">grouped_features_idxs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">ord_idxs</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
             <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">idxs</span> <span class="ow">in</span> <span class="n">grouped_features_idxs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__nan_to_none</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">][</span><span class="n">idxs</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__nan_to_none</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">r</span><span class="p">[</span><span class="s2">"values"</span><span class="p">][</span><span class="n">idxs</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">output</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
             <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">],</span> <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">],</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
-                <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output</span><span class="p">,</span>
+                <span class="s2">"input"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"key"</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"key"</span><span class="p">],</span> <span class="s2">"input"</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s2">"input"</span><span class="p">],</span> <span class="s2">"text"</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+                <span class="s2">"output"</span><span class="p">:</span> <span class="n">output</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">result</span> <span class="o">+=</span> <span class="p">[</span><span class="n">res</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">result</span></div>
@@ -1047,7 +1047,7 @@
 <div class="viewcode-block" id="TabularOutputStacker">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TabularOutputStacker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class used to stack tabular outputs.</span>
 
 <span class="sd">    Attributes</span>
@@ -1059,15 +1059,15 @@
 <span class="sd">    -------</span>
 <span class="sd">    stack(output)</span>
 <span class="sd">        Stacks the files into a single output file.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        file_names : list</span>
 <span class="sd">            The list of file names to stack.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">ft</span> <span class="o">=</span> <span class="n">FileTyper</span><span class="p">(</span><span class="n">file_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_hdf5</span> <span class="o">=</span> <span class="n">ft</span><span class="o">.</span><span class="n">is_hdf5</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_names</span> <span class="o">=</span> <span class="n">file_names</span>
@@ -1075,18 +1075,18 @@
 <div class="viewcode-block" id="TabularOutputStacker.stack_text">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack_text">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">stack_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Stacks text files into a single output file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        output : str</span>
 <span class="sd">            The name of the output file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">has_header</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f0</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f0</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_names</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f1</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f1</span><span class="p">:</span>
                     <span class="n">header</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f1</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">has_header</span><span class="p">:</span>
                         <span class="n">f0</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
@@ -1098,14 +1098,14 @@
 <div class="viewcode-block" id="TabularOutputStacker.stack_hdf5">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack_hdf5">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">stack_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Stacks HDF5 files into a single output file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        output : str</span>
 <span class="sd">            The name of the output file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">stacker</span> <span class="o">=</span> <span class="n">Hdf5DataStacker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_names</span><span class="p">)</span>
         <span class="n">stacker</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
 
@@ -1113,14 +1113,14 @@
 <div class="viewcode-block" id="TabularOutputStacker.stack">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.TabularOutputStacker.stack">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Stacks the files into a single output file.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        output : str</span>
 <span class="sd">            The name of the output file.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_hdf5</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stack_hdf5</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>

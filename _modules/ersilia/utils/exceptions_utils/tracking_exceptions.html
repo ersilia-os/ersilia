@@ -310,13 +310,13 @@
 <div class="viewcode-block" id="NoAWSCredentialsError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.tracking_exceptions.NoAWSCredentialsError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NoAWSCredentialsError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    AWS credentials error</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;You have no valid AWS credentials in your system. Therefore, tracking is not allowed&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;The variables AWS_ACCESS_KEY_ID and not AWS_SECRET_ACCESS_KEY should be accessible in your system as environmental variables or in the ~/.aws/credentials file&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"You have no valid AWS credentials in your system. Therefore, tracking is not allowed"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"The variables AWS_ACCESS_KEY_ID and not AWS_SECRET_ACCESS_KEY should be accessible in your system as environmental variables or in the ~/.aws/credentials file"</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 
@@ -324,13 +324,13 @@
 <div class="viewcode-block" id="TrackingNotSupportedError">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.tracking_exceptions.TrackingNotSupportedError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TrackingNotSupportedError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Tracking not supported error</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Tracking is not supported for this model as currently fetch, or with the specified input and output&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">&quot;Tracking is only supported for models that are served from a pulled Docker image, and for which input and outputs are specified as CSV files&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"Tracking is not supported for this model as currently fetch, or with the specified input and output"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="s2">"Tracking is only supported for models that are served from a pulled Docker image, and for which input and outputs are specified as CSV files"</span>
         <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
 
 </pre></div>

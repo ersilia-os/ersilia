@@ -313,32 +313,32 @@
 <div class="viewcode-block" id="example_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.example.example_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">example_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create example command&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Create example command"""</span>
 
     <span class="c1"># Example usage: ersilia example {MODEL} -n 10 [--file_name {FILE_NAME}]</span>
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;Generate input examples for the model of interest&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate input examples for a model. A model must be served before running this command, or a model identifier must be provided. The number of examples and output file can be specified.&quot;</span><span class="p">,</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">"Generate input examples for the model of interest"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Generate input examples for a model. A model must be served before running this command, or a model identifier must be provided. The number of examples and output file can be specified."</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">"model"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--n_samples&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;-n&quot;</span><span class="p">,</span>
+        <span class="s2">"--n_samples"</span><span class="p">,</span>
+        <span class="s2">"-n"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of examples to generate. Ignored in curated mode.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Number of examples to generate. Ignored in curated mode."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--output_file&quot;</span><span class="p">,</span> <span class="s2">&quot;-o&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output file name.&quot;</span>
+        <span class="s2">"--output_file"</span><span class="p">,</span> <span class="s2">"-o"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">"Output file name."</span>
     <span class="p">)</span>
-    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--file_name&quot;</span><span class="p">,</span> <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"--file_name"</span><span class="p">,</span> <span class="s2">"-f"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">hidden</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--mode&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
-        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="s2">&quot;curated&quot;</span><span class="p">,</span> <span class="s2">&quot;deterministic&quot;</span><span class="p">],</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span>
+        <span class="s2">"--mode"</span><span class="p">,</span>
+        <span class="s2">"-m"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s2">"random"</span><span class="p">,</span> <span class="s2">"curated"</span><span class="p">,</span> <span class="s2">"deterministic"</span><span class="p">],</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"random"</span><span class="p">,</span>
         <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;How examples are generated: random, curated, or deterministic.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"How examples are generated: random, curated, or deterministic."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
@@ -348,10 +348,10 @@
         <span class="c1"># support legacy --file_name / -f</span>
         <span class="n">resolved_file</span> <span class="o">=</span> <span class="n">output_file</span> <span class="ow">or</span> <span class="n">file_name</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">resolved_file</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">UsageError</span><span class="p">(</span><span class="s2">&quot;Missing option &#39;--output_file&#39; / &#39;-o&#39;.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;curated&quot;</span> <span class="ow">and</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Warning: --n_samples is ignored in curated mode.&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">!=</span> <span class="s2">&quot;curated&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">click</span><span class="o">.</span><span class="n">UsageError</span><span class="p">(</span><span class="s2">"Missing option '--output_file' / '-o'."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"curated"</span> <span class="ow">and</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="s2">"Warning: --n_samples is ignored in curated mode."</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">!=</span> <span class="s2">"curated"</span><span class="p">:</span>
             <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">5</span>
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model_id</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span>
@@ -360,8 +360,8 @@
             <span class="n">model_id</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_model_id</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">model_id</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">&quot;No model found. Please specify a model or serve a model in the current shell.&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="s2">"No model found. Please specify a model or serve a model in the current shell."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span>
         <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>

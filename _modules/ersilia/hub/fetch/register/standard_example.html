@@ -324,7 +324,7 @@
 <div class="viewcode-block" id="ModelStandardExample">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.standard_example.ModelStandardExample">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModelStandardExample</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    ModelStandardExample is responsible for running standard CSV examples for models.</span>
 
 <span class="sd">    Parameters</span>
@@ -339,10 +339,10 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        example_runner = ModelStandardExample(</span>
-<span class="sd">            model_id=&quot;model123&quot;, config_json=config</span>
+<span class="sd">            model_id="model123", config_json=config</span>
 <span class="sd">        )</span>
 <span class="sd">        example_runner.run()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -352,7 +352,7 @@
         <span class="n">max_rows</span> <span class="o">=</span> <span class="mi">5</span>
         <span class="n">max_cols</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_csv</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_csv</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
@@ -364,12 +364,12 @@
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">[:</span><span class="n">max_cols</span><span class="p">])</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_widths</span><span class="p">):</span>
                     <span class="n">max_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_widths</span><span class="p">)</span>
                 <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span>
-                    <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_widths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}}</span><span class="s2">&quot;</span>
+                    <span class="s2">" | "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_widths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}}</span><span class="s2">"</span>
                         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
-                        <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_widths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
-                        <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_widths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}}</span><span class="s2">&quot;</span>
+                        <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_widths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span>
+                        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
+                        <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">item</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">col_widths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}}</span><span class="s2">"</span>
                         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">[:</span><span class="n">max_cols</span><span class="p">])</span>
                     <span class="p">)</span>
                 <span class="p">]</span>
@@ -381,8 +381,8 @@
             <span class="k">raise</span> <span class="n">StandardModelExampleError</span><span class="p">(</span>
                 <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">output_csv</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">{0}</span><span class="s2"> created successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_csv</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;This is the output (maximum 5 rows, 10 columns)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"File </span><span class="si">{0}</span><span class="s2"> created successfully!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output_csv</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"This is the output (maximum 5 rows, 10 columns)"</span><span class="p">)</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_less_on_file</span><span class="p">(</span><span class="n">output_csv</span><span class="o">=</span><span class="n">output_csv</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
@@ -394,8 +394,8 @@
             <span class="k">nonlocal</span> <span class="n">warned</span>
             <span class="n">warned</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;This is taking longer than usual (&gt;</span><span class="si">{</span><span class="n">threshold_s</span><span class="si">}</span><span class="s2">s). Please be patient…&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"This is taking longer than usual (&gt;</span><span class="si">{</span><span class="n">threshold_s</span><span class="si">}</span><span class="s2">s). Please be patient…"</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
                 <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -408,67 +408,67 @@
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">timer</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">warned</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Command took &gt;</span><span class="si">{</span><span class="n">threshold_s</span><span class="si">}</span><span class="s2">s: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Command took &gt;</span><span class="si">{</span><span class="n">threshold_s</span><span class="si">}</span><span class="s2">s: </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_execute_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">):</span>
-        <span class="n">cmd_output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;ersilia --help&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;Welcome to Ersilia&quot;</span> <span class="ow">in</span> <span class="n">cmd_output</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No need to use Conda!&quot;</span><span class="p">)</span>
+        <span class="n">cmd_output</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">"ersilia --help"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"Welcome to Ersilia"</span> <span class="ow">in</span> <span class="n">cmd_output</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"No need to use Conda!"</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Running: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_run_command_with_slow_notice</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">threshold_s</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Will run this through Conda&quot;</span><span class="p">)</span>
-            <span class="n">env_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The environment name is </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env_name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Will run this through Conda"</span><span class="p">)</span>
+            <span class="n">env_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CONDA_DEFAULT_ENV"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"The environment name is </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env_name</span><span class="p">))</span>
             <span class="n">SimpleConda</span><span class="p">()</span><span class="o">.</span><span class="n">run_commandlines</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">commands</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelStandardExample.run">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.standard_example.ModelStandardExample.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the standard CSV example for the model (serve + run, without closing).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Running standard CSV example&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Running standard CSV example"</span><span class="p">)</span>
         <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">example_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="s2">&quot;framework&quot;</span><span class="p">,</span> <span class="s2">&quot;examples&quot;</span><span class="p">,</span> <span class="s2">&quot;run_input.csv&quot;</span>
+            <span class="n">path</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">,</span> <span class="s2">"framework"</span><span class="p">,</span> <span class="s2">"examples"</span><span class="p">,</span> <span class="s2">"run_input.csv"</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_csv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_csv</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span><span class="p">)</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">example_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_csv</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run_log</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;standard_run.log&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Example input file: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_csv</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Example output file: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_csv</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_log</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"standard_run.log"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Example input file: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_csv</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Example output file: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_csv</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_execute_commands</span><span class="p">(</span>
             <span class="p">[</span>
-                <span class="sa">f</span><span class="s2">&quot;ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> --disable-cache&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;ersilia run -i </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_csv</span><span class="si">}</span><span class="s2"> -o </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_csv</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="si">}</span><span class="s2"> 2&gt;&amp;1&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"ersilia serve </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> --disable-cache"</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"ersilia run -i </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_csv</span><span class="si">}</span><span class="s2"> -o </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_csv</span><span class="si">}</span><span class="s2"> &gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="si">}</span><span class="s2"> 2&gt;&amp;1"</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run log: </span><span class="si">{</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Run log: </span><span class="si">{</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run log file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="si">}</span><span class="s2"> was not created&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Run log file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="si">}</span><span class="s2"> was not created"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_file_exists</span><span class="p">(</span><span class="n">output_csv</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_csv</span><span class="p">)</span>
         <span class="n">is_fetched_successfully</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_csv</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_fetched_successfully</span><span class="p">:</span>
             <span class="n">echo</span><span class="p">(</span>
-                <span class="s2">&quot;Model produced all empty values. Removing the model.&quot;</span><span class="p">,</span>
-                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                <span class="s2">"Model produced all empty values. Removing the model."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Model produced all empty values. Removing the model and exiting.&quot;</span>
+                <span class="s2">"Model produced all empty values. Removing the model and exiting."</span>
             <span class="p">)</span>
-            <span class="n">run_command</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ersilia -v delete </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">run_command</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ersilia -v delete </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_file_exists</span><span class="p">(</span><span class="n">output_csv</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_csv</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Removing log file: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Removing log file: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_log</span><span class="p">)</span></div>
 
@@ -476,39 +476,50 @@
 <div class="viewcode-block" id="ModelStandardExample.close_model">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.register.html#ersilia.hub.fetch.register.standard_example.ModelStandardExample.close_model">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Shut down the container started during the standard example run.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_execute_commands</span><span class="p">([</span><span class="s2">&quot;ersilia close&quot;</span><span class="p">])</span></div>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_execute_commands</span><span class="p">([</span><span class="s2">"ersilia close"</span><span class="p">])</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_validate_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="n">saw_data_row</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">total_data_rows</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">empty_rows</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">row_num</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">row_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="k">continue</span>
 
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">((</span><span class="n">c</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span> <span class="ow">or</span> <span class="nb">all</span><span class="p">((</span><span class="n">c</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">""</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">row</span><span class="p">):</span>
                     <span class="k">continue</span>
 
                 <span class="n">saw_data_row</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">total_data_rows</span> <span class="o">+=</span> <span class="mi">1</span>
 
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Row </span><span class="si">{</span><span class="n">row_num</span><span class="si">}</span><span class="s2"> has fewer than 3 columns: </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Row </span><span class="si">{</span><span class="n">row_num</span><span class="si">}</span><span class="s2"> has fewer than 3 columns: </span><span class="si">{</span><span class="n">row</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
                     <span class="k">return</span> <span class="kc">False</span>
 
-                <span class="k">if</span> <span class="nb">all</span><span class="p">((</span><span class="n">cell</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:]):</span>
-                    <span class="n">echo</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;All output values are empty at row </span><span class="si">{</span><span class="n">row_num</span><span class="si">}</span><span class="s2">. The model is not correctly working!&quot;</span>
-                    <span class="p">)</span>
-                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">((</span><span class="n">cell</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">""</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:]):</span>
+                    <span class="n">empty_rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_num</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">saw_data_row</span><span class="p">:</span>
-                <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;No data rows found in output CSV (only header/blank rows).&quot;</span><span class="p">)</span>
+                <span class="n">echo</span><span class="p">(</span><span class="s2">"No data rows found in output CSV (only header/blank rows)."</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">empty_rows</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">empty_rows</span><span class="p">)</span> <span class="o">==</span> <span class="n">total_data_rows</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"All output values are empty at rows </span><span class="si">{</span><span class="n">empty_rows</span><span class="si">}</span><span class="s2">. The model is not correctly working!"</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">empty_rows</span><span class="p">:</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Some output values are empty at rows </span><span class="si">{</span><span class="n">empty_rows</span><span class="si">}</span><span class="s2">, but not all rows are empty. Continuing."</span>
+                <span class="p">)</span>
 
             <span class="k">return</span> <span class="kc">True</span></div>
 

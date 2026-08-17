@@ -318,7 +318,7 @@
 <div class="viewcode-block" id="run">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.api.commands.html#ersilia.api.commands.run.run">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">input_list</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Runs the current model on input strings, optionall saving the results to a file and always returning</span>
 <span class="sd">    a DataFarme.</span>
 
@@ -334,22 +334,22 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    pandas.DataFrame</span>
-<span class="sd">        DataFrame containing the model&#39;s prediction results.</span>
+<span class="sd">        DataFrame containing the model's prediction results.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
 <span class="sd">    SystemExit</span>
 <span class="sd">        If input or output validation fails.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">service_class</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span>
     <span class="n">output_source</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">current_output_source</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;No model seems to be served. Please run &#39;ersilia serve ...&#39; before.&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="s2">"No model seems to be served. Please run 'ersilia serve ...' before."</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span>
 
@@ -357,16 +357,16 @@
     <span class="n">cleanup_output</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="n">cleanup_input</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">temp_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="n">input_list</span><span class="p">})</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">temp_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">temp_file</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"w+"</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">".csv"</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"input"</span><span class="p">:</span> <span class="n">input_list</span><span class="p">})</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">temp_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">input_path</span> <span class="o">=</span> <span class="n">temp_file</span><span class="o">.</span><span class="n">name</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Input must be a list&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Input must be a list"</span><span class="p">)</span>
 
     <span class="c1"># Prepare output filepath</span>
     <span class="n">cleanup_output</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">temp_file_output</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span>
-        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w+&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.csv&quot;</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">"w+"</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">".csv"</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span>
     <span class="n">output_path</span> <span class="o">=</span> <span class="n">temp_file_output</span><span class="o">.</span><span class="n">name</span>
 
@@ -389,8 +389,8 @@
     <span class="c1"># Notify the user on persistent output</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cleanup_output</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;✅ The output was successfully generated at </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"✅ The output was successfully generated at </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">!"</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
             <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="c1"># Load results into DataFrame</span>

@@ -318,7 +318,7 @@
 <div class="viewcode-block" id="GithubCliRequirement">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GithubCliRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class to handle the checking and installation of the GitHub CLI.</span>
 
 <span class="sd">    Methods</span>
@@ -327,14 +327,14 @@
 <span class="sd">        Checks if the GitHub CLI is installed.</span>
 <span class="sd">    install()</span>
 <span class="sd">        Installs the GitHub CLI.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;gh&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"gh"</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raise_exception</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">install_if_necessary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks if the GitHub CLI is installed.</span>
 
 <span class="sd">        Parameters</span>
@@ -348,9 +348,9 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the GitHub CLI is installed, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">check</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;gh&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;GitHub&quot;</span> <span class="ow">in</span> <span class="n">check</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">"gh"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"GitHub"</span> <span class="ow">in</span> <span class="n">check</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">raise_exception</span><span class="p">:</span>
@@ -364,7 +364,7 @@
 <div class="viewcode-block" id="GithubCliRequirement.install">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GithubCliRequirement.install">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Installs the GitHub CLI.</span>
 
 <span class="sd">        This method installs the GitHub CLI using conda.</span>
@@ -372,8 +372,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;conda install -c conda-forge gh&quot;</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">"conda install -c conda-forge gh"</span><span class="p">)</span></div>
 </div>
 
 
@@ -381,7 +381,7 @@
 <div class="viewcode-block" id="GitLfsRequirement">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GitLfsRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class to handle the checking and installation of Git LFS.</span>
 
 <span class="sd">    Methods</span>
@@ -392,14 +392,14 @@
 <span class="sd">        Activates Git LFS.</span>
 <span class="sd">    install()</span>
 <span class="sd">        Installs Git LFS.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;git-lfs&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"git-lfs"</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">install_if_necessary</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Checks if Git LFS is installed.</span>
 
 <span class="sd">        Parameters</span>
@@ -411,9 +411,9 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if Git LFS is installed, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">check</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">&quot;git-lfs&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">check</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;git-lfs&quot;</span><span class="p">):</span>
+<span class="sd">        """</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="n">run_command_check_output</span><span class="p">(</span><span class="s2">"git-lfs"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">check</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"git-lfs"</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">install_if_necessary</span><span class="p">:</span>
@@ -424,7 +424,7 @@
 <div class="viewcode-block" id="GitLfsRequirement.activate">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.activate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">activate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Activates Git LFS.</span>
 
 <span class="sd">        This method runs the Git LFS install command.</span>
@@ -432,14 +432,14 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;git-lfs install&quot;</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">"git-lfs install"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GitLfsRequirement.install">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.GitLfsRequirement.install">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Installs Git LFS.</span>
 
 <span class="sd">        This method installs Git LFS using conda.</span>
@@ -447,8 +447,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;conda install -c conda-forge git-lfs&quot;</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="n">run_command</span><span class="p">(</span><span class="s2">"conda install -c conda-forge git-lfs"</span><span class="p">)</span></div>
 </div>
 
 
@@ -456,20 +456,20 @@
 <div class="viewcode-block" id="EosvcRequirement">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.EosvcRequirement">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EosvcRequirement</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class to handle checking and installing eosvc in the active Python environment.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;eosvc&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">install_target</span> <span class="o">=</span> <span class="s2">&quot;eosvc&gt;=1.1.0&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">"eosvc"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">install_target</span> <span class="o">=</span> <span class="s2">"eosvc&gt;=1.1.0"</span>
 
 <div class="viewcode-block" id="EosvcRequirement.is_installed">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.EosvcRequirement.is_installed">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check whether eosvc is importable in the active environment.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -480,14 +480,14 @@
 <div class="viewcode-block" id="EosvcRequirement.install">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.EosvcRequirement.install">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">install</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Install eosvc into the active Python environment.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span>
-            <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pip&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;install&quot;</span><span class="p">,</span>
+            <span class="s2">"-m"</span><span class="p">,</span>
+            <span class="s2">"pip"</span><span class="p">,</span>
+            <span class="s2">"install"</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">install_target</span><span class="p">,</span>
         <span class="p">]</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
@@ -497,9 +497,9 @@
 <div class="viewcode-block" id="EosvcRequirement.ensure_installed">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.setup.requirements.html#ersilia.setup.requirements.git.EosvcRequirement.ensure_installed">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ensure_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Ensure eosvc is available in the active Python environment.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">install</span><span class="p">():</span>

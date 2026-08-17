@@ -321,33 +321,33 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">rich.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span> <span class="k">as</span> <span class="n">RichTable</span>
 
     <span class="n">col_styles</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;Index&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;dim&quot;</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
-        <span class="s2">&quot;Identifier&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;bold cyan&quot;</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
-        <span class="s2">&quot;Slug&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span>
-        <span class="s2">&quot;Title&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">36</span><span class="p">),</span>
-        <span class="s2">&quot;Task&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;magenta&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
-        <span class="s2">&quot;Output Dimension&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span>
-        <span class="s2">&quot;Fetched From&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;dim cyan&quot;</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+        <span class="s2">"Index"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"dim"</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+        <span class="s2">"Identifier"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"bold cyan"</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span>
+        <span class="s2">"Slug"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"green"</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span>
+        <span class="s2">"Title"</span><span class="p">:</span> <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="mi">36</span><span class="p">),</span>
+        <span class="s2">"Task"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"magenta"</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+        <span class="s2">"Output Dimension"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"yellow"</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span>
+        <span class="s2">"Fetched From"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"dim cyan"</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
     <span class="p">}</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span>
         <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">header_style</span><span class="o">=</span><span class="s2">&quot;bold&quot;</span><span class="p">,</span>
-        <span class="n">border_style</span><span class="o">=</span><span class="s2">&quot;grey50&quot;</span><span class="p">,</span>
+        <span class="n">header_style</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="o">=</span><span class="s2">"grey50"</span><span class="p">,</span>
         <span class="n">show_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">expand</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">style</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">col_styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="n">style</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">col_styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span>
             <span class="n">col</span><span class="p">,</span>
             <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">,</span>
             <span class="n">min_width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
-            <span class="n">no_wrap</span><span class="o">=</span><span class="n">col</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Index&quot;</span><span class="p">,</span> <span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">),</span>
+            <span class="n">no_wrap</span><span class="o">=</span><span class="n">col</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Index"</span><span class="p">,</span> <span class="s2">"Identifier"</span><span class="p">,</span> <span class="s2">"Slug"</span><span class="p">,</span> <span class="s2">"Task"</span><span class="p">),</span>
         <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">""</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])</span>
 
     <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
@@ -357,79 +357,79 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">fmt</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;—&quot;</span>
+            <span class="k">return</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">"—"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">fmt_size</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;—&quot;</span>
+            <span class="k">return</span> <span class="s2">"—"</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">u</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;MB&quot;</span><span class="p">,</span> <span class="s2">&quot;GB&quot;</span><span class="p">,</span> <span class="s2">&quot;KB&quot;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">u</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"MB"</span><span class="p">,</span> <span class="s2">"GB"</span><span class="p">,</span> <span class="s2">"KB"</span><span class="p">)):</span>
             <span class="k">return</span> <span class="n">s</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> MB&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2"> MB"</span>
 
     <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">(</span><span class="s2">&quot;Overview&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Identifier&quot;</span><span class="p">,</span> <span class="s2">&quot;Slug&quot;</span><span class="p">,</span> <span class="s2">&quot;Status&quot;</span><span class="p">,</span> <span class="s2">&quot;Task&quot;</span><span class="p">,</span> <span class="s2">&quot;Subtask&quot;</span><span class="p">]),</span>
-        <span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Title&quot;</span><span class="p">,</span> <span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="s2">&quot;Interpretation&quot;</span><span class="p">]),</span>
+        <span class="p">(</span><span class="s2">"Overview"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Identifier"</span><span class="p">,</span> <span class="s2">"Slug"</span><span class="p">,</span> <span class="s2">"Status"</span><span class="p">,</span> <span class="s2">"Task"</span><span class="p">,</span> <span class="s2">"Subtask"</span><span class="p">]),</span>
+        <span class="p">(</span><span class="s2">"Description"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Title"</span><span class="p">,</span> <span class="s2">"Description"</span><span class="p">,</span> <span class="s2">"Interpretation"</span><span class="p">]),</span>
         <span class="p">(</span>
-            <span class="s2">&quot;Input / Output&quot;</span><span class="p">,</span>
+            <span class="s2">"Input / Output"</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="s2">&quot;Input&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Input Dimension&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Input Shape&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Output&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Output Dimension&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Output Shape&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Output Type&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Output Consistency&quot;</span><span class="p">,</span>
+                <span class="s2">"Input"</span><span class="p">,</span>
+                <span class="s2">"Input Dimension"</span><span class="p">,</span>
+                <span class="s2">"Input Shape"</span><span class="p">,</span>
+                <span class="s2">"Output"</span><span class="p">,</span>
+                <span class="s2">"Output Dimension"</span><span class="p">,</span>
+                <span class="s2">"Output Shape"</span><span class="p">,</span>
+                <span class="s2">"Output Type"</span><span class="p">,</span>
+                <span class="s2">"Output Consistency"</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">),</span>
         <span class="p">(</span>
-            <span class="s2">&quot;Deployment&quot;</span><span class="p">,</span>
+            <span class="s2">"Deployment"</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="s2">&quot;Deployment&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Source&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Source Type&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Docker Architecture&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;DockerHub&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;S3&quot;</span><span class="p">,</span>
+                <span class="s2">"Deployment"</span><span class="p">,</span>
+                <span class="s2">"Source"</span><span class="p">,</span>
+                <span class="s2">"Source Type"</span><span class="p">,</span>
+                <span class="s2">"Docker Architecture"</span><span class="p">,</span>
+                <span class="s2">"DockerHub"</span><span class="p">,</span>
+                <span class="s2">"S3"</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">),</span>
         <span class="p">(</span>
-            <span class="s2">&quot;Publication&quot;</span><span class="p">,</span>
+            <span class="s2">"Publication"</span><span class="p">,</span>
             <span class="p">[</span>
-                <span class="s2">&quot;License&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Contributor&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Publication Type&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Publication Year&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Publication&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Source Code&quot;</span><span class="p">,</span>
+                <span class="s2">"License"</span><span class="p">,</span>
+                <span class="s2">"Contributor"</span><span class="p">,</span>
+                <span class="s2">"Publication Type"</span><span class="p">,</span>
+                <span class="s2">"Publication Year"</span><span class="p">,</span>
+                <span class="s2">"Publication"</span><span class="p">,</span>
+                <span class="s2">"Source Code"</span><span class="p">,</span>
             <span class="p">],</span>
         <span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;Sizes&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Model Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">]),</span>
+        <span class="p">(</span><span class="s2">"Sizes"</span><span class="p">,</span> <span class="p">[</span><span class="s2">"Model Size"</span><span class="p">,</span> <span class="s2">"Environment Size"</span><span class="p">,</span> <span class="s2">"Image Size"</span><span class="p">]),</span>
     <span class="p">]</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold cyan&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_width</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s2">&quot;fold&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"Field"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold cyan"</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">min_width</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">"Value"</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="s2">"fold"</span><span class="p">)</span>
 
-    <span class="n">size_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Model Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Environment Size&quot;</span><span class="p">,</span> <span class="s2">&quot;Image Size&quot;</span><span class="p">}</span>
+    <span class="n">size_fields</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Model Size"</span><span class="p">,</span> <span class="s2">"Environment Size"</span><span class="p">,</span> <span class="s2">"Image Size"</span><span class="p">}</span>
     <span class="k">for</span> <span class="n">section_title</span><span class="p">,</span> <span class="n">fields</span> <span class="ow">in</span> <span class="n">sections</span><span class="p">:</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">section_title</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;bold magenta on grey15&quot;</span><span class="p">),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">section_title</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">"bold magenta on grey15"</span><span class="p">),</span> <span class="s2">""</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
                 <span class="n">formatter</span> <span class="o">=</span> <span class="n">fmt_size</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">size_fields</span> <span class="k">else</span> <span class="n">fmt</span>
-                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">formatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">field</span><span class="p">]))</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">formatter</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">field</span><span class="p">]))</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
 
-    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[bold]</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Identifier&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">[/bold]  ·  </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Title&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">border_style</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">))</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"[bold]</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'Identifier'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">[/bold]  ·  </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'Title'</span><span class="p">,</span><span class="w"> </span><span class="s1">''</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">border_style</span><span class="o">=</span><span class="s2">"cyan"</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="catalog_cmd">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.cli.commands.html#ersilia.cli.commands.catalog.catalog_cmd">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">catalog_cmd</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Creates the catalog command for the CLI.</span>
 
 <span class="sd">    This command allows users to list a catalog of models available either locally or in the model hub.</span>
@@ -447,48 +447,48 @@
 
 <span class="sd">    Display model card for a specific model ID and show catalog in json format:</span>
 <span class="sd">    $ ersilia catalog --card &lt;model_id&gt; --as-json</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="nd">@ersilia_cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
-        <span class="n">short_help</span><span class="o">=</span><span class="s2">&quot;List a catalog of models&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;List models available locally or in the Ersilia Model Hub. By default shows locally fetched models in table format. Supports detailed metadata and individual model cards.</span><span class="se">\n\n</span><span class="s2">For a full list of models visit [bold cyan][link=https://catalog.ersilia.io/]https://catalog.ersilia.io/[/link][/bold cyan]&quot;</span><span class="p">,</span>
+        <span class="n">short_help</span><span class="o">=</span><span class="s2">"List a catalog of models"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"List models available locally or in the Ersilia Model Hub. By default shows locally fetched models in table format. Supports detailed metadata and individual model cards.</span><span class="se">\n\n</span><span class="s2">For a full list of models visit [bold cyan][link=https://catalog.ersilia.io/]https://catalog.ersilia.io/[/link][/bold cyan]"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;-h/-l&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--hub/--local&quot;</span><span class="p">,</span>
+        <span class="s2">"-h/-l"</span><span class="p">,</span>
+        <span class="s2">"--hub/--local"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;--hub lists models available in the Ersilia Model Hub; --local (default) lists locally fetched models.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"--hub lists models available in the Ersilia Model Hub; --local (default) lists locally fetched models."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--output&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+        <span class="s2">"--output"</span><span class="p">,</span>
+        <span class="s2">"-o"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Save the catalog to a file. Accepted formats: .csv, .json.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Save the catalog to a file. Accepted formats: .csv, .json."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--more/--less&quot;</span><span class="p">,</span>
+        <span class="s2">"--more/--less"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;--more shows additional model metadata; --less (default) shows only the EOS identifier.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"--more shows additional model metadata; --less (default) shows only the EOS identifier."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--card&quot;</span><span class="p">,</span>
+        <span class="s2">"--card"</span><span class="p">,</span>
         <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Display the full model card for a given model ID.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Display the full model card for a given model ID."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-        <span class="s2">&quot;--task&quot;</span><span class="p">,</span>
+        <span class="s2">"--task"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">(</span>
-            <span class="p">[</span><span class="s2">&quot;Annotation&quot;</span><span class="p">,</span> <span class="s2">&quot;Representation&quot;</span><span class="p">,</span> <span class="s2">&quot;Sampling&quot;</span><span class="p">],</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">[</span><span class="s2">"Annotation"</span><span class="p">,</span> <span class="s2">"Representation"</span><span class="p">,</span> <span class="s2">"Sampling"</span><span class="p">],</span> <span class="n">case_sensitive</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">),</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Filter models by task.&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Filter models by task."</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span>
-        <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="s2">"model"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span>
         <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span>
@@ -506,7 +506,7 @@
 
         <span class="k">if</span> <span class="n">card</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">model</span><span class="p">:</span>
             <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">&quot;Error: --card option requires a model ID&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">),</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="s2">"Error: --card option requires a model ID"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">),</span>
                 <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span>
@@ -518,45 +518,45 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">model_metadata</span><span class="p">:</span>
                     <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
                         <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Error: No metadata found for model ID &#39;</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span>
+                            <span class="sa">f</span><span class="s2">"Error: No metadata found for model ID '</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">'"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span>
                         <span class="p">),</span>
                         <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">return</span>
                 <span class="k">if</span> <span class="n">output</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">)):</span>
                         <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
                             <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                                <span class="s2">&quot;Error: output file must have a .json or .csv extension.&quot;</span><span class="p">,</span>
-                                <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                                <span class="s2">"Error: output file must have a .json or .csv extension."</span><span class="p">,</span>
+                                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
                             <span class="p">),</span>
                             <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                         <span class="p">)</span>
                         <span class="k">return</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">model_metadata</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
-                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">model_metadata</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 
-                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-                            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">])</span>
+                            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s2">"Field"</span><span class="p">,</span> <span class="s2">"Value"</span><span class="p">])</span>
                             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                                 <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span>
                                     <span class="p">[</span>
                                         <span class="n">key</span><span class="p">,</span>
                                         <span class="n">value</span>
                                         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
-                                        <span class="k">else</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">),</span>
+                                        <span class="k">else</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">),</span>
                                     <span class="p">]</span>
                                 <span class="p">)</span>
-                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model card saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">))</span>
+                    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model card saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">_print_model_card</span><span class="p">(</span><span class="n">model_metadata</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error fetching model metadata: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">))</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error fetching model metadata: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">))</span>
             <span class="k">return</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">(</span><span class="n">less</span><span class="o">=</span><span class="ow">not</span> <span class="n">more</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
@@ -568,25 +568,25 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">catalog_table</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
                     <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
                         <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                            <span class="s2">&quot;No local models available. Please fetch a model by running &#39;ersilia fetch&#39; command&quot;</span><span class="p">,</span>
-                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                            <span class="s2">"No local models available. Please fetch a model by running 'ersilia fetch' command"</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
                     <span class="k">return</span>
             <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">_print_catalog</span><span class="p">(</span><span class="n">catalog_table</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">)):</span>
                     <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
                         <span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span>
-                            <span class="s2">&quot;Error: output file must have a .csv or .json extension.&quot;</span><span class="p">,</span>
-                            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+                            <span class="s2">"Error: output file must have a .csv or .json extension."</span><span class="p">,</span>
+                            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
                         <span class="p">),</span>
                         <span class="n">err</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="p">)</span>
                     <span class="k">return</span>
                 <span class="n">catalog_table</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Catalog saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">))</span>
+                <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Catalog saved to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">catalog</span></div>
 

@@ -316,7 +316,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_fetch</span><span class="p">(</span><span class="n">mf</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Fetches an Ersilia model to run it locally.</span>
 
 <span class="sd">    This command allows users to fetch a specified model from the model hub (dockerhub, repo, s3 etc...).</span>
@@ -330,7 +330,7 @@
 <span class="sd">    # -------</span>
 <span class="sd">    # RuntimeError: FastAPI are used together.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">res</span>
 
@@ -359,7 +359,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model_id_or_slug</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
     <span class="n">model_id</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span>
-    <span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Fetching model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">))</span>
+    <span class="n">echo</span><span class="p">(</span><span class="s2">"Fetching model </span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">mdl</span><span class="o">.</span><span class="n">slug</span><span class="p">))</span>
     <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span>
         <span class="n">repo_path</span><span class="o">=</span><span class="n">from_dir</span><span class="p">,</span>
         <span class="n">overwrite</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span>
@@ -375,23 +375,23 @@
 
     <span class="k">if</span> <span class="n">fetch_result</span><span class="o">.</span><span class="n">fetch_success</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;:thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> fetched successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="s2">":thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> fetched successfully!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
             <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span>
         <span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span>
-        <span class="o">==</span> <span class="s2">&quot;Model already exists on your system. If you want to fetch it again, please delete the existing model first.&quot;</span>
+        <span class="o">==</span> <span class="s2">"Model already exists on your system. If you want to fetch it again, please delete the existing model first."</span>
     <span class="p">):</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="s2">&quot;:thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> is already fetched successfully!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+            <span class="s2">":thumbs_up: Model </span><span class="si">{0}</span><span class="s2"> is already fetched successfully!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
             <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;:thumbs_down: Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed to fetch! </span><span class="si">{</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">fg</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">":thumbs_down: Model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2"> failed to fetch! </span><span class="si">{</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
             <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">echo</span><span class="p">(</span><span class="n">fetch_result</span><span class="o">.</span><span class="n">reason</span><span class="p">)</span>

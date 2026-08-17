@@ -327,18 +327,18 @@
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.cron.model_cleanup">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">model_cleanup</span><span class="p">():</span>
     <span class="n">ts_dict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">my_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;last_cleaned.json&quot;</span><span class="p">)</span>
+    <span class="n">my_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"last_cleaned.json"</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">my_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-        <span class="n">ts_dict</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;last_cleaned.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">ts_dict</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"last_cleaned.json"</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ts_dict</span><span class="p">,</span> <span class="n">outfile</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">current_ts</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;last_cleaned.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"last_cleaned.json"</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
             <span class="n">ts_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
-            <span class="n">ts</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ts_dict</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">])</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ts_dict</span><span class="p">[</span><span class="s2">"timestamp"</span><span class="p">])</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">seconds_to_days</span><span class="p">(</span><span class="n">current_ts</span> <span class="o">-</span> <span class="n">ts</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">model_cleanup_lim</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;fetched_models.txt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"fetched_models.txt"</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
                     <span class="n">fetched_models</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
                 <span class="k">for</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">fetched_models</span><span class="p">:</span>
                     <span class="k">if</span> <span class="p">(</span>
@@ -353,9 +353,9 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">del_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
     <span class="n">md</span> <span class="o">=</span> <span class="n">ModelFullDeleter</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">md</span><span class="o">.</span><span class="n">needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Deleting model </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Deleting model </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
         <span class="n">md</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Model &quot;</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="s2">&quot; deleted successfully!&quot;</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Model "</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="s2">" deleted successfully!"</span><span class="p">)</span></div>
 
 </pre></div>
         </article>

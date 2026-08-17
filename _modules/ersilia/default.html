@@ -312,136 +312,136 @@
 <span class="c1"># ruff: noqa: D101, D102</span>
 
 <span class="c1"># EOS environmental variables</span>
-<span class="n">EOS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span> <span class="s2">&quot;eos&quot;</span><span class="p">)</span>
-<span class="n">EOS_TMP</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;temp&quot;</span><span class="p">)</span>
+<span class="n">EOS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span> <span class="s2">"eos"</span><span class="p">)</span>
+<span class="n">EOS_TMP</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">"temp"</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">EOS</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">EOS</span><span class="p">)</span>
 
-<span class="n">ZAIRACHEM_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span> <span class="s2">&quot;zairachem&quot;</span><span class="p">)</span>
-<span class="n">EOS_PLAYGROUND</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;playground&quot;</span><span class="p">)</span>
+<span class="n">ZAIRACHEM_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()),</span> <span class="s2">"zairachem"</span><span class="p">)</span>
+<span class="n">EOS_PLAYGROUND</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">"playground"</span><span class="p">)</span>
 <span class="n">ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 <span class="n">CHECKSUM_NCHAR</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">CLOUD_CACHE_CHUNK</span> <span class="o">=</span> <span class="mi">100_000</span>
-<span class="n">CONDA_ENV_YML_FILE</span> <span class="o">=</span> <span class="s2">&quot;environment.yml&quot;</span>
-<span class="n">RUN_FILE</span> <span class="o">=</span> <span class="s2">&quot;run.sh&quot;</span>
-<span class="n">DOCKERFILE_FILE</span> <span class="o">=</span> <span class="s2">&quot;Dockerfile&quot;</span>
-<span class="n">GITHUB_ORG</span> <span class="o">=</span> <span class="s2">&quot;ersilia-os&quot;</span>
-<span class="n">GITHUB_CONTENT_URL</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/</span><span class="si">{</span><span class="n">GITHUB_ORG</span><span class="si">}</span><span class="s2">&quot;</span>
-<span class="n">GITHUB_ERSILIA_REPO</span> <span class="o">=</span> <span class="s2">&quot;ersilia&quot;</span>
-<span class="n">ERSILIA_MODEL_HUB_S3_BUCKET</span> <span class="o">=</span> <span class="s2">&quot;ersilia-model-hub&quot;</span>
-<span class="n">ERSILIA_MODELS_S3_BUCKET</span> <span class="o">=</span> <span class="s2">&quot;ersilia-models&quot;</span>
-<span class="n">ERSILIA_MODELS_ZIP_S3_BUCKET</span> <span class="o">=</span> <span class="s2">&quot;ersilia-models-zipped&quot;</span>
-<span class="n">MODELS_JSON</span> <span class="o">=</span> <span class="s2">&quot;models.json&quot;</span>
-<span class="n">CONFIG_JSON</span> <span class="o">=</span> <span class="s2">&quot;config.json&quot;</span>
-<span class="n">CREDENTIALS_JSON</span> <span class="o">=</span> <span class="s2">&quot;credentials.json&quot;</span>
-<span class="n">INSTALL_STATUS_FILE</span> <span class="o">=</span> <span class="s2">&quot;.install.status&quot;</span>
-<span class="n">DOCKER_BENTO_PATH</span> <span class="o">=</span> <span class="s2">&quot;/bento&quot;</span>
-<span class="n">DOCKERHUB_ORG</span> <span class="o">=</span> <span class="s2">&quot;ersiliaos&quot;</span>
-<span class="n">DOCKERHUB_LATEST_TAG</span> <span class="o">=</span> <span class="s2">&quot;latest&quot;</span>
-<span class="n">DEFAULT_DOCKER_PLATFORM</span> <span class="o">=</span> <span class="s2">&quot;linux/amd64&quot;</span>
-<span class="n">DEFAULT_MODEL_ID</span> <span class="o">=</span> <span class="s2">&quot;eos0zzz&quot;</span>
-<span class="n">DEFAULT_VENV</span> <span class="o">=</span> <span class="s2">&quot;env&quot;</span>
-<span class="n">DEFAULT_API_NAME</span> <span class="o">=</span> <span class="s2">&quot;run&quot;</span>
-<span class="n">DEFAULT_ASYNC_API_NAME</span> <span class="o">=</span> <span class="s2">&quot;job&quot;</span>
-<span class="n">PACKMODE_FILE</span> <span class="o">=</span> <span class="s2">&quot;pack_mode.txt&quot;</span>
-<span class="n">PACKMETHOD_FILE</span> <span class="o">=</span> <span class="s2">&quot;pack_method.txt&quot;</span>
-<span class="n">CARD_FILE</span> <span class="o">=</span> <span class="s2">&quot;card.json&quot;</span>
-<span class="n">UNPROCESSABLE_INPUT</span> <span class="o">=</span> <span class="s2">&quot;UNPROCESSABLE_INPUT&quot;</span>
-<span class="n">DOTENV_FILE</span> <span class="o">=</span> <span class="s2">&quot;.env&quot;</span>
-<span class="n">REDIS_DATA_VOLUME</span> <span class="o">=</span> <span class="s2">&quot;redis_data_volume&quot;</span>
-<span class="n">API_SCHEMA_FILE</span> <span class="o">=</span> <span class="s2">&quot;api_schema.json&quot;</span>
-<span class="n">MODEL_SIZE_FILE</span> <span class="o">=</span> <span class="s2">&quot;size.json&quot;</span>
+<span class="n">CONDA_ENV_YML_FILE</span> <span class="o">=</span> <span class="s2">"environment.yml"</span>
+<span class="n">RUN_FILE</span> <span class="o">=</span> <span class="s2">"run.sh"</span>
+<span class="n">DOCKERFILE_FILE</span> <span class="o">=</span> <span class="s2">"Dockerfile"</span>
+<span class="n">GITHUB_ORG</span> <span class="o">=</span> <span class="s2">"ersilia-os"</span>
+<span class="n">GITHUB_CONTENT_URL</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"https://raw.githubusercontent.com/</span><span class="si">{</span><span class="n">GITHUB_ORG</span><span class="si">}</span><span class="s2">"</span>
+<span class="n">GITHUB_ERSILIA_REPO</span> <span class="o">=</span> <span class="s2">"ersilia"</span>
+<span class="n">ERSILIA_MODEL_HUB_S3_BUCKET</span> <span class="o">=</span> <span class="s2">"ersilia-model-hub"</span>
+<span class="n">ERSILIA_MODELS_S3_BUCKET</span> <span class="o">=</span> <span class="s2">"ersilia-models"</span>
+<span class="n">ERSILIA_MODELS_ZIP_S3_BUCKET</span> <span class="o">=</span> <span class="s2">"ersilia-models-zipped"</span>
+<span class="n">MODELS_JSON</span> <span class="o">=</span> <span class="s2">"models.json"</span>
+<span class="n">CONFIG_JSON</span> <span class="o">=</span> <span class="s2">"config.json"</span>
+<span class="n">CREDENTIALS_JSON</span> <span class="o">=</span> <span class="s2">"credentials.json"</span>
+<span class="n">INSTALL_STATUS_FILE</span> <span class="o">=</span> <span class="s2">".install.status"</span>
+<span class="n">DOCKER_BENTO_PATH</span> <span class="o">=</span> <span class="s2">"/bento"</span>
+<span class="n">DOCKERHUB_ORG</span> <span class="o">=</span> <span class="s2">"ersiliaos"</span>
+<span class="n">DOCKERHUB_LATEST_TAG</span> <span class="o">=</span> <span class="s2">"latest"</span>
+<span class="n">DEFAULT_DOCKER_PLATFORM</span> <span class="o">=</span> <span class="s2">"linux/amd64"</span>
+<span class="n">DEFAULT_MODEL_ID</span> <span class="o">=</span> <span class="s2">"eos0zzz"</span>
+<span class="n">DEFAULT_VENV</span> <span class="o">=</span> <span class="s2">"env"</span>
+<span class="n">DEFAULT_API_NAME</span> <span class="o">=</span> <span class="s2">"run"</span>
+<span class="n">DEFAULT_ASYNC_API_NAME</span> <span class="o">=</span> <span class="s2">"job"</span>
+<span class="n">PACKMODE_FILE</span> <span class="o">=</span> <span class="s2">"pack_mode.txt"</span>
+<span class="n">PACKMETHOD_FILE</span> <span class="o">=</span> <span class="s2">"pack_method.txt"</span>
+<span class="n">CARD_FILE</span> <span class="o">=</span> <span class="s2">"card.json"</span>
+<span class="n">UNPROCESSABLE_INPUT</span> <span class="o">=</span> <span class="s2">"UNPROCESSABLE_INPUT"</span>
+<span class="n">DOTENV_FILE</span> <span class="o">=</span> <span class="s2">".env"</span>
+<span class="n">REDIS_DATA_VOLUME</span> <span class="o">=</span> <span class="s2">"redis_data_volume"</span>
+<span class="n">API_SCHEMA_FILE</span> <span class="o">=</span> <span class="s2">"api_schema.json"</span>
+<span class="n">MODEL_SIZE_FILE</span> <span class="o">=</span> <span class="s2">"size.json"</span>
 <span class="n">DEFAULT_BATCH_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">DEFAULT_REDIS_MEMORY_USAGE_FRACTION</span> <span class="o">=</span> <span class="mf">0.3</span>
-<span class="n">FETCHED_MODELS_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;fetched_models.txt&quot;</span>
-<span class="n">MODEL_CONFIG_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;config.json&quot;</span>
-<span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;example_standard_input.csv&quot;</span>
-<span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;example_standard_output.csv&quot;</span>
+<span class="n">FETCHED_MODELS_FILENAME</span> <span class="o">=</span> <span class="s2">"fetched_models.txt"</span>
+<span class="n">MODEL_CONFIG_FILENAME</span> <span class="o">=</span> <span class="s2">"config.json"</span>
+<span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span> <span class="o">=</span> <span class="s2">"example_standard_input.csv"</span>
+<span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span> <span class="o">=</span> <span class="s2">"example_standard_output.csv"</span>
 
 <span class="n">PREDEFINED_EXAMPLE_INPUT_FILES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;model/framework/examples/run_input.csv&quot;</span><span class="p">,</span>
+    <span class="s2">"model/framework/examples/run_input.csv"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">PREDEFINED_EXAMPLE_OUTPUT_FILES</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;model/framework/examples/run_output.csv&quot;</span><span class="p">,</span>
+    <span class="s2">"model/framework/examples/run_output.csv"</span><span class="p">,</span>
 <span class="p">]</span>
 
-<span class="n">PREDEFINED_COLUMN_FILE</span> <span class="o">=</span> <span class="s2">&quot;model/framework/columns/run_columns.csv&quot;</span>
+<span class="n">PREDEFINED_COLUMN_FILE</span> <span class="o">=</span> <span class="s2">"model/framework/columns/run_columns.csv"</span>
 
 <span class="n">PREDEFINED_EXAMPLE_FILES</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">PREDEFINED_EXAMPLE_INPUT_FILES</span> <span class="o">+</span> <span class="n">PREDEFINED_EXAMPLE_OUTPUT_FILES</span>
 <span class="p">)</span>
 <span class="n">DEFAULT_ERSILIA_ERROR_EXIT_CODE</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">METADATA_JSON_FILE</span> <span class="o">=</span> <span class="s2">&quot;metadata.json&quot;</span>
-<span class="n">METADATA_YAML_FILE</span> <span class="o">=</span> <span class="s2">&quot;metadata.yml&quot;</span>
-<span class="n">INSTALL_YAML_FILE</span> <span class="o">=</span> <span class="s2">&quot;install.yml&quot;</span>
-<span class="n">SERVICE_CLASS_FILE</span> <span class="o">=</span> <span class="s2">&quot;service_class.txt&quot;</span>
-<span class="n">MODEL_SOURCE_FILE</span> <span class="o">=</span> <span class="s2">&quot;model_source.txt&quot;</span>
-<span class="n">APIS_LIST_FILE</span> <span class="o">=</span> <span class="s2">&quot;apis_list.txt&quot;</span>
-<span class="n">INFORMATION_FILE</span> <span class="o">=</span> <span class="s2">&quot;information.json&quot;</span>
-<span class="n">DOCKER_INFO_FILE</span> <span class="o">=</span> <span class="s2">&quot;from_dockerhub.json&quot;</span>
-<span class="n">STATUS_JOSN</span> <span class="o">=</span> <span class="s2">&quot;status.json&quot;</span>
-<span class="n">IS_FETCHED_FROM_HOSTED_FILE</span> <span class="o">=</span> <span class="s2">&quot;from_hosted.json&quot;</span>
-<span class="n">DEFAULT_DOCKER_NETWORK_NAME</span> <span class="o">=</span> <span class="s2">&quot;ersilia_network&quot;</span>
-<span class="n">DEFAULT_DOCKER_NETWORK_BRIDGE</span> <span class="o">=</span> <span class="s2">&quot;bridge&quot;</span>
-<span class="c1"># ERSILIA_RUNS_FOLDER = &quot;ersilia_runs&quot;</span>
-<span class="n">ALLOWED_API_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">]</span>  <span class="c1"># This can grow in the future based on needs</span>
-<span class="n">PACK_METHOD_FASTAPI</span> <span class="o">=</span> <span class="s2">&quot;fastapi&quot;</span>
+<span class="n">METADATA_JSON_FILE</span> <span class="o">=</span> <span class="s2">"metadata.json"</span>
+<span class="n">METADATA_YAML_FILE</span> <span class="o">=</span> <span class="s2">"metadata.yml"</span>
+<span class="n">INSTALL_YAML_FILE</span> <span class="o">=</span> <span class="s2">"install.yml"</span>
+<span class="n">SERVICE_CLASS_FILE</span> <span class="o">=</span> <span class="s2">"service_class.txt"</span>
+<span class="n">MODEL_SOURCE_FILE</span> <span class="o">=</span> <span class="s2">"model_source.txt"</span>
+<span class="n">APIS_LIST_FILE</span> <span class="o">=</span> <span class="s2">"apis_list.txt"</span>
+<span class="n">INFORMATION_FILE</span> <span class="o">=</span> <span class="s2">"information.json"</span>
+<span class="n">DOCKER_INFO_FILE</span> <span class="o">=</span> <span class="s2">"from_dockerhub.json"</span>
+<span class="n">STATUS_JOSN</span> <span class="o">=</span> <span class="s2">"status.json"</span>
+<span class="n">IS_FETCHED_FROM_HOSTED_FILE</span> <span class="o">=</span> <span class="s2">"from_hosted.json"</span>
+<span class="n">DEFAULT_DOCKER_NETWORK_NAME</span> <span class="o">=</span> <span class="s2">"ersilia_network"</span>
+<span class="n">DEFAULT_DOCKER_NETWORK_BRIDGE</span> <span class="o">=</span> <span class="s2">"bridge"</span>
+<span class="c1"># ERSILIA_RUNS_FOLDER = "ersilia_runs"</span>
+<span class="n">ALLOWED_API_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"run"</span><span class="p">,</span> <span class="s2">"train"</span><span class="p">]</span>  <span class="c1"># This can grow in the future based on needs</span>
+<span class="n">PACK_METHOD_FASTAPI</span> <span class="o">=</span> <span class="s2">"fastapi"</span>
 <span class="n">FASTAPI_APPROVED_PYTHON_VERSIONS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;py38&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;py39&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;py310&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;py311&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;py312&quot;</span><span class="p">,</span>
+    <span class="s2">"py38"</span><span class="p">,</span>
+    <span class="s2">"py39"</span><span class="p">,</span>
+    <span class="s2">"py310"</span><span class="p">,</span>
+    <span class="s2">"py311"</span><span class="p">,</span>
+    <span class="s2">"py312"</span><span class="p">,</span>
 <span class="p">]</span>
 <span class="c1"># Session and logging</span>
-<span class="n">SESSIONS_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">&quot;sessions&quot;</span><span class="p">)</span>
+<span class="n">SESSIONS_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="s2">"sessions"</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">):</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">SESSION_HISTORY_FILE</span> <span class="o">=</span> <span class="s2">&quot;history.txt&quot;</span>
-<span class="n">SESSION_JSON</span> <span class="o">=</span> <span class="s2">&quot;session.json&quot;</span>
-<span class="n">LOGS_DIR</span> <span class="o">=</span> <span class="s2">&quot;logs&quot;</span>
-<span class="n">CONTAINER_LOGS_TMP_DIR</span> <span class="o">=</span> <span class="s2">&quot;_logs/tmp&quot;</span>
-<span class="n">CONTAINER_LOGS_EOS_DIR</span> <span class="o">=</span> <span class="s2">&quot;_logs/eos&quot;</span>  <span class="c1"># This is not used</span>
-<span class="n">LOGGING_FILE</span> <span class="o">=</span> <span class="s2">&quot;console.log&quot;</span>
-<span class="n">CURRENT_LOGGING_FILE</span> <span class="o">=</span> <span class="s2">&quot;current.log&quot;</span>
-<span class="n">SILENCE_FILE</span> <span class="o">=</span> <span class="s2">&quot;.silence.json&quot;</span>
-<span class="n">VERBOSE_FILE</span> <span class="o">=</span> <span class="s2">&quot;.verbose.json&quot;</span>
+<span class="n">SESSION_HISTORY_FILE</span> <span class="o">=</span> <span class="s2">"history.txt"</span>
+<span class="n">SESSION_JSON</span> <span class="o">=</span> <span class="s2">"session.json"</span>
+<span class="n">LOGS_DIR</span> <span class="o">=</span> <span class="s2">"logs"</span>
+<span class="n">CONTAINER_LOGS_TMP_DIR</span> <span class="o">=</span> <span class="s2">"_logs/tmp"</span>
+<span class="n">CONTAINER_LOGS_EOS_DIR</span> <span class="o">=</span> <span class="s2">"_logs/eos"</span>  <span class="c1"># This is not used</span>
+<span class="n">LOGGING_FILE</span> <span class="o">=</span> <span class="s2">"console.log"</span>
+<span class="n">CURRENT_LOGGING_FILE</span> <span class="o">=</span> <span class="s2">"current.log"</span>
+<span class="n">SILENCE_FILE</span> <span class="o">=</span> <span class="s2">".silence.json"</span>
+<span class="n">VERBOSE_FILE</span> <span class="o">=</span> <span class="s2">".verbose.json"</span>
 
-<span class="n">H5_EXTENSION</span> <span class="o">=</span> <span class="s2">&quot;.h5&quot;</span>
-<span class="n">H5_DATA_FILE</span> <span class="o">=</span> <span class="s2">&quot;data.h5&quot;</span>
-<span class="n">REDIS_SERVER</span> <span class="o">=</span> <span class="s2">&quot;redis://redis:6379&quot;</span>
+<span class="n">H5_EXTENSION</span> <span class="o">=</span> <span class="s2">".h5"</span>
+<span class="n">H5_DATA_FILE</span> <span class="o">=</span> <span class="s2">"data.h5"</span>
+<span class="n">REDIS_SERVER</span> <span class="o">=</span> <span class="s2">"redis://redis:6379"</span>
 <span class="c1"># Other</span>
-<span class="n">FEATURE_MERGE_PATTERN</span> <span class="o">=</span> <span class="s2">&quot;---&quot;</span>
+<span class="n">FEATURE_MERGE_PATTERN</span> <span class="o">=</span> <span class="s2">"---"</span>
 
 <span class="c1"># URLS</span>
 <span class="n">REDIS_EXPIRATION</span> <span class="o">=</span> <span class="mi">3600</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">7</span>
 <span class="n">REDIS_PORT</span> <span class="o">=</span> <span class="mi">6379</span>
-<span class="n">REDIS_CONTAINER_NAME</span> <span class="o">=</span> <span class="s2">&quot;redis&quot;</span>
-<span class="n">REDIS_IMAGE</span> <span class="o">=</span> <span class="s2">&quot;redis:latest&quot;</span>
-<span class="n">REDIS_HOST</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span>
-<span class="n">ERSILIA_WEB_URL</span> <span class="o">=</span> <span class="s2">&quot;https://ersilia.io&quot;</span>
-<span class="n">ERSILIA_MODEL_HUB_URL</span> <span class="o">=</span> <span class="s2">&quot;https://catalog.ersilia.io&quot;</span>
-<span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span> <span class="o">=</span> <span class="s2">&quot;https://airtable.com/appR6ZwgLgG8RTdoU/shr7scXQV3UYqnM6Q&quot;</span>
-<span class="n">ERSILIA_CATALOG_URL</span> <span class="o">=</span> <span class="s2">&quot;https://catalog.ersilia.io&quot;</span>
-<span class="n">S3_BUCKET_URL</span> <span class="o">=</span> <span class="s2">&quot;https://ersilia-models.s3.eu-central-1.amazonaws.com&quot;</span>
-<span class="n">S3_BUCKET_URL_ZIP</span> <span class="o">=</span> <span class="s2">&quot;https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com&quot;</span>
+<span class="n">REDIS_CONTAINER_NAME</span> <span class="o">=</span> <span class="s2">"redis"</span>
+<span class="n">REDIS_IMAGE</span> <span class="o">=</span> <span class="s2">"redis:latest"</span>
+<span class="n">REDIS_HOST</span> <span class="o">=</span> <span class="s2">"localhost"</span>
+<span class="n">ERSILIA_WEB_URL</span> <span class="o">=</span> <span class="s2">"https://ersilia.io"</span>
+<span class="n">ERSILIA_MODEL_HUB_URL</span> <span class="o">=</span> <span class="s2">"https://catalog.ersilia.io"</span>
+<span class="n">AIRTABLE_MODEL_HUB_VIEW_URL</span> <span class="o">=</span> <span class="s2">"https://airtable.com/appR6ZwgLgG8RTdoU/shr7scXQV3UYqnM6Q"</span>
+<span class="n">ERSILIA_CATALOG_URL</span> <span class="o">=</span> <span class="s2">"https://catalog.ersilia.io"</span>
+<span class="n">S3_BUCKET_URL</span> <span class="o">=</span> <span class="s2">"https://ersilia-models.s3.eu-central-1.amazonaws.com"</span>
+<span class="n">S3_BUCKET_URL_ZIP</span> <span class="o">=</span> <span class="s2">"https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com"</span>
 <span class="n">INFERENCE_STORE_API_URL</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations&quot;</span>
+    <span class="s2">"https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations"</span>
 <span class="p">)</span>
-<span class="n">API_BASE</span> <span class="o">=</span> <span class="s2">&quot;https://hov95ejni7.execute-api.eu-central-1.amazonaws.com/dev/predict&quot;</span>
+<span class="n">API_BASE</span> <span class="o">=</span> <span class="s2">"https://hov95ejni7.execute-api.eu-central-1.amazonaws.com/dev/predict"</span>
 <span class="c1"># Isaura Buckets</span>
 
-<span class="n">DEFAULT_PUBLIC_BUCKET</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;isaura-public&quot;</span><span class="p">]</span>
-<span class="n">DEFAULT_PRIVATE_BUCKET</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;isaura-private&quot;</span><span class="p">]</span>
-<span class="n">ERSILIA_BUCKET</span> <span class="o">=</span> <span class="s2">&quot;ersilia&quot;</span>
+<span class="n">DEFAULT_PUBLIC_BUCKET</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"isaura-public"</span><span class="p">]</span>
+<span class="n">DEFAULT_PRIVATE_BUCKET</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"isaura-private"</span><span class="p">]</span>
+<span class="n">ERSILIA_BUCKET</span> <span class="o">=</span> <span class="s2">"ersilia"</span>
 
 <span class="c1"># EOS conda</span>
-<span class="n">_resolve_script</span> <span class="o">=</span> <span class="s2">&quot;conda_env_resolve.py&quot;</span>
+<span class="n">_resolve_script</span> <span class="o">=</span> <span class="s2">"conda_env_resolve.py"</span>
 <span class="n">resolve_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">)</span>
 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">resolve_script</span><span class="p">):</span>
     <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">&quot;utils&quot;</span><span class="p">,</span> <span class="s2">&quot;supp&quot;</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">),</span> <span class="n">resolve_script</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT</span><span class="p">,</span> <span class="s2">"utils"</span><span class="p">,</span> <span class="s2">"supp"</span><span class="p">,</span> <span class="n">_resolve_script</span><span class="p">),</span> <span class="n">resolve_script</span>
     <span class="p">)</span>
 
 
@@ -449,42 +449,42 @@
 <div class="viewcode-block" id="TableConstants">
 <a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.TableConstants">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TableConstants</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-    <span class="n">TOP_LEFT</span> <span class="o">=</span> <span class="s2">&quot;┌&quot;</span>
-    <span class="n">TOP_MIDDLE</span> <span class="o">=</span> <span class="s2">&quot;┬&quot;</span>
-    <span class="n">TOP_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┐&quot;</span>
-    <span class="n">HORIZONTAL</span> <span class="o">=</span> <span class="s2">&quot;─&quot;</span>
-    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="s2">&quot;│&quot;</span>
-    <span class="n">MIDDLE_LEFT</span> <span class="o">=</span> <span class="s2">&quot;├&quot;</span>
-    <span class="n">MIDDLE_MIDDLE</span> <span class="o">=</span> <span class="s2">&quot;┼&quot;</span>
-    <span class="n">MIDDLE_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┤&quot;</span>
-    <span class="n">BOTTOM_LEFT</span> <span class="o">=</span> <span class="s2">&quot;└&quot;</span>
-    <span class="n">BOTTOM_MIDDLE</span> <span class="o">=</span> <span class="s2">&quot;┴&quot;</span>
-    <span class="n">BOTTOM_RIGHT</span> <span class="o">=</span> <span class="s2">&quot;┘&quot;</span>
-    <span class="n">CELL_PADDING</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
-    <span class="n">COLUMN_SEPARATOR</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span></div>
+    <span class="n">TOP_LEFT</span> <span class="o">=</span> <span class="s2">"┌"</span>
+    <span class="n">TOP_MIDDLE</span> <span class="o">=</span> <span class="s2">"┬"</span>
+    <span class="n">TOP_RIGHT</span> <span class="o">=</span> <span class="s2">"┐"</span>
+    <span class="n">HORIZONTAL</span> <span class="o">=</span> <span class="s2">"─"</span>
+    <span class="n">VERTICAL</span> <span class="o">=</span> <span class="s2">"│"</span>
+    <span class="n">MIDDLE_LEFT</span> <span class="o">=</span> <span class="s2">"├"</span>
+    <span class="n">MIDDLE_MIDDLE</span> <span class="o">=</span> <span class="s2">"┼"</span>
+    <span class="n">MIDDLE_RIGHT</span> <span class="o">=</span> <span class="s2">"┤"</span>
+    <span class="n">BOTTOM_LEFT</span> <span class="o">=</span> <span class="s2">"└"</span>
+    <span class="n">BOTTOM_MIDDLE</span> <span class="o">=</span> <span class="s2">"┴"</span>
+    <span class="n">BOTTOM_RIGHT</span> <span class="o">=</span> <span class="s2">"┘"</span>
+    <span class="n">CELL_PADDING</span> <span class="o">=</span> <span class="s2">" "</span>
+    <span class="n">COLUMN_SEPARATOR</span> <span class="o">=</span> <span class="s2">" | "</span></div>
 
 
 
 <span class="n">snippet</span> <span class="o">=</span> <span class="p">(</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd"># &gt;&gt;&gt; ersilia &gt;&gt;&gt;</span>
-<span class="sd"># !! Contents within this block are managed by &#39;ersilia&#39; !!</span>
+<span class="sd"># !! Contents within this block are managed by 'ersilia' !!</span>
 <span class="sd">eosconda() {</span>
 <span class="sd">    EOS_MODEL_ENV=$(python %s $2);</span>
 <span class="sd">    conda $1 $EOS_MODEL_ENV</span>
 <span class="sd">}</span>
 
 <span class="sd">ersilia() {</span>
-<span class="sd">    if [[ $1 == &quot;conda&quot; ]]; then</span>
-<span class="sd">        eosconda &quot;${@: 2}&quot;</span>
-<span class="sd">    elif [[ $1 == &quot;auth&quot; ]]; then</span>
-<span class="sd">        gh auth &quot;${@: 2}&quot;</span>
+<span class="sd">    if [[ $1 == "conda" ]]; then</span>
+<span class="sd">        eosconda "${@: 2}"</span>
+<span class="sd">    elif [[ $1 == "auth" ]]; then</span>
+<span class="sd">        gh auth "${@: 2}"</span>
 <span class="sd">    else</span>
-<span class="sd">        command ersilia &quot;$@&quot;</span>
+<span class="sd">        command ersilia "$@"</span>
 <span class="sd">    fi</span>
 <span class="sd">}</span>
 <span class="sd"># &lt;&lt;&lt; ersilia &lt;&lt;&lt;</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
     <span class="o">%</span> <span class="n">resolve_script</span>
 <span class="p">)</span>
 
@@ -493,10 +493,10 @@
 <a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_path">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">bashrc_path</span><span class="p">():</span>
     <span class="n">home_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
-    <span class="n">rc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">&quot;.bashrc&quot;</span><span class="p">)</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">".bashrc"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rc</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">rc</span>
-    <span class="n">pr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">&quot;.bash_profile&quot;</span><span class="p">)</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_path</span><span class="p">,</span> <span class="s2">".bash_profile"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">pr</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">pr</span></div>
 
@@ -508,7 +508,7 @@
     <span class="n">fn</span> <span class="o">=</span> <span class="n">bashrc_path</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">snippet</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
@@ -520,7 +520,7 @@
 <div class="viewcode-block" id="bashrc_cli_snippet">
 <a class="viewcode-back" href="../../source/autodoc/ersilia.html#ersilia.default.bashrc_cli_snippet">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">bashrc_cli_snippet</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a conda snippet in the user profile.</span>
+<span class="w">    </span><span class="sd">"""Write a conda snippet in the user profile.</span>
 
 <span class="sd">    This function writes on the user profile to create an executable to work</span>
 <span class="sd">    with conda environments based on model identifiers.</span>
@@ -529,102 +529,102 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        - overwrite (bool): Overwrite the current bash profile file if the eosconda string is found.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">fn</span> <span class="o">=</span> <span class="n">bashrc_path</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">snippet</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">overwrite</span><span class="p">:</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">snippet</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">snippet</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">&quot;a+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s2">"a+"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">snippet</span><span class="p">)</span></div>
 
 
 
-<span class="n">_CONDA_BOOTSTRAP</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="n">_CONDA_BOOTSTRAP</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"""</span>
 <span class="s2">set -euo pipefail</span>
 
 <span class="s2">unset CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PROMPT_MODIFIER || true</span>
 <span class="s2">unset CONDA_SHLVL || true</span>
-<span class="s2">while IFS=&#39;=&#39; read -r k _; do</span>
-<span class="s2">  if [[ &quot;$k&quot; =~ ^CONDA_PREFIX_[0-9]+$ ]]; then</span>
-<span class="s2">    unset &quot;$k&quot;</span>
+<span class="s2">while IFS='=' read -r k _; do</span>
+<span class="s2">  if [[ "$k" =~ ^CONDA_PREFIX_[0-9]+$ ]]; then</span>
+<span class="s2">    unset "$k"</span>
 <span class="s2">  fi</span>
 <span class="s2">done &lt; &lt;(env)</span>
 
 <span class="s2">for d in \</span>
-<span class="s2">  &quot;/usr/share/miniconda/bin&quot; \</span>
-<span class="s2">  &quot;/usr/local/miniconda/bin&quot; \</span>
-<span class="s2">  &quot;/opt/conda/bin&quot; \</span>
-<span class="s2">  &quot;$HOME/miniconda/bin&quot; \</span>
-<span class="s2">  &quot;$HOME/miniconda3/bin&quot; \</span>
-<span class="s2">  &quot;$HOME/mambaforge/bin&quot; \</span>
-<span class="s2">  &quot;$HOME/miniforge3/bin&quot; \</span>
-<span class="s2">  &quot;$HOME/anaconda3/bin&quot; \</span>
-<span class="s2">  &quot;$HOME/.local/share/mamba/condabin&quot; \</span>
+<span class="s2">  "/usr/share/miniconda/bin" \</span>
+<span class="s2">  "/usr/local/miniconda/bin" \</span>
+<span class="s2">  "/opt/conda/bin" \</span>
+<span class="s2">  "$HOME/miniconda/bin" \</span>
+<span class="s2">  "$HOME/miniconda3/bin" \</span>
+<span class="s2">  "$HOME/mambaforge/bin" \</span>
+<span class="s2">  "$HOME/miniforge3/bin" \</span>
+<span class="s2">  "$HOME/anaconda3/bin" \</span>
+<span class="s2">  "$HOME/.local/share/mamba/condabin" \</span>
 <span class="s2">; do</span>
-<span class="s2">  if [ -d &quot;$d&quot; ]; then</span>
-<span class="s2">    case &quot;:$PATH:&quot; in</span>
-<span class="s2">      *&quot;:$d:&quot;*) : ;;</span>
-<span class="s2">      *) export PATH=&quot;$d:$PATH&quot; ;;</span>
+<span class="s2">  if [ -d "$d" ]; then</span>
+<span class="s2">    case ":$PATH:" in</span>
+<span class="s2">      *":$d:"*) : ;;</span>
+<span class="s2">      *) export PATH="$d:$PATH" ;;</span>
 <span class="s2">    esac</span>
 <span class="s2">  fi</span>
 <span class="s2">done</span>
 
-<span class="s2">CONDA_BIN=&quot;$(command -v conda || true)&quot;</span>
-<span class="s2">CONDA_SH=&quot;&quot;</span>
+<span class="s2">CONDA_BIN="$(command -v conda || true)"</span>
+<span class="s2">CONDA_SH=""</span>
 
-<span class="s2">if [ -n &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot; ] &amp;&amp; [ -x &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">  CONDA_BASE=&quot;$(cd &quot;$(dirname &quot;$(dirname &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot;)&quot;)&quot; &amp;&amp; pwd)&quot;</span>
-<span class="s2">  if [ -f &quot;$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh&quot; ]; then</span>
-<span class="s2">    CONDA_SH=&quot;$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh&quot;</span>
+<span class="s2">if [ -n "$</span><span class="si">{CONDA_BIN}</span><span class="s2">" ] &amp;&amp; [ -x "$</span><span class="si">{CONDA_BIN}</span><span class="s2">" ]; then</span>
+<span class="s2">  CONDA_BASE="$(cd "$(dirname "$(dirname "$</span><span class="si">{CONDA_BIN}</span><span class="s2">")")" &amp;&amp; pwd)"</span>
+<span class="s2">  if [ -f "$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh" ]; then</span>
+<span class="s2">    CONDA_SH="$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh"</span>
 <span class="s2">  fi</span>
 <span class="s2">fi</span>
 
-<span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ] &amp;&amp; [ -n &quot;$</span><span class="si">{CONDA_EXE:-}</span><span class="s2">&quot; ] &amp;&amp; [ -x &quot;$</span><span class="si">{CONDA_EXE}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">  CONDA_BASE=&quot;$(cd &quot;$(dirname &quot;$(dirname &quot;$</span><span class="si">{CONDA_EXE}</span><span class="s2">&quot;)&quot;)&quot; &amp;&amp; pwd)&quot;</span>
-<span class="s2">  if [ -f &quot;$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh&quot; ]; then</span>
-<span class="s2">    CONDA_SH=&quot;$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh&quot;</span>
+<span class="s2">if [ -z "$</span><span class="si">{CONDA_SH}</span><span class="s2">" ] &amp;&amp; [ -n "$</span><span class="si">{CONDA_EXE:-}</span><span class="s2">" ] &amp;&amp; [ -x "$</span><span class="si">{CONDA_EXE}</span><span class="s2">" ]; then</span>
+<span class="s2">  CONDA_BASE="$(cd "$(dirname "$(dirname "$</span><span class="si">{CONDA_EXE}</span><span class="s2">")")" &amp;&amp; pwd)"</span>
+<span class="s2">  if [ -f "$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh" ]; then</span>
+<span class="s2">    CONDA_SH="$</span><span class="si">{CONDA_BASE}</span><span class="s2">/etc/profile.d/conda.sh"</span>
 <span class="s2">  fi</span>
 <span class="s2">fi</span>
 
-<span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
+<span class="s2">if [ -z "$</span><span class="si">{CONDA_SH}</span><span class="s2">" ]; then</span>
 <span class="s2">  for b in \</span>
-<span class="s2">    &quot;$</span><span class="si">{CONDA_PREFIX:-}</span><span class="s2">&quot; \</span>
-<span class="s2">    &quot;$</span><span class="si">{CONDA:-}</span><span class="s2">&quot; \</span>
-<span class="s2">    &quot;$</span><span class="si">{MAMBA_ROOT_PREFIX:-}</span><span class="s2">&quot; \</span>
-<span class="s2">    &quot;/usr/share/miniconda&quot; \</span>
-<span class="s2">    &quot;/opt/conda&quot; \</span>
-<span class="s2">    &quot;$HOME/miniconda&quot; \</span>
-<span class="s2">    &quot;$HOME/miniconda3&quot; \</span>
-<span class="s2">    &quot;$HOME/mambaforge&quot; \</span>
-<span class="s2">    &quot;$HOME/miniforge3&quot; \</span>
-<span class="s2">    &quot;$HOME/anaconda3&quot; \</span>
+<span class="s2">    "$</span><span class="si">{CONDA_PREFIX:-}</span><span class="s2">" \</span>
+<span class="s2">    "$</span><span class="si">{CONDA:-}</span><span class="s2">" \</span>
+<span class="s2">    "$</span><span class="si">{MAMBA_ROOT_PREFIX:-}</span><span class="s2">" \</span>
+<span class="s2">    "/usr/share/miniconda" \</span>
+<span class="s2">    "/opt/conda" \</span>
+<span class="s2">    "$HOME/miniconda" \</span>
+<span class="s2">    "$HOME/miniconda3" \</span>
+<span class="s2">    "$HOME/mambaforge" \</span>
+<span class="s2">    "$HOME/miniforge3" \</span>
+<span class="s2">    "$HOME/anaconda3" \</span>
 <span class="s2">  ; do</span>
-<span class="s2">    if [ -n &quot;$b&quot; ] &amp;&amp; [ -f &quot;$b/etc/profile.d/conda.sh&quot; ]; then</span>
-<span class="s2">      CONDA_SH=&quot;$b/etc/profile.d/conda.sh&quot;</span>
+<span class="s2">    if [ -n "$b" ] &amp;&amp; [ -f "$b/etc/profile.d/conda.sh" ]; then</span>
+<span class="s2">      CONDA_SH="$b/etc/profile.d/conda.sh"</span>
 <span class="s2">      break</span>
 <span class="s2">    fi</span>
 <span class="s2">  done</span>
 <span class="s2">fi</span>
 
-<span class="s2">if [ -n &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">  source &quot;$</span><span class="si">{CONDA_SH}</span><span class="s2">&quot; || true</span>
+<span class="s2">if [ -n "$</span><span class="si">{CONDA_SH}</span><span class="s2">" ]; then</span>
+<span class="s2">  source "$</span><span class="si">{CONDA_SH}</span><span class="s2">" || true</span>
 <span class="s2">fi</span>
 
-<span class="s2">CONDA_BIN=&quot;$(command -v conda || true)&quot;</span>
-<span class="s2">if [ -z &quot;$</span><span class="si">{CONDA_BIN}</span><span class="s2">&quot; ]; then</span>
-<span class="s2">  echo &quot;ERROR: conda not found&quot; &gt;&amp;2</span>
-<span class="s2">  echo &quot;PATH=$PATH&quot; &gt;&amp;2</span>
+<span class="s2">CONDA_BIN="$(command -v conda || true)"</span>
+<span class="s2">if [ -z "$</span><span class="si">{CONDA_BIN}</span><span class="s2">" ]; then</span>
+<span class="s2">  echo "ERROR: conda not found" &gt;&amp;2</span>
+<span class="s2">  echo "PATH=$PATH" &gt;&amp;2</span>
 <span class="s2">  exit 127</span>
 <span class="s2">fi</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 </pre></div>
         </article>
       </div>

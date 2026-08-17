@@ -317,7 +317,7 @@
 <div class="viewcode-block" id="Session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Session class for managing model sessions.</span>
 
 <span class="sd">    This class provides functionality to manage sessions, including opening, closing,</span>
@@ -329,7 +329,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    config_json : dict</span>
 <span class="sd">        Configuration in JSON format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -340,7 +340,7 @@
 <div class="viewcode-block" id="Session.current_model_id">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_model_id">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">current_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the current model ID from the session.</span>
 
 <span class="sd">        This method retrieves the current model ID from the session data.</span>
@@ -349,18 +349,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
 <span class="sd">            The current model ID, or None if no session data is available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"model_id"</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Session.current_store_status">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_store_status">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">current_store_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the current model ID from the session.</span>
 
 <span class="sd">        This method retrieves the current model ID from the session data.</span>
@@ -369,24 +369,24 @@
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
 <span class="sd">            The current model ID, or None if no session data is available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;read_store&quot;</span><span class="p">],</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;write_store&quot;</span><span class="p">],</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;store_access&quot;</span><span class="p">],</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;nearest_neighbors&quot;</span><span class="p">],</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;local_cache&quot;</span><span class="p">],</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"read_store"</span><span class="p">],</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"write_store"</span><span class="p">],</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"store_access"</span><span class="p">],</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"nearest_neighbors"</span><span class="p">],</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"local_cache"</span><span class="p">],</span>
             <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.current_local_cache_status">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_local_cache_status">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">current_local_cache_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the current model ID from the session.</span>
 
 <span class="sd">        This method retrieves the current model ID from the session data.</span>
@@ -395,18 +395,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
 <span class="sd">            The current model ID, or None if no session data is available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;local_cache&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"local_cache"</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Session.current_identifier">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_identifier">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">current_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the current identifier from the session.</span>
 
 <span class="sd">        This method retrieves the current identifier from the session data.</span>
@@ -415,18 +415,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
 <span class="sd">            The current identifier, or None if no session data is available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;identifier&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"identifier"</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Session.current_service_class">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_service_class">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">current_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the current service class from the session.</span>
 
 <span class="sd">        This method retrieves the current service class from the session data.</span>
@@ -435,18 +435,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
 <span class="sd">            The current service class, or None if no session data is available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service_class&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"service_class"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;service_class&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"service_class"</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Session.current_output_source">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.current_output_source">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">current_output_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the current output source from the session.</span>
 
 <span class="sd">        This method retrieves the current output source from the session data.</span>
@@ -455,18 +455,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
 <span class="sd">            The current output source, or None if no session data is available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;output_source&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"output_source"</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Session.register_service_class">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_service_class">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">register_service_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">service_class</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Register the service class in the session.</span>
 
 <span class="sd">        This method updates the session data with the provided service class.</span>
@@ -475,17 +475,17 @@
 <span class="sd">        ----------</span>
 <span class="sd">        service_class : str</span>
 <span class="sd">            The service class to register.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;service_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_class</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"service_class"</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_class</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.register_output_source">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_output_source">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">register_output_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_source</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Register the output source in the session.</span>
 
 <span class="sd">        This method updates the session data with the provided output source.</span>
@@ -494,10 +494,10 @@
 <span class="sd">        ----------</span>
 <span class="sd">        output_source : str</span>
 <span class="sd">            The output source to register.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;output_source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_source</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"output_source"</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_source</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
@@ -506,7 +506,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">register_store_status</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">read_store</span><span class="p">,</span> <span class="n">write_store</span><span class="p">,</span> <span class="n">store_access</span><span class="p">,</span> <span class="n">nearest_neighbors</span><span class="p">,</span> <span class="n">enable_cache</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Register the output source in the session.</span>
 
 <span class="sd">        This method updates the session data with the provided output source.</span>
@@ -515,21 +515,21 @@
 <span class="sd">        ----------</span>
 <span class="sd">        output_source : str</span>
 <span class="sd">            The output source to register.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;read_store&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_store</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;write_store&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">write_store</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;store_access&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">store_access</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;nearest_neighbors&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nearest_neighbors</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;local_cache&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">enable_cache</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"read_store"</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_store</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"write_store"</span><span class="p">]</span> <span class="o">=</span> <span class="n">write_store</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"store_access"</span><span class="p">]</span> <span class="o">=</span> <span class="n">store_access</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"nearest_neighbors"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nearest_neighbors</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"local_cache"</span><span class="p">]</span> <span class="o">=</span> <span class="n">enable_cache</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.register_tracking_use_case">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.register_tracking_use_case">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">register_tracking_use_case</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_case</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Register the tracking use case in the session.</span>
 
 <span class="sd">        This method updates the session data with the provided tracking use case.</span>
@@ -538,18 +538,18 @@
 <span class="sd">        ----------</span>
 <span class="sd">        use_case : str</span>
 <span class="sd">            The tracking use case to register.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;tracking_use_case&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_case</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"tracking_use_case"</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_case</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Registering tracking use case: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">use_case</span><span class="p">))</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Registering tracking use case: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">use_case</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="Session.tracking_status">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.tracking_status">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">tracking_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the tracking status from the session.</span>
 
 <span class="sd">        This method retrieves the tracking status from the session data.</span>
@@ -558,18 +558,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool or None</span>
 <span class="sd">            The tracking status, or None if no session data is available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;track_runs&quot;</span><span class="p">]</span></div>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"track_runs"</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="Session.get_tracking_use_case">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.get_tracking_use_case">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_tracking_use_case</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the tracking use case from the session.</span>
 
 <span class="sd">        This method retrieves the tracking use case from the session data.</span>
@@ -578,18 +578,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        str or None</span>
 <span class="sd">            The tracking use case, or None if no session data is available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tracking_use_case&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"tracking_use_case"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.open">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.open">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">track_runs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Open a new session for the specified model.</span>
 
 <span class="sd">        This method creates a new session for the specified model and saves the session data.</span>
@@ -600,24 +600,24 @@
 <span class="sd">            The identifier of the model.</span>
 <span class="sd">        track_runs : bool</span>
 <span class="sd">            Whether to track runs.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Opening session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Opening session </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="n">session</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;model_id&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
-            <span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()),</span>
-            <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>
-            <span class="s2">&quot;track_runs&quot;</span><span class="p">:</span> <span class="n">track_runs</span><span class="p">,</span>
+            <span class="s2">"model_id"</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
+            <span class="s2">"timestamp"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()),</span>
+            <span class="s2">"identifier"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>
+            <span class="s2">"track_runs"</span><span class="p">:</span> <span class="n">track_runs</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="n">session</span> <span class="o">=</span> <span class="n">session</span> <span class="o">|</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">session</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.get">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.get">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the current session data.</span>
 
 <span class="sd">        This method retrieves the current session data from the session file. The session file</span>
@@ -628,21 +628,21 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict or None</span>
 <span class="sd">            The session data, or None if no session file exists.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Getting session from </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Getting session from </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">session</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">session</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No session exists&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"No session exists"</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="Session.update_total_memory">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.update_total_memory">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_total_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">additional_memory</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Update the total memory usage in the session data.</span>
 
 <span class="sd">        This method updates the total memory usage in the session data by adding the provided</span>
@@ -652,21 +652,21 @@
 <span class="sd">        ----------</span>
 <span class="sd">        additional_memory : float</span>
 <span class="sd">            The additional memory to add.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">current_memory</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total memory used by model(MB)&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">current_memory</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"total memory used by model(MB)"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">new_memory</span> <span class="o">=</span> <span class="n">current_memory</span> <span class="o">+</span> <span class="n">additional_memory</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;total memory used by model(MB)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">new_memory</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"total memory used by model(MB)"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">new_memory</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.update_cpu_time">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.update_cpu_time">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_cpu_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cpu_time</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Updates the total CPU time usage in the session data by adding the provided</span>
 <span class="sd">        CPU time.</span>
 
@@ -674,21 +674,21 @@
 <span class="sd">        ----------</span>
 <span class="sd">        cpu_time : float</span>
 <span class="sd">            The CPU time to add.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">current_cpu</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CPU time used by model(seconds)&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">current_cpu</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CPU time used by model(seconds)"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">new_cpu</span> <span class="o">=</span> <span class="n">current_cpu</span> <span class="o">+</span> <span class="n">cpu_time</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;CPU time used by model(seconds)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">new_cpu</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"CPU time used by model(seconds)"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">new_cpu</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.update_peak_memory">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.update_peak_memory">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_peak_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">peak_memory</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Update the peak memory usage in the session data.</span>
 
 <span class="sd">        This method updates the peak memory usage in the session data if the new peak is higher</span>
@@ -698,27 +698,27 @@
 <span class="sd">        ----------</span>
 <span class="sd">        peak_memory : float</span>
 <span class="sd">            The peak memory usage to update.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s2">&quot;peak memory used by model(MiB)&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">stored_peak_memory</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;peak memory used by model(MiB)&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">"peak memory used by model(MiB)"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">stored_peak_memory</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"peak memory used by model(MiB)"</span><span class="p">])</span>
             <span class="k">if</span> <span class="n">peak_memory</span> <span class="o">&gt;</span> <span class="n">stored_peak_memory</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;peak memory used by model(MiB)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">peak_memory</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">"peak memory used by model(MiB)"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">peak_memory</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;peak memory used by model(MiB)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">peak_memory</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">"peak memory used by model(MiB)"</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">peak_memory</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Session.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.session.Session.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Close the current session.</span>
 
 <span class="sd">        This method removes the session file, effectively closing the session.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Closing session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Closing session </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_file</span><span class="p">)</span></div>
 </div>

@@ -318,7 +318,7 @@
 <div class="viewcode-block" id="ModelStatus">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModelStatus</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class to check the status of a model in terms of its installation and deployment.</span>
 
 <span class="sd">    It specifically provides methods to check if a model is downloaded, available as a Docker image,</span>
@@ -329,7 +329,7 @@
 <span class="sd">    ----------</span>
 <span class="sd">    config_json : dict, optional</span>
 <span class="sd">        Configuration settings in JSON format.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
@@ -337,7 +337,7 @@
 <div class="viewcode-block" id="ModelStatus.is_downloaded">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_downloaded">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_downloaded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the model is downloaded.</span>
 
 <span class="sd">        Parameters</span>
@@ -349,8 +349,8 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the model is downloaded, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">essentials</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;README.md&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">]</span>  <span class="c1">#  essential files</span>
+<span class="sd">        """</span>
+        <span class="n">essentials</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"README.md"</span><span class="p">,</span> <span class="s2">"model"</span><span class="p">]</span>  <span class="c1">#  essential files</span>
         <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dest_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -364,7 +364,7 @@
 <div class="viewcode-block" id="ModelStatus.is_docker">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_docker">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the model is available as a Docker image.</span>
 
 <span class="sd">        Parameters</span>
@@ -376,13 +376,13 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the model is available as a Docker image, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;docker&quot;</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">"docker"</span>
         <span class="n">docker</span> <span class="o">=</span> <span class="n">SimpleDocker</span><span class="p">()</span>
         <span class="n">envs</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">envs_of_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
-            <span class="n">img</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+            <span class="n">img</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">":"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">docker</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="o">.</span><span class="n">EXT</span><span class="o">.</span><span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
@@ -391,7 +391,7 @@
 <div class="viewcode-block" id="ModelStatus.is_pulled_docker">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_pulled_docker">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_pulled_docker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the Docker image for the model has been pulled.</span>
 
 <span class="sd">        Parameters</span>
@@ -403,20 +403,20 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the Docker image has been pulled, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">model_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">))</span>
         <span class="n">json_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">DOCKER_INFO_FILE</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">json_file</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;docker_hub&quot;</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">"docker_hub"</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="ModelStatus.is_conda">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_conda">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_conda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the model is available in a Conda environment.</span>
 
 <span class="sd">        Parameters</span>
@@ -428,9 +428,9 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the model is available in a Conda environment, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">db</span> <span class="o">=</span> <span class="n">EnvironmentDb</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;conda&quot;</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="s2">"conda"</span>
         <span class="n">conda</span> <span class="o">=</span> <span class="n">SimpleConda</span><span class="p">()</span>
         <span class="n">envs</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">envs_of_model</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
@@ -442,7 +442,7 @@
 <div class="viewcode-block" id="ModelStatus.is_pip">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_pip">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_pip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the model is available as a pip package.</span>
 
 <span class="sd">        Parameters</span>
@@ -454,7 +454,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the model is available as a pip package, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -465,7 +465,7 @@
 <div class="viewcode-block" id="ModelStatus.is_bundle">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.is_bundle">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the model is available as a bundle.</span>
 
 <span class="sd">        Parameters</span>
@@ -477,7 +477,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the model is available as a bundle, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">bundle_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bundles_dir</span><span class="p">,</span> <span class="n">model_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">bundle_dir</span><span class="p">)</span></div>
 
@@ -485,7 +485,7 @@
 <div class="viewcode-block" id="ModelStatus.status">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.hub.bundle.html#ersilia.hub.bundle.status.ModelStatus.status">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check the installation and deployment status of the model.</span>
 
 <span class="sd">        Parameters</span>
@@ -497,14 +497,14 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            A dictionary with the status of the model in various formats.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;download&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_downloaded</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="s2">&quot;bundle&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bundle</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="s2">&quot;docker&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="s2">&quot;pulled_docker&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pulled_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="s2">&quot;conda&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_conda</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="s2">&quot;pip&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pip</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">"download"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_downloaded</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">"bundle"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bundle</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">"docker"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">"pulled_docker"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pulled_docker</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">"conda"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_conda</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">"pip"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_pip</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">results</span></div>
 </div>

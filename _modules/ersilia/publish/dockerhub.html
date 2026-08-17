@@ -313,7 +313,7 @@
 <div class="viewcode-block" id="DockerHubUploader">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.dockerhub.DockerHubUploader">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DockerHubUploader</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class for uploading Docker images to DockerHub.</span>
 
 <span class="sd">    Parameters</span>
@@ -328,14 +328,14 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        uploader = DockerHubUploader(</span>
-<span class="sd">            model_id=&quot;model_id&quot;,</span>
-<span class="sd">            config_json=&quot;path/to/config.json&quot;,</span>
+<span class="sd">            model_id="model_id",</span>
+<span class="sd">            config_json="path/to/config.json",</span>
 <span class="sd">        )</span>
 <span class="sd">        uploader.set_credentials(</span>
-<span class="sd">            docker_user=&quot;username&quot;, docker_pwd=&quot;password&quot;</span>
+<span class="sd">            docker_user="username", docker_pwd="password"</span>
 <span class="sd">        )</span>
 <span class="sd">        uploader.upload()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -346,7 +346,7 @@
 <div class="viewcode-block" id="DockerHubUploader.set_credentials">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.dockerhub.DockerHubUploader.set_credentials">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">docker_user</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">docker_pwd</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Set DockerHub credentials.</span>
 
 <span class="sd">        Parameters</span>
@@ -355,7 +355,7 @@
 <span class="sd">            DockerHub username.</span>
 <span class="sd">        docker_pwd : str</span>
 <span class="sd">            DockerHub password.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker_user</span> <span class="o">=</span> <span class="n">docker_user</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">docker_pwd</span> <span class="o">=</span> <span class="n">docker_pwd</span></div>
 
@@ -363,9 +363,9 @@
 <div class="viewcode-block" id="DockerHubUploader.build_image">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.dockerhub.DockerHubUploader.build_image">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">build_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Build the Docker image for the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">dm</span> <span class="o">=</span> <span class="n">DockerManager</span><span class="p">()</span>
         <span class="n">dm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_user</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_pwd</span><span class="p">)</span></div>
 
@@ -373,15 +373,15 @@
 <div class="viewcode-block" id="DockerHubUploader.upload">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.publish.html#ersilia.publish.dockerhub.DockerHubUploader.upload">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Upload the Docker image to DockerHub.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">build_image</span><span class="p">()</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker login --password </span><span class="si">{0}</span><span class="s2"> --username </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">"docker login --password </span><span class="si">{0}</span><span class="s2"> --username </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">docker_pwd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">docker_user</span>
         <span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;docker push </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="s2">"docker push </span><span class="si">{0}</span><span class="s2">/</span><span class="si">{1}</span><span class="s2">:</span><span class="si">{2}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">DOCKERHUB_ORG</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">DOCKERHUB_LATEST_TAG</span>
         <span class="p">)</span>
         <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>

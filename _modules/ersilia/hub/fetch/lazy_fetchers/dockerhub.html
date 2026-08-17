@@ -330,7 +330,7 @@
 <div class="viewcode-block" id="ModelDockerHubFetcher">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ModelDockerHubFetcher</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class used to fetch models from DockerHub.</span>
 
 <span class="sd">    Attributes</span>
@@ -364,7 +364,7 @@
 <span class="sd">        Modify the information file copied from the model container.</span>
 <span class="sd">    fetch(model_id)</span>
 <span class="sd">        Fetch the model from DockerHub.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -384,47 +384,47 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_with_fastapi</span><span class="p">:</span>
             <span class="n">pack_method</span> <span class="o">=</span> <span class="n">PACK_METHOD_FASTAPI</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resolving pack method from GitHub repository...&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Resolving pack method from GitHub repository..."</span><span class="p">)</span>
             <span class="n">pmr</span> <span class="o">=</span> <span class="n">PackMethodResolver</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">)</span>
             <span class="n">pack_method</span> <span class="o">=</span> <span class="n">pmr</span><span class="o">.</span><span class="n">resolve_pack_method_from_github_metadata</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">pack_method</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Resolving pack method with TemplateResolver...&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Resolving pack method with TemplateResolver..."</span><span class="p">)</span>
                 <span class="n">pack_method</span> <span class="o">=</span> <span class="n">PACK_METHOD_FASTAPI</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pack method resolved: </span><span class="si">{</span><span class="n">pack_method</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pack method resolved: </span><span class="si">{</span><span class="n">pack_method</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">=</span> <span class="n">pack_method</span>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_docker_installed">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_installed">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_docker_installed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if Docker is installed.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if Docker is installed, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_installed</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_docker_active">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_docker_active">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_docker_active</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if Docker is active.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if Docker is active, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="n">DockerRequirement</span><span class="p">()</span><span class="o">.</span><span class="n">is_active</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.is_available">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.is_available">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the model is available locally or on DockerHub.</span>
 
 <span class="sd">        Parameters</span>
@@ -436,7 +436,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the model is available, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span>
             <span class="n">overwrite</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
@@ -453,15 +453,15 @@
 <div class="viewcode-block" id="ModelDockerHubFetcher.write_apis">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.write_apis">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Write APIs for the model.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Writing APIs&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Writing APIs"</span><span class="p">)</span>
         <span class="n">di</span> <span class="o">=</span> <span class="n">PulledDockerImageService</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="kc">None</span>
         <span class="p">)</span>
@@ -470,7 +470,7 @@
 
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_copy_from_ersiliapack_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Copy a file from an ErsiliaPack image.</span>
 
 <span class="sd">        Parameters</span>
@@ -479,9 +479,9 @@
 <span class="sd">            ID of the model.</span>
 <span class="sd">        file : str</span>
 <span class="sd">            Name of the file to copy.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">fr_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;/root/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">to_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">EOS</span><span class="si">}</span><span class="s2">/dest/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="sd">        """</span>
+        <span class="n">fr_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"/root/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">"</span>
+        <span class="n">to_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">EOS</span><span class="si">}</span><span class="s2">/dest/</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">cp_from_image</span><span class="p">(</span>
             <span class="n">img_path</span><span class="o">=</span><span class="n">fr_file</span><span class="p">,</span>
             <span class="n">local_path</span><span class="o">=</span><span class="n">to_file</span><span class="p">,</span>
@@ -491,7 +491,7 @@
         <span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_copy_from_image_to_local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Copy a file from the Docker image to the local filesystem.</span>
 
 <span class="sd">        Parameters</span>
@@ -500,27 +500,27 @@
 <span class="sd">            ID of the model.</span>
 <span class="sd">        file : str</span>
 <span class="sd">            Name of the file to copy.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Pack method not resolved&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Pack method not resolved"</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_method</span> <span class="o">==</span> <span class="n">PACK_METHOD_FASTAPI</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_ersiliapack_image</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unresolved method, should be </span><span class="si">{</span><span class="n">PACK_METHOD_FASTAPI</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unresolved method, should be </span><span class="si">{</span><span class="n">PACK_METHOD_FASTAPI</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ModelDockerHubFetcher.copy_information">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_information">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">copy_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Copy the information file from the model container.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Copying information file from model container: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Copying information file from model container: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">INFORMATION_FILE</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -530,16 +530,16 @@
 <div class="viewcode-block" id="ModelDockerHubFetcher.copy_metadata">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_metadata">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">copy_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Copy the metadata file from the model container.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Copying api_schema_file file from model container: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Copying api_schema_file file from model container: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">API_SCHEMA_FILE</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -549,16 +549,16 @@
 <div class="viewcode-block" id="ModelDockerHubFetcher.copy_status">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_status">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">copy_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Copy the status file from the model container.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Copying status file from model container: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">STATUS_FILE</span><span class="p">)</span>
+            <span class="s2">"Copying status file from model container: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">STATUS_FILE</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_image_to_local</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">STATUS_FILE</span><span class="p">)</span></div>
 
@@ -566,17 +566,17 @@
 <div class="viewcode-block" id="ModelDockerHubFetcher.copy_example_if_available">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_example_if_available">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">copy_example_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Copy example files from the model container if available.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">for</span> <span class="n">pf</span> <span class="ow">in</span> <span class="n">PREDEFINED_EXAMPLE_FILES</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Copying example file from model container: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span>
+                <span class="s2">"Copying example file from model container: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_copy_from_image_to_local</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">pf</span><span class="p">)</span></div>
 
@@ -584,17 +584,17 @@
 <div class="viewcode-block" id="ModelDockerHubFetcher.copy_column_file">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.copy_column_file">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">copy_column_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Copy columns file from the model container.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Copying columns file from model container&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Copying columns file from model container"</span><span class="p">)</span>
         <span class="n">dest_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">&quot;model/framework/columns/run_columns.csv&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="s2">"model/framework/columns/run_columns.csv"</span>
         <span class="p">)</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">simple_docker</span><span class="o">.</span><span class="n">_cp_col_from_container</span><span class="p">(</span>
             <span class="n">local_path</span><span class="o">=</span><span class="n">dest_path</span><span class="p">,</span>
@@ -607,52 +607,52 @@
 <div class="viewcode-block" id="ModelDockerHubFetcher.modify_information">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.hub.fetch.lazy_fetchers.html#ersilia.hub.fetch.lazy_fetchers.dockerhub.ModelDockerHubFetcher.modify_information">[docs]</a>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">modify_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Modify the information file copied from the model directory.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">information_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span> <span class="n">INFORMATION_FILE</span><span class="p">)</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">docker_tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span>
         <span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Information file not found, not modifying anything&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Information file not found, not modifying anything"</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;service_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;pulled_docker&quot;</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">_get_size_of_local_docker_image_in_mb</span><span class="p">()</span>
-        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;docker_tag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"service_class"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"pulled_docker"</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">_get_size_of_local_docker_image_in_mb</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">"docker_tag"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Fetch the model from DockerHub.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            ID of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_pack_method</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">mp</span> <span class="o">=</span> <span class="n">ModelPuller</span><span class="p">(</span>
             <span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">docker_tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Pulling model image from DockerHub&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Pulling model image from DockerHub"</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">mp</span><span class="o">.</span><span class="n">async_pull</span><span class="p">()</span>
         <span class="n">mr</span> <span class="o">=</span> <span class="n">ModelRegisterer</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Asynchronous and concurrent execution started!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Asynchronous and concurrent execution started!"</span><span class="p">)</span>
         <span class="k">await</span> <span class="n">async_spinner</span><span class="p">(</span>
-            <span class="s2">&quot;Registering model...&quot;</span><span class="p">,</span>
+            <span class="s2">"Registering model..."</span><span class="p">,</span>
             <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
                 <span class="n">mr</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">is_from_dockerhub</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">img_tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">img_tag</span><span class="p">),</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_apis</span><span class="p">(</span><span class="n">model_id</span><span class="p">),</span>

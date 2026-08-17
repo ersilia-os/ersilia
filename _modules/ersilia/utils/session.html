@@ -325,14 +325,14 @@
 <div class="viewcode-block" id="get_current_pid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_current_pid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_current_pid</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the current process ID.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    int</span>
 <span class="sd">        The current process ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">()</span></div>
 
 
@@ -340,14 +340,14 @@
 <div class="viewcode-block" id="get_parent_pid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_parent_pid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_parent_pid</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the parent process ID.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    int</span>
 <span class="sd">        The parent process ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">pid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getppid</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">pid</span></div>
 
@@ -356,18 +356,18 @@
 <div class="viewcode-block" id="get_session_uuid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_session_uuid">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_session_uuid</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the session UUID.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        The session UUID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># TODO this should not be implemented here ideally, and callers should use the Session interface in ersilia/core/session.py</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SESSION_JSON</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_session_dir</span><span class="p">(),</span> <span class="n">SESSION_JSON</span><span class="p">),</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">session</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;identifier&quot;</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">session</span><span class="p">[</span><span class="s2">"identifier"</span><span class="p">]</span></div>
 
 
 
@@ -383,11 +383,11 @@
 <div class="viewcode-block" id="create_session_dir">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.create_session_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_session_dir</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Create a session directory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">remove_orphaned_sessions</span><span class="p">()</span>
-    <span class="n">session_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;session_</span><span class="si">{</span><span class="n">get_parent_pid</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">session_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"session_</span><span class="si">{</span><span class="n">get_parent_pid</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span>
     <span class="n">session_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">session_name</span><span class="p">)</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mo">0o777</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">create_session_files</span><span class="p">(</span><span class="n">session_name</span><span class="p">)</span></div>
@@ -397,14 +397,14 @@
 <div class="viewcode-block" id="get_session_dir">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_session_dir">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_session_dir</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the session directory.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        The session directory path.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">get_session_id</span><span class="p">())</span></div>
 
 
@@ -414,11 +414,11 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">set_write_permissions</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
     <span class="n">current_uid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;_logs&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">root</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"_logs"</span><span class="p">:</span>
             <span class="n">dirs</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">continue</span>
 
-        <span class="n">dirs</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirs</span> <span class="k">if</span> <span class="n">d</span> <span class="o">!=</span> <span class="s2">&quot;_logs&quot;</span><span class="p">]</span>
+        <span class="n">dirs</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirs</span> <span class="k">if</span> <span class="n">d</span> <span class="o">!=</span> <span class="s2">"_logs"</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
             <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
@@ -446,7 +446,7 @@
         <span class="n">set_write_permissions</span><span class="p">(</span><span class="n">session_dir</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">session_dir</span><span class="p">):</span>
             <span class="n">item_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item_path</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;_logs&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item_path</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"_logs"</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">item_path</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">islink</span><span class="p">(</span><span class="n">item_path</span><span class="p">):</span>
@@ -454,28 +454,28 @@
                 <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">item_path</span><span class="p">):</span>
                     <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">item_path</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error deleting </span><span class="si">{</span><span class="n">item_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error deleting </span><span class="si">{</span><span class="n">item_path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">session_dir</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error deleting </span><span class="si">{</span><span class="n">session_dir</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error deleting </span><span class="si">{</span><span class="n">session_dir</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="prune_empty_session_dirs">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.prune_empty_session_dirs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">prune_empty_session_dirs</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Prune session directories that seem to be empty, meaning they don&#39;t contain any serving data or logs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Prune session directories that seem to be empty, meaning they don't contain any serving data or logs.</span>
+<span class="sd">    """</span>
     <span class="k">for</span> <span class="n">session_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">):</span>
         <span class="n">session_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">session_name</span><span class="p">)</span>
         <span class="n">do_prune</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">session_dir</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pid&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".pid"</span><span class="p">):</span>
                 <span class="n">do_prune</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">break</span>
-            <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.log&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".log"</span><span class="p">):</span>
                 <span class="n">do_prune</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">break</span>
         <span class="k">if</span> <span class="n">do_prune</span><span class="p">:</span>
@@ -486,22 +486,22 @@
 <div class="viewcode-block" id="determine_orphaned_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.determine_orphaned_session">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">determine_orphaned_session</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Determine orphaned sessions.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    list</span>
 <span class="sd">        A list of orphaned session names.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># TODO maybe this is slow, look out for performance</span>
     <span class="n">_sessions</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">sessions</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-        <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;session_&quot;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">))</span>
+        <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"session_"</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">))</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">sessions</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">sessions</span><span class="p">:</span>
-            <span class="n">session_pid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">session_pid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"_"</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">psutil</span><span class="o">.</span><span class="n">pid_exists</span><span class="p">(</span><span class="n">session_pid</span><span class="p">):</span>
                 <span class="n">_sessions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">session</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_sessions</span></div>
@@ -511,11 +511,11 @@
 <div class="viewcode-block" id="stop_containers_by_name">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.stop_containers_by_name">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">stop_containers_by_name</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Stop and remove the named Docker containers, if any.</span>
 
 <span class="sd">    Silent no-op if docker is unavailable or a name is unknown.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="k">try</span><span class="p">:</span>
@@ -543,21 +543,21 @@
 <div class="viewcode-block" id="purge_session_processes">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.purge_session_processes">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">purge_session_processes</span><span class="p">(</span><span class="n">session_name</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Stop any leftover processes and Docker containers tracked by a session&#39;s</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Stop any leftover processes and Docker containers tracked by a session's</span>
 <span class="sd">    .pid files. Used to clean up after orphaned (terminal-killed) sessions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">session_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SESSIONS_DIR</span><span class="p">,</span> <span class="n">session_name</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">session_dir</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="n">pids</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">container_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">session_dir</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pid&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fn</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".pid"</span><span class="p">):</span>
             <span class="k">continue</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">session_dir</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">parts</span><span class="p">:</span>
@@ -566,7 +566,7 @@
                         <span class="n">pids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
                     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                         <span class="k">pass</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"-"</span><span class="p">:</span>
                         <span class="n">container_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">continue</span>
@@ -584,9 +584,9 @@
 <div class="viewcode-block" id="remove_orphaned_sessions">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.remove_orphaned_sessions">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_orphaned_sessions</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove orphaned sessions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">orphaned_sessions</span> <span class="o">=</span> <span class="n">determine_orphaned_session</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">orphaned_sessions</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -603,22 +603,22 @@
 <div class="viewcode-block" id="get_session_id">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_session_id">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_session_id</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the session ID.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        The session ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;session_</span><span class="si">{</span><span class="n">get_parent_pid</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"session_</span><span class="si">{</span><span class="n">get_parent_pid</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span></div>
 
 
 
 <div class="viewcode-block" id="register_model_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.register_model_session">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">session_dir</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Register a model with a session.</span>
 
 <span class="sd">    Parameters</span>
@@ -627,20 +627,20 @@
 <span class="sd">        The model ID.</span>
 <span class="sd">    session_dir : str</span>
 <span class="sd">        The session directory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">MODELS_JSON</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({},</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">models</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">model_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">models</span>
     <span class="p">):</span>  <span class="c1"># TODO This would have implications when we try to run the same model across multiple sessions</span>
         <span class="n">models</span><span class="p">[</span><span class="n">model_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">session_dir</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 
@@ -648,7 +648,7 @@
 <div class="viewcode-block" id="get_model_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.get_model_session">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Get the model session.</span>
 
 <span class="sd">    Parameters</span>
@@ -660,11 +660,11 @@
 <span class="sd">    -------</span>
 <span class="sd">    str</span>
 <span class="sd">        The session ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">MODELS_JSON</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">models</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">models</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
@@ -673,22 +673,22 @@
 <div class="viewcode-block" id="deregister_model_session">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.deregister_model_session">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Remove a model from a session.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    model_id : str</span>
 <span class="sd">        The model ID.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">MODELS_JSON</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
         <span class="k">return</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">models</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">models</span><span class="p">:</span>
         <span class="k">del</span> <span class="n">models</span><span class="p">[</span><span class="n">model_id</span><span class="p">]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
 
 </pre></div>

@@ -315,13 +315,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.....utils.versioning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Versioner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....bundle.repo</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerfileFile</span>
 
-<span class="n">AVAILABLE_MODES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;venv&quot;</span><span class="p">,</span> <span class="s2">&quot;conda&quot;</span><span class="p">,</span> <span class="s2">&quot;docker&quot;</span><span class="p">]</span>
+<span class="n">AVAILABLE_MODES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"system"</span><span class="p">,</span> <span class="s2">"venv"</span><span class="p">,</span> <span class="s2">"conda"</span><span class="p">,</span> <span class="s2">"docker"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PackModeDecision">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PackModeDecision</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    A class used to decide the packaging mode for a model.</span>
 
 <span class="sd">    Attributes</span>
@@ -339,7 +339,7 @@
 <span class="sd">        Decide the packaging mode from the config file if available.</span>
 <span class="sd">    decide()</span>
 <span class="sd">        Decide the packaging mode based on system and model requirements.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config_json</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -350,19 +350,19 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">version</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">dockerfile</span><span class="p">:</span> <span class="n">DockerfileFile</span><span class="p">,</span>
-        <span class="n">protobuf_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;3.19.5&quot;</span><span class="p">,</span>
+        <span class="n">protobuf_version</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"3.19.5"</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DockerfileFile</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;0.11.0&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="s2">"version"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"0.11.0"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Custom Ersilia is used, no need for modifying protobuf version&quot;</span>
+                <span class="s2">"Custom Ersilia is used, no need for modifying protobuf version"</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">dockerfile</span>
-        <span class="k">if</span> <span class="s2">&quot;0.11&quot;</span> <span class="ow">in</span> <span class="n">version</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s2">"0.11"</span> <span class="ow">in</span> <span class="n">version</span><span class="p">[</span><span class="s2">"version"</span><span class="p">]:</span>
             <span class="n">dockerfile</span><span class="o">.</span><span class="n">append_run_command</span><span class="p">(</span>
-                <span class="s2">&quot;pip install protobuf==</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">protobuf_version</span><span class="p">)</span>
+                <span class="s2">"pip install protobuf==</span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">protobuf_version</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Since version is 0.11, protobuf will been downgraded to </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">"Since version is 0.11, protobuf will been downgraded to </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">protobuf_version</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -371,25 +371,25 @@
 <div class="viewcode-block" id="PackModeDecision.decide_from_config_file_if_available">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision.decide_from_config_file_if_available">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">decide_from_config_file_if_available</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Decide the packaging mode from the config file if available.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            Packaging mode if specified in the config file, None otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">MODEL_CONFIG_FILENAME</span><span class="p">)):</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">MODEL_CONFIG_FILENAME</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">MODEL_CONFIG_FILENAME</span><span class="p">),</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">model_config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;default_mode&quot;</span> <span class="ow">in</span> <span class="n">model_config</span><span class="p">:</span>
-            <span class="n">default_mode</span> <span class="o">=</span> <span class="n">model_config</span><span class="p">[</span><span class="s2">&quot;default_mode&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">"default_mode"</span> <span class="ow">in</span> <span class="n">model_config</span><span class="p">:</span>
+            <span class="n">default_mode</span> <span class="o">=</span> <span class="n">model_config</span><span class="p">[</span><span class="s2">"default_mode"</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">default_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AVAILABLE_MODES</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="s2">&quot;The model default_mode specified in the config.json file of the model repo is not correct. It should be one of </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                        <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">AVAILABLE_MODES</span><span class="p">)</span>
+                    <span class="s2">"The model default_mode specified in the config.json file of the model repo is not correct. It should be one of </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">AVAILABLE_MODES</span><span class="p">)</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -400,69 +400,69 @@
 <div class="viewcode-block" id="PackModeDecision.decide">
 <a class="viewcode-back" href="../../../../../../source/autodoc/ersilia.hub.fetch.pack.bentoml_pack.html#ersilia.hub.fetch.pack.bentoml_pack.mode.PackModeDecision.decide">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">decide</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Decide the packaging mode based on system and model requirements.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            Decided packaging mode.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">sc</span> <span class="o">=</span> <span class="n">SystemChecker</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">sc</span><span class="o">.</span><span class="n">is_github_action</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Code is being run inside a GitHub Actions workflow. Use conda as a by-default mode.&quot;</span>
+                <span class="s2">"Code is being run inside a GitHub Actions workflow. Use conda as a by-default mode."</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;conda&quot;</span>
+            <span class="k">return</span> <span class="s2">"conda"</span>
         <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decide_from_config_file_if_available</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode is already specified in the model repository&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Mode is already specified in the model repository"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Mode: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">mode</span>
         <span class="n">folder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)&quot;</span>
+            <span class="s2">"Check if model can be run with vanilla (system) code (i.e. dockerfile has no installs)"</span>
         <span class="p">)</span>
         <span class="n">dockerfile</span> <span class="o">=</span> <span class="n">DockerfileFile</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Check and python version&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Check and python version"</span><span class="p">)</span>
         <span class="n">version</span> <span class="o">=</span> <span class="n">dockerfile</span><span class="o">.</span><span class="n">get_version</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Version </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Version </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
         <span class="n">dockerfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_correct_protobuf</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">dockerfile</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dockerfile</span><span class="o">.</span><span class="n">has_runs</span><span class="p">():</span>
-            <span class="n">same_python</span> <span class="o">=</span> <span class="n">version</span><span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">versioner</span><span class="o">.</span><span class="n">python_version</span><span class="p">(</span>
+            <span class="n">same_python</span> <span class="o">=</span> <span class="n">version</span><span class="p">[</span><span class="s2">"python"</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">versioner</span><span class="o">.</span><span class="n">python_version</span><span class="p">(</span>
                 <span class="n">py_format</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
-            <span class="n">same_version</span> <span class="o">=</span> <span class="n">version</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">versioner</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>
+            <span class="n">same_version</span> <span class="o">=</span> <span class="n">version</span><span class="p">[</span><span class="s2">"version"</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">versioner</span><span class="o">.</span><span class="n">version</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">same_python</span> <span class="ow">and</span> <span class="n">same_version</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Same python and same, run in system&quot;</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: system&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="s2">&quot;system&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Model needs some installs&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Same python and same, run in system"</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Mode: system"</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">"system"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Model needs some installs"</span><span class="p">)</span>
         <span class="n">cmds</span> <span class="o">=</span> <span class="n">dockerfile</span><span class="o">.</span><span class="n">get_install_commands</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">cmds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No Dockerfile found...&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No Dockerfile found!&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Checking if only python/conda install will be sufficient&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">cmds</span><span class="p">[</span><span class="s2">&quot;exclusive_conda_and_pip&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"No Dockerfile found..."</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"No Dockerfile found!"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Checking if only python/conda install will be sufficient"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cmds</span><span class="p">[</span><span class="s2">"exclusive_conda_and_pip"</span><span class="p">]:</span>
             <span class="n">condareq</span> <span class="o">=</span> <span class="n">CondaRequirement</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">cmds</span><span class="p">[</span><span class="s2">&quot;conda&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">condareq</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: venv&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="s2">&quot;venv&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cmds</span><span class="p">[</span><span class="s2">"conda"</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">condareq</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Mode: venv"</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">"venv"</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: conda&quot;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="s2">&quot;conda&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Mode: conda"</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">"conda"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;The python/conda installs may not be sufficient, trying docker&quot;</span>
+                <span class="s2">"The python/conda installs may not be sufficient, trying docker"</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Mode: docker&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Mode: docker"</span><span class="p">)</span>
             <span class="n">dockerreq</span> <span class="o">=</span> <span class="n">DockerRequirement</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">dockerreq</span><span class="o">.</span><span class="n">is_inside_docker</span><span class="p">():</span>
-                <span class="k">return</span> <span class="s2">&quot;conda&quot;</span>
+                <span class="k">return</span> <span class="s2">"conda"</span>
             <span class="k">if</span> <span class="n">dockerreq</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
-                <span class="k">return</span> <span class="s2">&quot;docker&quot;</span>
+                <span class="k">return</span> <span class="s2">"docker"</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="s2">&quot;conda&quot;</span></div>
+                <span class="k">return</span> <span class="s2">"conda"</span></div>
 </div>
 
 </pre></div>

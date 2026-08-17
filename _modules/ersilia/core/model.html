@@ -356,7 +356,7 @@
 <div class="viewcode-block" id="ErsiliaModel">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ErsiliaModel</span><span class="p">(</span><span class="n">ErsiliaBase</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    ErsiliaModel class for managing and interacting with different models.</span>
 
 <span class="sd">    This class provides methods to fetch, serve, run, and close models form a model hub.</span>
@@ -393,33 +393,33 @@
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
+<span class="sd">        model = ErsiliaModel(model="model_id")</span>
 <span class="sd">        model.fetch()</span>
 
 <span class="sd">    Serving a model:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
+<span class="sd">        model = ErsiliaModel(model="model_id")</span>
 <span class="sd">        model.serve()</span>
 
 <span class="sd">    Running a model:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
+<span class="sd">        model = ErsiliaModel(model="model_id")</span>
 <span class="sd">        result = model.run(</span>
-<span class="sd">            input=&quot;input_data.csv&quot;,</span>
-<span class="sd">            output=&quot;output_data.csv&quot;,</span>
+<span class="sd">            input="input_data.csv",</span>
+<span class="sd">            output="output_data.csv",</span>
 <span class="sd">        )</span>
 
 <span class="sd">    Closing a model:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">        model = ErsiliaModel(model=&quot;model_id&quot;)</span>
+<span class="sd">        model = ErsiliaModel(model="model_id")</span>
 <span class="sd">        model.close()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -448,18 +448,18 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;ps1&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">"ps1"</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">service_class</span> <span class="ow">in</span> <span class="p">[</span>
             <span class="kc">None</span><span class="p">,</span>
-            <span class="s2">&quot;system&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;venv&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;conda&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;docker&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pulled_docker&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;hosted&quot;</span><span class="p">,</span>
-        <span class="p">],</span> <span class="s2">&quot;Wrong service class&quot;</span>
+            <span class="s2">"system"</span><span class="p">,</span>
+            <span class="s2">"venv"</span><span class="p">,</span>
+            <span class="s2">"conda"</span><span class="p">,</span>
+            <span class="s2">"docker"</span><span class="p">,</span>
+            <span class="s2">"pulled_docker"</span><span class="p">,</span>
+            <span class="s2">"hosted"</span><span class="p">,</span>
+        <span class="p">],</span> <span class="s2">"Wrong service class"</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">read_store</span> <span class="o">=</span> <span class="n">read_store</span>
@@ -472,7 +472,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">()</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;The identifier </span><span class="si">{0}</span><span class="s2"> is not valid. Please visit the Ersilia Model Hub for valid identifiers&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"The identifier </span><span class="si">{0}</span><span class="s2"> is not valid. Please visit the Ersilia Model Hub for valid identifiers"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">model</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -483,16 +483,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output_source</span> <span class="o">=</span> <span class="n">output_source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally</span> <span class="o">=</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_available_locally</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_available_locally</span> <span class="ow">and</span> <span class="n">fetch_if_not_available</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Model is not available locally&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Model is not available locally"</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">do_fetch</span> <span class="o">=</span> <span class="n">yes_no_input</span><span class="p">(</span>
-                    <span class="s2">&quot;Requested model </span><span class="si">{0}</span><span class="s2"> is not available locally. Do you want to fetch it? [Y/n]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"Requested model </span><span class="si">{0}</span><span class="s2"> is not available locally. Do you want to fetch it? [Y/n]"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
                     <span class="p">),</span>
-                    <span class="n">default_answer</span><span class="o">=</span><span class="s2">&quot;n&quot;</span><span class="p">,</span>
+                    <span class="n">default_answer</span><span class="o">=</span><span class="s2">"n"</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Unable to capture user input. Fetching anyway.&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Unable to capture user input. Fetching anyway."</span><span class="p">)</span>
                 <span class="n">do_fetch</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">if</span> <span class="n">do_fetch</span><span class="p">:</span>
                 <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span>
@@ -501,7 +501,7 @@
                 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mf</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="s2">&quot;Model is not fetched, please fetch the model before serving it.&quot;</span>
+                    <span class="s2">"Model is not fetched, please fetch the model before serving it."</span>
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span> <span class="o">=</span> <span class="n">ApiSchema</span><span class="p">(</span>
@@ -517,14 +517,14 @@
             <span class="n">maxmemory</span><span class="o">=</span><span class="n">maxmemory</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_apis</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with initialization!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Done with initialization!"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ErsiliaModel.fetch">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.fetch">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        This method fetches the model from the Ersilia Model Hub.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span>
             <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials_json</span>
         <span class="p">)</span>
@@ -532,7 +532,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Enter the runtime context related to this object.</span>
 
 <span class="sd">        This method is called when the runtime context is entered using the `with` statement.</span>
@@ -542,12 +542,12 @@
 <span class="sd">        -------</span>
 <span class="sd">        ErsiliaModel</span>
 <span class="sd">            The instance of the ErsiliaModel.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Exit the runtime context related to this object.</span>
 
 <span class="sd">        This method is called when the runtime context is exited using the `with` statement.</span>
@@ -561,13 +561,13 @@
 <span class="sd">            The exception instance.</span>
 <span class="sd">        exc_tb : traceback</span>
 <span class="sd">            The traceback object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ErsiliaModel.is_valid">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.is_valid">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Check if the model identifier is valid.</span>
 
 <span class="sd">        This method verifies if the provided model identifier is valid by checking its existence</span>
@@ -577,12 +577,12 @@
 <span class="sd">        -------</span>
 <span class="sd">        bool</span>
 <span class="sd">            True if the model identifier is valid, False otherwise.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_set_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
-        <span class="c1"># Don&#39;t want to override apis we explicitly write</span>
+        <span class="c1"># Don't want to override apis we explicitly write</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">):</span>
             <span class="k">return</span>
 
@@ -597,13 +597,13 @@
         <span class="p">)</span>
         <span class="n">api_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">apis_list</span><span class="p">):</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">apis_list</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">apis_list</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">api_name</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
                     <span class="n">api_names</span> <span class="o">+=</span> <span class="p">[</span><span class="n">api_name</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">api_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No apis found. Writing...&quot;</span><span class="p">)</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">apis_list</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"No apis found. Writing..."</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">apis_list</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">for</span> <span class="p">(</span>
                     <span class="n">api_name</span>
                 <span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">_get_apis_from_where_available</span><span class="p">():</span>
@@ -617,9 +617,9 @@
         <span class="n">model_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">),</span> <span class="p">(</span>
-            <span class="s2">&quot;Process ID file does not exist. Please serve the model first!&quot;</span>
+            <span class="s2">"Process ID file does not exist. Please serve the model first!"</span>
         <span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">url</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">url</span>
@@ -629,7 +629,7 @@
         <span class="k">if</span> <span class="n">api_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">api_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">api_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;More than one API found, please specificy api_name&quot;</span>
+                <span class="s2">"More than one API found, please specificy api_name"</span>
             <span class="p">)</span>
             <span class="n">api_name</span> <span class="o">=</span> <span class="n">api_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span>
@@ -641,7 +641,7 @@
         <span class="k">return</span> <span class="n">api</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_api_runner_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">:</span> <span class="n">Api</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the API in an iterative manner.</span>
 
 <span class="sd">        This method executes the API in an iterative manner, yielding results one by one.</span>
@@ -662,15 +662,15 @@
 <span class="sd">        ------</span>
 <span class="sd">        Any</span>
 <span class="sd">            The result of each API call.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">):</span>
             <span class="k">assert</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;Something went wrong. Please contact us at hello@ersila.io&quot;</span>
+                <span class="s2">"Something went wrong. Please contact us at hello@ersila.io"</span>
             <span class="p">)</span>
             <span class="k">yield</span> <span class="n">result</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_api_runner_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">:</span> <span class="n">Api</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the API and return the results.</span>
 
 <span class="sd">        This method executes the API and returns the results in the specified output format.</span>
@@ -691,10 +691,10 @@
 <span class="sd">        -------</span>
 <span class="sd">        Any</span>
 <span class="sd">            The result of the API run in the specified output format.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span> <span class="ow">and</span> <span class="n">pd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"pandas"</span> <span class="ow">and</span> <span class="n">pd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
             <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_runner_iter</span><span class="p">(</span>
                 <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
@@ -702,20 +702,20 @@
                 <span class="n">R</span> <span class="o">+=</span> <span class="p">[</span><span class="n">r</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;ersilia-&quot;</span><span class="p">)</span>
+            <span class="n">tmp_folder</span> <span class="o">=</span> <span class="n">make_temp_dir</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">"ersilia-"</span><span class="p">)</span>
             <span class="n">is_h5_serializable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span><span class="o">.</span><span class="n">is_h5_serializable</span><span class="p">(</span>
                 <span class="n">api_name</span><span class="o">=</span><span class="n">api</span><span class="o">.</span><span class="n">api_name</span>
             <span class="p">)</span>
-            <span class="n">_temporary_prefix</span> <span class="o">=</span> <span class="s2">&quot;temporary&quot;</span>
+            <span class="n">_temporary_prefix</span> <span class="o">=</span> <span class="s2">"temporary"</span>
             <span class="k">if</span> <span class="n">is_h5_serializable</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output is HDF5 serializable&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Output is HDF5 serializable"</span><span class="p">)</span>
                 <span class="n">tmp_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_temporary_prefix</span><span class="p">)</span>
+                    <span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">"</span><span class="si">{0}</span><span class="s2">.h5"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_temporary_prefix</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Output is not HDF5 serializable&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Output is not HDF5 serializable"</span><span class="p">)</span>
                 <span class="n">tmp_output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_temporary_prefix</span><span class="p">)</span>
+                    <span class="n">tmp_folder</span><span class="p">,</span> <span class="s2">"</span><span class="si">{0}</span><span class="s2">.csv"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_temporary_prefix</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_runner_iter</span><span class="p">(</span>
                 <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">tmp_output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
@@ -726,20 +726,20 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">CsvDataLoader</span><span class="p">()</span>
             <span class="n">data</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">tmp_output</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"numpy"</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">[:]</span>
-            <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"pandas"</span><span class="p">:</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
-                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span>
-                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">inputs</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">"key"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">"input"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">inputs</span>
                 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
                 <span class="n">df</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">features</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span>
                 <span class="k">return</span> <span class="n">df</span>
-            <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"dict"</span><span class="p">:</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
-                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;keys&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span>
-                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">inputs</span>
-                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;values&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">"keys"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">"inputs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">inputs</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">"values"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">values</span>
                 <span class="k">return</span> <span class="n">d</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_api_runner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
@@ -760,10 +760,10 @@
         <span class="n">scra</span> <span class="o">=</span> <span class="n">StandardCSVRunApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">())</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">scra</span><span class="o">.</span><span class="n">is_amenable</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Standard CSV Api runner is not amenable for this model, input and output&quot;</span>
+                <span class="s2">"Standard CSV Api runner is not amenable for this model, input and output"</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting standard runner&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Starting standard runner"</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">scra</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span>
             <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span>
@@ -778,13 +778,13 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".json"</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tsv&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".tsv"</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".h5"</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
@@ -794,13 +794,13 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;numpy&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"numpy"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;pandas&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"pandas"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"dict"</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
@@ -857,7 +857,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">api</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the specified API with the given input and output.</span>
 
 <span class="sd">        This method executes the specified API(usually with the end point run) using the provided input and output parameters.</span>
@@ -878,14 +878,14 @@
 <span class="sd">        -------</span>
 <span class="sd">        Any</span>
 <span class="sd">            The result of the API run.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">is_precalculation_enabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">):</span>
             <span class="n">store</span> <span class="o">=</span> <span class="n">InferenceStoreApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">get_precalculations</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_cache_splits</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">):</span>
             <span class="n">splitted_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tfr</span><span class="o">.</span><span class="n">split_in_cache</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Split inputs:&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splitted_inputs</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Split inputs:"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splitted_inputs</span><span class="p">))</span>
             <span class="n">splitted_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tfr</span><span class="o">.</span><span class="n">name_cached_output_files</span><span class="p">(</span>
                 <span class="n">splitted_inputs</span><span class="p">,</span> <span class="n">output</span>
             <span class="p">)</span>
@@ -899,7 +899,7 @@
             <span class="n">TabularOutputStacker</span><span class="p">(</span><span class="n">splitted_outputs</span><span class="p">)</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">output</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;No file splitting necessary!&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"No file splitting necessary!"</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_task</span><span class="p">(</span>
                 <span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
             <span class="p">)</span></div>
@@ -908,7 +908,7 @@
 <div class="viewcode-block" id="ErsiliaModel.api_task">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.api_task">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">api_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the specified API task with the given input and output.</span>
 
 <span class="sd">        This method executes the specified API task using the provided input and output parameters.</span>
@@ -929,7 +929,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        Any</span>
 <span class="sd">            The result of the API task.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">api_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_api_instance</span><span class="p">(</span><span class="n">api_name</span><span class="o">=</span><span class="n">api_name</span><span class="p">)</span>
         <span class="n">api_runner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_api_runner</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">api_runner</span><span class="p">(</span>
@@ -951,7 +951,7 @@
 <div class="viewcode-block" id="ErsiliaModel.update_model_usage_time">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.update_model_usage_time">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_model_usage_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Update the model usage time.</span>
 
 <span class="sd">        This method updates the usage time of the specified model by recording the current timestamp</span>
@@ -961,46 +961,46 @@
 <span class="sd">        ----------</span>
 <span class="sd">        model_id : str</span>
 <span class="sd">            The identifier of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">EOS</span><span class="p">,</span> <span class="n">FETCHED_MODELS_FILENAME</span><span class="p">)</span>
         <span class="n">ts_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
             <span class="n">models</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">infile</span><span class="p">))</span>
         <span class="n">infile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">model_id</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">models</span><span class="p">[</span><span class="n">model_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_str</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">values</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">values</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ErsiliaModel.setup">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.setup">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Setup the necessary requirements for the model.</span>
 
 <span class="sd">        This method ensures that the required dependencies and resources for the model are available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">pass</span>  <span class="c1"># TODO Implement whenever this is necessary</span></div>
 
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track_runs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Serve the model by starting the necessary services.</span>
 
 <span class="sd">        This method sets up the required dependencies, opens a session, and starts the model service.</span>
-<span class="sd">        It registers the service class and output source, updates the model&#39;s URL and process ID (PID),</span>
+<span class="sd">        It registers the service class and output source, updates the model's URL and process ID (PID),</span>
 <span class="sd">        and tracks resource usage if tracking is enabled.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        track_runs : str, optional</span>
 <span class="sd">            Whether to track runs, by default is None (i.e. do not track).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting serve&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Starting serve"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tracking_use_case</span> <span class="o">=</span> <span class="n">track_runs</span>
@@ -1008,7 +1008,7 @@
         <span class="k">if</span> <span class="n">track_runs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">PulledDockerImageService</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Tracking runs is currently only supported for Dockerized models&quot;</span>
+                    <span class="s2">"Tracking runs is currently only supported for Dockerized models"</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="n">TrackingNotSupportedError</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1019,7 +1019,7 @@
                     <span class="n">use_case</span><span class="o">=</span><span class="n">track_runs</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
-        <span class="n">spinner</span><span class="p">(</span><span class="s2">&quot;Closing existing sessions of a model&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
+        <span class="n">spinner</span><span class="p">(</span><span class="s2">"Closing existing sessions of a model"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">track_runs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">track</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">register_service_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span><span class="p">)</span>
@@ -1036,27 +1036,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">url</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">pid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">_service_class</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done with basic session registration&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Done with basic session registration"</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ErsiliaModel.close">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Close the model services and session.</span>
 
 <span class="sd">        This method stops the model service and closes the session.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Closing session </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Closing session </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">_session_dir</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Session closed&quot;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Session closed"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ErsiliaModel.get_apis">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.get_apis">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_apis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the list of available APIs for the model.</span>
 
 <span class="sd">        This method retrieves the list of APIs that are available for the model.</span>
@@ -1065,7 +1065,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
 <span class="sd">            The list of available APIs.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoservice</span><span class="o">.</span><span class="n">get_apis</span><span class="p">()</span></div>
 
 
@@ -1093,7 +1093,7 @@
         <span class="k">return</span> <span class="p">(</span>
             <span class="n">result</span><span class="p">,</span>
             <span class="n">status_ok</span><span class="p">,</span>
-        <span class="p">)</span>  <span class="c1"># TODO This doesn&#39;t actually check whether the result exists and isn&#39;t null</span>
+        <span class="p">)</span>  <span class="c1"># TODO This doesn't actually check whether the result exists and isn't null</span>
 
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
@@ -1102,7 +1102,7 @@
         <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the model with the given input and output.</span>
 
 <span class="sd">        This method executes the model using the provided input and output parameters.</span>
@@ -1120,7 +1120,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        Any</span>
 <span class="sd">            The result of the model run(such as output csv file name, json).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
@@ -1131,35 +1131,35 @@
             <span class="k">if</span> <span class="n">track_run</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">TrackingNotSupportedError</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.csv&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">output</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".csv"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">track_run</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">TrackingNotSupportedError</span><span class="p">()</span>
 
         <span class="c1"># Init the run tracker</span>
         <span class="k">if</span> <span class="n">track_run</span><span class="p">:</span>
             <span class="n">use_case</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_tracking_use_case</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="s2">&quot;Initializing the run trackers (use case </span><span class="si">{0}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">use_case</span><span class="p">)</span>
+                <span class="s2">"Initializing the run trackers (use case </span><span class="si">{0}</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">use_case</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
                 <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">use_case</span><span class="o">=</span><span class="n">use_case</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting runner&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Trying standard API&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Starting runner"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Trying standard API"</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standard_run</span><span class="p">(</span>
                 <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Standard run did not work with exception </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Standard run did not work with exception </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="k">raise</span> <span class="n">e</span>
 
         <span class="k">if</span> <span class="n">track_run</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Collecting metrics&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Collecting metrics"</span><span class="p">)</span>
             <span class="n">model_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
-            <span class="k">if</span> <span class="s2">&quot;metadata&quot;</span> <span class="ow">in</span> <span class="n">model_info</span><span class="p">:</span>
-                <span class="n">metadata</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="s2">&quot;card&quot;</span> <span class="ow">in</span> <span class="n">model_info</span><span class="p">:</span>
-                <span class="n">metadata</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s2">&quot;card&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">"metadata"</span> <span class="ow">in</span> <span class="n">model_info</span><span class="p">:</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s2">"metadata"</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="s2">"card"</span> <span class="ow">in</span> <span class="n">model_info</span><span class="p">:</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">model_info</span><span class="p">[</span><span class="s2">"card"</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -1171,7 +1171,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the paths related to the model.</span>
 
 <span class="sd">        This property returns a dictionary containing various paths related to the model,</span>
@@ -1181,63 +1181,63 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The dictionary containing paths.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">p</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;dest&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
-            <span class="s2">&quot;repository&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">"dest"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
+            <span class="s2">"repository"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bundle_location</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">p</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the input type of the model.</span>
 
-<span class="sd">        This property reads the input type information from the model&#39;s card file and returns it</span>
+<span class="sd">        This property reads the input type information from the model's card file and returns it</span>
 <span class="sd">        as a list of input types.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
 <span class="sd">            The list of input types(such as compounds).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">CARD_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="s2">&quot;Input&quot;</span><span class="p">]]</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">CARD_FILE</span><span class="p">),</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="s2">"Input"</span><span class="p">]]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the output type of the model.</span>
 
-<span class="sd">        This property reads the output type information from the model&#39;s card file and returns it</span>
+<span class="sd">        This property reads the output type information from the model's card file and returns it</span>
 <span class="sd">        as a list of output types.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list</span>
 <span class="sd">            The list of output types(such as Descriptor, score, probability etc...).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">CARD_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="s2">&quot;Output&quot;</span><span class="p">]]</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">CARD_FILE</span><span class="p">),</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)[</span><span class="s2">"Output"</span><span class="p">]]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">schema</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the schema of the model.</span>
 
 <span class="sd">        This property returns the schema of the model, which defines the structure and format</span>
-<span class="sd">        of the model&#39;s input and output data.</span>
+<span class="sd">        of the model's input and output data.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The schema of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span><span class="o">.</span><span class="n">schema</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the metadata of the model.</span>
 
 <span class="sd">        This property returns the metadata of the model, which provides additional information</span>
@@ -1247,31 +1247,31 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The metadata of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_schema</span><span class="o">.</span><span class="n">get_meta</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the size of the model.</span>
 
-<span class="sd">        This property reads the size information from the model&#39;s size file and returns it</span>
+<span class="sd">        This property reads the size information from the model's size file and returns it</span>
 <span class="sd">        as a dictionary.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The size of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">MODEL_SIZE_FILE</span><span class="p">),</span> <span class="s2">"r"</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ErsiliaModel.example">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.example">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Generate example data for the model.</span>
 
 <span class="sd">        This method generates example data for the model using the specified number of samples.</span>
@@ -1288,7 +1288,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        Any</span>
 <span class="sd">            The generated example data(path, list of inputs etc...).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">eg</span> <span class="o">=</span> <span class="n">ExampleGenerator</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">eg</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="n">file_name</span><span class="p">)</span></div>
 
@@ -1296,7 +1296,7 @@
 <div class="viewcode-block" id="ErsiliaModel.info">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.core.html#ersilia.core.model.ErsiliaModel.info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the information of the model.</span>
 
 <span class="sd">        This method reads the information file of the model and returns its content as a dictionary.</span>
@@ -1305,11 +1305,11 @@
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
 <span class="sd">            The information of the model.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">information_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_model_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">INFORMATION_FILE</span>
         <span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">information_file</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
 </div>
 
