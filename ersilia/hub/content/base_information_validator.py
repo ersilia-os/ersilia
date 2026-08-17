@@ -23,6 +23,10 @@ _SEMVER_REGEX = re.compile(
     re.VERBOSE,
 )
 
+_SLUG_REGEX = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+){0,3}$")
+
+_MAX_SLUG_LENGTH = 60
+
 
 class BaseInformationValidator:
     @staticmethod
@@ -88,7 +92,11 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_slug(cls, s) -> bool:
-        return s.lower() == s and 5 <= len(s) <= 60
+        return (
+            isinstance(s, str)
+            and len(s) <= _MAX_SLUG_LENGTH
+            and _SLUG_REGEX.match(s) is not None
+        )
 
     @classmethod
     def validate_status(cls, s) -> bool:
@@ -96,7 +104,7 @@ class BaseInformationValidator:
 
     @classmethod
     def validate_title(cls, t) -> bool:
-        return 10 <= len(t) <= 300
+        return isinstance(t, str) and 10 <= len(t) <= 300
 
     @classmethod
     def validate_description(cls, d) -> bool:
@@ -155,7 +163,7 @@ class BaseInformationValidator:
         return ot is None or all(
             v in cls._read_default_fields("Output Type") for v in cls.to_list(ot)
         )
-
+   
     @classmethod
     def validate_output_shape(cls, osz) -> bool:
         return osz is None or osz in cls._read_default_fields("Output Shape")
