@@ -328,7 +328,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">....utils.hdf5</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo_exceptions</span><span class="p">,</span> <span class="n">ClickInterface</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....hub.content.base_information_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseInformationValidator</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">....hub.content.columns_information</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnsInformation</span>
 
 <div class="viewcode-block" id="CheckService">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService">[docs]</a>
@@ -418,12 +418,20 @@
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">WrongCardIdentifierError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_slug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Checking model slug..."</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="s2">"Slug"</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">"slug"</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">"Slug"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> field.."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_slug</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"Slug"</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">"slug"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_slug</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InvalidEntry</span><span class="p">(</span>
+                <span class="n">key</span><span class="p">,</span>
+                <span class="s2">"A slug must be 1-4 lowercase words separated by hyphens, at most 60 characters."</span><span class="p">,</span>
+            <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Checking model description..."</span><span class="p">)</span>
@@ -462,13 +470,17 @@
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_source_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Checking model title..."</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">"Title"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Checking </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> field.."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_title</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"Title"</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">"Title"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyKey</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="s2">"Title"</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="s2">"Title"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">BaseInformationValidator</span><span class="p">()</span><span class="o">.</span><span class="n">validate_title</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">InvalidEntry</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Checking model status..."</span><span class="p">)</span>
@@ -658,7 +670,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
+        
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_output_consistency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">key</span> <span class="o">=</span> <span class="s2">"Output Consistency"</span>
 
@@ -1462,6 +1474,33 @@
             <span class="p">)</span>
         <span class="p">]</span>
 
+<div class="viewcode-block" id="CheckService.check_model_columns_name">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.check_model_columns_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_model_columns_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">column_names</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ios</span><span class="o">.</span><span class="n">get_model_run_columns</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">column_names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Column names validation check"</span><span class="p">,</span>
+                <span class="s2">"No column names found in the model run file"</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+            <span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">column_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">d</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">isalnum</span><span class="p">():</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Column names validation check"</span><span class="p">,</span>
+                    <span class="s2">"Column names are not valid: must be lowercase and alphanumeric with underscores"</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">),</span>
+                <span class="p">)</span>
+           
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Column names validation check"</span><span class="p">,</span>
+            <span class="s2">"Column names are valid"</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">PASSED</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+        
 <div class="viewcode-block" id="CheckService.compare_csv_columns">
 <a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.checks.CheckService.compare_csv_columns">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compare_csv_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_csv</span><span class="p">,</span> <span class="n">csv_file</span><span class="p">):</span>

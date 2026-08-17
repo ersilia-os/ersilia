@@ -1062,10 +1062,12 @@
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="n">dim_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_dim</span><span class="p">()</span>
-        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_FILE_CHECKS</span><span class="p">,</span> <span class="p">[</span><span class="n">dim_check</span><span class="p">])</span>
-        <span class="p">)</span>
 
+        <span class="n">column_name_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkup_service</span><span class="o">.</span><span class="n">check_model_columns_name</span><span class="p">()</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_generate_table_from_check</span><span class="p">(</span><span class="n">TableType</span><span class="o">.</span><span class="n">MODEL_FILE_CHECKS</span><span class="p">,</span> <span class="p">[</span><span class="n">dim_check</span><span class="p">,</span> <span class="n">column_name_check</span><span class="p">])</span>
+        <span class="p">)</span>
+       
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_directory_sizes</span><span class="p">())</span>
 
         <span class="n">docker_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docker_yml_column_name_check</span><span class="p">()</span>

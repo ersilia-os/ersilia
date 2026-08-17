@@ -519,7 +519,17 @@
         <span class="k">except</span> <span class="n">texc</span><span class="o">.</span><span class="n">EmptyField</span> <span class="k">as</span> <span class="n">ef</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"EmptyField exception caught for key '</span><span class="si">{</span><span class="n">ef</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> has invalid value"</span>
+                <span class="sa">f</span><span class="s2">"Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> is empty"</span>
+                <span class="k">if</span> <span class="n">data</span>
+                <span class="k">else</span> <span class="sa">f</span><span class="s2">"File </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> does not exist"</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">check_name</span><span class="p">,</span> <span class="n">details</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">STATUS_CONFIGS</span><span class="o">.</span><span class="n">FAILED</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">except</span> <span class="n">texc</span><span class="o">.</span><span class="n">InvalidEntry</span> <span class="k">as</span> <span class="n">ie</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"InvalidEntry exception caught for key '</span><span class="si">{</span><span class="n">ie</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Field </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> value does not meet the expected format"</span>
                 <span class="k">if</span> <span class="n">data</span>
                 <span class="k">else</span> <span class="sa">f</span><span class="s2">"File </span><span class="si">{</span><span class="n">check_name</span><span class="si">}</span><span class="s2"> does not exist"</span>
             <span class="p">)</span>
@@ -832,7 +842,23 @@
         <span class="k">return</span> <span class="n">odm</span><span class="p">,</span> <span class="n">odc</span></div>
 
 
+<div class="viewcode-block" id="IOService.get_model_run_columns">
+<a class="viewcode-back" href="../../../../../source/autodoc/ersilia.publish.test.services.html#ersilia.publish.test.services.io.IOService.get_model_run_columns">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_run_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the model run columns from run column file</span>
 
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">          A run columns name from the run column file</span>
+<span class="sd">        """</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">PREDEFINED_COLUMN_FILE</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">IOService</span><span class="o">.</span><span class="n">read_csv_values</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">row</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">column_names</span></div>
+
+    
     <span class="nd">@throw_ersilia_exception</span><span class="p">()</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_directories_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>

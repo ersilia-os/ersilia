@@ -382,12 +382,14 @@
 <div class="viewcode-block" id="InvalidEntry">
 <a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.test_exceptions.InvalidEntry">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InvalidEntry</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">invalid_field</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">invalid_field</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">"The </span><span class="si">{0}</span><span class="s2"> field of this model is not recognized as a valid format."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">invalid_field</span>
             <span class="p">)</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="n">reason</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="s2">"  </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">"Check the model information, usually available in a metadata.json file."</span>
         <span class="p">)</span>
