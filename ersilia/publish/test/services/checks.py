@@ -22,7 +22,7 @@ from ....utils.exceptions_utils import test_exceptions as texc
 from ....utils.hdf5 import Hdf5DataLoader
 from ....store.utils import echo_exceptions, ClickInterface
 from ....hub.content.base_information_validator import BaseInformationValidator
-
+from ....hub.content.columns_information import ColumnsInformation
 
 class CheckService:
     """
@@ -107,12 +107,20 @@ class CheckService:
             raise texc.WrongCardIdentifierError(self.model_id)
 
     def _check_model_slug(self, data):
-        self.logger.debug("Checking model slug...")
-        if not data["Slug"]:
-            raise texc.EmptyField("slug")
+        key = "Slug"
+        self.logger.debug(f"Checking {key} field..")
 
-        if not BaseInformationValidator().validate_slug(data["Slug"]):
-            raise texc.EmptyField("slug")
+        if key not in data:
+            raise texc.EmptyKey(key)
+
+        if not data[key]:
+            raise texc.EmptyField(key)
+
+        if not BaseInformationValidator().validate_slug(data[key]):
+            raise texc.InvalidEntry(
+                key,
+                "A slug must be 1-4 lowercase words separated by hyphens, at most 60 characters.",
+            )
 
     def _check_model_description(self, data):
         self.logger.debug("Checking model description...")
@@ -151,13 +159,17 @@ class CheckService:
             raise texc.EmptyField(key)
 
     def _check_model_source_title(self, data):
-        self.logger.debug("Checking model title...")
+        key = "Title"
+        self.logger.debug(f"Checking {key} field..")
 
-        if not BaseInformationValidator().validate_title(data["Title"]):
-            raise texc.EmptyField("Title")
+        if key not in data:
+            raise texc.EmptyKey(key)
 
-        if not data["Title"]:
-            raise texc.EmptyField("Title")
+        if not data[key]:
+            raise texc.EmptyField(key)
+
+        if not BaseInformationValidator().validate_title(data[key]):
+            raise texc.InvalidEntry(key)
 
     def _check_model_status(self, data):
         self.logger.debug("Checking model status...")
@@ -347,7 +359,7 @@ class CheckService:
 
         if not data[key]:
             raise texc.EmptyField(key)
-
+        
     def _check_model_output_consistency(self, data):
         key = "Output Consistency"
 
@@ -1130,6 +1142,30 @@ class CheckService:
             )
         ]
 
+    def check_model_columns_name(self):
+        column_names= self.ios.get_model_run_columns()
+        if not column_names:
+            return (
+                f"Column names validation check",
+                "No column names found in the model run file",
+                str(STATUS_CONFIGS.FAILED),
+            )
+        
+        for d in column_names:
+            if d.islower() is False or not d.replace("_", "").isalnum():
+                return (
+                    f"Column names validation check",
+                    "Column names are not valid: must be lowercase and alphanumeric with underscores",
+                    str(STATUS_CONFIGS.FAILED),
+                )
+           
+        return (
+            f"Column names validation check",
+            "Column names are valid",
+            str(STATUS_CONFIGS.PASSED),
+        )
+
+        
     def compare_csv_columns(self, column_csv, csv_file):
         try:
             with ExitStack() as stack:

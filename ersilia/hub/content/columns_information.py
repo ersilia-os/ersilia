@@ -84,8 +84,8 @@ class ColumnsInformation(ErsiliaBase):
 
     def _validate_columns_data(self, data):
         for d in data["name"]:
-            if d[0].lower() != d[0]:
-                raise ValueError("Column names must be lowercase")
+            if d.islower() is False:
+                raise ValueError("Column names allmust be lowercase")
             if not d.replace("_", "").isalnum():
                 raise ValueError(
                     "Column names must be alphanumeric or contain underscores"

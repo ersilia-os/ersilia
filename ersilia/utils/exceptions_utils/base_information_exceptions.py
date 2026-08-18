@@ -38,7 +38,7 @@ class IdentifierBaseInformationError(ErsiliaError):
 class SlugBaseInformationError(ErsiliaError):
     def __init__(self):
         self.message = "Wrong Ersilia slug"
-        self.hints = "Slug must be a 5-60 chars lowercase single-word unique identifier. Use '-' for linking words if necessary"
+        self.hints = "Slug must be a lowercase unique identifier of at most 60 characters, made of 1 to 4 words. Use '-' for linking words if necessary"
         ErsiliaError.__init__(self, self.message, self.hints)
 
 

@@ -733,10 +733,12 @@ class RunnerService:
             )
         )
         dim_check = self.checkup_service.check_dim()
-        results.append(
-            self._generate_table_from_check(TableType.MODEL_FILE_CHECKS, [dim_check])
-        )
 
+        column_name_check = self.checkup_service.check_model_columns_name()
+        results.append(
+            self._generate_table_from_check(TableType.MODEL_FILE_CHECKS, [dim_check, column_name_check])
+        )
+       
         results.append(self._log_directory_sizes())
 
         docker_check = self._docker_yml_column_name_check()
