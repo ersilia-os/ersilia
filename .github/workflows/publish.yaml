@@ -17,7 +17,7 @@ jobs:
       VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
       - name: Checkout persist credentials
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false # ensures use of personal token instead of GITHUB_TOKEN
           fetch-depth: 0 # fetches all history for tagging
@@ -93,7 +93,7 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v6.0.0
+      - uses: actions/checkout@v6.0.2
       - name: Create GitHub release
         id: gh_release
         run: |
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: version
     steps:
-      - uses: actions/checkout@v6.0.0
+      - uses: actions/checkout@v6.0.2
         with:
           ref: master
 
