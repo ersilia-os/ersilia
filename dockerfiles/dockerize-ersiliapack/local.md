@@ -14,11 +14,11 @@ Ersilia Pack dockerization is divided into two steps - building the base image t
     - Dockerfile.condapy310_24.7.1-0
     - Dockerfile.condapy311_24.7.1-0
     - Dockerfile.condapy312_24.7.1-0
-    - Dockerfile.pip3.8-slim-bullseye
-    - Dockerfile.pip3.9-slim-bullseye
-    - Dockerfile.pip3.10-slim-bullseye
-    - Dockerfile.pip3.11-slim-bullseye
-    - Dockerfile.pip3.12-slim-bullseye
+    - Dockerfile.pip3.8-slim-bookworm
+    - Dockerfile.pip3.9-slim-bookworm
+    - Dockerfile.pip3.10-slim-bookworm
+    - Dockerfile.pip3.11-slim-bookworm
+    - Dockerfile.pip3.12-slim-bookworm
 
 And an entrypoint script called `docker-entrypoint.sh`.
 
@@ -27,7 +27,7 @@ And an entrypoint script called `docker-entrypoint.sh`.
 5. This step assumes you are inside the ersilia-pack directory and you have completed Step 4. Build the base docker image, eg for Python 3.12 conda image, as follows:
 
 ```
-docker build -f Dockerfile.pip3.12-slim-bullseye -t ersiliaos/ersiliapack-py312:latest .
+docker build -f Dockerfile.pip3.12-slim-bookworm -t ersiliaos/ersiliapack-py312:latest .
 ```
 
 ### Local build - model
