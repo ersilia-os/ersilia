@@ -1489,7 +1489,7 @@ class CheckService:
             return _completed_status
         else:
             data1 = read_csv(output1_path)
-            data2 = read_csv(output1_path)
+            data2 = read_csv(output2_path)
 
             try:
                 for res1, res2 in zip(data1, data2):
