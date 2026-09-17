@@ -6,7 +6,7 @@ from ..utils.exceptions_utils.fetch_exceptions import (
     ModelPackageInstallError,
     VirtualEnvironmentSetupError,
 )
-from ..utils.logging import make_temp_dir
+from ..utils.logging import make_temp_dir, persist_log_to_cwd
 from .terminal import run_command
 
 
@@ -136,6 +136,7 @@ class SimpleVenv(ErsiliaBase):
 
         # run_command("bash {0}".format(tmp_script))
         run_command("bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log))  #
+        persist_log_to_cwd(tmp_log, "ersilia_install.log")
         with open(tmp_log, "r") as f:
             log_file = f.read()
         logger.debug(log_file)

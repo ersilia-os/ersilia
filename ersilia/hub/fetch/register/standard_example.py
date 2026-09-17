@@ -130,14 +130,12 @@ class ModelStandardExample(ErsiliaBase):
         self.run_log = os.path.join(path, "standard_run.log")
         self.logger.debug(f"Example input file: {self.input_csv}")
         self.logger.debug(f"Example output file: {self.output_csv}")
-
         self._execute_commands(
             [
                 f"ersilia serve {self.model_id} --disable-cache",
                 f"ersilia run -i {self.input_csv} -o {self.output_csv} > {self.run_log} 2>&1",
             ]
         )
-
         if os.path.exists(self.run_log):
             self.logger.info(f"Run log: {open(self.run_log).read()}")
         else:
@@ -145,15 +143,14 @@ class ModelStandardExample(ErsiliaBase):
 
         self._check_file_exists(output_csv=self.output_csv)
         is_fetched_successfully = self._validate_csv(self.output_csv)
-
         if not is_fetched_successfully:
-            echo(
-                "Model produced all empty values. Removing the model.",
-                fg="red",
-            )
+            note = " Full logs saved to ersilia_serve.log, ersilia_command_outputs.log and ersilia_install.log in the current directory."
+            echo(f"Model produced all empty values. Removing the model.{note}", fg="red")
             self.logger.error(
                 "Model produced all empty values. Removing the model and exiting."
+                + note
             )
+
             run_command(f"ersilia -v delete {self.model_id}")
             sys.exit(1)
 

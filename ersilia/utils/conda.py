@@ -9,7 +9,7 @@ from pathlib import Path
 from .. import logger, throw_ersilia_exception
 from ..default import _CONDA_BOOTSTRAP, CONDA_ENV_YML_FILE
 from ..utils.exceptions_utils.fetch_exceptions import ModelPackageInstallError
-from ..utils.logging import make_temp_dir
+from ..utils.logging import make_temp_dir, persist_log_to_cwd
 from .docker import SimpleDockerfileParser
 from .echo import echo
 from .supp.conda_env_resolve import CHECKSUM_FILE, CHECKSUM_NCHAR
@@ -739,6 +739,7 @@ class SimpleConda(CondaUtils):
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
         run_command(cmd)
+        persist_log_to_cwd(tmp_log, "ersilia_command_outputs.log")
         if os.path.exists(tmp_log):
             with open(tmp_log, "r") as f:
                 log_file = f.read()
@@ -816,6 +817,7 @@ class StandaloneConda(object):
         cmd = "bash {0} 2>&1 | tee -a {1}".format(tmp_script, tmp_log)
         logger.debug("Running {0}".format(cmd))
         run_command(cmd)
+        persist_log_to_cwd(tmp_log, "ersilia_command_outputs.log")
         if os.path.exists(tmp_log):
             with open(tmp_log, "r") as f:
                 log_file = f.read()

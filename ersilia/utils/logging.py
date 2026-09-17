@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 import os
@@ -62,6 +63,39 @@ def make_temp_dir(prefix):
     src = Path(tmp_dir)
     dst.symlink_to(src, target_is_directory=True)
     return tmp_dir
+
+
+def persist_log_to_cwd(tmp_log_path, persistent_filename):
+    """
+    Append a temporary execution log to a persistent log file in the current
+    working directory, so its content survives the /tmp cleanup that happens
+    on the next serve/close call.
+
+    Parameters
+    ----------
+    tmp_log_path : str
+        Path to the temporary log file (under /tmp) to persist.
+    persistent_filename : str
+        Name of the persistent log file to append to, created in the
+        current working directory.
+    """
+    if not os.path.exists(tmp_log_path):
+        return
+    try:
+        with open(tmp_log_path, "r", errors="replace") as f:
+            content = f.read()
+    except OSError:
+        return
+    dest = os.path.join(os.getcwd(), persistent_filename)
+    with open(dest, "a") as f:
+        f.write(
+            "\n===== {0} | source: {1} =====\n".format(
+                datetime.datetime.now().isoformat(timespec="seconds"), tmp_log_path
+            )
+        )
+        f.write(content)
+        if not content.endswith("\n"):
+            f.write("\n")
 
 
 class Logger(object):
