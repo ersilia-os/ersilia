@@ -241,26 +241,33 @@ class _FastApiService(BaseServing):
         model's ``run_uvicorn.py`` server as a child. Killing only the parent
         leaves that server running, so the whole process tree is stopped.
         """
+        pid = getattr(self, "pid", None)
+        # psutil.Process(None) means the current process, so an unset PID must
+        # never reach it.
+        if not isinstance(pid, int) or pid <= 0:
+            self.logger.info("PID {0} is unassigned".format(pid))
+            return
         try:
-            parent = psutil.Process(self.pid)
-        except (psutil.NoSuchProcess, TypeError, ValueError):
-            self.logger.info("PID {0} is unassigned".format(self.pid))
+            parent = psutil.Process(pid)
+        except psutil.Error:
+            self.logger.info("PID {0} is unassigned".format(pid))
             return
         try:
             processes = parent.children(recursive=True) + [parent]
-        except psutil.NoSuchProcess:
+        except psutil.Error:
             processes = [parent]
         for process in processes:
             try:
                 process.terminate()
-            except psutil.NoSuchProcess:
+            except psutil.Error:
                 pass
         _, alive = psutil.wait_procs(processes, timeout=5)
         for process in alive:
             try:
                 process.kill()
-            except psutil.NoSuchProcess:
+            except psutil.Error:
                 pass
+        psutil.wait_procs(alive, timeout=5)
 
 
 class _LocalService(ErsiliaBase):

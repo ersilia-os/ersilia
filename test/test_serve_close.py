@@ -50,3 +50,15 @@ def test_close_with_missing_process_does_not_raise():
     service = _service_for(proc.pid)
     service.close()
     service.logger.info.assert_called_once()
+
+
+def test_close_with_unset_pid_does_not_touch_current_process():
+    """psutil.Process(None) is the current process; close() must not use it."""
+    for pid in (None, 0, -1):
+        service = _service_for(pid)
+        service.close()
+        service.logger.info.assert_called_once()
+    service = _FastApiService.__new__(_FastApiService)
+    service.logger = MagicMock()
+    service.close()
+    service.logger.info.assert_called_once()
