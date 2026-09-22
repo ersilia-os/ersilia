@@ -5,6 +5,7 @@ import time
 import uuid
 
 import docker
+import psutil
 import requests
 
 from .. import ErsiliaBase, throw_ersilia_exception
@@ -234,12 +235,32 @@ class _FastApiService(BaseServing):
 
     def close(self):
         """
-        Close the FastAPI service by killing the process.
+        Close the FastAPI service by stopping the process and its children.
+
+        ``self.pid`` is the ``ersilia_model_serve`` process, which runs the
+        model's ``run_uvicorn.py`` server as a child. Killing only the parent
+        leaves that server running, so the whole process tree is stopped.
         """
         try:
-            os.kill(self.pid, 9)
-        except:
+            parent = psutil.Process(self.pid)
+        except (psutil.NoSuchProcess, TypeError, ValueError):
             self.logger.info("PID {0} is unassigned".format(self.pid))
+            return
+        try:
+            processes = parent.children(recursive=True) + [parent]
+        except psutil.NoSuchProcess:
+            processes = [parent]
+        for process in processes:
+            try:
+                process.terminate()
+            except psutil.NoSuchProcess:
+                pass
+        _, alive = psutil.wait_procs(processes, timeout=5)
+        for process in alive:
+            try:
+                process.kill()
+            except psutil.NoSuchProcess:
+                pass
 
 
 class _LocalService(ErsiliaBase):
