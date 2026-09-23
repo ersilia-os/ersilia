@@ -322,7 +322,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupRedis</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span><span class="p">,</span> <span class="n">spinner</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">stop_containers_by_name</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">kill_process_tree</span><span class="p">,</span> <span class="n">stop_containers_by_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Api</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.services</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">CondaEnvironmentService</span><span class="p">,</span>
@@ -697,7 +697,7 @@
             <span class="k">if</span> <span class="n">pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+                <span class="n">kill_process_tree</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"PID </span><span class="si">{0}</span><span class="s2"> is unassigned"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pid</span><span class="p">))</span>
 

@@ -338,6 +338,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_free_port</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">kill_process_tree</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.venv</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleVenv</span>
 
@@ -546,7 +547,7 @@
 <span class="sd">        Close the FastAPI service by killing the process.</span>
 <span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+            <span class="n">kill_process_tree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"PID </span><span class="si">{0}</span><span class="s2"> is unassigned"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
 

@@ -851,13 +851,16 @@ convert them into a standard format that can be processed in batches or one by o
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id1">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#DataFrame.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_unprocessable</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#DataFrame.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Link to this definition">¶</a></dt>
 <dd><p>Writes the DataFrame to a file, determining the format based on the file extension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_name</strong> (<em>str</em>) – The name of the file to write to.</p></li>
 <li><p><strong>delimiter</strong> (<em>str</em><em>, </em><em>optional</em>) – The delimiter to use in the text file (default is None).</p></li>
+<li><p><strong>append</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, append rows to a file previously written by this method.</p></li>
+<li><p><strong>check_unprocessable</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, raise when the data is a single unprocessable input. Disable
+when writing one chunk of a larger output.</p></li>
 </ul>
 </dd>
 </dl>
@@ -865,20 +868,24 @@ convert them into a standard format that can be processed in batches or one by o
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id2">
-<span class="sig-name descname"><span class="pre">write_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#DataFrame.write_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#DataFrame.write_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Link to this definition">¶</a></dt>
 <dd><p>Writes the DataFrame to an HDF5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – The name of the file to write to.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_name</strong> (<em>str</em>) – The name of the file to write to.</p></li>
+<li><p><strong>append</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, append rows to an existing file written by this method.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="id3">
-<span class="sig-name descname"><span class="pre">write_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#DataFrame.write_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunksize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#DataFrame.write_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Link to this definition">¶</a></dt>
 <dd><p>Writes the DataFrame to a text file, wrapping any string-valued field in quotes,
-except for the first and second columns, which are never quoted.</p>
+except for the first and second columns, which are never quoted.
+If append is True, rows are appended to an existing file without a header.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1019,6 +1026,23 @@ except for the first and second columns, which are never quoted.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>subfiles</strong> (<em>list</em>) – The list of subfiles to merge.</p></li>
 <li><p><strong>output_file</strong> (<em>str</em>) – The name of the output file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.io.output.GenericOutputAdapter.write_chunk">
+<span class="sig-name descname"><span class="pre">write_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#GenericOutputAdapter.write_chunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.output.GenericOutputAdapter.write_chunk" title="Link to this definition">¶</a></dt>
+<dd><p>Writes one chunk of standardized results to a CSV, TSV or HDF5 file.</p>
+<p>Used to stream large runs to disk batch by batch instead of holding
+the full output in memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result</strong> (<em>list</em>) – Standardized results ({“input”: …, “output”: …} dicts).</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output file name.</p></li>
+<li><p><strong>append</strong> (<em>bool</em>) – If True, append to the file written by a previous chunk.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1384,6 +1408,7 @@ This class produces a summary of the results, counting inputs, output dimensions
 <li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.adapt"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.adapt()</span></code></a></li>
 <li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.adapt()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.merge"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.merge()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.write_chunk"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.write_chunk()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#ersilia.io.output.ResponseRefactor"><code class="docutils literal notranslate"><span class="pre">ResponseRefactor</span></code></a><ul>

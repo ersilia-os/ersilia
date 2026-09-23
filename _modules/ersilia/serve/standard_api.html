@@ -741,6 +741,10 @@
 
         <span class="n">st</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="n">_ensure_ready</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_stream_output</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_streaming</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">st</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Waiting for server response"</span><span class="p">)</span>
         <span class="n">results</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_result</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Server response received"</span><span class="p">)</span>
@@ -768,6 +772,37 @@
 
         <span class="k">return</span> <span class="n">output</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_can_stream_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="c1"># Stream to disk when the file format supports appends. Single inputs keep</span>
+        <span class="c1"># the buffered path so that the unprocessable-input check still applies,</span>
+        <span class="c1"># and store writes need the full dataframe.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">output</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"csv"</span><span class="p">,</span> <span class="s2">"tsv"</span><span class="p">,</span> <span class="s2">"h5"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_post_streaming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">st</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Streaming output to </span><span class="si">{0}</span><span class="s2"> batch by batch"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+        <span class="n">written</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">write_batch</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">):</span>
+            <span class="k">nonlocal</span> <span class="n">written</span>
+            <span class="n">batch_inputs</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_results</span><span class="p">)]</span>
+            <span class="n">standardized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span><span class="n">batch_inputs</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generic_adapter</span><span class="o">.</span><span class="n">write_chunk</span><span class="p">(</span><span class="n">standardized</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">written</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">written</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">standardized</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Waiting for server response"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_result</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">on_batch</span><span class="o">=</span><span class="n">write_batch</span><span class="p">)</span>
+        <span class="n">et</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"All batches processed in </span><span class="si">{</span><span class="n">et</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> seconds"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">written</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Inputs and outputs are not matching"</span><span class="p">)</span>
+
+        <span class="n">ft</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Output generated to </span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">ft</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">st</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2"> seconds"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_found_and_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check_dict</span><span class="p">,</span> <span class="n">smi</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">check_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -805,10 +840,12 @@
 
         <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">on_batch</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># If on_batch(start, batch_results) is given, each batch is handed to it</span>
+        <span class="c1"># and not kept, so memory stays bounded by the batch size.</span>
         <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">overall_results</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">total</span>
+        <span class="n">overall_results</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">on_batch</span> <span class="k">else</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">total</span>
         <span class="n">all_replacements</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">write_replacements_txt</span><span class="p">(</span><span class="n">repls</span><span class="p">):</span>
@@ -904,7 +941,10 @@
                 <span class="p">)</span>
 
                 <span class="n">all_replacements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">batch_repls</span><span class="p">)</span>
-                <span class="n">overall_results</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_results</span><span class="p">)]</span> <span class="o">=</span> <span class="n">batch_results</span>
+                <span class="k">if</span> <span class="n">on_batch</span><span class="p">:</span>
+                    <span class="n">on_batch</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">overall_results</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_results</span><span class="p">)]</span> <span class="o">=</span> <span class="n">batch_results</span>
                 <span class="n">progress</span><span class="o">.</span><span class="n">advance</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">all_replacements</span><span class="p">:</span>

@@ -540,6 +540,51 @@
 
 
 
+<div class="viewcode-block" id="kill_process_tree">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.kill_process_tree">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kill_process_tree</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Terminate a process and all of its descendants.</span>
+
+<span class="sd">    The model server is launched as ``ersilia_model_serve``, which in turn</span>
+<span class="sd">    spawns ``run_uvicorn.py`` as a child. Killing only the recorded PID</span>
+<span class="sd">    orphans the uvicorn server, so the whole tree is terminated instead:</span>
+<span class="sd">    SIGTERM first, then SIGKILL for anything still alive after ``timeout``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pid : int</span>
+<span class="sd">        The root process ID.</span>
+<span class="sd">    timeout : float, optional</span>
+<span class="sd">        Seconds to wait for graceful termination before force-killing.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">pid</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">procs</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">children</span><span class="p">(</span><span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
+        <span class="n">procs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">procs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">procs</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">alive</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">wait_procs</span><span class="p">(</span><span class="n">procs</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">alive</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="n">alive</span><span class="p">:</span>
+        <span class="n">psutil</span><span class="o">.</span><span class="n">wait_procs</span><span class="p">(</span><span class="n">alive</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="purge_session_processes">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.session.purge_session_processes">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">purge_session_processes</span><span class="p">(</span><span class="n">session_name</span><span class="p">):</span>
@@ -571,10 +616,8 @@
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">continue</span>
     <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">pid</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">continue</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+            <span class="n">kill_process_tree</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">pass</span>
     <span class="n">stop_containers_by_name</span><span class="p">(</span><span class="n">container_names</span><span class="p">)</span></div>

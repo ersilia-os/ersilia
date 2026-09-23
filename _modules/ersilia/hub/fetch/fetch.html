@@ -488,8 +488,10 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_standard_csv_example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">ms</span> <span class="o">=</span> <span class="n">ModelStandardExample</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span>
-        <span class="n">spinner</span><span class="p">(</span><span class="s2">"Checking that container works"</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
-        <span class="n">spinner</span><span class="p">(</span><span class="s2">"Shutting down container"</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">close_model</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">spinner</span><span class="p">(</span><span class="s2">"Checking that container works"</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">spinner</span><span class="p">(</span><span class="s2">"Shutting down container"</span><span class="p">,</span> <span class="n">ms</span><span class="o">.</span><span class="n">close_model</span><span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_fetch_from_dockerhub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Fetching from DockerHub"</span><span class="p">)</span>

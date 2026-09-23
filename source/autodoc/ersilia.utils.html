@@ -1914,8 +1914,18 @@ int→np.int32, str→utf-8 HDF5 string).  If None: infer per your original logi
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.utils.hdf5.Hdf5Data.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/hdf5.html#Hdf5Data.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.hdf5.Hdf5Data.save" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/hdf5.html#Hdf5Data.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.hdf5.Hdf5Data.save" title="Link to this definition">¶</a></dt>
 <dd><p>Save the data to an HDF5 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – The path to the HDF5 file.</p></li>
+<li><p><strong>append</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, append Values, Keys and Inputs to the datasets of an
+existing file (Features are written only once). Datasets are
+always created resizable so that later appends are possible.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -2876,6 +2886,24 @@ before the fetch procedure.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.kill_process_tree">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">kill_process_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#kill_process_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.kill_process_tree" title="Link to this definition">¶</a></dt>
+<dd><p>Terminate a process and all of its descendants.</p>
+<p>The model server is launched as <code class="docutils literal notranslate"><span class="pre">ersilia_model_serve</span></code>, which in turn
+spawns <code class="docutils literal notranslate"><span class="pre">run_uvicorn.py</span></code> as a child. Killing only the recorded PID
+orphans the uvicorn server, so the whole tree is terminated instead:
+SIGTERM first, then SIGKILL for anything still alive after <code class="docutils literal notranslate"><span class="pre">timeout</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pid</strong> (<em>int</em>) – The root process ID.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – Seconds to wait for graceful termination before force-killing.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -3896,6 +3924,7 @@ before the fetch procedure.</p>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_dir"><code class="docutils literal notranslate"><span class="pre">get_session_dir()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_id"><code class="docutils literal notranslate"><span class="pre">get_session_id()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_uuid"><code class="docutils literal notranslate"><span class="pre">get_session_uuid()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.kill_process_tree"><code class="docutils literal notranslate"><span class="pre">kill_process_tree()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.prune_empty_session_dirs"><code class="docutils literal notranslate"><span class="pre">prune_empty_session_dirs()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.purge_session_processes"><code class="docutils literal notranslate"><span class="pre">purge_session_processes()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.register_model_session"><code class="docutils literal notranslate"><span class="pre">register_model_session()</span></code></a></li>

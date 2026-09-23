@@ -578,7 +578,7 @@
 
 <div class="viewcode-block" id="DataFrame.write_hdf5">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_hdf5">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">write_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Writes the DataFrame to an HDF5 file.</span>
 
@@ -586,6 +586,8 @@
 <span class="sd">        ----------</span>
 <span class="sd">        file_name : str</span>
 <span class="sd">            The name of the file to write to.</span>
+<span class="sd">        append : bool, optional</span>
+<span class="sd">            If True, append rows to an existing file written by this method.</span>
 <span class="sd">        """</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
         <span class="n">hdf5</span> <span class="o">=</span> <span class="n">Hdf5Data</span><span class="p">(</span>
@@ -597,17 +599,22 @@
             <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">hdf5</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span></div>
+        <span class="n">hdf5</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DataFrame.write_text">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write_text">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write_text</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50_000</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">chunksize</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50_000</span><span class="p">,</span>
+        <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Writes the DataFrame to a text file, wrapping any string-valued field in quotes,</span>
 <span class="sd">        except for the first and second columns, which are never quoted.</span>
+<span class="sd">        If append is True, rows are appended to an existing file without a header.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">delimiter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">delimiter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_delimiter</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
@@ -623,7 +630,8 @@
         <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="s2">"a"</span> <span class="k">if</span> <span class="n">append</span> <span class="k">else</span> <span class="s2">"w"</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">buffering</span><span class="o">=</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span>
                 <span class="n">f</span><span class="p">,</span>
                 <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span>
@@ -632,7 +640,8 @@
                 <span class="n">quotechar</span><span class="o">=</span><span class="s1">'"'</span><span class="p">,</span>
                 <span class="n">doublequote</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">append</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"write_text header dt=</span><span class="si">{</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="p">)</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">s file=</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
@@ -673,7 +682,13 @@
 
 <div class="viewcode-block" id="DataFrame.write">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.DataFrame.write">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">check_unprocessable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Writes the DataFrame to a file, determining the format based on the file extension.</span>
 
@@ -683,13 +698,18 @@
 <span class="sd">            The name of the file to write to.</span>
 <span class="sd">        delimiter : str, optional</span>
 <span class="sd">            The delimiter to use in the text file (default is None).</span>
+<span class="sd">        append : bool, optional</span>
+<span class="sd">            If True, append rows to a file previously written by this method.</span>
+<span class="sd">        check_unprocessable : bool, optional</span>
+<span class="sd">            If True, raise when the data is a single unprocessable input. Disable</span>
+<span class="sd">            when writing one chunk of a larger output.</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_unprocessable_input</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">check_unprocessable</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_unprocessable_input</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">UnprocessableInputError</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_h5</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">write_hdf5</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_hdf5</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">)</span></div>
 </div>
 
 
@@ -871,6 +891,29 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">df</span>
+
+<div class="viewcode-block" id="GenericOutputAdapter.write_chunk">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.write_chunk">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">append</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Writes one chunk of standardized results to a CSV, TSV or HDF5 file.</span>
+
+<span class="sd">        Used to stream large runs to disk batch by batch instead of holding</span>
+<span class="sd">        the full output in memory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            Standardized results ({"input": ..., "output": ...} dicts).</span>
+<span class="sd">        output : str</span>
+<span class="sd">            The output file name.</span>
+<span class="sd">        append : bool</span>
+<span class="sd">            If True, append to the file written by a previous chunk.</span>
+<span class="sd">        """</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_dataframe</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_extension</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"tsv"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">","</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">append</span><span class="p">,</span> <span class="n">check_unprocessable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="GenericOutputAdapter.adapt">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.io.html#ersilia.io.output.GenericOutputAdapter.adapt">[docs]</a>
