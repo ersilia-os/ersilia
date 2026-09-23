@@ -259,7 +259,7 @@ class DataFrame(object):
         values = [r[2:] for r in self.data]
         return {"keys": keys, "inputs": inputs, "features": features, "values": values}
 
-    def write_hdf5(self, file_name: str):
+    def write_hdf5(self, file_name: str, append: bool = False):
         """
         Writes the DataFrame to an HDF5 file.
 
@@ -267,6 +267,8 @@ class DataFrame(object):
         ----------
         file_name : str
             The name of the file to write to.
+        append : bool, optional
+            If True, append rows to an existing file written by this method.
         """
         res = self.decompose()
         hdf5 = Hdf5Data(
@@ -278,14 +280,19 @@ class DataFrame(object):
             dim=self.dim,
         )
 
-        hdf5.save(file_name)
+        hdf5.save(file_name, append=append)
 
     def write_text(
-        self, file_name: str, delimiter: str = None, chunksize: int = 50_000
+        self,
+        file_name: str,
+        delimiter: str = None,
+        chunksize: int = 50_000,
+        append: bool = False,
     ):
         """
         Writes the DataFrame to a text file, wrapping any string-valued field in quotes,
         except for the first and second columns, which are never quoted.
+        If append is True, rows are appended to an existing file without a header.
         """
         if delimiter is None:
             delimiter = self._get_delimiter(file_name)
@@ -301,7 +308,8 @@ class DataFrame(object):
         it = iter(self.data)
 
         t0 = time.perf_counter()
-        with open(file_name, "w", newline="", buffering=1024 * 1024) as f:
+        mode = "a" if append else "w"
+        with open(file_name, mode, newline="", buffering=1024 * 1024) as f:
             writer = csv.writer(
                 f,
                 delimiter=delimiter,
@@ -310,7 +318,8 @@ class DataFrame(object):
                 quotechar='"',
                 doublequote=True,
             )
-            writer.writerow(cols)
+            if not append:
+                writer.writerow(cols)
             self.logger.debug(
                 f"write_text header dt={(time.perf_counter() - t0):.6f}s file={file_name}"
             )
@@ -348,7 +357,13 @@ class DataFrame(object):
             f"write_text done rows={wrote} dt_total={(time.perf_counter() - t0):.6f}s file={file_name}"
         )
 
-    def write(self, file_name: str, delimiter: str = None):
+    def write(
+        self,
+        file_name: str,
+        delimiter: str = None,
+        append: bool = False,
+        check_unprocessable: bool = True,
+    ):
         """
         Writes the DataFrame to a file, determining the format based on the file extension.
 
@@ -358,13 +373,18 @@ class DataFrame(object):
             The name of the file to write to.
         delimiter : str, optional
             The delimiter to use in the text file (default is None).
+        append : bool, optional
+            If True, append rows to a file previously written by this method.
+        check_unprocessable : bool, optional
+            If True, raise when the data is a single unprocessable input. Disable
+            when writing one chunk of a larger output.
         """
-        if self._is_unprocessable_input():
+        if check_unprocessable and self._is_unprocessable_input():
             raise UnprocessableInputError()
         if self._is_h5(file_name):
-            self.write_hdf5(file_name)
+            self.write_hdf5(file_name, append=append)
         else:
-            self.write_text(file_name, delimiter=delimiter)
+            self.write_text(file_name, delimiter=delimiter, append=append)
 
 
 class GenericOutputAdapter(ResponseRefactor):
@@ -539,6 +559,26 @@ class GenericOutputAdapter(ResponseRefactor):
         else:
             pass
         return result, df
+
+    def write_chunk(self, result: list, output: str, append: bool):
+        """
+        Writes one chunk of standardized results to a CSV, TSV or HDF5 file.
+
+        Used to stream large runs to disk batch by batch instead of holding
+        the full output in memory.
+
+        Parameters
+        ----------
+        result : list
+            Standardized results ({"input": ..., "output": ...} dicts).
+        output : str
+            The output file name.
+        append : bool
+            If True, append to the file written by a previous chunk.
+        """
+        df = self._to_dataframe(result)
+        delimiter = "\t" if self._has_extension(output, "tsv") else ","
+        df.write(output, delimiter=delimiter, append=append, check_unprocessable=False)
 
     def adapt(
         self, result: str, output: str, model_id: str = None, api_name: str = None

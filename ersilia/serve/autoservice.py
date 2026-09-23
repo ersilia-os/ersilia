@@ -16,7 +16,7 @@ from ..default import (
 from ..utils import tmp_pid_file
 from ..utils.cache import SetupRedis
 from ..utils.echo import echo, spinner
-from ..utils.session import stop_containers_by_name
+from ..utils.session import kill_process_tree, stop_containers_by_name
 from .api import Api
 from .services import (
     CondaEnvironmentService,
@@ -380,7 +380,7 @@ class AutoService(ErsiliaBase):
             if pid == -1:
                 continue
             try:
-                os.kill(pid, 9)
+                kill_process_tree(pid)
             except:
                 self.logger.info("PID {0} is unassigned".format(pid))
 

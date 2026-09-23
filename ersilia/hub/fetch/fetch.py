@@ -180,8 +180,10 @@ class ModelFetcher(ErsiliaBase):
 
     def _standard_csv_example(self, model_id: str):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
-        spinner("Checking that container works", ms.run)
-        spinner("Shutting down container", ms.close_model)
+        try:
+            spinner("Checking that container works", ms.run)
+        finally:
+            spinner("Shutting down container", ms.close_model)
 
     async def _fetch_from_dockerhub(self, model_id: str):
         self.logger.debug("Fetching from DockerHub")

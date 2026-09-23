@@ -201,6 +201,48 @@ def stop_containers_by_name(names):
             pass
 
 
+def kill_process_tree(pid, timeout=5):
+    """
+    Terminate a process and all of its descendants.
+
+    The model server is launched as ``ersilia_model_serve``, which in turn
+    spawns ``run_uvicorn.py`` as a child. Killing only the recorded PID
+    orphans the uvicorn server, so the whole tree is terminated instead:
+    SIGTERM first, then SIGKILL for anything still alive after ``timeout``.
+
+    Parameters
+    ----------
+    pid : int
+        The root process ID.
+    timeout : float, optional
+        Seconds to wait for graceful termination before force-killing.
+    """
+    if pid is None or pid == -1:
+        return
+    try:
+        parent = psutil.Process(pid)
+    except psutil.NoSuchProcess:
+        return
+    try:
+        procs = parent.children(recursive=True)
+    except psutil.NoSuchProcess:
+        procs = []
+    procs.append(parent)
+    for p in procs:
+        try:
+            p.terminate()
+        except psutil.NoSuchProcess:
+            pass
+    _, alive = psutil.wait_procs(procs, timeout=timeout)
+    for p in alive:
+        try:
+            p.kill()
+        except psutil.NoSuchProcess:
+            pass
+    if alive:
+        psutil.wait_procs(alive, timeout=timeout)
+
+
 def purge_session_processes(session_name):
     """
     Stop any leftover processes and Docker containers tracked by a session's
@@ -230,10 +272,8 @@ def purge_session_processes(session_name):
         except Exception:
             continue
     for pid in pids:
-        if pid == -1:
-            continue
         try:
-            os.kill(pid, 9)
+            kill_process_tree(pid)
         except Exception:
             pass
     stop_containers_by_name(container_names)
