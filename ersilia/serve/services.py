@@ -32,6 +32,7 @@ from ..utils.exceptions_utils.serve_exceptions import (
 )
 from ..utils.logging import make_temp_dir
 from ..utils.ports import find_free_port
+from ..utils.session import kill_process_tree
 from ..utils.terminal import run_command
 from ..utils.venv import SimpleVenv
 
@@ -237,7 +238,7 @@ class _FastApiService(BaseServing):
         Close the FastAPI service by killing the process.
         """
         try:
-            os.kill(self.pid, 9)
+            kill_process_tree(self.pid)
         except:
             self.logger.info("PID {0} is unassigned".format(self.pid))
 

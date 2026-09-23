@@ -398,6 +398,10 @@ class StandardCSVRunApi(ErsiliaBase):
 
         st = time.perf_counter()
         _ensure_ready(self=self, root=self.url)
+
+        if self._can_stream_output(input_data, output):
+            return self._post_streaming(input_data, url, output, batch_size, st)
+
         self.logger.debug("Waiting for server response")
         results, meta = self._fetch_result(input_data, url, batch_size)
         self.logger.info("Server response received")
@@ -423,6 +427,37 @@ class StandardCSVRunApi(ErsiliaBase):
         ft = time.perf_counter()
         self.logger.info(f"Output generated to {output} in {ft - st:.5f} seconds")
 
+        return output
+
+    def _can_stream_output(self, input_data, output):
+        # Stream to disk when the file format supports appends. Single inputs keep
+        # the buffered path so that the unprocessable-input check still applies,
+        # and store writes need the full dataframe.
+        if self.write_store or len(input_data) <= 1:
+            return False
+        return isinstance(output, str) and output.split(".")[-1] in ("csv", "tsv", "h5")
+
+    def _post_streaming(self, input_data, url, output, batch_size, st):
+        self.logger.debug("Streaming output to {0} batch by batch".format(output))
+        written = 0
+
+        def write_batch(start, batch_results):
+            nonlocal written
+            batch_inputs = input_data[start : start + len(batch_results)]
+            standardized = self._standardize_output(batch_inputs, batch_results, None)
+            self.generic_adapter.write_chunk(standardized, output, append=written > 0)
+            written += len(standardized)
+
+        self.logger.debug("Waiting for server response")
+        self._fetch_result(input_data, url, batch_size, on_batch=write_batch)
+        et = time.perf_counter()
+        self.logger.info(f"All batches processed in {et - st:.4f} seconds")
+
+        if written != len(input_data):
+            raise Exception("Inputs and outputs are not matching")
+
+        ft = time.perf_counter()
+        self.logger.info(f"Output generated to {output} in {ft - st:.5f} seconds")
         return output
 
     def _check_found_and_key(self, check_dict, smi):
@@ -461,10 +496,12 @@ class StandardCSVRunApi(ErsiliaBase):
 
         return False, None
 
-    def _fetch_result(self, input_data, url, batch_size):
+    def _fetch_result(self, input_data, url, batch_size, on_batch=None):
+        # If on_batch(start, batch_results) is given, each batch is handed to it
+        # and not kept, so memory stays bounded by the batch size.
         total = len(input_data)
         meta = None
-        overall_results = [None] * total
+        overall_results = None if on_batch else [None] * total
         all_replacements = []
 
         def write_replacements_txt(repls):
@@ -560,7 +597,10 @@ class StandardCSVRunApi(ErsiliaBase):
                 )
 
                 all_replacements.extend(batch_repls)
-                overall_results[i : i + len(batch_results)] = batch_results
+                if on_batch:
+                    on_batch(i, batch_results)
+                else:
+                    overall_results[i : i + len(batch_results)] = batch_results
                 progress.advance(task)
 
         if all_replacements:
