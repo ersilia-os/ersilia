@@ -167,6 +167,9 @@ def serve_cmd():
     ):
         from ... import ErsiliaModel
         from ...core.session import Session
+        from ...utils.exceptions_utils.exceptions import (
+            ModelNotAvailableLocallyError,
+        )
         from ...utils.logging import logger
         from ...utils.session import (
             deregister_model_session,
@@ -224,17 +227,25 @@ def serve_cmd():
             )
             sys.exit(1)
 
-        mdl = ErsiliaModel(
-            model,
-            output_source=None,
-            preferred_port=port,
-            cache=enable_cache,
-            maxmemory=max_memory,
-            read_store=read_store,
-            write_store=write_store,
-            access=access,
-            nearest_neighbors=nearest_neighbors,
-        )
+        try:
+            mdl = ErsiliaModel(
+                model,
+                output_source=None,
+                preferred_port=port,
+                cache=enable_cache,
+                maxmemory=max_memory,
+                read_store=read_store,
+                write_store=write_store,
+                access=access,
+                nearest_neighbors=nearest_neighbors,
+            )
+        except ModelNotAvailableLocallyError as e:
+            echo(
+                f"Model {e.model} is not available locally, so it cannot be served.",
+                fg="red",
+            )
+            echo(f"Fetch it first by running: ersilia fetch {e.model}")
+            sys.exit(1)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
 
