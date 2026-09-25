@@ -459,9 +459,10 @@ class StandardCSVRunApi(ErsiliaBase):
         def write_batch(start, batch_results):
             nonlocal written
             batch_inputs = input_data[start : start + len(batch_results)]
-            standardized = self._standardize_output(batch_inputs, batch_results, None)
-            self.generic_adapter.write_chunk(standardized, output, append=written > 0)
-            written += len(standardized)
+            self.generic_adapter.write_batch(
+                batch_inputs, batch_results, output, append=written > 0
+            )
+            written += len(batch_results)
 
         self.logger.debug("Waiting for server response")
         self._fetch_result(input_data, url, batch_size, on_batch=write_batch)
@@ -734,9 +735,9 @@ class StandardCSVRunApi(ErsiliaBase):
     def _standardize_output(self, input_data, results, meta):
         results = list(results)
         standardized = []
+        keys_flat = self.input_header[1:] + self.output_header
         for inp, out in zip(input_data, results):
             values = self._normalize_values(out)
-            keys_flat = self.input_header[1:] + self.output_header
             standardized.append({"input": inp, "output": dict(zip(keys_flat, values))})
         return standardized
 
