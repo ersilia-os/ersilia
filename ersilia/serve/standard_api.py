@@ -18,6 +18,8 @@ from ..default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
     INFORMATION_FILE,
+    RUN_CONNECT_TIMEOUT,
+    RUN_READ_TIMEOUT,
 )
 from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
@@ -79,6 +81,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.input_header = self.get_input_header()
         self.output_header = self.get_output_header()
         self.generic_adapter = GenericOutputAdapter(model_id, self.columns_info)
+        self.http = requests.Session()
         self.isaura_store = IsauraStore()
         self.session = Session(config_json=config_json)
         store_info = self.session.current_store_status()
@@ -326,7 +329,12 @@ class StandardCSVRunApi(ErsiliaBase):
         }
 
         def do_request(batch):
-            response = requests.post(url, params=params, json=batch)
+            response = self.http.post(
+                url,
+                params=params,
+                json=batch,
+                timeout=(RUN_CONNECT_TIMEOUT, RUN_READ_TIMEOUT),
+            )
             response.raise_for_status()
             return response.json()
 
@@ -350,6 +358,13 @@ class StandardCSVRunApi(ErsiliaBase):
                 return [data] * len(batch), None
             else:
                 return [None] * len(batch), None
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            # The server is unreachable or hung, not a bad molecule: splitting
+            # the batch would only repeat the wait, so fail right away.
+            raise RuntimeError(
+                f"Model server at {url} did not respond (connect timeout "
+                f"{RUN_CONNECT_TIMEOUT}s, read timeout {RUN_READ_TIMEOUT}s): {e}"
+            ) from e
         except Exception as e:
             self.logger.error(f"Batch of size {len(batch)} failed: {e}")
             if len(batch) == 1:
