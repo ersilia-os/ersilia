@@ -114,8 +114,9 @@ class SetupRedis:
             return (False, "Docker is not active!")
 
         if not self.cache:
+            # Other sessions may be using the shared Redis container, so it is
+            # left running; this session simply does not use it.
             logger.warning("Caching is disabled. Model result will not be cached!")
-            self._remove_container_if_exists()
             return (False, "Caching is disabled using flag!")
 
         if self.cache:
@@ -215,35 +216,6 @@ class SetupRedis:
             logger.error(f"Failed to remove image '{REDIS_IMAGE}': {api_err}")
         except Exception as e:
             logger.error(f"An unexpected error occurred while removing the image: {e}")
-
-    def _remove_container_if_exists(self):
-        set_docker_host()
-        client = docker.from_env()
-
-        try:
-            containers = client.containers.list(
-                all=True, filters={"name": REDIS_CONTAINER_NAME}
-            )
-        except docker.errors.DockerException as e:
-            logger.error(f"Error accessing Docker: {e}")
-            return 0
-
-        if not containers:
-            logger.info(
-                f"No containers found with name containing '{REDIS_CONTAINER_NAME}'."
-            )
-            return 0
-
-        removed = 0
-        for c in containers:
-            try:
-                logger.info(f"Removing container {c.name} ({c.id[:12]})")
-                c.remove(force=True)
-                removed += 1
-            except docker.errors.APIError as e:
-                logger.error(f"Failed to remove {c.name}: {e}")
-
-        return removed
 
     def _start_new_container(self):
         self._create_docker_network()
