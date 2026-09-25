@@ -81,7 +81,10 @@ class AutoService(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Setting autoservice for {0}".format(model_id))
         self.config_json = config_json
-        self.setup_redis = SetupRedis(cache=cache, maxmemory=maxmemory)
+        # Redis is only set up when serving; run and close never need it, and
+        # constructing SetupRedis runs several docker probes.
+        self._cache = cache
+        self._maxmemory = maxmemory
         self.model_id = model_id
         self._meta = None
         self._preferred_port = preferred_port
@@ -390,7 +393,7 @@ class AutoService(ErsiliaBase):
         spinner("Closing existing session for the model", self.close)
         spinner(f"Starting service for model {self.model_id}", self.service.serve)
         self.logger.info("Setting up Redis")
-        self.setup_redis.ensure_redis_running()
+        SetupRedis(cache=self._cache, maxmemory=self._maxmemory).ensure_redis_running()
         tmp_file = tmp_pid_file(self.model_id)
         container_name = getattr(self.service, "container_name", None) or "-"
         with open(tmp_file, "a+") as f:
