@@ -145,71 +145,24 @@ class AutoService(ErsiliaBase):
                     if service_class_file is not None
                     else io.StringIO()
                 )
+                port = {"preferred_port": preferred_port}
+                candidates = [
+                    ("system", SystemBundleService, port),
+                    ("venv", VenvEnvironmentService, port),
+                    ("conda", CondaEnvironmentService, port),
+                    ("docker", DockerImageService, port),
+                    ("pulled_docker", PulledDockerImageService, port),
+                    ("hosted", HostedService, {"url": url}),
+                ]
                 with _ctx as f:
-                    if SystemBundleService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = SystemBundleService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        self.logger.debug("Service class: system")
-                        f.write("system")
-                        self._service_class = "system"
-                    elif VenvEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = VenvEnvironmentService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("venv")
-                        self.logger.debug("Service class: venv")
-                        self._service_class = "venv"
-                    elif CondaEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = CondaEnvironmentService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("conda")
-                        self.logger.debug("Service class: conda")
-                        self._service_class = "conda"
-                    elif DockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = DockerImageService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("docker")
-                        self.logger.debug("Service class: docker")
-                        self._service_class = "docker"
-                    elif PulledDockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = PulledDockerImageService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("pulled_docker")
-                        self.logger.debug("Service class: pulled_docker")
-                        self._service_class = "pulled_docker"
-                    elif HostedService(
-                        model_id, config_json=config_json, url=url
-                    ).is_available():
-                        self.service = HostedService(
-                            model_id, config_json=config_json, url=url
-                        )
-                        f.write("hosted")
-                        self.logger.debug("Service class: hosted")
-                        self._service_class = "hosted"
+                    for name, cls, kwargs in candidates:
+                        svc = cls(model_id, config_json=config_json, **kwargs)
+                        if svc.is_available():
+                            self.service = svc
+                            f.write(name)
+                            self.logger.debug("Service class: {0}".format(name))
+                            self._service_class = name
+                            break
                     else:
                         self.logger.debug("Service class: dummy")
                         self.service = DummyService(
@@ -225,18 +178,14 @@ class AutoService(ErsiliaBase):
         else:
             self.logger.info("Service class provided")
             service_class = self._service_class_loader(service_class)
-            if service_class(
+            svc = service_class(
                 model_id,
                 config_json=config_json,
                 preferred_port=preferred_port,
                 url=url,
-            ).is_available():
-                self.service = service_class(
-                    model_id,
-                    config_json=config_json,
-                    preferred_port=preferred_port,
-                    url=url,
-                )
+            )
+            if svc.is_available():
+                self.service = svc
                 self.logger.info(
                     f"Resolved service backend '{self._service_class}' for model {model_id}"
                 )
