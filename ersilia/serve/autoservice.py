@@ -14,7 +14,6 @@ from ..default import (
     SERVICE_CLASS_FILE,
 )
 from ..utils import tmp_pid_file
-from ..utils.cache import SetupRedis
 from ..utils.echo import echo, spinner
 from ..utils.session import kill_process_tree, stop_containers_by_name
 from .api import Api
@@ -393,6 +392,8 @@ class AutoService(ErsiliaBase):
         spinner("Closing existing session for the model", self.close)
         spinner(f"Starting service for model {self.model_id}", self.service.serve)
         self.logger.info("Setting up Redis")
+        from ..utils.cache import SetupRedis
+
         SetupRedis(cache=self._cache, maxmemory=self._maxmemory).ensure_redis_running()
         tmp_file = tmp_pid_file(self.model_id)
         container_name = getattr(self.service, "container_name", None) or "-"

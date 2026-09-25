@@ -14,7 +14,6 @@ from ..default import (
 )
 from ..serve.schema import ApiSchema
 from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
-from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..utils.logging import logger, make_temp_dir
 from .dataframe import Dataframe
 from .readers.file import FileTyper
@@ -270,6 +269,8 @@ class DataFrame(object):
         append : bool, optional
             If True, append rows to an existing file written by this method.
         """
+        from ..utils.hdf5 import Hdf5Data
+
         res = self.decompose()
         hdf5 = Hdf5Data(
             values=res["values"],
@@ -629,6 +630,8 @@ class GenericOutputAdapter(ResponseRefactor):
         values = [self._row_values(r, n) for r in results]
 
         if self._has_extension(output, "h5"):
+            from ..utils.hdf5 import Hdf5Data
+
             if cast is float:
                 try:
                     # None becomes nan, the fill value Hdf5Data uses for floats.
@@ -869,6 +872,8 @@ class TabularOutputStacker(object):
         output : str
             The name of the output file.
         """
+        from ..utils.hdf5 import Hdf5DataStacker
+
         stacker = Hdf5DataStacker(self.file_names)
         stacker.stack(output)
 

@@ -8,7 +8,6 @@ import time
 from collections import Counter
 
 import nest_asyncio
-import pandas as pd
 import requests
 
 from .. import ErsiliaBase
@@ -429,6 +428,8 @@ class StandardCSVRunApi(ErsiliaBase):
             json.dumps(results), output, self.model_id, self.api_name
         )
         if self.write_store:
+            import pandas as pd
+
             df = pd.DataFrame(
                 data=df.data, columns=["key", "input"] + self.output_header, dtype=str
             )
@@ -583,7 +584,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 if found_u and IsauraStore.is_installed():
                     cache_df = self.isaura_store.read(found_u)
                 else:
-                    cache_df = pd.DataFrame(columns=["key", "input"])
+                    cache_df = None
 
                 api_values = []
                 if missed_u:
