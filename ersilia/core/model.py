@@ -17,7 +17,6 @@ from ..default import (
     INFORMATION_FILE,
     MODEL_SIZE_FILE,
 )
-from ..hub.fetch.fetch import ModelFetcher
 from ..io.input import BaseIOGetter, ExampleGenerator
 from ..io.output import TabularOutputStacker
 from ..io.readers.file import FileTyper, TabularFileReader
@@ -25,7 +24,6 @@ from ..serve.api import Api
 from ..serve.autoservice import AutoService, PulledDockerImageService
 from ..serve.schema import ApiSchema
 from ..serve.standard_api import StandardCSVRunApi
-from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
@@ -33,18 +31,11 @@ from ..utils.echo import spinner
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
-from ..utils.hdf5 import Hdf5DataLoader
 from ..utils.logging import make_temp_dir
 from ..utils.terminal import yes_no_input
 from .base import ErsiliaBase
 from .modelbase import ModelBase
 from .session import Session
-from .tracking import RunTracker
-
-try:
-    import pandas as pd
-except ModuleNotFoundError:
-    pd = None
 
 
 class ErsiliaModel(ErsiliaBase):
@@ -187,6 +178,8 @@ class ErsiliaModel(ErsiliaBase):
                 self.logger.debug("Unable to capture user input. Fetching anyway.")
                 do_fetch = True
             if do_fetch:
+                from ..hub.fetch.fetch import ModelFetcher
+
                 mf = ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
@@ -215,6 +208,8 @@ class ErsiliaModel(ErsiliaBase):
         """
         This method fetches the model from the Ersilia Model Hub.
         """
+        from ..hub.fetch.fetch import ModelFetcher
+
         mf = ModelFetcher(
             config_json=self.config_json, credentials_json=self.credentials_json
         )
@@ -378,8 +373,11 @@ class ErsiliaModel(ErsiliaBase):
         Any
             The result of the API run in the specified output format.
         """
-        if output == "pandas" and pd is None:
-            raise Exception
+        if output == "pandas":
+            try:
+                import pandas as pd
+            except ModuleNotFoundError:
+                raise Exception
         if output == "json":
             R = []
             for r in self._api_runner_iter(
@@ -408,6 +406,8 @@ class ErsiliaModel(ErsiliaBase):
             ):
                 continue
             if is_h5_serializable:
+                from ..utils.hdf5 import Hdf5DataLoader
+
                 data = Hdf5DataLoader()
             else:
                 data = CsvDataLoader()
@@ -564,6 +564,8 @@ class ErsiliaModel(ErsiliaBase):
             The result of the API run.
         """
         if OutputSource.is_precalculation_enabled(self.output_source):
+            from ..store.api import InferenceStoreApi
+
             store = InferenceStoreApi(model_id=self.model_id, output=output)
             return store.get_precalculations(input)
         elif self._do_cache_splits(input=input, output=output):
@@ -687,6 +689,8 @@ class ErsiliaModel(ErsiliaBase):
                 raise TrackingNotSupportedError()
             else:
                 self.track = True
+                from .tracking import RunTracker
+
                 self.run_tracker = RunTracker(
                     model_id=self.model_id,
                     config_json=self.config_json,
@@ -808,6 +812,8 @@ class ErsiliaModel(ErsiliaBase):
             self.logger.debug(
                 "Initializing the run trackers (use case {0})".format(use_case)
             )
+            from .tracking import RunTracker
+
             self.run_tracker = RunTracker(
                 model_id=self.model_id, config_json=self.config_json, use_case=use_case
             )

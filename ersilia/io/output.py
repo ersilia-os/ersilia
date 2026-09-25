@@ -14,7 +14,6 @@ from ..default import (
 )
 from ..serve.schema import ApiSchema
 from ..utils.exceptions_utils.api_exceptions import UnprocessableInputError
-from ..utils.hdf5 import Hdf5Data, Hdf5DataStacker
 from ..utils.logging import logger, make_temp_dir
 from .dataframe import Dataframe
 from .readers.file import FileTyper
@@ -270,6 +269,8 @@ class DataFrame(object):
         append : bool, optional
             If True, append rows to an existing file written by this method.
         """
+        from ..utils.hdf5 import Hdf5Data
+
         res = self.decompose()
         hdf5 = Hdf5Data(
             values=res["values"],
@@ -300,11 +301,6 @@ class DataFrame(object):
         cols = list(self.columns)
         ncols = len(cols)
 
-        def fmt(v):
-            if v is None:
-                return ""
-            return v if isinstance(v, str) else str(v)
-
         it = iter(self.data)
 
         t0 = time.perf_counter()
@@ -334,14 +330,15 @@ class DataFrame(object):
                 if not chunk:
                     break
 
+                # csv.writer already writes None as an empty field and other
+                # values as str(v), so rows only need fixing when the length is off.
                 t = time.perf_counter()
-                out_rows = []
-                out_append = out_rows.append
-                for row in chunk:
-                    if len(row) != ncols:
-                        row = list(row) + [None] * (ncols - len(row))
-                        row = row[:ncols]
-                    out_append([fmt(v) for v in row])
+                out_rows = [
+                    row
+                    if len(row) == ncols
+                    else (list(row) + [None] * (ncols - len(row)))[:ncols]
+                    for row in chunk
+                ]
                 self.logger.debug(
                     f"write_text chunk_format rows={len(out_rows)} dt={(time.perf_counter() - t):.6f}s"
                 )
@@ -580,6 +577,87 @@ class GenericOutputAdapter(ResponseRefactor):
         delimiter = "\t" if self._has_extension(output, "tsv") else ","
         df.write(output, delimiter=delimiter, append=append, check_unprocessable=False)
 
+    @staticmethod
+    def _row_values(result, n):
+        # Same positional mapping as StandardCSVRunApi._standardize_output: the
+        # first value is the input, the next n are the output columns in order.
+        if result is None:
+            return [None] * n
+        values = result if isinstance(result, list) else list(result.values())
+        values = values[1 : n + 1]
+        if len(values) < n:
+            values += [None] * (n - len(values))
+        return values
+
+    @staticmethod
+    def _float_rows(values):
+        # Convert the whole batch at once; rows holding None are redone cell by
+        # cell because numpy would turn None into nan instead of an empty field.
+        try:
+            rows = np.array(values, dtype=np.float64).tolist()
+        except (TypeError, ValueError):
+            return [[None if v is None else float(v) for v in row] for row in values]
+        for i, row in enumerate(values):
+            if None in row:
+                rows[i] = [None if v is None else float(v) for v in row]
+        return rows
+
+    def write_batch(self, inputs: list, results: list, output: str, append: bool):
+        """
+        Writes one batch of merged API results to a CSV, TSV or HDF5 file.
+
+        Produces the same file as standardizing the batch and calling
+        write_chunk, but builds the rows in one pass and converts float
+        outputs as a single matrix instead of cell by cell.
+
+        Parameters
+        ----------
+        inputs : list
+            Input records ({"key": ..., "input": ...}), one per result.
+        results : list
+            One dict per input: the input first, then the output values in
+            column order.
+        output : str
+            The output file name.
+        append : bool
+            If True, append to the file written by a previous batch.
+        """
+        n = len(self.output_columns)
+        cast = self.output_dtype
+        cols = self.input_columns + self.output_columns
+        keys = [d["key"] for d in inputs]
+        smiles = [d["input"] for d in inputs]
+        values = [self._row_values(r, n) for r in results]
+
+        if self._has_extension(output, "h5"):
+            from ..utils.hdf5 import Hdf5Data
+
+            if cast is float:
+                try:
+                    # None becomes nan, the fill value Hdf5Data uses for floats.
+                    values = np.array(values, dtype=np.float64)
+                except (TypeError, ValueError):
+                    pass
+            hdf5 = Hdf5Data(
+                values=values,
+                keys=keys,
+                inputs=smiles,
+                features=self.output_columns,
+                dtype=cast,
+                dim=len(cols),
+            )
+            hdf5.save(output, append=append)
+            return
+
+        if cast is float:
+            rows = self._float_rows(values)
+        else:
+            rows = [[None if v is None else cast(v) for v in row] for row in values]
+        data = [[k, s, *row] for k, s, row in zip(keys, smiles, rows)]
+        df = DataFrame(data=data, columns=cols, dtype=cast, dim=len(cols))
+        delimiter = "\t" if self._has_extension(output, "tsv") else ","
+        df.write_text(output, delimiter=delimiter, append=append)
+
     def adapt(
         self, result: str, output: str, model_id: str = None, api_name: str = None
     ) -> dict:
@@ -794,6 +872,8 @@ class TabularOutputStacker(object):
         output : str
             The name of the output file.
         """
+        from ..utils.hdf5 import Hdf5DataStacker
+
         stacker = Hdf5DataStacker(self.file_names)
         stacker.stack(output)
 

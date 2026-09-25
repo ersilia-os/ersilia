@@ -34,7 +34,7 @@ class Hdf5Data:
                 self._force_dtype = False
                 self._np_dtype = None
             else:
-                self.logger.warning("Forced data type infering enabled!")
+                self.logger.debug("Forced data type infering enabled!")
                 self._force_dtype = True
                 if dtype is float:
                     self._np_dtype = np.float32
@@ -71,6 +71,9 @@ class Hdf5Data:
         try:
             if not self._force_dtype:
                 return self._infer_values(values, dim)
+
+            if isinstance(values, np.ndarray):
+                return values.astype(self._np_dtype, copy=False)
 
             if not values:
                 fill = self._default_fill()
