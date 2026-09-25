@@ -1,5 +1,6 @@
 import os
 import platform
+import shutil
 import stat
 import tempfile
 
@@ -129,15 +130,18 @@ class SystemChecker(object):
             stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR,
         )
 
-        run_command(f"bash {tmp_dir}/geoip.sh > {tmp_dir}/geoip.txt")
+        try:
+            run_command(f"bash {tmp_dir}/geoip.sh > {tmp_dir}/geoip.txt")
 
-        with open(os.path.join(tmp_dir, "geoip.txt"), "r") as f:
-            text = f.read()
-            if "Country" in text:
-                country = text.split("Country: ")[1].rstrip().split("\n")[0]
-                code = text.split("Code:    ")[1].rstrip().split("\n")[0]
-            else:
-                country = "None"
-                code = "None"
+            with open(os.path.join(tmp_dir, "geoip.txt"), "r") as f:
+                text = f.read()
+                if "Country" in text:
+                    country = text.split("Country: ")[1].rstrip().split("\n")[0]
+                    code = text.split("Code:    ")[1].rstrip().split("\n")[0]
+                else:
+                    country = "None"
+                    code = "None"
+        finally:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
 
         return (country, code)
