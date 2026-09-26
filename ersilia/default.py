@@ -56,6 +56,7 @@ SERVICE_CLASS_LABELS = {
     "venv": "Virtual environment",
     "system": "System Python",
     "hosted": "Hosted",
+    "apptainer": "Apptainer",
     "dummy": "Not available",
 }
 DEFAULT_REDIS_MEMORY_USAGE_FRACTION = 0.3
@@ -88,6 +89,7 @@ INFORMATION_FILE = "information.json"
 DOCKER_INFO_FILE = "from_dockerhub.json"
 STATUS_JOSN = "status.json"
 IS_FETCHED_FROM_HOSTED_FILE = "from_hosted.json"
+APPTAINER_INFO_FILE = "from_apptainer.json"
 DEFAULT_DOCKER_NETWORK_NAME = "ersilia_network"
 DEFAULT_DOCKER_NETWORK_BRIDGE = "bridge"
 # ERSILIA_RUNS_FOLDER = "ersilia_runs"
@@ -132,6 +134,11 @@ AIRTABLE_MODEL_HUB_VIEW_URL = "https://airtable.com/appR6ZwgLgG8RTdoU/shr7scXQV3
 ERSILIA_CATALOG_URL = "https://catalog.ersilia.io"
 S3_BUCKET_URL = "https://ersilia-models.s3.eu-central-1.amazonaws.com"
 S3_BUCKET_URL_ZIP = "https://ersilia-models-zipped.s3.eu-central-1.amazonaws.com"
+# Apptainer images (SIFs), one per model and version: <model_id>_<version>.sif
+SIF_BUCKET_URL = "https://models-sif.s3.eu-north-1.amazonaws.com"
+# Where downloaded SIFs are kept. Can be moved (e.g. to scratch storage on HPC,
+# where home quotas are small) with the ERSILIA_SIF_DIR environment variable.
+SIF_DIR = os.environ.get("ERSILIA_SIF_DIR") or os.path.join(EOS, "sifs")
 INFERENCE_STORE_API_URL = (
     "https://5x2fkcjtei.execute-api.eu-central-1.amazonaws.com/dev/precalculations"
 )

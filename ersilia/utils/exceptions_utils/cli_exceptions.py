@@ -106,3 +106,45 @@ class ConfigFileError(ErsiliaError):
         self.message = "Ersilia's settings file {0} is damaged.".format(path)
         self.hints = "Delete it and run the command again; it will be created anew."
         ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ApptainerNotLinuxError(ErsiliaError):
+    def __init__(self, system):
+        self.message = "Apptainer images can only be run on Linux, not on {0}.".format(
+            system
+        )
+        self.hints = "Fetch the model from DockerHub instead (the default): leave out --from_apptainer."
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ApptainerNotInstalledError(ErsiliaError):
+    def __init__(self):
+        self.message = "Apptainer is not installed."
+        self.hints = "Install it (https://apptainer.org/docs/admin/main/installation.html), or fetch the model from DockerHub instead: leave out --from_apptainer."
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ApptainerImageNotFoundError(ErsiliaError):
+    def __init__(self, model_id, version=None):
+        if version is None:
+            self.message = "Model {0} has no Apptainer image.".format(model_id)
+            self.hints = "Fetch it from DockerHub instead: 'ersilia fetch {0}'.".format(
+                model_id
+            )
+        else:
+            self.message = "Model {0} has no Apptainer image of version {1}.".format(
+                model_id, version
+            )
+            self.hints = "Leave out --version to get the latest one."
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ApptainerDownloadError(ErsiliaError):
+    def __init__(self, model_id, reason):
+        self.message = (
+            "Could not download the Apptainer image of model {0}: {1}.".format(
+                model_id, reason
+            )
+        )
+        self.hints = "Check your internet connection and disk space, and try again."
+        ErsiliaError.__init__(self, self.message, self.hints)
