@@ -207,6 +207,10 @@ def catalog_cmd():
             )
             sys.exit(1)
         elif card and model:
+            from ... import ModelBase
+
+            # Accepts slugs and suggests close matches for a typo.
+            model = ModelBase(model).model_id
             try:
                 mc = ModelCard()
                 model_metadata = mc.get(model, as_json=True)

@@ -258,11 +258,27 @@ class ModelFetcher(ErsiliaBase):
         else:
             return False
 
+    def _warn_if_archived(self, model_id):
+        # Archived models are no longer maintained and may fail to fetch or run.
+        try:
+            models = self.ji.items_all()
+        except Exception:
+            return
+        for m in models:
+            if m.get("Identifier") == model_id:
+                if str(m.get("Status", "")).lower() == "archived":
+                    echo(
+                        f"Model {model_id} is archived and no longer maintained; it may not work.",
+                        fg="yellow",
+                    )
+                return
+
     async def _fetch(self, model_id: str) -> FetchResult:
         label = f"{model_id} ({self.slug})" if self.slug else model_id
         if not self.exists(model_id):
             self.logger.info("Model doesn't exist on your system, fetching it now.")
             echo(f"Fetching model {label} from {self.model_source}.")
+            self._warn_if_archived(model_id)
             self.logger.debug("Starting fetching procedure")
             do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
             if self.force_from_dockerhub and not do_dockerhub:
