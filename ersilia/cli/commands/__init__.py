@@ -96,8 +96,8 @@ class ErsiliaCommandGroup(RichGroup):
     context_settings={
         "show_default": True,
         "help_option_names": ["-h", "--help"],
-        # --from-github works like --from_github (and --enable_cache like
-        # --enable-cache), without listing both spellings in the help.
+        # --from-github works like --from_github, without listing both
+        # spellings in the help.
         "token_normalize_func": lambda name: name.replace("-", "_"),
     },
     epilog="To learn more about a specific command, run: ersilia COMMAND --help",

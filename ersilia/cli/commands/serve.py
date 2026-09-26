@@ -78,7 +78,7 @@ def serve_cmd():
         ),
     )
     @click.option(
-        "--tracking-use-case",
+        "--tracking_use_case",
         type=click.Choice(
             ["local", "self-service", "hosted", "test"], case_sensitive=True
         ),
@@ -91,7 +91,7 @@ def serve_cmd():
         ),
     )
     @click.option(
-        "--enable-cache/--disable-cache",
+        "--enable_cache/--disable_cache",
         is_flag=True,
         default=False,
         show_default=True,
@@ -101,7 +101,7 @@ def serve_cmd():
         ),
     )
     @click.option(
-        "--read-store",
+        "--read_store",
         "-rs",
         is_flag=True,
         default=False,
@@ -112,7 +112,7 @@ def serve_cmd():
         ),
     )
     @click.option(
-        "--write-store",
+        "--write_store",
         "-ws",
         is_flag=True,
         default=False,
@@ -130,12 +130,12 @@ def serve_cmd():
         show_default="unset",
         help=(
             "Visibility for predictions written to the Isaura store. "
-            "One of: public, private. Required with `--write-store`."
+            "One of: public, private. Required with `--write_store`."
         ),
     )
     @click.option(
-        "--nearest-neighbors",
-        "--nearest-neigbors",
+        "--nearest_neighbors",
+        "--nearest_neigbors",
         "-nn",
         "nearest_neighbors",
         is_flag=True,
@@ -148,7 +148,7 @@ def serve_cmd():
         ),
     )
     @click.option(
-        "--max-cache-memory-frac",
+        "--max_cache_memory_frac",
         "max_memory",
         type=click.FloatRange(0, 1, min_open=True),
         default=None,
