@@ -279,3 +279,13 @@ def test_options_accept_dashes_or_underscores_without_listing_both():
     assert "Choose only one source; got --from_github , --from_s3" in text
     help_text = CliRunner().invoke(ersilia_cli, ["fetch", "-h"]).output
     assert "--from_github" in help_text and "--from-github" not in help_text
+
+
+def test_top_level_help_aligns_commands_with_options():
+    from ersilia.cli.create_cli import create_ersilia_cli
+
+    out = CliRunner().invoke(create_ersilia_cli(), ["--help"], terminal_width=100)
+    lines = re.sub(r"\x1b\[[0-9;]*m", "", out.output).splitlines()
+    option = next(line for line in lines if "--version" in line)
+    command = next(line for line in lines if line.startswith("│ catalog"))
+    assert option.index("Show the version") == command.index("List a catalog")
