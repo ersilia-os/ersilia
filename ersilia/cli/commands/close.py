@@ -1,3 +1,5 @@
+import sys
+
 from .. import echo
 from . import ersilia_cli
 
@@ -38,6 +40,20 @@ def close_cmd():
         if model_id is None:
             no_model_served(fg="yellow")
             return
+        if service_class in ("pulled_docker", "docker"):
+            from ...setup.requirements.docker import DockerRequirement
+
+            if not DockerRequirement().is_active():
+                # Keep the record: if Docker is only slow or paused, the
+                # container still runs and must stay tracked.
+                echo(
+                    f"Docker is not running, so model {model_id} cannot be closed now.",
+                    fg="red",
+                )
+                echo(
+                    "Its container stops along with Docker. Start Docker and run 'ersilia close' again to clear it."
+                )
+                sys.exit(1)
         mdl = ErsiliaModel(model_id, service_class=service_class)
         mdl.close()
         deregister_model_session(model_id)

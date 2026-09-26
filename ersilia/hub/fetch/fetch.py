@@ -205,10 +205,6 @@ class ModelFetcher(ErsiliaBase):
             return False
         if not self.is_docker_installed:
             self.logger.debug("Docker Engine is not installed on your system.")
-            echo(
-                "Docker is not installed, so the model cannot be fetched from DockerHub.",
-                fg="yellow",
-            )
             return False
         if self.force_from_dockerhub and not self.is_docker_active:
             self.logger.error("Docker is not active in your local")
@@ -269,15 +265,17 @@ class ModelFetcher(ErsiliaBase):
             echo(f"Fetching model {label} from {self.model_source}.")
             self.logger.debug("Starting fetching procedure")
             do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
-            if (
-                self.force_from_dockerhub
-                and not do_dockerhub
-                and not self.is_docker_active
-            ):
-                return FetchResult(
-                    fetch_success=False,
-                    reason="Docker is not running. Start Docker (e.g. Docker Desktop) and try again.",
-                )
+            if self.force_from_dockerhub and not do_dockerhub:
+                if not self.is_docker_installed:
+                    return FetchResult(
+                        fetch_success=False,
+                        reason="Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github.",
+                    )
+                if not self.is_docker_active:
+                    return FetchResult(
+                        fetch_success=False,
+                        reason="Docker is not running. Start Docker (e.g. Docker Desktop) and try again.",
+                    )
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
                 if not self.can_use_docker:
