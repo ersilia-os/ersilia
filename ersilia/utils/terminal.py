@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from collections import namedtuple
 
 from rich import box
@@ -175,7 +176,7 @@ def raw_input_with_timeout(prompt, default_answer, timeout=5):
     try:
         answer = inputimeout(prompt=prompt, timeout=timeout)
     except TimeoutOccurred:
-        answer = default_answer
+        answer = None
     return answer
 
 
@@ -199,14 +200,29 @@ def yes_no_input(prompt, default_answer, timeout=5):
     """
     # Show the choices so that the capital letter is the real default, and
     # indent the prompt like the other lines of the CLI.
+    from .echo import echo
+
     question = re.sub(r"\s*\[[yYnN]/[yYnN]\]\s*$", "", prompt).strip()
-    choices = "[y/N]" if str(default_answer).lower().startswith("n") else "[Y/n]"
+    default_no = str(default_answer).lower().startswith("n")
+    choice = "No" if default_no else "Yes"
+    if not sys.stdin.isatty():
+        # Nobody can answer (e.g. a script): use the default at once.
+        echo(f"{question} {choice} (no terminal to ask; using the default).")
+        return not default_no
+    choices = (
+        f"[y/N, {choice} in {timeout} s]"
+        if default_no
+        else f"[Y/n, {choice} in {timeout} s]"
+    )
     ans = raw_input_with_timeout(
         prompt=f"  ▪  {question} {choices} ",
         default_answer=default_answer,
         timeout=timeout,
     )
-    if ans is None or ans == "":
+    if ans is None:
+        echo(f"No answer; continuing with {choice}.")
+        ans = default_answer
+    elif ans == "":
         ans = default_answer
     ans = str(ans).lower()
     if ans[0] == "n":
