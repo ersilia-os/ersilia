@@ -29,6 +29,14 @@ def close_cmd():
         from ...utils.session import deregister_model_session
 
         session = Session(config_json=None)
+        served_model, status = session.served_model()
+        if status == "stale":
+            session.clear_stale(served_model)
+            echo(
+                f"Model {served_model} closed (it was no longer running).",
+                fg="green",
+            )
+            return
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         if model_id is None:

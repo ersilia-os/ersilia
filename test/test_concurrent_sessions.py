@@ -185,3 +185,109 @@ def test_clean_before_serving_stops_containers_of_removed_pid_files(eos, monkeyp
 
     assert stopped == ["eos0bbb_1234abcd"]
     assert not os.path.exists(os.path.join(mine, "eos0bbb.pid"))
+
+
+# Stale sessions: session.json names a model that is no longer running.
+
+
+@pytest.fixture
+def session_here(eos, monkeypatch):
+    import ersilia.core.session as core_session
+
+    path = _session(eos, os.getpid())
+    # A real session always has a log; without one, Session() prunes the dir.
+    open(os.path.join(path, "current.log"), "w").close()
+    monkeypatch.setattr(core_session, "get_session_dir", lambda: path)
+    return path
+
+
+def _record(path, model_id, pid_line=None):
+    with open(os.path.join(path, "session.json"), "w") as f:
+        json.dump({"model_id": model_id, "service_class": "pulled_docker"}, f)
+    if pid_line is not None:
+        with open(os.path.join(path, f"{model_id}.pid"), "w") as f:
+            f.write(pid_line + "\n")
+
+
+def _served(monkeypatch, container_state=True):
+    import ersilia.core.session as core_session
+    from ersilia.core.session import Session
+
+    monkeypatch.setattr(core_session, "container_is_running", lambda n: container_state)
+    return Session(config_json=None).served_model()
+
+
+def test_served_model_states(session_here, monkeypatch):
+    assert _served(monkeypatch) == (None, None)
+    _record(session_here, "eos3b5e")
+    assert _served(monkeypatch) == ("eos3b5e", "stale")  # no .pid file
+    _record(session_here, "eos3b5e", "-1 http://0.0.0.0:1 eos3b5e_1234abcd")
+    assert _served(monkeypatch, True) == ("eos3b5e", "running")
+    assert _served(monkeypatch, False) == ("eos3b5e", "stale")  # container gone
+    assert _served(monkeypatch, None) == ("eos3b5e", "running")  # Docker unknown
+
+
+def test_served_model_checks_server_processes(session_here, monkeypatch):
+    _record(session_here, "eos3b5e", f"{_dead_pid()} http://0.0.0.0:1 -")
+    assert _served(monkeypatch) == ("eos3b5e", "stale")
+    _record(session_here, "eos3b5e", f"{os.getpid()} http://0.0.0.0:1 -")
+    assert _served(monkeypatch) == ("eos3b5e", "running")
+
+
+def test_clear_stale_forgets_the_model(session_here, monkeypatch):
+    from ersilia.core.session import Session
+
+    _record(session_here, "eos3b5e")
+    session_utils.register_model_session("eos3b5e", session_here)
+    Session(config_json=None).clear_stale("eos3b5e")
+    assert not os.path.exists(os.path.join(session_here, "session.json"))
+    assert session_utils.get_model_sessions("eos3b5e") == []
+
+
+@pytest.mark.parametrize(
+    "cmd_name, args, expected",
+    [
+        (
+            "run",
+            ["-i", "in.csv", "-o", "out.csv"],
+            "no longer running in this terminal",
+        ),
+        ("info", [], "no longer running in this terminal"),
+        ("close", [], "closed (it was no longer running)"),
+    ],
+)
+def test_commands_recover_from_a_stale_session(
+    session_here, monkeypatch, cmd_name, args, expected
+):
+    import importlib
+
+    from click.testing import CliRunner
+
+    _record(session_here, "eos3b5e")
+    module = importlib.import_module(f"ersilia.cli.commands.{cmd_name}")
+    result = CliRunner().invoke(getattr(module, f"{cmd_name}_cmd")(), args)
+    assert expected in result.output, result.output
+    assert not os.path.exists(os.path.join(session_here, "session.json"))
+
+
+def test_failed_serve_does_not_leave_a_session_record(monkeypatch):
+    from unittest.mock import MagicMock
+
+    import ersilia.core.model as core_model
+    from ersilia.core.model import ErsiliaModel
+
+    session = MagicMock()
+    monkeypatch.setattr(core_model, "Session", lambda config_json=None: session)
+    mdl = ErsiliaModel.__new__(ErsiliaModel)
+    mdl.config_json = None
+    mdl.model_id = "eos3b5e"
+    mdl.logger = logging.getLogger("test")
+    mdl.setup = MagicMock()
+    mdl.close = MagicMock()
+    mdl.autoservice = MagicMock()
+    mdl.autoservice.serve.side_effect = KeyboardInterrupt
+    with pytest.raises(KeyboardInterrupt):
+        ErsiliaModel.serve(mdl)
+    session.open.assert_called_once()
+    session.close.assert_called_once()
+    mdl.autoservice.close.assert_called_once()

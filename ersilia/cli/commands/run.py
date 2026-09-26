@@ -99,6 +99,15 @@ def run_cmd():
 
         validate_input_output_types(input, output)
         session = Session(config_json=None)
+        served_model, status = session.served_model()
+        if status == "stale":
+            session.clear_stale(served_model)
+            echo(
+                f"Model {served_model} is no longer running in this terminal (its server stopped).",
+                fg="yellow",
+            )
+            echo(f"Serve it again with 'ersilia serve {served_model}'.")
+            return
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         output_source = session.current_output_source()

@@ -228,6 +228,67 @@ def determine_orphaned_session():
     return _sessions
 
 
+def read_pid_file(path):
+    """
+    Read a model's .pid file.
+
+    Each line is "<pid> <url> <container_name|->", written when the model is
+    served (``AutoService.serve``).
+
+    Parameters
+    ----------
+    path : str
+        The .pid file.
+
+    Returns
+    -------
+    tuple of (list of int, list of str)
+        The process IDs and the container names it lists.
+    """
+    pids, container_names = [], []
+    with open(path, "r") as f:
+        for line in f:
+            parts = line.strip().split()
+            if not parts:
+                continue
+            try:
+                pids.append(int(parts[0]))
+            except ValueError:
+                pass
+            if len(parts) >= 3 and parts[2] != "-":
+                container_names.append(parts[2])
+    return pids, container_names
+
+
+def container_is_running(name):
+    """
+    Tell whether a Docker container is running.
+
+    Parameters
+    ----------
+    name : str
+        The container name.
+
+    Returns
+    -------
+    bool or None
+        True if it is running, False if it is stopped or does not exist, and
+        None if Docker cannot be reached (so the answer is unknown).
+    """
+    try:
+        import docker
+
+        client = docker.from_env()
+    except Exception:
+        return None
+    try:
+        return client.containers.get(name).status == "running"
+    except docker.errors.NotFound:
+        return False
+    except Exception:
+        return None
+
+
 def stop_containers_by_name(names):
     """
     Stop and remove the named Docker containers, if any.
