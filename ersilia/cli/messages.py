@@ -35,7 +35,7 @@ class ModelNotFound(object):
                 ERSILIA_MODEL_HUB_URL
             )
         )
-        sys.exit(0)
+        sys.exit(1)
 
 
 class ModelNotInLocal(object):
@@ -62,7 +62,7 @@ class ModelNotInLocal(object):
         """
         echo("Model {0} is not available locally.".format(self.model_id), fg="red")
         echo("Fetch it first with 'ersilia fetch {0}'.".format(self.model_id))
-        sys.exit(0)
+        sys.exit(1)
 
 
 # Shared wordings, so a situation reads the same in every command.
@@ -80,6 +80,8 @@ def no_model_served(fg="red"):
     """
     echo("No model is being served in this terminal.", fg=fg)
     echo("Serve one first with 'ersilia serve MODEL'.")
+    if fg == "red":
+        sys.exit(1)
 
 
 def wrong_extension(allowed, err=False):
@@ -98,6 +100,7 @@ def wrong_extension(allowed, err=False):
     else:
         names = allowed[0]
     echo("The output file must end in {0}.".format(names), fg="red", err=err)
+    sys.exit(1)
 
 
 def report_error(error):

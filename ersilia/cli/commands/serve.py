@@ -262,7 +262,7 @@ def serve_cmd():
         if mdl.url is None:
             echo(f"Model {mdl.model_id} could not be started.", fg="red")
             echo("Run the command again with 'ersilia -v serve' to see the details.")
-            return
+            sys.exit(1)
 
         register_model_session(mdl.model_id, mdl.session._session_dir)
 
