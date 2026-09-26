@@ -19,6 +19,218 @@ from ...utils.terminal import run_command, yes_no_input
 PULL_IMAGE = os.environ.get("PULL_IMAGE", "Y")
 
 
+class PullProgress:
+    """
+    Progress of a Docker image pull, from the Docker Engine API's pull events.
+
+    The Engine API reports progress as structured events (layer id, status,
+    and byte counts), the same across Docker versions, instead of the text
+    that ``docker pull`` prints.
+
+    Parameters
+    ----------
+    expected_bytes : int, optional
+        Compressed size of the image, if known beforehand. Used as the total
+        until every layer has reported its own size.
+    layer_sizes : dict, optional
+        Compressed size of each layer, keyed by its short digest (the 12
+        characters Docker uses as layer id), if known beforehand (e.g. from
+        Docker Hub). Docker only reports a layer's size once it starts
+        downloading, so this keeps the total exact from the start.
+    """
+
+    DONE = ("Pull complete", "Already exists")
+
+    def __init__(self, expected_bytes=None, layer_sizes=None):
+        self.expected_bytes = expected_bytes or 0
+        self.layer_sizes = layer_sizes or {}
+        self.layers = {}
+
+    def update(self, event):
+        """
+        Record one pull event.
+
+        Parameters
+        ----------
+        event : dict
+            A decoded event, e.g. ``{"id": "55d2dadd4bbc", "status":
+            "Downloading", "progressDetail": {"current": 1, "total": 2}}``.
+        """
+        layer_id = event.get("id")
+        status = event.get("status") or ""
+        # Events without a layer (e.g. "Pulling from ...", "Digest: ...") and
+        # the first event, whose id is the tag, carry no layer progress.
+        if not layer_id or status.startswith("Pulling from"):
+            return
+        detail = event.get("progressDetail") or {}
+        layer = self.layers.setdefault(
+            layer_id,
+            {
+                "size": self.layer_sizes.get(layer_id, 0),
+                "downloaded": 0,
+                "extracted": 0,
+                "status": "",
+            },
+        )
+        layer["status"] = status
+        total = detail.get("total") or 0
+        current = detail.get("current") or 0
+        if total:
+            layer["size"] = max(layer["size"], total)
+        if status.startswith("Downloading"):
+            layer["downloaded"] = current
+        elif status in ("Verifying Checksum", "Download complete"):
+            layer["downloaded"] = layer["size"]
+        elif status.startswith("Extracting"):
+            layer["downloaded"] = layer["size"]
+            layer["extracted"] = current
+        elif status == "Pull complete":
+            layer["downloaded"] = layer["extracted"] = layer["size"]
+
+    @property
+    def layers_done(self):
+        """Number of layers pulled or already present."""
+        return sum(1 for layer in self.layers.values() if layer["status"] in self.DONE)
+
+    @property
+    def layers_total(self):
+        """Number of layers seen so far."""
+        return len(self.layers)
+
+    @property
+    def total_bytes(self):
+        """Bytes to download (compressed), as far as known."""
+
+        def exists(layer_id):
+            # Layers already present locally are not downloaded.
+            layer = self.layers.get(layer_id)
+            return layer is not None and layer["status"] == "Already exists"
+
+        if self.layer_sizes:
+            # Every listed layer counts from the start, until Docker reports
+            # it as already present; so the total can only shrink, early on.
+            listed = sum(
+                size
+                for layer_id, size in self.layer_sizes.items()
+                if not exists(layer_id)
+            )
+            unlisted = sum(
+                layer["size"]
+                for layer_id, layer in self.layers.items()
+                if layer_id not in self.layer_sizes and not exists(layer_id)
+            )
+            return listed + unlisted
+        present = [
+            layer for layer_id, layer in self.layers.items() if not exists(layer_id)
+        ]
+        known = sum(layer["size"] for layer in present)
+        if len(present) < len(self.layers):
+            return known
+        return max(known, self.expected_bytes)
+
+    @property
+    def downloaded_bytes(self):
+        """Bytes downloaded so far."""
+        return sum(layer["downloaded"] for layer in self.layers.values())
+
+    @property
+    def extracted_bytes(self):
+        """Bytes extracted so far."""
+        return sum(layer["extracted"] for layer in self.layers.values())
+
+    @property
+    def extracting(self):
+        """Whether everything is downloaded and layers are being extracted."""
+        # Docker starts extracting a layer while others are still downloading;
+        # the text only switches to "extracting" once downloading is done.
+        return self.downloaded_bytes >= self.total_bytes and any(
+            layer["status"].startswith("Extracting") for layer in self.layers.values()
+        )
+
+    def bar(self):
+        """
+        Completed and total units for a progress bar.
+
+        Returns
+        -------
+        tuple of (float, float or None)
+            Downloading and extracting count as two halves when byte counts
+            are known; otherwise finished layers out of all layers. The total
+            is None until anything is known.
+        """
+        total = self.total_bytes
+        if total:
+            return self.downloaded_bytes + self.extracted_bytes, 2 * total
+        if self.layers_total:
+            return self.layers_done, self.layers_total
+        return 0, None
+
+    def describe(self):
+        """
+        Text shown next to the bar, e.g. "95/182 MB  3/14 layers".
+
+        Returns
+        -------
+        str
+            Megabytes (decimal, as Docker reports them) and layers.
+        """
+        parts = []
+        total = self.total_bytes
+        if total:
+            done = self.extracted_bytes if self.extracting else self.downloaded_bytes
+            prefix = "extracting " if self.extracting else ""
+            parts.append(f"{prefix}{done / 1e6:.0f}/{total / 1e6:.0f} MB")
+        if self.layers_total:
+            parts.append(f"{self.layers_done}/{self.layers_total} layers")
+        return "  ".join(parts)
+
+
+def pull_with_progress(
+    repository, tag, callback, platform=None, expected_bytes=None, layer_sizes=None
+):
+    """
+    Pull a Docker image through the Docker Engine API, reporting progress.
+
+    Parameters
+    ----------
+    repository : str
+        Image repository, e.g. "ersiliaos/eos3b5e".
+    tag : str
+        Image tag.
+    callback : callable
+        Called with a ``PullProgress`` after every event.
+    platform : str, optional
+        Platform to pull, e.g. "linux/amd64".
+    expected_bytes : int, optional
+        Compressed image size, if known.
+    layer_sizes : dict, optional
+        Compressed size of each layer by short digest, if known.
+
+    Raises
+    ------
+    RuntimeError
+        If the pull fails.
+    """
+    import docker
+
+    from ...utils.docker import set_docker_host
+
+    set_docker_host()
+    client = docker.from_env(timeout=600)
+    progress = PullProgress(expected_bytes=expected_bytes, layer_sizes=layer_sizes)
+    try:
+        events = client.api.pull(
+            repository, tag=tag, stream=True, decode=True, platform=platform
+        )
+        for event in events:
+            if event.get("error"):
+                raise RuntimeError(event["error"])
+            progress.update(event)
+            callback(progress)
+    except docker.errors.APIError as e:
+        raise RuntimeError(str(e)) from e
+
+
 class ModelPuller(ErsiliaBase):
     """
     ModelPuller is responsible for pulling models from DockerHub.
@@ -127,76 +339,43 @@ class ModelPuller(ErsiliaBase):
             self.logger.warning("Image not found locally")
             return None
 
-    def _get_remote_image_size_mb(self) -> float:
-        url = "https://hub.docker.com/v2/repositories/{0}/{1}/tags/{2}".format(
+    @staticmethod
+    def _architecture(platform=None):
+        # The architecture Docker pulls: the given platform, or this machine's.
+        if platform:
+            return platform.split("/")[-1]
+        import platform as _platform
+
+        machine = _platform.machine().lower()
+        return "arm64" if machine in ("arm64", "aarch64") else "amd64"
+
+    def _get_remote_image_info(self, platform=None):
+        # Compressed size and per-layer sizes of the image Docker will pull,
+        # from Docker Hub. (None, {}) if unknown.
+        url = "https://hub.docker.com/v2/repositories/{0}/{1}/tags/{2}/images".format(
             DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
         try:
-            response = requests.get(url)
-            if response.status_code == 200:
-                full_size = response.json().get("full_size", 0)
-                return full_size / (1024 * 1024)
+            response = requests.get(url, timeout=10)
+            if response.status_code != 200:
+                return None, {}
+            arch = self._architecture(platform)
+            for image in response.json():
+                if image.get("architecture") != arch:
+                    continue
+                layers = {
+                    layer["digest"].split(":")[-1][:12]: layer.get("size") or 0
+                    for layer in image.get("layers") or []
+                    if layer.get("digest")
+                }
+                return image.get("size") or None, layers
         except Exception:
             pass
-        return None
+        return None, {}
 
-    def _pull_with_pty_progress(self, cmd: str, progress_callback):
-        """Blocking: run docker pull via PTY so docker outputs full layer progress."""
-        import os
-        import pty
-        import re as _re
-        import shlex
-        import subprocess as _sp
-
-        ansi_re = _re.compile(r"\x1b\[[0-9;]*[a-zA-Z]")
-        layer_re = _re.compile(r"^([a-f0-9]{12,}): (.+)$")
-
-        master_fd, slave_fd = pty.openpty()
-        proc = _sp.Popen(
-            shlex.split(cmd),
-            stdout=slave_fd,
-            stderr=slave_fd,
-            close_fds=True,
-        )
-        os.close(slave_fd)
-
-        seen = set()
-        done = set()
-        buf = b""
-
-        while True:
-            try:
-                chunk = os.read(master_fd, 4096)
-                if not chunk:
-                    break
-                buf += chunk
-            except OSError:
-                break
-
-            parts = _re.split(b"[\r\n]", buf)
-            buf = parts[-1]
-
-            for raw in parts[:-1]:
-                line = ansi_re.sub("", raw.decode("utf-8", errors="replace")).strip()
-                if not line:
-                    continue
-                self.logger.debug(line)
-                m = layer_re.match(line)
-                if m:
-                    layer_id, status = m.group(1), m.group(2).strip()
-                    seen.add(layer_id)
-                    if status in ("Pull complete", "Already exists"):
-                        done.add(layer_id)
-                    progress_callback(len(done), len(seen))
-
-        try:
-            os.close(master_fd)
-        except OSError:
-            pass
-
-        proc.wait()
-        if proc.returncode != 0:
-            raise _sp.CalledProcessError(proc.returncode, cmd)
+    def _get_remote_image_size_mb(self, platform=None) -> float:
+        size, _ = self._get_remote_image_info(platform)
+        return size / 1e6 if size else None
 
     @throw_ersilia_exception()
     async def async_pull(self):
@@ -228,7 +407,10 @@ class ModelPuller(ErsiliaBase):
 
             verbose = getattr(self.logger, "verbosity", 0) == 1
 
-            remote_size = self._get_remote_image_size_mb() if not verbose else None
+            remote_bytes, layer_sizes = (
+                self._get_remote_image_info() if not verbose else (None, {})
+            )
+            remote_size = remote_bytes / 1e6 if remote_bytes else None
             if not verbose:
                 size_text = (
                     f" (~{remote_size:.0f} MB compressed)" if remote_size else ""
@@ -269,48 +451,61 @@ class ModelPuller(ErsiliaBase):
             else:
                 from rich.progress import (
                     BarColumn,
-                    MofNCompleteColumn,
                     Progress,
                     TextColumn,
                     TimeElapsedColumn,
                 )
 
+                repository = f"{DOCKERHUB_ORG}/{self.model_id}"
+
                 with Progress(
                     # Indented to line up under the text of the line above.
                     TextColumn("    "),
                     BarColumn(),
-                    MofNCompleteColumn(),
-                    TextColumn("layers"),
+                    TextColumn("{task.fields[detail]}"),
                     TimeElapsedColumn(),
                 ) as progress:
-                    task = progress.add_task("", total=None)
+                    task = progress.add_task("", total=None, detail="")
 
-                    def on_progress(completed, total):
-                        progress.update(task, completed=completed, total=total)
+                    def on_progress(pull):
+                        completed, total = pull.bar()
+                        progress.update(
+                            task,
+                            completed=completed,
+                            total=total,
+                            detail=pull.describe(),
+                        )
 
                     loop = asyncio.get_running_loop()
-                    try:
-                        await loop.run_in_executor(
-                            None,
-                            self._pull_with_pty_progress,
-                            pull_command,
+
+                    def pull(platform):
+                        if platform:
+                            expected, sizes = self._get_remote_image_info(platform)
+                        else:
+                            expected, sizes = remote_bytes, layer_sizes
+                        return pull_with_progress(
+                            repository,
+                            self.docker_tag,
                             on_progress,
+                            platform=platform,
+                            expected_bytes=expected,
+                            layer_sizes=sizes,
                         )
-                    except subprocess.CalledProcessError:
-                        self.logger.warning(
-                            "Conventional pull failed, trying linux/amd64"
-                        )
+
+                    try:
+                        await loop.run_in_executor(None, pull, None)
+                    except RuntimeError as e:
+                        self.logger.warning(f"Pull failed ({e}), trying linux/amd64")
                         try:
-                            await loop.run_in_executor(
-                                None,
-                                self._pull_with_pty_progress,
-                                force_pull_command,
-                                on_progress,
-                            )
-                        except subprocess.CalledProcessError as e:
+                            await loop.run_in_executor(None, pull, "linux/amd64")
+                        except RuntimeError as e:
                             raise DockerConventionalPullError(
                                 model=self.model_id
                             ) from e
+                    # Show the bar full once Docker reports the pull as done.
+                    total = progress.tasks[0].total
+                    if total:
+                        progress.update(task, completed=total)
 
                 echo("Docker image downloaded.", fg="green")
 
