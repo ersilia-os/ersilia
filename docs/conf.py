@@ -42,6 +42,10 @@ extensions = [
 
 autosummary_generate = True
 
+# Document only what each module defines, so classes re-exported by packages
+# (e.g. ersilia.api.Model) are not duplicated in the package reference.
+autodoc_default_options = {"ignore-module-all": True}
+
 templates_path = ["_templates"]
 
 source_suffix = ".rst"
