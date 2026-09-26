@@ -21,6 +21,6 @@ class BadGatewayError(ErsiliaError):
 
 class DockerNotActiveError(ErsiliaError):
     def __init__(self):
-        self.message = "Docker is not running, so the model cannot be served."
+        self.message = "Docker is not running."
         self.hints = "Start Docker (e.g. Docker Desktop) and try again."
         ErsiliaError.__init__(self, self.message, self.hints)
