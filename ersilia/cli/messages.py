@@ -98,3 +98,23 @@ def wrong_extension(allowed, err=False):
     else:
         names = allowed[0]
     echo("The output file must end in {0}.".format(names), fg="red", err=err)
+
+
+def report_error(error):
+    """
+    Print an error the standard way (message, then hint) and exit with code 1.
+
+    Parameters
+    ----------
+    error : Exception
+        The error, typically an ``ErsiliaError``.
+    """
+    from ..utils.exceptions_utils.throw_ersilia_exception import (
+        user_message_and_hints,
+    )
+
+    message, hints = user_message_and_hints(error)
+    echo(message, fg="red")
+    if hints:
+        echo(hints)
+    sys.exit(1)

@@ -1,4 +1,5 @@
 import json
+import sys
 
 import rich_click as click
 from rich.console import Console
@@ -195,7 +196,8 @@ def catalog_cmd():
     ):
         from ...hub.content.card import ModelCard
         from ...hub.content.catalog import ModelCatalog
-        from ..messages import wrong_extension
+        from ...utils.exceptions_utils.exceptions import ErsiliaError
+        from ..messages import report_error, wrong_extension
 
         if card and not model:
             echo(
@@ -242,18 +244,24 @@ def catalog_cmd():
                     echo(f"Model card saved to {output}.", fg="green")
                 else:
                     _print_model_card(model_metadata)
+            except ErsiliaError as e:
+                report_error(e)
             except Exception as e:
                 echo(
                     f"Could not get the information of model {model}: {e}",
                     fg="red",
                     err=True,
                 )
+                sys.exit(1)
             return
         else:
             mc = ModelCatalog(less=not more, task=task)
 
             if hub:
-                catalog_table = mc.hub()
+                try:
+                    catalog_table = mc.hub()
+                except ErsiliaError as e:
+                    report_error(e)
             else:
                 catalog_table = mc.local()
                 if not catalog_table.data:

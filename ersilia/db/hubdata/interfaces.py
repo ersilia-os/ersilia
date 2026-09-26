@@ -20,9 +20,16 @@ class JsonModelsInterface(ErsiliaBase):
         self.url = f"https://{ERSILIA_MODEL_HUB_S3_BUCKET}.s3.eu-central-1.amazonaws.com/{MODELS_JSON}"
 
     def _read_json_file(self):
-        response = requests.get(self.url)
-        models_list = response.json()
-        return models_list
+        from ...utils.exceptions_utils.cli_exceptions import HubUnreachableError
+
+        try:
+            response = requests.get(self.url, timeout=15)
+            response.raise_for_status()
+            return response.json()
+        except (requests.exceptions.RequestException, ValueError) as e:
+            # Offline, a proxy page, or the Hub is down.
+            self.logger.debug(f"Could not read {self.url}: {e}")
+            raise HubUnreachableError() from e
 
     def items(self):
         """
