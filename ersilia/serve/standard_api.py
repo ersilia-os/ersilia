@@ -45,6 +45,7 @@ class StandardCSVRunApi(ErsiliaBase):
     Examples
     --------
     .. code-block:: python
+
         model_id = "eosxxxx"
         url = "http://0.0.0.0:15221/run"
         api = StandardCSVRunApi(model_id, url)
@@ -257,17 +258,17 @@ class StandardCSVRunApi(ErsiliaBase):
 
     def serialize_to_json(self, input_data):
         """
-            Serialize input data to JSON format.
+        Serialize input data to JSON format.
 
-            Parameters
+        Parameters
         ----------
-            input_data : str | list
-                Input data which can be a file path, an input string, or a list of input strings.
+        input_data : str | list
+            Input data which can be a file path, an input string, or a list of input strings.
 
-            Returns
-            -------
-            list
-                List of dictionaries containing serialized input data.
+        Returns
+        -------
+        list
+            List of dictionaries containing serialized input data.
         """
         if isinstance(input_data, str) and os.path.isfile(input_data):
             with open(input_data, "r") as f:

@@ -18,52 +18,25 @@ class Model(object):
     """
     Python API wrapper for interacting with Ersilia Model Hub models.
 
-    This class provides a programmatic interface to run, serve, fetch, and manage
-    machine learning models from the Ersilia Model Hub. It wraps the existing CLI-based
-    functionality in a clean Pythonic interface and supports use in context managers.
+    This class provides a programmatic interface to fetch, serve, run and manage
+    models from the Ersilia Model Hub. It mirrors the CLI commands of the same
+    name and can be used as a context manager: entering the ``with`` block serves
+    the model and leaving it closes the model.
 
     Parameters
     ----------
     model_id : str
-        The unique identifier of the model to be managed and executed.
+        Identifier of the model, e.g. ``"eos4e40"``.
+    verbose : bool, default=False
+        Print logs to the terminal.
 
-    Methods
-    -------
-    fetch():
-        Downloads the specified model and its dependencies from DockerHub.
-
-    serve():
-        Serves the specified model locally to prepare for inference.
-
-    run(input, output, batch_size):
-        Runs the model on the given input and writes predictions to the output file.
-
-    close():
-        Terminates the model server and cleans up associated resources.
-
-    info():
-        Prints metadata and technical details about the specified model.
-
-    example(file_name, simple, random, n_samples, deterministic):
-        Generates example input files for the model.
-
-    delete():
-        Deletes the specified model and its local artifacts.
-
-    __enter__():
-        Context manager entry — automatically serves the model.
-
-    __exit__(exc_type, exc_value, traceback):
-        Context manager exit — automatically closes the served model.
-
-    Usage Example
-    -------------
+    Examples
+    --------
     >>> from ersilia.api import Model
-    >>> molecular_weight = Model("eos3b5e")
-    >>> molecular_weight.fetch()
-    >>> molecular_weight.serve()
-    >>> with molecular_weight as model:
-    >>>     model.info()
+    >>> model = Model("eos4e40")
+    >>> model.fetch()
+    >>> with model:
+    ...     df = model.run(["CCO", "c1ccccc1"])
     """
 
     def __init__(self, model_id, verbose=False):
@@ -122,6 +95,13 @@ class Model(object):
         bool or result
             False if DockerHub was requested but Docker is not running.
             Otherwise returns the result from the underlying fetch command.
+
+        Examples
+        --------
+        From DockerHub (default), or from source on GitHub:
+
+        >>> Model("eos4e40").fetch()
+        >>> Model("eos4e40").fetch(from_github=True)
         """
         # infer default: if no source specified, use DockerHub
         if from_dockerhub is None:
@@ -158,34 +138,51 @@ class Model(object):
         verbose_flag: bool = False,
     ):
         """
-        Serves a specified model as an API.
+        Serve the model locally as an API, ready to receive predictions.
 
-        Args
-        -------
-            model: The model ID to be served. Can either be the eos identifier or the slug identifier.
-            port: The port to use when creating a model server. If unspecified, Ersilia looks for empty ports to use on the user's system.
-            track: Whether the model's runs should be tracked to monitor model and system performance.
-            tracking_use_case: If --track is true, this command allows specification of the tracking use case. Current options are: local, hosted, self-service and test.
-            enable_cache: Toggle Redis-based local caching on or off. If enabled, the results from model APIs will be cached for 7 days.
-            read_store: Specifies to read from isaura store
-            write_store: Specifies to write from isaura store
-            access: Specifies access level to write to isaura store
-            nearest_neighbors: Specifies nearest neighbor search when reading from isaura store
-            max_cache_memory_frac: Sets the maximum fraction of memory to use by Redis for caching. Recommended value 0.2-0.7.
+        Parameters
+        ----------
+        port : int, optional
+            Port for the model server. If unspecified, a free port is chosen.
+        track : bool, default=False
+            Track runs (input/output stats, errors, timing) and send them to
+            Ersilia's tracking bucket.
+        tracking_use_case : str, default="local"
+            Tracking use case when ``track`` is True. One of ``"local"``,
+            ``"hosted"``, ``"self-service"`` or ``"test"``.
+        enable_cache : bool, default=False
+            Cache predictions in a local Redis container for 7 days.
+        read_store : bool, default=False
+            Read precalculated predictions from the Isaura store.
+        write_store : bool, default=False
+            Write predictions to the Isaura store.
+        access : str, optional
+            Visibility of predictions written to the Isaura store, ``"public"``
+            or ``"private"``. Required with ``write_store``.
+        nearest_neighbors : bool, default=False
+            Use nearest-neighbour search when reading from the Isaura store.
+        max_cache_memory_frac : float, optional
+            Maximum fraction of system memory Redis may use. Recommended
+            values are between 0.2 and 0.7.
+        verbose_flag : bool, default=False
+            Print logs to the terminal.
 
         Returns
         -------
         dict
-            A dictionary containing:
-            - url: The URL where the model is being served
-            - session: The session object
-            - server: The server object
+            ``url`` (where the model is served), ``session`` and ``server``.
 
         Raises
-        -------
-            RuntimeError: If the model/URL is not valid or not found,
-            or if the maximum cache memory fraction is outside of the recommended range.
+        ------
+        RuntimeError
+            If the model is not found or ``max_cache_memory_frac`` is outside
+            the recommended range.
 
+        Examples
+        --------
+        >>> model = Model("eos4e40")
+        >>> url = model.serve()["url"]
+        >>> model.close()
         """
         self._url, self.session, self.SRV = serve.serve(
             self.model_id,
@@ -208,20 +205,25 @@ class Model(object):
 
     def run(self, input_list, batch_size=1000):
         """
-        Runs the current model on a list of input strings and
-        returns the prediction as a pandas dataframe.
+        Run the served model on a list of inputs.
 
-        Args
-        ----
-        input_list: a list containing input strings.
-        batch_size: number of input strings to process per batch
+        Parameters
+        ----------
+        input_list : list of str
+            Inputs to the model, e.g. SMILES strings.
+        batch_size : int, default=1000
+            Number of inputs sent to the model server per batch.
 
         Returns
         -------
-        function
-            The run command function to be used by the API.
-            A pandas df with the predictions.
+        pandas.DataFrame
+            One row per input, with ``key`` and ``input`` columns followed by
+            the model's output columns.
 
+        Examples
+        --------
+        >>> with Model("eos4e40") as model:
+        ...     df = model.run(["CCO", "c1ccccc1"])
         """
         return run.run(self.model_id, input_list, batch_size)
 
@@ -242,43 +244,46 @@ class Model(object):
 
     def info(self):
         """
-        Provides information about a specified model.
+        Show information about the served model.
 
-        This command allows users to get detailed information about a current active session,
-        including information about Model Identifiers, Code and Parameters, Docker Hub link and Architectures.
-
-        Args
-        -------
-        model_id (str): ID of the model to delete.
+        Includes its identifiers, description, code and parameters links,
+        Docker Hub image and supported architectures.
 
         Returns
         -------
-        function: The info command function to be used by the API.
-        str: Confirmation message on success or warning message on failure.
+        dict or None
+            The model information.
 
         Raises
-        -------
-        RuntimeError: If no model was served in the current session.
+        ------
+        RuntimeError
+            If no model is served in the current session.
         """
         return info.info(self.model_id)
 
     def example(self, n_samples=5, mode="random"):
         """
-        This command can sample inputs for a given model.
+        Generate example inputs for the served model.
 
-        Args
-        -------
-        model: The model ID to be served. Can either be the eos identifier or the slug identifier.
-        simple: Simple inputs only contain the input column, while complete inputs also include key and the input.
-        random: If the model source contains an example input file, when the predefined flag is set, then inputs are sampled from that file. Only the number of samples present in the file are returned, especially if --n_samples is greater than that number. By default, Ersilia samples inputs randomly.
-        n_samples: Specify the number of example inputs to generate for the given model.
-        deterministic: Used to generate examples data deterministically instead of random sampling. This allows when every time you run with example command with this flag you get the same types of examples.
+        Parameters
+        ----------
+        n_samples : int, default=5
+            Number of examples to generate. Ignored in ``"curated"`` mode.
+        mode : str, default="random"
+            ``"random"`` samples inputs at random, ``"deterministic"`` always
+            returns the same inputs, and ``"curated"`` returns the model's own
+            example file.
 
         Returns
         -------
-        Function: The exmaple command function to be used by the API.
-        Str: Error message if no model was served in the current session.
+        list or None
+            The example inputs, or None if no model is served.
 
+        Examples
+        --------
+        >>> with Model("eos4e40") as model:
+        ...     inputs = model.example(n_samples=10)
+        ...     df = model.run(inputs)
         """
         return example.example(n_samples, mode=mode)
 
@@ -293,18 +298,21 @@ class Model(object):
         bool
             True if the model was successfully deleted, False otherwise.
 
-        Raises:
-            RuntimeError: If the model cannot be deleted.
+        Raises
+        ------
+        RuntimeError
+            If the model cannot be deleted.
         """
         return delete.delete(self.model_id, verbose=self.verbose_mode)
 
     def is_fetched(self):
         """
-        Checks whether the model has been successfully fetched.
+        Check whether the model has been fetched on this machine.
 
         Returns
         -------
-        Echo Message indicating fetch status.
+        bool
+            True if the model is fetched, False otherwise.
         """
         return is_fetched.is_fetched(self.model_id)
 
@@ -343,14 +351,21 @@ class Model(object):
 
 class Catalog(object):
     """
-    This class enables users to browse and retrieve information about all models
-    available in the Ersilia Hub. It is designed for general catalog-level operations
-    and is not tied to any specific model instance. Use this class when you want to
-    explore the hub, list available models,
+    Browse the models available locally or in the Ersilia Model Hub.
 
-    Typical usage includes listing the model catalog via the `catalog()` method,
-    which mirrors the CLI behavior but returns a structured DataFrame for programmatic use.
+    Unlike :class:`Model`, this class is not tied to a specific model. Its
+    :meth:`catalog` method mirrors ``ersilia catalog`` but returns the result
+    for programmatic use.
 
+    Parameters
+    ----------
+    verbose : bool, default=False
+        Print logs to the terminal.
+
+    Examples
+    --------
+    >>> from ersilia.api import Catalog
+    >>> df = Catalog().catalog(hub=True)
     """
 
     def __init__(self, verbose=False):
@@ -367,7 +382,8 @@ class Catalog(object):
         verbose=False,
     ):
         """
-        API-compatible version of the catalog command with echo-based output.
+        List models, or show the model card of one model.
+
         Parameters
         ----------
         hub : bool, default=False
@@ -385,11 +401,12 @@ class Catalog(object):
             If True, return JSON output instead of a formatted table.
         verbose : bool, default=False
             If True, enable verbose logging.
+
         Returns
         -------
         pandas.DataFrame or dict or None
-            A DataFrame containing the last two columns of the model catalog.
-            Also prints the full catalog as a table or JSON to the terminal, depending on `as_json`.
+            The catalog, which is also printed to the terminal as a table (or
+            as JSON when ``as_json`` is True).
         """
         return catalog.catalog(
             hub=hub,
