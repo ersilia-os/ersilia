@@ -16,7 +16,8 @@ from ...utils.exceptions_utils.pull_exceptions import (
 from ...utils.logging import make_temp_dir
 from ...utils.terminal import run_command, yes_no_input
 
-PULL_IMAGE = os.environ.get("PULL_IMAGE", "Y")
+# Re-downloading an image the user already has is opt-in.
+PULL_IMAGE = os.environ.get("PULL_IMAGE", "n")
 
 
 class PullProgress:
@@ -186,7 +187,13 @@ class PullProgress:
 
 
 def pull_with_progress(
-    repository, tag, callback, platform=None, expected_bytes=None, layer_sizes=None
+    repository,
+    tag,
+    callback,
+    platform=None,
+    expected_bytes=None,
+    layer_sizes=None,
+    stop=None,
 ):
     """
     Pull a Docker image through the Docker Engine API, reporting progress.
@@ -205,6 +212,8 @@ def pull_with_progress(
         Compressed image size, if known.
     layer_sizes : dict, optional
         Compressed size of each layer by short digest, if known.
+    stop : threading.Event, optional
+        When set, the pull stops (e.g. after Ctrl+C).
 
     Raises
     ------
@@ -223,12 +232,66 @@ def pull_with_progress(
             repository, tag=tag, stream=True, decode=True, platform=platform
         )
         for event in events:
+            if stop is not None and stop.is_set():
+                return
             if event.get("error"):
                 raise RuntimeError(event["error"])
             progress.update(event)
             callback(progress)
     except docker.errors.APIError as e:
         raise RuntimeError(str(e)) from e
+    except (requests.exceptions.RequestException, docker.errors.DockerException) as e:
+        raise RuntimeError("connection to Docker lost: {0}".format(e)) from e
+
+
+def pull_error(model_id, tag, error):
+    """
+    Turn a pull failure into an error that says why and what to do.
+
+    Parameters
+    ----------
+    model_id : str
+        The model identifier.
+    tag : str
+        The image tag that was pulled.
+    error : Exception
+        The failure reported by Docker.
+
+    Returns
+    -------
+    ImagePullError
+        The error to raise.
+    """
+    from ...utils.exceptions_utils.cli_exceptions import ImagePullError
+
+    text = str(error).lower()
+    if "no space left on device" in text:
+        return ImagePullError(
+            model_id,
+            "Docker ran out of disk space",
+            "Free space with 'docker system prune', or raise the disk limit in Docker Desktop > Settings > Resources.",
+        )
+    if "toomanyrequests" in text or "rate limit" in text:
+        return ImagePullError(
+            model_id,
+            "the Docker Hub download limit was reached",
+            "Log in with 'docker login', or try again later.",
+        )
+    if "manifest unknown" in text or "not found" in text:
+        return ImagePullError(
+            model_id,
+            "version '{0}' does not exist".format(tag),
+            "See the available versions at https://hub.docker.com/r/{0}/{1}/tags".format(
+                DOCKERHUB_ORG, model_id
+            ),
+        )
+    if "connection to docker lost" in text:
+        return ImagePullError(
+            model_id,
+            "Docker stopped responding during the download",
+            "Start Docker and run the fetch again.",
+        )
+    return ImagePullError(model_id, str(error), "")
 
 
 class ModelPuller(ErsiliaBase):
@@ -397,7 +460,8 @@ class ModelPuller(ErsiliaBase):
             if not do_pull:
                 self.logger.info("Skipping pulling the image")
                 return
-            self._delete()
+            # The local image is not deleted first: 'docker pull' only
+            # replaces it once the new download has succeeded.
         else:
             self.logger.debug("Docker image of the model is not available locally")
         if self.is_available_in_dockerhub():
@@ -476,7 +540,30 @@ class ModelPuller(ErsiliaBase):
                             detail=pull.describe(),
                         )
 
+                    import threading
+
                     loop = asyncio.get_running_loop()
+                    stop = threading.Event()
+
+                    async def in_thread(platform):
+                        # A daemon thread, stopped on Ctrl+C, so an interrupt
+                        # does not wait for the whole download to finish.
+                        done = loop.create_future()
+
+                        def work():
+                            try:
+                                result = pull(platform)
+                            except BaseException as e:
+                                loop.call_soon_threadsafe(done.set_exception, e)
+                            else:
+                                loop.call_soon_threadsafe(done.set_result, result)
+
+                        threading.Thread(target=work, daemon=True).start()
+                        try:
+                            return await done
+                        except BaseException:
+                            stop.set()
+                            raise
 
                     def pull(platform):
                         if platform:
@@ -490,18 +577,29 @@ class ModelPuller(ErsiliaBase):
                             platform=platform,
                             expected_bytes=expected,
                             layer_sizes=sizes,
+                            stop=stop,
                         )
 
                     try:
-                        await loop.run_in_executor(None, pull, None)
+                        await in_thread(None)
+                    except (KeyboardInterrupt, asyncio.CancelledError) as e:
+                        e.ersilia_note = (
+                            "Download cancelled. Run the fetch again to resume."
+                        )
+                        raise
                     except RuntimeError as e:
+                        if "no matching manifest" not in str(e).lower():
+                            raise pull_error(self.model_id, self.docker_tag, e) from e
+                        # No image for this machine's architecture.
                         self.logger.warning(f"Pull failed ({e}), trying linux/amd64")
+                        echo(
+                            "No image for this machine's architecture; using the Intel (amd64) image, which runs slower.",
+                            fg="yellow",
+                        )
                         try:
-                            await loop.run_in_executor(None, pull, "linux/amd64")
+                            await in_thread("linux/amd64")
                         except RuntimeError as e:
-                            raise DockerConventionalPullError(
-                                model=self.model_id
-                            ) from e
+                            raise pull_error(self.model_id, self.docker_tag, e) from e
                     # Show the bar full once Docker reports the pull as done.
                     total = progress.tasks[0].total
                     if total:
@@ -542,7 +640,8 @@ class ModelPuller(ErsiliaBase):
             if not do_pull:
                 self.logger.info("Skipping pulling the image")
                 return
-            self._delete()
+            # The local image is not deleted first: 'docker pull' only
+            # replaces it once the new download has succeeded.
         else:
             self.logger.debug("Docker image of the model is not available locally")
         if self.is_available_in_dockerhub():
