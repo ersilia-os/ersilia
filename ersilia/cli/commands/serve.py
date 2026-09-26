@@ -167,6 +167,7 @@ def serve_cmd():
     ):
         from ... import ErsiliaModel
         from ...core.session import Session
+        from ...hub.content.information import version_label
         from ...utils.exceptions_utils.exceptions import (
             ModelNotAvailableLocallyError,
         )
@@ -278,7 +279,7 @@ def serve_cmd():
             enable_cache=enable_cache,
             tracking_enabled=bool(track),
             tracking_use_case=tracking_use_case,
-            version=info.get("docker_tag"),
+            version=version_label(info.get("docker_tag"), info.get("card")),
         )
 
         logger.success(f"Model {model} is successfully served!")
