@@ -182,25 +182,6 @@ def serve_cmd():
         existing_session = sess.get() or {}
         already_served = existing_session.get("model_id")
         if already_served:
-            import os
-
-            from ... import ModelBase
-            from ...utils import tmp_pid_file
-            from ...utils.ports import normalize_connect_url
-
-            pid_file = tmp_pid_file(already_served)
-            if ModelBase(model).model_id == already_served and os.path.isfile(pid_file):
-                # The same model is already running here: nothing to do.
-                with open(pid_file) as f:
-                    lines = [line.split() for line in f if line.strip()]
-                url = normalize_connect_url(lines[-1][1]) if lines else None
-                echo(
-                    f"Model {already_served} is already being served in this terminal.",
-                    fg="green",
-                )
-                if url:
-                    echo(f"It is available at {url}.")
-                return
             echo(
                 f"Model {already_served} is already being served in this terminal.",
                 fg="yellow",
