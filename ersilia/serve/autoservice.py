@@ -17,6 +17,7 @@ from ..utils.echo import echo, spinner
 from ..utils.session import (
     get_session_dir,
     kill_process_tree,
+    read_pid_file,
     stop_containers_by_name,
 )
 from .api import Api
@@ -371,20 +372,7 @@ class AutoService(ErsiliaBase):
             return False
 
     def _read_pid_file(self, fn):
-        # Each line is "<pid> <url> <container_name|->".
-        pids, container_names = [], []
-        with open(fn, "r") as f:
-            for line in f:
-                parts = line.strip().split()
-                if not parts:
-                    continue
-                try:
-                    pids.append(int(parts[0]))
-                except ValueError:
-                    pass
-                if len(parts) >= 3 and parts[2] != "-":
-                    container_names.append(parts[2])
-        return pids, container_names
+        return read_pid_file(fn)
 
     def _kill_pids(self, pids):
         for pid in pids:

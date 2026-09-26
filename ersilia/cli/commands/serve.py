@@ -176,6 +176,11 @@ def serve_cmd():
         from ..messages import ModelNotFound
 
         sess = Session(config_json=None)
+        stale_model, status = sess.served_model()
+        if status == "stale":
+            # Recorded as served, but no longer running: nothing to close.
+            sess.clear_stale(stale_model)
+            echo(f"Model {stale_model} was no longer running; replacing it.")
         existing_session = sess.get() or {}
         already_served = existing_session.get("model_id")
         if already_served:

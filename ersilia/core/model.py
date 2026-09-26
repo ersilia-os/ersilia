@@ -695,7 +695,17 @@ class ErsiliaModel(ErsiliaBase):
         self.setup()
         spinner("Closing existing sessions of a model", self.close)
         self.session.open(model_id=self.model_id, track_runs=self.track)
-        self.autoservice.serve()
+        try:
+            self.autoservice.serve()
+        except BaseException:
+            # Serving failed or was interrupted (e.g. Ctrl+C): undo the session
+            # record, so the terminal does not claim a model that is not running.
+            self.logger.info("Serving did not complete; closing the session")
+            try:
+                self.autoservice.close()
+            finally:
+                self.session.close()
+            raise
         self.session.register_service_class(self.autoservice._service_class)
         self.session.register_output_source(self.output_source)
         self.session.register_store_status(
