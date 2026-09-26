@@ -176,6 +176,29 @@ def serve_cmd():
         from ..messages import ModelNotFound
 
         sess = Session(config_json=None)
+        stale_model, status = sess.served_model()
+        if status == "stale":
+            # Recorded as served, but no longer running: nothing to close.
+            sess.clear_stale(stale_model)
+            echo(f"Model {stale_model} was no longer running; replacing it.")
+        elif status == "running":
+            from ... import ModelBase
+
+            if ModelBase(model).model_id == stale_model:
+                # The same model is already running here: nothing to do.
+                from ...utils import tmp_pid_file
+                from ...utils.ports import normalize_connect_url
+
+                with open(tmp_pid_file(stale_model)) as f:
+                    lines = [line.split() for line in f if line.strip()]
+                url = normalize_connect_url(lines[-1][1]) if lines else None
+                echo(
+                    f"Model {stale_model} is already being served in this terminal.",
+                    fg="green",
+                )
+                if url:
+                    echo(f"It is available at {url}.")
+                return
         existing_session = sess.get() or {}
         already_served = existing_session.get("model_id")
         if already_served:

@@ -2,10 +2,8 @@ import io
 import json
 import os
 import shutil
-import tempfile
 
 from .. import ErsiliaBase
-from ..db.environments.managers import DockerManager
 from ..default import (
     APIS_LIST_FILE,
     DEFAULT_BATCH_SIZE,
@@ -16,7 +14,12 @@ from ..default import (
 from ..utils import tmp_pid_file
 from ..utils.cache import SetupRedis
 from ..utils.echo import echo, spinner
-from ..utils.session import kill_process_tree, stop_containers_by_name
+from ..utils.session import (
+    get_session_dir,
+    kill_process_tree,
+    read_pid_file,
+    stop_containers_by_name,
+)
 from .api import Api
 from .services import (
     CondaEnvironmentService,
@@ -368,12 +371,8 @@ class AutoService(ErsiliaBase):
         else:
             return False
 
-    def _pids_from_file(self, fn):
-        pids = []
-        with open(fn, "r") as f:
-            for l in f:
-                pids += [int(l.split(" ")[0])]
-        return pids
+    def _read_pid_file(self, fn):
+        return read_pid_file(fn)
 
     def _kill_pids(self, pids):
         for pid in pids:
@@ -392,45 +391,52 @@ class AutoService(ErsiliaBase):
         tmp_file = tmp_pid_file(self.model_id)
         dir_name = os.path.dirname(tmp_file)
         pids = []
+        container_names = []
         for proc_file in os.listdir(dir_name):
             if proc_file[-3:] != "pid":
                 continue
             proc_file = os.path.join(dir_name, proc_file)
             self.logger.debug(proc_file)
-            pids += self._pids_from_file(proc_file)
+            file_pids, file_containers = self._read_pid_file(proc_file)
+            pids += file_pids
+            container_names += file_containers
             os.remove(proc_file)
         self.logger.debug("Cleaning {0} processes".format(pids))
         self._kill_pids(pids)
+        # The pid files are removed here, so their containers must be stopped
+        # now; otherwise they would keep running with no session tracking them.
+        self._stop_session_containers(container_names)
 
     def clean_temp_dir(self):
         """
-        Clean the temporary directory.
-        """
-        self.logger.debug("Cleaning temp dir")
-        tmp_folder = tempfile.gettempdir()
-        for d in os.listdir(tmp_folder):
-            if "ersilia-" in d:
-                d = os.path.join(tmp_folder, d)
-                self.logger.debug("Flushing temporary directory {0}".format(d))
-                try:
-                    shutil.rmtree(d)
-                except:
-                    self.logger.warning(
-                        "Could not remove temporary directory {0}".format(d)
-                    )
+        Clean the temporary directories created by this session.
 
-    def clean_docker_containers(self):
+        Each session tracks its temporary directories as symlinks in
+        ``<session>/logs/tmp`` (see ``make_temp_dir``). Only those are removed,
+        so runs, fetches and servers of other sessions (terminals) keep theirs.
         """
-        Clean Docker containers if necessary.
-        """
-        self.logger.debug("Silencing docker containers if necessary")
-        dm = DockerManager(config_json=self.config_json)
-        if dm.is_inside_docker():
-            self.logger.debug("It is inside docker")
+        self.logger.debug("Cleaning temp dirs of this session")
+        logs_tmp_dir = os.path.join(get_session_dir(), "logs", "tmp")
+        if not os.path.isdir(logs_tmp_dir):
             return
-        if dm.is_installed():
-            self.logger.debug("It is not inside docker")
-            dm.stop_containers(self.model_id)
+        for name in os.listdir(logs_tmp_dir):
+            link = os.path.join(logs_tmp_dir, name)
+            target = os.path.realpath(link)
+            if os.path.basename(target).startswith("ersilia-") and os.path.isdir(
+                target
+            ):
+                self.logger.debug("Flushing temporary directory {0}".format(target))
+                try:
+                    shutil.rmtree(target)
+                except Exception:
+                    self.logger.warning(
+                        "Could not remove temporary directory {0}".format(target)
+                    )
+                    continue
+            try:
+                os.unlink(link)
+            except OSError:
+                pass
 
     def serve(self):
         """
@@ -458,18 +464,7 @@ class AutoService(ErsiliaBase):
         tmp_file = tmp_pid_file(self.model_id)
         container_names = []
         if os.path.isfile(tmp_file):
-            pids = []
-            with open(tmp_file, "r") as f:
-                for line in f:
-                    parts = line.strip().split()
-                    if not parts:
-                        continue
-                    try:
-                        pids.append(int(parts[0]))
-                    except ValueError:
-                        pass
-                    if len(parts) >= 3 and parts[2] != "-":
-                        container_names.append(parts[2])
+            pids, container_names = self._read_pid_file(tmp_file)
             self._kill_pids(pids)
             os.remove(tmp_file)
         self.clean_temp_dir()
