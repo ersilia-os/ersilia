@@ -86,9 +86,8 @@ class ModelStandardExample(ErsiliaBase):
             nonlocal warned
             warned = True
             echo(
-                f"This is taking longer than usual (>{threshold_s}s). Please be patient…",
+                f"This is taking longer than usual (over {threshold_s} s). Please wait.",
                 fg="yellow",
-                bold=True,
             )
 
         timer = threading.Timer(threshold_s, warn_user)
@@ -147,10 +146,7 @@ class ModelStandardExample(ErsiliaBase):
         is_fetched_successfully = self._validate_csv(self.output_csv)
 
         if not is_fetched_successfully:
-            echo(
-                "Model produced all empty values. Removing the model.",
-                fg="red",
-            )
+            echo(f"Model {self.model_id} did not work, so it will be removed.")
             self.logger.error(
                 "Model produced all empty values. Removing the model and exiting."
             )
@@ -186,25 +182,27 @@ class ModelStandardExample(ErsiliaBase):
                 total_data_rows += 1
 
                 if len(row) < 3:
-                    echo(f"Row {row_num} has fewer than 3 columns: {row}")
+                    echo(
+                        f"The model's test output is incomplete (row {row_num} has fewer than 3 columns).",
+                        fg="red",
+                    )
                     return False
 
                 if all((cell or "").strip() == "" for cell in row[2:]):
                     empty_rows.append(row_num)
 
             if not saw_data_row:
-                echo("No data rows found in output CSV (only header/blank rows).")
+                echo("The model's test output has no rows.", fg="red")
                 return False
 
             if empty_rows and len(empty_rows) == total_data_rows:
-                echo(
-                    f"All output values are empty at rows {empty_rows}. The model is not correctly working!"
-                )
+                echo("The model returned empty outputs for every test input.", fg="red")
                 return False
 
             if empty_rows:
                 echo(
-                    f"Some output values are empty at rows {empty_rows}, but not all rows are empty. Continuing."
+                    f"The model returned empty outputs for {len(empty_rows)} of {total_data_rows} test inputs.",
+                    fg="yellow",
                 )
 
             return True

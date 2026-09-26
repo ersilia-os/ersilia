@@ -530,7 +530,7 @@ class ModelFullDeleter(ErsiliaBase):
             if model_source == "DockerHub" and not dm.is_active():
                 return (
                     False,
-                    f"Unable to delete Model {model_id}. Docker engine is inactive.",
+                    f"Model {model_id} cannot be deleted while Docker is not running. Start Docker and try again.",
                 )
             return True, "Model can be deleted."
         else:
@@ -547,6 +547,11 @@ class ModelFullDeleter(ErsiliaBase):
         ----------
         model_id : str
             Identifier of the model to be deleted.
+
+        Returns
+        -------
+        bool
+            True if the model was deleted.
         """
 
         if not is_inside_docker() and model_id in self.docker.list_eos_images():
@@ -554,10 +559,10 @@ class ModelFullDeleter(ErsiliaBase):
                 DOCKERHUB_ORG, model_id, DOCKERHUB_LATEST_TAG
             ):
                 echo(
-                    f"Cannot delete model {model_id}: its Docker image was fetched by a different user on this system.",
+                    f"Model {model_id} cannot be deleted because another user on this machine fetched it.",
                     fg="red",
                 )
-                return
+                return False
 
         def _run_deleters():
             ModelEosDeleter(self.config_json).delete(model_id)
@@ -572,6 +577,10 @@ class ModelFullDeleter(ErsiliaBase):
             BruteDeleter(self.config_json).delete(model_id)
 
         self.logger.info("Starting delete of model {0}".format(model_id))
-        spinner(f"Deleting all data for model {model_id}", _run_deleters)
+        spinner(
+            f"Deleting model {model_id}",
+            _run_deleters,
+            done=f"Model {model_id} deleted.",
+        )
         self.logger.success("Model {0} deleted successfully".format(model_id))
-        echo(f"Model {model_id} deleted successfully", fg="green")
+        return True

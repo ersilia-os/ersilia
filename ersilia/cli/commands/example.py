@@ -42,7 +42,7 @@ def example_cmd():
         if not resolved_file:
             raise click.UsageError("Missing option '--output_file' / '-o'.")
         if mode == "curated" and n_samples is not None:
-            echo("Warning: --n_samples is ignored in curated mode.", fg="yellow")
+            echo("--n_samples is ignored in curated mode.", fg="yellow")
         if n_samples is None and mode != "curated":
             n_samples = 5
         if model is not None:
@@ -52,9 +52,10 @@ def example_cmd():
             model_id = session.current_model_id()
         if not model_id:
             echo(
-                "No model found. Please specify a model or serve a model in the current shell.",
+                "No model was given, and no model is being served in this terminal.",
                 fg="red",
             )
+            echo("Give one, e.g. 'ersilia example eos42ez -o input.csv'.")
             return
         eg = ExampleGenerator(model_id=model_id)
         eg.example(
@@ -62,5 +63,6 @@ def example_cmd():
             resolved_file,
             mode=mode,
         )
+        echo(f"Examples written to {resolved_file}.", fg="green")
 
     return example

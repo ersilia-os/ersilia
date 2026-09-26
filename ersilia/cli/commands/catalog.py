@@ -6,6 +6,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
+from .. import echo
 from . import ersilia_cli
 
 _console = Console()
@@ -195,10 +196,12 @@ def catalog_cmd():
     ):
         from ...hub.content.card import ModelCard
         from ...hub.content.catalog import ModelCatalog
+        from ..messages import wrong_extension
 
         if card and not model:
-            click.echo(
-                click.style("Error: --card option requires a model ID", fg="red"),
+            echo(
+                "The --card option needs a model, e.g. 'ersilia catalog --card eos42ez'.",
+                fg="red",
                 err=True,
             )
             return
@@ -208,22 +211,15 @@ def catalog_cmd():
                 model_metadata = mc.get(model, as_json=True)
 
                 if not model_metadata:
-                    click.echo(
-                        click.style(
-                            f"Error: No metadata found for model ID '{model}'", fg="red"
-                        ),
+                    echo(
+                        f"No information was found for model {model}.",
+                        fg="red",
                         err=True,
                     )
                     return
                 if output:
-                    if not (output.endswith(".json") or output.endswith(".csv")):
-                        click.echo(
-                            click.style(
-                                "Error: output file must have a .json or .csv extension.",
-                                fg="red",
-                            ),
-                            err=True,
-                        )
+                    if not output.endswith((".json", ".csv")):
+                        wrong_extension([".json", ".csv"], err=True)
                         return
                     data = json.loads(model_metadata)
                     if output.endswith(".json"):
@@ -244,11 +240,15 @@ def catalog_cmd():
                                         else ", ".join(str(v) for v in value),
                                     ]
                                 )
-                    click.echo(click.style(f"Model card saved to {output}", fg="green"))
+                    echo(f"Model card saved to {output}.", fg="green")
                 else:
                     _print_model_card(model_metadata)
             except Exception as e:
-                click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
+                echo(
+                    f"Could not get the information of model {model}: {e}",
+                    fg="red",
+                    err=True,
+                )
             return
         else:
             mc = ModelCatalog(less=not more, task=task)
@@ -258,26 +258,16 @@ def catalog_cmd():
             else:
                 catalog_table = mc.local()
                 if not catalog_table.data:
-                    click.echo(
-                        click.style(
-                            "No local models available. Please fetch a model by running 'ersilia fetch' command",
-                            fg="red",
-                        )
-                    )
+                    echo("No models are available locally.", fg="yellow")
+                    echo("Fetch one with 'ersilia fetch MODEL'.")
                     return
             if output is None:
                 _print_catalog(catalog_table)
             else:
-                if not (output.endswith(".csv") or output.endswith(".json")):
-                    click.echo(
-                        click.style(
-                            "Error: output file must have a .csv or .json extension.",
-                            fg="red",
-                        ),
-                        err=True,
-                    )
+                if not output.endswith((".json", ".csv")):
+                    wrong_extension([".json", ".csv"], err=True)
                     return
                 catalog_table.write(output)
-                click.echo(click.style(f"Catalog saved to {output}", fg="green"))
+                echo(f"Catalog saved to {output}.", fg="green")
 
     return catalog

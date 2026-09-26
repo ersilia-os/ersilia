@@ -27,7 +27,6 @@ from ..serve.standard_api import StandardCSVRunApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
-from ..utils.echo import spinner
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..utils.exceptions_utils.exceptions import ModelNotAvailableLocallyError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
@@ -170,7 +169,7 @@ class ErsiliaModel(ErsiliaBase):
             self.logger.info("Model is not available locally")
             try:
                 do_fetch = yes_no_input(
-                    "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
+                    "Model {0} is not available locally. Fetch it now?".format(
                         self.model_id
                     ),
                     default_answer="n",
@@ -696,7 +695,7 @@ class ErsiliaModel(ErsiliaBase):
                     use_case=track_runs,
                 )
         self.setup()
-        spinner("Closing existing sessions of a model", self.close)
+        self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track)
         try:
             self.autoservice.serve()

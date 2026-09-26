@@ -127,7 +127,7 @@ def test_standard_example_closes_model_on_failure():
     example.run.side_effect = RuntimeError("model crashed")
     with (
         patch("ersilia.hub.fetch.fetch.ModelStandardExample", return_value=example),
-        patch("ersilia.hub.fetch.fetch.spinner", side_effect=lambda _, f: f()),
+        patch("ersilia.hub.fetch.fetch.spinner", side_effect=lambda _, f, **kw: f()),
     ):
         with pytest.raises(RuntimeError):
             fetcher._standard_csv_example("eos0xxx")

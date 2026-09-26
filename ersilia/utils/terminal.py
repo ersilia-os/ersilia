@@ -7,6 +7,7 @@ from collections import namedtuple
 
 from rich import box
 from rich.console import Console
+from rich.padding import Padding
 from rich.panel import Panel
 from rich.table import Table
 
@@ -16,7 +17,7 @@ except:
     inputimeout = None
     TimeoutOccurred = None
 
-from ..default import _CONDA_BOOTSTRAP, VERBOSE_FILE
+from ..default import _CONDA_BOOTSTRAP, SERVICE_CLASS_LABELS, VERBOSE_FILE
 from ..utils.logging import make_temp_dir
 from ..utils.session import get_session_dir
 
@@ -195,8 +196,14 @@ def yes_no_input(prompt, default_answer, timeout=5):
     bool
         True if the user's input is 'yes', False otherwise.
     """
+    # Show the choices so that the capital letter is the real default, and
+    # indent the prompt like the other lines of the CLI.
+    question = re.sub(r"\s*\[[yYnN]/[yYnN]\]\s*$", "", prompt).strip()
+    choices = "[y/N]" if str(default_answer).lower().startswith("n") else "[Y/n]"
     ans = raw_input_with_timeout(
-        prompt=prompt, default_answer=default_answer, timeout=timeout
+        prompt=f"  ▪  {question} {choices} ",
+        default_answer=default_answer,
+        timeout=timeout,
     )
     if ans is None or ans == "":
         ans = default_answer
@@ -236,17 +243,18 @@ def print_serve_summary(
         pad_edge=False,
     )
 
-    table.add_row("Model", f"[bold]{model_id}[/bold] ([dim]{slug}[/dim])")
+    def on_off(enabled, text=None):
+        if enabled:
+            return f"[green]{text or 'Enabled'}[/green]"
+        return "[dim]Disabled[/dim]"
+
+    table.add_row("Model", f"[bold]{model_id}[/bold] [dim]({slug})[/dim]")
     if version:
-        table.add_row("Version", f"[dim]{version}[/dim]")
+        table.add_row("Version", version)
     table.add_row("URL", f"[link={url}][cyan]{url}[/cyan][/link]")
-
     if str(pid) != "-1":
-        table.add_row("PID", f"[yellow]{pid}[/yellow]")
-
-    srv_display = "DockerHub" if srv == "pulled_docker" else srv
-    table.add_row("Service", f"[yellow]{srv_display}[/yellow]")
-    table.add_row("Session", f"[yellow]{session_dir}[/yellow]")
+        table.add_row("PID", str(pid))
+    table.add_row("Service", SERVICE_CLASS_LABELS.get(srv, srv))
 
     all_apis = apis or []
     if "run" in all_apis:
@@ -255,23 +263,14 @@ def print_serve_summary(
         all_apis = ["run"]
     if "info" not in all_apis:
         all_apis.append("info")
-    endpoints_display = "\n".join(f"[cyan]{a}[/cyan]" for a in all_apis)
-    table.add_row("Endpoints", endpoints_display)
+    table.add_row("Endpoints", "\n".join(all_apis))
 
-    store_style = "red" if store_stat == "Disabled" else "green"
-    table.add_row("Store", f"[{store_style}]{store_stat}[/{store_style}]")
-
-    cache_text = "Enabled" if enable_cache else "Disabled"
-    cache_style = "green" if enable_cache else "red"
-    table.add_row("Local cache", f"[{cache_style}]{cache_text}[/{cache_style}]")
-
-    if tracking_enabled:
-        tracking_text = f"Enabled ({tracking_use_case})"
-        tracking_style = "green"
-    else:
-        tracking_text = "Disabled"
-        tracking_style = "red"
-    table.add_row("Tracking", f"[{tracking_style}]{tracking_text}[/{tracking_style}]")
+    table.add_row("Store", on_off(store_stat != "Disabled", store_stat))
+    table.add_row("Local cache", on_off(enable_cache))
+    table.add_row(
+        "Tracking",
+        on_off(tracking_enabled, f"Enabled ({tracking_use_case})"),
+    )
 
     panel = Panel(
         table,
@@ -279,6 +278,7 @@ def print_serve_summary(
         expand=False,
         border_style="green",
     )
+    # Indented like the "  ✓  " lines printed before it.
     console.print()
-    console.print(panel)
+    console.print(Padding(panel, (0, 0, 0, 2), expand=False))
     console.print()
