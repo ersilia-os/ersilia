@@ -83,14 +83,19 @@ class InvalidModelIdentifierError(ErsiliaError):
     Exception raised for invalid model identifier errors.
     """
 
-    def __init__(self, model):
+    def __init__(self, model, suggestion=None):
         self.model = model
         self.message = "Model {0} was not found in the Ersilia Model Hub.".format(
             self.model
         )
-        self.hints = "Check the identifier or slug. Browse the models at {0}".format(
-            ERSILIA_CATALOG_URL
-        )
+        if suggestion:
+            self.hints = "Did you mean {0}?".format(suggestion)
+        else:
+            self.hints = (
+                "Check the identifier or slug. Browse the models at {0}".format(
+                    ERSILIA_CATALOG_URL
+                )
+            )
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
