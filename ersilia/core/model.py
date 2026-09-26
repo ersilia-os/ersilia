@@ -446,7 +446,14 @@ class ErsiliaModel(ErsiliaBase):
             self.logger.debug(
                 "Standard CSV Api runner is not amenable for this model, input and output"
             )
-            return None
+            from ..utils.exceptions_utils.cli_exceptions import RunNotSupportedError
+
+            if not scra.is_input_type_standardizable():
+                inputs = ", ".join(scra.input_type or []) or "unknown"
+                reason = f"it takes {inputs} inputs, which are not supported yet"
+            else:
+                reason = "its output columns are not described"
+            raise RunNotSupportedError(self.model_id, reason)
         self.logger.debug("Starting standard runner")
         result = scra.post(
             input=input,

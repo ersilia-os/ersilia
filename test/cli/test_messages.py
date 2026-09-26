@@ -127,7 +127,9 @@ def test_no_model_served_reads_the_same_everywhere(cmd, args, kind):
     )
 
 
-def test_run_rejects_unsupported_output_extension():
+def test_run_rejects_unsupported_output_extension(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "in.csv").write_text("smiles\nCCO\n")
     result = _invoke(run_cmd, ["-i", "in.csv", "-o", "out.txt"], model_id="eos42ez")
     assert result.output == "  ✖  The output file must end in .csv or .h5.\n"
     assert result.exit_code == 1
