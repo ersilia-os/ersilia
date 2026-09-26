@@ -12,6 +12,19 @@ are fetched from DockerHub by default.
    # check that the installation worked
    ersilia --help
 
+Find a model
+------------
+
+Every model in the Ersilia Model Hub has an identifier such as ``eos4e40``.
+Browse the models and their identifiers in the
+`Ersilia Model Hub catalog <https://catalog.ersilia.io>`_, or list them from
+the terminal:
+
+.. code-block:: bash
+
+   # list all models available in the Ersilia Model Hub
+   ersilia catalog --hub
+
 Command line
 ------------
 
