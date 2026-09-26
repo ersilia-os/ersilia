@@ -175,6 +175,12 @@ def confirm(question, default=False):
     bool
         The answer.
     """
+    if not sys.stdin.isatty():
+        # Nobody can answer (e.g. a script): use the default and say so,
+        # instead of waiting for input that never comes.
+        answer = "Yes" if default else "No"
+        echo(f"{question} {answer} (no terminal to ask; using the default).")
+        return default
     return click.confirm(f"  ▪  {question}", default=default, prompt_suffix=" ")
 
 

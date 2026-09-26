@@ -64,8 +64,10 @@ def test_shared_wordings(capsys):
     )
 
 
-@pytest.mark.parametrize("default, choices", [("n", "[y/N]"), ("Y", "[Y/n]")])
-def test_prompt_shows_its_real_default(monkeypatch, default, choices):
+@pytest.mark.parametrize(
+    "default, choices", [("n", "[y/N, No in 5 s]"), ("Y", "[Y/n, Yes in 5 s]")]
+)
+def test_prompt_shows_its_real_default_and_timeout(monkeypatch, default, choices):
     seen = {}
 
     def fake_input(prompt, default_answer, timeout):
@@ -73,9 +75,33 @@ def test_prompt_shows_its_real_default(monkeypatch, default, choices):
         return ""
 
     monkeypatch.setattr(terminal, "raw_input_with_timeout", fake_input)
+    monkeypatch.setattr("sys.stdin.isatty", lambda: True)
     answer = terminal.yes_no_input("Fetch it now? [Y/n]", default_answer=default)
     assert seen["prompt"] == f"  ▪  Fetch it now? {choices} "
     assert answer is (default == "Y")
+
+
+def test_prompt_timeout_says_what_was_chosen(monkeypatch, capsys):
+    monkeypatch.setattr(terminal, "raw_input_with_timeout", lambda **kw: None)
+    monkeypatch.setattr("sys.stdin.isatty", lambda: True)
+    assert terminal.yes_no_input("Fetch it now?", default_answer="n") is False
+    assert "No answer; continuing with No." in capsys.readouterr().out
+
+
+def test_prompts_without_a_terminal_use_the_default_at_once(monkeypatch, capsys):
+    import ersilia.utils.echo as echo_module
+
+    asked = []
+    monkeypatch.setattr(
+        terminal, "raw_input_with_timeout", lambda **kw: asked.append(1)
+    )
+    monkeypatch.setattr("sys.stdin.isatty", lambda: False)
+    assert terminal.yes_no_input("Fetch it now?", default_answer="n") is False
+    assert echo_module.confirm("Continue?", default=True) is True
+    assert asked == []
+    out = capsys.readouterr().out
+    assert "Fetch it now? No (no terminal to ask; using the default)." in out
+    assert "Continue? Yes (no terminal to ask; using the default)." in out
 
 
 def test_errors_show_message_and_hint_not_the_exception_block(capsys):
@@ -197,6 +223,7 @@ def test_confirm_prompts_look_like_other_lines(monkeypatch):
     monkeypatch.setattr(
         click, "confirm", lambda text, **kw: seen.update(text=text, **kw) or True
     )
+    monkeypatch.setattr("sys.stdin.isatty", lambda: True)
     assert echo_module.confirm("Continue?") is True
     assert seen["text"] == "  ▪  Continue?" and seen["prompt_suffix"] == " "
 
