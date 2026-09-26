@@ -8,7 +8,7 @@ import requests
 from ... import ErsiliaBase, throw_ersilia_exception
 from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...utils.docker import SimpleDocker
-from ...utils.echo import echo
+from ...utils.echo import echo, is_quiet
 from ...utils.exceptions_utils.pull_exceptions import (
     DockerConventionalPullError,
     DockerImageNotAvailableError,
@@ -541,6 +541,7 @@ class ModelPuller(ErsiliaBase):
                     BarColumn(),
                     TextColumn("{task.fields[detail]}"),
                     TimeElapsedColumn(),
+                    disable=is_quiet(),
                 ) as progress:
                     task = progress.add_task("", total=None, detail="")
 

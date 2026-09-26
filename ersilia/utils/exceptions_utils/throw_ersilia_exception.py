@@ -35,6 +35,36 @@ def user_message_and_hints(error):
     return (message or f"Unexpected error ({type(error).__name__})."), ""
 
 
+# In library mode (the Python API) errors are re-raised for the caller to
+# handle: nothing is printed and the process never exits.
+_library_mode = False
+
+
+def set_library_mode(enabled):
+    """
+    Make decorated functions re-raise errors instead of printing and exiting.
+
+    Parameters
+    ----------
+    enabled : bool
+        True for library (Python API) behaviour.
+    """
+    global _library_mode
+    _library_mode = bool(enabled)
+
+
+def is_library_mode():
+    """
+    Tell whether errors are re-raised for the caller.
+
+    Returns
+    -------
+    bool
+        True in library mode.
+    """
+    return _library_mode
+
+
 def _is_verbose():
     return logging.getLogger("ersilia").level == logging.DEBUG
 
@@ -80,6 +110,8 @@ def throw_ersilia_exception(exit=True):
                 try:
                     return await func(*args, **kwargs)
                 except Exception as error:
+                    if _library_mode:
+                        raise
                     _report(error, exit)
 
             return async_inner_function
@@ -89,6 +121,8 @@ def throw_ersilia_exception(exit=True):
             try:
                 return func(*args, **kwargs)
             except Exception as error:
+                if _library_mode:
+                    raise
                 _report(error, exit)
                 # FIXME: Enable automatic reporting of issues
                 # if query_yes_no("Would you like to report this error to Ersilia?"):

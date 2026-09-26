@@ -17,6 +17,34 @@ from ..utils.session import get_session_dir
 # column 5. The running spinner uses the same columns.
 console = Console()
 
+# When quiet, nothing is printed (used by the Python API unless verbose).
+_quiet = False
+
+
+def set_quiet(quiet):
+    """
+    Silence or restore all echo, spinner and progress output.
+
+    Parameters
+    ----------
+    quiet : bool
+        True to print nothing.
+    """
+    global _quiet
+    _quiet = bool(quiet)
+
+
+def is_quiet():
+    """
+    Tell whether output is silenced.
+
+    Returns
+    -------
+    bool
+        True if nothing should be printed.
+    """
+    return _quiet
+
 
 class Silencer(object):
     """
@@ -125,6 +153,8 @@ def echo(text, harmonize=True, **styles):
         Other click styles are ignored when harmonizing, so every message
         of a kind looks the same.
     """
+    if _quiet:
+        return
     if getattr(logger, "verbosity", 0) == 1:
         return
     err = styles.pop("err", False)
@@ -175,6 +205,9 @@ def confirm(question, default=False):
     bool
         The answer.
     """
+    if _quiet:
+        # Library mode (the Python API): never ask, take the default.
+        return default
     if not sys.stdin.isatty():
         # Nobody can answer (e.g. a script): use the default and say so,
         # instead of waiting for input that never comes.
@@ -197,6 +230,8 @@ def spinner(text, func, *args, done=None, **kwargs):
     done : str, optional
         The success line printed afterwards. Defaults to ``text``.
     """
+    if _quiet:
+        return func(*args, **kwargs)
     if getattr(logger, "verbosity", 0) == 1:
         return func(*args, **kwargs)
     with _running(text):
@@ -222,6 +257,8 @@ async def async_spinner(text, coro, done=None):
     done : str, optional
         The success line printed afterwards. Defaults to ``text``.
     """
+    if _quiet:
+        return await coro
     if getattr(logger, "verbosity", 0) == 1:
         return await coro
     with _running(text):

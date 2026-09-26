@@ -435,7 +435,8 @@ class ExampleGenerator(ErsiliaBase):
         file_name : str
             File name to save the examples.
         mode : str
-            Mode for generating examples. Can be "predefined", "deterministic", or "random".
+            Mode for generating examples: "random", "deterministic", or "curated"
+            (the model's own example inputs; "predefined" is accepted as an alias).
 
         Returns
         -------

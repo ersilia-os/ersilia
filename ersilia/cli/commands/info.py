@@ -1,5 +1,3 @@
-import csv
-import json
 import sys
 
 import rich_click as click
@@ -79,7 +77,7 @@ def info_cmd():
     def info(output):
         from ... import ErsiliaModel
         from ...core.session import Session
-        from ...hub.content.information import InformationDisplayer
+        from ...hub.content.information import InformationDisplayer, write_fields
         from ..messages import no_model_served, wrong_extension
 
         session = Session(config_json=None)
@@ -105,22 +103,7 @@ def info_cmd():
         mdl = ErsiliaModel(model_id, service_class=service_class)
         info = mdl.info()
         if output:
-            if output.endswith(".json"):
-                with open(output, "w") as f:
-                    json.dump(info, f, indent=4)
-            else:
-                with open(output, "w", newline="") as f:
-                    writer = csv.writer(f)
-                    writer.writerow(["Field", "Value"])
-                    for key, value in info.items():
-                        writer.writerow(
-                            [
-                                key,
-                                value
-                                if not isinstance(value, list)
-                                else ", ".join(str(v) for v in value),
-                            ]
-                        )
+            write_fields(info, output)
             echo(f"Model information saved to {output}.", fg="green")
         else:
             InformationDisplayer(info, serving=_serving(session, mdl)).echo()
