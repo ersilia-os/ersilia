@@ -61,10 +61,39 @@ class ErsiliaCommandGroup(RichGroup):
             _print_logo()
         return super().main(*args, **kwargs)
 
+    def invoke(self, ctx):
+        # Ctrl+C anywhere (including at a prompt) ends with one short line,
+        # never a traceback.
+        try:
+            return super().invoke(ctx)
+        except (KeyboardInterrupt, click.exceptions.Abort) as e:
+            import sys
+
+            from ..echo import echo
+
+            echo("Interrupted.", fg="yellow")
+            note = getattr(e, "ersilia_note", None) or getattr(
+                e.__context__, "ersilia_note", None
+            )
+            if note:
+                echo(note)
+            sys.exit(130)
+
+    def resolve_command(self, ctx, args):
+        # Suggest the closest command for a typo, e.g. 'ersilia server'.
+        name = args[0] if args else None
+        if name and not name.startswith("-") and self.get_command(ctx, name) is None:
+            import difflib
+
+            matches = difflib.get_close_matches(name, self.list_commands(ctx), n=1)
+            if matches:
+                ctx.fail(f"No such command '{name}'. Did you mean '{matches[0]}'?")
+        return super().resolve_command(ctx, args)
+
 
 @click.group(
     cls=ErsiliaCommandGroup,
-    context_settings={"show_default": True},
+    context_settings={"show_default": True, "help_option_names": ["-h", "--help"]},
     epilog="To learn more about a specific command, run: ersilia COMMAND --help",
 )
 @click.version_option(version=__version__)

@@ -147,7 +147,6 @@ def catalog_cmd():
         help="List models available locally or in the Ersilia Model Hub. By default shows locally fetched models in table format. Supports detailed metadata and individual model cards.\n\nFor a full list of models visit [bold cyan][link=https://catalog.ersilia.io/]https://catalog.ersilia.io/[/link][/bold cyan]",
     )
     @click.option(
-        "-h/-l",
         "--hub/--local",
         is_flag=True,
         default=False,
