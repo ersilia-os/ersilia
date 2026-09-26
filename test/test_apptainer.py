@@ -100,8 +100,9 @@ def test_model_without_image():
 class _Download:
     """A streamed response that sends ``data`` in two chunks."""
 
-    def __init__(self, data):
+    def __init__(self, data, status_code=200):
         self.data = data
+        self.status_code = status_code
 
     def __enter__(self):
         return self
@@ -136,6 +137,27 @@ def test_download_writes_the_image(sif_dir):
     assert not os.path.exists(path + ".part")
 
 
+def test_dropped_download_resumes_where_it_stopped(sif_dir):
+    data = b"0123456789" * 100
+    calls = []
+
+    def get(url, stream, timeout, headers):
+        calls.append(headers)
+        if not headers:
+            # The first connection closes after the first 400 bytes.
+            return _Download(data[:400])
+        start = int(headers["Range"].split("=")[1].rstrip("-"))
+        return _Download(data[start:], status_code=206)
+
+    with (
+        patch.object(apptainer, "remote_size", return_value=len(data)),
+        patch("ersilia.utils.apptainer.requests.get", side_effect=get),
+    ):
+        path = apptainer.download(MODEL_ID, "v1", verbose=True)
+    assert open(path, "rb").read() == data
+    assert calls == [{}, {"Range": "bytes=400-"}]
+
+
 def test_complete_image_is_not_downloaded_again(sif_dir):
     (sif_dir / "eos4e40_v1.sif").write_bytes(b"x" * 10)
     with (
@@ -149,7 +171,9 @@ def test_complete_image_is_not_downloaded_again(sif_dir):
 def test_incomplete_download_leaves_nothing_behind(sif_dir):
     with (
         patch.object(apptainer, "remote_size", return_value=1000),
-        patch("ersilia.utils.apptainer.requests.get", return_value=_Download(b"x" * 10)),
+        patch(
+            "ersilia.utils.apptainer.requests.get", return_value=_Download(b"x" * 10)
+        ),
     ):
         with pytest.raises(ApptainerDownloadError):
             apptainer.download(MODEL_ID, "v1", verbose=True)
@@ -289,7 +313,5 @@ def test_serve_without_the_image(_check, tmp_path):
 
 def test_not_available_unless_fetched_as_apptainer(tmp_path):
     assert not _service(tmp_path, None).is_available()
-    with patch(
-        "ersilia.setup.requirements.apptainer.shutil.which", return_value="/x"
-    ):
+    with patch("ersilia.setup.requirements.apptainer.shutil.which", return_value="/x"):
         assert _service(tmp_path, _info(tmp_path)).is_available()

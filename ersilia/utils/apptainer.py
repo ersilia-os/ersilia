@@ -14,6 +14,8 @@ from .exceptions_utils.cli_exceptions import (
 # bucket ever answers 200 for everything.
 MAX_VERSIONS = 50
 CHUNK_BYTES = 1 << 20
+# Attempts at downloading an image when the connection keeps dropping.
+MAX_ATTEMPTS = 5
 
 # Where ersilia-pack puts model bundles inside the image. The image's own
 # entrypoint points elsewhere, so the bundle is looked up instead.
@@ -151,9 +153,10 @@ def download(model_id, version, verbose=False):
     """
     Download a model's image, showing progress like a Docker pull.
 
-    Nothing is downloaded if a complete copy is already on disk. The file is
-    written under a temporary name and renamed at the end, so an interrupted
-    download never looks complete.
+    Nothing is downloaded if a complete copy is already on disk. If the
+    connection drops, the download resumes where it stopped (up to
+    ``MAX_ATTEMPTS`` times). The file is written under a temporary name and
+    renamed at the end, so an interrupted download never looks complete.
 
     Parameters
     ----------
@@ -187,10 +190,17 @@ def download(model_id, version, verbose=False):
     partial = path + ".part"
     echo("Downloading the Apptainer image (~{0:.0f} MB).".format(expected / 1e6))
     try:
-        with requests.get(sif_url(model_id, version), stream=True, timeout=60) as r:
-            r.raise_for_status()
-            with open(partial, "wb") as f:
-                _write_with_progress(r, f, expected, verbose)
+        with _progress(expected, verbose) as advance:
+            for attempt in range(1, MAX_ATTEMPTS + 1):
+                try:
+                    _download_rest(sif_url(model_id, version), partial, advance)
+                except _DROPPED as e:
+                    if attempt == MAX_ATTEMPTS:
+                        raise ApptainerDownloadError(
+                            model_id, "the connection kept dropping"
+                        ) from e
+                if os.path.getsize(partial) >= expected:
+                    break
         if os.path.getsize(partial) != expected:
             raise ApptainerDownloadError(model_id, "the download is incomplete")
         os.replace(partial, path)
@@ -202,31 +212,66 @@ def download(model_id, version, verbose=False):
     return path
 
 
-def _write_with_progress(response, handle, expected, verbose):
-    chunks = response.iter_content(chunk_size=CHUNK_BYTES)
-    if verbose:
-        for chunk in chunks:
-            handle.write(chunk)
-        return
-    from rich.progress import BarColumn, Progress, TextColumn, TimeElapsedColumn
+# Failures after which the download is resumed rather than given up.
+_DROPPED = (
+    requests.exceptions.ConnectionError,
+    requests.exceptions.ChunkedEncodingError,
+    requests.exceptions.Timeout,
+)
 
-    # The same columns as the Docker pull (hub/pull/pull.py).
-    with Progress(
-        TextColumn("    "),
-        BarColumn(),
-        TextColumn("{task.fields[detail]}"),
-        TimeElapsedColumn(),
-    ) as progress:
-        task = progress.add_task("", total=expected, detail="")
-        done = 0
-        for chunk in chunks:
-            handle.write(chunk)
-            done += len(chunk)
-            progress.update(
+
+def _download_rest(url, partial, advance):
+    # Append what is missing from the partial file, asking only for the rest.
+    done = os.path.getsize(partial) if os.path.exists(partial) else 0
+    headers = {"Range": "bytes={0}-".format(done)} if done else {}
+    with requests.get(url, stream=True, timeout=60, headers=headers) as r:
+        r.raise_for_status()
+        if done and r.status_code != 206:
+            # The server sent the whole file again: start over.
+            done = 0
+        with open(partial, "ab" if done else "wb") as f:
+            for chunk in r.iter_content(chunk_size=CHUNK_BYTES):
+                f.write(chunk)
+                done += len(chunk)
+                advance(done)
+
+
+class _progress(object):
+    # A progress bar with the same columns as the Docker pull (hub/pull/pull.py).
+    # Yields a function that takes the number of bytes downloaded so far.
+
+    def __init__(self, expected, verbose):
+        self.expected = expected
+        self.verbose = verbose
+        self.bar = None
+
+    def __enter__(self):
+        if self.verbose:
+            return lambda done: None
+        from rich.progress import BarColumn, Progress, TextColumn, TimeElapsedColumn
+
+        self.bar = Progress(
+            TextColumn("    "),
+            BarColumn(),
+            TextColumn("{task.fields[detail]}"),
+            TimeElapsedColumn(),
+        )
+        self.bar.__enter__()
+        task = self.bar.add_task("", total=self.expected, detail="")
+
+        def advance(done):
+            self.bar.update(
                 task,
                 completed=done,
-                detail="{0:.0f}/{1:.0f} MB".format(done / 1e6, expected / 1e6),
+                detail="{0:.0f}/{1:.0f} MB".format(done / 1e6, self.expected / 1e6),
             )
+
+        return advance
+
+    def __exit__(self, *args):
+        if self.bar is not None:
+            self.bar.__exit__(*args)
+        return False
 
 
 class SimpleApptainer(object):
