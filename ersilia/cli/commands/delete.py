@@ -47,21 +47,49 @@ def delete_cmd():
         echo(reason, fg="red")
         return False
 
+    def _close_if_served(model_ids):
+        # A model served in this terminal is closed before it is deleted, so
+        # its container and session record do not outlive it.
+        from ... import ErsiliaModel
+        from ...core.session import Session
+        from ...utils.session import deregister_model_session
+
+        session = Session(config_json=None)
+        served = _served_model()
+        if served not in model_ids:
+            return
+        mdl = ErsiliaModel(served, service_class=session.current_service_class())
+        mdl.close()
+        deregister_model_session(served)
+        echo(f"Model {served} closed.", fg="green")
+
+    def _served_model():
+        from ...core.session import Session
+
+        try:
+            return Session(config_json=None).current_model_id()
+        except Exception:
+            # A half-written session record: nothing usable is served.
+            return None
+
+    def _served_here(model_id):
+        return _served_model() == model_id
+
     def _delete_all():
         """Function to delete all locally available models"""
         from ...hub.content.catalog import ModelCatalog
 
         model_catalog = ModelCatalog()
         catalog_table = model_catalog.local()
-        if not catalog_table:
+        model_ids = []
+        if catalog_table and catalog_table.data:
+            idx = catalog_table.columns.index("Identifier")
+            model_ids = [row[idx] for row in catalog_table.data]
+        # Remains of models not fully fetched or deleted go too.
+        model_ids += [m for m in model_catalog.leftovers if m not in model_ids]
+        if not model_ids:
             echo("No models are available locally.", fg="yellow")
             return
-        local_models = catalog_table.data
-        idx = catalog_table.columns.index("Identifier")
-        if not local_models:
-            echo("No models are available locally.", fg="yellow")
-            return
-        model_ids = [row[idx] for row in local_models]
         echo(
             "This will delete {0} model{1}: {2}.".format(
                 len(model_ids), "" if len(model_ids) == 1 else "s", ", ".join(model_ids)
@@ -71,22 +99,22 @@ def delete_cmd():
         if not confirm("Continue?", default=False):
             echo("Aborted. No models were deleted.")
             return
+        _close_if_served(model_ids)
         deleted_count = 0
-        for model_row in local_models:
-            model_id = model_row[idx]
+        for model_id in model_ids:
             try:
                 if _delete_model_by_id(model_id):
                     deleted_count += 1
             except Exception as e:
                 echo(f"Model {model_id} could not be deleted: {e}", fg="red")
-        if deleted_count == len(local_models):
+        if deleted_count == len(model_ids):
             echo(
                 f"Deleted {deleted_count} model{'' if deleted_count == 1 else 's'}.",
                 fg="green",
             )
         else:
             echo(
-                f"Deleted {deleted_count} of {len(local_models)} models.",
+                f"Deleted {deleted_count} of {len(model_ids)} models.",
                 fg="red",
             )
             sys.exit(1)
@@ -107,6 +135,14 @@ def delete_cmd():
             from ... import ModelBase
 
             model_id = ModelBase(model).model_id
+            if _served_here(model_id):
+                if not confirm(
+                    f"Model {model_id} is being served in this terminal. Close and delete it?",
+                    default=False,
+                ):
+                    echo(f"Aborted. Model {model_id} was not deleted.")
+                    return
+                _close_if_served([model_id])
             if _delete_model_by_id(model_id) is False:
                 sys.exit(1)
         else:

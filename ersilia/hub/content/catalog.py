@@ -14,11 +14,6 @@ from ...default import (
 )
 from ...utils.conda import SimpleConda
 from ...utils.docker import SimpleDocker
-from ...utils.exceptions_utils.catalog_exceptions import (
-    LocalCatalogDestBundleModelsMismatch,
-    LocalCatalogIdleModelsInConda,
-    LocalCatalogIdleModelsInDocker,
-)
 from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ...utils.identifiers.model import ModelIdentifier
 from .card import ModelCard
@@ -244,6 +239,8 @@ class ModelCatalog(ErsiliaBase):
         self.task = task.lower() if task else None
         self.conda = SimpleConda(config_json=self.config_json)
         self.docker = SimpleDocker()
+        # Models found only in part (e.g. a failed fetch), set by local().
+        self.leftovers = []
 
     def _is_eos(self, s):
         if self.mi.is_valid(s):
@@ -387,28 +384,24 @@ class ModelCatalog(ErsiliaBase):
         self.logger.debug(f"Listing models from {self._bundles_dir}")
         models_in_bundles = sorted(self._model_ids_in_bundles_dir())
         models_in_dest = sorted(self._model_ids_in_dest_dir())
-        if models_in_bundles != models_in_dest:
-            self.logger.error(
-                f"Models in bundles dir ({self._bundles_dir}): {models_in_bundles}"
+        complete = set(models_in_bundles) & set(models_in_dest)
+        leftovers = set(models_in_bundles) ^ set(models_in_dest)
+        if leftovers:
+            self.logger.warning(
+                f"Models in only one of {self._bundles_dir} and {self._dest_dir}: {sorted(leftovers)}"
             )
-            self.logger.error(
-                f"Models in dest dir ({self._dest_dir}): {models_in_dest}"
+        idle_in_conda = set(self._model_ids_in_conda()) - complete
+        if idle_in_conda:
+            self.logger.warning(f"Idle models in conda envs: {sorted(idle_in_conda)}")
+        idle_in_docker = set(self._model_ids_in_docker()) - complete
+        if idle_in_docker:
+            self.logger.warning(
+                f"Idle models in docker images: {sorted(idle_in_docker)}"
             )
-            self.logger.error("The two directories are not in sync.")
-            raise LocalCatalogDestBundleModelsMismatch(
-                models_in_dest, models_in_bundles
-            )
-        models_in_conda = sorted(self._model_ids_in_conda())
-        idle_models_in_conda = sorted(set(models_in_conda) - set(models_in_bundles))
-        if len(idle_models_in_conda) > 0:
-            self.logger.error(f"Idle models in conda envs: {idle_models_in_conda}")
-            raise LocalCatalogIdleModelsInConda(idle_models_in_conda)
-        models_in_docker = sorted(self._model_ids_in_docker())
-        idle_models_in_docker = sorted(set(models_in_docker) - set(models_in_bundles))
-        if len(idle_models_in_docker) > 0:
-            self.logger.error(f"Idle models in docker images: {idle_models_in_docker}")
-            raise LocalCatalogIdleModelsInDocker(idle_models_in_docker)
-        for model_id in models_in_bundles:
+        self.leftovers = sorted(
+            m for m in leftovers | idle_in_conda | idle_in_docker if self._is_eos(m)
+        )
+        for model_id in sorted(complete):
             if not self._is_eos(model_id):
                 continue
             card = mc.get(model_id)

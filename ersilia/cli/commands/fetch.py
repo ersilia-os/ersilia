@@ -151,6 +151,7 @@ def fetch_cmd():
         if fetch_result.fetch_success:
             if fetch_result.reason == "Model fetched successfully":
                 echo(f"Model {model_id} fetched.", fg="green")
+                echo(f"Serve it with 'ersilia serve {model_id}'.")
         elif fetch_result.reason == ALREADY_FETCHED:
             echo(f"Model {model_id} is already fetched.", fg="yellow")
             echo(

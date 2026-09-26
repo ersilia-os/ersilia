@@ -142,20 +142,31 @@ def _invoke(cmd_factory, args, model_id=None):
         return CliRunner().invoke(cmd_factory(), args)
 
 
-@pytest.mark.parametrize(
-    "cmd, args, kind",
-    [
-        (close_cmd, [], "⚠"),
-        (info_cmd, [], "✖"),
-        (run_cmd, ["-i", "in.csv", "-o", "out.csv"], "✖"),
-    ],
-)
-def test_no_model_served_reads_the_same_everywhere(cmd, args, kind):
-    result = _invoke(cmd, args)
+def test_no_model_served_reads_the_same_everywhere():
+    result = _invoke(run_cmd, ["-i", "in.csv", "-o", "out.csv"])
     assert result.output == (
-        f"  {kind}  No model is being served in this terminal.\n"
+        "  ✖  No model is being served in this terminal.\n"
         "  ▪  Serve one first with 'ersilia serve MODEL'.\n"
     )
+    assert result.exit_code == 1
+
+
+def test_info_without_a_model_points_to_the_card():
+    result = _invoke(info_cmd, [])
+    assert result.output == (
+        "  ✖  No model is being served in this terminal.\n"
+        "  ▪  Serve one first with 'ersilia serve MODEL'.\n"
+        "  ▪  To read a model's card without serving it, use 'ersilia catalog --card MODEL'.\n"
+    )
+    assert result.exit_code == 1
+
+
+def test_close_without_a_model_has_nothing_to_do():
+    result = _invoke(close_cmd, [])
+    assert result.output == (
+        "  ⚠  No model is being served in this terminal, so there is nothing to close.\n"
+    )
+    assert result.exit_code == 0
 
 
 def test_run_rejects_unsupported_output_extension(tmp_path, monkeypatch):

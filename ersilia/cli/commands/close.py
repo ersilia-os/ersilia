@@ -8,7 +8,7 @@ def close_cmd():
     """
     Closes the current session of the served model.
 
-    This command allows users to close the current session and clean up any resources.
+    This command stops the model served in this terminal and cleans up its resources.
 
     Returns
     -------
@@ -19,7 +19,7 @@ def close_cmd():
     --------
     .. code-block:: console
 
-        Close the current session:
+        Close the model served in this terminal:
         $ ersilia close
     """
 
@@ -32,13 +32,15 @@ def close_cmd():
         from ... import ErsiliaModel
         from ...core.session import Session
         from ...utils.session import deregister_model_session
-        from ..messages import no_model_served
 
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         if model_id is None:
-            no_model_served(fg="yellow")
+            echo(
+                "No model is being served in this terminal, so there is nothing to close.",
+                fg="yellow",
+            )
             return
         if service_class in ("pulled_docker", "docker"):
             from ...setup.requirements.docker import DockerRequirement

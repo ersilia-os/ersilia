@@ -85,7 +85,9 @@ def info_cmd():
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         if model_id is None:
-            no_model_served()
+            no_model_served(
+                hint="To read a model's card without serving it, use 'ersilia catalog --card MODEL'."
+            )
             return
         if output and not output.endswith((".json", ".csv")):
             wrong_extension([".json", ".csv"], err=True)

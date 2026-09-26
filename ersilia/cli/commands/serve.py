@@ -125,6 +125,7 @@ def serve_cmd():
     @click.option(
         "--access",
         "-a",
+        type=click.Choice(["public", "private"]),
         default=None,
         show_default="unset",
         help=(
@@ -133,6 +134,7 @@ def serve_cmd():
         ),
     )
     @click.option(
+        "--nearest-neighbors",
         "--nearest-neigbors",
         "-nn",
         "nearest_neighbors",
@@ -148,9 +150,9 @@ def serve_cmd():
     @click.option(
         "--max-cache-memory-frac",
         "max_memory",
-        type=click.FLOAT,
+        type=click.FloatRange(0, 1, min_open=True),
         default=None,
-        show_default="0.5",
+        show_default="0.3",
         help=("Maximum fraction (0.0-1.0) of system RAM the Redis cache may use."),
     )
     def serve(
@@ -282,6 +284,9 @@ def serve_cmd():
             version=version_label(info.get("docker_tag"), info.get("card")),
         )
 
+        echo(
+            "Run it with 'ersilia run -i INPUT.csv -o OUTPUT.csv', and stop it with 'ersilia close'."
+        )
         logger.success(f"Model {model} is successfully served!")
 
     return serve

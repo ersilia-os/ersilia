@@ -122,6 +122,21 @@ def _print_model_card(metadata_json: str):
     _console.print(Panel(table, title=title, border_style="cyan"))
 
 
+def _report_leftovers(model_ids):
+    # Remains of models that were not fully fetched or deleted.
+    echo(
+        "Some models were not fully fetched or deleted: {0}.".format(
+            ", ".join(model_ids)
+        ),
+        fg="yellow",
+    )
+    echo(
+        "Remove them with {0}.".format(
+            " and ".join(f"'ersilia delete {m}'" for m in model_ids)
+        )
+    )
+
+
 def catalog_cmd():
     """
     Creates the catalog command for the CLI.
@@ -139,8 +154,11 @@ def catalog_cmd():
     --------
     .. code-block:: console
 
-    Display model card for a specific model ID and show catalog in json format:
-    $ ersilia catalog --card <model_id> --as-json
+    Display the model card of a model:
+    $ ersilia catalog --card <model_id>
+
+    Save the Hub catalog, with more details, as JSON:
+    $ ersilia catalog --hub --more -o catalog.json
     """
 
     @ersilia_cli.command(
@@ -268,6 +286,8 @@ def catalog_cmd():
                     report_error(e)
             else:
                 catalog_table = mc.local()
+                if mc.leftovers:
+                    _report_leftovers(mc.leftovers)
                 if not catalog_table.data:
                     echo("No models are available locally.", fg="yellow")
                     echo("Fetch one with 'ersilia fetch MODEL'.")

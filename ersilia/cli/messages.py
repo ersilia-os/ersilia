@@ -68,7 +68,7 @@ class ModelNotInLocal(object):
 # Shared wordings, so a situation reads the same in every command.
 
 
-def no_model_served(fg="red"):
+def no_model_served(fg="red", hint=None):
     """
     Tell the user that no model is served in this terminal.
 
@@ -77,9 +77,13 @@ def no_model_served(fg="red"):
     fg : str, optional
         "red" when the command cannot continue, "yellow" when nothing needed
         to be done (e.g. ``ersilia close``).
+    hint : str, optional
+        What to do instead of serving a model, shown after the usual hint.
     """
     echo("No model is being served in this terminal.", fg=fg)
     echo("Serve one first with 'ersilia serve MODEL'.")
+    if hint:
+        echo(hint)
     if fg == "red":
         sys.exit(1)
 
