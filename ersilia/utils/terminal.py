@@ -5,11 +5,7 @@ import shutil
 import subprocess
 from collections import namedtuple
 
-from rich import box
 from rich.console import Console
-from rich.padding import Padding
-from rich.panel import Panel
-from rich.table import Table
 
 try:
     from inputimeout import TimeoutOccurred, inputimeout
@@ -236,19 +232,15 @@ def print_serve_summary(
     """
     Print a rich summary table for a served model.
     """
-    table = Table(
-        show_header=False,
-        box=box.SIMPLE,
-        expand=False,
-        pad_edge=False,
-    )
+    from .echo import fields_table, print_panel
 
     def on_off(enabled, text=None):
         if enabled:
             return f"[green]{text or 'Enabled'}[/green]"
         return "[dim]Disabled[/dim]"
 
-    table.add_row("Model", f"[bold]{model_id}[/bold] [dim]({slug})[/dim]")
+    table = fields_table()
+    table.add_row("Model", f"{model_id} [dim]({slug})[/dim]")
     if version:
         table.add_row("Version", version)
     table.add_row("URL", f"[link={url}][cyan]{url}[/cyan][/link]")
@@ -263,7 +255,7 @@ def print_serve_summary(
         all_apis = ["run"]
     if "info" not in all_apis:
         all_apis.append("info")
-    table.add_row("Endpoints", "\n".join(all_apis))
+    table.add_row("Endpoints", ", ".join(all_apis))
 
     table.add_row("Store", on_off(store_stat != "Disabled", store_stat))
     table.add_row("Local cache", on_off(enable_cache))
@@ -271,14 +263,4 @@ def print_serve_summary(
         "Tracking",
         on_off(tracking_enabled, f"Enabled ({tracking_use_case})"),
     )
-
-    panel = Panel(
-        table,
-        title="[bold green]Model served[/bold green]",
-        expand=False,
-        border_style="green",
-    )
-    # Indented like the "  ✓  " lines printed before it.
-    console.print()
-    console.print(Padding(panel, (0, 0, 0, 2), expand=False))
-    console.print()
+    print_panel(table, title="Model served")

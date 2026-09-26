@@ -1,6 +1,4 @@
-import rich_click as click
-
-from .. import echo
+from ..echo import confirm, echo
 from . import ersilia_cli
 
 
@@ -16,7 +14,7 @@ def uninstall_cmd():
             "This will remove the Ersilia folder with all fetched models, all Ersilia Docker images and conda environments, and the ersilia Python package.",
             fg="yellow",
         )
-        if not click.confirm("  ▪  Continue?", default=False):
+        if not confirm("Continue?", default=False):
             echo("Aborted. Nothing was removed.")
             return
         from ...utils.uninstall import Uninstaller

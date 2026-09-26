@@ -267,21 +267,12 @@ class ModelPuller(ErsiliaBase):
                     self.logger.warning("Conventional pull failed, trying linux/amd64")
                     await _run_pull(force_pull_command)
             else:
-                from rich.progress import (
-                    BarColumn,
-                    MofNCompleteColumn,
-                    Progress,
-                    TextColumn,
-                    TimeElapsedColumn,
-                )
+                from rich.progress import MofNCompleteColumn, TextColumn
 
-                with Progress(
-                    # Indented to line up under the text of the line above.
-                    TextColumn("    "),
-                    BarColumn(),
-                    MofNCompleteColumn(),
-                    TextColumn("layers"),
-                    TimeElapsedColumn(),
+                from ...utils.echo import progress_bar
+
+                with progress_bar(
+                    MofNCompleteColumn(), TextColumn("[dim]layers")
                 ) as progress:
                     task = progress.add_task("", total=None)
 

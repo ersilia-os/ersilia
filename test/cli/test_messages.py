@@ -156,3 +156,94 @@ def test_user_commands_have_no_emoji_in_messages():
         if emoji.search(line)
     ]
     assert offenders == []
+
+
+def _terminal_console(width=100):
+    from io import StringIO
+
+    from rich.console import Console
+
+    import ersilia.utils.echo as echo_module
+
+    return Console(
+        file=StringIO(),
+        force_terminal=True,
+        color_system="standard",
+        width=width,
+        theme=echo_module.THEME,
+        highlight=False,
+    )
+
+
+def _has_bold(ansi):
+    return any("1" in code.split(";") for code in re.findall(r"\x1b\[([0-9;]*)m", ansi))
+
+
+def test_running_spinner_sits_in_the_icon_column():
+    import ersilia.utils.echo as echo_module
+
+    c = _terminal_console()
+    c.print(echo_module._SpinnerLine("Starting model eos3b5e"))
+    line = re.sub(r"\x1b\[[0-9;]*m", "", c.file.getvalue()).rstrip("\n")
+    assert re.fullmatch(r"  [⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]  Starting model eos3b5e", line)
+    assert not _has_bold(c.file.getvalue())
+
+
+def test_panels_are_indented_and_never_bold(monkeypatch):
+    import ersilia.utils.echo as echo_module
+    from ersilia.hub.content.information import print_card_panel
+    from ersilia.utils.terminal import print_serve_summary
+
+    c = _terminal_console()
+    monkeypatch.setattr(echo_module, "console", c)
+    print_serve_summary(
+        "eos3b5e",
+        "molecular-weight",
+        "http://0.0.0.0:5000",
+        -1,
+        "pulled_docker",
+        "/s",
+        ["run"],
+        "Disabled",
+        False,
+        False,
+        None,
+        version="latest",
+    )
+    print_card_panel(
+        {"Identifier": "eos3b5e", "Title": "Molecular weight", "Task": "Annotation"}
+    )
+    out = c.file.getvalue()
+    assert not _has_bold(out)
+    plain = re.sub(r"\x1b\[[0-9;]*m|\x1b\]8;[^\x1b]*\x1b\\", "", out)
+    borders = [l for l in plain.splitlines() if l.strip().startswith(("╭", "│", "╰"))]
+    assert borders and all(l.startswith("  ") and l[2] in "╭│╰" for l in borders)
+
+
+def test_progress_bar_lines_up_under_the_text():
+    from rich.progress import MofNCompleteColumn
+
+    import ersilia.utils.echo as echo_module
+
+    c = _terminal_console()
+    bar = echo_module.progress_bar(MofNCompleteColumn())
+    bar.live.console = c
+    task = bar.add_task("", total=3)
+    bar.update(task, completed=3)
+    c.print(bar.get_renderable())
+    line = re.sub(r"\x1b\[[0-9;]*m", "", c.file.getvalue()).splitlines()[0]
+    assert line.startswith("     ━") and "3/3" in line
+    assert not _has_bold(c.file.getvalue())
+
+
+def test_confirm_prompts_look_like_other_lines(monkeypatch):
+    import click
+
+    import ersilia.utils.echo as echo_module
+
+    seen = {}
+    monkeypatch.setattr(
+        click, "confirm", lambda text, **kw: seen.update(text=text, **kw) or True
+    )
+    assert echo_module.confirm("Continue?") is True
+    assert seen["text"] == "  ▪  Continue?" and seen["prompt_suffix"] == " "
