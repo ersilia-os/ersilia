@@ -291,3 +291,28 @@ def test_failed_serve_does_not_leave_a_session_record(monkeypatch):
     session.open.assert_called_once()
     session.close.assert_called_once()
     mdl.autoservice.close.assert_called_once()
+
+
+def test_serving_the_running_model_again_just_says_so(session_here, monkeypatch):
+    from unittest.mock import MagicMock, patch
+
+    from click.testing import CliRunner
+
+    from ersilia.cli.commands.serve import serve_cmd
+
+    _record(session_here, "eos3b5e", "-1 http://0.0.0.0:5000 eos3b5e_1234abcd")
+    import ersilia.core.session as core_session
+
+    monkeypatch.setattr(core_session, "container_is_running", lambda name: True)
+    monkeypatch.setattr(
+        "ersilia.utils.tmp_pid_file",
+        lambda model_id: os.path.join(session_here, f"{model_id}.pid"),
+    )
+    with (
+        patch("ersilia.ModelBase", return_value=MagicMock(model_id="eos3b5e")),
+        patch("ersilia.core.model.ErsiliaModel") as model,
+    ):
+        result = CliRunner().invoke(serve_cmd(), ["molecular-weight"])
+    assert "Model eos3b5e is already being served in this terminal." in result.output
+    assert "It is available at http://127.0.0.1:5000." in result.output
+    model.assert_not_called()
