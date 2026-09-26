@@ -54,14 +54,19 @@ def test_echo_can_print_to_stderr(capsys):
     assert captured.out == "" and captured.err == "  ✖  Bad.\n"
 
 
-def test_shared_wordings(capsys):
-    no_model_served()
-    wrong_extension([".json", ".csv"])
+def test_shared_wordings_are_errors_that_exit_1(capsys):
+    with pytest.raises(SystemExit) as e:
+        no_model_served()
+    assert e.value.code == 1
+    with pytest.raises(SystemExit) as e:
+        wrong_extension([".json", ".csv"])
+    assert e.value.code == 1
     assert capsys.readouterr().out == (
         "  ✖  No model is being served in this terminal.\n"
         "  ▪  Serve one first with 'ersilia serve MODEL'.\n"
         "  ✖  The output file must end in .json or .csv.\n"
     )
+    no_model_served(fg="yellow")  # a warning (e.g. close): no exit
 
 
 @pytest.mark.parametrize(

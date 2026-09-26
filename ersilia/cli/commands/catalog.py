@@ -205,7 +205,7 @@ def catalog_cmd():
                 fg="red",
                 err=True,
             )
-            return
+            sys.exit(1)
         elif card and model:
             try:
                 mc = ModelCard()
@@ -217,7 +217,7 @@ def catalog_cmd():
                         fg="red",
                         err=True,
                     )
-                    return
+                    sys.exit(1)
                 if output:
                     if not output.endswith((".json", ".csv")):
                         wrong_extension([".json", ".csv"], err=True)

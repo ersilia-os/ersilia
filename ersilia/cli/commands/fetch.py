@@ -1,4 +1,5 @@
 import asyncio
+import sys
 
 import rich_click as click
 
@@ -123,5 +124,6 @@ def fetch_cmd():
         else:
             echo(f"Model {model_id} could not be fetched.", fg="red")
             echo(fetch_result.reason)
+            sys.exit(1)
 
     return fetch

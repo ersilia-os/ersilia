@@ -1,3 +1,5 @@
+import sys
+
 import rich_click as click
 
 from ..echo import confirm, echo
@@ -41,8 +43,8 @@ def delete_cmd():
                 f"Model {model_id} is not available locally, so there is nothing to delete.",
                 fg="yellow",
             )
-        else:
-            echo(reason, fg="red")
+            return None
+        echo(reason, fg="red")
         return False
 
     def _delete_all():
@@ -87,6 +89,7 @@ def delete_cmd():
                 f"Deleted {deleted_count} of {len(local_models)} models.",
                 fg="red",
             )
+            sys.exit(1)
 
     # Example usage:
     # 1. Delete a specific model: ersilia delete {MODEL}
@@ -104,7 +107,8 @@ def delete_cmd():
             from ... import ModelBase
 
             model_id = ModelBase(model).model_id
-            _delete_model_by_id(model_id)
+            if _delete_model_by_id(model_id) is False:
+                sys.exit(1)
         else:
             raise click.UsageError(
                 "Give a model to delete, or use --all to delete every local model."
