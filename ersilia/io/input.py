@@ -422,8 +422,7 @@ class ExampleGenerator(ErsiliaBase):
                     for r in data:
                         writer.writerow([r])
                 return True
-            else:
-                return False
+        return False
 
     def example(self, n_samples, file_name, mode):
         """
@@ -443,7 +442,7 @@ class ExampleGenerator(ErsiliaBase):
         list or str
             List of example data or file content if saved to file.
         """
-        if mode.lower() == "predefined":
+        if mode.lower() in ("curated", "predefined"):
             try_predefined = True
         else:
             try_predefined = False
@@ -470,6 +469,8 @@ class ExampleGenerator(ErsiliaBase):
                 self.logger.info(
                     "No predefined examples found for the model. Generating random examples."
                 )
+                if n_samples is None:
+                    n_samples = 5
             self.logger.debug("Randomly sampling input")
             return self.random_example(n_samples=n_samples, file_name=file_name)
 
