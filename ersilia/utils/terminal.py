@@ -5,7 +5,11 @@ import shutil
 import subprocess
 from collections import namedtuple
 
+from rich import box
 from rich.console import Console
+from rich.padding import Padding
+from rich.panel import Panel
+from rich.table import Table
 
 try:
     from inputimeout import TimeoutOccurred, inputimeout
@@ -16,6 +20,7 @@ except:
 from ..default import _CONDA_BOOTSTRAP, SERVICE_CLASS_LABELS, VERBOSE_FILE
 from ..utils.logging import make_temp_dir
 from ..utils.session import get_session_dir
+from .ports import normalize_connect_url
 
 console = Console()
 
@@ -232,23 +237,27 @@ def print_serve_summary(
     """
     Print a rich summary table for a served model.
     """
-    from .echo import fields_table, link, print_panel
-    from .ports import normalize_connect_url
+    table = Table(
+        show_header=False,
+        box=box.SIMPLE,
+        expand=False,
+        pad_edge=False,
+    )
 
     def on_off(enabled, text=None):
         if enabled:
             return f"[green]{text or 'Enabled'}[/green]"
         return "[dim]Disabled[/dim]"
 
-    table = fields_table()
-    table.add_row("Model", f"{model_id} [dim]({slug})[/dim]")
+    table.add_row("Model", f"[bold]{model_id}[/bold] [dim]({slug})[/dim]")
     if version:
         table.add_row("Version", version)
     # The server listens on 0.0.0.0, which browsers cannot open: show the
     # local address instead, and link its interactive API docs.
     local_url = normalize_connect_url(url).rstrip("/")
-    table.add_row("URL", link(local_url))
-    table.add_row("Docs", link(f"{local_url}/docs"))
+    docs_url = f"{local_url}/docs"
+    table.add_row("URL", f"[link={local_url}][cyan]{local_url}[/cyan][/link]")
+    table.add_row("Docs", f"[link={docs_url}][cyan]{docs_url}[/cyan][/link]")
     if str(pid) != "-1":
         table.add_row("PID", str(pid))
     table.add_row("Service", SERVICE_CLASS_LABELS.get(srv, srv))
@@ -260,7 +269,7 @@ def print_serve_summary(
         all_apis = ["run"]
     if "info" not in all_apis:
         all_apis.append("info")
-    table.add_row("Endpoints", ", ".join(all_apis))
+    table.add_row("Endpoints", "\n".join(all_apis))
 
     table.add_row("Store", on_off(store_stat != "Disabled", store_stat))
     table.add_row("Local cache", on_off(enable_cache))
@@ -268,4 +277,14 @@ def print_serve_summary(
         "Tracking",
         on_off(tracking_enabled, f"Enabled ({tracking_use_case})"),
     )
-    print_panel(table, title="Model served")
+
+    panel = Panel(
+        table,
+        title="[bold green]Model served[/bold green]",
+        expand=False,
+        border_style="green",
+    )
+    # Indented like the "  ✓  " lines printed before it.
+    console.print()
+    console.print(Padding(panel, (0, 0, 0, 2), expand=False))
+    console.print()

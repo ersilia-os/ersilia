@@ -519,15 +519,27 @@ class StandardCSVRunApi(ErsiliaBase):
 
             return path
 
-        from rich.progress import MofNCompleteColumn
+        from rich.progress import (
+            BarColumn,
+            MofNCompleteColumn,
+            Progress,
+            TextColumn,
+            TimeElapsedColumn,
+        )
 
-        from ..utils.echo import echo, progress_bar
+        from ..utils.echo import echo
 
         echo(
             f"Running model {self.model_id} on {total:,} input{'s' if total != 1 else ''}."
         )
 
-        with progress_bar(MofNCompleteColumn()) as progress:
+        with Progress(
+            # Indented to line up under the text of the line above.
+            TextColumn("    "),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TimeElapsedColumn(),
+        ) as progress:
             task = progress.add_task("", total=total)
 
             for i in range(0, total, batch_size):
