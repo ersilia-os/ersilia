@@ -5,7 +5,7 @@ import re
 from .. import ErsiliaBase, throw_ersilia_exception
 from ..default import DOCKER_INFO_FILE
 from ..hub.content.slug import Slug
-from ..hub.fetch import DONE_TAG, STATUS_FILE
+from ..hub.fetch import is_fetched
 from ..utils.exceptions_utils.exceptions import InvalidModelIdentifierError
 from ..utils.paths import get_metadata_from_base_dir
 
@@ -130,25 +130,9 @@ class ModelBase(ErsiliaBase):
             return True
 
     def _is_available_locally_from_status(self):
-        fetch_status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
-        if not os.path.exists(fetch_status_file):
-            self.logger.debug("No status file exists")
-            is_fetched = False
-        else:
-            with open(fetch_status_file, "r") as f:
-                status = json.load(f)
-            is_fetched = status[DONE_TAG]
-        self.logger.debug("Is fetched: {0}".format(is_fetched))
-        return is_fetched
-
-    def _is_available_locally_from_dockerhub(self):
-        from_dockerhub_file = os.path.join(
-            self._dest_dir, self.model_id, DOCKER_INFO_FILE
-        )
-        if not os.path.exists(from_dockerhub_file):
-            return False
-        else:
-            return True
+        fetched = is_fetched(os.path.join(self._dest_dir, self.model_id))
+        self.logger.debug("Is fetched: {0}".format(fetched))
+        return fetched
 
     def is_available_locally(self):
         """
@@ -160,12 +144,9 @@ class ModelBase(ErsiliaBase):
         bool
             True if the model is available locally, False otherwise.
         """
-        bs = self._is_available_locally_from_status()
-        bd = self._is_available_locally_from_dockerhub()
-        if bs or bd:
-            return True
-        else:
-            return False
+        # A folder left by a failed fetch has no finished status, so it does
+        # not count as fetched.
+        return self._is_available_locally_from_status()
 
     def was_fetched_from_dockerhub(self):
         """

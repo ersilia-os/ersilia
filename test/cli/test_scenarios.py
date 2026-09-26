@@ -75,3 +75,31 @@ def test_a_failed_start_removes_its_container():
     ):
         svc.serve()
     stop.assert_called_once_with([svc.container_name])
+
+
+def test_a_half_fetched_folder_is_not_a_fetched_model(tmp_path):
+    from ersilia.hub.fetch import is_fetched
+
+    assert not is_fetched(str(tmp_path))
+    (tmp_path / "status.json").write_text('{"done": false}')
+    assert not is_fetched(str(tmp_path))
+    (tmp_path / "status.json").write_text("{broken")
+    assert not is_fetched(str(tmp_path))
+    (tmp_path / "status.json").write_text('{"done": true}')
+    assert is_fetched(str(tmp_path))
+
+
+def test_a_missing_image_is_reported_not_pulled_again():
+    import docker
+
+    from ersilia.utils.exceptions_utils.cli_exceptions import ImageMissingError
+
+    svc = PulledDockerImageService.__new__(PulledDockerImageService)
+    svc.model_id, svc.port, svc._port_given = "eos3b5e", 8080, False
+    svc.image_name, svc._mem_gb = "ersiliaos/eos3b5e:latest", None
+    svc.logger, svc.client = MagicMock(), MagicMock()
+    svc._create_docker_network = lambda: None
+    svc.client.images.get.side_effect = docker.errors.ImageNotFound("gone")
+    with pytest.raises(ImageMissingError, match="Docker image of model eos3b5e"):
+        svc.serve()
+    svc.client.containers.run.assert_not_called()

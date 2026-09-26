@@ -1250,6 +1250,13 @@ class PulledDockerImageService(BaseServing):
 
         if self._port_given and is_port_in_use(self.port):
             raise PortInUseError(self.port)
+        try:
+            self.client.images.get(self.image_name)
+        except docker.errors.ImageNotFound:
+            # Docker would otherwise pull the image again without a word.
+            from ..utils.exceptions_utils.cli_exceptions import ImageMissingError
+
+            raise ImageMissingError(self.model_id, self.image_name)
 
         self.logger.debug(f"Running container with env: {env!r}")
         try:
