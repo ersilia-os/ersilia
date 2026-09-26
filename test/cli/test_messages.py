@@ -247,3 +247,26 @@ def test_confirm_prompts_look_like_other_lines(monkeypatch):
     )
     assert echo_module.confirm("Continue?") is True
     assert seen["text"] == "  ▪  Continue?" and seen["prompt_suffix"] == " "
+
+
+def test_serve_panel_links_a_browsable_url_and_the_docs(monkeypatch):
+    import ersilia.utils.echo as echo_module
+    from ersilia.utils.terminal import print_serve_summary
+
+    c = _terminal_console()
+    monkeypatch.setattr(echo_module, "console", c)
+    print_serve_summary(
+        "eos3b5e",
+        "molecular-weight",
+        "http://0.0.0.0:5000",
+        -1,
+        "pulled_docker",
+        "/s",
+        ["run"],
+        "Disabled",
+        False,
+        False,
+        None,
+    )
+    targets = re.findall(r"\x1b\]8;[^;]*;([^\x1b]+)\x1b\\", c.file.getvalue())
+    assert targets == ["http://127.0.0.1:5000", "http://127.0.0.1:5000/docs"]
