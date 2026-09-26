@@ -6,7 +6,10 @@ are fetched from DockerHub by default.
 
 .. code-block:: bash
 
+   # install the Ersilia CLI and Python package
    pip install ersilia
+
+   # check that the installation worked
    ersilia --help
 
 Command line
@@ -17,10 +20,19 @@ when you're done:
 
 .. code-block:: bash
 
-   ersilia fetch eos3b5e
-   ersilia serve eos3b5e
+   # download the model (antibiotic activity prediction, Stokes et al. 2020)
+   ersilia fetch eos4e40
+
+   # start the model server in this terminal
+   ersilia serve eos4e40
+
+   # generate 5 example inputs (SMILES) for the model
    ersilia example -n 5 -o input.csv
+
+   # run predictions and save them to a CSV file
    ersilia run -i input.csv -o output.csv
+
+   # stop the model server
    ersilia close
 
 See :doc:`cli` for all commands and options.
@@ -32,9 +44,15 @@ Python
 
    from ersilia.api import Model
 
-   model = Model("eos3b5e")
+   # create a handle for the model
+   model = Model("eos4e40")
+
+   # download the model
    model.fetch()
+
+   # serve the model inside the block; it is closed automatically at the end
    with model:
+       # run predictions on a list of SMILES; returns a pandas DataFrame
        df = model.run(["CCO", "c1ccccc1"])
 
 See :doc:`python-api` for the full API. For installation details and user
