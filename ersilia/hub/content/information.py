@@ -260,7 +260,7 @@ def print_card_panel(card, origin=(), skip=()):
     """
     from rich.text import Text
 
-    from ...utils.echo import fields_table, print_panel
+    from ...utils.echo import fields_table, link, print_panel
 
     def fmt(field, value):
         if value is None:
@@ -273,7 +273,7 @@ def print_card_panel(card, origin=(), skip=()):
         ):
             value = f"{value} MB"
         if value.startswith(("http://", "https://")):
-            return f"[link={value}][cyan]{value}[/cyan][/link]"
+            return link(value)
         return value
 
     table = fields_table()

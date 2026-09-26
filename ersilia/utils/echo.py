@@ -209,6 +209,25 @@ def progress_bar(*columns):
     )
 
 
+def link(url, text=None):
+    """
+    Rich markup for a clickable link, styled like every other link.
+
+    Parameters
+    ----------
+    url : str
+        The link target.
+    text : str, optional
+        The text shown. Defaults to the URL.
+
+    Returns
+    -------
+    str
+        Markup for rich tables and panels.
+    """
+    return f"[link={url}][cyan underline]{text or url}[/cyan underline][/link]"
+
+
 def fields_table():
     """
     A two-column table of fields and values, for panels.

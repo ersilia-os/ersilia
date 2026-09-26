@@ -232,7 +232,8 @@ def print_serve_summary(
     """
     Print a rich summary table for a served model.
     """
-    from .echo import fields_table, print_panel
+    from .echo import fields_table, link, print_panel
+    from .ports import normalize_connect_url
 
     def on_off(enabled, text=None):
         if enabled:
@@ -243,7 +244,11 @@ def print_serve_summary(
     table.add_row("Model", f"{model_id} [dim]({slug})[/dim]")
     if version:
         table.add_row("Version", version)
-    table.add_row("URL", f"[link={url}][cyan]{url}[/cyan][/link]")
+    # The server listens on 0.0.0.0, which browsers cannot open: show the
+    # local address instead, and link its interactive API docs.
+    local_url = normalize_connect_url(url).rstrip("/")
+    table.add_row("URL", link(local_url))
+    table.add_row("Docs", link(f"{local_url}/docs"))
     if str(pid) != "-1":
         table.add_row("PID", str(pid))
     table.add_row("Service", SERVICE_CLASS_LABELS.get(srv, srv))
