@@ -7,6 +7,7 @@ import validators
 
 from .... import EOS, ErsiliaBase, throw_ersilia_exception
 from ....default import (
+    APPTAINER_INFO_FILE,
     DOCKER_INFO_FILE,
     IS_FETCHED_FROM_HOSTED_FILE,
     SERVICE_CLASS_FILE,
@@ -77,6 +78,39 @@ class ModelRegisterer(ErsiliaBase):
         self.logger.debug("Writing service class pulled_docker {0}".format(file_name))
         with open(file_name, "w") as f:
             f.write("pulled_docker")
+
+    def register_from_apptainer(self, data: dict):
+        """
+        Register the model as fetched as an Apptainer image.
+
+        Parameters
+        ----------
+        data : dict
+            What the Apptainer service needs to serve the model: ``version``,
+            ``sif_path``, ``bundle_path``, ``binary`` and ``use_unshare``.
+        """
+        data = dict(data, apptainer=True)
+        self.logger.debug(
+            "Registering model {0} in the file system".format(self.model_id)
+        )
+        path = os.path.join(EOS, "dest", self.model_id)
+        if os.path.exists(path):
+            shutil.rmtree(path)
+        os.mkdir(path)
+        with open(os.path.join(path, APPTAINER_INFO_FILE), "w") as f:
+            json.dump(data, f)
+        folder_name = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+        path = os.path.join(EOS, "repository", self.model_id)
+        if os.path.exists(path):
+            shutil.rmtree(path)
+        path = os.path.join(path, folder_name)
+        os.makedirs(path)
+        with open(os.path.join(path, APPTAINER_INFO_FILE), "w") as f:
+            json.dump(data, f)
+        file_name = os.path.join(path, SERVICE_CLASS_FILE)
+        self.logger.debug("Writing service class apptainer {0}".format(file_name))
+        with open(file_name, "w") as f:
+            f.write("apptainer")
 
     def register_not_from_dockerhub(self):
         """
@@ -178,7 +212,11 @@ class ModelRegisterer(ErsiliaBase):
             json.dump(data, f)
 
     async def register(
-        self, is_from_dockerhub: bool = False, is_from_hosted: bool = False, **kwargs
+        self,
+        is_from_dockerhub: bool = False,
+        is_from_hosted: bool = False,
+        apptainer: dict = None,
+        **kwargs,
     ):
         """
         Register the model based on its source.
@@ -191,6 +229,9 @@ class ModelRegisterer(ErsiliaBase):
             Indicates if the model is from DockerHub.
         is_from_hosted : bool, optional
             Indicates if the model is from a hosted URL.
+        apptainer : dict, optional
+            If given, the model is an Apptainer image; see
+            ``register_from_apptainer``.
 
         Raises
         ------
@@ -206,6 +247,11 @@ class ModelRegisterer(ErsiliaBase):
             )
             await registerer.register(is_from_dockerhub=True)
         """
+        if apptainer is not None:
+            self.register_from_apptainer(apptainer)
+            self.register_not_from_dockerhub()
+            self.register_not_from_hosted()
+            return
         if is_from_dockerhub and is_from_hosted:
             raise ValueError("Model cannot be from both DockerHub and hosted")
         elif is_from_dockerhub and not is_from_hosted:
