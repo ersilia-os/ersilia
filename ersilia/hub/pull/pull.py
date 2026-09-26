@@ -206,7 +206,7 @@ class ModelPuller(ErsiliaBase):
         if self.is_available_locally():
             if self.overwrite is None:
                 do_pull = yes_no_input(
-                    "Requested image {0} is available locally. Do you still want to fetch it? [Y/n]".format(
+                    "The image of model {0} is already available locally. Download it again?".format(
                         self.model_id
                     ),
                     default_answer=PULL_IMAGE,
@@ -229,8 +229,11 @@ class ModelPuller(ErsiliaBase):
             verbose = getattr(self.logger, "verbosity", 0) == 1
 
             remote_size = self._get_remote_image_size_mb() if not verbose else None
-            if remote_size:
-                echo(f"Download size: ~{remote_size:.0f} MB (compressed)")
+            if not verbose:
+                size_text = (
+                    f" (~{remote_size:.0f} MB compressed)" if remote_size else ""
+                )
+                echo(f"Downloading the Docker image{size_text}.")
 
             pull_command = (
                 f"docker pull {DOCKERHUB_ORG}/{self.model_id}:{self.docker_tag}"
@@ -264,7 +267,6 @@ class ModelPuller(ErsiliaBase):
                     self.logger.warning("Conventional pull failed, trying linux/amd64")
                     await _run_pull(force_pull_command)
             else:
-                from rich.console import Console as _Console
                 from rich.progress import (
                     BarColumn,
                     MofNCompleteColumn,
@@ -272,12 +274,13 @@ class ModelPuller(ErsiliaBase):
                     TextColumn,
                     TimeElapsedColumn,
                 )
-                from rich.text import Text as _Text
 
                 with Progress(
-                    TextColumn("[bold cyan]  Downloading layers"),
+                    # Indented to line up under the text of the line above.
+                    TextColumn("    "),
                     BarColumn(),
                     MofNCompleteColumn(),
+                    TextColumn("layers"),
                     TimeElapsedColumn(),
                 ) as progress:
                     task = progress.add_task("", total=None)
@@ -309,7 +312,7 @@ class ModelPuller(ErsiliaBase):
                                 model=self.model_id
                             ) from e
 
-                _Console().print(_Text("  ✓  Pulled Docker image", style="green"))
+                echo("Docker image downloaded.", fg="green")
 
             size = self._get_size_of_local_docker_image_in_mb()
             if size:
@@ -332,7 +335,7 @@ class ModelPuller(ErsiliaBase):
         if self.is_available_locally():
             if self.overwrite is None:
                 do_pull = yes_no_input(
-                    "Requested image {0} is available locally. Do you still want to fetch it? [Y/n]".format(
+                    "The image of model {0} is already available locally. Download it again?".format(
                         self.model_id
                     ),
                     default_answer=PULL_IMAGE,

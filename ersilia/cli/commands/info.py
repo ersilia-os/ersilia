@@ -34,25 +34,20 @@ def info_cmd():
         from ... import ErsiliaModel
         from ...core.session import Session
         from ...hub.content.information import InformationDisplayer
+        from ..messages import no_model_served, wrong_extension
 
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         if model_id is None:
-            echo("No model is currently served.", fg="red")
+            no_model_served()
+            return
+        if output and not output.endswith((".json", ".csv")):
+            wrong_extension([".json", ".csv"], err=True)
             return
         mdl = ErsiliaModel(model_id, service_class=service_class)
         info = mdl.info()
         if output:
-            if not (output.endswith(".json") or output.endswith(".csv")):
-                click.echo(
-                    click.style(
-                        "Error: output file must have a .json or .csv extension.",
-                        fg="red",
-                    ),
-                    err=True,
-                )
-                return
             if output.endswith(".json"):
                 with open(output, "w") as f:
                     json.dump(info, f, indent=4)
@@ -69,6 +64,8 @@ def info_cmd():
                                 else ", ".join(str(v) for v in value),
                             ]
                         )
-            echo(f"Model information saved to {output}", fg="green")
+            echo(f"Model information saved to {output}.", fg="green")
         else:
             InformationDisplayer(info).echo()
+
+    return info

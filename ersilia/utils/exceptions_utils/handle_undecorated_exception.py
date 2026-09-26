@@ -22,7 +22,7 @@ def handle_undecorated_exception(E):
     text = ":triangular_flag: Something went wrong with Ersilia...\n\n"
     echo(text)
     echo("Error message:\n")
-    echo(":prohibited: " + str(E), fg="red")
+    echo(str(E), fg="red")
     text = "If this error message is not helpful, open an issue at:\n"
     text += " - https://github.com/ersilia-os/ersilia\n"
     text += "Or feel free to reach out to us at:\n"

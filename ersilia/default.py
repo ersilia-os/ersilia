@@ -46,6 +46,16 @@ REDIS_DATA_VOLUME = "redis_data_volume"
 API_SCHEMA_FILE = "api_schema.json"
 MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
+# How each service class is named to users.
+SERVICE_CLASS_LABELS = {
+    "pulled_docker": "DockerHub",
+    "docker": "Docker (local)",
+    "conda": "Conda",
+    "venv": "Virtual environment",
+    "system": "System Python",
+    "hosted": "Hosted",
+    "dummy": "Not available",
+}
 DEFAULT_REDIS_MEMORY_USAGE_FRACTION = 0.3
 FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"

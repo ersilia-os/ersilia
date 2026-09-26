@@ -12,6 +12,7 @@ from ...default import (
     MODEL_SOURCE_FILE,
     PACKMODE_FILE,
     SERVICE_CLASS_FILE,
+    SERVICE_CLASS_LABELS,
 )
 from ...utils.paths import get_metadata_from_base_dir
 from .columns_information import ColumnsInformation
@@ -179,15 +180,7 @@ class InformationDisplayer(ErsiliaBase):
         from rich.table import Table
         from rich.text import Text
 
-        _service_class_labels = {
-            "pulled_docker": "DockerHub",
-            "docker": "Docker (local)",
-            "conda": "Conda",
-            "venv": "Virtual environment",
-            "system": "System Python",
-            "hosted": "Hosted",
-            "dummy": "Dummy",
-        }
+        _service_class_labels = SERVICE_CLASS_LABELS
 
         console = Console()
         card = self.info_data.get("card") or {}

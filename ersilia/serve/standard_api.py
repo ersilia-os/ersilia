@@ -2,7 +2,6 @@ import asyncio
 import csv
 import importlib
 import json
-import math
 import os
 import time
 from collections import Counter
@@ -520,7 +519,6 @@ class StandardCSVRunApi(ErsiliaBase):
 
             return path
 
-        from rich.console import Console
         from rich.progress import (
             BarColumn,
             MofNCompleteColumn,
@@ -529,18 +527,20 @@ class StandardCSVRunApi(ErsiliaBase):
             TimeElapsedColumn,
         )
 
-        Console().print(f"[bold cyan]Running model {self.model_id}[/bold cyan]")
+        from ..utils.echo import echo
 
-        num_batches = math.ceil(total / batch_size)
-        label = f"Running {total} input{'s' if total != 1 else ''}"
+        echo(
+            f"Running model {self.model_id} on {total:,} input{'s' if total != 1 else ''}."
+        )
 
         with Progress(
-            TextColumn("[bold cyan]{task.description}"),
+            # Indented to line up under the text of the line above.
+            TextColumn("    "),
             BarColumn(),
             MofNCompleteColumn(),
             TimeElapsedColumn(),
         ) as progress:
-            task = progress.add_task(label, total=num_batches)
+            task = progress.add_task("", total=total)
 
             for i in range(0, total, batch_size):
                 batch_items = input_data[i : i + batch_size]
@@ -601,7 +601,7 @@ class StandardCSVRunApi(ErsiliaBase):
                     on_batch(i, batch_results)
                 else:
                     overall_results[i : i + len(batch_results)] = batch_results
-                progress.advance(task)
+                progress.advance(task, len(batch_items))
 
         if all_replacements:
             path = write_replacements_txt(all_replacements)

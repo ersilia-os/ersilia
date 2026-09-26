@@ -36,27 +36,12 @@ def run_cmd():
         if (type(input) == str and not input.endswith(".csv")) or is_quoted_list(
             json.dumps(input)
         ):
-            echo(
-                "Input must be a single-column CSV file. String and list inputs are not supported.",
-                fg="red",
-                bold=True,
-            )
+            echo("The input must be a CSV file with one column of inputs.", fg="red")
             sys.exit(1)
-        if output is not None and not any(
-            [output.endswith(ext) for ext in (".csv", ".h5")]
-        ):
-            echo(
-                "This output type is not allowed in Ersilia. Valid output types are .csv or .h5",
-                fg="red",
-                bold=True,
-            )
-            sys.exit(1)
-        if output is None:
-            echo(
-                "Please specify a valid output file with extension .csv or .h5",
-                fg="red",
-                bold=True,
-            )
+        from ..messages import wrong_extension
+
+        if output is None or not output.endswith((".csv", ".h5")):
+            wrong_extension([".csv", ".h5"])
             sys.exit(1)
 
     # Example usage: ersilia run -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
@@ -104,20 +89,19 @@ def run_cmd():
         output_source = session.current_output_source()
 
         if model_id is None:
-            echo(
-                "No model seems to be served. Please run 'ersilia serve ...' before.",
-                fg="red",
-            )
+            from ..messages import no_model_served
+
+            no_model_served()
             return
 
         output_basename = os.path.basename(output)
         output_model_ids = re.findall(r"eos[0-9][a-z0-9]{3}", output_basename)
         if output_model_ids and output_model_ids[0] != model_id:
             echo(
-                f"Output filename contains model identifier '{output_model_ids[0]}' but the served model is '{model_id}'. Please use a correct output filename.",
+                f"The output file name mentions {output_model_ids[0]}, but the served model is {model_id}.",
                 fg="red",
-                bold=True,
             )
+            echo("Use an output file name that matches the served model.")
             sys.exit(1)
 
         mdl = ErsiliaModel(
@@ -132,10 +116,6 @@ def run_cmd():
             for result in mdl.run(input=input, output=output, batch_size=batch_size):
                 if result is not None:
                     iter_values.append(result)
-        echo(
-            f"✅ Output successfully written in {output} file!",
-            fg="green",
-            bold=False,
-        )
+        echo(f"Output written to {output}.", fg="green")
 
     return run

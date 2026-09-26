@@ -21,15 +21,21 @@ class Uninstaller(object):
 
     def __init__(self):
         self.docker_cleaner = SimpleDocker()
+        self.failed = []
+
+    def _step(self, label, func):
+        # The spinner prints the step as done or failed; the error goes below it.
+        try:
+            spinner(label, func)
+        except Exception as e:
+            self.failed.append(label[0].lower() + label[1:])
+            echo(str(e))
 
     def _uninstall_ersilia_package(self):
         def _run():
             subprocess.run(["pip", "uninstall", "-y", "ersilia"], check=True)
 
-        try:
-            spinner("Uninstalling Ersilia pip package", _run)
-        except subprocess.CalledProcessError as e:
-            echo(f"Failed to uninstall Ersilia pip package: {e}", fg="red")
+        self._step("Uninstalling the ersilia Python package", _run)
 
     def _directories(self):
         def _run():
@@ -37,10 +43,7 @@ class Uninstaller(object):
                 if os.path.exists(dir):
                     shutil.rmtree(dir)
 
-        try:
-            spinner(f"Removing EOS directory {EOS}", _run)
-        except Exception as e:
-            echo(f"Failed to remove EOS directory: {e}", fg="red")
+        self._step(f"Removing the Ersilia folder ({EOS})", _run)
 
     def _conda(self):
         sc = SimpleConda()
@@ -62,25 +65,26 @@ class Uninstaller(object):
             except Exception as e:
                 logger.error(f"Failed to remove conda environment ersilia: {e}")
 
-        try:
-            spinner("Removing model conda environments", _run)
-        except Exception as e:
-            echo(f"Failed to remove conda environments: {e}", fg="red")
+        self._step("Removing the model conda environments", _run)
 
     def uninstall(self):
         """
         Main uninstallation method.
         """
-        try:
-            spinner(
-                "Removing Ersilia Docker images",
-                self.docker_cleaner.cleanup_ersilia_images,
-            )
-        except Exception as e:
-            echo(f"Failed to remove Docker images: {e}", fg="red")
-
+        self._step(
+            "Removing the Ersilia Docker images",
+            self.docker_cleaner.cleanup_ersilia_images,
+        )
         self._uninstall_ersilia_package()
         self._conda()
         self._directories()
 
-        echo("Ersilia uninstalled successfully.", fg="green")
+        if self.failed:
+            echo(
+                "Ersilia was not fully uninstalled. Failed steps: {0}.".format(
+                    "; ".join(self.failed)
+                ),
+                fg="red",
+            )
+        else:
+            echo("Ersilia uninstalled.", fg="green")

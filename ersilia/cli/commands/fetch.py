@@ -86,7 +86,7 @@ def fetch_cmd():
         import nest_asyncio
 
         from ... import ModelBase
-        from ...hub.fetch.fetch import ModelFetcher
+        from ...hub.fetch.fetch import ALREADY_FETCHED, ModelFetcher
 
         nest_asyncio.apply()
 
@@ -114,12 +114,14 @@ def fetch_cmd():
 
         if fetch_result.fetch_success:
             if fetch_result.reason == "Model fetched successfully":
-                echo(f"Model {model_id} fetched successfully.", fg="green")
-        else:
+                echo(f"Model {model_id} fetched.", fg="green")
+        elif fetch_result.reason == ALREADY_FETCHED:
+            echo(f"Model {model_id} is already fetched.", fg="yellow")
             echo(
-                f"Model {model_id} failed to fetch: {fetch_result.reason}",
-                fg="red",
-                bold=True,
+                f"To fetch it again, delete it first with 'ersilia delete {model_id}'."
             )
+        else:
+            echo(f"Model {model_id} could not be fetched.", fg="red")
+            echo(fetch_result.reason)
 
     return fetch

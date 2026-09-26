@@ -22,21 +22,25 @@ def close_cmd():
     """
 
     # Example usage: ersilia close {MODEL}
-    @ersilia_cli.command(short_help="Close model", help="Close model")
+    @ersilia_cli.command(
+        short_help="Close the served model",
+        help="Stop the model served in this terminal and free its resources.",
+    )
     def close():
         from ... import ErsiliaModel
         from ...core.session import Session
         from ...utils.session import deregister_model_session
+        from ..messages import no_model_served
 
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         if model_id is None:
-            echo("No model was served", fg="yellow")
+            no_model_served(fg="yellow")
             return
         mdl = ErsiliaModel(model_id, service_class=service_class)
         mdl.close()
         deregister_model_session(model_id)
-        echo(":no_entry: Model {0} closed".format(mdl.model_id), fg="green")
+        echo("Model {0} closed.".format(mdl.model_id), fg="green")
 
     return close

@@ -41,9 +41,9 @@ def serve_cmd():
         if read_store and not write_store:
             return "Enabled: Read Only"
         if not read_store and write_store:
-            return "Enabled: Writter Only"
+            return "Enabled: Write Only"
         if read_store and write_store:
-            return "Enabled: Reader & Writter "
+            return "Enabled: Read & Write"
         return "Disabled"
 
     @ersilia_cli.command(
@@ -167,6 +167,9 @@ def serve_cmd():
     ):
         from ... import ErsiliaModel
         from ...core.session import Session
+        from ...utils.exceptions_utils.exceptions import (
+            ModelNotAvailableLocallyError,
+        )
         from ...utils.logging import logger
         from ...utils.session import (
             deregister_model_session,
@@ -180,17 +183,14 @@ def serve_cmd():
         already_served = existing_session.get("model_id")
         if already_served:
             echo(
-                f"A model is already being served in this terminal: {already_served}.",
+                f"Model {already_served} is already being served in this terminal.",
                 fg="yellow",
             )
             if not click.confirm(
-                f"Close {already_served} and serve {model} instead?",
+                f"  ▪  Close {already_served} and serve {model} instead?",
                 default=True,
             ):
-                echo(
-                    f"Aborted. {already_served} is still being served.",
-                    fg="yellow",
-                )
+                echo(f"Aborted. {already_served} is still being served.")
                 sys.exit(0)
             # Actually close the previously served model so its Docker
             # container and session are shut down before serving the new one.
@@ -200,41 +200,44 @@ def serve_cmd():
             )
             previous_mdl.close()
             deregister_model_session(already_served)
-            echo(f":no_entry: Model {already_served} closed", fg="green")
+            echo(f"Model {already_served} closed.", fg="green")
         sess.register_store_status(
             read_store, write_store, access, nearest_neighbors, enable_cache
         )
         store_stat = store_status(read_store, write_store)
         if not is_installed("isaura") and (read_store or write_store):
             echo(
-                "Isaura is not installed! Please install isaura in your env by running simply \n>> pip install git+https://github.com/ersilia-os/isaura.git.\nTo start all isaura services, run this command >> isaura engine -s.",
-                fg="red",
+                "Isaura is needed to use the store, but it is not installed.", fg="red"
+            )
+            echo(
+                "Install it with 'pip install git+https://github.com/ersilia-os/isaura.git'\nand start its services with 'isaura engine -s'."
             )
             logger.error(
                 "Isaura is not installed! Please install isaura in your env [pip install git+https://github.com/ersilia-os/isaura.git]! To start all isaura services, execute >> isaura engine -s. "
             )
             sys.exit(1)
         if write_store and access is None:
-            echo(
-                "You need to specifiy the access as [public or private] to write to store!",
-                fg="red",
-            )
-            logger.error(
-                "You need to specifiy the access as [public or private] to write to store!"
-            )
+            echo("Writing to the store needs an access level.", fg="red")
+            echo("Add '--access public' or '--access private'.")
+            logger.error("Writing to the store needs --access public or private.")
             sys.exit(1)
 
-        mdl = ErsiliaModel(
-            model,
-            output_source=None,
-            preferred_port=port,
-            cache=enable_cache,
-            maxmemory=max_memory,
-            read_store=read_store,
-            write_store=write_store,
-            access=access,
-            nearest_neighbors=nearest_neighbors,
-        )
+        try:
+            mdl = ErsiliaModel(
+                model,
+                output_source=None,
+                preferred_port=port,
+                cache=enable_cache,
+                maxmemory=max_memory,
+                read_store=read_store,
+                write_store=write_store,
+                access=access,
+                nearest_neighbors=nearest_neighbors,
+            )
+        except ModelNotAvailableLocallyError as e:
+            echo(f"Model {e.model} is not available locally.", fg="red")
+            echo(f"Fetch it first with 'ersilia fetch {e.model}'.")
+            sys.exit(1)
         if not mdl.is_valid():
             ModelNotFound(mdl).echo()
 
@@ -245,7 +248,8 @@ def serve_cmd():
 
         mdl.serve(track_runs=track)
         if mdl.url is None:
-            echo("No URL found. Service unsuccessful.", fg="red")
+            echo(f"Model {mdl.model_id} could not be started.", fg="red")
+            echo("Run the command again with 'ersilia -v serve' to see the details.")
             return
 
         register_model_session(mdl.model_id, mdl.session._session_dir)

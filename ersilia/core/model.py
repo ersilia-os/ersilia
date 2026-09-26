@@ -29,8 +29,8 @@ from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
 from ..utils.csvfile import CsvDataLoader
-from ..utils.echo import spinner
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
+from ..utils.exceptions_utils.exceptions import ModelNotAvailableLocallyError
 from ..utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
 from ..utils.exceptions_utils.tracking_exceptions import TrackingNotSupportedError
 from ..utils.hdf5 import Hdf5DataLoader
@@ -178,7 +178,7 @@ class ErsiliaModel(ErsiliaBase):
             self.logger.info("Model is not available locally")
             try:
                 do_fetch = yes_no_input(
-                    "Requested model {0} is not available locally. Do you want to fetch it? [Y/n]".format(
+                    "Model {0} is not available locally. Fetch it now?".format(
                         self.model_id
                     ),
                     default_answer="n",
@@ -192,9 +192,7 @@ class ErsiliaModel(ErsiliaBase):
                 )
                 asyncio.run(mf.fetch(self.model_id))
             else:
-                raise Exception(
-                    "Model is not fetched, please fetch the model before serving it."
-                )
+                raise ModelNotAvailableLocallyError(self.model_id)
 
         self.api_schema = ApiSchema(
             model_id=self.model_id, config_json=self.config_json
@@ -693,7 +691,7 @@ class ErsiliaModel(ErsiliaBase):
                     use_case=track_runs,
                 )
         self.setup()
-        spinner("Closing existing sessions of a model", self.close)
+        self.close()
         self.session.open(model_id=self.model_id, track_runs=self.track)
         self.autoservice.serve()
         self.session.register_service_class(self.autoservice._service_class)
