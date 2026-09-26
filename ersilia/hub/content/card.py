@@ -57,17 +57,18 @@ class RepoMetadataFile(ErsiliaBase):
         )
 
     def _get_file_content_from_github(self, org, branch):
-        json_url = self._github_json_url(org, branch)
-        r = requests.get(json_url)
+        from ...utils.exceptions_utils.cli_exceptions import HubUnreachableError
+
+        try:
+            r = requests.get(self._github_json_url(org, branch), timeout=15)
+            if r.status_code != 404:
+                return json.loads(r.content)
+            r = requests.get(self._github_yaml_url(org, branch), timeout=15)
+        except requests.exceptions.RequestException as e:
+            raise HubUnreachableError() from e
         if r.status_code == 404:
-            yaml_url = self._github_yaml_url(org, branch)
-            r = requests.get(yaml_url)
-            if r.status_code == 404:
-                return None
-            else:
-                return yaml.safe_load(r.content)
-        else:
-            return json.loads(r.content)
+            return None
+        return yaml.safe_load(r.content)
 
     def get_json_or_yaml_file(self, org: str = None, branch: str = None) -> dict:
         """
@@ -268,7 +269,10 @@ class ReadmeCard(ErsiliaBase):
                     return None
                 text = "--".join(text.split("--")[1:])
             else:
-                r = requests.get(self._raw_readme_url(model_id))
+                try:
+                    r = requests.get(self._raw_readme_url(model_id), timeout=15)
+                except requests.exceptions.RequestException:
+                    return None
                 if r.status_code != 200:
                     return None
                 text = r.text

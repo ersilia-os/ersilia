@@ -363,10 +363,23 @@ class ModelPuller(ErsiliaBase):
         bool
             True if the image is available in DockerHub, False otherwise.
         """
+        from ...utils.exceptions_utils.cli_exceptions import ImagePullError
+
         url = "https://hub.docker.com/v2/repositories/{0}/{1}/tags/{2}".format(
             DOCKERHUB_ORG, self.model_id, self.docker_tag
         )
-        response = requests.get(url)
+        try:
+            response = requests.get(url, timeout=15)
+        except requests.exceptions.RequestException as e:
+            raise ImagePullError(
+                self.model_id,
+                "Docker Hub could not be reached",
+                "Check your internet connection and try again.",
+            ) from e
+        if response.status_code == 429:
+            raise pull_error(self.model_id, self.docker_tag, "toomanyrequests")
+        if response.status_code == 404 and self.docker_tag != DOCKERHUB_LATEST_TAG:
+            raise pull_error(self.model_id, self.docker_tag, "manifest unknown")
         if response.status_code == 200:
             self.logger.debug(
                 "The docker image {0} exists in DockerHub".format(self.image_name)

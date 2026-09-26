@@ -498,7 +498,10 @@ class GitHubDownloader(object):
         url = "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
             org, repo, branch, repo_path
         )
-        response = requests.get(url)
+        try:
+            response = requests.get(url, timeout=15)
+        except requests.exceptions.RequestException:
+            return False
         if response.status_code != 200:
             return False
         with open(destination, "wb") as f:
