@@ -174,9 +174,11 @@ class ErsiliaModel(ErsiliaBase):
                     ),
                     default_answer="n",
                 )
-            except:
-                self.logger.debug("Unable to capture user input. Fetching anyway.")
-                do_fetch = True
+            except (EOFError, OSError):
+                # No way to ask (e.g. no terminal): do not start a download
+                # the user did not agree to. Ctrl+C is not caught here.
+                self.logger.debug("Unable to capture user input. Not fetching.")
+                do_fetch = False
             if do_fetch:
                 from ..hub.fetch.fetch import ModelFetcher
 
