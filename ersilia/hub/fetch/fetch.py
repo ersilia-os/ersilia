@@ -303,6 +303,14 @@ class ModelFetcher(ErsiliaBase):
                 return FetchResult(
                     fetch_success=True, reason="Model fetched successfully"
                 )
+            if self.force_from_hosted and not self.model_hosted_fetcher.is_available(
+                model_id=model_id
+            ):
+                # A hosted URL was asked for: do not silently build locally.
+                return FetchResult(
+                    fetch_success=False,
+                    reason=f"The hosted model at {self.hosted_url} could not be reached. Check the URL.",
+                )
             do_hosted = self._decide_if_use_hosted(model_id=model_id)
             if do_hosted:
                 self.logger.debug("Fetching from hosted")
@@ -315,6 +323,11 @@ class ModelFetcher(ErsiliaBase):
                 self.logger.debug("Overwriting")
                 self.overwrite = True
             self.logger.debug("Fetching in your system, not from DockerHub")
+            if not (self.force_from_github or self.force_from_s3 or self.repo_path):
+                echo(
+                    "Installing from GitHub instead (needs conda, can take 10+ minutes).",
+                    fg="yellow",
+                )
             self._fetch_not_from_dockerhub(model_id=model_id)
             return FetchResult(fetch_success=True, reason="Model fetched successfully")
         else:
