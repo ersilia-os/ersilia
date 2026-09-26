@@ -265,3 +265,17 @@ def test_serve_panel_links_a_browsable_url_and_the_docs(monkeypatch):
     )
     targets = re.findall(r"\x1b\]8;[^;]*;([^\x1b]+)\x1b\\", c.file.getvalue())
     assert targets == ["http://127.0.0.1:5000", "http://127.0.0.1:5000/docs"]
+
+
+def test_options_accept_dashes_or_underscores_without_listing_both():
+    from ersilia.cli.commands import ersilia_cli
+    from ersilia.cli.commands.fetch import fetch_cmd
+
+    fetch_cmd()
+    both = CliRunner().invoke(
+        ersilia_cli, ["fetch", "eos3b5e", "--from-github", "--from_s3"]
+    )
+    text = " ".join(re.sub(r"\x1b\[[0-9;]*m|[│╭╮╰╯─]", " ", both.output).split())
+    assert "Choose only one source; got --from_github , --from_s3" in text
+    help_text = CliRunner().invoke(ersilia_cli, ["fetch", "-h"]).output
+    assert "--from_github" in help_text and "--from-github" not in help_text
