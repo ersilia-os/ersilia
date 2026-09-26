@@ -13,6 +13,7 @@ This documentation provides comprehensive information on the API's functionaliti
    :maxdepth: 2
    :caption: Contents:
 
+   source/getting-started.rst
    source/python-api.rst
    source/cli.rst
    source/package.rst
