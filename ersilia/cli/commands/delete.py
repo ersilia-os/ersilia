@@ -1,6 +1,6 @@
 import rich_click as click
 
-from .. import echo
+from ..echo import confirm, echo
 from . import ersilia_cli
 
 
@@ -66,7 +66,7 @@ def delete_cmd():
             ),
             fg="yellow",
         )
-        if not click.confirm("  ▪  Continue?", default=False):
+        if not confirm("Continue?", default=False):
             echo("Aborted. No models were deleted.")
             return
         deleted_count = 0

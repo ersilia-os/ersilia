@@ -1,124 +1,44 @@
 import json
 
 import rich_click as click
-from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
-from rich.text import Text
 
 from .. import echo
 from . import ersilia_cli
 
-_console = Console()
-
 
 def _print_catalog(catalog_table):
+    from rich import box
+    from rich.padding import Padding
     from rich.table import Table as RichTable
 
-    col_styles = {
-        "Index": ("dim", 6),
-        "Identifier": ("bold cyan", 12),
-        "Slug": ("green", 28),
-        "Title": ("", 36),
-        "Task": ("magenta", 16),
-        "Output Dimension": ("yellow", 18),
-        "Fetched From": ("dim cyan", 14),
-    }
+    from ...utils.echo import console
 
+    # Same look as the other panels: default colour, secondary columns dimmed,
+    # a quiet border, indented to line up with the icons of other lines.
+    secondary = {"Index", "Task", "Output Dimension", "Fetched From"}
     table = RichTable(
-        show_header=True,
-        header_style="bold",
-        border_style="grey50",
-        show_lines=True,
+        box=box.SIMPLE_HEAD,
+        header_style="dim",
+        border_style="bright_black",
         expand=False,
+        show_edge=False,
+        pad_edge=False,
     )
     for col in catalog_table.columns:
-        style, width = col_styles.get(col, ("", 16))
         table.add_column(
             col,
-            style=style,
-            min_width=width,
+            style="dim" if col in secondary else None,
             no_wrap=col in ("Index", "Identifier", "Slug", "Task"),
         )
-
     for row in catalog_table.data:
         table.add_row(*[str(v) if v is not None else "" for v in row])
-
-    _console.print(table)
+    console.print(Padding(table, (0, 0, 0, 2), expand=False))
 
 
 def _print_model_card(metadata_json: str):
-    data = json.loads(metadata_json)
+    from ...hub.content.information import print_card_panel
 
-    def fmt(value):
-        if isinstance(value, list):
-            return ", ".join(str(v) for v in value)
-        return str(value) if value is not None else "—"
-
-    def fmt_size(value):
-        if value is None:
-            return "—"
-        s = str(value)
-        if any(u in s.upper() for u in ("MB", "GB", "KB")):
-            return s
-        return f"{s} MB"
-
-    sections = [
-        ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
-        ("Description", ["Title", "Description", "Interpretation"]),
-        (
-            "Input / Output",
-            [
-                "Input",
-                "Input Dimension",
-                "Input Shape",
-                "Output",
-                "Output Dimension",
-                "Output Shape",
-                "Output Type",
-                "Output Consistency",
-            ],
-        ),
-        (
-            "Deployment",
-            [
-                "Deployment",
-                "Source",
-                "Source Type",
-                "Docker Architecture",
-                "DockerHub",
-                "S3",
-            ],
-        ),
-        (
-            "Publication",
-            [
-                "License",
-                "Contributor",
-                "Publication Type",
-                "Publication Year",
-                "Publication",
-                "Source Code",
-            ],
-        ),
-        ("Sizes", ["Model Size", "Environment Size", "Image Size"]),
-    ]
-
-    table = Table(show_header=False, box=None, padding=(0, 1), expand=True)
-    table.add_column("Field", style="bold cyan", no_wrap=True, min_width=24)
-    table.add_column("Value", overflow="fold")
-
-    size_fields = {"Model Size", "Environment Size", "Image Size"}
-    for section_title, fields in sections:
-        table.add_row(Text(f" {section_title}", style="bold magenta on grey15"), "")
-        for field in fields:
-            if field in data:
-                formatter = fmt_size if field in size_fields else fmt
-                table.add_row(f"  {field}", formatter(data[field]))
-        table.add_row("", "")
-
-    title = f"[bold]{data.get('Identifier', '')}[/bold]  ·  {data.get('Title', '')}"
-    _console.print(Panel(table, title=title, border_style="cyan"))
+    print_card_panel(json.loads(metadata_json))
 
 
 def catalog_cmd():

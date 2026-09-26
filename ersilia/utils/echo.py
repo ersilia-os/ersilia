@@ -5,13 +5,44 @@ import sys
 
 import click
 from rich.console import Console
+from rich.live import Live
+from rich.padding import Padding
+from rich.panel import Panel
+from rich.progress import BarColumn, Progress, TextColumn, TimeElapsedColumn
+from rich.spinner import Spinner
+from rich.table import Table
 from rich.text import Text
+from rich.theme import Theme
 
 from ..default import SILENCE_FILE
 from ..utils.logging import logger
 from ..utils.session import get_session_dir
 
-console = Console()
+# The look of everything the CLI prints, in one place.
+#
+# Layout: every line is "  <icon>  <text>": the icon at column 2 and the text
+# at column 5. Continuation lines, progress bars and the running spinner use
+# the same columns, and panels are indented by 2 so their border lines up with
+# the icons.
+#
+# Colour means something, so it is used sparingly: green for success, yellow
+# for warnings, red for errors, cyan for links. Everything else is the
+# terminal's default colour, with secondary details dimmed. Nothing is bold.
+THEME = Theme(
+    {
+        "bar.back": "bright_black",
+        "bar.complete": "default",
+        "bar.finished": "green",
+        "bar.pulse": "default",
+        "progress.elapsed": "dim",
+        "progress.remaining": "dim",
+        "progress.download": "dim",
+        "progress.percentage": "dim",
+        "progress.spinner": "default",
+        "status.spinner": "default",
+    }
+)
+console = Console(theme=THEME, highlight=False)
 
 
 class Silencer(object):
@@ -131,6 +162,111 @@ def echo(text, harmonize=True, **styles):
     return click.echo(click.style(_format(text, icon), fg=fg), err=err)
 
 
+class _SpinnerLine:
+    # A running step drawn exactly like a message line, with the spinner in
+    # the icon's place: "  ⠋  text".
+    def __init__(self, text):
+        self._spinner = Spinner("dots")
+        self._text = str(text)
+
+    def __rich_console__(self, console, options):
+        frame = self._spinner.render(console.get_time())
+        line = Text.assemble("  ", frame, "  ", self._text)
+        line.no_wrap = True
+        line.overflow = "ellipsis"
+        yield line
+
+
+def _running(text):
+    return Live(
+        _SpinnerLine(text),
+        console=console,
+        transient=True,
+        refresh_per_second=12,
+    )
+
+
+def progress_bar(*columns):
+    """
+    A progress bar that lines up under the text of the line above it.
+
+    Parameters
+    ----------
+    *columns : rich.progress.ProgressColumn
+        Columns shown after the bar (e.g. a count), before the elapsed time.
+
+    Returns
+    -------
+    rich.progress.Progress
+        Use it as a context manager, like any rich Progress.
+    """
+    return Progress(
+        TextColumn("    "),
+        BarColumn(bar_width=40),
+        *columns,
+        TimeElapsedColumn(),
+        console=console,
+    )
+
+
+def fields_table():
+    """
+    A two-column table of fields and values, for panels.
+
+    Returns
+    -------
+    rich.table.Table
+        Labels are dimmed; add rows with ``table.add_row(label, value)``.
+    """
+    table = Table(show_header=False, box=None, padding=(0, 2), pad_edge=False)
+    table.add_column(style="dim", no_wrap=True)
+    table.add_column(overflow="fold")
+    return table
+
+
+def print_panel(renderable, title=None):
+    """
+    Print a panel in the CLI's style: indented, with a quiet border.
+
+    Parameters
+    ----------
+    renderable : rich renderable
+        The panel's content, usually a ``fields_table()``.
+    title : str, optional
+        Plain text shown in the top border.
+    """
+    panel = Panel(
+        renderable,
+        title=Text(title) if title else None,
+        title_align="left",
+        border_style="bright_black",
+        expand=False,
+        padding=(1, 2),
+    )
+    console.print()
+    console.print(Padding(panel, (0, 0, 0, 2), expand=False))
+    console.print()
+
+
+def confirm(question, default=False):
+    """
+    Ask a yes/no question, formatted like the other lines.
+
+    Parameters
+    ----------
+    question : str
+        The question, e.g. "Continue?".
+    default : bool, optional
+        The answer when the user just presses Enter.
+
+    Returns
+    -------
+    bool
+        The answer.
+    """
+    return click.confirm(f"  ▪  {question}", default=default, prompt_suffix=" ")
+
+
 def spinner(text, func, *args, done=None, **kwargs):
     """
     Run ``func`` while showing ``text``, then print a success line.
@@ -146,7 +282,7 @@ def spinner(text, func, *args, done=None, **kwargs):
     """
     if getattr(logger, "verbosity", 0) == 1:
         return func(*args, **kwargs)
-    with console.status(Text(text, style="cyan")):
+    with _running(text):
         try:
             result = func(*args, **kwargs)
         except Exception:
@@ -171,7 +307,7 @@ async def async_spinner(text, coro, done=None):
     """
     if getattr(logger, "verbosity", 0) == 1:
         return await coro
-    with console.status(Text(text, style="cyan")):
+    with _running(text):
         try:
             result = await coro
         except Exception:

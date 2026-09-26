@@ -2,7 +2,7 @@ import sys
 
 import rich_click as click
 
-from .. import echo
+from ..echo import confirm, echo
 from . import ersilia_cli
 
 
@@ -186,9 +186,8 @@ def serve_cmd():
                 f"Model {already_served} is already being served in this terminal.",
                 fg="yellow",
             )
-            if not click.confirm(
-                f"  ▪  Close {already_served} and serve {model} instead?",
-                default=True,
+            if not confirm(
+                f"Close {already_served} and serve {model} instead?", default=True
             ):
                 echo(f"Aborted. {already_served} is still being served.")
                 sys.exit(0)

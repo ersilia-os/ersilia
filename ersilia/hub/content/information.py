@@ -173,103 +173,130 @@ class InformationDisplayer(ErsiliaBase):
 
     def echo(self):
         """
-        Display the information about the model using a rich Panel layout.
+        Display the information about the model as a panel.
         """
-        from rich.console import Console
-        from rich.panel import Panel
-        from rich.table import Table
-        from rich.text import Text
-
-        _service_class_labels = SERVICE_CLASS_LABELS
-
-        console = Console()
         card = self.info_data.get("card") or {}
-        model_source = self.info_data.get("model_source")
-        docker_tag = self.info_data.get("docker_tag")
-        service_class_raw = self.info_data.get("service_class")
-        service_class = _service_class_labels.get(service_class_raw, service_class_raw)
-
-        def fmt(value):
-            if isinstance(value, list):
-                return ", ".join(str(v) for v in value)
-            return str(value) if value is not None else "—"
-
-        def fmt_size(value):
-            if value is None:
-                return "—"
-            s = str(value)
-            if any(u in s.upper() for u in ("MB", "GB", "KB")):
-                return s
-            return f"{s} MB"
-
-        def fmt_arch(value):
-            if not isinstance(value, list):
-                return fmt(value)
-            current = self._current_arch()
-            matched = [a for a in value if current in a.lower() or a.lower() in current]
-            return matched[0] if matched else fmt(value)
-
-        table = Table(show_header=False, box=None, padding=(0, 1), expand=True)
-        table.add_column("Field", style="bold cyan", no_wrap=True, min_width=24)
-        table.add_column("Value", overflow="fold")
-
-        # Origin section
-        table.add_row(Text(" Origin", style="bold magenta on grey15"), "")
-        if model_source:
-            table.add_row("  Fetched from", fmt(model_source))
-        if service_class:
-            table.add_row("  Service class", fmt(service_class))
-        if "DockerHub" in card:
-            table.add_row("  Docker Hub", fmt(card["DockerHub"]))
-        if docker_tag:
-            table.add_row("  Version", fmt(docker_tag))
-        if "Docker Architecture" in card:
-            table.add_row("  Architecture", fmt_arch(card["Docker Architecture"]))
-        identifier = card.get("Identifier", "")
-        if identifier:
-            table.add_row("  GitHub", f"https://github.com/ersilia-os/{identifier}")
-        table.add_row("", "")
-
-        sections = [
-            ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
-            ("Description", ["Title", "Description", "Interpretation"]),
-            (
-                "Input / Output",
-                [
-                    "Input",
-                    "Input Dimension",
-                    "Input Shape",
-                    "Output",
-                    "Output Dimension",
-                    "Output Shape",
-                    "Output Type",
-                    "Output Consistency",
-                ],
-            ),
-            ("Deployment", ["Deployment", "Source", "Source Type", "S3"]),
-            (
-                "Publication",
-                [
-                    "License",
-                    "Contributor",
-                    "Publication Type",
-                    "Publication Year",
-                    "Publication",
-                    "Source Code",
-                ],
-            ),
-            ("Sizes", ["Model Size", "Environment Size", "Image Size"]),
+        service_class = self.info_data.get("service_class")
+        origin = [
+            ("Fetched from", self.info_data.get("model_source")),
+            ("Service", SERVICE_CLASS_LABELS.get(service_class, service_class)),
+            ("DockerHub", card.get("DockerHub")),
+            ("Version", self.info_data.get("docker_tag")),
         ]
+        arch = card.get("Docker Architecture")
+        if isinstance(arch, list):
+            current = self._current_arch()
+            matched = [a for a in arch if current in a.lower() or a.lower() in current]
+            arch = matched[0] if matched else arch
+        origin.append(("Architecture", arch))
+        if card.get("Identifier"):
+            origin.append(
+                ("GitHub", "https://github.com/ersilia-os/" + card["Identifier"])
+            )
+        print_card_panel(
+            card,
+            origin=[(k, v) for k, v in origin if v],
+            skip={"DockerHub", "Docker Architecture"},
+        )
 
-        size_fields = {"Model Size", "Environment Size", "Image Size"}
-        for section_title, fields in sections:
-            table.add_row(Text(f" {section_title}", style="bold magenta on grey15"), "")
-            for field in fields:
-                if field in card:
-                    formatter = fmt_size if field in size_fields else fmt
-                    table.add_row(f"  {field}", formatter(card[field]))
+
+CARD_SECTIONS = [
+    ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
+    ("Description", ["Title", "Description", "Interpretation"]),
+    (
+        "Input / Output",
+        [
+            "Input",
+            "Input Dimension",
+            "Input Shape",
+            "Output",
+            "Output Dimension",
+            "Output Shape",
+            "Output Type",
+            "Output Consistency",
+        ],
+    ),
+    (
+        "Deployment",
+        [
+            "Deployment",
+            "Source",
+            "Source Type",
+            "Docker Architecture",
+            "DockerHub",
+            "S3",
+        ],
+    ),
+    (
+        "Publication",
+        [
+            "License",
+            "Contributor",
+            "Publication Type",
+            "Publication Year",
+            "Publication",
+            "Source Code",
+        ],
+    ),
+    ("Sizes", ["Model Size", "Environment Size", "Image Size"]),
+]
+_SIZE_FIELDS = {"Model Size", "Environment Size", "Image Size"}
+
+
+def print_card_panel(card, origin=(), skip=()):
+    """
+    Print a model card as a panel, grouped in sections.
+
+    Used by ``ersilia info`` and ``ersilia catalog --card``.
+
+    Parameters
+    ----------
+    card : dict
+        The model card.
+    origin : list of (str, str), optional
+        Rows for a first "Origin" section (where the model came from locally).
+    skip : set of str, optional
+        Card fields not to show (e.g. because they are already in ``origin``).
+    """
+    from rich.text import Text
+
+    from ...utils.echo import fields_table, print_panel
+
+    def fmt(field, value):
+        if value is None:
+            return "—"
+        if isinstance(value, list):
+            value = ", ".join(str(v) for v in value)
+        value = str(value)
+        if field in _SIZE_FIELDS and not any(
+            u in value.upper() for u in ("MB", "GB", "KB")
+        ):
+            value = f"{value} MB"
+        if value.startswith(("http://", "https://")):
+            return f"[link={value}][cyan]{value}[/cyan][/link]"
+        return value
+
+    table = fields_table()
+
+    def section(title, rows):
+        if not rows:
+            return
+        if table.row_count:
             table.add_row("", "")
+        table.add_row(Text(title, style="not dim"), "")
+        for label, value in rows:
+            table.add_row(f"  {label}", value)
 
-        title = card.get("Title", "")
-        panel_title = f"[bold]{identifier}[/bold]  ·  {title}" if identifier else title
-        console.print(Panel(table, title=panel_title, border_style="cyan"))
+    section("Origin", [(label, fmt(label, value)) for label, value in origin])
+    for title, fields in CARD_SECTIONS:
+        section(
+            title,
+            [
+                (field, fmt(field, card[field]))
+                for field in fields
+                if field in card and field not in skip
+            ],
+        )
+    identifier = card.get("Identifier", "")
+    title = f"{identifier} · {card.get('Title', '')}" if identifier else None
+    print_panel(table, title=title)
