@@ -1,5 +1,4 @@
 import importlib
-import json
 import os
 from collections import namedtuple
 
@@ -20,7 +19,7 @@ from ...utils.exceptions_utils.throw_ersilia_exception import (
     user_message_and_hints,
 )
 from ...utils.terminal import yes_no_input
-from . import STATUS_FILE
+from . import is_fetched
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
@@ -248,15 +247,28 @@ class ModelFetcher(ErsiliaBase):
         bool
             True if the model exists locally, False otherwise.
         """
-        status_file = os.path.join(self._model_path(model_id), STATUS_FILE)
-        if not os.path.exists(status_file):
+        return is_fetched(self._model_path(model_id))
+
+    def _remove_partial_files(self, model_id):
+        # A fetch that did not finish leaves a folder that looks like a model
+        # but cannot be served. The Docker image, if any, is kept so a retry
+        # does not download it again.
+        if self.exists(model_id) or not os.path.isdir(self._model_path(model_id)):
             return False
-        with open(status_file, "r") as f:
-            status = json.load(f)
-        if status["done"]:
-            return True
-        else:
+        from ..delete.delete import (
+            ModelBundleDeleter,
+            ModelEosDeleter,
+            ModelFetchedEntryDeleter,
+        )
+
+        try:
+            ModelEosDeleter(self.config_json).delete(model_id)
+            ModelBundleDeleter(self.config_json).delete(model_id)
+            ModelFetchedEntryDeleter(self.config_json).delete(model_id)
+        except Exception as e:
+            self.logger.debug(f"Could not remove partial files: {e}")
             return False
+        return True
 
     def _warn_if_archived(self, model_id):
         # Archived models are no longer maintained and may fail to fetch or run.
@@ -364,8 +376,22 @@ class ModelFetcher(ErsiliaBase):
                 echo(msg, fg="yellow")
                 return FetchResult(fetch_success=True, reason=msg)
 
-            fr = await self._fetch(model_id)
+            try:
+                fr = await self._fetch(model_id)
+            except BaseException as e:
+                if self._remove_partial_files(model_id):
+                    note = "The partial files were removed."
+                    if isinstance(e, Exception):
+                        echo(
+                            f"Fetch of {model_id} failed; the partial files were removed. Run 'ersilia fetch {model_id}' again.",
+                            fg="red",
+                        )
+                    else:
+                        e.ersilia_note = note
+                raise
             if not fr.fetch_success:
+                if fr.reason != ALREADY_FETCHED:
+                    self._remove_partial_files(model_id)
                 return fr
 
             self._standard_csv_example(model_id)

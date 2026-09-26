@@ -81,6 +81,17 @@ class PortInUseError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
+class ImageMissingError(ErsiliaError):
+    def __init__(self, model_id, image):
+        self.message = "The Docker image of model {0} ({1}) is missing.".format(
+            model_id, image
+        )
+        self.hints = "It may have been removed with 'docker rmi'. Run 'ersilia delete {0}' and then 'ersilia fetch {0}'.".format(
+            model_id
+        )
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
 class ImagePullError(ErsiliaError):
     def __init__(self, model_id, reason, hint):
         self.message = "Could not download the Docker image of model {0}: {1}.".format(
