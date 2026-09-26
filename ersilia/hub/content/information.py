@@ -6,6 +6,7 @@ from ... import ErsiliaBase
 from ...default import (
     API_SCHEMA_FILE,
     APIS_LIST_FILE,
+    APPTAINER_INFO_FILE,
     CARD_FILE,
     DOCKER_INFO_FILE,
     MODEL_SIZE_FILE,
@@ -86,7 +87,14 @@ class Information(ErsiliaBase):
         if os.path.exists(docker_info_file):
             with open(docker_info_file, "r") as f:
                 data = json.load(f)
-            return data.get("tag")
+            if data.get("tag"):
+                return data.get("tag")
+        # Models fetched as Apptainer images have a version such as "v1".
+        apptainer_info_file = os.path.join(self.dest_folder, APPTAINER_INFO_FILE)
+        if os.path.exists(apptainer_info_file):
+            with open(apptainer_info_file, "r") as f:
+                data = json.load(f)
+            return data.get("version")
         return None
 
     def _get_metadata(self):
