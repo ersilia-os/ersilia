@@ -5,8 +5,6 @@ import itertools
 import json
 import os
 
-from click import secho
-
 from .. import ErsiliaBase, throw_ersilia_exception
 from ..default import PREDEFINED_EXAMPLE_FILES
 from ..hub.content.card import ModelCard
@@ -438,14 +436,15 @@ class ExampleGenerator(ErsiliaBase):
         file_name : str
             File name to save the examples.
         mode : str
-            Mode for generating examples. Can be "predefined", "deterministic", or "random".
+            Mode for generating examples: "random", "deterministic", or "curated"
+            (the model's own example inputs; "predefined" is accepted as an alias).
 
         Returns
         -------
         list or str
             List of example data or file content if saved to file.
         """
-        if mode.lower() == "predefined":
+        if mode.lower() in ("curated", "predefined"):
             try_predefined = True
         else:
             try_predefined = False
@@ -462,10 +461,9 @@ class ExampleGenerator(ErsiliaBase):
             with open(file_name, "r") as f:
                 return f.read()
         elif deterministic:
-            secho(
-                "Sampling input not randomly but in deterministic manner.",
-                fg="green",
-            )
+            from ..utils.echo import echo
+
+            echo("Sampling input not randomly but in deterministic manner.")
             self.logger.debug("Sampling input not randomly but in deterministic manner")
             return self.fixed_example(n_samples=n_samples, file_name=file_name)
         else:
@@ -473,6 +471,8 @@ class ExampleGenerator(ErsiliaBase):
                 self.logger.info(
                     "No predefined examples found for the model. Generating random examples."
                 )
+                if n_samples is None:
+                    n_samples = 5
             self.logger.debug("Randomly sampling input")
             return self.random_example(n_samples=n_samples, file_name=file_name)
 

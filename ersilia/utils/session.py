@@ -13,8 +13,6 @@ from ..default import (
     SESSIONS_DIR,
 )
 
-os.umask(0)
-
 
 def get_current_pid():
     """

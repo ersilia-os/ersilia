@@ -17,6 +17,34 @@ from ..utils.session import get_session_dir
 
 console = Console()
 
+# When quiet, nothing is printed (used by the Python API unless verbose).
+_quiet = False
+
+
+def set_quiet(quiet):
+    """
+    Silence or restore all echo, spinner and progress output.
+
+    Parameters
+    ----------
+    quiet : bool
+        True to print nothing.
+    """
+    global _quiet
+    _quiet = bool(quiet)
+
+
+def is_quiet():
+    """
+    Tell whether output is silenced.
+
+    Returns
+    -------
+    bool
+        True if nothing should be printed.
+    """
+    return _quiet
+
 
 class Silencer(object):
     """
@@ -71,6 +99,8 @@ class Silencer(object):
 
 
 def echo(text, harmonize=True, **styles):
+    if _quiet:
+        return
     if getattr(logger, "verbosity", 0) == 1:
         return
 
@@ -102,6 +132,8 @@ def echo(text, harmonize=True, **styles):
 
 
 def spinner(text, func, *args, **kwargs):
+    if _quiet:
+        return func(*args, **kwargs)
     if getattr(logger, "verbosity", 0) == 1:
         return func(*args, **kwargs)
     with console.status(Text(text, style="cyan")):
@@ -115,6 +147,8 @@ def spinner(text, func, *args, **kwargs):
 
 
 async def async_spinner(text, coro):
+    if _quiet:
+        return await coro
     if getattr(logger, "verbosity", 0) == 1:
         return await coro
     with console.status(Text(text, style="cyan")):

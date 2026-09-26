@@ -195,9 +195,15 @@ def yes_no_input(prompt, default_answer, timeout=5):
     bool
         True if the user's input is 'yes', False otherwise.
     """
-    ans = raw_input_with_timeout(
-        prompt=prompt, default_answer=default_answer, timeout=timeout
-    )
+    from .exceptions_utils.throw_ersilia_exception import is_library_mode
+
+    if is_library_mode():
+        # A library call must never wait for keyboard input.
+        ans = default_answer
+    else:
+        ans = raw_input_with_timeout(
+            prompt=prompt, default_answer=default_answer, timeout=timeout
+        )
     if ans is None or ans == "":
         ans = default_answer
     ans = str(ans).lower()
