@@ -220,3 +220,25 @@ def test_serve_panel_links_a_browsable_url_and_the_docs(monkeypatch):
     )
     targets = re.findall(r"\x1b\]8;[^;]*;([^\x1b]+)\x1b\\", c.file.getvalue())
     assert targets == ["http://127.0.0.1:5000", "http://127.0.0.1:5000/docs"]
+
+
+def test_serving_the_model_already_served_just_says_so(tmp_path):
+    from unittest.mock import MagicMock
+
+    from ersilia.cli.commands.serve import serve_cmd
+
+    pid_file = tmp_path / "eos3b5e.pid"
+    pid_file.write_text("-1 http://0.0.0.0:5000 eos3b5e_1234abcd\n")
+    resolved = MagicMock(model_id="eos3b5e")
+    with (
+        patch.object(Session, "get", return_value={"model_id": "eos3b5e"}),
+        patch("ersilia.utils.tmp_pid_file", return_value=str(pid_file)),
+        patch("ersilia.ModelBase", return_value=resolved),
+        patch("ersilia.core.model.ErsiliaModel") as model,
+    ):
+        result = CliRunner().invoke(serve_cmd(), ["molecular-weight"])
+    assert result.output == (
+        "  ✓  Model eos3b5e is already being served in this terminal.\n"
+        "  ▪  It is available at http://127.0.0.1:5000.\n"
+    )
+    model.assert_not_called()
