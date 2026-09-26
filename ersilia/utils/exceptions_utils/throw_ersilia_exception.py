@@ -22,6 +22,36 @@ def echo(text: str, **styles):
     return click.echo(click.style(text, **styles))
 
 
+# In library mode (the Python API) errors are re-raised for the caller to
+# handle: nothing is printed and the process never exits.
+_library_mode = False
+
+
+def set_library_mode(enabled):
+    """
+    Make decorated functions re-raise errors instead of printing and exiting.
+
+    Parameters
+    ----------
+    enabled : bool
+        True for library (Python API) behaviour.
+    """
+    global _library_mode
+    _library_mode = bool(enabled)
+
+
+def is_library_mode():
+    """
+    Tell whether errors are re-raised for the caller.
+
+    Returns
+    -------
+    bool
+        True in library mode.
+    """
+    return _library_mode
+
+
 def _is_verbose():
     return logging.getLogger("ersilia").level == logging.DEBUG
 
@@ -33,6 +63,8 @@ def throw_ersilia_exception(exit=True):
             try:
                 return func(*args, **kwargs)
             except Exception as error:
+                if _library_mode:
+                    raise
                 if _is_verbose():
                     text = ":police_car_light::police_car_light::police_car_light: Something went wrong with Ersilia :police_car_light::police_car_light::police_car_light:\n"
                     echo(text, blink=False, bold=True, fg="red")

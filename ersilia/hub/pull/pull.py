@@ -8,7 +8,7 @@ import requests
 from ... import ErsiliaBase, throw_ersilia_exception
 from ...default import DOCKERHUB_LATEST_TAG, DOCKERHUB_ORG
 from ...utils.docker import SimpleDocker
-from ...utils.echo import echo
+from ...utils.echo import echo, is_quiet
 from ...utils.exceptions_utils.pull_exceptions import (
     DockerConventionalPullError,
     DockerImageNotAvailableError,
@@ -279,6 +279,7 @@ class ModelPuller(ErsiliaBase):
                     BarColumn(),
                     MofNCompleteColumn(),
                     TimeElapsedColumn(),
+                    disable=is_quiet(),
                 ) as progress:
                     task = progress.add_task("", total=None)
 
@@ -309,7 +310,8 @@ class ModelPuller(ErsiliaBase):
                                 model=self.model_id
                             ) from e
 
-                _Console().print(_Text("  ✓  Pulled Docker image", style="green"))
+                if not is_quiet():
+                    _Console().print(_Text("  ✓  Pulled Docker image", style="green"))
 
             size = self._get_size_of_local_docker_image_in_mb()
             if size:

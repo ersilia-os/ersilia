@@ -280,3 +280,38 @@ class InformationDisplayer(ErsiliaBase):
         title = card.get("Title", "")
         panel_title = f"[bold]{identifier}[/bold]  ·  {title}" if identifier else title
         console.print(Panel(table, title=panel_title, border_style="cyan"))
+
+
+def write_fields(data, output):
+    """
+    Write a flat dictionary (model information or card) to a file.
+
+    Used by ``ersilia info -o``, ``ersilia catalog --card -o`` and the Python
+    API, so that all of them write the same format.
+
+    Parameters
+    ----------
+    data : dict
+        The fields to write.
+    output : str
+        Path ending in .json (pretty-printed JSON) or .csv (two columns,
+        Field and Value; list values are joined with commas).
+    """
+    import csv
+
+    if output.endswith(".json"):
+        with open(output, "w") as f:
+            json.dump(data, f, indent=4)
+        return
+    with open(output, "w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Field", "Value"])
+        for key, value in data.items():
+            writer.writerow(
+                [
+                    key,
+                    value
+                    if not isinstance(value, list)
+                    else ", ".join(str(v) for v in value),
+                ]
+            )

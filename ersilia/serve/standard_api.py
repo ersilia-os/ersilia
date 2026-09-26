@@ -1,4 +1,3 @@
-import asyncio
 import csv
 import importlib
 import json
@@ -7,7 +6,6 @@ import os
 import time
 from collections import Counter
 
-import nest_asyncio
 import pandas as pd
 import requests
 
@@ -22,11 +20,10 @@ from ..default import (
 from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
 from ..store.isaura import IsauraStore
+from ..utils.asyncio_utils import run_coroutine
 from ..utils.ports import _ensure_ready, normalize_connect_url
 
 MAX_INPUT_ROWS_STANDARD = 1000
-
-nest_asyncio.apply()
 
 
 class StandardCSVRunApi(ErsiliaBase):
@@ -275,7 +272,9 @@ class StandardCSVRunApi(ErsiliaBase):
                 h = next(reader)
             if len(h) == 1:
                 self.logger.debug("One column found in input")
-                return asyncio.run(self.async_serialize_to_json_one_column(input_data))
+                return run_coroutine(
+                    self.async_serialize_to_json_one_column(input_data)
+                )
             else:
                 raise ValueError(
                     "More than one column found in input! This is not standard."
@@ -529,7 +528,10 @@ class StandardCSVRunApi(ErsiliaBase):
             TimeElapsedColumn,
         )
 
-        Console().print(f"[bold cyan]Running model {self.model_id}[/bold cyan]")
+        from ..utils.echo import is_quiet
+
+        if not is_quiet():
+            Console().print(f"[bold cyan]Running model {self.model_id}[/bold cyan]")
 
         num_batches = math.ceil(total / batch_size)
         label = f"Running {total} input{'s' if total != 1 else ''}"
@@ -539,6 +541,7 @@ class StandardCSVRunApi(ErsiliaBase):
             BarColumn(),
             MofNCompleteColumn(),
             TimeElapsedColumn(),
+            disable=is_quiet(),
         ) as progress:
             task = progress.add_task(label, total=num_batches)
 

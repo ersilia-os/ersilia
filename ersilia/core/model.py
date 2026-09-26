@@ -1,4 +1,3 @@
-import asyncio
 import collections
 import csv
 import json
@@ -28,6 +27,7 @@ from ..serve.standard_api import StandardCSVRunApi
 from ..store.api import InferenceStoreApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
+from ..utils.asyncio_utils import run_coroutine
 from ..utils.csvfile import CsvDataLoader
 from ..utils.echo import spinner
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
@@ -190,7 +190,7 @@ class ErsiliaModel(ErsiliaBase):
                 mf = ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
-                asyncio.run(mf.fetch(self.model_id))
+                run_coroutine(mf.fetch(self.model_id))
             else:
                 raise Exception(
                     "Model is not fetched, please fetch the model before serving it."
@@ -218,7 +218,7 @@ class ErsiliaModel(ErsiliaBase):
         mf = ModelFetcher(
             config_json=self.config_json, credentials_json=self.credentials_json
         )
-        asyncio.run(mf.fetch(self.model_id))
+        run_coroutine(mf.fetch(self.model_id))
 
     def __enter__(self):
         """

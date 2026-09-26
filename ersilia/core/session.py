@@ -44,7 +44,7 @@ class Session(ErsiliaBase):
         if data is None:
             return None
         else:
-            return data["model_id"]
+            return data.get("model_id")
 
     def current_store_status(self):
         """
@@ -58,7 +58,7 @@ class Session(ErsiliaBase):
             The current model ID, or None if no session data is available.
         """
         data = self.get()
-        if data is None:
+        if data is None or "read_store" not in data:
             return None
         else:
             return (
@@ -84,7 +84,7 @@ class Session(ErsiliaBase):
         if data is None:
             return None
         else:
-            return data["local_cache"]
+            return data.get("local_cache")
 
     def current_identifier(self):
         """
@@ -101,7 +101,7 @@ class Session(ErsiliaBase):
         if data is None:
             return None
         else:
-            return data["identifier"]
+            return data.get("identifier")
 
     def current_service_class(self):
         """
@@ -118,7 +118,7 @@ class Session(ErsiliaBase):
         if data is None or data.get("service_class") is None:
             return None
         else:
-            return data["service_class"]
+            return data.get("service_class")
 
     def current_output_source(self):
         """
@@ -135,7 +135,7 @@ class Session(ErsiliaBase):
         if data is None:
             return None
         else:
-            return data["output_source"]
+            return data.get("output_source")
 
     def register_service_class(self, service_class):
         """
@@ -223,7 +223,7 @@ class Session(ErsiliaBase):
         if data is None:
             return None
         else:
-            return data["track_runs"]
+            return data.get("track_runs")
 
     def get_tracking_use_case(self):
         """

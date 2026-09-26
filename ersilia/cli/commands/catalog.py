@@ -225,25 +225,9 @@ def catalog_cmd():
                             err=True,
                         )
                         return
-                    data = json.loads(model_metadata)
-                    if output.endswith(".json"):
-                        with open(output, "w") as f:
-                            f.write(model_metadata)
-                    else:
-                        import csv
+                    from ...hub.content.information import write_fields
 
-                        with open(output, "w", newline="") as f:
-                            writer = csv.writer(f)
-                            writer.writerow(["Field", "Value"])
-                            for key, value in data.items():
-                                writer.writerow(
-                                    [
-                                        key,
-                                        value
-                                        if not isinstance(value, list)
-                                        else ", ".join(str(v) for v in value),
-                                    ]
-                                )
+                    write_fields(json.loads(model_metadata), output)
                     click.echo(click.style(f"Model card saved to {output}", fg="green"))
                 else:
                     _print_model_card(model_metadata)
