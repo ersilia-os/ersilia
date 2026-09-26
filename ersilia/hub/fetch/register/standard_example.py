@@ -1,5 +1,6 @@
 import csv
 import os
+import shlex
 import shutil
 import sys
 import threading
@@ -12,7 +13,7 @@ from ....default import (
 from ....utils.conda import SimpleConda
 from ....utils.echo import echo
 from ....utils.exceptions_utils.fetch_exceptions import StandardModelExampleError
-from ....utils.terminal import run_command, run_command_check_output
+from ....utils.terminal import run_command
 
 
 class ModelStandardExample(ErsiliaBase):
@@ -86,9 +87,8 @@ class ModelStandardExample(ErsiliaBase):
             nonlocal warned
             warned = True
             echo(
-                f"This is taking longer than usual (>{threshold_s}s). Please be patient…",
+                f"This is taking longer than usual (over {threshold_s} s). Please wait.",
                 fg="yellow",
-                bold=True,
             )
 
         timer = threading.Timer(threshold_s, warn_user)
@@ -102,18 +102,34 @@ class ModelStandardExample(ErsiliaBase):
             if warned:
                 self.logger.debug(f"Command took >{threshold_s}s: {cmd}")
 
+    @staticmethod
+    def _ersilia_executable():
+        # The 'ersilia' of the running installation (conda, venv, uv or pip),
+        # so the example runs with the same code and needs no conda.
+        here = os.path.join(os.path.dirname(sys.executable), "ersilia")
+        if os.path.isfile(here):
+            return here
+        return shutil.which("ersilia")
+
     def _execute_commands(self, commands):
-        cmd_output = run_command_check_output("ersilia --help")
-        if "Welcome to Ersilia" in cmd_output:
-            self.logger.debug("No need to use Conda!")
-            for c in commands:
-                self.logger.debug(f"Running: {c}")
-                self._run_command_with_slow_notice(c, threshold_s=60)
-        else:
+        exe = self._ersilia_executable()
+        if exe is None:
             self.logger.debug("Will run this through Conda")
             env_name = os.environ.get("CONDA_DEFAULT_ENV")
             self.logger.debug("The environment name is {0}".format(env_name))
             SimpleConda().run_commandlines(env_name, commands)
+            return
+        # All commands run in one shell: Ersilia sessions follow the parent
+        # process, so serve, run and close must share it.
+        lines = [
+            shlex.quote(exe) + c[len("ersilia") :] if c.startswith("ersilia ") else c
+            for c in commands
+        ]
+        script = "\n".join(lines)
+        self.logger.debug(f"Running: {script}")
+        self._run_command_with_slow_notice(
+            f"bash -c {shlex.quote(script)}", threshold_s=60
+        )
 
     def run(self):
         """
@@ -135,6 +151,8 @@ class ModelStandardExample(ErsiliaBase):
             [
                 f"ersilia serve {self.model_id} --disable-cache",
                 f"ersilia run -i {self.input_csv} -o {self.output_csv} > {self.run_log} 2>&1",
+                # Closed in the same session, whether or not the run worked.
+                "ersilia close",
             ]
         )
 
@@ -147,14 +165,12 @@ class ModelStandardExample(ErsiliaBase):
         is_fetched_successfully = self._validate_csv(self.output_csv)
 
         if not is_fetched_successfully:
-            echo(
-                "Model produced all empty values. Removing the model.",
-                fg="red",
-            )
+            echo(f"Model {self.model_id} did not work, so it will be removed.")
             self.logger.error(
                 "Model produced all empty values. Removing the model and exiting."
             )
-            run_command(f"ersilia -v delete {self.model_id}")
+            exe = self._ersilia_executable() or "ersilia"
+            run_command(f"{shlex.quote(exe)} -v delete {self.model_id}")
             sys.exit(1)
 
         self._check_file_exists(output_csv=self.output_csv)
@@ -186,25 +202,27 @@ class ModelStandardExample(ErsiliaBase):
                 total_data_rows += 1
 
                 if len(row) < 3:
-                    echo(f"Row {row_num} has fewer than 3 columns: {row}")
+                    echo(
+                        f"The model's test output is incomplete (row {row_num} has fewer than 3 columns).",
+                        fg="red",
+                    )
                     return False
 
                 if all((cell or "").strip() == "" for cell in row[2:]):
                     empty_rows.append(row_num)
 
             if not saw_data_row:
-                echo("No data rows found in output CSV (only header/blank rows).")
+                echo("The model's test output has no rows.", fg="red")
                 return False
 
             if empty_rows and len(empty_rows) == total_data_rows:
-                echo(
-                    f"All output values are empty at rows {empty_rows}. The model is not correctly working!"
-                )
+                echo("The model returned empty outputs for every test input.", fg="red")
                 return False
 
             if empty_rows:
                 echo(
-                    f"Some output values are empty at rows {empty_rows}, but not all rows are empty. Continuing."
+                    f"The model returned empty outputs for {len(empty_rows)} of {total_data_rows} test inputs.",
+                    fg="yellow",
                 )
 
             return True

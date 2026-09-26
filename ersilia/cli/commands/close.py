@@ -1,3 +1,5 @@
+import sys
+
 from .. import echo
 from . import ersilia_cli
 
@@ -6,7 +8,7 @@ def close_cmd():
     """
     Closes the current session of the served model.
 
-    This command allows users to close the current session and clean up any resources.
+    This command stops the model served in this terminal and cleans up its resources.
 
     Returns
     -------
@@ -17,12 +19,15 @@ def close_cmd():
     --------
     .. code-block:: console
 
-        Close the current session:
+        Close the model served in this terminal:
         $ ersilia close
     """
 
     # Example usage: ersilia close {MODEL}
-    @ersilia_cli.command(short_help="Close model", help="Close model")
+    @ersilia_cli.command(
+        short_help="Close the served model",
+        help="Stop the model served in this terminal and free its resources.",
+    )
     def close():
         from ... import ErsiliaModel
         from ...core.session import Session
@@ -32,11 +37,28 @@ def close_cmd():
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         if model_id is None:
-            echo("No model was served", fg="yellow")
+            echo(
+                "No model is being served in this terminal, so there is nothing to close.",
+                fg="yellow",
+            )
             return
+        if service_class in ("pulled_docker", "docker"):
+            from ...setup.requirements.docker import DockerRequirement
+
+            if not DockerRequirement().is_active():
+                # Keep the record: if Docker is only slow or paused, the
+                # container still runs and must stay tracked.
+                echo(
+                    f"Docker is not running, so model {model_id} cannot be closed now.",
+                    fg="red",
+                )
+                echo(
+                    "Its container stops along with Docker. Start Docker and run 'ersilia close' again to clear it."
+                )
+                sys.exit(1)
         mdl = ErsiliaModel(model_id, service_class=service_class)
         mdl.close()
         deregister_model_session(model_id)
-        echo(":no_entry: Model {0} closed".format(mdl.model_id), fg="green")
+        echo("Model {0} closed.".format(mdl.model_id), fg="green")
 
     return close

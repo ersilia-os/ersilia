@@ -45,6 +45,43 @@ click.rich_click.STYLE_HELPTEXT = ""
 click.rich_click.STYLE_ERRORS_SUGGESTION = "bold"
 click.rich_click.HEADER_TEXT = f"Ersilia version: {__version__}"
 
+
+def _align_commands_with_options():
+    # rich-click stretches the commands table to the panel width and gives
+    # the extra space to the name column, so command descriptions start
+    # further right than option descriptions. Size the name column to the
+    # option columns instead (options here are flags, with no metavar).
+    try:
+        from rich_click.rich_panel import RichCommandPanel
+    except ImportError:
+        return
+    get_table = RichCommandPanel.get_table
+
+    def aligned_get_table(self, command, ctx, formatter):
+        table = get_table(self, command, ctx, formatter)
+        try:
+            names = [
+                p.opts + p.secondary_opts
+                for p in command.get_params(ctx)
+                if isinstance(p, click.Option) and not p.hidden
+            ]
+            long_ = max(
+                len("/".join(o for o in n if o.startswith("--"))) for n in names
+            )
+            short = max(
+                len("/".join(o for o in n if not o.startswith("--"))) for n in names
+            )
+            table.expand = False
+            table.columns[0].min_width = long_ + short + 2 if short else long_ + 1
+        except Exception:
+            pass
+        return table
+
+    RichCommandPanel.get_table = aligned_get_table
+
+
+_align_commands_with_options()
+
 # ruff: noqa: D101, D102
 
 
@@ -61,10 +98,45 @@ class ErsiliaCommandGroup(RichGroup):
             _print_logo()
         return super().main(*args, **kwargs)
 
+    def invoke(self, ctx):
+        # Ctrl+C anywhere (including at a prompt) ends with one short line,
+        # never a traceback.
+        try:
+            return super().invoke(ctx)
+        except (KeyboardInterrupt, click.exceptions.Abort) as e:
+            import sys
+
+            from ..echo import echo
+
+            echo("Interrupted.", fg="yellow")
+            note = getattr(e, "ersilia_note", None) or getattr(
+                e.__context__, "ersilia_note", None
+            )
+            if note:
+                echo(note)
+            sys.exit(130)
+
+    def resolve_command(self, ctx, args):
+        # Suggest the closest command for a typo, e.g. 'ersilia server'.
+        name = args[0] if args else None
+        if name and not name.startswith("-") and self.get_command(ctx, name) is None:
+            import difflib
+
+            matches = difflib.get_close_matches(name, self.list_commands(ctx), n=1)
+            if matches:
+                ctx.fail(f"No such command '{name}'. Did you mean '{matches[0]}'?")
+        return super().resolve_command(ctx, args)
+
 
 @click.group(
     cls=ErsiliaCommandGroup,
-    context_settings={"show_default": True},
+    context_settings={
+        "show_default": True,
+        "help_option_names": ["-h", "--help"],
+        # --from-github works like --from_github, without listing both
+        # spellings in the help.
+        "token_normalize_func": lambda name: name.replace("-", "_"),
+    },
     epilog="To learn more about a specific command, run: ersilia COMMAND --help",
 )
 @click.version_option(version=__version__)

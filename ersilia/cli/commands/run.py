@@ -1,6 +1,4 @@
-import json
 import sys
-import types
 
 import click
 
@@ -30,35 +28,6 @@ def run_cmd():
         $ ersilia run -i <input_data> -b 50
     """
 
-    def validate_input_output_types(input, output):
-        from ...utils.terminal import is_quoted_list
-
-        if (type(input) == str and not input.endswith(".csv")) or is_quoted_list(
-            json.dumps(input)
-        ):
-            echo(
-                "Input must be a single-column CSV file. String and list inputs are not supported.",
-                fg="red",
-                bold=True,
-            )
-            sys.exit(1)
-        if output is not None and not any(
-            [output.endswith(ext) for ext in (".csv", ".h5")]
-        ):
-            echo(
-                "This output type is not allowed in Ersilia. Valid output types are .csv or .h5",
-                fg="red",
-                bold=True,
-            )
-            sys.exit(1)
-        if output is None:
-            echo(
-                "Please specify a valid output file with extension .csv or .h5",
-                fg="red",
-                bold=True,
-            )
-            sys.exit(1)
-
     # Example usage: ersilia run -i {INPUT} [-o {OUTPUT} -b {BATCH_SIZE}]
     @ersilia_cli.command(
         short_help="Run predictions on the served model",
@@ -87,7 +56,7 @@ def run_cmd():
         "batch_size",
         required=False,
         default=100,
-        type=click.INT,
+        type=click.IntRange(min=1),
         help="Number of inputs processed per batch.",
     )
     def run(input, output, batch_size):
@@ -96,46 +65,50 @@ def run_cmd():
 
         from ... import ErsiliaModel
         from ...core.session import Session
+        from ..run_checks import check_run_arguments
 
-        validate_input_output_types(input, output)
         session = Session(config_json=None)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         output_source = session.current_output_source()
 
         if model_id is None:
-            echo(
-                "No model seems to be served. Please run 'ersilia serve ...' before.",
-                fg="red",
-            )
-            return
+            from ..messages import no_model_served
+
+            no_model_served()
+            sys.exit(1)
 
         output_basename = os.path.basename(output)
         output_model_ids = re.findall(r"eos[0-9][a-z0-9]{3}", output_basename)
         if output_model_ids and output_model_ids[0] != model_id:
             echo(
-                f"Output filename contains model identifier '{output_model_ids[0]}' but the served model is '{model_id}'. Please use a correct output filename.",
+                f"The output file name mentions {output_model_ids[0]}, but the served model is {model_id}.",
                 fg="red",
-                bold=True,
             )
+            echo("Use an output file name that matches the served model.")
             sys.exit(1)
 
+        run_input, tmp_dir = check_run_arguments(input, output)
         mdl = ErsiliaModel(
             model_id,
             output_source=output_source,
             service_class=service_class,
             config_json=None,
         )
-        result = mdl.run(input=input, output=output, batch_size=batch_size)
-        iter_values = []
-        if isinstance(result, types.GeneratorType):
-            for result in mdl.run(input=input, output=output, batch_size=batch_size):
-                if result is not None:
-                    iter_values.append(result)
-        echo(
-            f"✅ Output successfully written in {output} file!",
-            fg="green",
-            bold=False,
-        )
+        import time
+
+        started = time.time()
+        try:
+            mdl.run(input=run_input, output=output, batch_size=batch_size)
+        finally:
+            if tmp_dir:
+                import shutil
+
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+        # Success means an output file written by this run, not an old one.
+        if not os.path.isfile(output) or os.path.getmtime(output) < started - 1:
+            echo("No output was written.", fg="red")
+            sys.exit(1)
+        echo(f"Output written to {output}.", fg="green")
 
     return run

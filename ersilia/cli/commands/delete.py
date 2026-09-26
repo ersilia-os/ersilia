@@ -1,6 +1,8 @@
+import sys
+
 import rich_click as click
 
-from .. import echo
+from ..echo import confirm, echo
 from . import ersilia_cli
 
 
@@ -27,7 +29,7 @@ def delete_cmd():
     """
 
     def _delete(md, model_id):
-        md.delete(model_id)
+        return md.delete(model_id)
 
     def _delete_model_by_id(model_id):
         from ...hub.delete.delete import ModelFullDeleter
@@ -35,15 +37,43 @@ def delete_cmd():
         md = ModelFullDeleter()
         can_delete, reason = md.can_be_deleted(model_id)
         if can_delete:
-            echo("Deleting model {0}".format(model_id), harmonize=False)
-            _delete(md, model_id)
-            return True
-        else:
-            if "not available locally" in reason:
-                echo(f"Model {model_id} is not available locally.", fg="red")
-            else:
-                echo(f"{reason}", fg="red")
-            return False
+            return _delete(md, model_id) is not False
+        if "not available locally" in reason:
+            echo(
+                f"Model {model_id} is not available locally, so there is nothing to delete.",
+                fg="yellow",
+            )
+            return None
+        echo(reason, fg="red")
+        return False
+
+    def _close_if_served(model_ids):
+        # A model served in this terminal is closed before it is deleted, so
+        # its container and session record do not outlive it.
+        from ... import ErsiliaModel
+        from ...core.session import Session
+        from ...utils.session import deregister_model_session
+
+        session = Session(config_json=None)
+        served = _served_model()
+        if served not in model_ids:
+            return
+        mdl = ErsiliaModel(served, service_class=session.current_service_class())
+        mdl.close()
+        deregister_model_session(served)
+        echo(f"Model {served} closed.", fg="green")
+
+    def _served_model():
+        from ...core.session import Session
+
+        try:
+            return Session(config_json=None).current_model_id()
+        except Exception:
+            # A half-written session record: nothing usable is served.
+            return None
+
+    def _served_here(model_id):
+        return _served_model() == model_id
 
     def _delete_all():
         """Function to delete all locally available models"""
@@ -51,55 +81,49 @@ def delete_cmd():
 
         model_catalog = ModelCatalog()
         catalog_table = model_catalog.local()
-        if not catalog_table:
-            echo(
-                "No local models available.",
-                fg="red",
-            )
+        model_ids = []
+        if catalog_table and catalog_table.data:
+            idx = catalog_table.columns.index("Identifier")
+            model_ids = [row[idx] for row in catalog_table.data]
+        # Remains of models not fully fetched or deleted go too.
+        model_ids += [m for m in model_catalog.leftovers if m not in model_ids]
+        if not model_ids:
+            echo("No models are available locally.", fg="yellow")
             return
-        local_models = catalog_table.data
-        idx = catalog_table.columns.index("Identifier")
-        if not local_models:
-            echo(
-                "No local models available.",
-                fg="red",
-            )
-            return
-        model_ids = [row[idx] for row in local_models]
         echo(
-            "This will delete the following models: {0}".format(", ".join(model_ids)),
+            "This will delete {0} model{1}: {2}.".format(
+                len(model_ids), "" if len(model_ids) == 1 else "s", ", ".join(model_ids)
+            ),
             fg="yellow",
         )
-        if not click.confirm("Are you sure you want to proceed?", default=False):
-            echo("Aborted.", fg="green")
+        if not confirm("Continue?", default=False):
+            echo("Aborted. No models were deleted.")
             return
+        _close_if_served(model_ids)
         deleted_count = 0
-        for model_row in local_models:
-            model_id = model_row[idx]
+        for model_id in model_ids:
             try:
                 if _delete_model_by_id(model_id):
                     deleted_count += 1
             except Exception as e:
-                echo(
-                    f":warning: Error deleting model {model_id}: {e}",
-                    fg="red",
-                )
-        if deleted_count is len(local_models):
+                echo(f"Model {model_id} could not be deleted: {e}", fg="red")
+        if deleted_count == len(model_ids):
             echo(
-                f":thumbs_up: Completed the deletion of {deleted_count} locally available models!",
+                f"Deleted {deleted_count} model{'' if deleted_count == 1 else 's'}.",
                 fg="green",
             )
         else:
             echo(
-                f":thumbs_down: Failed to delete all models. Deleted {deleted_count} out of {len(local_models)} models.",
+                f"Deleted {deleted_count} of {len(model_ids)} models.",
                 fg="red",
             )
+            sys.exit(1)
 
     # Example usage:
     # 1. Delete a specific model: ersilia delete {MODEL}
     # 2. Delete all models: ersilia delete --all
     @ersilia_cli.command(
-        short_help="Delete model from local computer",
+        short_help="Delete a model from this computer",
         help="Fully remove a model from the local computer. This includes the model files in the EOS directory, conda environment, Docker image and containers, pip package, and all associated database entries.",
     )
     @click.argument("model", required=False, type=click.STRING)
@@ -111,11 +135,19 @@ def delete_cmd():
             from ... import ModelBase
 
             model_id = ModelBase(model).model_id
-            _delete_model_by_id(model_id)
+            if _served_here(model_id):
+                if not confirm(
+                    f"Model {model_id} is being served in this terminal. Close and delete it?",
+                    default=False,
+                ):
+                    echo(f"Aborted. Model {model_id} was not deleted.")
+                    return
+                _close_if_served([model_id])
+            if _delete_model_by_id(model_id) is False:
+                sys.exit(1)
         else:
-            echo(
-                ":warning: Please specify a model to delete a model or use --all to delete all models.",
-                fg="red",
+            raise click.UsageError(
+                "Give a model to delete, or use --all to delete every local model."
             )
 
     return delete

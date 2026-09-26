@@ -5,7 +5,7 @@ from .exceptions import ErsiliaError
 
 class ServeErsiliaError(ErsiliaError):
     def __init__(self):
-        self.message = "Error occured while running serve command"
+        self.message = "Error occurred while running serve command"
         self.hints = ""
         ErsiliaError.__init__(self, self.message, self.hints)
 
@@ -21,6 +21,6 @@ class BadGatewayError(ErsiliaError):
 
 class DockerNotActiveError(ErsiliaError):
     def __init__(self):
-        self.message = "Docker is not active. Cannot serve model"
-        self.hints = "Please activate docker and try again"
+        self.message = "Docker is not running."
+        self.hints = "Start Docker (e.g. Docker Desktop) and try again."
         ErsiliaError.__init__(self, self.message, self.hints)

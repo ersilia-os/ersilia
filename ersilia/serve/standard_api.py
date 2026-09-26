@@ -2,7 +2,6 @@ import asyncio
 import csv
 import importlib
 import json
-import math
 import os
 import time
 from collections import Counter
@@ -22,6 +21,12 @@ from ..default import (
 from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
 from ..store.isaura import IsauraStore
+from ..utils.exceptions_utils.cli_exceptions import (
+    ModelNotRespondingError,
+    NoInputProcessedError,
+    ResultCountMismatchError,
+)
+from ..utils.exceptions_utils.exceptions import ErsiliaError
 from ..utils.ports import _ensure_ready, normalize_connect_url
 
 MAX_INPUT_ROWS_STANDARD = 1000
@@ -252,7 +257,9 @@ class StandardCSVRunApi(ErsiliaBase):
             header = reader.fieldnames
             key = header[0] if len(header) == 1 else header[1]
             for row in reader:
-                data_list.append(row.get(key))
+                # Surrounding spaces (common in spreadsheet exports) are removed
+                # here, once, so inputs and their results always match.
+                data_list.append((row.get(key) or "").strip())
         return data_list
 
     def serialize_to_json(self, input_data):
@@ -340,6 +347,8 @@ class StandardCSVRunApi(ErsiliaBase):
             if hasattr(data, "json"):
                 data = data.json()
             if isinstance(data, list):
+                if len(data) != len(batch):
+                    raise ResultCountMismatchError(self.model_id, len(data), len(batch))
                 return data, None
             elif isinstance(data, dict) and "result" in data:
                 batch_meta = (
@@ -350,6 +359,12 @@ class StandardCSVRunApi(ErsiliaBase):
                 return [data] * len(batch), None
             else:
                 return [None] * len(batch), None
+        except ErsiliaError:
+            raise
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            # The server is gone: splitting the batch would only repeat the
+            # failure for every input and write empty rows.
+            raise ModelNotRespondingError(self.model_id, self.url, during_run=True)
         except Exception as e:
             self.logger.error(f"Batch of size {len(batch)} failed: {e}")
             if len(batch) == 1:
@@ -397,7 +412,10 @@ class StandardCSVRunApi(ErsiliaBase):
             input_data = [input_data]
 
         st = time.perf_counter()
-        _ensure_ready(self=self, root=self.url)
+        try:
+            _ensure_ready(self=self, root=self.url, attempts=10)
+        except RuntimeError:
+            raise ModelNotRespondingError(self.model_id, self.url)
 
         if self._can_stream_output(input_data, output):
             return self._post_streaming(input_data, url, output, batch_size, st)
@@ -405,6 +423,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.logger.debug("Waiting for server response")
         results, meta = self._fetch_result(input_data, url, batch_size)
         self.logger.info("Server response received")
+        self._report_empty(self._empty_inputs(input_data, results), len(input_data))
 
         results = self._standardize_output(input_data, results, meta)
         et = time.perf_counter()
@@ -440,21 +459,36 @@ class StandardCSVRunApi(ErsiliaBase):
     def _post_streaming(self, input_data, url, output, batch_size, st):
         self.logger.debug("Streaming output to {0} batch by batch".format(output))
         written = 0
+        empty = []
+        # Batches go to a hidden partial file, renamed to the output at the
+        # end, so a failed or interrupted run never leaves a half-written file.
+        folder, name = os.path.split(output)
+        stem, ext = os.path.splitext(name)
+        partial = os.path.join(folder, ".{0}.partial{1}".format(stem, ext))
 
         def write_batch(start, batch_results):
             nonlocal written
             batch_inputs = input_data[start : start + len(batch_results)]
+            empty.extend(self._empty_inputs(batch_inputs, batch_results))
             standardized = self._standardize_output(batch_inputs, batch_results, None)
-            self.generic_adapter.write_chunk(standardized, output, append=written > 0)
+            self.generic_adapter.write_chunk(standardized, partial, append=written > 0)
             written += len(standardized)
 
         self.logger.debug("Waiting for server response")
-        self._fetch_result(input_data, url, batch_size, on_batch=write_batch)
+        try:
+            self._fetch_result(input_data, url, batch_size, on_batch=write_batch)
+            if written != len(input_data):
+                raise Exception("Inputs and outputs are not matching")
+            self._report_empty(empty, len(input_data))
+        except BaseException as e:
+            if os.path.exists(partial):
+                os.remove(partial)
+            if isinstance(e, KeyboardInterrupt):
+                e.ersilia_note = "No output was written."
+            raise
+        os.replace(partial, output)
         et = time.perf_counter()
         self.logger.info(f"All batches processed in {et - st:.4f} seconds")
-
-        if written != len(input_data):
-            raise Exception("Inputs and outputs are not matching")
 
         ft = time.perf_counter()
         self.logger.info(f"Output generated to {output} in {ft - st:.5f} seconds")
@@ -520,7 +554,6 @@ class StandardCSVRunApi(ErsiliaBase):
 
             return path
 
-        from rich.console import Console
         from rich.progress import (
             BarColumn,
             MofNCompleteColumn,
@@ -529,18 +562,20 @@ class StandardCSVRunApi(ErsiliaBase):
             TimeElapsedColumn,
         )
 
-        Console().print(f"[bold cyan]Running model {self.model_id}[/bold cyan]")
+        from ..utils.echo import echo
 
-        num_batches = math.ceil(total / batch_size)
-        label = f"Running {total} input{'s' if total != 1 else ''}"
+        echo(
+            f"Running model {self.model_id} on {total:,} input{'s' if total != 1 else ''}."
+        )
 
         with Progress(
-            TextColumn("[bold cyan]{task.description}"),
+            # Indented to line up under the text of the line above.
+            TextColumn("    "),
             BarColumn(),
             MofNCompleteColumn(),
             TimeElapsedColumn(),
         ) as progress:
-            task = progress.add_task(label, total=num_batches)
+            task = progress.add_task("", total=total)
 
             for i in range(0, total, batch_size):
                 batch_items = input_data[i : i + batch_size]
@@ -601,7 +636,7 @@ class StandardCSVRunApi(ErsiliaBase):
                     on_batch(i, batch_results)
                 else:
                     overall_results[i : i + len(batch_results)] = batch_results
-                progress.advance(task)
+                progress.advance(task, len(batch_items))
 
         if all_replacements:
             path = write_replacements_txt(all_replacements)
@@ -724,6 +759,35 @@ class StandardCSVRunApi(ErsiliaBase):
             keys_flat = self.input_header[1:] + self.output_header
             standardized.append({"input": inp, "output": dict(zip(keys_flat, values))})
         return standardized
+
+    @staticmethod
+    def _empty_inputs(batch_inputs, batch_results):
+        # Inputs whose outputs are all empty (the model could not process them).
+        empty = []
+        for inp, result in zip(batch_inputs, batch_results):
+            if isinstance(result, dict):
+                values = [v for k, v in result.items() if k != "input"]
+            else:
+                values = list(result or [])
+            if all(v is None or v == "" for v in values):
+                empty.append(inp.get("input") if isinstance(inp, dict) else inp)
+        return empty
+
+    def _report_empty(self, empty, total):
+        # Tell the user about inputs the model could not process, instead of
+        # writing empty rows silently.
+        if not empty:
+            return
+        if len(empty) == total:
+            raise NoInputProcessedError(total)
+        from ..utils.echo import echo
+
+        examples = ", ".join(f"'{e}'" for e in empty[:2])
+        echo(
+            f"{len(empty):,} of {total:,} inputs could not be processed and have empty values (e.g. {examples}).",
+            fg="yellow",
+        )
+        echo("Check that they are valid inputs for this model (e.g. valid SMILES).")
 
     def _same_row_count(self, inputs, results):
         return len(inputs) == len(results)

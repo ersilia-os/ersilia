@@ -12,6 +12,7 @@ from ...default import (
     MODEL_SOURCE_FILE,
     PACKMODE_FILE,
     SERVICE_CLASS_FILE,
+    SERVICE_CLASS_LABELS,
 )
 from ...utils.paths import get_metadata_from_base_dir
 from .columns_information import ColumnsInformation
@@ -146,6 +147,28 @@ class Information(ErsiliaBase):
         return data
 
 
+def version_label(docker_tag, card):
+    """
+    The version to show for a model image, e.g. "latest (v1.0.1)".
+
+    Parameters
+    ----------
+    docker_tag : str
+        The Docker image tag, often "latest".
+    card : dict
+        The model card; its "Release" field gives the actual version.
+
+    Returns
+    -------
+    str or None
+        The tag, with the release in parentheses when the tag is "latest".
+    """
+    release = (card or {}).get("Release")
+    if docker_tag == "latest" and release:
+        return f"latest ({release})"
+    return docker_tag
+
+
 class InformationDisplayer(ErsiliaBase):
     """
     Class to display the information of a model.
@@ -156,11 +179,15 @@ class InformationDisplayer(ErsiliaBase):
         The information data of the model.
     config_json : dict, optional
         Configuration settings in JSON format.
+    serving : dict, optional
+        How the model is being served (URL, PID, session...), shown in its own
+        section. Keys are labels, values are what to show.
     """
 
-    def __init__(self, info_data, config_json=None):
+    def __init__(self, info_data, config_json=None, serving=None):
         ErsiliaBase.__init__(self, config_json=config_json, credentials_json=None)
         self.info_data = info_data
+        self.serving = serving or {}
         self.logger.debug(self.info_data)
 
     @staticmethod
@@ -179,15 +206,7 @@ class InformationDisplayer(ErsiliaBase):
         from rich.table import Table
         from rich.text import Text
 
-        _service_class_labels = {
-            "pulled_docker": "DockerHub",
-            "docker": "Docker (local)",
-            "conda": "Conda",
-            "venv": "Virtual environment",
-            "system": "System Python",
-            "hosted": "Hosted",
-            "dummy": "Dummy",
-        }
+        _service_class_labels = SERVICE_CLASS_LABELS
 
         console = Console()
         card = self.info_data.get("card") or {}
@@ -229,13 +248,21 @@ class InformationDisplayer(ErsiliaBase):
         if "DockerHub" in card:
             table.add_row("  Docker Hub", fmt(card["DockerHub"]))
         if docker_tag:
-            table.add_row("  Version", fmt(docker_tag))
+            table.add_row("  Version", fmt(version_label(docker_tag, card)))
         if "Docker Architecture" in card:
             table.add_row("  Architecture", fmt_arch(card["Docker Architecture"]))
         identifier = card.get("Identifier", "")
         if identifier:
             table.add_row("  GitHub", f"https://github.com/ersilia-os/{identifier}")
         table.add_row("", "")
+
+        # Serving section
+        if self.serving:
+            table.add_row(Text(" Serving", style="bold magenta on grey15"), "")
+            for label, value in self.serving.items():
+                if value not in (None, ""):
+                    table.add_row(f"  {label}", value)
+            table.add_row("", "")
 
         sections = [
             ("Overview", ["Identifier", "Slug", "Status", "Task", "Subtask"]),
