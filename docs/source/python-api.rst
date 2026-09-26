@@ -8,7 +8,7 @@ The public Python API consists of two classes, :class:`~ersilia.api.Model` and
 
    from ersilia.api import Model
 
-   model = Model("eos3b5e")
+   model = Model("eos4e40")
    model.fetch()
    with model:
        df = model.run(["CCO", "c1ccccc1"])

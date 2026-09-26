@@ -26,14 +26,14 @@ class Model(object):
     Parameters
     ----------
     model_id : str
-        Identifier of the model, e.g. ``"eos3b5e"``.
+        Identifier of the model, e.g. ``"eos4e40"``.
     verbose : bool, default=False
         Print logs to the terminal.
 
     Examples
     --------
     >>> from ersilia.api import Model
-    >>> model = Model("eos3b5e")
+    >>> model = Model("eos4e40")
     >>> model.fetch()
     >>> with model:
     ...     df = model.run(["CCO", "c1ccccc1"])
@@ -100,8 +100,8 @@ class Model(object):
         --------
         From DockerHub (default), or from source on GitHub:
 
-        >>> Model("eos3b5e").fetch()
-        >>> Model("eos3b5e").fetch(from_github=True)
+        >>> Model("eos4e40").fetch()
+        >>> Model("eos4e40").fetch(from_github=True)
         """
         # infer default: if no source specified, use DockerHub
         if from_dockerhub is None:
@@ -180,7 +180,7 @@ class Model(object):
 
         Examples
         --------
-        >>> model = Model("eos3b5e")
+        >>> model = Model("eos4e40")
         >>> url = model.serve()["url"]
         >>> model.close()
         """
@@ -222,7 +222,7 @@ class Model(object):
 
         Examples
         --------
-        >>> with Model("eos3b5e") as model:
+        >>> with Model("eos4e40") as model:
         ...     df = model.run(["CCO", "c1ccccc1"])
         """
         return run.run(self.model_id, input_list, batch_size)
@@ -281,7 +281,7 @@ class Model(object):
 
         Examples
         --------
-        >>> with Model("eos3b5e") as model:
+        >>> with Model("eos4e40") as model:
         ...     inputs = model.example(n_samples=10)
         ...     df = model.run(inputs)
         """
