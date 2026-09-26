@@ -182,6 +182,18 @@ def serve_cmd():
         existing_session = sess.get() or {}
         already_served = existing_session.get("model_id")
         if already_served:
+            # Check the requested model before touching the one being served,
+            # so a typo or an unfetched model does not close it for nothing.
+            from ... import ModelBase
+
+            requested = ModelBase(model)
+            if not requested.is_available_locally():
+                echo(
+                    f"Model {requested.model_id} is not available locally.",
+                    fg="red",
+                )
+                echo(f"Fetch it first with 'ersilia fetch {requested.model_id}'.")
+                sys.exit(1)
             echo(
                 f"Model {already_served} is already being served in this terminal.",
                 fg="yellow",

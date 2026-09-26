@@ -32,7 +32,7 @@ from ..utils.exceptions_utils.serve_exceptions import (
 )
 from ..utils.logging import make_temp_dir
 from ..utils.ports import find_free_port
-from ..utils.session import kill_process_tree
+from ..utils.session import kill_process_tree, stop_containers_by_name
 from ..utils.terminal import run_command
 from ..utils.venv import SimpleVenv
 
@@ -963,6 +963,7 @@ class PulledDockerImageService(BaseServing):
         )
         set_docker_host()
         self.client = docker.from_env(timeout=600)
+        self._port_given = preferred_port is not None
         if preferred_port is None:
             self.port = find_free_port()
         else:
@@ -1158,12 +1159,49 @@ class PulledDockerImageService(BaseServing):
         else:
             return True
 
-    def _wait_until_container_is_running(self):
-        while True:
-            if self.is_url_available(self.url):
-                break
-            else:
-                self.logger.debug("Container in {0} is not ready yet".format(self.url))
+    def _wait_until_container_is_running(self, timeout=180):
+        # Wait for the model's server, but notice when its container stops
+        # (e.g. out of memory, a crash) instead of waiting forever.
+        from ..utils.exceptions_utils.cli_exceptions import ModelStartError
+
+        deadline = time.time() + timeout
+        while not self.is_url_available(self.url):
+            self.logger.debug("Container in {0} is not ready yet".format(self.url))
+            try:
+                self.container.reload()
+                status = self.container.status
+            except Exception:
+                status = None
+            if status in ("exited", "dead"):
+                state = self.container.attrs.get("State", {})
+                try:
+                    tail = self.container.logs(tail=20).decode(errors="replace")
+                    self.logger.info("Last lines of the model's log:\n" + tail)
+                except Exception:
+                    pass
+                if state.get("OOMKilled"):
+                    raise ModelStartError(
+                        self.model_id,
+                        "stopped while starting (out of memory)",
+                        "Give Docker more memory (Docker Desktop > Settings > Resources) and try again.",
+                    )
+                raise ModelStartError(
+                    self.model_id,
+                    "stopped while starting (exit code {0})".format(
+                        state.get("ExitCode")
+                    ),
+                    "Run 'ersilia -v serve {0}' to see the model's log.".format(
+                        self.model_id
+                    ),
+                )
+            if time.time() > deadline:
+                raise ModelStartError(
+                    self.model_id,
+                    "did not start after {0} minutes".format(timeout // 60),
+                    "Run 'ersilia -v serve {0}' to see what happened.".format(
+                        self.model_id
+                    ),
+                )
             time.sleep(1)
 
     def _create_docker_network(self):
@@ -1207,13 +1245,31 @@ class PulledDockerImageService(BaseServing):
         if self._mem_gb is not None:
             run_kwargs["mem_limit"] = f"{self._mem_gb}g"
 
-        self.logger.debug(f"Running container with env: {env!r}")
-        self.container = self.client.containers.run(**run_kwargs)
+        from ..utils.exceptions_utils.cli_exceptions import PortInUseError
+        from ..utils.ports import is_port_in_use
 
-        self.container_id = self.container.id
-        self.url = f"http://0.0.0.0:{self.port}"
-        self._wait_until_container_is_running()
-        self._apis_list = self._get_apis()
+        if self._port_given and is_port_in_use(self.port):
+            raise PortInUseError(self.port)
+
+        self.logger.debug(f"Running container with env: {env!r}")
+        try:
+            try:
+                self.container = self.client.containers.run(**run_kwargs)
+            except docker.errors.APIError as e:
+                if "port is already allocated" in str(
+                    e
+                ) or "address already in use" in str(e):
+                    raise PortInUseError(self.port)
+                raise
+            self.container_id = self.container.id
+            self.url = f"http://0.0.0.0:{self.port}"
+            self._wait_until_container_is_running()
+            self._apis_list = self._get_apis()
+        except BaseException:
+            # A failed or interrupted start must not leave the container
+            # running (or created) untracked.
+            stop_containers_by_name([self.container_name])
+            raise
         self.logger.debug(self._apis_list)
 
     def api(self, api_name: str, input: dict) -> dict:
