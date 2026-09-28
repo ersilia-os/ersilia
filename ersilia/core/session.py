@@ -3,8 +3,16 @@ import os
 import time
 import uuid
 
+import psutil
+
 from ..default import SESSION_JSON
-from ..utils.session import get_session_dir, prune_empty_session_dirs
+from ..utils.session import (
+    _pid_was_recycled,
+    container_is_running,
+    get_session_dir,
+    prune_empty_session_dirs,
+    read_pid_file,
+)
 from .base import ErsiliaBase
 
 
@@ -350,6 +358,67 @@ class Session(ErsiliaBase):
             data["peak memory used by model(MiB)"] = f"{peak_memory:.5f}"
         with open(self.session_file, "w") as f:
             json.dump(data, f, indent=4)
+
+    def served_model(self):
+        """
+        Tell which model this session serves, and whether it is really running.
+
+        ``session.json`` records which model is served, and ``<model>.pid``
+        where it runs. The two can disagree, e.g. when serving was interrupted
+        or the model's container was removed outside Ersilia.
+
+        Returns
+        -------
+        tuple of (str or None, str or None)
+            The model ID and its status: "running", or "stale" when the model
+            is recorded but its .pid file, container or process is gone.
+            (None, None) when no model is recorded.
+        """
+        data = self.get() or {}
+        model_id = data.get("model_id")
+        if not model_id:
+            return None, None
+        pid_file = os.path.join(self._session_dir, "{0}.pid".format(model_id))
+        if not os.path.isfile(pid_file):
+            return model_id, "stale"
+        try:
+            pids, containers = read_pid_file(pid_file)
+            written_at = os.path.getmtime(pid_file)
+        except OSError:
+            return model_id, "stale"
+        if containers:
+            running = [container_is_running(name) for name in containers]
+            # If Docker cannot be reached, the record is trusted.
+            if any(r is None for r in running) or any(running):
+                return model_id, "running"
+            return model_id, "stale"
+        servers = [p for p in pids if p is not None and p >= 0]
+        if servers:
+            alive = [
+                psutil.pid_exists(p) and not _pid_was_recycled(p, written_at)
+                for p in servers
+            ]
+            return model_id, "running" if any(alive) else "stale"
+        # Nothing to check (e.g. a hosted model): trust the record.
+        return model_id, "running"
+
+    def clear_stale(self, model_id):
+        """
+        Forget a model that is recorded as served but is no longer running.
+
+        Parameters
+        ----------
+        model_id : str
+            The model recorded in this session.
+        """
+        from ..utils.session import deregister_model_session
+
+        self.logger.info("Clearing stale session record of model {0}".format(model_id))
+        pid_file = os.path.join(self._session_dir, "{0}.pid".format(model_id))
+        if os.path.isfile(pid_file):
+            os.remove(pid_file)
+        self.close()
+        deregister_model_session(model_id, self._session_dir)
 
     def close(self):
         """

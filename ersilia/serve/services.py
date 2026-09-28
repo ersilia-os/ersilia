@@ -32,7 +32,7 @@ from ..utils.exceptions_utils.serve_exceptions import (
 )
 from ..utils.logging import make_temp_dir
 from ..utils.ports import find_free_port
-from ..utils.session import kill_process_tree
+from ..utils.session import kill_process_tree, stop_containers_by_name
 from ..utils.terminal import run_command
 from ..utils.venv import SimpleVenv
 
@@ -720,9 +720,11 @@ class DockerImageService(BaseServing):
 
     def close(self):
         """
-        Close the Docker image service.
+        Close the Docker image service, stopping only this service's container.
         """
-        self.df.stop_containers(self.model_id)
+        name = getattr(self, "container_name", None)
+        if name:
+            stop_containers_by_name([name])
 
     def api(self, api_name, input):
         """
@@ -963,6 +965,7 @@ class PulledDockerImageService(BaseServing):
         )
         set_docker_host()
         self.client = docker.from_env(timeout=600)
+        self._port_given = preferred_port is not None
         if preferred_port is None:
             self.port = find_free_port()
         else:
@@ -1055,22 +1058,6 @@ class PulledDockerImageService(BaseServing):
                 "Image {0} is not available locally".format(self.image_name)
             )
             return False
-
-    def _stop_all_containers_of_image(self):
-        self.logger.debug(
-            "Stopping all containers related to model {0}".format(self.model_id)
-        )
-        containers = self.client.containers.list(all=True)
-        for container in containers:
-            if container.name.startswith(self.model_id):
-                self.logger.debug(
-                    "Stopping and removing container {0}".format(container.name)
-                )
-                self._delete_temp_files(container.name)
-                container.stop()
-                self.logger.info(f"Container {container.name} stopped")
-                container.remove()
-                self.logger.info(f"Container {container.name} removed")
 
     @throw_ersilia_exception()
     def _get_apis(self):
@@ -1186,7 +1173,6 @@ class PulledDockerImageService(BaseServing):
         Serve the model using the Docker image service.
         """
         self._create_docker_network()
-        self.container_name = f"{self.model_id}_{str(uuid.uuid4())[:4]}"
 
         env = {
             "REDIS_HOST": os.getenv("REDIS_HOST", "redis"),
@@ -1194,21 +1180,38 @@ class PulledDockerImageService(BaseServing):
             "REDIS_URI": os.getenv("REDIS_URI", "redis://redis:6379"),
             "REDIS_EXPIRATION": os.getenv("REDIS_EXPIRATION", str(3600 * 24 * 7)),
         }
-
-        run_kwargs = dict(
-            image=self.image_name,
-            name=self.container_name,
-            detach=True,
-            ports={"80/tcp": self.port},
-            environment=env,
-            network=DEFAULT_DOCKER_NETWORK_NAME,
-        )
-
-        if self._mem_gb is not None:
-            run_kwargs["mem_limit"] = f"{self._mem_gb}g"
-
         self.logger.debug(f"Running container with env: {env!r}")
-        self.container = self.client.containers.run(**run_kwargs)
+
+        for attempt in range(2):
+            self.container_name = f"{self.model_id}_{uuid.uuid4().hex[:8]}"
+            run_kwargs = dict(
+                image=self.image_name,
+                name=self.container_name,
+                detach=True,
+                ports={"80/tcp": self.port},
+                environment=env,
+                network=DEFAULT_DOCKER_NETWORK_NAME,
+            )
+            if self._mem_gb is not None:
+                run_kwargs["mem_limit"] = f"{self._mem_gb}g"
+            try:
+                self.container = self.client.containers.run(**run_kwargs)
+                break
+            except docker.errors.APIError as e:
+                # Another session may have taken the free port between picking
+                # it and starting the container: retry once on a new port.
+                port_taken = "port is already allocated" in str(e) or (
+                    "address already in use" in str(e)
+                )
+                if attempt or self._port_given or not port_taken:
+                    raise
+                stop_containers_by_name([self.container_name])
+                self.port = find_free_port()
+                self.logger.warning(
+                    "Port was taken by another process, retrying on port {0}".format(
+                        self.port
+                    )
+                )
 
         self.container_id = self.container.id
         self.url = f"http://0.0.0.0:{self.port}"
