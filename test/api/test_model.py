@@ -26,7 +26,8 @@ def test_model_lifecycle(tmp_path):
     out = tmp_path / "out.csv"
     assert mdl.run(INPUTS, output=str(out)) == str(out) and out.exists()
 
-    mdl.close()
+    assert mdl.close() is True
+    assert mdl.close() is False  # nothing left to close
     with pytest.raises(ModelNotServedError):
         mdl.run(INPUTS)
 

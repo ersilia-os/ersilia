@@ -42,10 +42,16 @@ class InvalidOptionError(ErsiliaError):
 
 
 class ModelNotServedError(ErsiliaError):
-    def __init__(self, model_id):
+    def __init__(self, model_id, stopped=False):
         self.model_id = model_id
-        self.message = "Model {0} is not being served.".format(model_id)
-        self.hints = "Call serve() first."
+        if stopped:
+            self.message = (
+                "Model {0} is no longer running (its server stopped).".format(model_id)
+            )
+            self.hints = "Call serve() again."
+        else:
+            self.message = "Model {0} is not being served.".format(model_id)
+            self.hints = "Call serve() first."
         ErsiliaError.__init__(self, self.message, self.hints)
 
 

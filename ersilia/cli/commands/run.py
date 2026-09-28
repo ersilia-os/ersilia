@@ -65,7 +65,7 @@ def run_cmd():
 
         from ... import ErsiliaModel
         from ...core.session import Session
-        from ..run_checks import check_run_arguments
+        from ...utils.checks import check_run_arguments
 
         session = Session(config_json=None)
         served_model, status = session.served_model()

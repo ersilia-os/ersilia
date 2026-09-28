@@ -140,7 +140,7 @@ from ersilia.api import Model, Catalog
 
 model = Model("eos3b5e")        # identifier or slug
 model.fetch()                   # True if fetched now, False if already fetched
-model.serve()
+model.serve()                   # URL, service, container...; nothing new if already served
 df = model.run(["CCO", "c1ccccc1"])            # a pandas DataFrame
 model.run("input.csv", output="output.h5")    # or write a .csv / .h5 file
 model.close()
@@ -151,7 +151,7 @@ with Model("eos3b5e") as model:  # serve, then close automatically
 Catalog().hub(task="Annotation")  # a pandas DataFrame
 ```
 
-The API prints nothing unless you pass `verbose=True`, and it raises an `ersilia.api.ErsiliaError` subclass when something goes wrong.
+The API prints nothing unless you pass `verbose=True`, and it raises an `ersilia.api.ErsiliaError` subclass when something goes wrong. It applies the same checks as the CLI (for example on input files, fetch sources and batch sizes), and follows the same session rules: a model that stopped is no longer taken as served.
 
 ## Contribute
 

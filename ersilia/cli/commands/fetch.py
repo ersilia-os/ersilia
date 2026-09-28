@@ -91,8 +91,6 @@ def fetch_cmd():
 
         nest_asyncio.apply()
 
-        from ..run_checks import fail
-
         chosen = [
             name
             for name, on in (
@@ -113,24 +111,9 @@ def fetch_cmd():
             echo("--version only applies to DockerHub, so it is ignored.", fg="yellow")
 
         if from_dir is not None:
-            import os
+            from ...utils.checks import check_fetch_folder
 
-            if not os.path.isdir(os.path.expanduser(from_dir)):
-                fail(f"The folder {from_dir} does not exist.")
-            mdl = ModelBase(repo_path=from_dir)
-            from ...utils.paths import get_metadata_from_base_dir
-
-            try:
-                folder_id = get_metadata_from_base_dir(from_dir).get("Identifier")
-            except Exception:
-                folder_id = None
-            folder_id = folder_id or mdl.model_id
-            requested = model.strip().lower()
-            if folder_id and requested not in (folder_id, mdl.slug):
-                fail(
-                    f"The folder {from_dir} contains model {folder_id}, not {model}.",
-                    f"Run 'ersilia fetch {folder_id} --from_dir {from_dir}'.",
-                )
+            mdl = check_fetch_folder(model, from_dir)
         else:
             mdl = ModelBase(model_id_or_slug=model)
         model_id = mdl.model_id

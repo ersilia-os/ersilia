@@ -18,6 +18,7 @@ from ..default import DEFAULT_BATCH_SIZE, INFORMATION_FILE
 from ._runtime import library_call
 
 FETCHED = "Model fetched successfully"
+DOCKER_SERVICES = ("pulled_docker", "docker")
 TRACKING_USE_CASES = ("local", "self-service", "hosted", "test")
 EXAMPLE_MODES = ("random", "curated", "deterministic")
 CATALOG_TASKS = ("Annotation", "Representation", "Sampling")
@@ -106,14 +107,59 @@ class Model:
 
         return Session(config_json=None)
 
+    def _served_now(self):
+        # The model this session serves and whether it still runs, like the
+        # CLI: a record whose server stopped is cleared, as 'ersilia' does.
+        session = self._session()
+        served, status = session.served_model()
+        if status == "stale":
+            session.clear_stale(served)
+            return served, False
+        return served, status == "running"
+
     def _served_here(self):
-        return self._session().current_model_id() == self.model_id
+        served, running = self._served_now()
+        return running and served == self.model_id
 
     def _require_served(self):
         from ..utils.exceptions_utils.api_exceptions import ModelNotServedError
 
-        if not self._served_here():
+        served, running = self._served_now()
+        if served == self.model_id and not running:
+            raise ModelNotServedError(self.model_id, stopped=True)
+        if not (running and served == self.model_id):
             raise ModelNotServedError(self.model_id)
+
+    def _serving_info(self):
+        # What 'ersilia info' shows in its Serving section.
+        from ..utils import tmp_pid_file
+        from ..utils.ports import normalize_connect_url
+
+        session = self._session()
+        data = session.get() or {}
+        url = pid = container = None
+        pid_file = tmp_pid_file(self.model_id)
+        if os.path.isfile(pid_file):
+            with open(pid_file) as f:
+                lines = [line.split() for line in f if line.strip()]
+            if lines:
+                pid, url = lines[-1][0], lines[-1][1]
+                container = lines[-1][2] if len(lines[-1]) > 2 else None
+        url = normalize_connect_url(url).rstrip("/") if url else None
+        try:
+            apis = self._served_model().get_apis()
+        except Exception:
+            apis = []
+        return {
+            "model_id": self.model_id,
+            "url": url,
+            "docs": "{0}/docs".format(url) if url else None,
+            "service": data.get("service_class"),
+            "pid": int(pid) if pid not in (None, "-1") else None,
+            "container": container if container not in (None, "-") else None,
+            "session": session._session_dir,
+            "apis": apis,
+        }
 
     def _require_fetched(self):
         from ..utils.exceptions_utils.exceptions import ModelNotAvailableLocallyError
@@ -174,12 +220,38 @@ class Model:
         ModelFetchError
             If the model could not be fetched.
         """
-        from ..hub.fetch.fetch import ModelFetcher
+        from ..hub.fetch.fetch import ALREADY_FETCHED, ModelFetcher
         from ..utils.asyncio_utils import run_coroutine
-        from ..utils.exceptions_utils.api_exceptions import ModelFetchError
+        from ..utils.echo import echo
+        from ..utils.exceptions_utils.api_exceptions import (
+            InvalidOptionError,
+            ModelFetchError,
+        )
 
-        from_dockerhub = not any([from_dir, from_github, from_s3, from_hosted])
+        chosen = [
+            name
+            for name, on in (
+                ("from_dir", from_dir),
+                ("from_github", from_github),
+                ("from_s3", from_s3),
+                ("from_hosted", from_hosted),
+            )
+            if on
+        ]
+        if len(chosen) > 1:
+            raise InvalidOptionError(
+                "Choose only one source; got {0}.".format(", ".join(chosen))
+            )
+        from_dockerhub = not chosen
         with library_call(self.verbose):
+            if version is not None and not from_dockerhub:
+                echo(
+                    "version only applies to DockerHub, so it is ignored.", fg="yellow"
+                )
+            if from_dir is not None:
+                from ..utils.checks import check_fetch_folder
+
+                check_fetch_folder(self.model_id, from_dir)
             mf = ModelFetcher(
                 repo_path=from_dir,
                 force_from_github=from_github,
@@ -194,7 +266,7 @@ class Model:
             result = run_coroutine(mf.fetch(self.model_id))
         if result.fetch_success:
             return result.reason == FETCHED
-        if str(result.reason).startswith("Model already exists"):
+        if result.reason == ALREADY_FETCHED:
             return False
         raise ModelFetchError(self.model_id, result.reason)
 
@@ -235,8 +307,11 @@ class Model:
         Returns
         -------
         dict
-            ``model_id``, ``url``, ``service``, ``pid`` (None for containers)
-            and ``apis``.
+            How the model is served, as in the Serving section of
+            ``ersilia info``: ``model_id``, ``url``, ``docs``, ``service``,
+            ``pid`` (None for containers), ``container``, ``session`` and
+            ``apis``. If the model is already served here, it is not started
+            again and these details are returned.
 
         Raises
         ------
@@ -275,8 +350,11 @@ class Model:
                 import isaura  # noqa: F401
             except ImportError:
                 raise MissingDependencyError("isaura")
-        served = self._session().current_model_id()
-        if served is not None and served != self.model_id:
+        served, running = self._served_now()
+        if running and served == self.model_id:
+            # Already served here: nothing to do, as 'ersilia serve' says.
+            return self._serving_info()
+        if running and served is not None:
             raise SessionBusyError(served, self.model_id)
         self._require_fetched()
 
@@ -297,15 +375,7 @@ class Model:
             if mdl.url is None:
                 raise ModelServeError(self.model_id)
             register_model_session(mdl.model_id, mdl.session._session_dir)
-            apis = mdl.get_apis()
-        pid = mdl.pid if mdl.pid not in (None, -1) else None
-        return {
-            "model_id": self.model_id,
-            "url": mdl.url,
-            "service": mdl.scl,
-            "pid": pid,
-            "apis": apis,
-        }
+        return self._serving_info()
 
     def run(self, input, output=None, batch_size=DEFAULT_BATCH_SIZE):
         """
@@ -319,7 +389,7 @@ class Model:
             A .csv or .h5 file to write the results to. If not given, the
             results are returned as a DataFrame.
         batch_size : int, optional
-            Number of inputs sent to the model at a time.
+            Number of inputs sent to the model at a time (at least 1).
 
         Returns
         -------
@@ -329,9 +399,11 @@ class Model:
         Raises
         ------
         ModelNotServedError
-            If this model is not served in this session.
+            If this model is not served in this session, or it stopped.
         InvalidOptionError
-            For an unsupported input or output file.
+            For a problem with the input or output file (the same checks as
+            ``ersilia run``: missing or empty file, several columns, wrong
+            encoding or separator, missing output folder, and so on).
         EmptyRunOutputError
             If the model produced no output.
         """
@@ -342,6 +414,11 @@ class Model:
             InvalidOptionError,
         )
 
+        if not isinstance(batch_size, int) or batch_size < 1:
+            raise InvalidOptionError(
+                "batch_size must be a whole number of at least 1.",
+                "Got {0!r}.".format(batch_size),
+            )
         self._require_served()
         if output is not None:
             _check_extension(output, [".csv", ".h5"])
@@ -352,18 +429,17 @@ class Model:
                         ids[0], self.model_id
                     )
                 )
+        from ..utils.checks import check_run_arguments
+
         tmp_dir = tempfile.mkdtemp(prefix="ersilia-api-")
+        extracted = None
         try:
             if isinstance(input, (list, tuple)):
+                if not input:
+                    raise InvalidOptionError("No inputs were given.")
                 input_path = os.path.join(tmp_dir, "input.csv")
                 pd.DataFrame({"input": list(input)}).to_csv(input_path, index=False)
-            elif isinstance(input, str) and input.endswith(".csv"):
-                if not os.path.isfile(input):
-                    from ..utils.exceptions_utils.api_exceptions import (
-                        InputFileNotFoundError,
-                    )
-
-                    raise InputFileNotFoundError(input)
+            elif isinstance(input, str):
                 input_path = input
             else:
                 raise InvalidOptionError(
@@ -371,6 +447,8 @@ class Model:
                 )
             output_path = output or os.path.join(tmp_dir, "output.csv")
             with library_call(self.verbose):
+                # The same input and output checks as 'ersilia run'.
+                input_path, extracted = check_run_arguments(input_path, output_path)
                 self._served_model().run(
                     input=input_path, output=output_path, batch_size=batch_size
                 )
@@ -381,6 +459,8 @@ class Model:
             return pd.read_csv(output_path)
         finally:
             shutil.rmtree(tmp_dir, ignore_errors=True)
+            if extracted:
+                shutil.rmtree(extracted, ignore_errors=True)
 
     def info(self, output=None):
         """
@@ -444,16 +524,33 @@ class Model:
         ModelNotAvailableLocallyError
             If the model is not fetched.
         InvalidOptionError
-            For an unknown mode.
+            For an unknown mode, fewer than 1 example, a missing output
+            folder, or curated mode on a model without curated examples.
         """
         import pandas as pd
 
         from ..io.input import ExampleGenerator
+        from ..utils.exceptions_utils.api_exceptions import InvalidOptionError
 
         mode = _check_choice(mode, EXAMPLE_MODES, "mode")
+        if mode != "curated" and (not isinstance(n_samples, int) or n_samples < 1):
+            raise InvalidOptionError(
+                "n_samples must be a whole number of at least 1.",
+                "Got {0!r}.".format(n_samples),
+            )
         if output is not None:
             _check_extension(output, [".csv"])
+            folder = os.path.dirname(output) or "."
+            if not os.path.isdir(folder):
+                raise InvalidOptionError(
+                    "The output folder {0} does not exist.".format(folder)
+                )
         self._require_fetched()
+        if mode == "curated":
+            from ..utils.checks import check_curated_examples
+
+            with library_call(self.verbose):
+                check_curated_examples(self.model_id)
         tmp_dir = tempfile.mkdtemp(prefix="ersilia-api-")
         try:
             path = output or os.path.join(tmp_dir, "examples.csv")
@@ -469,17 +566,45 @@ class Model:
         """
         Close the served model, like ``ersilia close``.
 
+        Returns
+        -------
+        bool
+            True if the model was closed (also when it had already stopped),
+            False if no model is served in this session, so there was nothing
+            to close.
+
         Raises
         ------
         ModelNotServedError
-            If this model is not served in this session.
+            If another model is served in this session.
+        DockerNotActiveError
+            If the model runs in Docker and Docker is not running.
         """
+        from ..utils.exceptions_utils.api_exceptions import ModelNotServedError
+        from ..utils.exceptions_utils.serve_exceptions import DockerNotActiveError
         from ..utils.session import deregister_model_session
 
-        self._require_served()
+        session = self._session()
+        served, status = session.served_model()
+        if served is None:
+            # Nothing to close, as 'ersilia close' says.
+            return False
+        if served != self.model_id:
+            raise ModelNotServedError(self.model_id)
+        if status == "stale":
+            # It had already stopped: forget it, as 'ersilia close' does.
+            session.clear_stale(served)
+            return True
+        if session.current_service_class() in DOCKER_SERVICES:
+            from ..setup.requirements.docker import DockerRequirement
+
+            if not DockerRequirement().is_active():
+                # Keep the record: the container stops along with Docker.
+                raise DockerNotActiveError()
         with library_call(self.verbose):
             self._served_model().close()
             deregister_model_session(self.model_id)
+        return True
 
     def delete(self):
         """
@@ -490,12 +615,19 @@ class Model:
         ModelNotAvailableLocallyError
             If the model is not fetched.
         ModelNotDeletableError
-            If the model cannot be deleted (e.g. Docker is not running).
+            If the model cannot be deleted: it is served in this session or
+            another one, or Docker is not running.
         """
         from ..hub.delete.delete import ModelFullDeleter
         from ..utils.exceptions_utils.api_exceptions import ModelNotDeletableError
         from ..utils.exceptions_utils.exceptions import ModelNotAvailableLocallyError
 
+        if self._served_here():
+            # 'ersilia delete' asks first (default no); a library never asks.
+            raise ModelNotDeletableError(
+                self.model_id,
+                "It is being served in this session. Call close() first.",
+            )
         with library_call(self.verbose):
             md = ModelFullDeleter()
             can_delete, reason = md.can_be_deleted(self.model_id)
@@ -631,7 +763,7 @@ class Catalog:
         Raises
         ------
         InvalidModelIdentifierError
-            If the model is not in the Ersilia Model Hub.
+            If the model is not in the Ersilia Model Hub (with suggestions).
         """
         from ..hub.content.card import ModelCard
         from ..hub.content.information import write_fields
@@ -639,7 +771,11 @@ class Catalog:
 
         if output is not None:
             _check_extension(output, [".json", ".csv"])
+        from ..core.modelbase import ModelBase
+
         with library_call(self.verbose):
+            # Accepts a slug too, and suggests a close match for a typo.
+            model = ModelBase(model).model_id
             card = ModelCard().get(model)
         if not card:
             raise InvalidModelIdentifierError(model)

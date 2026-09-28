@@ -132,7 +132,7 @@ def test_prompts_take_their_default_in_library_mode(monkeypatch):
     "result, expected",
     [
         (FetchResult(True, "Model fetched successfully"), True),
-        (FetchResult(False, "Model already exists on your system. ..."), False),
+        (FetchResult(False, "Model is already fetched."), False),
         (FetchResult(True, "Model eos3b5e is already available locally ..."), False),
     ],
 )
@@ -220,15 +220,15 @@ def test_run_rejects_what_the_cli_rejects(kwargs):
 
 def test_run_needs_this_model_served():
     m = _model()
-    with patch.object(Model, "_served_here", lambda self: False):
-        with pytest.raises(ModelNotServedError):
+    with patch.object(Model, "_served_now", lambda self: (None, False)):
+        with pytest.raises(ModelNotServedError, match="not being served"):
             m.run(["CCO"])
 
 
 def test_serve_refuses_while_another_model_is_served():
     m = _model()
     session = MagicMock()
-    session.current_model_id.return_value = "eos42ez"
+    session.served_model.return_value = ("eos42ez", "running")
     with patch.object(Model, "_session", lambda self: session):
         with pytest.raises(SessionBusyError):
             m.serve()
@@ -308,3 +308,153 @@ def test_importing_the_api_does_not_import_the_cli():
         [sys.executable, "-c", code], capture_output=True, text=True
     )
     assert result.returncode == 0, result.stderr[-500:]
+
+
+# The API follows the CLI's current rules (sessions, checks, messages).
+
+
+def _session(served=None, status=None, service_class="pulled_docker"):
+    session = MagicMock()
+    session.served_model.return_value = (served, status)
+    session.current_service_class.return_value = service_class
+    return session
+
+
+def test_serving_the_served_model_again_returns_its_details():
+    m, session = _model(), _session("eos3b5e", "running")
+    info = {"model_id": "eos3b5e", "url": "http://127.0.0.1:1"}
+    with (
+        patch.object(Model, "_session", lambda self: session),
+        patch.object(Model, "_serving_info", lambda self: info),
+        patch("ersilia.core.model.ErsiliaModel") as started,
+    ):
+        assert m.serve() == info
+    started.assert_not_called()
+
+
+def test_a_stopped_model_is_cleared_and_not_taken_as_served():
+    m, session = _model(), _session("eos3b5e", "stale")
+    with patch.object(Model, "_session", lambda self: session):
+        with pytest.raises(ModelNotServedError, match="no longer running"):
+            m.run(["CCO"])
+    session.clear_stale.assert_called_once_with("eos3b5e")
+
+
+def test_a_stale_record_of_another_model_does_not_block_serving():
+    m, session = _model(), _session("eos42ez", "stale")
+    with (
+        patch.object(Model, "_session", lambda self: session),
+        patch.object(Model, "_require_fetched", side_effect=RuntimeError("next")),
+    ):
+        with pytest.raises(RuntimeError, match="next"):
+            m.serve()
+    session.clear_stale.assert_called_once_with("eos42ez")
+
+
+def test_closing_a_stopped_model_just_forgets_it():
+    m, session = _model(), _session("eos3b5e", "stale")
+    with (
+        patch.object(Model, "_session", lambda self: session),
+        patch.object(Model, "_served_model") as served,
+    ):
+        assert m.close() is True
+    session.clear_stale.assert_called_once_with("eos3b5e")
+    served.assert_not_called()
+
+
+def test_close_with_nothing_served_has_nothing_to_do():
+    m, session = _model(), _session(None, None)
+    with patch.object(Model, "_session", lambda self: session):
+        assert m.close() is False
+
+
+def test_close_refuses_another_served_model():
+    m, session = _model(), _session("eos42ez", "running")
+    with patch.object(Model, "_session", lambda self: session):
+        with pytest.raises(ModelNotServedError):
+            m.close()
+
+
+def test_close_refuses_while_docker_is_down():
+    from ersilia.utils.exceptions_utils.serve_exceptions import DockerNotActiveError
+
+    m, session = _model(), _session("eos3b5e", "running")
+    with (
+        patch.object(Model, "_session", lambda self: session),
+        patch(
+            "ersilia.setup.requirements.docker.DockerRequirement.is_active",
+            return_value=False,
+        ),
+        patch.object(Model, "_served_model") as served,
+        pytest.raises(DockerNotActiveError),
+    ):
+        m.close()
+    served.assert_not_called()
+
+
+def test_delete_refuses_the_model_served_here():
+    from ersilia.utils.exceptions_utils.api_exceptions import ModelNotDeletableError
+
+    m = _model()
+    with patch.object(Model, "_served_here", lambda self: True):
+        with pytest.raises(ModelNotDeletableError, match="cannot be deleted"):
+            m.delete()
+
+
+def test_fetch_takes_one_source_at_a_time():
+    with pytest.raises(InvalidOptionError, match="Choose only one source"):
+        _model().fetch(from_github=True, from_s3=True)
+
+
+def test_fetch_from_a_missing_folder_is_refused(tmp_path):
+    with pytest.raises(InvalidOptionError, match="does not exist"):
+        _model().fetch(from_dir=str(tmp_path / "nope"))
+
+
+@pytest.mark.parametrize("batch_size", [0, -1, 1.5, "10"])
+def test_run_checks_the_batch_size(batch_size):
+    with pytest.raises(InvalidOptionError, match="batch_size"):
+        _model().run(["CCO"], batch_size=batch_size)
+
+
+@pytest.mark.parametrize(
+    "content, message",
+    [
+        ("", "is empty"),
+        ("smiles\n", "has a header but no inputs"),
+        ("a,b\nCCO,1\n", "has 2 columns"),
+        ("smiles;name\nCCO;x\n", "tab or semicolon"),
+    ],
+)
+def test_run_checks_the_input_file_like_the_cli(tmp_path, content, message):
+    csv = tmp_path / "in.csv"
+    csv.write_text(content)
+    m = _model()
+    p1, p2 = _served(m, _FakeServed())
+    with p1, p2, pytest.raises(InvalidOptionError, match=message):
+        m.run(str(csv))
+
+
+def test_run_uses_the_smiles_column_of_a_wider_file(tmp_path):
+    csv = tmp_path / "in.csv"
+    csv.write_text("name,smiles\nethanol,CCO\nbenzene,c1ccccc1\n")
+    m, fake = _model(), _FakeServed()
+    p1, p2 = _served(m, fake)
+    with p1, p2:
+        assert m.run(str(csv)).shape[0] == 2
+
+
+@pytest.mark.parametrize("n_samples", [0, -3])
+def test_example_needs_at_least_one_sample(n_samples):
+    with pytest.raises(InvalidOptionError, match="n_samples"):
+        _model().example(n_samples)
+
+
+def test_checks_raise_in_the_api_and_exit_in_the_cli():
+    from ersilia.utils.checks import fail
+
+    with library_call(), pytest.raises(InvalidOptionError, match="bad input"):
+        fail("bad input", "fix it")
+    with pytest.raises(SystemExit) as e:
+        fail("bad input", "fix it")
+    assert e.value.code == 1

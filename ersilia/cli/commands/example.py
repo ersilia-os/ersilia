@@ -46,7 +46,7 @@ def example_cmd():
         resolved_file = output_file or file_name
         if not resolved_file:
             raise click.UsageError("Missing option '--output_file' / '-o'.")
-        from ..run_checks import fail
+        from ...utils.checks import check_curated_examples, fail
 
         if not resolved_file.lower().endswith(".csv"):
             fail(
@@ -73,17 +73,7 @@ def example_cmd():
             echo("Give one, e.g. 'ersilia example eos42ez -o input.csv'.")
             sys.exit(1)
         if mode == "curated":
-            from ...default import PREDEFINED_EXAMPLE_FILES
-
-            model_dir = ModelBase(model_id)._model_path(model_id)
-            if not any(
-                os.path.exists(os.path.join(model_dir, f))
-                for f in PREDEFINED_EXAMPLE_FILES
-            ):
-                fail(
-                    f"Model {model_id} has no curated examples here.",
-                    "Fetch the model first, or use '--mode random' instead.",
-                )
+            check_curated_examples(model_id)
         eg = ExampleGenerator(model_id=model_id)
         eg.example(
             n_samples,
