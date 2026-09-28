@@ -14,7 +14,6 @@ from ..default import (
     SERVICE_CLASS_FILE,
 )
 from ..utils import tmp_pid_file
-from ..utils.cache import SetupRedis
 from ..utils.echo import echo, spinner
 from ..utils.session import kill_process_tree, stop_containers_by_name
 from .api import Api
@@ -81,7 +80,10 @@ class AutoService(ErsiliaBase):
         ErsiliaBase.__init__(self, config_json=config_json)
         self.logger.debug("Setting autoservice for {0}".format(model_id))
         self.config_json = config_json
-        self.setup_redis = SetupRedis(cache=cache, maxmemory=maxmemory)
+        # Redis is only set up when serving; run and close never need it, and
+        # constructing SetupRedis runs several docker probes.
+        self._cache = cache
+        self._maxmemory = maxmemory
         self.model_id = model_id
         self._meta = None
         self._preferred_port = preferred_port
@@ -145,71 +147,24 @@ class AutoService(ErsiliaBase):
                     if service_class_file is not None
                     else io.StringIO()
                 )
+                port = {"preferred_port": preferred_port}
+                candidates = [
+                    ("system", SystemBundleService, port),
+                    ("venv", VenvEnvironmentService, port),
+                    ("conda", CondaEnvironmentService, port),
+                    ("docker", DockerImageService, port),
+                    ("pulled_docker", PulledDockerImageService, port),
+                    ("hosted", HostedService, {"url": url}),
+                ]
                 with _ctx as f:
-                    if SystemBundleService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = SystemBundleService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        self.logger.debug("Service class: system")
-                        f.write("system")
-                        self._service_class = "system"
-                    elif VenvEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = VenvEnvironmentService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("venv")
-                        self.logger.debug("Service class: venv")
-                        self._service_class = "venv"
-                    elif CondaEnvironmentService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = CondaEnvironmentService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("conda")
-                        self.logger.debug("Service class: conda")
-                        self._service_class = "conda"
-                    elif DockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = DockerImageService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("docker")
-                        self.logger.debug("Service class: docker")
-                        self._service_class = "docker"
-                    elif PulledDockerImageService(
-                        model_id, config_json=config_json, preferred_port=preferred_port
-                    ).is_available():
-                        self.service = PulledDockerImageService(
-                            model_id,
-                            config_json=config_json,
-                            preferred_port=preferred_port,
-                        )
-                        f.write("pulled_docker")
-                        self.logger.debug("Service class: pulled_docker")
-                        self._service_class = "pulled_docker"
-                    elif HostedService(
-                        model_id, config_json=config_json, url=url
-                    ).is_available():
-                        self.service = HostedService(
-                            model_id, config_json=config_json, url=url
-                        )
-                        f.write("hosted")
-                        self.logger.debug("Service class: hosted")
-                        self._service_class = "hosted"
+                    for name, cls, kwargs in candidates:
+                        svc = cls(model_id, config_json=config_json, **kwargs)
+                        if svc.is_available():
+                            self.service = svc
+                            f.write(name)
+                            self.logger.debug("Service class: {0}".format(name))
+                            self._service_class = name
+                            break
                     else:
                         self.logger.debug("Service class: dummy")
                         self.service = DummyService(
@@ -225,18 +180,14 @@ class AutoService(ErsiliaBase):
         else:
             self.logger.info("Service class provided")
             service_class = self._service_class_loader(service_class)
-            if service_class(
+            svc = service_class(
                 model_id,
                 config_json=config_json,
                 preferred_port=preferred_port,
                 url=url,
-            ).is_available():
-                self.service = service_class(
-                    model_id,
-                    config_json=config_json,
-                    preferred_port=preferred_port,
-                    url=url,
-                )
+            )
+            if svc.is_available():
+                self.service = svc
                 self.logger.info(
                     f"Resolved service backend '{self._service_class}' for model {model_id}"
                 )
@@ -441,7 +392,9 @@ class AutoService(ErsiliaBase):
         spinner("Closing existing session for the model", self.close)
         spinner(f"Starting service for model {self.model_id}", self.service.serve)
         self.logger.info("Setting up Redis")
-        self.setup_redis.ensure_redis_running()
+        from ..utils.cache import SetupRedis
+
+        SetupRedis(cache=self._cache, maxmemory=self._maxmemory).ensure_redis_running()
         tmp_file = tmp_pid_file(self.model_id)
         container_name = getattr(self.service, "container_name", None) or "-"
         with open(tmp_file, "a+") as f:
