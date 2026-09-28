@@ -478,6 +478,9 @@
     <span class="p">):</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.exceptions_utils.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">ModelNotAvailableLocallyError</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
             <span class="n">deregister_model_session</span><span class="p">,</span>
@@ -487,6 +490,29 @@
         <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelNotFound</span>
 
         <span class="n">sess</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">stale_model</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">served_model</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"stale"</span><span class="p">:</span>
+            <span class="c1"># Recorded as served, but no longer running: nothing to close.</span>
+            <span class="n">sess</span><span class="o">.</span><span class="n">clear_stale</span><span class="p">(</span><span class="n">stale_model</span><span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">stale_model</span><span class="si">}</span><span class="s2"> was no longer running; replacing it."</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"running"</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
+
+            <span class="k">if</span> <span class="n">ModelBase</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">model_id</span> <span class="o">==</span> <span class="n">stale_model</span><span class="p">:</span>
+                <span class="c1"># The same model is already running here: nothing to do.</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">...utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.ports</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_connect_url</span>
+
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_pid_file</span><span class="p">(</span><span class="n">stale_model</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">normalize_connect_url</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">lines</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="n">echo</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">stale_model</span><span class="si">}</span><span class="s2"> is already being served in this terminal."</span><span class="p">,</span>
+                    <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">url</span><span class="p">:</span>
+                    <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"It is available at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+                <span class="k">return</span>
         <span class="n">existing_session</span> <span class="o">=</span> <span class="n">sess</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="n">already_served</span> <span class="o">=</span> <span class="n">existing_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"model_id"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">already_served</span><span class="p">:</span>
@@ -535,17 +561,25 @@
             <span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">output_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
-            <span class="n">cache</span><span class="o">=</span><span class="n">enable_cache</span><span class="p">,</span>
-            <span class="n">maxmemory</span><span class="o">=</span><span class="n">max_memory</span><span class="p">,</span>
-            <span class="n">read_store</span><span class="o">=</span><span class="n">read_store</span><span class="p">,</span>
-            <span class="n">write_store</span><span class="o">=</span><span class="n">write_store</span><span class="p">,</span>
-            <span class="n">access</span><span class="o">=</span><span class="n">access</span><span class="p">,</span>
-            <span class="n">nearest_neighbors</span><span class="o">=</span><span class="n">nearest_neighbors</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span>
+                <span class="n">model</span><span class="p">,</span>
+                <span class="n">output_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">preferred_port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+                <span class="n">cache</span><span class="o">=</span><span class="n">enable_cache</span><span class="p">,</span>
+                <span class="n">maxmemory</span><span class="o">=</span><span class="n">max_memory</span><span class="p">,</span>
+                <span class="n">read_store</span><span class="o">=</span><span class="n">read_store</span><span class="p">,</span>
+                <span class="n">write_store</span><span class="o">=</span><span class="n">write_store</span><span class="p">,</span>
+                <span class="n">access</span><span class="o">=</span><span class="n">access</span><span class="p">,</span>
+                <span class="n">nearest_neighbors</span><span class="o">=</span><span class="n">nearest_neighbors</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="n">ModelNotAvailableLocallyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2"> is not available locally, so it cannot be served."</span><span class="p">,</span>
+                <span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">echo</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fetch it first by running: ersilia fetch </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mdl</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
             <span class="n">ModelNotFound</span><span class="p">(</span><span class="n">mdl</span><span class="p">)</span><span class="o">.</span><span class="n">echo</span><span class="p">()</span>
 

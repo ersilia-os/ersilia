@@ -715,6 +715,17 @@ retrieved when needed.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.core.session.Session.clear_stale">
+<span class="sig-name descname"><span class="pre">clear_stale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.clear_stale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.clear_stale" title="Link to this definition">¶</a></dt>
+<dd><p>Forget a model that is recorded as served but is no longer running.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model_id</strong> (<em>str</em>) – The model recorded in this session.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.core.session.Session.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.close" title="Link to this definition">¶</a></dt>
 <dd><p>Close the current session.</p>
@@ -902,6 +913,25 @@ timestamp, identifier, tracking status, service class, and output source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>use_case</strong> (<em>str</em>) – The tracking use case to register.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.core.session.Session.served_model">
+<span class="sig-name descname"><span class="pre">served_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/core/session.html#Session.served_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.core.session.Session.served_model" title="Link to this definition">¶</a></dt>
+<dd><p>Tell which model this session serves, and whether it is really running.</p>
+<p><code class="docutils literal notranslate"><span class="pre">session.json</span></code> records which model is served, and <code class="docutils literal notranslate"><span class="pre">&lt;model&gt;.pid</span></code>
+where it runs. The two can disagree, e.g. when serving was interrupted
+or the model’s container was removed outside Ersilia.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The model ID and its status: “running”, or “stale” when the model
+is recorded but its .pid file, container or process is gone.
+(None, None) when no model is recorded.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of (str or None, str or None)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1239,6 +1269,7 @@ and uploads the data to AWS if credentials are available.
 </li>
 <li><a class="reference internal" href="#module-ersilia.core.session">ersilia.core.session module</a><ul>
 <li><a class="reference internal" href="#ersilia.core.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.core.session.Session.clear_stale"><code class="docutils literal notranslate"><span class="pre">Session.clear_stale()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.close"><code class="docutils literal notranslate"><span class="pre">Session.close()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.current_identifier"><code class="docutils literal notranslate"><span class="pre">Session.current_identifier()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.current_local_cache_status"><code class="docutils literal notranslate"><span class="pre">Session.current_local_cache_status()</span></code></a></li>
@@ -1253,6 +1284,7 @@ and uploads the data to AWS if credentials are available.
 <li><a class="reference internal" href="#ersilia.core.session.Session.register_service_class"><code class="docutils literal notranslate"><span class="pre">Session.register_service_class()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.register_store_status"><code class="docutils literal notranslate"><span class="pre">Session.register_store_status()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.register_tracking_use_case"><code class="docutils literal notranslate"><span class="pre">Session.register_tracking_use_case()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.core.session.Session.served_model"><code class="docutils literal notranslate"><span class="pre">Session.served_model()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.tracking_status"><code class="docutils literal notranslate"><span class="pre">Session.tracking_status()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.update_cpu_time"><code class="docutils literal notranslate"><span class="pre">Session.update_cpu_time()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.core.session.Session.update_peak_memory"><code class="docutils literal notranslate"><span class="pre">Session.update_peak_memory()</span></code></a></li>

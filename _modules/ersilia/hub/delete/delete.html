@@ -321,8 +321,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Environment</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">deregister_model_session</span><span class="p">,</span>
-    <span class="n">get_model_session</span><span class="p">,</span>
-    <span class="n">remove_session_dir</span><span class="p">,</span>
+    <span class="n">get_live_model_sessions</span><span class="p">,</span>
+    <span class="n">get_model_sessions</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.system</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_inside_docker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command</span>
@@ -869,11 +869,23 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the model can be deleted, False otherwise.</span>
 <span class="sd">        """</span>
-        <span class="n">mdl_session</span> <span class="o">=</span> <span class="n">get_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mdl_session</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Removing session </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl_session</span><span class="p">))</span>
-            <span class="n">remove_session_dir</span><span class="p">(</span><span class="n">mdl_session</span><span class="p">)</span>
-            <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="n">live_sessions</span> <span class="o">=</span> <span class="n">get_live_model_sessions</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">live_sessions</span><span class="p">:</span>
+            <span class="c1"># Deleting the image would stop the containers of every terminal</span>
+            <span class="c1"># serving this model, so ask the user to close them first.</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">live_sessions</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="kc">False</span><span class="p">,</span>
+                <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> is being served in </span><span class="si">{1}</span><span class="s2"> session</span><span class="si">{2}</span><span class="s2"> (</span><span class="si">{3}</span><span class="s2">). Run 'ersilia close' there before deleting it."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">model_id</span><span class="p">,</span>
+                    <span class="n">n</span><span class="p">,</span>
+                    <span class="s2">""</span> <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">"s"</span><span class="p">,</span>
+                    <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">live_sessions</span><span class="p">),</span>
+                <span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">session_dir</span> <span class="ow">in</span> <span class="n">get_model_sessions</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Deregistering stale session </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">session_dir</span><span class="p">))</span>
+            <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">session_dir</span><span class="p">)</span>
         <span class="n">needs_delete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_delete</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">ModelCard</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">model_source</span> <span class="o">=</span> <span class="n">ModelCatalog</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">)</span><span class="o">.</span><span class="n">_get_model_source</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>

@@ -516,15 +516,12 @@ It also provides methods to start, stop, and manage the service, as well as to i
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.clean_docker_containers">
-<span class="sig-name descname"><span class="pre">clean_docker_containers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.clean_docker_containers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.clean_docker_containers" title="Link to this definition">¶</a></dt>
-<dd><p>Clean Docker containers if necessary.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.autoservice.AutoService.clean_temp_dir">
 <span class="sig-name descname"><span class="pre">clean_temp_dir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/autoservice.html#AutoService.clean_temp_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.autoservice.AutoService.clean_temp_dir" title="Link to this definition">¶</a></dt>
-<dd><p>Clean the temporary directory.</p>
+<dd><p>Clean the temporary directories created by this session.</p>
+<p>Each session tracks its temporary directories as symlinks in
+<code class="docutils literal notranslate"><span class="pre">&lt;session&gt;/logs/tmp</span></code> (see <code class="docutils literal notranslate"><span class="pre">make_temp_dir</span></code>). Only those are removed,
+so runs, fetches and servers of other sessions (terminals) keep theirs.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -960,7 +957,7 @@ for HDF5 serializability, and generate empty representations of the input and ou
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.services.DockerImageService.close">
 <span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/services.html#DockerImageService.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.services.DockerImageService.close" title="Link to this definition">¶</a></dt>
-<dd><p>Close the Docker image service.</p>
+<dd><p>Close the Docker image service, stopping only this service’s container.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -1689,7 +1686,6 @@ Finally, create a CSV file with the combined results.</p>
 <li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService"><code class="docutils literal notranslate"><span class="pre">AutoService</span></code></a><ul>
 <li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.api"><code class="docutils literal notranslate"><span class="pre">AutoService.api()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.clean_before_serving"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_before_serving()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.clean_docker_containers"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_docker_containers()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.clean_temp_dir"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_temp_dir()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.close"><code class="docutils literal notranslate"><span class="pre">AutoService.close()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.serve.autoservice.AutoService.get_apis"><code class="docutils literal notranslate"><span class="pre">AutoService.get_apis()</span></code></a></li>

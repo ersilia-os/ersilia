@@ -544,6 +544,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.core.html#module-ersilia.core.session">ersilia.core.session module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.clear_stale"><code class="docutils literal notranslate"><span class="pre">Session.clear_stale()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.close"><code class="docutils literal notranslate"><span class="pre">Session.close()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.current_identifier"><code class="docutils literal notranslate"><span class="pre">Session.current_identifier()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.current_local_cache_status"><code class="docutils literal notranslate"><span class="pre">Session.current_local_cache_status()</span></code></a></li>
@@ -558,6 +559,7 @@
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.register_service_class"><code class="docutils literal notranslate"><span class="pre">Session.register_service_class()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.register_store_status"><code class="docutils literal notranslate"><span class="pre">Session.register_store_status()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.register_tracking_use_case"><code class="docutils literal notranslate"><span class="pre">Session.register_tracking_use_case()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.served_model"><code class="docutils literal notranslate"><span class="pre">Session.served_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.tracking_status"><code class="docutils literal notranslate"><span class="pre">Session.tracking_status()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.update_cpu_time"><code class="docutils literal notranslate"><span class="pre">Session.update_cpu_time()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.core.html#ersilia.core.session.Session.update_peak_memory"><code class="docutils literal notranslate"><span class="pre">Session.update_peak_memory()</span></code></a></li>
@@ -885,7 +887,6 @@
 <li class="toctree-l3"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService"><code class="docutils literal notranslate"><span class="pre">AutoService</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.api"><code class="docutils literal notranslate"><span class="pre">AutoService.api()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_before_serving"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_before_serving()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_docker_containers"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_docker_containers()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.clean_temp_dir"><code class="docutils literal notranslate"><span class="pre">AutoService.clean_temp_dir()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.close"><code class="docutils literal notranslate"><span class="pre">AutoService.close()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ersilia.serve.html#ersilia.serve.autoservice.AutoService.get_apis"><code class="docutils literal notranslate"><span class="pre">AutoService.get_apis()</span></code></a></li>
@@ -1532,22 +1533,28 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.html#module-ersilia.utils.session">ersilia.utils.session module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.container_is_running"><code class="docutils literal notranslate"><span class="pre">container_is_running()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.create_session_dir"><code class="docutils literal notranslate"><span class="pre">create_session_dir()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.create_session_files"><code class="docutils literal notranslate"><span class="pre">create_session_files()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.deregister_model_session"><code class="docutils literal notranslate"><span class="pre">deregister_model_session()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.deregister_session"><code class="docutils literal notranslate"><span class="pre">deregister_session()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.determine_orphaned_session"><code class="docutils literal notranslate"><span class="pre">determine_orphaned_session()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.get_current_pid"><code class="docutils literal notranslate"><span class="pre">get_current_pid()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.get_model_session"><code class="docutils literal notranslate"><span class="pre">get_model_session()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.get_live_model_sessions"><code class="docutils literal notranslate"><span class="pre">get_live_model_sessions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.get_model_sessions"><code class="docutils literal notranslate"><span class="pre">get_model_sessions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.get_parent_pid"><code class="docutils literal notranslate"><span class="pre">get_parent_pid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.get_session_dir"><code class="docutils literal notranslate"><span class="pre">get_session_dir()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.get_session_id"><code class="docutils literal notranslate"><span class="pre">get_session_id()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.get_session_uuid"><code class="docutils literal notranslate"><span class="pre">get_session_uuid()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.is_session_alive"><code class="docutils literal notranslate"><span class="pre">is_session_alive()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.kill_process_tree"><code class="docutils literal notranslate"><span class="pre">kill_process_tree()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.prune_empty_session_dirs"><code class="docutils literal notranslate"><span class="pre">prune_empty_session_dirs()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.purge_session_processes"><code class="docutils literal notranslate"><span class="pre">purge_session_processes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.read_pid_file"><code class="docutils literal notranslate"><span class="pre">read_pid_file()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.register_model_session"><code class="docutils literal notranslate"><span class="pre">register_model_session()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.remove_orphaned_sessions"><code class="docutils literal notranslate"><span class="pre">remove_orphaned_sessions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.remove_session_dir"><code class="docutils literal notranslate"><span class="pre">remove_session_dir()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.session_pid_from_name"><code class="docutils literal notranslate"><span class="pre">session_pid_from_name()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.set_write_permissions"><code class="docutils literal notranslate"><span class="pre">set_write_permissions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.html#ersilia.utils.session.stop_containers_by_name"><code class="docutils literal notranslate"><span class="pre">stop_containers_by_name()</span></code></a></li>
 </ul>
