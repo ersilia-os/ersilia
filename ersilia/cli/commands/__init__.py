@@ -85,9 +85,20 @@ _align_commands_with_options()
 # ruff: noqa: D101, D102
 
 
+def _normalize_option(name):
+    # --from-github works like --from_github, without listing both spellings
+    # in the help.
+    return name.replace("-", "_")
+
+
 class ErsiliaCommandGroup(RichGroup):
     def command(self, *args, **kwargs):
         kwargs.setdefault("cls", RichCommand)
+        # Set on each command too, so it also applies when a command is
+        # invoked directly (scripts, tests), not only through 'ersilia'.
+        settings = dict(kwargs.get("context_settings") or {})
+        settings.setdefault("token_normalize_func", _normalize_option)
+        kwargs["context_settings"] = settings
         return RichGroup.command(self, *args, **kwargs)
 
     def main(self, *args, **kwargs):
@@ -133,9 +144,7 @@ class ErsiliaCommandGroup(RichGroup):
     context_settings={
         "show_default": True,
         "help_option_names": ["-h", "--help"],
-        # --from-github works like --from_github, without listing both
-        # spellings in the help.
-        "token_normalize_func": lambda name: name.replace("-", "_"),
+        "token_normalize_func": _normalize_option,
     },
     epilog="To learn more about a specific command, run: ersilia COMMAND --help",
 )

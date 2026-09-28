@@ -289,3 +289,15 @@ def test_top_level_help_aligns_commands_with_options():
     option = next(line for line in lines if "--version" in line)
     command = next(line for line in lines if line.startswith("│ catalog"))
     assert option.index("Show the version") == command.index("List a catalog")
+
+
+def test_commands_accept_dashes_when_invoked_directly():
+    # Scripts and the playground tests invoke a command without the group.
+    from ersilia.cli.commands.serve import serve_cmd
+
+    result = CliRunner().invoke(
+        serve_cmd(), ["eos3b5e", "--disable-cache", "--max-cache-memory-frac", "2"]
+    )
+    text = " ".join(re.sub(r"\x1b\[[0-9;]*m|[│╭╮╰╯─]", " ", result.output).split())
+    assert "No such option" not in text
+    assert "--max_cache_memory_frac" in text and "0<x<=1" in text
