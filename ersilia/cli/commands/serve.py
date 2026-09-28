@@ -182,6 +182,7 @@ def serve_cmd():
         from ..messages import ModelNotFound
 
         sess = Session(config_json=None)
+        requested = None
         stale_model, status = sess.served_model()
         if status == "stale":
             # Recorded as served, but no longer running: nothing to close.
@@ -190,7 +191,8 @@ def serve_cmd():
         elif status == "running":
             from ... import ModelBase
 
-            if ModelBase(model).model_id == stale_model:
+            requested = ModelBase(model)
+            if requested.model_id == stale_model:
                 # The same model is already running here: nothing to do.
                 from ...utils import tmp_pid_file
                 from ...utils.ports import normalize_connect_url
@@ -212,7 +214,7 @@ def serve_cmd():
             # so a typo or an unfetched model does not close it for nothing.
             from ... import ModelBase
 
-            requested = ModelBase(model)
+            requested = requested or ModelBase(model)
             if not requested.is_available_locally():
                 echo(
                     f"Model {requested.model_id} is not available locally.",
