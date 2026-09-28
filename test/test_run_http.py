@@ -10,6 +10,7 @@ import requests
 
 import ersilia.serve.standard_api as standard_api
 from ersilia.serve.standard_api import StandardCSVRunApi
+from ersilia.utils.exceptions_utils.cli_exceptions import ModelNotRespondingError
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -59,6 +60,7 @@ def _api():
     api.http = requests.Session()
     api.local_cache = False
     api.logger = logging.getLogger("test_run_http")
+    api.model_id, api.url = "eos3b5e", "http://127.0.0.1"
     return api
 
 
@@ -80,7 +82,7 @@ def test_dead_server_fails_fast_without_splitting():
     api = _api()
     url = f"http://127.0.0.1:{_free_port()}/run"
     st = time.perf_counter()
-    with pytest.raises(RuntimeError, match="did not respond"):
+    with pytest.raises(ModelNotRespondingError, match="stopped responding"):
         api._post_batch_with_fallback(url, ["C"] * 100)
     assert time.perf_counter() - st < 5
 
@@ -89,7 +91,7 @@ def test_hung_server_fails_fast_without_splitting(server, monkeypatch):
     monkeypatch.setattr(standard_api, "RUN_READ_TIMEOUT", 0.5)
     _Handler.mode = "slow"
     api = _api()
-    with pytest.raises(RuntimeError, match="did not respond"):
+    with pytest.raises(ModelNotRespondingError, match="stopped responding"):
         api._post_batch_with_fallback(server, ["C"] * 8)
     assert _Handler.requests_seen == [8]
 
