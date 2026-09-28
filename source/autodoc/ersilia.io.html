@@ -1032,6 +1032,26 @@ If append is True, rows are appended to an existing file without a header.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="ersilia.io.output.GenericOutputAdapter.write_batch">
+<span class="sig-name descname"><span class="pre">write_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#GenericOutputAdapter.write_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.output.GenericOutputAdapter.write_batch" title="Link to this definition">¶</a></dt>
+<dd><p>Writes one batch of merged API results to a CSV, TSV or HDF5 file.</p>
+<p>Produces the same file as standardizing the batch and calling
+write_chunk, but builds the rows in one pass and converts float
+outputs as a single matrix instead of cell by cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputs</strong> (<em>list</em>) – Input records ({“key”: …, “input”: …}), one per result.</p></li>
+<li><p><strong>results</strong> (<em>list</em>) – One dict per input: the input first, then the output values in
+column order.</p></li>
+<li><p><strong>output</strong> (<em>str</em>) – The output file name.</p></li>
+<li><p><strong>append</strong> (<em>bool</em>) – If True, append to the file written by a previous batch.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="ersilia.io.output.GenericOutputAdapter.write_chunk">
 <span class="sig-name descname"><span class="pre">write_chunk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/io/output.html#GenericOutputAdapter.write_chunk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.io.output.GenericOutputAdapter.write_chunk" title="Link to this definition">¶</a></dt>
 <dd><p>Writes one chunk of standardized results to a CSV, TSV or HDF5 file.</p>
@@ -1408,6 +1428,7 @@ This class produces a summary of the results, counting inputs, output dimensions
 <li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.adapt"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.adapt()</span></code></a></li>
 <li><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.adapt()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.merge"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.merge()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.write_batch"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.write_batch()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.io.output.GenericOutputAdapter.write_chunk"><code class="docutils literal notranslate"><span class="pre">GenericOutputAdapter.write_chunk()</span></code></a></li>
 </ul>
 </li>

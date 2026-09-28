@@ -323,7 +323,6 @@
     <span class="n">INFORMATION_FILE</span><span class="p">,</span>
     <span class="n">MODEL_SIZE_FILE</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..hub.fetch.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFetcher</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.input</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseIOGetter</span><span class="p">,</span> <span class="n">ExampleGenerator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.output</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularOutputStacker</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.readers.file</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileTyper</span><span class="p">,</span> <span class="n">TabularFileReader</span>
@@ -331,7 +330,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.autoservice</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoService</span><span class="p">,</span> <span class="n">PulledDockerImageService</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiSchema</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..serve.standard_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardCSVRunApi</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..store.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceStoreApi</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..store.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">OutputSource</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.csvfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">CsvDataLoader</span>
@@ -339,18 +337,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.api_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApiSpecifiedOutputError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.throw_ersilia_exception</span><span class="w"> </span><span class="kn">import</span> <span class="n">throw_ersilia_exception</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.tracking_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrackingNotSupportedError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.hdf5</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_temp_dir</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.terminal</span><span class="w"> </span><span class="kn">import</span> <span class="n">yes_no_input</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.modelbase</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.tracking</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunTracker</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-    <span class="n">pd</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="ErsiliaModel">
@@ -495,6 +486,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Unable to capture user input. Fetching anyway."</span><span class="p">)</span>
                 <span class="n">do_fetch</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">if</span> <span class="n">do_fetch</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">..hub.fetch.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFetcher</span>
+
                 <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span>
                     <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials_json</span>
                 <span class="p">)</span>
@@ -525,6 +518,8 @@
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        This method fetches the model from the Ersilia Model Hub.</span>
 <span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..hub.fetch.fetch</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFetcher</span>
+
         <span class="n">mf</span> <span class="o">=</span> <span class="n">ModelFetcher</span><span class="p">(</span>
             <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">credentials_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials_json</span>
         <span class="p">)</span>
@@ -692,8 +687,11 @@
 <span class="sd">        Any</span>
 <span class="sd">            The result of the API run in the specified output format.</span>
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"pandas"</span> <span class="ow">and</span> <span class="n">pd</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"pandas"</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+            <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span>
         <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"json"</span><span class="p">:</span>
             <span class="n">R</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api_runner_iter</span><span class="p">(</span>
@@ -722,6 +720,8 @@
             <span class="p">):</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">is_h5_serializable</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.hdf5</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hdf5DataLoader</span>
+
                 <span class="n">data</span> <span class="o">=</span> <span class="n">Hdf5DataLoader</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">CsvDataLoader</span><span class="p">()</span>
@@ -880,6 +880,8 @@
 <span class="sd">            The result of the API run.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">OutputSource</span><span class="o">.</span><span class="n">is_precalculation_enabled</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_source</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">..store.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceStoreApi</span>
+
             <span class="n">store</span> <span class="o">=</span> <span class="n">InferenceStoreApi</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">store</span><span class="o">.</span><span class="n">get_precalculations</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_cache_splits</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">):</span>
@@ -1013,6 +1015,8 @@
                 <span class="k">raise</span> <span class="n">TrackingNotSupportedError</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">track</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">.tracking</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunTracker</span>
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
                     <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span>
                     <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span>
@@ -1140,6 +1144,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">"Initializing the run trackers (use case </span><span class="si">{0}</span><span class="s2">)"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">use_case</span><span class="p">)</span>
             <span class="p">)</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.tracking</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunTracker</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">run_tracker</span> <span class="o">=</span> <span class="n">RunTracker</span><span class="p">(</span>
                 <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config_json</span><span class="p">,</span> <span class="n">use_case</span><span class="o">=</span><span class="n">use_case</span>
             <span class="p">)</span>

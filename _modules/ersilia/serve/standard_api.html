@@ -314,7 +314,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">nest_asyncio</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaBase</span>
@@ -324,6 +323,8 @@
     <span class="n">EXAMPLE_STANDARD_INPUT_CSV_FILENAME</span><span class="p">,</span>
     <span class="n">EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME</span><span class="p">,</span>
     <span class="n">INFORMATION_FILE</span><span class="p">,</span>
+    <span class="n">RUN_CONNECT_TIMEOUT</span><span class="p">,</span>
+    <span class="n">RUN_READ_TIMEOUT</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..hub.content.columns_information</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnsInformation</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..io.output</span><span class="w"> </span><span class="kn">import</span> <span class="n">GenericOutputAdapter</span>
@@ -387,6 +388,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">input_header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_input_header</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_output_header</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generic_adapter</span> <span class="o">=</span> <span class="n">GenericOutputAdapter</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns_info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">http</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">isaura_store</span> <span class="o">=</span> <span class="n">IsauraStore</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="n">store_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">current_store_status</span><span class="p">()</span>
@@ -667,7 +669,12 @@
         <span class="p">}</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">do_request</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="n">url</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+                <span class="n">timeout</span><span class="o">=</span><span class="p">(</span><span class="n">RUN_CONNECT_TIMEOUT</span><span class="p">,</span> <span class="n">RUN_READ_TIMEOUT</span><span class="p">),</span>
+            <span class="p">)</span>
             <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
@@ -691,6 +698,13 @@
                 <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="kc">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Timeout</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># The server is unreachable or hung, not a bad molecule: splitting</span>
+            <span class="c1"># the batch would only repeat the wait, so fail right away.</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Model server at </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2"> did not respond (connect timeout "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">RUN_CONNECT_TIMEOUT</span><span class="si">}</span><span class="s2">s, read timeout </span><span class="si">{</span><span class="n">RUN_READ_TIMEOUT</span><span class="si">}</span><span class="s2">s): </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Batch of size </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -757,6 +771,8 @@
             <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_name</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_store</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
             <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"key"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_header</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span>
             <span class="p">)</span>
@@ -788,9 +804,10 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">write_batch</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">):</span>
             <span class="k">nonlocal</span> <span class="n">written</span>
             <span class="n">batch_inputs</span> <span class="o">=</span> <span class="n">input_data</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_results</span><span class="p">)]</span>
-            <span class="n">standardized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_output</span><span class="p">(</span><span class="n">batch_inputs</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generic_adapter</span><span class="o">.</span><span class="n">write_chunk</span><span class="p">(</span><span class="n">standardized</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">written</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="n">written</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">standardized</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generic_adapter</span><span class="o">.</span><span class="n">write_batch</span><span class="p">(</span>
+                <span class="n">batch_inputs</span><span class="p">,</span> <span class="n">batch_results</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="n">written</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">written</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_results</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Waiting for server response"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fetch_result</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">on_batch</span><span class="o">=</span><span class="n">write_batch</span><span class="p">)</span>
@@ -911,7 +928,7 @@
                 <span class="k">if</span> <span class="n">found_u</span> <span class="ow">and</span> <span class="n">IsauraStore</span><span class="o">.</span><span class="n">is_installed</span><span class="p">():</span>
                     <span class="n">cache_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">isaura_store</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">found_u</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">cache_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"key"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">])</span>
+                    <span class="n">cache_df</span> <span class="o">=</span> <span class="kc">None</span>
 
                 <span class="n">api_values</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">if</span> <span class="n">missed_u</span><span class="p">:</span>
@@ -1063,9 +1080,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_standardize_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">results</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
         <span class="n">standardized</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">keys_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_header</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_header</span>
         <span class="k">for</span> <span class="n">inp</span><span class="p">,</span> <span class="n">out</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_values</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
-            <span class="n">keys_flat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_header</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_header</span>
             <span class="n">standardized</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"input"</span><span class="p">:</span> <span class="n">inp</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys_flat</span><span class="p">,</span> <span class="n">values</span><span class="p">))})</span>
         <span class="k">return</span> <span class="n">standardized</span>
 

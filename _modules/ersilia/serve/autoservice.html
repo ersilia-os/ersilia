@@ -320,7 +320,6 @@
     <span class="n">SERVICE_CLASS_FILE</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">tmp_pid_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupRedis</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span><span class="p">,</span> <span class="n">spinner</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">kill_process_tree</span><span class="p">,</span> <span class="n">stop_containers_by_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Api</span>
@@ -389,7 +388,10 @@
         <span class="n">ErsiliaBase</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Setting autoservice for </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_id</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config_json</span> <span class="o">=</span> <span class="n">config_json</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setup_redis</span> <span class="o">=</span> <span class="n">SetupRedis</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">maxmemory</span><span class="o">=</span><span class="n">maxmemory</span><span class="p">)</span>
+        <span class="c1"># Redis is only set up when serving; run and close never need it, and</span>
+        <span class="c1"># constructing SetupRedis runs several docker probes.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">cache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maxmemory</span> <span class="o">=</span> <span class="n">maxmemory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span> <span class="o">=</span> <span class="n">model_id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_preferred_port</span> <span class="o">=</span> <span class="n">preferred_port</span>
@@ -453,71 +455,24 @@
                     <span class="k">if</span> <span class="n">service_class_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                     <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
                 <span class="p">)</span>
+                <span class="n">port</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"preferred_port"</span><span class="p">:</span> <span class="n">preferred_port</span><span class="p">}</span>
+                <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="s2">"system"</span><span class="p">,</span> <span class="n">SystemBundleService</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">"venv"</span><span class="p">,</span> <span class="n">VenvEnvironmentService</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">"conda"</span><span class="p">,</span> <span class="n">CondaEnvironmentService</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">"docker"</span><span class="p">,</span> <span class="n">DockerImageService</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">"pulled_docker"</span><span class="p">,</span> <span class="n">PulledDockerImageService</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span>
+                    <span class="p">(</span><span class="s2">"hosted"</span><span class="p">,</span> <span class="n">HostedService</span><span class="p">,</span> <span class="p">{</span><span class="s2">"url"</span><span class="p">:</span> <span class="n">url</span><span class="p">}),</span>
+                <span class="p">]</span>
                 <span class="k">with</span> <span class="n">_ctx</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">SystemBundleService</span><span class="p">(</span>
-                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">SystemBundleService</span><span class="p">(</span>
-                            <span class="n">model_id</span><span class="p">,</span>
-                            <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
-                            <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Service class: system"</span><span class="p">)</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"system"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">"system"</span>
-                    <span class="k">elif</span> <span class="n">VenvEnvironmentService</span><span class="p">(</span>
-                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">VenvEnvironmentService</span><span class="p">(</span>
-                            <span class="n">model_id</span><span class="p">,</span>
-                            <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
-                            <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"venv"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Service class: venv"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">"venv"</span>
-                    <span class="k">elif</span> <span class="n">CondaEnvironmentService</span><span class="p">(</span>
-                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">CondaEnvironmentService</span><span class="p">(</span>
-                            <span class="n">model_id</span><span class="p">,</span>
-                            <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
-                            <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"conda"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Service class: conda"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">"conda"</span>
-                    <span class="k">elif</span> <span class="n">DockerImageService</span><span class="p">(</span>
-                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">DockerImageService</span><span class="p">(</span>
-                            <span class="n">model_id</span><span class="p">,</span>
-                            <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
-                            <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"docker"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Service class: docker"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">"docker"</span>
-                    <span class="k">elif</span> <span class="n">PulledDockerImageService</span><span class="p">(</span>
-                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">PulledDockerImageService</span><span class="p">(</span>
-                            <span class="n">model_id</span><span class="p">,</span>
-                            <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
-                            <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
-                        <span class="p">)</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"pulled_docker"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Service class: pulled_docker"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">"pulled_docker"</span>
-                    <span class="k">elif</span> <span class="n">HostedService</span><span class="p">(</span>
-                        <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span>
-                    <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">HostedService</span><span class="p">(</span>
-                            <span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span>
-                        <span class="p">)</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"hosted"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Service class: hosted"</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="s2">"hosted"</span>
+                    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">kwargs</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+                        <span class="n">svc</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">svc</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">svc</span>
+                            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Service class: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span> <span class="o">=</span> <span class="n">name</span>
+                            <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Service class: dummy"</span><span class="p">)</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">DummyService</span><span class="p">(</span>
@@ -533,18 +488,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Service class provided"</span><span class="p">)</span>
             <span class="n">service_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_class_loader</span><span class="p">(</span><span class="n">service_class</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">service_class</span><span class="p">(</span>
+            <span class="n">svc</span> <span class="o">=</span> <span class="n">service_class</span><span class="p">(</span>
                 <span class="n">model_id</span><span class="p">,</span>
                 <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
                 <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
                 <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">service_class</span><span class="p">(</span>
-                    <span class="n">model_id</span><span class="p">,</span>
-                    <span class="n">config_json</span><span class="o">=</span><span class="n">config_json</span><span class="p">,</span>
-                    <span class="n">preferred_port</span><span class="o">=</span><span class="n">preferred_port</span><span class="p">,</span>
-                    <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">svc</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="n">svc</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">"Resolved service backend '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_service_class</span><span class="si">}</span><span class="s2">' for model </span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
@@ -769,7 +720,9 @@
         <span class="n">spinner</span><span class="p">(</span><span class="s2">"Closing existing session for the model"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
         <span class="n">spinner</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Starting service for model </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">serve</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">"Setting up Redis"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setup_redis</span><span class="o">.</span><span class="n">ensure_redis_running</span><span class="p">()</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">SetupRedis</span>
+
+        <span class="n">SetupRedis</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span> <span class="n">maxmemory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_maxmemory</span><span class="p">)</span><span class="o">.</span><span class="n">ensure_redis_running</span><span class="p">()</span>
         <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">tmp_pid_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="n">container_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="s2">"container_name"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"-"</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">,</span> <span class="s2">"a+"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
