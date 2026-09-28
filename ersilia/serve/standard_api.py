@@ -8,7 +8,6 @@ import time
 from collections import Counter
 
 import nest_asyncio
-import pandas as pd
 import requests
 
 from .. import ErsiliaBase
@@ -18,6 +17,8 @@ from ..default import (
     EXAMPLE_STANDARD_INPUT_CSV_FILENAME,
     EXAMPLE_STANDARD_OUTPUT_CSV_FILENAME,
     INFORMATION_FILE,
+    RUN_CONNECT_TIMEOUT,
+    RUN_READ_TIMEOUT,
 )
 from ..hub.content.columns_information import ColumnsInformation
 from ..io.output import GenericOutputAdapter
@@ -79,6 +80,7 @@ class StandardCSVRunApi(ErsiliaBase):
         self.input_header = self.get_input_header()
         self.output_header = self.get_output_header()
         self.generic_adapter = GenericOutputAdapter(model_id, self.columns_info)
+        self.http = requests.Session()
         self.isaura_store = IsauraStore()
         self.session = Session(config_json=config_json)
         store_info = self.session.current_store_status()
@@ -326,7 +328,12 @@ class StandardCSVRunApi(ErsiliaBase):
         }
 
         def do_request(batch):
-            response = requests.post(url, params=params, json=batch)
+            response = self.http.post(
+                url,
+                params=params,
+                json=batch,
+                timeout=(RUN_CONNECT_TIMEOUT, RUN_READ_TIMEOUT),
+            )
             response.raise_for_status()
             return response.json()
 
@@ -350,6 +357,13 @@ class StandardCSVRunApi(ErsiliaBase):
                 return [data] * len(batch), None
             else:
                 return [None] * len(batch), None
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            # The server is unreachable or hung, not a bad molecule: splitting
+            # the batch would only repeat the wait, so fail right away.
+            raise RuntimeError(
+                f"Model server at {url} did not respond (connect timeout "
+                f"{RUN_CONNECT_TIMEOUT}s, read timeout {RUN_READ_TIMEOUT}s): {e}"
+            ) from e
         except Exception as e:
             self.logger.error(f"Batch of size {len(batch)} failed: {e}")
             if len(batch) == 1:
@@ -414,6 +428,8 @@ class StandardCSVRunApi(ErsiliaBase):
             json.dumps(results), output, self.model_id, self.api_name
         )
         if self.write_store:
+            import pandas as pd
+
             df = pd.DataFrame(
                 data=df.data, columns=["key", "input"] + self.output_header, dtype=str
             )
@@ -444,9 +460,10 @@ class StandardCSVRunApi(ErsiliaBase):
         def write_batch(start, batch_results):
             nonlocal written
             batch_inputs = input_data[start : start + len(batch_results)]
-            standardized = self._standardize_output(batch_inputs, batch_results, None)
-            self.generic_adapter.write_chunk(standardized, output, append=written > 0)
-            written += len(standardized)
+            self.generic_adapter.write_batch(
+                batch_inputs, batch_results, output, append=written > 0
+            )
+            written += len(batch_results)
 
         self.logger.debug("Waiting for server response")
         self._fetch_result(input_data, url, batch_size, on_batch=write_batch)
@@ -567,7 +584,7 @@ class StandardCSVRunApi(ErsiliaBase):
                 if found_u and IsauraStore.is_installed():
                     cache_df = self.isaura_store.read(found_u)
                 else:
-                    cache_df = pd.DataFrame(columns=["key", "input"])
+                    cache_df = None
 
                 api_values = []
                 if missed_u:
@@ -719,9 +736,9 @@ class StandardCSVRunApi(ErsiliaBase):
     def _standardize_output(self, input_data, results, meta):
         results = list(results)
         standardized = []
+        keys_flat = self.input_header[1:] + self.output_header
         for inp, out in zip(input_data, results):
             values = self._normalize_values(out)
-            keys_flat = self.input_header[1:] + self.output_header
             standardized.append({"input": inp, "output": dict(zip(keys_flat, values))})
         return standardized
 
