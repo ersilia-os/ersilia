@@ -73,10 +73,10 @@ def run_cmd():
             session.clear_stale(served_model)
             echo(
                 f"Model {served_model} is no longer running in this terminal (its server stopped).",
-                fg="yellow",
+                fg="red",
             )
             echo(f"Serve it again with 'ersilia serve {served_model}'.")
-            return
+            sys.exit(1)
         model_id = session.current_model_id()
         service_class = session.current_service_class()
         output_source = session.current_output_source()
