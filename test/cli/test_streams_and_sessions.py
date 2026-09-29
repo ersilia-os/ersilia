@@ -201,3 +201,37 @@ def test_a_model_stopped_by_cleanup_points_to_ersilia_session(eos, monkeypatch):
     messages.served_elsewhere_hint()
     assert "was served by an earlier command whose process has ended" in lines[0]
     assert "ERSILIA_SESSION=<name>" in lines[1]
+
+
+def test_closing_ends_a_named_session(eos, monkeypatch):
+    monkeypatch.setenv("ERSILIA_SESSION", "closing")
+    named = eos / "sessions" / "session_closing"
+    (named / "logs").mkdir(parents=True)
+    session_utils.register_model_session("eos3b5e", str(named))
+    assert session_utils.end_named_session() is True
+    assert not named.exists()
+    assert session_utils.get_model_sessions("eos3b5e") == []
+
+
+def test_closing_leaves_a_terminal_session(eos, monkeypatch):
+    monkeypatch.delenv("ERSILIA_SESSION", raising=False)
+    terminal = eos / "sessions" / f"session_{os.getppid()}"
+    terminal.mkdir()
+    assert session_utils.end_named_session() is False
+    assert terminal.exists()
+
+
+def test_the_close_command_ends_a_named_session(eos, monkeypatch):
+    from ersilia.cli.commands.close import close_cmd
+
+    monkeypatch.setenv("ERSILIA_SESSION", "closing")
+    named = eos / "sessions" / "session_closing"
+    named.mkdir()
+    import ersilia.core.session as core_session
+
+    monkeypatch.setattr(core_session, "get_session_dir", lambda: str(named))
+    monkeypatch.setattr(session_utils, "models_served_elsewhere", lambda: [])
+    result = CliRunner().invoke(close_cmd())
+    assert result.exit_code == 0
+    assert "nothing to close" in result.output
+    assert not named.exists()

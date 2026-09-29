@@ -726,3 +726,29 @@ def models_served_elsewhere():
             if os.path.normpath(session_dir) != here:
                 served.append((model_id, session_dir))
     return served
+
+
+def end_named_session():
+    """
+    Remove the current session's folder if it was named with ERSILIA_SESSION.
+
+    A named session is not tied to a process, so it is never cleaned up
+    automatically; closing it removes it. A terminal's session is left alone
+    (it is removed when the terminal ends).
+
+    Returns
+    -------
+    bool
+        True if a named session was removed.
+    """
+    session_id = get_session_id()
+    if not is_named_session(session_id):
+        return False
+    session_dir = os.path.join(SESSIONS_DIR, session_id)
+    try:
+        deregister_session(session_dir)
+        remove_session_dir(session_id)
+    except Exception:
+        # Cleanup must never stop the command.
+        return False
+    return True

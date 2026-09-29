@@ -31,12 +31,13 @@ def close_cmd():
     def close():
         from ... import ErsiliaModel
         from ...core.session import Session
-        from ...utils.session import deregister_model_session
+        from ...utils.session import deregister_model_session, end_named_session
 
         session = Session(config_json=None)
         served_model, status = session.served_model()
         if status == "stale":
             session.clear_stale(served_model)
+            end_named_session()
             echo(
                 f"Model {served_model} closed (it was no longer running).",
                 fg="green",
@@ -52,6 +53,7 @@ def close_cmd():
             from ..messages import served_elsewhere_hint
 
             served_elsewhere_hint()
+            end_named_session()
             return
         if service_class in ("pulled_docker", "docker"):
             from ...setup.requirements.docker import DockerRequirement
@@ -70,6 +72,8 @@ def close_cmd():
         mdl = ErsiliaModel(model_id, service_class=service_class)
         mdl.close()
         deregister_model_session(model_id)
+        # A session named with ERSILIA_SESSION ends here.
+        end_named_session()
         echo("Model {0} closed.".format(mdl.model_id), fg="green")
 
     return close

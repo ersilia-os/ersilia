@@ -571,7 +571,7 @@ class Model:
         bool
             True if the model was closed (also when it had already stopped),
             False if no model is served in this session, so there was nothing
-            to close.
+            to close. A session named with ERSILIA_SESSION is removed.
 
         Raises
         ------
@@ -582,18 +582,20 @@ class Model:
         """
         from ..utils.exceptions_utils.api_exceptions import ModelNotServedError
         from ..utils.exceptions_utils.serve_exceptions import DockerNotActiveError
-        from ..utils.session import deregister_model_session
+        from ..utils.session import deregister_model_session, end_named_session
 
         session = self._session()
         served, status = session.served_model()
         if served is None:
             # Nothing to close, as 'ersilia close' says.
+            end_named_session()
             return False
         if served != self.model_id:
             raise ModelNotServedError(self.model_id)
         if status == "stale":
             # It had already stopped: forget it, as 'ersilia close' does.
             session.clear_stale(served)
+            end_named_session()
             return True
         if session.current_service_class() in DOCKER_SERVICES:
             from ..setup.requirements.docker import DockerRequirement
@@ -604,6 +606,7 @@ class Model:
         with library_call(self.verbose):
             self._served_model().close()
             deregister_model_session(self.model_id)
+            end_named_session()
         return True
 
     def delete(self):
