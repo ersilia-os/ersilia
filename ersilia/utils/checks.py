@@ -1,8 +1,9 @@
 """
-Checks of `ersilia run` inputs and outputs, done before the model is loaded.
+Checks of user input shared by the CLI and the Python API.
 
-Each problem is reported with what is wrong and how to fix it, and the command
-exits with code 1.
+Each problem is reported with what is wrong and how to fix it. In the CLI the
+command then exits with code 1; in the Python API an ``InvalidOptionError``
+is raised instead.
 """
 
 import csv
@@ -22,7 +23,7 @@ _LOOKS_LIKE_SMILES = re.compile(r"[CNOSPFIBrclnosp0-9()=#\[\]@+\-\\/.%]{2,}")
 
 def fail(message, hint=None):
     """
-    Print an error (and a hint) and exit with code 1.
+    Report an error (and a hint): exit with code 1, or raise in the Python API.
 
     Parameters
     ----------
@@ -30,7 +31,18 @@ def fail(message, hint=None):
         What went wrong.
     hint : str, optional
         What to do about it.
+
+    Raises
+    ------
+    InvalidOptionError
+        In library mode (the Python API), instead of printing and exiting.
     """
+    from .exceptions_utils.throw_ersilia_exception import is_library_mode
+
+    if is_library_mode():
+        from .exceptions_utils.api_exceptions import InvalidOptionError
+
+        raise InvalidOptionError(message, hint or "")
     echo(message, fg="red")
     if hint:
         echo(hint)
@@ -94,12 +106,9 @@ def check_run_arguments(input, output):
         The input path to run, and a temporary folder to remove afterwards
         (when a single column was extracted from a wider file), or None.
     """
-    from .messages import wrong_extension
-
     _check_input_file(input)
     if output is None or not output.lower().endswith((".csv", ".h5")):
-        wrong_extension([".csv", ".h5"])
-        sys.exit(1)
+        fail("The output file must end in .csv or .h5.")
     if os.path.realpath(input) == os.path.realpath(output):
         fail(
             "The output file is the same as the input file.",
@@ -160,3 +169,60 @@ def check_run_arguments(input, output):
             )
             echo("Add a header line (e.g. 'smiles') to include it.")
     return input, tmp_dir
+
+
+def check_fetch_folder(model, from_dir):
+    """
+    Check a model folder given to fetch (``--from_dir``).
+
+    Parameters
+    ----------
+    model : str
+        The model the user asked for (identifier or slug).
+    from_dir : str
+        The folder with the model repository.
+
+    Returns
+    -------
+    ModelBase
+        The model found in the folder.
+    """
+    from ..core.modelbase import ModelBase
+    from .paths import get_metadata_from_base_dir
+
+    if not os.path.isdir(os.path.expanduser(from_dir)):
+        fail(f"The folder {from_dir} does not exist.")
+    mdl = ModelBase(repo_path=from_dir)
+    try:
+        folder_id = get_metadata_from_base_dir(from_dir).get("Identifier")
+    except Exception:
+        folder_id = None
+    folder_id = folder_id or mdl.model_id
+    if folder_id and model.strip().lower() not in (folder_id, mdl.slug):
+        fail(
+            f"The folder {from_dir} contains model {folder_id}, not {model}.",
+            f"Run 'ersilia fetch {folder_id} --from_dir {from_dir}'.",
+        )
+    return mdl
+
+
+def check_curated_examples(model_id):
+    """
+    Check that a fetched model has its own (curated) example inputs.
+
+    Parameters
+    ----------
+    model_id : str
+        The model identifier.
+    """
+    from ..core.modelbase import ModelBase
+    from ..default import PREDEFINED_EXAMPLE_FILES
+
+    model_dir = ModelBase(model_id)._model_path(model_id)
+    if not any(
+        os.path.exists(os.path.join(model_dir, f)) for f in PREDEFINED_EXAMPLE_FILES
+    ):
+        fail(
+            f"Model {model_id} has no curated examples here.",
+            "Fetch the model first, or use the random mode instead.",
+        )

@@ -205,6 +205,11 @@ def yes_no_input(prompt, default_answer, timeout=5):
     question = re.sub(r"\s*\[[yYnN]/[yYnN]\]\s*$", "", prompt).strip()
     default_no = str(default_answer).lower().startswith("n")
     choice = "No" if default_no else "Yes"
+    from .exceptions_utils.throw_ersilia_exception import is_library_mode
+
+    if is_library_mode():
+        # A library call must never wait for keyboard input.
+        return not default_no
     if not sys.stdin.isatty():
         # Nobody can answer (e.g. a script): use the default at once.
         echo(f"{question} {choice} (no terminal to ask; using the default).")

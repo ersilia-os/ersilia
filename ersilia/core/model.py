@@ -1,4 +1,3 @@
-import asyncio
 import collections
 import csv
 import json
@@ -26,6 +25,7 @@ from ..serve.schema import ApiSchema
 from ..serve.standard_api import StandardCSVRunApi
 from ..store.utils import OutputSource
 from ..utils import tmp_pid_file
+from ..utils.asyncio_utils import run_coroutine
 from ..utils.csvfile import CsvDataLoader
 from ..utils.exceptions_utils.api_exceptions import ApiSpecifiedOutputError
 from ..utils.exceptions_utils.exceptions import ModelNotAvailableLocallyError
@@ -185,7 +185,7 @@ class ErsiliaModel(ErsiliaBase):
                 mf = ModelFetcher(
                     config_json=self.config_json, credentials_json=self.credentials_json
                 )
-                asyncio.run(mf.fetch(self.model_id))
+                run_coroutine(mf.fetch(self.model_id))
             else:
                 raise ModelNotAvailableLocallyError(self.model_id)
 
@@ -213,7 +213,7 @@ class ErsiliaModel(ErsiliaBase):
         mf = ModelFetcher(
             config_json=self.config_json, credentials_json=self.credentials_json
         )
-        asyncio.run(mf.fetch(self.model_id))
+        run_coroutine(mf.fetch(self.model_id))
 
     def __enter__(self):
         """

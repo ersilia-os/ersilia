@@ -7,9 +7,6 @@ import warnings
 # Filter out some warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-# Disable GPU
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
 # Default variables
 from .default import EOS, CONFIG_JSON, INSTALL_STATUS_FILE
 
@@ -21,11 +18,6 @@ if not os.path.exists(os.path.join(EOS, CONFIG_JSON)):
 
 # Environmental variables
 os.environ["EOS_HOME"] = EOS
-
-# User profile
-from .default import bashrc_cli_snippet
-
-bashrc_cli_snippet(overwrite=False)
 
 
 # Lazy re-exports of heavy library classes/utilities. Importing them eagerly
