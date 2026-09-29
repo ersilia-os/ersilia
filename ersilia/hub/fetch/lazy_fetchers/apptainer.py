@@ -58,9 +58,16 @@ class ModelApptainerFetcher(ErsiliaBase):
         if runner.works(sif):
             self.logger.debug("Apptainer needs 'unshare -r' on this machine")
             return runner
-        raise ApptainerDownloadError(
-            os.path.basename(sif), "the image was downloaded but cannot be run"
+        from ....utils.exceptions_utils.cli_exceptions import ApptainerNotUsableError
+
+        raise ApptainerNotUsableError(
+            self._model_id_from_sif(sif), apptainer.SimpleApptainer(binary).error(sif)
         )
+
+    @staticmethod
+    def _model_id_from_sif(sif):
+        # e.g. /home/user/eos/sifs/eos4e40_v1.sif -> eos4e40
+        return os.path.basename(sif).split("_")[0]
 
     def _copy_from_image(self, runner, sif, bundle, model_id, relative_path):
         source = runner.find_bundle_file(sif, bundle, relative_path)

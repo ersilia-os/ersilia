@@ -301,6 +301,22 @@ class ModelFetcher(ErsiliaBase):
                     )
                 return
 
+    @staticmethod
+    def _apptainer_alternative(model_id):
+        # On Linux, Apptainer can replace Docker (e.g. on HPC clusters).
+        from ...setup.requirements.apptainer import ApptainerRequirement
+
+        requirement = ApptainerRequirement()
+        if not requirement.is_linux():
+            return ""
+        if requirement.is_installed():
+            return "\nApptainer is installed here, so you can fetch it without Docker: 'ersilia fetch {0} --from_apptainer'.".format(
+                model_id
+            )
+        return "\nOn Linux without Docker (e.g. HPC clusters), you can use Apptainer instead: 'ersilia fetch {0} --from_apptainer'.".format(
+            model_id
+        )
+
     async def _fetch(self, model_id: str) -> FetchResult:
         label = f"{model_id} ({self.slug})" if self.slug else model_id
         if not self.exists(model_id):
@@ -319,19 +335,22 @@ class ModelFetcher(ErsiliaBase):
                 if not self.is_docker_installed:
                     return FetchResult(
                         fetch_success=False,
-                        reason="Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github. On Linux without Docker (e.g. HPC), use --from_apptainer.",
+                        reason="Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github."
+                        + self._apptainer_alternative(model_id),
                     )
                 if not self.is_docker_active:
                     return FetchResult(
                         fetch_success=False,
-                        reason="Docker is not running. Start Docker (e.g. Docker Desktop) and try again.",
+                        reason="Docker is not running. Start Docker (e.g. Docker Desktop) and try again."
+                        + self._apptainer_alternative(model_id),
                     )
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
                 if not self.can_use_docker:
                     return FetchResult(
                         fetch_success=False,
-                        reason="Docker is not installed or not running.",
+                        reason="Docker is not installed or not running."
+                        + self._apptainer_alternative(model_id),
                     )
                 await self._fetch_from_dockerhub(model_id=model_id)
                 return FetchResult(

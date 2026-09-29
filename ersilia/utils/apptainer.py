@@ -352,6 +352,29 @@ class SimpleApptainer(object):
         except (OSError, subprocess.SubprocessError):
             return False
 
+    def error(self, sif):
+        """
+        Why a trivial command cannot run inside the image, as Apptainer says.
+
+        Parameters
+        ----------
+        sif : str
+            Path of the image.
+
+        Returns
+        -------
+        str or None
+            The last line Apptainer printed to stderr, if any.
+        """
+        try:
+            result = self.run(sif, "true", timeout=120)
+        except (OSError, subprocess.SubprocessError) as e:
+            return str(e)
+        lines = [
+            line.strip() for line in (result.stderr or "").splitlines() if line.strip()
+        ]
+        return lines[-1] if lines else None
+
     def find_bundle(self, sif):
         """
         Find the model bundle inside the image.

@@ -70,7 +70,11 @@ class HubUnreachableError(ErsiliaError):
 class DockerNotInstalledError(ErsiliaError):
     def __init__(self):
         self.message = "Docker is not installed."
-        self.hints = "Install it from https://docs.docker.com/get-docker/ and try again, or fetch the model with --from_github. On Linux without Docker (e.g. HPC), use --from_apptainer."
+        self.hints = "Install it from https://docs.docker.com/get-docker/ and try again, or fetch the model with --from_github."
+        import platform
+
+        if platform.system() == "Linux":
+            self.hints += "\nOn Linux without Docker (e.g. HPC clusters), you can use Apptainer instead: --from_apptainer."
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
@@ -117,10 +121,47 @@ class ApptainerNotLinuxError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
 
+APPTAINER_INSTALL_HINT = (
+    "On an HPC cluster it is usually available as a module: run 'module load apptainer' "
+    "(or 'module load singularity'), or ask your administrators.\n"
+    "To install it yourself, see https://apptainer.org/docs/admin/main/installation.html "
+    "(on Ubuntu: sudo add-apt-repository -y ppa:apptainer/ppa && sudo apt install -y apptainer)."
+)
+
+
 class ApptainerNotInstalledError(ErsiliaError):
-    def __init__(self):
-        self.message = "Apptainer is not installed."
-        self.hints = "Install it (https://apptainer.org/docs/admin/main/installation.html), or fetch the model from DockerHub instead: leave out --from_apptainer."
+    def __init__(self, model_id=None):
+        if model_id:
+            self.message = (
+                "Model {0} runs with Apptainer, but Apptainer is not available.".format(
+                    model_id
+                )
+            )
+        else:
+            self.message = "Apptainer is not installed."
+        self.hints = APPTAINER_INSTALL_HINT
+        if not model_id:
+            self.hints += "\nOr fetch the model from DockerHub instead: leave out --from_apptainer."
+        ErsiliaError.__init__(self, self.message, self.hints)
+
+
+class ApptainerNotUsableError(ErsiliaError):
+    def __init__(self, model_id, detail=None):
+        self.message = "Apptainer is installed but cannot run model {0}'s image on this machine.".format(
+            model_id
+        )
+        hints = []
+        if detail:
+            hints.append("Apptainer said: {0}".format(detail))
+        hints.append(
+            "It usually needs unprivileged user namespaces, or a setuid installation "
+            "(apptainer-suid). On a cluster, ask your administrators; see "
+            "https://apptainer.org/docs/admin/main/user_namespace.html"
+        )
+        hints.append(
+            "The image is kept, so fetching again once Apptainer works does not download it again."
+        )
+        self.hints = "\n".join(hints)
         ErsiliaError.__init__(self, self.message, self.hints)
 
 

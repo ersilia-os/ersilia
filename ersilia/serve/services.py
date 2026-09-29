@@ -1657,16 +1657,11 @@ class ApptainerImageService(BaseServing):
         Returns
         -------
         bool
-            True if the model was fetched as an Apptainer image, the image is
-            on disk and Apptainer is installed.
+            True if the model was fetched as an Apptainer image. Whether
+            Apptainer and the image are there is checked by ``serve``, which
+            says clearly what is missing.
         """
-        from ..setup.requirements.apptainer import ApptainerRequirement
-
-        if not self.info or not self.info.get("apptainer"):
-            return False
-        if not os.path.isfile(self.info.get("sif_path") or ""):
-            return False
-        return ApptainerRequirement().is_installed()
+        return bool(self.info and self.info.get("apptainer"))
 
     def _get_apis(self):
         apis_list = self._get_apis_from_apis_list()
@@ -1774,12 +1769,17 @@ class ApptainerImageService(BaseServing):
         from ..setup.requirements.apptainer import ApptainerRequirement
         from ..utils.apptainer import SimpleApptainer
         from ..utils.exceptions_utils.cli_exceptions import (
+            ApptainerNotInstalledError,
             ModelStartError,
             PortInUseError,
         )
         from ..utils.ports import is_port_in_use
 
-        binary = ApptainerRequirement().check()
+        requirement = ApptainerRequirement()
+        if requirement.is_linux() and not requirement.is_installed():
+            # e.g. a new shell on a cluster, without 'module load apptainer'.
+            raise ApptainerNotInstalledError(self.model_id)
+        binary = requirement.check()
         info = self.info or {}
         sif = info.get("sif_path")
         if not sif or not os.path.isfile(sif):

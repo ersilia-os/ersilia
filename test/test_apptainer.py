@@ -395,3 +395,74 @@ def test_a_served_apptainer_model_is_tracked_by_its_server_process(tmp_path):
             server.kill()
             server.wait()
         assert session.served_model() == (MODEL_ID, "stale")
+
+
+# A smooth experience when Apptainer is missing or cannot run
+
+
+@patch("ersilia.setup.requirements.apptainer.platform.system", return_value="Linux")
+@patch("ersilia.setup.requirements.apptainer.shutil.which", return_value=None)
+def test_serving_without_apptainer_says_so(_which, _system, tmp_path):
+    # e.g. a new shell on a cluster, without 'module load apptainer'.
+    service = _service(tmp_path, _info(tmp_path))
+    assert service.is_available()  # the model is still served by Apptainer
+    with pytest.raises(ApptainerNotInstalledError) as e:
+        service.serve()
+    assert "runs with Apptainer, but Apptainer is not available" in e.value.message
+    assert "module load apptainer" in e.value.hints
+    assert "leave out --from_apptainer" not in e.value.hints
+
+
+@patch("ersilia.setup.requirements.apptainer.platform.system", return_value="Linux")
+@patch("ersilia.setup.requirements.apptainer.shutil.which", return_value=None)
+def test_fetching_without_apptainer_gives_install_pointers(_which, _system):
+    with pytest.raises(ApptainerNotInstalledError) as e:
+        ApptainerRequirement().check()
+    assert e.value.message == "Apptainer is not installed."
+    for pointer in ("module load apptainer", "apptainer.org/docs", "ppa:apptainer/ppa"):
+        assert pointer in e.value.hints
+    assert "leave out --from_apptainer" in e.value.hints
+
+
+def test_an_image_apptainer_cannot_run_is_explained():
+    from ersilia.hub.fetch.lazy_fetchers.apptainer import ModelApptainerFetcher
+    from ersilia.utils.exceptions_utils.cli_exceptions import ApptainerNotUsableError
+
+    failed = MagicMock(
+        returncode=255, stderr="INFO: ...\nFATAL: could not create user namespace\n"
+    )
+    with patch("ersilia.utils.apptainer.subprocess.run", return_value=failed):
+        with pytest.raises(ApptainerNotUsableError) as e:
+            ModelApptainerFetcher()._choose_runner("apptainer", "/x/eos4e40_v1.sif")
+    assert "cannot run model eos4e40's image" in e.value.message
+    assert "FATAL: could not create user namespace" in e.value.hints
+    assert "user namespaces" in e.value.hints and "kept" in e.value.hints
+
+
+@pytest.mark.parametrize(
+    "system, installed, expected",
+    [
+        ("Linux", True, "Apptainer is installed here"),
+        ("Linux", False, "you can use Apptainer instead"),
+        ("Darwin", True, ""),
+    ],
+)
+def test_without_docker_linux_users_are_pointed_to_apptainer(
+    system, installed, expected
+):
+    from ersilia.hub.fetch.fetch import ModelFetcher
+
+    with (
+        patch(
+            "ersilia.setup.requirements.apptainer.platform.system", return_value=system
+        ),
+        patch(
+            "ersilia.setup.requirements.apptainer.shutil.which",
+            return_value="/usr/bin/apptainer" if installed else None,
+        ),
+    ):
+        hint = ModelFetcher._apptainer_alternative(MODEL_ID)
+    if expected:
+        assert expected in hint and f"ersilia fetch {MODEL_ID} --from_apptainer" in hint
+    else:
+        assert hint == ""

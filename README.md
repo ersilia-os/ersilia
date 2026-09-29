@@ -146,7 +146,7 @@ On Linux machines without Docker, such as HPC clusters, models can be fetched as
 ersilia fetch eos3b5e --from_apptainer   # then serve, run and close as usual
 ```
 
-Images are stored in `~/eos/sifs`; set `ERSILIA_SIF_DIR` to keep them elsewhere (e.g. where home quotas are small).
+Ersilia does not install Apptainer. On HPC clusters it is usually available as a module (`module load apptainer`, or ask your administrators); otherwise see the [installation guide](https://apptainer.org/docs/admin/main/installation.html) (on Ubuntu: `sudo add-apt-repository -y ppa:apptainer/ppa && sudo apt install -y apptainer`). Images are stored in `~/eos/sifs`; set `ERSILIA_SIF_DIR` to keep them elsewhere (e.g. where home quotas are small).
 
 Please see the a full reference of all commands available [here](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/developer-docs/command-line-interface).
 

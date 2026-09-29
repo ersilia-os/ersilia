@@ -70,6 +70,18 @@ On Linux machines without Docker, such as HPC clusters, fetch models as
 `Apptainer <https://apptainer.org>`_ images instead. Serving, running and
 closing work as above.
 
+Ersilia does not install Apptainer. On HPC clusters it is usually available as
+a module; otherwise, see the
+`installation guide <https://apptainer.org/docs/admin/main/installation.html>`_.
+
+.. code-block:: bash
+
+   # on a cluster: load Apptainer (the module may be called singularity)
+   module load apptainer
+
+   # on Ubuntu, to install it yourself
+   sudo add-apt-repository -y ppa:apptainer/ppa && sudo apt install -y apptainer
+
 .. code-block:: bash
 
    # download the model's Apptainer image instead of its Docker image
