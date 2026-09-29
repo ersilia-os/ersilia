@@ -401,6 +401,21 @@ def stop_containers_by_name(names):
             pass
 
 
+def _own_session_group(pid):
+    # The process group to stop along with a server: only when the server was
+    # started in a session of its own (e.g. with start_new_session=True, as
+    # Apptainer models are), so that the group holds nothing but the model's
+    # processes. Never a terminal's session, nor Ersilia's own group.
+    try:
+        pgid, sid = os.getpgid(pid), os.getsid(pid)
+        own = {os.getpgrp(), os.getsid(0)}
+    except (AttributeError, OSError):
+        return None
+    if pgid != sid or pgid in own or pgid <= 1:
+        return None
+    return pgid
+
+
 def kill_process_tree(pid, timeout=5):
     """
     Terminate a process and all of its descendants.
@@ -409,6 +424,9 @@ def kill_process_tree(pid, timeout=5):
     spawns ``run_uvicorn.py`` as a child. Killing only the recorded PID
     orphans the uvicorn server, so the whole tree is terminated instead:
     SIGTERM first, then SIGKILL for anything still alive after ``timeout``.
+    When the server runs in a session of its own (Apptainer models), the rest
+    of its process group is stopped too: the processes that started it are
+    not its descendants.
 
     Parameters
     ----------
@@ -423,11 +441,21 @@ def kill_process_tree(pid, timeout=5):
         parent = psutil.Process(pid)
     except psutil.NoSuchProcess:
         return
+    group = _own_session_group(pid)
     try:
         procs = parent.children(recursive=True)
     except psutil.NoSuchProcess:
         procs = []
     procs.append(parent)
+    if group is not None:
+        # Also the processes that started the server (e.g. Apptainer's), which
+        # are not its descendants but share its process group.
+        for p in psutil.process_iter():
+            try:
+                if p not in procs and os.getpgid(p.pid) == group:
+                    procs.append(p)
+            except (psutil.Error, OSError):
+                pass
     for p in procs:
         try:
             p.terminate()

@@ -1775,11 +1775,12 @@ class ApptainerImageService(BaseServing):
         )
         from ..utils.ports import is_port_in_use
 
-        requirement = ApptainerRequirement()
-        if requirement.is_linux() and not requirement.is_installed():
-            # e.g. a new shell on a cluster, without 'module load apptainer'.
+        try:
+            binary = ApptainerRequirement().check()
+        except ApptainerNotInstalledError:
+            # e.g. a new shell on a cluster, without 'module load apptainer':
+            # say that this model needs it.
             raise ApptainerNotInstalledError(self.model_id)
-        binary = requirement.check()
         info = self.info or {}
         sif = info.get("sif_path")
         if not sif or not os.path.isfile(sif):

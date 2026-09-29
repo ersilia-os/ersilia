@@ -132,3 +132,48 @@ def test_standard_example_closes_model_on_failure():
         with pytest.raises(RuntimeError):
             fetcher._standard_csv_example("eos0xxx")
     example.close_model.assert_called_once()
+
+
+def _children_of(pid, timeout=5):
+    import psutil
+
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        kids = psutil.Process(pid).children()
+        if len(kids) >= 2:
+            return kids
+        time.sleep(0.1)
+    raise AssertionError("the helper processes did not start")
+
+
+def test_a_server_in_its_own_session_is_stopped_with_its_starters():
+    # Like Apptainer: the server (the listening process) is not a descendant
+    # of the processes that started it, but they share its session's group.
+    import psutil
+
+    starter = subprocess.Popen(
+        ["sh", "-c", "sleep 60 & sleep 60 & wait"], start_new_session=True
+    )
+    try:
+        server, sibling = _children_of(starter.pid)
+        kill_process_tree(server.pid)
+        starter.wait(timeout=10)
+        assert not psutil.pid_exists(server.pid) or server.status() == "zombie"
+        assert not sibling.is_running() or sibling.status() == "zombie"
+    finally:
+        if starter.poll() is None:
+            starter.kill()
+
+
+def test_a_server_in_our_own_group_leaves_its_siblings_alone():
+    # Servers not started in a session of their own: only their own tree.
+    first = subprocess.Popen(["sleep", "60"])
+    second = subprocess.Popen(["sleep", "60"])
+    try:
+        kill_process_tree(first.pid)
+        first.wait(timeout=10)
+        assert second.poll() is None
+    finally:
+        for p in (first, second):
+            if p.poll() is None:
+                p.kill()
