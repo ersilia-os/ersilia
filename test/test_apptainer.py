@@ -315,3 +315,83 @@ def test_not_available_unless_fetched_as_apptainer(tmp_path):
     assert not _service(tmp_path, None).is_available()
     with patch("ersilia.setup.requirements.apptainer.shutil.which", return_value="/x"):
         assert _service(tmp_path, _info(tmp_path)).is_available()
+
+
+# In step with the current CLI, Python API and sessions
+
+
+def test_latest_means_the_newest_image():
+    from ersilia.hub.fetch.lazy_fetchers.apptainer import ModelApptainerFetcher
+
+    assert ModelApptainerFetcher(version="latest").version is None
+    assert ModelApptainerFetcher(version="v2").version == "v2"
+
+
+def _api_model():
+    from ersilia.api import Model
+
+    m = Model.__new__(Model)
+    m.model_id, m.slug, m.verbose = MODEL_ID, "chemprop-antibiotic", False
+    return m
+
+
+def test_the_python_api_fetches_from_apptainer():
+    from collections import namedtuple
+
+    FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
+
+    async def done():
+        return FetchResult(True, "Model fetched successfully")
+
+    fetcher = MagicMock()
+    fetcher.return_value.fetch = MagicMock(return_value=done())
+    with patch("ersilia.hub.fetch.fetch.ModelFetcher", fetcher):
+        assert _api_model().fetch(from_apptainer=True, version="v1") is True
+    kwargs = fetcher.call_args.kwargs
+    assert kwargs["force_from_apptainer"] is True
+    assert kwargs["force_from_dockerhub"] is False
+    assert kwargs["img_version"] == "v1"
+
+
+def test_the_python_api_takes_one_source_at_a_time():
+    from ersilia.utils.exceptions_utils.api_exceptions import InvalidOptionError
+
+    with pytest.raises(InvalidOptionError, match="from_github, from_apptainer"):
+        _api_model().fetch(from_github=True, from_apptainer=True)
+
+
+def test_the_serve_summary_names_the_service():
+    from ersilia.default import SERVICE_CLASS_LABELS
+
+    assert SERVICE_CLASS_LABELS["apptainer"] == "Apptainer"
+
+
+def test_a_served_apptainer_model_is_tracked_by_its_server_process(tmp_path):
+    # The .pid file holds the server process, with no container ("-"): the
+    # session is running while that process lives, and stale once it ends.
+    import json
+    import subprocess
+    import sys
+
+    from ersilia.core.session import Session
+    from ersilia.serve.services import ApptainerImageService
+
+    assert getattr(ApptainerImageService, "container_name", None) is None
+    server = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+    session_dir = tmp_path / "session_1"
+    session_dir.mkdir()
+    (session_dir / "current.log").write_text("")
+    (session_dir / "session.json").write_text(
+        json.dumps({"model_id": MODEL_ID, "service_class": "apptainer"})
+    )
+    (session_dir / f"{MODEL_ID}.pid").write_text(
+        f"{server.pid} http://127.0.0.1:8123 -\n"
+    )
+    with patch("ersilia.core.session.get_session_dir", return_value=str(session_dir)):
+        session = Session(config_json=None)
+        try:
+            assert session.served_model() == (MODEL_ID, "running")
+        finally:
+            server.kill()
+            server.wait()
+        assert session.served_model() == (MODEL_ID, "stale")

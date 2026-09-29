@@ -190,6 +190,7 @@ class Model:
         from_s3=False,
         from_hosted=None,
         version=None,
+        from_apptainer=False,
     ):
         """
         Fetch the model, like ``ersilia fetch``.
@@ -208,7 +209,11 @@ class Model:
         from_hosted : str, optional
             URL of a hosted model to connect to.
         version : str, optional
-            Docker image tag to fetch from DockerHub (default: the latest).
+            Image version: a Docker tag for DockerHub, or e.g. "v1" for
+            Apptainer (default: the latest).
+        from_apptainer : bool, optional
+            Fetch the model as an Apptainer image, for Linux machines without
+            Docker (e.g. HPC clusters).
 
         Returns
         -------
@@ -235,6 +240,7 @@ class Model:
                 ("from_github", from_github),
                 ("from_s3", from_s3),
                 ("from_hosted", from_hosted),
+                ("from_apptainer", from_apptainer),
             )
             if on
         ]
@@ -244,9 +250,10 @@ class Model:
             )
         from_dockerhub = not chosen
         with library_call(self.verbose):
-            if version is not None and not from_dockerhub:
+            if version is not None and not (from_dockerhub or from_apptainer):
                 echo(
-                    "version only applies to DockerHub, so it is ignored.", fg="yellow"
+                    "version only applies to DockerHub and Apptainer, so it is ignored.",
+                    fg="yellow",
                 )
             if from_dir is not None:
                 from ..utils.checks import check_fetch_folder
@@ -257,6 +264,7 @@ class Model:
                 force_from_github=from_github,
                 force_from_s3=from_s3,
                 force_from_dockerhub=from_dockerhub,
+                force_from_apptainer=from_apptainer,
                 img_version=version,
                 force_from_hosted=from_hosted is not None,
                 hosted_url=from_hosted,

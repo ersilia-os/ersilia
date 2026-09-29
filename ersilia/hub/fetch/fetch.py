@@ -319,7 +319,7 @@ class ModelFetcher(ErsiliaBase):
                 if not self.is_docker_installed:
                     return FetchResult(
                         fetch_success=False,
-                        reason="Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github.",
+                        reason="Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github. On Linux without Docker (e.g. HPC), use --from_apptainer.",
                     )
                 if not self.is_docker_active:
                     return FetchResult(

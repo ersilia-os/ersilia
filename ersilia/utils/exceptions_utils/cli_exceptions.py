@@ -70,7 +70,7 @@ class HubUnreachableError(ErsiliaError):
 class DockerNotInstalledError(ErsiliaError):
     def __init__(self):
         self.message = "Docker is not installed."
-        self.hints = "Install it from https://docs.docker.com/get-docker/ and try again, or fetch the model with --from_github."
+        self.hints = "Install it from https://docs.docker.com/get-docker/ and try again, or fetch the model with --from_github. On Linux without Docker (e.g. HPC), use --from_apptainer."
         ErsiliaError.__init__(self, self.message, self.hints)
 
 

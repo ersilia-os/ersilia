@@ -44,7 +44,9 @@ class ModelApptainerFetcher(ErsiliaBase):
 
     def __init__(self, config_json=None, version=None):
         super().__init__(config_json=config_json, credentials_json=None)
-        self.version = version
+        # "latest" (the CLI's and API's word for the newest image) is found
+        # by probing v1, v2, ... like no version at all.
+        self.version = None if version in (None, "latest") else version
 
     def _choose_runner(self, binary, sif):
         # Plain 'apptainer exec' works on most machines. Some (e.g. Colab,

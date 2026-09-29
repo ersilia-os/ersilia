@@ -140,6 +140,14 @@ conda run -n ersilia ersilia close
 
 Errors are printed to stderr, so they can be told apart from normal output.
 
+On Linux machines without Docker, such as HPC clusters, models can be fetched as [Apptainer](https://apptainer.org) images instead:
+
+```bash
+ersilia fetch eos3b5e --from_apptainer   # then serve, run and close as usual
+```
+
+Images are stored in `~/eos/sifs`; set `ERSILIA_SIF_DIR` to keep them elsewhere (e.g. where home quotas are small).
+
 Please see the a full reference of all commands available [here](https://ersilia.gitbook.io/ersilia-book/ersilia-model-hub/developer-docs/command-line-interface).
 
 ### Python API
