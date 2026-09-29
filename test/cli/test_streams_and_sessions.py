@@ -179,3 +179,25 @@ def test_no_hint_when_nothing_is_served_elsewhere(eos, monkeypatch):
 
     monkeypatch.setattr(session_utils, "get_session_dir", lambda: str(eos))
     served_elsewhere_hint()  # prints nothing and does not fail
+
+
+def test_a_model_stopped_by_cleanup_points_to_ersilia_session(eos, monkeypatch):
+    # 'conda run ersilia serve' leaves a session whose process has ended; the
+    # next command's cleanup stops its model.
+    import ersilia.cli.messages as messages
+
+    dead = subprocess.Popen([sys.executable, "-c", "pass"])
+    dead.wait()
+    orphan = eos / "sessions" / f"session_{dead.pid}"
+    orphan.mkdir()
+    (orphan / "eos3b5e.pid").write_text("-1 http://0.0.0.0:1 -\n")
+    monkeypatch.setattr(session_utils, "_stopped_by_cleanup", [])
+    monkeypatch.setattr(session_utils, "purge_session_processes", lambda s: None)
+    session_utils.remove_orphaned_sessions()
+    assert session_utils.models_stopped_by_cleanup() == ["eos3b5e"]
+
+    lines = []
+    monkeypatch.setattr(messages, "echo", lambda text, **kw: lines.append(text))
+    messages.served_elsewhere_hint()
+    assert "was served by an earlier command whose process has ended" in lines[0]
+    assert "ERSILIA_SESSION=<name>" in lines[1]

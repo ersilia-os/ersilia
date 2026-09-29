@@ -71,26 +71,38 @@ class ModelNotInLocal(object):
 
 def served_elsewhere_hint():
     """
-    Point to ERSILIA_SESSION when a model is served in another session.
+    Point to ERSILIA_SESSION when the model may be in another session.
 
     Commands started through wrappers such as ``conda run``, make or CI steps
-    each get a new session, so a model served by one such command is not seen
-    by the next. Nothing is printed when no other session serves a model.
+    each get a new session: a model served by one such command is stopped by
+    the next (its session's process has ended), or runs in a session that
+    this command cannot see. Nothing is printed otherwise.
     """
     try:
-        from ..utils.session import SESSION_ENV, models_served_elsewhere
+        from ..utils.session import (
+            SESSION_ENV,
+            models_served_elsewhere,
+            models_stopped_by_cleanup,
+        )
 
-        served = models_served_elsewhere()
+        stopped = models_stopped_by_cleanup()
+        served = [] if stopped else models_served_elsewhere()
     except Exception:
         return
-    if not served:
-        return
-    model_id, session_dir = served[0]
-    echo(
-        "Model {0} is being served in another session ({1}).".format(
-            model_id, os.path.basename(session_dir)
+    if stopped:
+        echo(
+            "Model {0} was served by an earlier command whose process has ended, "
+            "so it was stopped.".format(stopped[0])
         )
-    )
+    elif served:
+        model_id, session_dir = served[0]
+        echo(
+            "Model {0} is being served in another session ({1}).".format(
+                model_id, os.path.basename(session_dir)
+            )
+        )
+    else:
+        return
     echo(
         "If you run Ersilia through a wrapper such as 'conda run', make or CI steps, "
         "each command gets a new session: set {0}=<name> to share one, "

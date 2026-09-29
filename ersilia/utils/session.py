@@ -498,6 +498,27 @@ def _pid_was_recycled(pid, written_at):
         return False
 
 
+# Models whose server this process stopped because their session's process
+# had ended (see models_stopped_by_cleanup).
+_stopped_by_cleanup = []
+
+
+def models_stopped_by_cleanup():
+    """
+    List the models stopped by this process's cleanup of orphaned sessions.
+
+    A session is orphaned when its parent process has ended. That happens
+    after every command run through a wrapper such as ``conda run``, so a
+    model served that way is stopped by the next command.
+
+    Returns
+    -------
+    list of str
+        The model IDs.
+    """
+    return list(_stopped_by_cleanup)
+
+
 def remove_orphaned_sessions():
     """
     Remove orphaned sessions.
@@ -508,7 +529,18 @@ def remove_orphaned_sessions():
         return
     for session in orphaned_sessions:
         try:
+            served = [
+                fn[: -len(".pid")]
+                for fn in os.listdir(os.path.join(SESSIONS_DIR, session))
+                if fn.endswith(".pid")
+            ]
+        except OSError:
+            served = []
+        try:
             purge_session_processes(session)
+            _stopped_by_cleanup.extend(
+                m for m in served if m not in _stopped_by_cleanup
+            )
         except Exception:
             pass
         try:
