@@ -112,6 +112,9 @@ class ErsiliaCommandGroup(RichGroup):
     def invoke(self, ctx):
         # Ctrl+C anywhere (including at a prompt) ends with one short line,
         # never a traceback.
+        from ...utils.echo import reset
+
+        reset()
         try:
             return super().invoke(ctx)
         except (KeyboardInterrupt, click.exceptions.Abort) as e:
@@ -146,7 +149,11 @@ class ErsiliaCommandGroup(RichGroup):
         "help_option_names": ["-h", "--help"],
         "token_normalize_func": _normalize_option,
     },
-    epilog="To learn more about a specific command, run: ersilia COMMAND --help",
+    epilog=(
+        "To learn more about a specific command, run: ersilia COMMAND --help\n\n"
+        "Each terminal has its own session. To share one across commands run "
+        "through wrappers such as 'conda run', set ERSILIA_SESSION=<name>."
+    ),
 )
 @click.version_option(version=__version__)
 @click.option(
