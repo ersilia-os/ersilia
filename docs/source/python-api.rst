@@ -2,7 +2,10 @@ Python API
 ==========
 
 The public Python API consists of two classes, :class:`~ersilia.api.Model` and
-:class:`~ersilia.api.Catalog`. They mirror the CLI commands of the same name.
+:class:`~ersilia.api.Catalog`. They mirror the CLI commands, with the same
+options, defaults and checks. They print nothing unless ``verbose=True`` is
+given, never prompt or end the process, and raise an
+:class:`~ersilia.api.ErsiliaError` subclass when something goes wrong.
 
 .. code-block:: python
 
@@ -23,4 +26,4 @@ Catalog
 -------
 
 .. autoclass:: ersilia.api.Catalog
-   :members: catalog
+   :members: hub, local, card

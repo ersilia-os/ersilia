@@ -55,7 +55,7 @@ class Model:
     Parameters
     ----------
     model : str
-        Model identifier (e.g. ``"eos3b5e"``) or slug (e.g. ``"molecular-weight"``).
+        Model identifier (e.g. ``"eos4e40"``) or slug (e.g. ``"chemprop-antibiotic"``).
     verbose : bool, optional
         Show the same progress lines as the CLI. By default nothing is printed.
 
@@ -77,14 +77,14 @@ class Model:
 
         from ersilia.api import Model
 
-        model = Model("eos3b5e")
+        model = Model("eos4e40")
         model.fetch()
         model.serve()
         df = model.run(["CCO", "c1ccccc1"])
         model.close()
 
         # Or serve and close automatically:
-        with Model("eos3b5e") as model:
+        with Model("eos4e40") as model:
             df = model.run("input.csv")
     """
 
@@ -680,7 +680,7 @@ class Catalog:
         catalog = Catalog()
         hub = catalog.hub(task="Annotation")
         local = catalog.local()
-        card = catalog.card("eos3b5e")
+        card = catalog.card("eos4e40")
     """
 
     def __init__(self, verbose=False):
