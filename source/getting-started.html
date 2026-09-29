@@ -352,6 +352,18 @@ ersilia<span class="w"> </span>run<span class="w"> </span>-i<span class="w"> </s
 ersilia<span class="w"> </span>close
 </pre></div>
 </div>
+<p>Each terminal has its own session: a model served in one terminal is used by
+the commands run in that terminal. When commands do not share a terminal, for
+example in scripts run through <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">run</span></code>, make or CI steps, give them one
+session with <code class="docutils literal notranslate"><span class="pre">ERSILIA_SESSION</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># every command below uses the same session, "myproject"</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">ERSILIA_SESSION</span><span class="o">=</span>myproject
+conda<span class="w"> </span>run<span class="w"> </span>-n<span class="w"> </span>ersilia<span class="w"> </span>ersilia<span class="w"> </span>serve<span class="w"> </span>eos4e40
+conda<span class="w"> </span>run<span class="w"> </span>-n<span class="w"> </span>ersilia<span class="w"> </span>ersilia<span class="w"> </span>run<span class="w"> </span>-i<span class="w"> </span>input.csv<span class="w"> </span>-o<span class="w"> </span>output.csv
+conda<span class="w"> </span>run<span class="w"> </span>-n<span class="w"> </span>ersilia<span class="w"> </span>ersilia<span class="w"> </span>close
+</pre></div>
+</div>
+<p>Errors are printed to stderr, so they can be told apart from normal output.</p>
 <p>See <a class="reference internal" href="cli.html"><span class="doc">Command-line interface</span></a> for all commands and options.</p>
 </section>
 <section id="python">

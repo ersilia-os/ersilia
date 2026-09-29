@@ -304,7 +304,8 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for ersilia.cli.messages</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..default</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERSILIA_MODEL_HUB_URL</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">echo</span>
@@ -386,6 +387,50 @@
 <span class="c1"># Shared wordings, so a situation reads the same in every command.</span>
 
 
+<div class="viewcode-block" id="served_elsewhere_hint">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.served_elsewhere_hint">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">served_elsewhere_hint</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Point to ERSILIA_SESSION when the model may be in another session.</span>
+
+<span class="sd">    Commands started through wrappers such as ``conda run``, make or CI steps</span>
+<span class="sd">    each get a new session: a model served by one such command is stopped by</span>
+<span class="sd">    the next (its session's process has ended), or runs in a session that</span>
+<span class="sd">    this command cannot see. Nothing is printed otherwise.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">SESSION_ENV</span><span class="p">,</span>
+            <span class="n">models_served_elsewhere</span><span class="p">,</span>
+            <span class="n">models_stopped_by_cleanup</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">stopped</span> <span class="o">=</span> <span class="n">models_stopped_by_cleanup</span><span class="p">()</span>
+        <span class="n">served</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">stopped</span> <span class="k">else</span> <span class="n">models_served_elsewhere</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">stopped</span><span class="p">:</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> was served by an earlier command whose process has ended, "</span>
+            <span class="s2">"so it was stopped."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stopped</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">served</span><span class="p">:</span>
+        <span class="n">model_id</span><span class="p">,</span> <span class="n">session_dir</span> <span class="o">=</span> <span class="n">served</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">echo</span><span class="p">(</span>
+            <span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> is being served in another session (</span><span class="si">{1}</span><span class="s2">)."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">model_id</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">session_dir</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">echo</span><span class="p">(</span>
+        <span class="s2">"If you run Ersilia through a wrapper such as 'conda run', make or CI steps, "</span>
+        <span class="s2">"each command gets a new session: set </span><span class="si">{0}</span><span class="s2">=&lt;name&gt; to share one, "</span>
+        <span class="s2">"e.g. export </span><span class="si">{0}</span><span class="s2">=myproject."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">SESSION_ENV</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="no_model_served">
 <a class="viewcode-back" href="../../../source/autodoc/ersilia.cli.html#ersilia.cli.messages.no_model_served">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">no_model_served</span><span class="p">(</span><span class="n">fg</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">hint</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -404,6 +449,7 @@
     <span class="n">echo</span><span class="p">(</span><span class="s2">"Serve one first with 'ersilia serve MODEL'."</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">hint</span><span class="p">:</span>
         <span class="n">echo</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span>
+    <span class="n">served_elsewhere_hint</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">fg</span> <span class="o">==</span> <span class="s2">"red"</span><span class="p">:</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
 

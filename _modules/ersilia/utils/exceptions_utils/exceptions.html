@@ -500,6 +500,28 @@
         <span class="k">return</span> <span class="n">log</span></div>
 </div>
 
+
+
+<span class="n">SESSION_NAME_HINT</span> <span class="o">=</span> <span class="s2">"Use letters, digits, '.', '_' or '-' (up to 64 characters, not only digits), e.g. ERSILIA_SESSION=myproject."</span>
+
+
+<div class="viewcode-block" id="SessionNameError">
+<a class="viewcode-back" href="../../../../source/autodoc/ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.SessionNameError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SessionNameError</span><span class="p">(</span><span class="n">ErsiliaError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Raised when ERSILIA_SESSION holds a name that cannot name a session.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The value of ERSILIA_SESSION.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="s2">"ERSILIA_SESSION=</span><span class="si">{0!r}</span><span class="s2"> is not a valid session name."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hints</span> <span class="o">=</span> <span class="n">SESSION_NAME_HINT</span>
+        <span class="n">ErsiliaError</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hints</span><span class="p">)</span></div>
+
 </pre></div>
         </article>
       </div>

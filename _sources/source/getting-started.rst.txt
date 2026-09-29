@@ -48,6 +48,21 @@ when you're done:
    # stop the model server
    ersilia close
 
+Each terminal has its own session: a model served in one terminal is used by
+the commands run in that terminal. When commands do not share a terminal, for
+example in scripts run through ``conda run``, make or CI steps, give them one
+session with ``ERSILIA_SESSION``:
+
+.. code-block:: bash
+
+   # every command below uses the same session, "myproject"
+   export ERSILIA_SESSION=myproject
+   conda run -n ersilia ersilia serve eos4e40
+   conda run -n ersilia ersilia run -i input.csv -o output.csv
+   conda run -n ersilia ersilia close
+
+Errors are printed to stderr, so they can be told apart from normal output.
+
 See :doc:`cli` for all commands and options.
 
 Python

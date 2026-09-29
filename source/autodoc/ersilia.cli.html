@@ -590,6 +590,16 @@ to be done (e.g. <code class="docutils literal notranslate"><span class="pre">er
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="ersilia.cli.messages.served_elsewhere_hint">
+<span class="sig-prename descclassname"><span class="pre">ersilia.cli.messages.</span></span><span class="sig-name descname"><span class="pre">served_elsewhere_hint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#served_elsewhere_hint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.served_elsewhere_hint" title="Link to this definition">¶</a></dt>
+<dd><p>Point to ERSILIA_SESSION when the model may be in another session.</p>
+<p>Commands started through wrappers such as <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">run</span></code>, make or CI steps
+each get a new session: a model served by one such command is stopped by
+the next (its session’s process has ended), or runs in a session that
+this command cannot see. Nothing is printed otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.cli.messages.wrong_extension">
 <span class="sig-prename descclassname"><span class="pre">ersilia.cli.messages.</span></span><span class="sig-name descname"><span class="pre">wrong_extension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allowed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">err</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/cli/messages.html#wrong_extension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.cli.messages.wrong_extension" title="Link to this definition">¶</a></dt>
 <dd><p>Tell the user that an output file has an unsupported extension.</p>
@@ -707,6 +717,7 @@ to be done (e.g. <code class="docutils literal notranslate"><span class="pre">er
 </li>
 <li><a class="reference internal" href="#ersilia.cli.messages.no_model_served"><code class="docutils literal notranslate"><span class="pre">no_model_served()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.cli.messages.report_error"><code class="docutils literal notranslate"><span class="pre">report_error()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.cli.messages.served_elsewhere_hint"><code class="docutils literal notranslate"><span class="pre">served_elsewhere_hint()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.cli.messages.wrong_extension"><code class="docutils literal notranslate"><span class="pre">wrong_extension()</span></code></a></li>
 </ul>
 </li>

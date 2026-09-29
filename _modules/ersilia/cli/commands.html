@@ -428,6 +428,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">invoke</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="c1"># Ctrl+C anywhere (including at a prompt) ends with one short line,</span>
         <span class="c1"># never a traceback.</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.echo</span><span class="w"> </span><span class="kn">import</span> <span class="n">reset</span>
+
+        <span class="n">reset</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Abort</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -467,7 +470,11 @@
         <span class="s2">"help_option_names"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"-h"</span><span class="p">,</span> <span class="s2">"--help"</span><span class="p">],</span>
         <span class="s2">"token_normalize_func"</span><span class="p">:</span> <span class="n">_normalize_option</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="n">epilog</span><span class="o">=</span><span class="s2">"To learn more about a specific command, run: ersilia COMMAND --help"</span><span class="p">,</span>
+    <span class="n">epilog</span><span class="o">=</span><span class="p">(</span>
+        <span class="s2">"To learn more about a specific command, run: ersilia COMMAND --help</span><span class="se">\n\n</span><span class="s2">"</span>
+        <span class="s2">"Each terminal has its own session. To share one across commands run "</span>
+        <span class="s2">"through wrappers such as 'conda run', set ERSILIA_SESSION=&lt;name&gt;."</span>
+    <span class="p">),</span>
 <span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">version_option</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>

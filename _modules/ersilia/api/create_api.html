@@ -896,7 +896,7 @@
 <span class="sd">        bool</span>
 <span class="sd">            True if the model was closed (also when it had already stopped),</span>
 <span class="sd">            False if no model is served in this session, so there was nothing</span>
-<span class="sd">            to close.</span>
+<span class="sd">            to close. A session named with ERSILIA_SESSION is removed.</span>
 
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
@@ -907,18 +907,20 @@
 <span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.api_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelNotServedError</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.exceptions_utils.serve_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerNotActiveError</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">deregister_model_session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">deregister_model_session</span><span class="p">,</span> <span class="n">end_named_session</span>
 
         <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">()</span>
         <span class="n">served</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">served_model</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">served</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Nothing to close, as 'ersilia close' says.</span>
+            <span class="n">end_named_session</span><span class="p">()</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">served</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ModelNotServedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"stale"</span><span class="p">:</span>
             <span class="c1"># It had already stopped: forget it, as 'ersilia close' does.</span>
             <span class="n">session</span><span class="o">.</span><span class="n">clear_stale</span><span class="p">(</span><span class="n">served</span><span class="p">)</span>
+            <span class="n">end_named_session</span><span class="p">()</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">session</span><span class="o">.</span><span class="n">current_service_class</span><span class="p">()</span> <span class="ow">in</span> <span class="n">DOCKER_SERVICES</span><span class="p">:</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">..setup.requirements.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerRequirement</span>
@@ -929,6 +931,7 @@
         <span class="k">with</span> <span class="n">library_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_served_model</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">deregister_model_session</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_id</span><span class="p">)</span>
+            <span class="n">end_named_session</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 

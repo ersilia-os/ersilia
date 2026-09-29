@@ -425,6 +425,7 @@
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.MissingDependencyError"><code class="docutils literal notranslate"><span class="pre">MissingDependencyError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError"><code class="docutils literal notranslate"><span class="pre">ModelNotAvailableLocallyError</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.NullModelIdentifierError"><code class="docutils literal notranslate"><span class="pre">NullModelIdentifierError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.SessionNameError"><code class="docutils literal notranslate"><span class="pre">SessionNameError</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ersilia.utils.exceptions_utils.html#module-ersilia.utils.exceptions_utils.fetch_exceptions">ersilia.utils.exceptions_utils.fetch_exceptions module</a><ul>
@@ -2139,6 +2140,10 @@ of a kind looks the same.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Errors are printed to stderr, and so are the info lines that follow an
+error (its hints), until the next success, warning or running step.
+Everything else goes to stdout.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -2153,6 +2158,14 @@ of a kind looks the same.</p></li>
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.echo.reset">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.echo.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/echo.html#reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.echo.reset" title="Link to this definition">¶</a></dt>
+<dd><p>Start a new command: output goes to stdout until the next error.</p>
+<p>Called when each CLI command or Python API call starts, so that a
+previous error does not send later lines to stderr.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -3074,6 +3087,17 @@ before the fetch procedure.</p>
 <section id="module-ersilia.utils.session">
 <span id="ersilia-utils-session-module"></span><h2>ersilia.utils.session module<a class="headerlink" href="#module-ersilia.utils.session" title="Link to this heading">¶</a></h2>
 <dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.check_session_env">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">check_session_env</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#check_session_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.check_session_env" title="Link to this definition">¶</a></dt>
+<dd><p>Check the session name given in ERSILIA_SESSION, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.SessionNameError" title="ersilia.utils.exceptions_utils.exceptions.SessionNameError"><strong>SessionNameError</strong></a> – If the variable is set to a name that cannot name a session.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="ersilia.utils.session.container_is_running">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">container_is_running</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#container_is_running"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.container_is_running" title="Link to this definition">¶</a></dt>
 <dd><p>Tell whether a Docker container is running.</p>
@@ -3137,6 +3161,23 @@ None if Docker cannot be reached (so the answer is unknown).</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.end_named_session">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">end_named_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#end_named_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.end_named_session" title="Link to this definition">¶</a></dt>
+<dd><p>Remove the current session’s folder if it was named with ERSILIA_SESSION.</p>
+<p>A named session is not tied to a process, so it is never cleaned up
+automatically; closing it removes it. A terminal’s session is left alone
+(it is removed when the terminal ends).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if a named session was removed.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3223,6 +3264,8 @@ holds the model’s pid file.</p>
 <dt class="sig sig-object py" id="ersilia.utils.session.get_session_id">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">get_session_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#get_session_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.get_session_id" title="Link to this definition">¶</a></dt>
 <dd><p>Get the session ID.</p>
+<p>The session is <code class="docutils literal notranslate"><span class="pre">session_&lt;name&gt;</span></code> when ERSILIA_SESSION is set, and
+<code class="docutils literal notranslate"><span class="pre">session_&lt;parent</span> <span class="pre">process</span> <span class="pre">ID&gt;</span></code> (one per terminal) otherwise.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The session ID.</p>
@@ -3243,6 +3286,37 @@ holds the model’s pid file.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.invalid_session_name">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">invalid_session_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#invalid_session_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.invalid_session_name" title="Link to this definition">¶</a></dt>
+<dd><p>Get the value of ERSILIA_SESSION if it cannot name a session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The invalid name, or None when the variable is unset or valid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.is_named_session">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">is_named_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#is_named_session"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.is_named_session" title="Link to this definition">¶</a></dt>
+<dd><p>Tell whether a session was named with ERSILIA_SESSION.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>session_name</strong> (<em>str</em>) – A session name such as <code class="docutils literal notranslate"><span class="pre">session_myproject</span></code>, or a path ending in one.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True for a named session, False for a terminal’s session.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3278,6 +3352,38 @@ SIGTERM first, then SIGKILL for anything still alive after <code class="docutils
 <li><p><strong>pid</strong> (<em>int</em>) – The root process ID.</p></li>
 <li><p><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – Seconds to wait for graceful termination before force-killing.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.models_served_elsewhere">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">models_served_elsewhere</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#models_served_elsewhere"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.models_served_elsewhere" title="Link to this definition">¶</a></dt>
+<dd><p>List the models served in other live sessions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">(model_id,</span> <span class="pre">session_dir)</span></code> for each model served in a live session
+other than this one.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of tuple of (str, str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.models_stopped_by_cleanup">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">models_stopped_by_cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#models_stopped_by_cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.models_stopped_by_cleanup" title="Link to this definition">¶</a></dt>
+<dd><p>List the models stopped by this process’s cleanup of orphaned sessions.</p>
+<p>A session is orphaned when its parent process has ended. That happens
+after every command run through a wrapper such as <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">run</span></code>, so a
+model served that way is stopped by the next command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The model IDs.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3340,6 +3446,23 @@ so each model maps to a list of session directories.</p>
 <dt class="sig sig-object py" id="ersilia.utils.session.remove_session_dir">
 <span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">remove_session_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#remove_session_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.remove_session_dir" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ersilia.utils.session.session_name_from_env">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.session.</span></span><span class="sig-name descname"><span class="pre">session_name_from_env</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/session.html#session_name_from_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.session.session_name_from_env" title="Link to this definition">¶</a></dt>
+<dd><p>Get the session name given in the ERSILIA_SESSION environment variable.</p>
+<p>An invalid name is ignored here (the terminal’s session is used), since
+this runs while Ersilia is being imported; <code class="docutils literal notranslate"><span class="pre">check_session_env</span></code> reports
+it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The name, or None when the variable is not set or not valid.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ersilia.utils.session.session_pid_from_name">
@@ -4248,6 +4371,7 @@ so each model maps to a list of session directories.</p>
 <li><a class="reference internal" href="#ersilia.utils.echo.confirm"><code class="docutils literal notranslate"><span class="pre">confirm()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.echo.echo"><code class="docutils literal notranslate"><span class="pre">echo()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.echo.is_quiet"><code class="docutils literal notranslate"><span class="pre">is_quiet()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.echo.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.echo.set_quiet"><code class="docutils literal notranslate"><span class="pre">set_quiet()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.echo.spinner"><code class="docutils literal notranslate"><span class="pre">spinner()</span></code></a></li>
 </ul>
@@ -4390,12 +4514,14 @@ so each model maps to a list of session directories.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-ersilia.utils.session">ersilia.utils.session module</a><ul>
+<li><a class="reference internal" href="#ersilia.utils.session.check_session_env"><code class="docutils literal notranslate"><span class="pre">check_session_env()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.container_is_running"><code class="docutils literal notranslate"><span class="pre">container_is_running()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.create_session_dir"><code class="docutils literal notranslate"><span class="pre">create_session_dir()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.create_session_files"><code class="docutils literal notranslate"><span class="pre">create_session_files()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.deregister_model_session"><code class="docutils literal notranslate"><span class="pre">deregister_model_session()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.deregister_session"><code class="docutils literal notranslate"><span class="pre">deregister_session()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.determine_orphaned_session"><code class="docutils literal notranslate"><span class="pre">determine_orphaned_session()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.end_named_session"><code class="docutils literal notranslate"><span class="pre">end_named_session()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_current_pid"><code class="docutils literal notranslate"><span class="pre">get_current_pid()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_live_model_sessions"><code class="docutils literal notranslate"><span class="pre">get_live_model_sessions()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_model_sessions"><code class="docutils literal notranslate"><span class="pre">get_model_sessions()</span></code></a></li>
@@ -4403,14 +4529,19 @@ so each model maps to a list of session directories.</p>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_dir"><code class="docutils literal notranslate"><span class="pre">get_session_dir()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_id"><code class="docutils literal notranslate"><span class="pre">get_session_id()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.get_session_uuid"><code class="docutils literal notranslate"><span class="pre">get_session_uuid()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.invalid_session_name"><code class="docutils literal notranslate"><span class="pre">invalid_session_name()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.is_named_session"><code class="docutils literal notranslate"><span class="pre">is_named_session()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.is_session_alive"><code class="docutils literal notranslate"><span class="pre">is_session_alive()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.kill_process_tree"><code class="docutils literal notranslate"><span class="pre">kill_process_tree()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.models_served_elsewhere"><code class="docutils literal notranslate"><span class="pre">models_served_elsewhere()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.models_stopped_by_cleanup"><code class="docutils literal notranslate"><span class="pre">models_stopped_by_cleanup()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.prune_empty_session_dirs"><code class="docutils literal notranslate"><span class="pre">prune_empty_session_dirs()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.purge_session_processes"><code class="docutils literal notranslate"><span class="pre">purge_session_processes()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.read_pid_file"><code class="docutils literal notranslate"><span class="pre">read_pid_file()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.register_model_session"><code class="docutils literal notranslate"><span class="pre">register_model_session()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.remove_orphaned_sessions"><code class="docutils literal notranslate"><span class="pre">remove_orphaned_sessions()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.remove_session_dir"><code class="docutils literal notranslate"><span class="pre">remove_session_dir()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.session.session_name_from_env"><code class="docutils literal notranslate"><span class="pre">session_name_from_env()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.session_pid_from_name"><code class="docutils literal notranslate"><span class="pre">session_pid_from_name()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.set_write_permissions"><code class="docutils literal notranslate"><span class="pre">set_write_permissions()</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.session.stop_containers_by_name"><code class="docutils literal notranslate"><span class="pre">stop_containers_by_name()</span></code></a></li>

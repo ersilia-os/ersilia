@@ -322,6 +322,12 @@
 <span class="c1"># Every line is "  &lt;icon&gt;  &lt;text&gt;": the icon at column 2 and the text at</span>
 <span class="c1"># column 5. The running spinner uses the same columns.</span>
 <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+<span class="c1"># Errors go to stderr, so scripts can tell them apart from normal output.</span>
+<span class="n">_err_console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">(</span><span class="n">stderr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Hint lines printed right after an error belong to it: they go to stderr</span>
+<span class="c1"># too, until the next success, warning or running step.</span>
+<span class="n">_after_error</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="c1"># When quiet, nothing is printed (used by the Python API unless verbose).</span>
 <span class="n">_quiet</span> <span class="o">=</span> <span class="kc">False</span>
@@ -478,7 +484,14 @@
 <span class="sd">        ``fg`` selects the kind of message; ``err=True`` prints to stderr.</span>
 <span class="sd">        Other click styles are ignored when harmonizing, so every message</span>
 <span class="sd">        of a kind looks the same.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Errors are printed to stderr, and so are the info lines that follow an</span>
+<span class="sd">    error (its hints), until the next success, warning or running step.</span>
+<span class="sd">    Everything else goes to stdout.</span>
 <span class="sd">    """</span>
+    <span class="k">global</span> <span class="n">_after_error</span>
     <span class="k">if</span> <span class="n">_quiet</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -488,8 +501,40 @@
         <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">styles</span><span class="p">),</span> <span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">)</span>
     <span class="n">color</span> <span class="o">=</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"fg"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">styles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"color"</span><span class="p">)</span>
     <span class="n">icon</span><span class="p">,</span> <span class="n">fg</span> <span class="o">=</span> <span class="n">_KINDS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="p">(</span><span class="s2">"▪"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">icon</span> <span class="o">==</span> <span class="s2">"✖"</span><span class="p">:</span>
+        <span class="n">_after_error</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">icon</span> <span class="o">!=</span> <span class="s2">"▪"</span><span class="p">:</span>
+        <span class="n">_after_error</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="n">err</span> <span class="ow">or</span> <span class="n">_after_error</span>
     <span class="k">return</span> <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">icon</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="n">fg</span><span class="p">),</span> <span class="n">err</span><span class="o">=</span><span class="n">err</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="reset">
+<a class="viewcode-back" href="../../../source/autodoc/ersilia.utils.html#ersilia.utils.echo.reset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Start a new command: output goes to stdout until the next error.</span>
+
+<span class="sd">    Called when each CLI command or Python API call starts, so that a</span>
+<span class="sd">    previous error does not send later lines to stderr.</span>
+<span class="sd">    """</span>
+    <span class="k">global</span> <span class="n">_after_error</span>
+    <span class="n">_after_error</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_failed</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="c1"># A step that failed, printed like an error line (to stderr).</span>
+    <span class="k">global</span> <span class="n">_after_error</span>
+    <span class="n">_after_error</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">_err_console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">"✖"</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">"red"</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_start_step</span><span class="p">():</span>
+    <span class="c1"># A new running step: what follows is no longer part of an error.</span>
+    <span class="k">global</span> <span class="n">_after_error</span>
+    <span class="n">_after_error</span> <span class="o">=</span> <span class="kc">False</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_SpinnerLine</span><span class="p">:</span>
@@ -566,11 +611,12 @@
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">_start_step</span><span class="p">()</span>
     <span class="k">with</span> <span class="n">_running</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">"✖"</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">"red"</span><span class="p">))</span>
+            <span class="n">_failed</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
             <span class="k">raise</span>
     <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="n">done</span> <span class="ow">or</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"✓"</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">"green"</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">result</span></div>
@@ -596,11 +642,12 @@
         <span class="k">return</span> <span class="k">await</span> <span class="n">coro</span>
     <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logger</span><span class="p">,</span> <span class="s2">"verbosity"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">return</span> <span class="k">await</span> <span class="n">coro</span>
+    <span class="n">_start_step</span><span class="p">()</span>
     <span class="k">with</span> <span class="n">_running</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">coro</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">"✖"</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">"red"</span><span class="p">))</span>
+            <span class="n">_failed</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
             <span class="k">raise</span>
     <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">Text</span><span class="p">(</span><span class="n">_format</span><span class="p">(</span><span class="n">done</span> <span class="ow">or</span> <span class="n">text</span><span class="p">,</span> <span class="s2">"✓"</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="s2">"green"</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">result</span></div>

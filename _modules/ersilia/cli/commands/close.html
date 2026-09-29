@@ -339,12 +339,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">():</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...</span><span class="w"> </span><span class="kn">import</span> <span class="n">ErsiliaModel</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">...core.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">deregister_model_session</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">...utils.session</span><span class="w"> </span><span class="kn">import</span> <span class="n">deregister_model_session</span><span class="p">,</span> <span class="n">end_named_session</span>
 
         <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">config_json</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">served_model</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">served_model</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">"stale"</span><span class="p">:</span>
             <span class="n">session</span><span class="o">.</span><span class="n">clear_stale</span><span class="p">(</span><span class="n">served_model</span><span class="p">)</span>
+            <span class="n">end_named_session</span><span class="p">()</span>
             <span class="n">echo</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"Model </span><span class="si">{</span><span class="n">served_model</span><span class="si">}</span><span class="s2"> closed (it was no longer running)."</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>
@@ -357,6 +358,10 @@
                 <span class="s2">"No model is being served in this terminal, so there is nothing to close."</span><span class="p">,</span>
                 <span class="n">fg</span><span class="o">=</span><span class="s2">"yellow"</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">..messages</span><span class="w"> </span><span class="kn">import</span> <span class="n">served_elsewhere_hint</span>
+
+            <span class="n">served_elsewhere_hint</span><span class="p">()</span>
+            <span class="n">end_named_session</span><span class="p">()</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="n">service_class</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"pulled_docker"</span><span class="p">,</span> <span class="s2">"docker"</span><span class="p">):</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">...setup.requirements.docker</span><span class="w"> </span><span class="kn">import</span> <span class="n">DockerRequirement</span>
@@ -375,6 +380,8 @@
         <span class="n">mdl</span> <span class="o">=</span> <span class="n">ErsiliaModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">service_class</span><span class="o">=</span><span class="n">service_class</span><span class="p">)</span>
         <span class="n">mdl</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">deregister_model_session</span><span class="p">(</span><span class="n">model_id</span><span class="p">)</span>
+        <span class="c1"># A session named with ERSILIA_SESSION ends here.</span>
+        <span class="n">end_named_session</span><span class="p">()</span>
         <span class="n">echo</span><span class="p">(</span><span class="s2">"Model </span><span class="si">{0}</span><span class="s2"> closed."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdl</span><span class="o">.</span><span class="n">model_id</span><span class="p">),</span> <span class="n">fg</span><span class="o">=</span><span class="s2">"green"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">close</span></div>
