@@ -261,10 +261,23 @@ def test_example_uses_this_model_not_the_served_one(tmp_path):
 
     with (
         patch.object(Model, "_require_fetched", lambda self: None),
+        patch("ersilia.utils.checks.check_curated_examples"),
         patch("ersilia.io.input.ExampleGenerator", FakeGenerator),
     ):
         assert _model("eos3b5e").example(2, mode="Curated") == ["CCO", "CCO"]
     assert seen == {"model_id": "eos3b5e", "mode": "curated"}
+
+
+def test_curated_examples_need_the_models_own_examples(tmp_path):
+    with (
+        patch.object(Model, "_require_fetched", lambda self: None),
+        patch(
+            "ersilia.core.modelbase.ModelBase._model_path",
+            lambda self, model_id: str(tmp_path),
+        ),
+        pytest.raises(InvalidOptionError, match="has no curated examples"),
+    ):
+        _model("eos3b5e").example(mode="curated")
 
 
 def test_example_rejects_unknown_modes():
