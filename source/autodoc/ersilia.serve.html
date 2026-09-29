@@ -192,7 +192,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">API documentation</a><input aria-label="Toggle navigation of API documentation" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python-api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">Package reference</a><input aria-label="Toggle navigation of Package reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2 current has-children"><a class="reference internal" href="ersilia.html">ersilia package</a><input aria-label="Toggle navigation of ersilia package" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="ersilia.api.html">ersilia.api package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a><input aria-label="Toggle navigation of ersilia.app package" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -1409,6 +1412,14 @@ for HDF5 serializability, and generate empty representations of the input and ou
 </dd>
 </dl>
 <p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model_id</span> <span class="o">=</span> <span class="s2">"eosxxxx"</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">"http://0.0.0.0:15221/run"</span>
+<span class="n">api</span> <span class="o">=</span> <span class="n">StandardCSVRunApi</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="s2">"path/to/input.csv"</span>
+<span class="n">output_data</span> <span class="o">=</span> <span class="s2">"path/to/output.csv"</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">output_data</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.async_serialize_to_json_one_column">
 <span class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">async_serialize_to_json_one_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.async_serialize_to_json_one_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.async_serialize_to_json_one_column" title="Link to this definition">¶</a></dt>
@@ -1573,16 +1584,18 @@ Finally, create a CSV file with the combined results.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json">
 <span class="sig-name descname"><span class="pre">serialize_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/serve/standard_api.html#StandardCSVRunApi.serialize_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.serve.standard_api.StandardCSVRunApi.serialize_to_json" title="Link to this definition">¶</a></dt>
-<dd><blockquote>
-<div><p>Serialize input data to JSON format.</p>
-<p>Parameters</p>
-</div></blockquote>
-<blockquote>
-<div><dl class="simple">
-<dt>list</dt><dd><p>List of dictionaries containing serialized input data.</p>
+<dd><p>Serialize input data to JSON format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_data</strong> (<em>str</em><em> | </em><em>list</em>) – Input data which can be a file path, an input string, or a list of input strings.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of dictionaries containing serialized input data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py method">

@@ -191,7 +191,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/package.html">API documentation</a><input aria-label="Toggle navigation of API documentation" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/python-api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/cli.html">Command-line interface</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../source/package.html">Package reference</a><input aria-label="Toggle navigation of Package reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.html">ersilia package</a><input aria-label="Toggle navigation of ersilia package" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../source/autodoc/ersilia.api.html">ersilia.api package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../../source/autodoc/ersilia.app.html">ersilia.app package</a><input aria-label="Toggle navigation of ersilia.app package" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -352,7 +355,7 @@
 
 
 <div class="viewcode-block" id="Model">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Model</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    An Ersilia model, identified by its identifier or slug.</span>
@@ -360,7 +363,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    model : str</span>
-<span class="sd">        Model identifier (e.g. ``"eos3b5e"``) or slug (e.g. ``"molecular-weight"``).</span>
+<span class="sd">        Model identifier (e.g. ``"eos4e40"``) or slug (e.g. ``"chemprop-antibiotic"``).</span>
 <span class="sd">    verbose : bool, optional</span>
 <span class="sd">        Show the same progress lines as the CLI. By default nothing is printed.</span>
 
@@ -382,14 +385,14 @@
 
 <span class="sd">        from ersilia.api import Model</span>
 
-<span class="sd">        model = Model("eos3b5e")</span>
+<span class="sd">        model = Model("eos4e40")</span>
 <span class="sd">        model.fetch()</span>
 <span class="sd">        model.serve()</span>
 <span class="sd">        df = model.run(["CCO", "c1ccccc1"])</span>
 <span class="sd">        model.close()</span>
 
 <span class="sd">        # Or serve and close automatically:</span>
-<span class="sd">        with Model("eos3b5e") as model:</span>
+<span class="sd">        with Model("eos4e40") as model:</span>
 <span class="sd">            df = model.run("input.csv")</span>
 <span class="sd">    """</span>
 
@@ -489,7 +492,7 @@
     <span class="c1"># Commands</span>
 
 <div class="viewcode-block" id="Model.fetch">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.fetch">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model.fetch">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">from_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -579,7 +582,7 @@
 
 
 <div class="viewcode-block" id="Model.serve">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.serve">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model.serve">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -689,7 +692,7 @@
 
 
 <div class="viewcode-block" id="Model.run">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.run">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model.run">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Run the served model, like ``ersilia run``.</span>
@@ -777,7 +780,7 @@
 
 
 <div class="viewcode-block" id="Model.info">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.info">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model.info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get the model information, like ``ersilia info``.</span>
@@ -817,7 +820,7 @@
 
 
 <div class="viewcode-block" id="Model.example">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.example">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model.example">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"random"</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Generate example inputs for the model, like ``ersilia example``.</span>
@@ -883,7 +886,7 @@
 
 
 <div class="viewcode-block" id="Model.close">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.close">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Close the served model, like ``ersilia close``.</span>
@@ -930,7 +933,7 @@
 
 
 <div class="viewcode-block" id="Model.delete">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.delete">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model.delete">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Delete the model from this computer, like ``ersilia delete``.</span>
@@ -964,7 +967,7 @@
 
 
 <div class="viewcode-block" id="Model.is_fetched">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Model.is_fetched">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Model.is_fetched">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_fetched</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Tell whether the model is fetched.</span>
@@ -993,7 +996,7 @@
 
 
 <div class="viewcode-block" id="Catalog">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Catalog">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Catalog">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Catalog</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    The Ersilia Model Hub catalog, like ``ersilia catalog``.</span>
@@ -1012,7 +1015,7 @@
 <span class="sd">        catalog = Catalog()</span>
 <span class="sd">        hub = catalog.hub(task="Annotation")</span>
 <span class="sd">        local = catalog.local()</span>
-<span class="sd">        card = catalog.card("eos3b5e")</span>
+<span class="sd">        card = catalog.card("eos4e40")</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1037,7 +1040,7 @@
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">data</span> <span class="ow">or</span> <span class="p">[],</span> <span class="n">columns</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Catalog.hub">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Catalog.hub">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Catalog.hub">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">hub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">more</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        List the models in the Ersilia Model Hub, like ``ersilia catalog --hub``.</span>
@@ -1060,7 +1063,7 @@
 
 
 <div class="viewcode-block" id="Catalog.local">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Catalog.local">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Catalog.local">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">more</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        List the models fetched on this computer, like ``ersilia catalog``.</span>
@@ -1083,7 +1086,7 @@
 
 
 <div class="viewcode-block" id="Catalog.card">
-<a class="viewcode-back" href="../../../source/autodoc/ersilia.api.html#ersilia.api.create_api.Catalog.card">[docs]</a>
+<a class="viewcode-back" href="../../../source/python-api.html#ersilia.api.create_api.Catalog.card">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">card</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Get a model's card, like ``ersilia catalog --card MODEL``.</span>

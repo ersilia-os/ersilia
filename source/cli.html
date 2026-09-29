@@ -1,0 +1,835 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Package reference" href="package.html"><link rel="prev" title="Python API" href="python-api.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>Command-line interface - Ersilia documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Ersilia  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <span class="sidebar-brand-text">Ersilia  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api.html">Python API</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Command-line interface</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="package.html">Package reference</a><input aria-label="Toggle navigation of Package reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="autodoc/ersilia.html">ersilia package</a><input aria-label="Toggle navigation of ersilia package" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="autodoc/ersilia.api.html">ersilia.api package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.app.html">ersilia.app package</a><input aria-label="Toggle navigation of ersilia.app package" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.app.fastapi.html">ersilia.app.fastapi package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.app.streamlit.html">ersilia.app.streamlit package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autodoc/ersilia.auth.html">ersilia.auth package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.cli.html">ersilia.cli package</a><input aria-label="Toggle navigation of ersilia.cli package" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="autodoc/ersilia.cli.commands.html">ersilia.cli.commands package</a><input aria-label="Toggle navigation of ersilia.cli.commands package" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="autodoc/ersilia.cli.commands.utils.html">ersilia.cli.commands.utils package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autodoc/ersilia.core.html">ersilia.core package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.db.html">ersilia.db package</a><input aria-label="Toggle navigation of ersilia.db package" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.db.disk.html">ersilia.db.disk package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.db.environments.html">ersilia.db.environments package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.db.hubdata.html">ersilia.db.hubdata package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.hub.html">ersilia.hub package</a><input aria-label="Toggle navigation of ersilia.hub package" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.hub.bundle.html">ersilia.hub.bundle package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.hub.content.html">ersilia.hub.content package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.hub.delete.html">ersilia.hub.delete package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="autodoc/ersilia.hub.fetch.html">ersilia.hub.fetch package</a><input aria-label="Toggle navigation of ersilia.hub.fetch package" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="autodoc/ersilia.hub.fetch.actions.html">ersilia.hub.fetch.actions package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="autodoc/ersilia.hub.fetch.lazy_fetchers.html">ersilia.hub.fetch.lazy_fetchers package</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="autodoc/ersilia.hub.fetch.pack.html">ersilia.hub.fetch.pack package</a><input aria-label="Toggle navigation of ersilia.hub.fetch.pack package" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="autodoc/ersilia.hub.fetch.pack.bentoml_pack.html">ersilia.hub.fetch.pack.bentoml_pack package</a></li>
+<li class="toctree-l6"><a class="reference internal" href="autodoc/ersilia.hub.fetch.pack.fastapi_pack.html">ersilia.hub.fetch.pack.fastapi_pack package</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="autodoc/ersilia.hub.fetch.register.html">ersilia.hub.fetch.register package</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.hub.pull.html">ersilia.hub.pull package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.io.html">ersilia.io package</a><input aria-label="Toggle navigation of ersilia.io package" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.io.readers.html">ersilia.io.readers package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="autodoc/ersilia.io.types.html">ersilia.io.types package</a><input aria-label="Toggle navigation of ersilia.io.types package" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="autodoc/ersilia.io.types.examples.html">ersilia.io.types.examples package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.publish.html">ersilia.publish package</a><input aria-label="Toggle navigation of ersilia.publish package" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="autodoc/ersilia.publish.test.html">ersilia.publish.test package</a><input aria-label="Toggle navigation of ersilia.publish.test package" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="autodoc/ersilia.publish.test.services.html">ersilia.publish.test.services package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.serve.html">ersilia.serve package</a><input aria-label="Toggle navigation of ersilia.serve package" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.serve.environment.html">ersilia.serve.environment package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.setup.html">ersilia.setup package</a><input aria-label="Toggle navigation of ersilia.setup package" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.setup.requirements.html">ersilia.setup.requirements package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.setup.utils.html">ersilia.setup.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="autodoc/ersilia.store.html">ersilia.store package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="autodoc/ersilia.tools.html">ersilia.tools package</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autodoc/ersilia.utils.html">ersilia.utils package</a><input aria-label="Toggle navigation of ersilia.utils package" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.utils.exceptions_utils.html">ersilia.utils.exceptions_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.utils.identifiers.html">ersilia.utils.identifiers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autodoc/ersilia.utils.supp.html">ersilia.utils.supp package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/source/cli.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="command-line-interface">
+<h1>Command-line interface<a class="headerlink" href="#command-line-interface" title="Link to this heading">¶</a></h1>
+<p>Reference for the <code class="docutils literal notranslate"><span class="pre">ersilia</span></code> command, generated from the source code. Run
+<code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">&lt;command&gt;</span> <span class="pre">--help</span></code> for the same information in the terminal.</p>
+<section id="ersilia">
+<h2>ersilia<a class="headerlink" href="#ersilia" title="Link to this heading">¶</a></h2>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-version" title="Link to this definition">¶</a></dt>
+<dd><p>Show the version and exit.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-v">
+<span id="cmdoption-ersilia-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-v" title="Link to this definition">¶</a></dt>
+<dd><p>Show logging on terminal when running commands.</p>
+</dd></dl>
+
+<p>To learn more about a specific command, run: ersilia COMMAND –help</p>
+<section id="ersilia-catalog">
+<h3>catalog<a class="headerlink" href="#ersilia-catalog" title="Link to this heading">¶</a></h3>
+<p>List models available locally or in the Ersilia Model Hub. By default shows locally fetched models in table format. Supports detailed metadata and individual model cards.</p>
+<p>For a full list of models visit [bold cyan][link=https://catalog.ersilia.io/]https://catalog.ersilia.io/[/link][/bold cyan]</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>catalog<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>MODEL<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-catalog-hub">
+<span id="cmdoption-ersilia-catalog-local"></span><span class="sig-name descname"><span class="pre">--hub</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--local</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-catalog-hub" title="Link to this definition">¶</a></dt>
+<dd><p>–hub lists models available in the Ersilia Model Hub; –local (default) lists locally fetched models.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-catalog-o">
+<span id="cmdoption-ersilia-catalog-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-catalog-o" title="Link to this definition">¶</a></dt>
+<dd><p>Save the catalog to a file. Accepted formats: .csv, .json.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-catalog-more">
+<span id="cmdoption-ersilia-catalog-less"></span><span class="sig-name descname"><span class="pre">--more</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--less</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-catalog-more" title="Link to this definition">¶</a></dt>
+<dd><p>–more shows additional model metadata; –less (default) shows only the EOS identifier.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-catalog-card">
+<span class="sig-name descname"><span class="pre">--card</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-catalog-card" title="Link to this definition">¶</a></dt>
+<dd><p>Display the full model card for a given model ID.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-catalog-task">
+<span class="sig-name descname"><span class="pre">--task</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;task&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-catalog-task" title="Link to this definition">¶</a></dt>
+<dd><p>Filter models by task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Annotation | Representation | Sampling</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-catalog-arg-MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-catalog-arg-MODEL" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</section>
+<section id="ersilia-close">
+<h3>close<a class="headerlink" href="#ersilia-close" title="Link to this heading">¶</a></h3>
+<p>Stop the model served in this terminal and free its resources.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>close<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="ersilia-delete">
+<h3>delete<a class="headerlink" href="#ersilia-delete" title="Link to this heading">¶</a></h3>
+<p>Fully remove a model from the local computer. This includes the model files in the EOS directory, conda environment, Docker image and containers, pip package, and all associated database entries.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>delete<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>MODEL<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-delete-all">
+<span class="sig-name descname"><span class="pre">--all</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-delete-all" title="Link to this definition">¶</a></dt>
+<dd><p>Delete all locally available models.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-delete-arg-MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-delete-arg-MODEL" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</section>
+<section id="ersilia-example">
+<h3>example<a class="headerlink" href="#ersilia-example" title="Link to this heading">¶</a></h3>
+<p>Generate input examples for a model. A model must be served before running this command, or a model identifier must be provided. The number of examples and output file can be specified.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>example<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>MODEL<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-example-n">
+<span id="cmdoption-ersilia-example-n_samples"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--n_samples</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;n_samples&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-example-n" title="Link to this definition">¶</a></dt>
+<dd><p>Number of examples to generate. Ignored in curated mode.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-example-o">
+<span id="cmdoption-ersilia-example-output_file"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output_file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_file&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-example-o" title="Link to this definition">¶</a></dt>
+<dd><p>Output file name.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-example-m">
+<span id="cmdoption-ersilia-example-mode"></span><span class="sig-name descname"><span class="pre">-m</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--mode</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mode&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-example-m" title="Link to this definition">¶</a></dt>
+<dd><p>How examples are generated: random, curated, or deterministic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'random'</span></code></p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p>random | curated | deterministic</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-example-arg-MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-example-arg-MODEL" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</section>
+<section id="ersilia-fetch">
+<h3>fetch<a class="headerlink" href="#ersilia-fetch" title="Link to this heading">¶</a></h3>
+<p>Download a model from the Ersilia Model Hub and set it up locally. By default, models are fetched from DockerHub. Use the –from_* flags to override the source.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>fetch<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>MODEL
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-fetch-from_dir">
+<span class="sig-name descname"><span class="pre">--from_dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;from_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-fetch-from_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch from a local directory containing the model repository.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-fetch-from_github">
+<span class="sig-name descname"><span class="pre">--from_github</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-fetch-from_github" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch directly from the model’s GitHub repository.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-fetch-from_s3">
+<span class="sig-name descname"><span class="pre">--from_s3</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-fetch-from_s3" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch from the Ersilia AWS S3 bucket.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-fetch-from_dockerhub">
+<span class="sig-name descname"><span class="pre">--from_dockerhub</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-fetch-from_dockerhub" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch from DockerHub (the default when no other source is given).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-fetch-from_hosted">
+<span class="sig-name descname"><span class="pre">--from_hosted</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;from_hosted&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-fetch-from_hosted" title="Link to this definition">¶</a></dt>
+<dd><p>Connect to a remotely hosted model service by providing its URL. Only creates a local folder structure; the model is not downloaded.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-fetch-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;version&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-fetch-version" title="Link to this definition">¶</a></dt>
+<dd><p>Specific Docker image version to fetch from DockerHub.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-fetch-arg-MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-fetch-arg-MODEL" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ersilia-info">
+<h3>info<a class="headerlink" href="#ersilia-info" title="Link to this heading">¶</a></h3>
+<p>Display information about the currently served model, including its title, description, identifiers, GitHub and S3 links, and Docker Hub details. A model must be served before running this command.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>info<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-info-o">
+<span id="cmdoption-ersilia-info-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-info-o" title="Link to this definition">¶</a></dt>
+<dd><p>Save model information to a file. Accepted formats: .json, .csv.</p>
+</dd></dl>
+
+</section>
+<section id="ersilia-run">
+<h3>run<a class="headerlink" href="#ersilia-run" title="Link to this heading">¶</a></h3>
+<p>Run predictions using the currently served model. Input must be a single-column CSV file. Output can be saved as .csv or .h5. A model must be served before running this command.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-run-i">
+<span id="cmdoption-ersilia-run-input"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--input</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;input&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-run-i" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> Path to a single-column CSV file containing the input data.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-run-o">
+<span id="cmdoption-ersilia-run-output"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-run-o" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> Path to the output file. Accepted formats: .csv, .h5.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-run-b">
+<span id="cmdoption-ersilia-run-batch_size"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--batch_size</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;batch_size&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-run-b" title="Link to this definition">¶</a></dt>
+<dd><p>Number of inputs processed per batch.</p>
+</dd></dl>
+
+</section>
+<section id="ersilia-serve">
+<h3>serve<a class="headerlink" href="#ersilia-serve" title="Link to this heading">¶</a></h3>
+<p>Start a local API server for a previously fetched model. Once served, the model is ready to receive predictions via <cite>ersilia run</cite>. Optional flags configure session tracking, in-memory caching, and Isaura store access.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>serve<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>MODEL
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-serve-p">
+<span id="cmdoption-ersilia-serve-port"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-serve-p" title="Link to this definition">¶</a></dt>
+<dd><p>Preferred port for the local API server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'auto-selected'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-serve-t">
+<span id="cmdoption-ersilia-serve-track"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--track</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-serve-t" title="Link to this definition">¶</a></dt>
+<dd><p>Track model runs (input/output stats, errors, timing, model metadata) by sending event data to Ersilia’s S3 tracking bucket.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'off'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-serve-enable_cache">
+<span id="cmdoption-ersilia-serve-disable_cache"></span><span class="sig-name descname"><span class="pre">--enable_cache</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--disable_cache</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-serve-enable_cache" title="Link to this definition">¶</a></dt>
+<dd><p>Enable a Redis in-memory cache for prediction results so repeat inputs return instantly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-serve-rs">
+<span id="cmdoption-ersilia-serve-read_store"></span><span class="sig-name descname"><span class="pre">-rs</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--read_store</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-serve-rs" title="Link to this definition">¶</a></dt>
+<dd><p>Read previously computed predictions from the Isaura store before running the model. Requires Isaura installed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'off'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-serve-ws">
+<span id="cmdoption-ersilia-serve-write_store"></span><span class="sig-name descname"><span class="pre">-ws</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--write_store</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-serve-ws" title="Link to this definition">¶</a></dt>
+<dd><p>Write predictions to the Isaura store as they are computed. Requires Isaura installed and <cite>–access</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'off'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-serve-a">
+<span id="cmdoption-ersilia-serve-access"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--access</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;access&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-serve-a" title="Link to this definition">¶</a></dt>
+<dd><p>Visibility for predictions written to the Isaura store. One of: public, private. Required with <cite>–write_store</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'unset'</span></code></p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p>public | private</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-serve-max_cache_memory_frac">
+<span class="sig-name descname"><span class="pre">--max_cache_memory_frac</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;max_memory&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-serve-max_cache_memory_frac" title="Link to this definition">¶</a></dt>
+<dd><p>Maximum fraction (0.0-1.0) of system RAM the Redis cache may use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'0.3'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-serve-arg-MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-serve-arg-MODEL" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ersilia-test">
+<h3>test<a class="headerlink" href="#ersilia-test" title="Link to this heading">¶</a></h3>
+<p>Test a model and generate a detailed report on its expected behavior and performance. Supports surface, shallow, deep, and inspect check levels.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>MODEL
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-from_dir">
+<span class="sig-name descname"><span class="pre">--from_dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;from_dir&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-test-from_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Path to a local directory where the model is stored.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-from_github">
+<span class="sig-name descname"><span class="pre">--from_github</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-from_github" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch the model directly from GitHub.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-from_dockerhub">
+<span class="sig-name descname"><span class="pre">--from_dockerhub</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-from_dockerhub" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch the model from DockerHub.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-from_s3">
+<span class="sig-name descname"><span class="pre">--from_s3</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-from_s3" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch the model from AWS S3 bucket.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;version&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-test-version" title="Link to this definition">¶</a></dt>
+<dd><p>Model version to fetch from DockerHub.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-shallow">
+<span class="sig-name descname"><span class="pre">--shallow</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-shallow" title="Link to this definition">¶</a></dt>
+<dd><p>Run shallow checks: model fetch, run, and output consistency.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-deep">
+<span class="sig-name descname"><span class="pre">--deep</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-deep" title="Link to this definition">¶</a></dt>
+<dd><p>Run deep checks: computational performance.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-surface">
+<span class="sig-name descname"><span class="pre">--surface</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-surface" title="Link to this definition">¶</a></dt>
+<dd><p>Run surface checks: simple model fetch and run.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-inspect">
+<span class="sig-name descname"><span class="pre">--inspect</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-inspect" title="Link to this definition">¶</a></dt>
+<dd><p>Run inspect checks: file structure and metadata.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-report_path">
+<span class="sig-name descname"><span class="pre">--report_path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;report_path&gt;</span></span><a class="headerlink" href="#cmdoption-ersilia-test-report_path" title="Link to this definition">¶</a></dt>
+<dd><p>Path to save the JSON report file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-clean">
+<span class="sig-name descname"><span class="pre">--clean</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-clean" title="Link to this definition">¶</a></dt>
+<dd><p>Remove the temp folder after testing.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-permissive">
+<span class="sig-name descname"><span class="pre">--permissive</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-permissive" title="Link to this definition">¶</a></dt>
+<dd><p>Downgrade bash consistency check failures to warnings. Only valid with –from_dockerhub.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-ersilia-test-arg-MODEL">
+<span class="sig-name descname"><span class="pre">MODEL</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-ersilia-test-arg-MODEL" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="ersilia-uninstall">
+<h3>uninstall<a class="headerlink" href="#ersilia-uninstall" title="Link to this heading">¶</a></h3>
+<p>Fully uninstall Ersilia from this computer. Removes the Ersilia folder with all fetched models, all Ersilia Docker images and conda environments, and the ersilia Python package.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>ersilia<span class="w"> </span>uninstall<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="package.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Package reference</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="python-api.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Python API</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Ersilia Open Source Initiative
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Command-line interface</a><ul>
+<li><a class="reference internal" href="#ersilia">ersilia</a><ul>
+<li><a class="reference internal" href="#ersilia-catalog">catalog</a></li>
+<li><a class="reference internal" href="#ersilia-close">close</a></li>
+<li><a class="reference internal" href="#ersilia-delete">delete</a></li>
+<li><a class="reference internal" href="#ersilia-example">example</a></li>
+<li><a class="reference internal" href="#ersilia-fetch">fetch</a></li>
+<li><a class="reference internal" href="#ersilia-info">info</a></li>
+<li><a class="reference internal" href="#ersilia-run">run</a></li>
+<li><a class="reference internal" href="#ersilia-serve">serve</a></li>
+<li><a class="reference internal" href="#ersilia-test">test</a></li>
+<li><a class="reference internal" href="#ersilia-uninstall">uninstall</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

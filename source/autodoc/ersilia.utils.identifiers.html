@@ -192,7 +192,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">API documentation</a><input aria-label="Toggle navigation of API documentation" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python-api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">Package reference</a><input aria-label="Toggle navigation of Package reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2 current has-children"><a class="reference internal" href="ersilia.html">ersilia package</a><input aria-label="Toggle navigation of ersilia package" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="ersilia.api.html">ersilia.api package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a><input aria-label="Toggle navigation of ersilia.app package" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -696,8 +699,83 @@
 </dd></dl>
 
 </section>
-<section id="ersilia-utils-identifiers-protein-module">
-<h2>ersilia.utils.identifiers.protein module<a class="headerlink" href="#ersilia-utils-identifiers-protein-module" title="Link to this heading">¶</a></h2>
+<section id="module-ersilia.utils.identifiers.protein">
+<span id="ersilia-utils-identifiers-protein-module"></span><h2>ersilia.utils.identifiers.protein module<a class="headerlink" href="#module-ersilia.utils.identifiers.protein" title="Link to this heading">¶</a></h2>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.protein.Identifier">
+<span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.protein.</span></span><span class="sig-name descname"><span class="pre">Identifier</span></span><a class="headerlink" href="#ersilia.utils.identifiers.protein.Identifier" title="Link to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#ersilia.utils.identifiers.protein.ProteinIdentifier" title="ersilia.utils.identifiers.protein.ProteinIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProteinIdentifier</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.protein.ProteinIdentifier">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.utils.identifiers.protein.</span></span><span class="sig-name descname"><span class="pre">ProteinIdentifier</span></span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/protein.html#ProteinIdentifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.protein.ProteinIdentifier" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to handle protein identification and sequence retrieval.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.protein.ProteinIdentifier.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sequence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/protein.html#ProteinIdentifier.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.protein.ProteinIdentifier.encode" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a protein seguid checksum based on the amino-acid sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sequence</strong> (<em>str</em>) – The amino-acid sequence of the protein.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The seguid checksum of the protein.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.protein.ProteinIdentifier.generate_seguid">
+<span class="sig-name descname"><span class="pre">generate_seguid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/protein.html#ProteinIdentifier.generate_seguid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.protein.ProteinIdentifier.generate_seguid" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a SEGUID for the protein.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The generated SEGUID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.protein.ProteinIdentifier.protein_identifier_resolver">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">protein_identifier_resolver</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/protein.html#ProteinIdentifier.protein_identifier_resolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.protein.ProteinIdentifier.protein_identifier_resolver" title="Link to this definition">¶</a></dt>
+<dd><p>Resolve a protein identifier to a protein sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The protein sequence.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ersilia.utils.identifiers.protein.ProteinIdentifier.sequence_from_uniprot">
+<span class="sig-name descname"><span class="pre">sequence_from_uniprot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uniprot_ac</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/identifiers/protein.html#ProteinIdentifier.sequence_from_uniprot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.utils.identifiers.protein.ProteinIdentifier.sequence_from_uniprot" title="Link to this definition">¶</a></dt>
+<dd><p>Returns protein sequence from UniProt identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uniprot_ac</strong> (<em>str</em>) – The UniProt accession number.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The protein sequence, or None if retrieval fails.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-ersilia.utils.identifiers.short">
 <span id="ersilia-utils-identifiers-short-module"></span><h2>ersilia.utils.identifiers.short module<a class="headerlink" href="#module-ersilia.utils.identifiers.short" title="Link to this heading">¶</a></h2>
@@ -911,7 +989,17 @@ The checksum is prefixed with “key” to distinguish it from other strings.</p
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#ersilia-utils-identifiers-protein-module">ersilia.utils.identifiers.protein module</a></li>
+<li><a class="reference internal" href="#module-ersilia.utils.identifiers.protein">ersilia.utils.identifiers.protein module</a><ul>
+<li><a class="reference internal" href="#ersilia.utils.identifiers.protein.Identifier"><code class="docutils literal notranslate"><span class="pre">Identifier</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.identifiers.protein.ProteinIdentifier"><code class="docutils literal notranslate"><span class="pre">ProteinIdentifier</span></code></a><ul>
+<li><a class="reference internal" href="#ersilia.utils.identifiers.protein.ProteinIdentifier.encode"><code class="docutils literal notranslate"><span class="pre">ProteinIdentifier.encode()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.identifiers.protein.ProteinIdentifier.generate_seguid"><code class="docutils literal notranslate"><span class="pre">ProteinIdentifier.generate_seguid()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.identifiers.protein.ProteinIdentifier.protein_identifier_resolver"><code class="docutils literal notranslate"><span class="pre">ProteinIdentifier.protein_identifier_resolver()</span></code></a></li>
+<li><a class="reference internal" href="#ersilia.utils.identifiers.protein.ProteinIdentifier.sequence_from_uniprot"><code class="docutils literal notranslate"><span class="pre">ProteinIdentifier.sequence_from_uniprot()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-ersilia.utils.identifiers.short">ersilia.utils.identifiers.short module</a><ul>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.short.Identifier"><code class="docutils literal notranslate"><span class="pre">Identifier</span></code></a></li>
 <li><a class="reference internal" href="#ersilia.utils.identifiers.short.ShortIdentifier"><code class="docutils literal notranslate"><span class="pre">ShortIdentifier</span></code></a><ul>

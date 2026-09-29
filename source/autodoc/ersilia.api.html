@@ -192,7 +192,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">API documentation</a><input aria-label="Toggle navigation of API documentation" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python-api.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli.html">Command-line interface</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../package.html">Package reference</a><input aria-label="Toggle navigation of Package reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2 current has-children"><a class="reference internal" href="ersilia.html">ersilia package</a><input aria-label="Toggle navigation of ersilia package" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">ersilia.api package</a></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="ersilia.app.html">ersilia.app package</a><input aria-label="Toggle navigation of ersilia.app package" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
@@ -336,7 +339,7 @@ and raise an <code class="docutils literal notranslate"><span class="pre">Ersili
 <span class="n">catalog</span> <span class="o">=</span> <span class="n">Catalog</span><span class="p">()</span>
 <span class="n">hub</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">hub</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="s2">"Annotation"</span><span class="p">)</span>
 <span class="n">local</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
-<span class="n">card</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">card</span><span class="p">(</span><span class="s2">"eos3b5e"</span><span class="p">)</span>
+<span class="n">card</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">card</span><span class="p">(</span><span class="s2">"eos4e40"</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -414,7 +417,7 @@ and raise an <code class="docutils literal notranslate"><span class="pre">Ersili
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>str</em>) – Model identifier (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;eos3b5e&quot;</span></code>) or slug (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;molecular-weight&quot;</span></code>).</p></li>
+<li><p><strong>model</strong> (<em>str</em>) – Model identifier (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;eos4e40&quot;</span></code>) or slug (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;chemprop-antibiotic&quot;</span></code>).</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Show the same progress lines as the CLI. By default nothing is printed.</p></li>
 </ul>
 </dd>
@@ -449,14 +452,14 @@ and raise an <code class="docutils literal notranslate"><span class="pre">Ersili
 <p class="rubric">Examples</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ersilia.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s2">"eos3b5e"</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s2">"eos4e40"</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
 <span class="n">model</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">"CCO"</span><span class="p">,</span> <span class="s2">"c1ccccc1"</span><span class="p">])</span>
 <span class="n">model</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <span class="c1"># Or serve and close automatically:</span>
-<span class="k">with</span> <span class="n">Model</span><span class="p">(</span><span class="s2">"eos3b5e"</span><span class="p">)</span> <span class="k">as</span> <span class="n">model</span><span class="p">:</span>
+<span class="k">with</span> <span class="n">Model</span><span class="p">(</span><span class="s2">"eos4e40"</span><span class="p">)</span> <span class="k">as</span> <span class="n">model</span><span class="p">:</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"input.csv"</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -665,372 +668,6 @@ again and these details are returned.</p>
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ersilia.api" title="Link to this heading">¶</a></h2>
 <p>The Ersilia Python API: <code class="docutils literal notranslate"><span class="pre">Model</span></code> and <code class="docutils literal notranslate"><span class="pre">Catalog</span></code> mirror the CLI commands.</p>
 <p>Every error is raised as an <code class="docutils literal notranslate"><span class="pre">ErsiliaError</span></code> subclass.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.api.Catalog">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.api.</span></span><span class="sig-name descname"><span class="pre">Catalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Catalog" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>The Ersilia Model Hub catalog, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">catalog</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Show the same progress lines as the CLI. By default nothing is printed.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ersilia.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Catalog</span>
-
-<span class="n">catalog</span> <span class="o">=</span> <span class="n">Catalog</span><span class="p">()</span>
-<span class="n">hub</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">hub</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="s2">"Annotation"</span><span class="p">)</span>
-<span class="n">local</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
-<span class="n">card</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">card</span><span class="p">(</span><span class="s2">"eos3b5e"</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Catalog.card">
-<span class="sig-name descname"><span class="pre">card</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Catalog.card"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Catalog.card" title="Link to this definition">¶</a></dt>
-<dd><p>Get a model’s card, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">catalog</span> <span class="pre">--card</span> <span class="pre">MODEL</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>str</em>) – Model identifier or slug.</p></li>
-<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Also write the card to a .json or .csv file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The model card.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.InvalidModelIdentifierError" title="ersilia.utils.exceptions_utils.exceptions.InvalidModelIdentifierError"><strong>InvalidModelIdentifierError</strong></a> – If the model is not in the Ersilia Model Hub (with suggestions).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Catalog.hub">
-<span class="sig-name descname"><span class="pre">hub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">more</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Catalog.hub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Catalog.hub" title="Link to this definition">¶</a></dt>
-<dd><p>List the models in the Ersilia Model Hub, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">catalog</span> <span class="pre">--hub</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>more</strong> (<em>bool</em><em>, </em><em>optional</em>) – Include more columns.</p></li>
-<li><p><strong>task</strong> (<em>str</em><em>, </em><em>optional</em>) – Only “Annotation”, “Representation” or “Sampling” models.</p></li>
-<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Also write the catalog to a .csv or .json file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>One row per model.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Catalog.local">
-<span class="sig-name descname"><span class="pre">local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">more</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Catalog.local"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Catalog.local" title="Link to this definition">¶</a></dt>
-<dd><p>List the models fetched on this computer, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">catalog</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>more</strong> (<em>bool</em><em>, </em><em>optional</em>) – Include more columns.</p></li>
-<li><p><strong>task</strong> (<em>str</em><em>, </em><em>optional</em>) – Only “Annotation”, “Representation” or “Sampling” models.</p></li>
-<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Also write the catalog to a .csv or .json file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>One row per model; empty if no model is fetched.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="ersilia.api.ErsiliaError">
-<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.api.</span></span><span class="sig-name descname"><span class="pre">ErsiliaError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Ersilia</span> <span class="pre">has</span> <span class="pre">experienced</span> <span class="pre">an</span> <span class="pre">error'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/utils/exceptions_utils/exceptions.html#ErsiliaError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.ErsiliaError" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Base class for managing errors in Ersilia.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>message</strong> (<em>str</em><em>, </em><em>optional</em>) – The error message to be displayed. Default is “Ersilia has experienced an error”.</p></li>
-<li><p><strong>hints</strong> (<em>str</em><em>, </em><em>optional</em>) – Additional hints or suggestions for resolving the error. Default is an empty string.</p></li>
-<li><p><strong>config_json</strong> (<em>dict</em><em>, </em><em>optional</em>) – Configuration settings in JSON format. Default is None.</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="n">ErsiliaError</span><span class="p">(</span>
-        <span class="s2">"An error occurred"</span><span class="p">,</span>
-        <span class="n">hints</span><span class="o">=</span><span class="s2">"Check your configuration"</span><span class="p">,</span>
-    <span class="p">)</span>
-<span class="k">except</span> <span class="n">ErsiliaError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="ersilia.api.Model">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ersilia.api.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>An Ersilia model, identified by its identifier or slug.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>str</em>) – Model identifier (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;eos3b5e&quot;</span></code>) or slug (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;molecular-weight&quot;</span></code>).</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Show the same progress lines as the CLI. By default nothing is printed.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ersilia.api.Model.model_id">
-<span class="sig-name descname"><span class="pre">model_id</span></span><a class="headerlink" href="#ersilia.api.Model.model_id" title="Link to this definition">¶</a></dt>
-<dd><p>The model identifier.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ersilia.api.Model.slug">
-<span class="sig-name descname"><span class="pre">slug</span></span><a class="headerlink" href="#ersilia.api.Model.slug" title="Link to this definition">¶</a></dt>
-<dd><p>The model slug.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.InvalidModelIdentifierError" title="ersilia.utils.exceptions_utils.exceptions.InvalidModelIdentifierError"><strong>InvalidModelIdentifierError</strong></a> – If the model is not in the Ersilia Model Hub.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ersilia.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s2">"eos3b5e"</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
-<span class="n">model</span><span class="o">.</span><span class="n">serve</span><span class="p">()</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">"CCO"</span><span class="p">,</span> <span class="s2">"c1ccccc1"</span><span class="p">])</span>
-<span class="n">model</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-<span class="c1"># Or serve and close automatically:</span>
-<span class="k">with</span> <span class="n">Model</span><span class="p">(</span><span class="s2">"eos3b5e"</span><span class="p">)</span> <span class="k">as</span> <span class="n">model</span><span class="p">:</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">"input.csv"</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Model.close">
-<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.close" title="Link to this definition">¶</a></dt>
-<dd><p>Close the served model, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">close</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if the model was closed (also when it had already stopped),
-False if no model is served in this session, so there was nothing
-to close.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.ModelNotServedError" title="ersilia.utils.exceptions_utils.api_exceptions.ModelNotServedError"><strong>ModelNotServedError</strong></a> – If another model is served in this session.</p></li>
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.fetch_exceptions.DockerNotActiveError" title="ersilia.utils.exceptions_utils.fetch_exceptions.DockerNotActiveError"><strong>DockerNotActiveError</strong></a> – If the model runs in Docker and Docker is not running.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Model.delete">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.delete" title="Link to this definition">¶</a></dt>
-<dd><p>Delete the model from this computer, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">delete</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError" title="ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError"><strong>ModelNotAvailableLocallyError</strong></a> – If the model is not fetched.</p></li>
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.ModelNotDeletableError" title="ersilia.utils.exceptions_utils.api_exceptions.ModelNotDeletableError"><strong>ModelNotDeletableError</strong></a> – If the model cannot be deleted: it is served in this session or
-    another one, or Docker is not running.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Model.example">
-<span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.example" title="Link to this definition">¶</a></dt>
-<dd><p>Generate example inputs for the model, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">example</span></code>.</p>
-<p>The model must be fetched; it does not need to be served.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>n_samples</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of examples (ignored in “curated” mode).</p></li>
-<li><p><strong>mode</strong> (<em>str</em><em>, </em><em>optional</em>) – “random”, “curated” (the model’s own examples) or “deterministic”.</p></li>
-<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Also write the examples to this CSV file.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The example inputs.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>list of str</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError" title="ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError"><strong>ModelNotAvailableLocallyError</strong></a> – If the model is not fetched.</p></li>
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.InvalidOptionError" title="ersilia.utils.exceptions_utils.api_exceptions.InvalidOptionError"><strong>InvalidOptionError</strong></a> – For an unknown mode, fewer than 1 example, a missing output
-    folder, or curated mode on a model without curated examples.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Model.fetch">
-<span class="sig-name descname"><span class="pre">fetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_github</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_s3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_hosted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.fetch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.fetch" title="Link to this definition">¶</a></dt>
-<dd><p>Fetch the model, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">fetch</span></code>.</p>
-<p>By default the model is fetched from DockerHub. Give one of the other
-sources to fetch it from there instead.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>from_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Fetch from a local copy of the model repository.</p></li>
-<li><p><strong>from_github</strong> (<em>bool</em><em>, </em><em>optional</em>) – Fetch from GitHub.</p></li>
-<li><p><strong>from_s3</strong> (<em>bool</em><em>, </em><em>optional</em>) – Fetch from Ersilia’s S3 bucket.</p></li>
-<li><p><strong>from_hosted</strong> (<em>str</em><em>, </em><em>optional</em>) – URL of a hosted model to connect to.</p></li>
-<li><p><strong>version</strong> (<em>str</em><em>, </em><em>optional</em>) – Docker image tag to fetch from DockerHub (default: the latest).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>True if the model was fetched now, False if it was already fetched.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.ModelFetchError" title="ersilia.utils.exceptions_utils.api_exceptions.ModelFetchError"><strong>ModelFetchError</strong></a> – If the model could not be fetched.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Model.info">
-<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.info" title="Link to this definition">¶</a></dt>
-<dd><p>Get the model information, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">info</span></code>.</p>
-<p>The model must be fetched; it does not need to be served.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – Also write the information to a .json or .csv file.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The model information.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError" title="ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError"><strong>ModelNotAvailableLocallyError</strong></a> – If the model is not fetched.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Model.is_fetched">
-<span class="sig-name descname"><span class="pre">is_fetched</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.is_fetched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.is_fetched" title="Link to this definition">¶</a></dt>
-<dd><p>Tell whether the model is fetched.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>True if the model is available locally.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Model.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.run" title="Link to this definition">¶</a></dt>
-<dd><p>Run the served model, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">run</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>str</em><em> or </em><em>list</em><em> of </em><em>str</em>) – A CSV file with one column of inputs, or a list of inputs.</p></li>
-<li><p><strong>output</strong> (<em>str</em><em>, </em><em>optional</em>) – A .csv or .h5 file to write the results to. If not given, the
-results are returned as a DataFrame.</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of inputs sent to the model at a time (at least 1).</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The results, or the path of <code class="docutils literal notranslate"><span class="pre">output</span></code> when it is given.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>pandas.DataFrame or str</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.ModelNotServedError" title="ersilia.utils.exceptions_utils.api_exceptions.ModelNotServedError"><strong>ModelNotServedError</strong></a> – If this model is not served in this session, or it stopped.</p></li>
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.InvalidOptionError" title="ersilia.utils.exceptions_utils.api_exceptions.InvalidOptionError"><strong>InvalidOptionError</strong></a> – For a problem with the input or output file (the same checks as
-    <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">run</span></code>: missing or empty file, several columns, wrong
-    encoding or separator, missing output folder, and so on).</p></li>
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.EmptyRunOutputError" title="ersilia.utils.exceptions_utils.api_exceptions.EmptyRunOutputError"><strong>EmptyRunOutputError</strong></a> – If the model produced no output.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="ersilia.api.Model.serve">
-<span class="sig-name descname"><span class="pre">serve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tracking_use_case</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'local'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_store</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_store</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">access</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearest_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_cache_memory_frac</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/ersilia/api/create_api.html#Model.serve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ersilia.api.Model.serve" title="Link to this definition">¶</a></dt>
-<dd><p>Serve the model, like <code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">serve</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>port</strong> (<em>int</em><em>, </em><em>optional</em>) – Port for the model server. By default a free port is used.</p></li>
-<li><p><strong>track</strong> (<em>bool</em><em>, </em><em>optional</em>) – Track runs to monitor model and system performance.</p></li>
-<li><p><strong>tracking_use_case</strong> (<em>str</em><em>, </em><em>optional</em>) – With <code class="docutils literal notranslate"><span class="pre">track</span></code>: one of “local”, “self-service”, “hosted” or “test”.</p></li>
-<li><p><strong>enable_cache</strong> (<em>bool</em><em>, </em><em>optional</em>) – Cache results in a local Redis store.</p></li>
-<li><p><strong>read_store</strong> (<em>bool</em><em>, </em><em>optional</em>) – Read results from, or write them to, the Isaura store.</p></li>
-<li><p><strong>write_store</strong> (<em>bool</em><em>, </em><em>optional</em>) – Read results from, or write them to, the Isaura store.</p></li>
-<li><p><strong>access</strong> (<em>str</em><em>, </em><em>optional</em>) – “public” or “private”; needed to write to the store.</p></li>
-<li><p><strong>nearest_neighbors</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use nearest-neighbor matches when reading from the store.</p></li>
-<li><p><strong>max_cache_memory_frac</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum fraction (0.0-1.0) of system RAM the cache may use.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>How the model is served, as in the Serving section of
-<code class="docutils literal notranslate"><span class="pre">ersilia</span> <span class="pre">info</span></code>: <code class="docutils literal notranslate"><span class="pre">model_id</span></code>, <code class="docutils literal notranslate"><span class="pre">url</span></code>, <code class="docutils literal notranslate"><span class="pre">docs</span></code>, <code class="docutils literal notranslate"><span class="pre">service</span></code>,
-<code class="docutils literal notranslate"><span class="pre">pid</span></code> (None for containers), <code class="docutils literal notranslate"><span class="pre">container</span></code>, <code class="docutils literal notranslate"><span class="pre">session</span></code> and
-<code class="docutils literal notranslate"><span class="pre">apis</span></code>. If the model is already served here, it is not started
-again and these details are returned.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError" title="ersilia.utils.exceptions_utils.exceptions.ModelNotAvailableLocallyError"><strong>ModelNotAvailableLocallyError</strong></a> – If the model is not fetched.</p></li>
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.SessionBusyError" title="ersilia.utils.exceptions_utils.api_exceptions.SessionBusyError"><strong>SessionBusyError</strong></a> – If another model is already served in this session.</p></li>
-<li><p><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.InvalidOptionError" title="ersilia.utils.exceptions_utils.api_exceptions.InvalidOptionError"><strong>InvalidOptionError</strong></a><strong>, </strong><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.exceptions.MissingDependencyError" title="ersilia.utils.exceptions_utils.exceptions.MissingDependencyError"><strong>MissingDependencyError</strong></a><strong>, </strong><a class="reference internal" href="ersilia.utils.exceptions_utils.html#ersilia.utils.exceptions_utils.api_exceptions.ModelServeError" title="ersilia.utils.exceptions_utils.api_exceptions.ModelServeError"><strong>ModelServeError</strong></a> – For invalid options, a missing Isaura installation, or a failed start.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -1113,29 +750,7 @@ again and these details are returned.</p>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-ersilia.api">Module contents</a><ul>
-<li><a class="reference internal" href="#ersilia.api.Catalog"><code class="docutils literal notranslate"><span class="pre">Catalog</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.api.Catalog.card"><code class="docutils literal notranslate"><span class="pre">Catalog.card()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Catalog.hub"><code class="docutils literal notranslate"><span class="pre">Catalog.hub()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Catalog.local"><code class="docutils literal notranslate"><span class="pre">Catalog.local()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#ersilia.api.ErsiliaError"><code class="docutils literal notranslate"><span class="pre">ErsiliaError</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
-<li><a class="reference internal" href="#ersilia.api.Model.model_id"><code class="docutils literal notranslate"><span class="pre">Model.model_id</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.slug"><code class="docutils literal notranslate"><span class="pre">Model.slug</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.close"><code class="docutils literal notranslate"><span class="pre">Model.close()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.delete"><code class="docutils literal notranslate"><span class="pre">Model.delete()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.example"><code class="docutils literal notranslate"><span class="pre">Model.example()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.fetch"><code class="docutils literal notranslate"><span class="pre">Model.fetch()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.info"><code class="docutils literal notranslate"><span class="pre">Model.info()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.is_fetched"><code class="docutils literal notranslate"><span class="pre">Model.is_fetched()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.run"><code class="docutils literal notranslate"><span class="pre">Model.run()</span></code></a></li>
-<li><a class="reference internal" href="#ersilia.api.Model.serve"><code class="docutils literal notranslate"><span class="pre">Model.serve()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-ersilia.api">Module contents</a></li>
 </ul>
 </li>
 </ul>
