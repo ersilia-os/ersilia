@@ -321,6 +321,11 @@ class ModelFetcher(ErsiliaBase):
         label = f"{model_id} ({self.slug})" if self.slug else model_id
         if not self.exists(model_id):
             self.logger.info("Model doesn't exist on your system, fetching it now.")
+            if self.force_from_apptainer:
+                # Can Apptainer run here? Said before anything else happens.
+                from ...setup.requirements.apptainer import ApptainerRequirement
+
+                ApptainerRequirement().check()
             echo(f"Fetching model {label} from {self.model_source}.")
             self._warn_if_archived(model_id)
             self.logger.debug("Starting fetching procedure")

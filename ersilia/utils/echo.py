@@ -166,9 +166,12 @@ def echo(text, harmonize=True, **styles):
     Everything else goes to stdout.
     """
     global _after_error
+    force = styles.pop("force", False)
     if _quiet:
         return
-    if getattr(logger, "verbosity", 0) == 1:
+    # In verbose mode the log lines replace the messages, except for errors
+    # (force=True), which must always be seen.
+    if getattr(logger, "verbosity", 0) == 1 and not force:
         return
     err = styles.pop("err", False)
     if not harmonize:

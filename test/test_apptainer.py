@@ -16,6 +16,9 @@ from ersilia.utils.exceptions_utils.cli_exceptions import (
     ApptainerNotLinuxError,
     ModelStartError,
 )
+from ersilia.utils.exceptions_utils.throw_ersilia_exception import (
+    ErsiliaErrorReported,
+)
 
 MODEL_ID = "eos4e40"
 
@@ -215,7 +218,7 @@ def test_fetch_checks_requirements_before_downloading():
         patch.object(apptainer, "download") as download,
         patch.object(apptainer, "latest_version") as latest,
     ):
-        with pytest.raises(SystemExit):
+        with pytest.raises(ErsiliaErrorReported):
             asyncio.run(ModelApptainerFetcher().fetch(MODEL_ID))
     download.assert_not_called()
     latest.assert_not_called()

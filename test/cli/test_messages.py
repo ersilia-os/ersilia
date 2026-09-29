@@ -133,13 +133,83 @@ def test_errors_show_message_and_hint_not_the_exception_block(capsys):
 
 
 def test_errors_raised_inside_coroutines_are_formatted(capsys):
+    from ersilia.utils.exceptions_utils.throw_ersilia_exception import (
+        ErsiliaErrorReported,
+    )
+
     @throw_ersilia_exception()
     async def fetch():
         raise InvalidModelIdentifierError("eos9zzz")
 
-    with pytest.raises(SystemExit):
+    # Not SystemExit: asyncio would keep it on the task and later print it
+    # with a traceback ("Task exception was never retrieved").
+    with pytest.raises(ErsiliaErrorReported) as e:
         asyncio.run(fetch())
+    assert e.value.code == 1
     assert "  ✖  Model eos9zzz was not found" in capsys.readouterr().err
+
+
+def test_a_reported_coroutine_error_ends_the_calling_function(capsys):
+    @throw_ersilia_exception()
+    async def pull():
+        raise InvalidModelIdentifierError("eos9zzz")
+
+    @throw_ersilia_exception()
+    async def fetch():
+        await pull()  # nested: reported once, passed through
+
+    @throw_ersilia_exception()
+    def command():
+        asyncio.run(fetch())
+
+    with pytest.raises(SystemExit) as e:
+        command()
+    assert e.value.code == 1
+    assert capsys.readouterr().err.count("Model eos9zzz was not found") == 1
+
+
+def test_errors_are_shown_in_verbose_mode_too(capsys, monkeypatch):
+    import ersilia.utils.echo as echo_utils
+
+    monkeypatch.setattr(echo_utils.logger, "verbosity", 1, raising=False)
+    echo("A progress line.")
+    echo("Something failed.", fg="red", force=True)
+    captured = capsys.readouterr()
+    assert "A progress line." not in captured.out
+    assert "Something failed." in captured.err
+
+
+def test_the_cli_ends_any_error_cleanly():
+    from ersilia.cli.commands import _end_with_error
+
+    with pytest.raises(SystemExit) as e:
+        _end_with_error(InvalidModelIdentifierError("eos9zzz"))
+    assert e.value.code == 1
+    with pytest.raises(SystemExit) as e:
+        _end_with_error(RuntimeError("disk on fire"))
+    assert e.value.code == 1
+
+
+def test_a_failed_async_fetch_prints_no_traceback(tmp_path):
+    # A real process: the error comes from inside an asyncio task.
+    import subprocess
+    import sys
+
+    result = subprocess.run(
+        [sys.executable, "-c", "from ersilia.cli import cli; cli()"]
+        + ["fetch", "eos4e40", "--version", "v999"],
+        capture_output=True,
+        text=True,
+        cwd=tmp_path,
+        stdin=subprocess.DEVNULL,
+        env=dict(__import__("os").environ, ERSILIA_SESSION="test-no-traceback"),
+    )
+    from ersilia.utils.session import remove_session_dir
+
+    remove_session_dir("session_test-no-traceback")
+    output = result.stdout + result.stderr
+    assert result.returncode == 1
+    assert "Traceback" not in output and "Task exception" not in output
 
 
 def _invoke(cmd_factory, args, model_id=None):

@@ -33,8 +33,19 @@ def fetch_cmd():
     """
 
     def _fetch(mf, model_id):
-        res = asyncio.run(mf.fetch(model_id))
-        return res
+        from ...utils.exceptions_utils.exceptions import ErsiliaError
+        from ...utils.exceptions_utils.throw_ersilia_exception import (
+            ErsiliaErrorReported,
+            show_error,
+        )
+
+        try:
+            return asyncio.run(mf.fetch(model_id))
+        except ErsiliaErrorReported as reported:
+            sys.exit(reported.code)
+        except ErsiliaError as error:
+            show_error(error)
+            sys.exit(1)
 
     # Example usage: ersilia fetch {MODEL}
     @ersilia_cli.command(
