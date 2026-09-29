@@ -49,6 +49,9 @@ def close_cmd():
                 "No model is being served in this terminal, so there is nothing to close.",
                 fg="yellow",
             )
+            from ..messages import served_elsewhere_hint
+
+            served_elsewhere_hint()
             return
         if service_class in ("pulled_docker", "docker"):
             from ...setup.requirements.docker import DockerRequirement

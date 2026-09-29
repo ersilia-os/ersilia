@@ -1,6 +1,7 @@
 import contextlib
 import json
 import os
+import re
 import shutil
 import stat
 
@@ -18,6 +19,87 @@ from ..default import (
     SESSION_JSON,
     SESSIONS_DIR,
 )
+
+# Set ERSILIA_SESSION to a name to use one session across commands whose
+# parent process differs, e.g. under 'conda run', make or CI steps. By
+# default each terminal (parent process) has its own session.
+SESSION_ENV = "ERSILIA_SESSION"
+_SESSION_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}")
+
+
+def _valid_session_name(name):
+    # An all-digit name would look like a process ID, and its session would
+    # be removed once no process with that ID exists.
+    return bool(_SESSION_NAME.fullmatch(name)) and not name.isdigit()
+
+
+def session_name_from_env():
+    """
+    Get the session name given in the ERSILIA_SESSION environment variable.
+
+    An invalid name is ignored here (the terminal's session is used), since
+    this runs while Ersilia is being imported; ``check_session_env`` reports
+    it.
+
+    Returns
+    -------
+    str or None
+        The name, or None when the variable is not set or not valid.
+    """
+    name = os.environ.get(SESSION_ENV, "").strip()
+    if not name or not _valid_session_name(name):
+        return None
+    return name
+
+
+def invalid_session_name():
+    """
+    Get the value of ERSILIA_SESSION if it cannot name a session.
+
+    Returns
+    -------
+    str or None
+        The invalid name, or None when the variable is unset or valid.
+    """
+    name = os.environ.get(SESSION_ENV, "").strip()
+    if name and not _valid_session_name(name):
+        return name
+    return None
+
+
+def check_session_env():
+    """
+    Check the session name given in ERSILIA_SESSION, if any.
+
+    Raises
+    ------
+    SessionNameError
+        If the variable is set to a name that cannot name a session.
+    """
+    name = invalid_session_name()
+    if name is not None:
+        from .exceptions_utils.exceptions import SessionNameError
+
+        raise SessionNameError(name)
+
+
+def is_named_session(session_name):
+    """
+    Tell whether a session was named with ERSILIA_SESSION.
+
+    Parameters
+    ----------
+    session_name : str
+        A session name such as ``session_myproject``, or a path ending in one.
+
+    Returns
+    -------
+    bool
+        True for a named session, False for a terminal's session.
+    """
+    name = os.path.basename(os.path.normpath(session_name))
+    prefix, _, rest = name.partition("_")
+    return prefix == "session" and bool(rest) and not rest.isdigit()
 
 
 def get_current_pid():
@@ -71,7 +153,7 @@ def create_session_dir():
     Create a session directory.
     """
     remove_orphaned_sessions()
-    session_name = f"session_{get_parent_pid()}"
+    session_name = get_session_id()
     session_dir = os.path.join(SESSIONS_DIR, session_name)
     os.makedirs(session_dir, mode=0o777, exist_ok=True)
     create_session_files(session_name)
@@ -198,6 +280,9 @@ def is_session_alive(session_name):
     bool
         True if the session's process exists.
     """
+    if is_named_session(session_name):
+        # A named session is not tied to a process: it lasts until closed.
+        return True
     pid = session_pid_from_name(session_name)
     return pid is not None and psutil.pid_exists(pid)
 
@@ -442,11 +527,17 @@ def get_session_id():
     """
     Get the session ID.
 
+    The session is ``session_<name>`` when ERSILIA_SESSION is set, and
+    ``session_<parent process ID>`` (one per terminal) otherwise.
+
     Returns
     -------
     str
         The session ID.
     """
+    name = session_name_from_env()
+    if name:
+        return f"session_{name}"
     return f"session_{get_parent_pid()}"
 
 
@@ -583,3 +674,23 @@ def deregister_session(session_dir):
         for sessions in models.values():
             if session_dir in sessions:
                 sessions.remove(session_dir)
+
+
+def models_served_elsewhere():
+    """
+    List the models served in other live sessions.
+
+    Returns
+    -------
+    list of tuple of (str, str)
+        ``(model_id, session_dir)`` for each model served in a live session
+        other than this one.
+    """
+    here = os.path.normpath(get_session_dir())
+    file_path = os.path.join(EOS, MODELS_JSON)
+    served = []
+    for model_id in _read_models_json(file_path):
+        for session_dir in get_live_model_sessions(model_id):
+            if os.path.normpath(session_dir) != here:
+                served.append((model_id, session_dir))
+    return served
