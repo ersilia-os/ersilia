@@ -28,6 +28,14 @@ MAX_WEIGHT = 60.0
 HEADER = ["key", "input", "value"]
 
 
+@pytest.fixture(autouse=True)
+def answer_yes_to_fetch():
+    # The model is not fetched here: answer yes to "Fetch it now?", so the
+    # mocked fetcher runs (without a terminal the prompt answers no).
+    with patch("ersilia.core.model.yes_no_input", return_value=True):
+        yield
+
+
 @pytest.fixture
 def mock_fetcher():
     with patch(

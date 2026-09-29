@@ -177,7 +177,7 @@ class AutoService(ErsiliaBase):
                         )
                         self._service_class = "dummy"
                         echo(
-                            f"No concrete backend available, using 'dummy' service for model {model_id}",
+                            f"No way to run model {model_id} was found on this machine (Docker, conda or a hosted URL).",
                             fg="yellow",
                         )
         else:
@@ -393,10 +393,14 @@ class AutoService(ErsiliaBase):
         """
         Serve the application.
         """
-        spinner("Cleaning existing api processes", self.clean_before_serving)
-        spinner("Cleaning existing temporary directories", self.clean_temp_dir)
-        spinner("Closing existing session for the model", self.close)
-        spinner(f"Starting service for model {self.model_id}", self.service.serve)
+        self.clean_before_serving()
+        self.clean_temp_dir()
+        self.close()
+        spinner(
+            f"Starting model {self.model_id}",
+            self.service.serve,
+            done=f"Model {self.model_id} started.",
+        )
         self.logger.info("Setting up Redis")
         from ..utils.cache import SetupRedis
 

@@ -1,5 +1,9 @@
+import os
+import sys
+
 import rich_click as click
 
+from ... import throw_ersilia_exception
 from .. import echo
 from . import ersilia_cli
 
@@ -17,7 +21,7 @@ def example_cmd():
         "--n_samples",
         "-n",
         default=None,
-        type=click.INT,
+        type=click.IntRange(min=1),
         help="Number of examples to generate. Ignored in curated mode.",
     )
     @click.option(
@@ -32,6 +36,7 @@ def example_cmd():
         show_default=True,
         help="How examples are generated: random, curated, or deterministic.",
     )
+    @throw_ersilia_exception()
     def example(model, n_samples, output_file, file_name, mode):
         from ... import ModelBase
         from ...core.session import Session
@@ -41,8 +46,18 @@ def example_cmd():
         resolved_file = output_file or file_name
         if not resolved_file:
             raise click.UsageError("Missing option '--output_file' / '-o'.")
+        from ..run_checks import fail
+
+        if not resolved_file.lower().endswith(".csv"):
+            fail(
+                "The output file must end in .csv.",
+                "Examples are written as CSV, so they can be used with 'ersilia run'.",
+            )
+        folder = os.path.dirname(resolved_file) or "."
+        if not os.path.isdir(folder):
+            fail(f"The output folder {folder} does not exist.")
         if mode == "curated" and n_samples is not None:
-            echo("Warning: --n_samples is ignored in curated mode.", fg="yellow")
+            echo("--n_samples is ignored in curated mode.", fg="yellow")
         if n_samples is None and mode != "curated":
             n_samples = 5
         if model is not None:
@@ -52,15 +67,29 @@ def example_cmd():
             model_id = session.current_model_id()
         if not model_id:
             echo(
-                "No model found. Please specify a model or serve a model in the current shell.",
+                "No model was given, and no model is being served in this terminal.",
                 fg="red",
             )
-            return
+            echo("Give one, e.g. 'ersilia example eos42ez -o input.csv'.")
+            sys.exit(1)
+        if mode == "curated":
+            from ...default import PREDEFINED_EXAMPLE_FILES
+
+            model_dir = ModelBase(model_id)._model_path(model_id)
+            if not any(
+                os.path.exists(os.path.join(model_dir, f))
+                for f in PREDEFINED_EXAMPLE_FILES
+            ):
+                fail(
+                    f"Model {model_id} has no curated examples here.",
+                    "Fetch the model first, or use '--mode random' instead.",
+                )
         eg = ExampleGenerator(model_id=model_id)
         eg.example(
             n_samples,
             resolved_file,
             mode=mode,
         )
+        echo(f"Examples written to {resolved_file}.", fg="green")
 
     return example

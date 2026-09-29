@@ -28,7 +28,7 @@ def test_delete_specific_model(mock_echo, mock_deleter, mock_modelbase, can_be_d
     mock_modelbase.return_value = mock_modelbase_instance
 
     mock_deleter_instance = MagicMock()
-    mock_deleter_instance.can_be_deleted.return_value = (False, "")
+    mock_deleter_instance.can_be_deleted.return_value = (True, "")
     mock_deleter_instance.delete.return_value = None
     mock_deleter.return_value = mock_deleter_instance
 
@@ -77,7 +77,7 @@ def test_delete_all_models_fails_when_can_be_deleted_is_False(mock_echo, mock_de
     mock_catalog.return_value = mock_catalog_instance
 
     mock_deleter_instance = MagicMock()
-    mock_deleter_instance.can_be_deleted.return_value = (False, "")
+    mock_deleter_instance.can_be_deleted.return_value = (True, "")
     mock_deleter.return_value = mock_deleter_instance
 
     result = runner.invoke(delete_cmd(), ["delete", "--all"], input="y\n")

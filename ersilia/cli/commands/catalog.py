@@ -1,4 +1,5 @@
 import json
+import sys
 
 import rich_click as click
 from rich.console import Console
@@ -6,6 +7,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
+from .. import echo
 from . import ersilia_cli
 
 _console = Console()
@@ -120,6 +122,21 @@ def _print_model_card(metadata_json: str):
     _console.print(Panel(table, title=title, border_style="cyan"))
 
 
+def _report_leftovers(model_ids):
+    # Remains of models that were not fully fetched or deleted.
+    echo(
+        "Some models were not fully fetched or deleted: {0}.".format(
+            ", ".join(model_ids)
+        ),
+        fg="yellow",
+    )
+    echo(
+        "Remove them with {0}.".format(
+            " and ".join(f"'ersilia delete {m}'" for m in model_ids)
+        )
+    )
+
+
 def catalog_cmd():
     """
     Creates the catalog command for the CLI.
@@ -137,8 +154,11 @@ def catalog_cmd():
     --------
     .. code-block:: console
 
-    Display model card for a specific model ID and show catalog in json format:
-    $ ersilia catalog --card <model_id> --as-json
+    Display the model card of a model:
+    $ ersilia catalog --card <model_id>
+
+    Save the Hub catalog, with more details, as JSON:
+    $ ersilia catalog --hub --more -o catalog.json
     """
 
     @ersilia_cli.command(
@@ -146,7 +166,6 @@ def catalog_cmd():
         help="List models available locally or in the Ersilia Model Hub. By default shows locally fetched models in table format. Supports detailed metadata and individual model cards.\n\nFor a full list of models visit [bold cyan][link=https://catalog.ersilia.io/]https://catalog.ersilia.io/[/link][/bold cyan]",
     )
     @click.option(
-        "-h/-l",
         "--hub/--local",
         is_flag=True,
         default=False,
@@ -195,35 +214,35 @@ def catalog_cmd():
     ):
         from ...hub.content.card import ModelCard
         from ...hub.content.catalog import ModelCatalog
+        from ...utils.exceptions_utils.exceptions import ErsiliaError
+        from ..messages import report_error, wrong_extension
 
         if card and not model:
-            click.echo(
-                click.style("Error: --card option requires a model ID", fg="red"),
+            echo(
+                "The --card option needs a model, e.g. 'ersilia catalog --card eos42ez'.",
+                fg="red",
                 err=True,
             )
-            return
+            sys.exit(1)
         elif card and model:
+            from ... import ModelBase
+
+            # Accepts slugs and suggests close matches for a typo.
+            model = ModelBase(model).model_id
             try:
                 mc = ModelCard()
                 model_metadata = mc.get(model, as_json=True)
 
                 if not model_metadata:
-                    click.echo(
-                        click.style(
-                            f"Error: No metadata found for model ID '{model}'", fg="red"
-                        ),
+                    echo(
+                        f"No information was found for model {model}.",
+                        fg="red",
                         err=True,
                     )
-                    return
+                    sys.exit(1)
                 if output:
-                    if not (output.endswith(".json") or output.endswith(".csv")):
-                        click.echo(
-                            click.style(
-                                "Error: output file must have a .json or .csv extension.",
-                                fg="red",
-                            ),
-                            err=True,
-                        )
+                    if not output.endswith((".json", ".csv")):
+                        wrong_extension([".json", ".csv"], err=True)
                         return
                     data = json.loads(model_metadata)
                     if output.endswith(".json"):
@@ -244,40 +263,42 @@ def catalog_cmd():
                                         else ", ".join(str(v) for v in value),
                                     ]
                                 )
-                    click.echo(click.style(f"Model card saved to {output}", fg="green"))
+                    echo(f"Model card saved to {output}.", fg="green")
                 else:
                     _print_model_card(model_metadata)
+            except ErsiliaError as e:
+                report_error(e)
             except Exception as e:
-                click.echo(click.style(f"Error fetching model metadata: {e}", fg="red"))
+                echo(
+                    f"Could not get the information of model {model}: {e}",
+                    fg="red",
+                    err=True,
+                )
+                sys.exit(1)
             return
         else:
             mc = ModelCatalog(less=not more, task=task)
 
             if hub:
-                catalog_table = mc.hub()
+                try:
+                    catalog_table = mc.hub()
+                except ErsiliaError as e:
+                    report_error(e)
             else:
                 catalog_table = mc.local()
+                if mc.leftovers:
+                    _report_leftovers(mc.leftovers)
                 if not catalog_table.data:
-                    click.echo(
-                        click.style(
-                            "No local models available. Please fetch a model by running 'ersilia fetch' command",
-                            fg="red",
-                        )
-                    )
+                    echo("No models are available locally.", fg="yellow")
+                    echo("Fetch one with 'ersilia fetch MODEL'.")
                     return
             if output is None:
                 _print_catalog(catalog_table)
             else:
-                if not (output.endswith(".csv") or output.endswith(".json")):
-                    click.echo(
-                        click.style(
-                            "Error: output file must have a .csv or .json extension.",
-                            fg="red",
-                        ),
-                        err=True,
-                    )
+                if not output.endswith((".json", ".csv")):
+                    wrong_extension([".json", ".csv"], err=True)
                     return
                 catalog_table.write(output)
-                click.echo(click.style(f"Catalog saved to {output}", fg="green"))
+                echo(f"Catalog saved to {output}.", fg="green")
 
     return catalog

@@ -6,7 +6,7 @@ from .exceptions import ErsiliaError
 class FetchErsiliaError(ErsiliaError):
     def __init__(self, model_id):
         self.model_id = model_id
-        self.message = "Error occured while fetching model: {0}".format(self.model_id)
+        self.message = "Error occurred while fetching model: {0}".format(self.model_id)
         self.hints = ""
         ErsiliaError.__init__(self, self.message, self.hints)
 
@@ -21,7 +21,7 @@ class InvalidUrlError(ErsiliaError):
 class S3DownloaderError(ErsiliaError):
     def __init__(self, model_id):
         self.model_id = model_id
-        self.message = "Error occured while fetching model from S3: {0}".format(
+        self.message = "Error occurred while fetching model from S3: {0}".format(
             self.model_id
         )
         self.hints = (
@@ -33,7 +33,7 @@ class S3DownloaderError(ErsiliaError):
 class GetFetchErsiliaError(ErsiliaError):
     def __init__(self, model_id):
         self.model_id = model_id
-        self.message = "Error occured while fetching model: {0}".format(self.model_id)
+        self.message = "Error occurred while fetching model: {0}".format(self.model_id)
         self.hints = ""
         ErsiliaError.__init__(self, self.message, self.hints)
 
@@ -82,7 +82,7 @@ class ModelPackageInstallError(ErsiliaError):
 
     def _get_message(self):
         text = (
-            'Error occured while installing package by running "'
+            'Error occurred while installing package by running "'
             + self.package_name
             + '" command \n'
         )
@@ -156,11 +156,11 @@ class DockerNotActiveError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
-        text = "Cannot fetch model from Docker Hub since Docker is not active."
+        text = "Docker is not running, so the model cannot be fetched from DockerHub."
         return text
 
     def _get_hints(self):
-        text = "Make sure that Docker is running on your computer. We recommend to use Docker Desktop."
+        text = "Start Docker (e.g. Docker Desktop) and try again."
         return text
 
 
@@ -173,17 +173,19 @@ class NotInstallableError(ErsiliaError):
         ErsiliaError.__init__(self, self.message, self.hints)
 
     def _get_message(self):
-        text = f"Model {self.model_id} is not installable with {self.packing_strategy}"
+        text = (
+            f"Model {self.model_id} cannot be installed with {self.packing_strategy}."
+        )
         return text
 
     def _get_hints(self):
-        text = f"This model is not compatible with {self.packing_strategy}. Please check the model structure or reach out to Ersilia directly to report this error."
+        text = "Please report this at https://github.com/ersilia-os/ersilia/issues."
         return text
 
 
 class NotInstallableWithFastAPI(NotInstallableError):
     def __init__(self, model_id):
-        super.__init__(model_id, "FastAPI")
+        super().__init__(model_id, "FastAPI")
 
 
 class SniffFastApiColumnsDontMatch(ErsiliaError):

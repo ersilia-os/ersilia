@@ -92,7 +92,9 @@ class Slug(ErsiliaBase):
         else:
             if "card" in res:
                 res = res["card"]
-            return res["Slug"].strip()
+            slug = res.get("Slug") or res.get("slug")
+            # A card without a slug is not a model of the Hub.
+            return slug.strip() if slug else None
 
     def decode(self, model_id: str) -> str:
         """

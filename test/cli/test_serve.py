@@ -23,11 +23,20 @@ def mock_serve():
         yield mock_serve_
 
 
+@patch("ersilia.core.session.Session.get", return_value={})
+@patch("ersilia.utils.session.register_model_session")
 @patch("ersilia.core.model.ErsiliaModel")
 @patch("ersilia.store.utils.store_has_model", return_value=False)
 def test_serve_cmd(
-    mock_store_has_model, mock_ersilia_model, mock_serve, mock_std_example
+    mock_store_has_model,
+    mock_ersilia_model,
+    mock_register,
+    mock_session_get,
+    mock_serve,
+    mock_std_example,
 ):
+    # register_model_session is mocked so the test never writes to the real
+    # ~/eos/models.json (a mocked model id there corrupted the file).
     """Verify that the serve command exits successfully and calls ErsiliaModel.serve for the given model ID."""
     runner = CliRunner()
     mock_mdl_instance = MagicMock()
@@ -40,10 +49,17 @@ def test_serve_cmd(
     mock_mdl_instance.scl = "pulled_docker"
     mock_mdl_instance.output_source = "LOCAL_ONLY"
     mock_mdl_instance.get_apis.return_value = ["run"]
+    mock_mdl_instance.model_id = MODEL_ID
+    mock_mdl_instance.info.return_value = {"docker_tag": "latest", "card": {}}
 
     mock_ersilia_model.return_value = mock_mdl_instance
 
-    result = runner.invoke(serve_cmd(), [MODEL_ID])
+    # The command imports ErsiliaModel from the ersilia package, which may
+    # already hold the real class; patch it there too.
+    with patch("ersilia.ErsiliaModel", mock_ersilia_model, create=True):
+        result = runner.invoke(serve_cmd(), [MODEL_ID])
 
     assert result.exit_code == 0
-    assert mock_serve.called
+    # serve is called on the mocked instance or the patched method, depending
+    # on which ErsiliaModel the command imports first.
+    assert mock_serve.called or mock_mdl_instance.serve.called

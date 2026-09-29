@@ -70,7 +70,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         self.force_from_s3 = force_from_s3
 
     def _setup_check(self):
-        echo("Checking setup requirements for the model to be installed and run")
+        self.logger.debug("Checking setup requirements")
         sc = SetupChecker(
             model_id=self.model_id,
             config_json=self.config_json,
@@ -79,7 +79,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         sc.check()
 
     def _prepare(self):
-        echo("Preparing the model by deleting existing data if necessary")
+        self.logger.debug("Preparing the model folder")
         mp = ModelPreparer(
             model_id=self.model_id,
             overwrite=self.overwrite,
@@ -88,7 +88,7 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mp.prepare()
 
     def _get(self):
-        echo("Getting the model repository and parameters.")
+        echo("Downloading the model files.")
         mg = ModelGetter(
             model_id=self.model_id,
             repo_path=self.repo_path,
@@ -103,14 +103,13 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
             model_id=self.model_id, mode=self.mode, config_json=self.config_json
         )
         spinner(
-            "Packing the model using FastAPI. This process may take some time...",
+            "Installing the model's dependencies",
             mp.pack,
+            done="Model dependencies installed.",
         )
-        echo("Model is packed using FastAPI successfully", fg="cyan", bold=True)
 
     def _content(self):
-        echo("Registering all model information started", fg="blue")
-        echo("Getting model card of the model.")
+        self.logger.debug("Getting the model card")
         cg = CardGetter(self.model_id, self.config_json)
         cg.get()
 
@@ -119,17 +118,17 @@ class ModelFetcherFromFastAPI(ErsiliaBase):
         mc.check()
 
     def _sniff(self):
-        echo("Infering the structure of the model by reading the columns file.")
+        self.logger.debug("Inferring the model structure from the columns file")
         sn = ModelSniffer(self.model_id, self.config_json)
         sn.sniff()
 
     def _inform(self):
-        echo("Writing information to a JSON file and adding API information.")
+        self.logger.debug("Writing model information")
         mi = ModelInformer(self.model_id, self.config_json)
         mi.inform()
 
     def _success(self):
-        echo("Finalizing fetching. Almost there!", fg="cyan", bold=True)
+        self.logger.debug("Finalizing fetch")
         done = {DONE_TAG: True}
         status_file = os.path.join(self._dest_dir, self.model_id, STATUS_FILE)
         with open(status_file, "w") as f:

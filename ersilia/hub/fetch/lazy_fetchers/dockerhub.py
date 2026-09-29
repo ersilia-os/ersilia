@@ -314,7 +314,7 @@ class ModelDockerHubFetcher(ErsiliaBase):
         mr = ModelRegisterer(model_id=model_id, config_json=self.config_json)
         self.logger.debug("Asynchronous and concurrent execution started!")
         await async_spinner(
-            "Registering model...",
+            "Setting up the model",
             asyncio.gather(
                 mr.register(is_from_dockerhub=True, img_tag=self.img_tag),
                 self.write_apis(model_id),
@@ -325,4 +325,5 @@ class ModelDockerHubFetcher(ErsiliaBase):
                 self.copy_example_if_available(model_id),
                 self.copy_column_file(model_id),
             ),
+            done="Model set up.",
         )

@@ -245,19 +245,20 @@ def test_clear_stale_forgets_the_model(session_here, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "cmd_name, args, expected",
+    "cmd_name, args, expected, code",
     [
         (
             "run",
             ["-i", "in.csv", "-o", "out.csv"],
             "no longer running in this terminal",
+            1,
         ),
-        ("info", [], "no longer running in this terminal"),
-        ("close", [], "closed (it was no longer running)"),
+        ("info", [], "no longer running in this terminal", 1),
+        ("close", [], "closed (it was no longer running)", 0),
     ],
 )
 def test_commands_recover_from_a_stale_session(
-    session_here, monkeypatch, cmd_name, args, expected
+    session_here, monkeypatch, cmd_name, args, expected, code
 ):
     import importlib
 
@@ -267,6 +268,7 @@ def test_commands_recover_from_a_stale_session(
     module = importlib.import_module(f"ersilia.cli.commands.{cmd_name}")
     result = CliRunner().invoke(getattr(module, f"{cmd_name}_cmd")(), args)
     assert expected in result.output, result.output
+    assert result.exit_code == code
     assert not os.path.exists(os.path.join(session_here, "session.json"))
 
 

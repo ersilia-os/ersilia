@@ -48,6 +48,16 @@ MODEL_SIZE_FILE = "size.json"
 DEFAULT_BATCH_SIZE = 100
 RUN_CONNECT_TIMEOUT = 60  # seconds
 RUN_READ_TIMEOUT = 36000  # seconds (10 hours); max silence per batch request
+# How each service class is named to users.
+SERVICE_CLASS_LABELS = {
+    "pulled_docker": "DockerHub",
+    "docker": "Docker (local)",
+    "conda": "Conda",
+    "venv": "Virtual environment",
+    "system": "System Python",
+    "hosted": "Hosted",
+    "dummy": "Not available",
+}
 DEFAULT_REDIS_MEMORY_USAGE_FRACTION = 0.3
 FETCHED_MODELS_FILENAME = "fetched_models.txt"
 MODEL_CONFIG_FILENAME = "config.json"

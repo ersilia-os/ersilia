@@ -1,5 +1,4 @@
 import importlib
-import json
 import os
 from collections import namedtuple
 
@@ -15,14 +14,20 @@ from ...utils.exceptions_utils.fetch_exceptions import (
     NotInstallableWithFastAPI,
     StandardModelExampleError,
 )
-from ...utils.exceptions_utils.throw_ersilia_exception import throw_ersilia_exception
+from ...utils.exceptions_utils.throw_ersilia_exception import (
+    throw_ersilia_exception,
+    user_message_and_hints,
+)
 from ...utils.terminal import yes_no_input
-from . import STATUS_FILE
+from . import is_fetched
 from .lazy_fetchers.dockerhub import ModelDockerHubFetcher
 from .lazy_fetchers.hosted import ModelHostedFetcher
 from .register.standard_example import ModelStandardExample
 
 FetchResult = namedtuple("FetchResult", ["fetch_success", "reason"])
+# Reason returned when the model is already fetched; the CLI reports it as a
+# warning rather than a failure.
+ALREADY_FETCHED = "Model is already fetched."
 
 
 class ModelFetcher(ErsiliaBase):
@@ -101,11 +106,6 @@ class ModelFetcher(ErsiliaBase):
         self.repo_path = repo_path
         if self.mode == "docker":
             self.logger.debug("When packing mode is docker, dockerization is mandatory")
-            echo(
-                "When packing mode is docker, dockerization is mandatory",
-                fg="cyan",
-                bold=True,
-            )
             dockerize = True
         self.do_docker = dockerize
         self.model_dockerhub_fetcher = ModelDockerHubFetcher(
@@ -148,7 +148,7 @@ class ModelFetcher(ErsiliaBase):
     @throw_ersilia_exception()
     def _fetch_from_fastapi(self):
         self.logger.debug("Fetching the model Ersilia Pack (FastAPI)")
-        echo("Fetching the model using Ersilia Pack (FastAPI)")
+        echo("Installing the model. This can take a few minutes.")
         fetch = importlib.import_module("ersilia.hub.fetch.fetch_fastapi")
         mf = fetch.ModelFetcherFromFastAPI(
             config_json=self.config_json,
@@ -163,7 +163,6 @@ class ModelFetcher(ErsiliaBase):
             mf.fetch(model_id=self.model_id)
         else:
             self.logger.debug("Not installable with FastAPI")
-            echo("Not installable with FastAPI", fg="red")
             raise NotInstallableWithFastAPI(model_id=self.model_id)
 
     @throw_ersilia_exception()
@@ -181,25 +180,18 @@ class ModelFetcher(ErsiliaBase):
     def _standard_csv_example(self, model_id: str):
         ms = ModelStandardExample(model_id=model_id, config_json=self.config_json)
         try:
-            spinner("Checking that container works", ms.run)
+            spinner("Checking that the model runs", ms.run, done="The model runs.")
         finally:
-            spinner("Shutting down container", ms.close_model)
+            ms.close_model()
 
     async def _fetch_from_dockerhub(self, model_id: str):
         self.logger.debug("Fetching from DockerHub")
         await self.model_dockerhub_fetcher.fetch(model_id)
-        dest = self._model_path(model_id)
-        echo(f"Model stored at: {dest}")
 
     def _fetch_from_hosted(self, model_id: str):
         self.logger.debug("Fetching from hosted")
-        echo(
-            "Started fetching from hosted — this process may take some time...",
-            fg="blue",
-        )
         self.model_hosted_fetcher.fetch(model_id=model_id)
         self.logger.debug("Fetching from hosted done")
-        echo("Fetching from hosted done", fg="cyan", bold=True)
 
     def _decide_if_use_dockerhub(self, model_id: str) -> bool:
         if self.repo_path is not None:
@@ -212,7 +204,6 @@ class ModelFetcher(ErsiliaBase):
             return False
         if not self.is_docker_installed:
             self.logger.debug("Docker Engine is not installed on your system.")
-            echo("Docker Engine is not installed on your system.", fg="red")
             return False
         if self.force_from_dockerhub and not self.is_docker_active:
             self.logger.error("Docker is not active in your local")
@@ -221,7 +212,7 @@ class ModelFetcher(ErsiliaBase):
             self.logger.warning(
                 "Docker image of this model doesn't seem to be available"
             )
-            echo("Docker image of this model doesn't seem to be available", fg="red")
+            echo(f"Model {model_id} has no Docker image on DockerHub.", fg="yellow")
             return False
         return True
 
@@ -236,7 +227,7 @@ class ModelFetcher(ErsiliaBase):
             return False
         if not self.model_hosted_fetcher.is_available(model_id=model_id):
             self.logger.debug("There is no hosted URL available for this model")
-            echo("There is no hosted URL available for this model", fg="red")
+            echo(f"Model {model_id} has no hosted URL.", fg="yellow")
             return False
         if self.force_from_hosted:
             return True
@@ -256,71 +247,106 @@ class ModelFetcher(ErsiliaBase):
         bool
             True if the model exists locally, False otherwise.
         """
-        status_file = os.path.join(self._model_path(model_id), STATUS_FILE)
-        if not os.path.exists(status_file):
+        return is_fetched(self._model_path(model_id))
+
+    def _remove_partial_files(self, model_id):
+        # A fetch that did not finish leaves a folder that looks like a model
+        # but cannot be served. The Docker image, if any, is kept so a retry
+        # does not download it again.
+        if self.exists(model_id) or not os.path.isdir(self._model_path(model_id)):
             return False
-        with open(status_file, "r") as f:
-            status = json.load(f)
-        if status["done"]:
-            return True
-        else:
+        from ..delete.delete import (
+            ModelBundleDeleter,
+            ModelEosDeleter,
+            ModelFetchedEntryDeleter,
+        )
+
+        try:
+            ModelEosDeleter(self.config_json).delete(model_id)
+            ModelBundleDeleter(self.config_json).delete(model_id)
+            ModelFetchedEntryDeleter(self.config_json).delete(model_id)
+        except Exception as e:
+            self.logger.debug(f"Could not remove partial files: {e}")
             return False
+        return True
+
+    def _warn_if_archived(self, model_id):
+        # Archived models are no longer maintained and may fail to fetch or run.
+        try:
+            models = self.ji.items_all()
+        except Exception:
+            return
+        for m in models:
+            if m.get("Identifier") == model_id:
+                if str(m.get("Status", "")).lower() == "archived":
+                    echo(
+                        f"Model {model_id} is archived and no longer maintained; it may not work.",
+                        fg="yellow",
+                    )
+                return
 
     async def _fetch(self, model_id: str) -> FetchResult:
-        label = f"{model_id}: {self.slug}" if self.slug else model_id
-        echo(f"Checking if {label} is available locally...", harmonize=False)
+        label = f"{model_id} ({self.slug})" if self.slug else model_id
         if not self.exists(model_id):
             self.logger.info("Model doesn't exist on your system, fetching it now.")
-            echo(f"Model not found locally, fetching from {self.model_source}...")
+            echo(f"Fetching model {label} from {self.model_source}.")
+            self._warn_if_archived(model_id)
             self.logger.debug("Starting fetching procedure")
             do_dockerhub = self._decide_if_use_dockerhub(model_id=model_id)
-            if (
-                self.force_from_dockerhub
-                and not do_dockerhub
-                and not self.is_docker_active
-            ):
-                return FetchResult(
-                    fetch_success=False,
-                    reason="Docker is not active on your system. Please start Docker and try again.",
-                )
+            if self.force_from_dockerhub and not do_dockerhub:
+                if not self.is_docker_installed:
+                    return FetchResult(
+                        fetch_success=False,
+                        reason="Docker is not installed. Install it from https://docs.docker.com/get-docker/, or fetch the model with --from_github.",
+                    )
+                if not self.is_docker_active:
+                    return FetchResult(
+                        fetch_success=False,
+                        reason="Docker is not running. Start Docker (e.g. Docker Desktop) and try again.",
+                    )
             if do_dockerhub:
                 self.logger.debug("Decided to fetch from DockerHub")
                 if not self.can_use_docker:
                     return FetchResult(
                         fetch_success=False,
-                        reason="Docker is not installed or active on your system.",
+                        reason="Docker is not installed or not running.",
                     )
                 await self._fetch_from_dockerhub(model_id=model_id)
                 return FetchResult(
                     fetch_success=True, reason="Model fetched successfully"
                 )
+            if self.force_from_hosted and not self.model_hosted_fetcher.is_available(
+                model_id=model_id
+            ):
+                # A hosted URL was asked for: do not silently build locally.
+                return FetchResult(
+                    fetch_success=False,
+                    reason=f"The hosted model at {self.hosted_url} could not be reached. Check the URL.",
+                )
             do_hosted = self._decide_if_use_hosted(model_id=model_id)
             if do_hosted:
                 self.logger.debug("Fetching from hosted")
-                echo("Fetching from hosted")
+                echo("Connecting to the hosted model.")
                 self._fetch_from_hosted(model_id=model_id)
                 return FetchResult(
                     fetch_success=True, reason="Model fetched successfully"
                 )
             if self.overwrite is None:
                 self.logger.debug("Overwriting")
-                echo("Overwriting", fg="cyan", bold=True)
                 self.overwrite = True
             self.logger.debug("Fetching in your system, not from DockerHub")
+            if not (self.force_from_github or self.force_from_s3 or self.repo_path):
+                echo(
+                    "Installing from GitHub instead (needs conda, can take 10+ minutes).",
+                    fg="yellow",
+                )
             self._fetch_not_from_dockerhub(model_id=model_id)
             return FetchResult(fetch_success=True, reason="Model fetched successfully")
         else:
             self.logger.info(
                 "Model already exists on your system. If you want to fetch it again, please delete it first."
             )
-            echo(
-                f"Model {model_id} is already available locally. Delete it first to re-fetch.",
-                fg="yellow",
-            )
-            return FetchResult(
-                fetch_success=False,
-                reason="Model already exists on your system. If you want to fetch it again, please delete the existing model first.",
-            )
+            return FetchResult(fetch_success=False, reason=ALREADY_FETCHED)
 
     async def fetch(self, model_id: str) -> bool:
         """
@@ -345,13 +371,27 @@ class ModelFetcher(ErsiliaBase):
         """
         try:
             if self.force_from_hosted and self.exists(model_id):
-                msg = f"Model {model_id} is already available locally and can be served normally."
+                msg = f"Model {model_id} is already fetched and can be served."
                 self.logger.info(msg)
                 echo(msg, fg="yellow")
                 return FetchResult(fetch_success=True, reason=msg)
 
-            fr = await self._fetch(model_id)
+            try:
+                fr = await self._fetch(model_id)
+            except BaseException as e:
+                if self._remove_partial_files(model_id):
+                    note = "The partial files were removed."
+                    if isinstance(e, Exception):
+                        echo(
+                            f"Fetch of {model_id} failed; the partial files were removed. Run 'ersilia fetch {model_id}' again.",
+                            fg="red",
+                        )
+                    else:
+                        e.ersilia_note = note
+                raise
             if not fr.fetch_success:
+                if fr.reason != ALREADY_FETCHED:
+                    self._remove_partial_files(model_id)
                 return fr
 
             self._standard_csv_example(model_id)
@@ -363,7 +403,7 @@ class ModelFetcher(ErsiliaBase):
                 os.makedirs(self._model_path(model_id), exist_ok=True)
             except OSError as error:
                 self.logger.error(f"Error during folder creation: {error}")
-                echo(f"Error during folder creation: {error}", fg="red")
+                echo(f"Could not create the model folder: {error}", fg="red")
             with open(model_source_file, "w") as f:
                 f.write(self.model_source)
 
@@ -371,23 +411,19 @@ class ModelFetcher(ErsiliaBase):
 
         except (StandardModelExampleError,) as err:
             self.logger.debug(f"{type(err).__name__} occurred: {str(err)}")
-            echo(f"{type(err).__name__} occurred: {str(err)}", fg="red")
+            message, hints = user_message_and_hints(err)
+            echo(message, fg="red")
+            if hints:
+                echo(hints)
             do_delete = yes_no_input(
-                "Do you want to delete the model artifacts? [Y/n]",
+                "Delete the downloaded model files?",
                 default_answer="n",
             )
             if do_delete:
                 md = ModelFullDeleter(overwrite=False)
                 md.delete(model_id)
-                self.logger.info(
-                    f"✅ Model '{model_id}' artifacts have been successfully deleted."
-                )
-                echo(
-                    f"✅ Model '{model_id}' artifacts have been successfully deleted.",
-                    fg="green",
-                )
+                self.logger.info(f"Model {model_id} files deleted.")
+                echo(f"Downloaded files of model {model_id} deleted.", fg="green")
 
-            reason = (
-                str(err) if str(err) else "An unknown error occurred during fetching."
-            )
+            reason = message or "An unknown error occurred during fetching."
             return FetchResult(fetch_success=False, reason=reason)

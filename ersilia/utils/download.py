@@ -437,17 +437,17 @@ class GitHubDownloader(object):
     def _download_model_artifacts(self, repo, destination):
         if self.use_eosvc:
             if self._has_access_json(destination):
-                echo("Detected access.json. Downloading model artifacts via eosvc.")
+                self.logger.debug("Downloading model artifacts via eosvc")
                 if self._ensure_eosvc():
                     downloaded, had_error = self._download_large_files_with_eosvc(
                         destination
                     )
                     if downloaded:
-                        echo("Model artifacts downloaded via eosvc.")
+                        self.logger.debug("Model artifacts downloaded via eosvc")
                         return
                     if had_error:
                         echo(
-                            "eosvc encountered errors fetching artifacts. Falling back to Git LFS.",
+                            "Some model files could not be downloaded. Retrying another way.",
                             fg="yellow",
                         )
                     else:
@@ -455,9 +455,8 @@ class GitHubDownloader(object):
                             "eosvc found no artifacts to download. Falling back to Git LFS."
                         )
                 else:
-                    echo(
-                        "Could not install eosvc automatically. Falling back to Git LFS.",
-                        fg="yellow",
+                    self.logger.warning(
+                        "Could not install eosvc automatically. Falling back to Git LFS."
                     )
             else:
                 self.logger.debug(
@@ -499,7 +498,10 @@ class GitHubDownloader(object):
         url = "https://raw.githubusercontent.com/{0}/{1}/{2}/{3}".format(
             org, repo, branch, repo_path
         )
-        response = requests.get(url)
+        try:
+            response = requests.get(url, timeout=15)
+        except requests.exceptions.RequestException:
+            return False
         if response.status_code != 200:
             return False
         with open(destination, "wb") as f:
